@@ -33,10 +33,10 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
         context, widget.user!.uid, !(widget.user!.isCoopView ?? false));
     context.pop();
 
-    if (widget.user!.isManager ?? false) {
-      context.go('/manager_dashboard');
-    } else {
+    if (widget.user!.isCoopView ?? false) {
       context.go('/customer_home');
+    } else {
+      context.go('/manager_dashboard');
     }
   }
 
@@ -155,7 +155,7 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                 : const Icon(Icons.manage_accounts, size: 20),
             const SizedBox(width: 10),
             isCoopView
-                ? const Text('Switch to Customer',
+                ? const Text('Switch to Customer View',
                     style: TextStyle(fontSize: 14))
                 : const Text('Switch to Coop View',
                     style: TextStyle(fontSize: 14))

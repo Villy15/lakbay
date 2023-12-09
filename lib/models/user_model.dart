@@ -1,8 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-
 class UserModel {
   final String uid;
   final String name;
@@ -83,31 +81,5 @@ class UserModel {
   @override
   String toString() {
     return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, isAuthenticated: $isAuthenticated, isManager: $isManager, isCoopView: $isCoopView, coopsManaged: $coopsManaged, coopsJoined: $coopsJoined)';
-  }
-
-  @override
-  bool operator ==(covariant UserModel other) {
-    if (identical(this, other)) return true;
-
-    return other.uid == uid &&
-        other.name == name &&
-        other.profilePic == profilePic &&
-        other.isAuthenticated == isAuthenticated &&
-        other.isManager == isManager &&
-        other.isCoopView == isCoopView &&
-        listEquals(other.coopsManaged, coopsManaged) &&
-        listEquals(other.coopsJoined, coopsJoined);
-  }
-
-  @override
-  int get hashCode {
-    return uid.hashCode ^
-        name.hashCode ^
-        profilePic.hashCode ^
-        isAuthenticated.hashCode ^
-        isManager.hashCode ^
-        isCoopView.hashCode ^
-        coopsManaged.hashCode ^
-        coopsJoined.hashCode;
   }
 }

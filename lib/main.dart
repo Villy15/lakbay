@@ -61,7 +61,6 @@ class _MyAppState extends ConsumerState<MyApp> {
     final userData =
         await ref.watch(authControllerProvider.notifier).getUserData(uid).first;
 
-    // debugPrint("User Data: $userData");
     ref.read(userProvider.notifier).update((state) => userData);
     setState(() {});
   }

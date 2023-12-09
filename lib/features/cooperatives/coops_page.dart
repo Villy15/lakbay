@@ -23,7 +23,7 @@ class CoopsPage extends ConsumerWidget {
               ref.watch(getAllCooperativesProvider).when(
                   data: (cooperatives) => ListView.builder(
                         shrinkWrap: true,
-                        itemCount: 1,
+                        itemCount: cooperatives.length,
                         itemBuilder: (BuildContext context, int index) {
                           final cooperative = cooperatives[index];
                           return ListTile(

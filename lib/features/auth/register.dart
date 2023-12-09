@@ -4,15 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
+class RegisterPage extends ConsumerStatefulWidget {
   final Function()? onTap;
-  const LoginPage({super.key, this.onTap});
+  const RegisterPage({super.key, this.onTap});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
   bool _obscureText = true;
@@ -21,10 +21,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     setState(() {
       _obscureText = !_obscureText;
     });
-  }
-
-  void signInWithGoogle(BuildContext context) {
-    ref.read(authControllerProvider.notifier).signInWithGoogle(context);
   }
 
   @override
@@ -63,12 +59,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       const SizedBox(height: 20),
                       passwordTextField(),
                       const SizedBox(height: 20),
-                      loginButton(),
-                      const SizedBox(height: 60),
-                      loginWithText(),
+                      confirmPasswordTextField(),
                       const SizedBox(height: 20),
-                      loginOptions(),
-                      const SizedBox(height: 80),
+                      registerButton(),
+                      const SizedBox(height: 140),
                     ],
                     extraFunctions(),
                   ],
@@ -109,62 +103,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
-  Text loginWithText() {
-    return const Text(
-      "Or login with",
-      style: TextStyle(
-        fontSize: 16,
-        color: Colors.white,
-      ),
-    );
-  }
-
-  Row loginOptions() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        IconButton.filled(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.background),
-            icon: Image.asset("lib/core/images/google.png"),
-            onPressed: () => signInWithGoogle(context)),
-        IconButton.filled(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.background),
-          icon: Image.asset("lib/core/images/facebook.png"),
-          onPressed: () {},
-        ),
-      ],
-    );
-  }
-
   Row extraFunctions() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         TextButton(
           onPressed: () {
-            widget.onTap?.call();
+            widget.onTap!.call();
           },
           child: const Text(
-            "Create Account",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
-          ),
-        ),
-        const Text(
-          "|",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
-        ),
-        TextButton(
-          onPressed: () {},
-          child: const Text(
-            "Forgot Password",
+            "Go back to login",
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -175,7 +123,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
-  FilledButton loginButton() {
+  FilledButton registerButton() {
     return FilledButton(
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(double.infinity, 50),
@@ -183,7 +131,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       onPressed: () {
         context.go('/customer_home');
       },
-      child: const Text("Login"),
+      child: const Text("Register"),
     );
   }
 
@@ -206,6 +154,35 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         ),
         contentPadding: const EdgeInsets.all(20),
         hintText: "Password",
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+        ),
+      ),
+    );
+  }
+
+  TextFormField confirmPasswordTextField() {
+    return TextFormField(
+      style: const TextStyle(color: Colors.black),
+      obscureText: _obscureText,
+      decoration: InputDecoration(
+        fillColor: Colors.white54,
+        filled: true,
+        prefixIcon: const Icon(Icons.lock),
+        suffixIcon: Padding(
+          padding: const EdgeInsets.only(right: 5),
+          child: IconButton(
+            icon: Icon(
+              _obscureText ? Icons.visibility : Icons.visibility_off,
+            ),
+            onPressed: _togglePasswordVisibility,
+          ),
+        ),
+        contentPadding: const EdgeInsets.all(20),
+        hintText: "Confirm Password",
         enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),

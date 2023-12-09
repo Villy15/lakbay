@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
-import 'package:lakbay/features/auth/login.dart';
+import 'package:lakbay/features/auth/login_or_register.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/shared_axis.dart';
 import 'package:lakbay/features/common/fade_through.dart';
@@ -29,10 +29,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     final isAuth = authState.valueOrNull != null;
     final isLoggingIn = state.matchedLocation == '/login';
 
+    debugPrint("isLoggingIn: $isLoggingIn");
+
     if (!isAuth) {
       // Not authenticated
       return isLoggingIn ? null : '/login';
     }
+
     if (isLoggingIn) {
       return '/customer_home';
     }
@@ -47,7 +50,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       routes: [
         GoRoute(
           path: '/login',
-          builder: (context, state) => LoginPage(key: state.pageKey),
+          builder: (context, state) => LoginOrRegister(key: state.pageKey),
         ),
         ShellRoute(
             navigatorKey: _shellNavigator,
