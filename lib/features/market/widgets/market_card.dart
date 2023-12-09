@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 
 class MarketCard extends ConsumerWidget {
   const MarketCard({super.key});
 
   void onTap(BuildContext context, WidgetRef ref) {
-    ref.read(navBarVisibilityProvider.notifier).hide();
-    context
-        .push('/market/1')
-        .then((_) => {ref.read(navBarVisibilityProvider.notifier).show()});
+    context.push('/market/1');
   }
 
   @override

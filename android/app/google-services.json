@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "329158450498",
+    "project_id": "lakbay-cd97e",
+    "storage_bucket": "lakbay-cd97e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329158450498:android:e6364cfa8c0e5819403cdb",
+        "android_client_info": {
+          "package_name": "com.example.lakbay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_23hwBioqNkEcDlDV1fA9mmJpHNnXy7Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

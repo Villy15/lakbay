@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyCcrwSvJq6zkKgKHSlTTq76EMCgqJbQlDA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>329158450498</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.lakbay</string>
+	<key>PROJECT_ID</key>
+	<string>lakbay-cd97e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>lakbay-cd97e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:329158450498:ios:9930bb0c0395d2b8403cdb</string>
+</dict>
+</plist>

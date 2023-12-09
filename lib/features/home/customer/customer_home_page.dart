@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/widgets/search.dart';
 import 'package:lakbay/features/home/customer/widgets/customer_home_appbar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CustomerHomePage extends StatelessWidget {
+class CustomerHomePage extends ConsumerWidget {
   const CustomerHomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider);
+
     return Scaffold(
-        appBar: const CustomerHomeAppBar(title: 'Lakbay'),
+        appBar: CustomerHomeAppBar(title: 'Lakbay', user: user),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -17,7 +21,8 @@ class CustomerHomePage extends StatelessWidget {
               children: [
                 const SizedBox(height: 8.0),
                 CustomSearchBar(
-                    hintText: 'Where do you want to go?', onTap: () {}),
+                    hintText: 'Where do you want to go ${user?.name ?? ''}?',
+                    onTap: () {}),
                 const SizedBox(height: 16.0),
               ],
             ),

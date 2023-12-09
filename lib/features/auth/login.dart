@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/loader.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   bool _obscureText = true;
@@ -19,8 +22,14 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  void signInWithGoogle(BuildContext context) {
+    ref.read(authControllerProvider.notifier).signInWithGoogle(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(authControllerProvider);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -45,16 +54,21 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     greetingText(),
                     const SizedBox(height: 80),
-                    emailTextField(),
-                    const SizedBox(height: 20),
-                    passwordTextField(),
-                    const SizedBox(height: 20),
-                    loginButton(),
-                    const SizedBox(height: 60),
-                    loginWithText(),
-                    const SizedBox(height: 20),
-                    loginOptions(),
-                    const SizedBox(height: 80),
+                    if (isLoading) ...[
+                      const Loader(),
+                      const SizedBox(height: 429),
+                    ] else ...[
+                      emailTextField(),
+                      const SizedBox(height: 20),
+                      passwordTextField(),
+                      const SizedBox(height: 20),
+                      loginButton(),
+                      const SizedBox(height: 60),
+                      loginWithText(),
+                      const SizedBox(height: 20),
+                      loginOptions(),
+                      const SizedBox(height: 80),
+                    ],
                     extraFunctions(),
                   ],
                 ),
@@ -99,6 +113,7 @@ class _LoginPageState extends State<LoginPage> {
       "Or login with",
       style: TextStyle(
         fontSize: 16,
+        color: Colors.white,
       ),
     );
   }
@@ -108,12 +123,13 @@ class _LoginPageState extends State<LoginPage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         IconButton.filled(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-          icon: Image.asset("lib/core/images/google.png"),
-          onPressed: () {},
-        ),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.background),
+            icon: Image.asset("lib/core/images/google.png"),
+            onPressed: () => signInWithGoogle(context)),
         IconButton.filled(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.background),
           icon: Image.asset("lib/core/images/facebook.png"),
           onPressed: () {},
         ),
