@@ -3,6 +3,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/widgets/search.dart';
 import 'package:lakbay/features/home/customer/widgets/customer_home_appbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lakbay/features/market/widgets/market_card.dart';
 
 class CustomerHomePage extends ConsumerWidget {
   const CustomerHomePage({super.key});
@@ -23,7 +24,8 @@ class CustomerHomePage extends ConsumerWidget {
                 CustomSearchBar(
                     hintText: 'Where do you want to go ${user?.name ?? ''}?',
                     onTap: () {}),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: 24.0),
+                const MarketCard()
               ],
             ),
           ),

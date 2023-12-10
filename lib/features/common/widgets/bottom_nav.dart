@@ -45,9 +45,9 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
 
         // Second Nav Bar
         const BottomNavigationBarItem(
-          icon: Icon(Icons.store_mall_directory_outlined),
-          activeIcon: Icon(Icons.store_mall_directory),
-          label: 'Market',
+          icon: Icon(Icons.card_travel_outlined),
+          activeIcon: Icon(Icons.card_travel),
+          label: 'Trips',
         ),
 
         // Third Nav Bar
@@ -90,7 +90,7 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         }
         break;
       case 1:
-        context.go('/market');
+        context.go('/trips');
         break;
       case 2:
         context.go('/events');
