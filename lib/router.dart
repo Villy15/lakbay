@@ -17,6 +17,8 @@ import 'package:lakbay/features/home/customer/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/market/crud/read_market.dart';
 import 'package:lakbay/features/market/market_page.dart';
+import 'package:lakbay/features/trips/trips_page.dart';
+// import 'package:lakbay/features/trips/trips_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
 final GlobalKey<NavigatorState> _shellNavigator =
@@ -29,7 +31,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     final isAuth = authState.valueOrNull != null;
     final isLoggingIn = state.matchedLocation == '/login';
 
-    debugPrint("isLoggingIn: $isLoggingIn");
+    // debugPrint("isLoggingIn: $isLoggingIn");
 
     if (!isAuth) {
       // Not authenticated
@@ -99,6 +101,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   context: context,
                   state: state,
                   child: const EventsPage(),
+                ),
+              ),
+
+              GoRoute(
+                path: '/trips',
+                pageBuilder: (context, state) =>
+                    buildPageWithDefaultTransition<void>(
+                  context: context,
+                  state: state,
+                  child: const TripsPage(),
                 ),
               ),
 

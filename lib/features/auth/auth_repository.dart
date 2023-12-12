@@ -66,7 +66,7 @@ class AuthRepository {
             profilePic: photoUrl ?? Constants.profilePic,
             isAuthenticated: true);
 
-        await _users.doc(userCredential.user!.uid).set(userModel.toMap());
+        await _users.doc(userCredential.user!.uid).set(userModel.toJson());
       } else {
         userModel = await getUserData(userCredential.user!.uid).first;
       }
@@ -79,9 +79,34 @@ class AuthRepository {
     }
   }
 
+  // Register user with email and password
+  FutureEither<UserModel> register({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      UserModel userModel = UserModel(
+          uid: userCredential.user?.uid ?? "",
+          name: userCredential.user?.displayName ?? "Lakbay Name",
+          profilePic: '',
+          isAuthenticated: true);
+
+      await _users.doc(userCredential.user!.uid).set(userModel.toJson());
+
+      return right(userModel);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   Stream<UserModel> getUserData(String uid) {
     return _users.doc(uid).snapshots().map((event) {
-      return UserModel.fromMap(event.data() as Map<String, dynamic>);
+      return UserModel.fromJson(event.data() as Map<String, dynamic>);
     });
   }
 

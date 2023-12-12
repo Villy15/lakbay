@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
@@ -86,21 +87,39 @@ class _AddCoopPageState extends ConsumerState<AddCoopPage> {
                       _formKey.currentState!.save(); //
 
                       final userUid = ref.read(userProvider)?.uid ?? '';
+                      final imagePath =
+                          'cooperatives/${_nameController.text}/${_image?.path.split('/').last ?? ''}';
 
                       // Process data.
-                      final coop = CooperativeModel(
+                      var coop = CooperativeModel(
                         name: _nameController.text,
                         description: _descriptionController.text,
                         address: _addressController.text,
                         city: _cityController.text,
                         province: _provinceController.text,
-                        imageUrl: _image?.path ?? '',
+                        imagePath: imagePath,
                         members: [userUid],
                         managers: [userUid],
                       );
 
-                      // Register cooperative
-                      registerCooperative(coop);
+                      // Upload image to Firebase Storage
+                      ref
+                          .read(storageRepositoryProvider)
+                          .storeFile(
+                            path: 'cooperatives/${_nameController.text}',
+                            id: _image?.path.split('/').last ?? '',
+                            file: _image,
+                          )
+                          .then((value) => value.fold(
+                                (failure) => debugPrint(
+                                  'Failed to upload image: $failure',
+                                ),
+                                (imageUrl) {
+                                  coop = coop.copyWith(imageUrl: imageUrl);
+                                  // Register cooperative
+                                  registerCooperative(coop);
+                                },
+                              ));
                     }
                   },
                   child: const Text('Submit'),

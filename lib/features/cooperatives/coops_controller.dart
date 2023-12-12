@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_repository.dart';
+import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 
 // Get all cooperatives provider
@@ -38,14 +40,40 @@ class CoopsController extends StateNotifier<bool> {
   void registerCooperative(CooperativeModel coop, BuildContext context) async {
     state = true;
     final result = await _coopsRepository.addCoop(coop);
-    state = false;
+
     result.fold(
-        (l) => showSnackBar(context, l.message),
-        (r) => {
-              showSnackBar(context, 'Cooperative registered successfully'),
-              context.pop(),
-              _ref.read(navBarVisibilityProvider.notifier).show()
-            });
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (coopUid) async {
+        // coopUid is the uid of the newly added cooperative
+        // You can use it here
+
+        // Update user's coopsJoined, coopsManaged, currentCoop, isCoopView = true, isManager = true
+        final user = _ref.read(userProvider);
+
+        // Using copyWith to update the user
+        final updatedUser = user?.copyWith(
+          coopsJoined: [...?user.coopsJoined, coopUid],
+          coopsManaged: [...?user.coopsManaged, coopUid],
+          currentCoop: coopUid,
+          isCoopView: true,
+          isManager: true,
+        );
+
+        // Update user
+        _ref
+            .read(usersControllerProvider.notifier)
+            .editUserAfterRegisterCoop(user!.uid, updatedUser!);
+
+        state = false;
+        showSnackBar(context, 'Cooperative registered successfully');
+        context.pop();
+        _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
   }
 
   // Read all cooperatives

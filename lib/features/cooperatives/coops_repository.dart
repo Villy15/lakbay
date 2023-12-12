@@ -19,15 +19,18 @@ class CoopsRepository {
   }) : _firestore = firestore;
 
   // Add a cooperative
-  FutureVoid addCoop(CooperativeModel coop) async {
+  FutureEither<String> addCoop(CooperativeModel coop) async {
     try {
       // Generate a new document ID
       var doc = _communities.doc();
 
       // Update the uid of the cooperative
-      coop.uid = doc.id;
+      coop = coop.copyWith(uid: doc.id);
 
-      return right(await doc.set(coop.toMap()));
+      await doc.set(coop.toJson());
+
+      // Return the uid of the newly added cooperative
+      return right(coop.uid!);
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
@@ -39,7 +42,7 @@ class CoopsRepository {
   Stream<List<CooperativeModel>> readCoops() {
     return _communities.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return CooperativeModel.fromMap(doc.data() as Map<String, dynamic>);
+        return CooperativeModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -47,7 +50,7 @@ class CoopsRepository {
   // Read community by uid
   Stream<CooperativeModel> readCoop(String uid) {
     return _communities.doc(uid).snapshots().map((snapshot) {
-      return CooperativeModel.fromMap(snapshot.data() as Map<String, dynamic>);
+      return CooperativeModel.fromJson(snapshot.data() as Map<String, dynamic>);
     });
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 
@@ -15,12 +15,36 @@ class RegisterPage extends ConsumerStatefulWidget {
 class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
   bool _obscureText = true;
 
   void _togglePasswordVisibility() {
     setState(() {
       _obscureText = !_obscureText;
     });
+  }
+
+  void _register() async {
+    if (_formKey.currentState!.validate()) {
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+      final confirmPassword = _confirmPasswordController.text.trim();
+
+      if (password != confirmPassword) {
+        showSnackBar(context, "Password does not match");
+        return;
+      }
+
+      ref.read(authControllerProvider.notifier).register(
+            context: context,
+            email: email,
+            password: password,
+          );
+    }
   }
 
   @override
@@ -129,7 +153,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         minimumSize: const Size(double.infinity, 50),
       ),
       onPressed: () {
-        context.go('/customer_home');
+        _register();
       },
       child: const Text("Register"),
     );
@@ -137,6 +161,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   TextFormField passwordTextField() {
     return TextFormField(
+      controller: _passwordController,
       style: const TextStyle(color: Colors.black),
       obscureText: _obscureText,
       decoration: InputDecoration(
@@ -161,11 +186,18 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your password';
+        }
+        return null;
+      },
     );
   }
 
   TextFormField confirmPasswordTextField() {
     return TextFormField(
+      controller: _confirmPasswordController,
       style: const TextStyle(color: Colors.black),
       obscureText: _obscureText,
       decoration: InputDecoration(
@@ -190,11 +222,18 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your password';
+        }
+        return null;
+      },
     );
   }
 
   TextFormField emailTextField() {
     return TextFormField(
+      controller: _emailController,
       style: const TextStyle(color: Colors.black),
       decoration: const InputDecoration(
         fillColor: Colors.white54,
@@ -209,6 +248,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your email';
+        }
+        return null;
+      },
     );
   }
 }

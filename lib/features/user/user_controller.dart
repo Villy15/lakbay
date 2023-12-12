@@ -30,9 +30,15 @@ class UsersController extends StateNotifier<bool> {
     return _userRepository.readUser(uid);
   }
 
+  // Edit user after register COOP
+  void editUserAfterRegisterCoop(String uid, UserModel user) async {
+    await _userRepository.editUser(uid, user);
+  }
+
   // Edit user isCoopView
   void editUserIsCoopView(
       BuildContext context, String uid, bool isCoopView) async {
+    // debugPrint("editUserIsCoopView: $uid, $isCoopView");
     state = true;
     final result = await _userRepository.editUserIsCoopView(uid, isCoopView);
     state = false;

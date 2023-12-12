@@ -22,7 +22,7 @@ class UserRepository {
   Stream<List<UserModel>> readUsers() {
     return _users.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return UserModel.fromMap(doc.data() as Map<String, dynamic>);
+        return UserModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -30,7 +30,7 @@ class UserRepository {
   // Read user by uid
   Stream<UserModel> readUser(String uid) {
     return _users.doc(uid).snapshots().map((snapshot) {
-      return UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
+      return UserModel.fromJson(snapshot.data() as Map<String, dynamic>);
     });
   }
 
@@ -38,6 +38,17 @@ class UserRepository {
   FutureVoid editUserIsCoopView(String uid, bool isCoopView) async {
     try {
       return right(_users.doc(uid).update({'isCoopView': isCoopView}));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Edit user
+  FutureVoid editUser(String uid, UserModel user) async {
+    try {
+      return right(_users.doc(uid).update(user.toJson()));
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
