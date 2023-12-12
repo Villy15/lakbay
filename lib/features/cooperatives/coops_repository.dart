@@ -54,6 +54,17 @@ class CoopsRepository {
     });
   }
 
+  // Update cooperative
+  FutureVoid updateCoop(CooperativeModel coop) async {
+    try {
+      return right(await _communities.doc(coop.uid).update(coop.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   CollectionReference get _communities =>
       _firestore.collection(FirebaseConstants.coopsCollection);
 }

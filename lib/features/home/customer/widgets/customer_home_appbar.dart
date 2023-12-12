@@ -27,39 +27,77 @@ class _CustomerHomeAppBarState extends ConsumerState<CustomerHomeAppBar>
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.nature_rounded),
-          child: Flexible(child: Text('Nature')),
+          icon: Icon(Icons.hotel),
+          child: Flexible(child: Text('Accomodation')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.museum),
-          child: Flexible(child: Text('Cultural')),
+          icon: Icon(Icons.food_bank),
+          child: Flexible(child: Text('Food')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.beach_access),
-          child: Flexible(child: Text('Beach')),
+          icon: Icon(Icons.car_rental),
+          child: Flexible(child: Text('Transport')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.health_and_safety),
-          child: Flexible(child: Text('Health')),
+          icon: Icon(Icons.tour),
+          child: Flexible(child: Text('Tours')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.scuba_diving),
-          child: Flexible(child: Text('Diving')),
+          icon: Icon(Icons.shopping_bag),
+          child: Flexible(child: Text('Products')),
         ),
       ),
     ];
+
+    // List<Widget> tabs = [
+    //   const SizedBox(
+    //     width: 100.0,
+    //     child: Tab(
+    //       icon: Icon(Icons.nature_rounded),
+    //       child: Flexible(child: Text('Nature')),
+    //     ),
+    //   ),
+    //   const SizedBox(
+    //     width: 100.0,
+    //     child: Tab(
+    //       icon: Icon(Icons.museum),
+    //       child: Flexible(child: Text('Cultural')),
+    //     ),
+    //   ),
+    //   const SizedBox(
+    //     width: 100.0,
+    //     child: Tab(
+    //       icon: Icon(Icons.beach_access),
+    //       child: Flexible(child: Text('Beach')),
+    //     ),
+    //   ),
+    //   const SizedBox(
+    //     width: 100.0,
+    //     child: Tab(
+    //       icon: Icon(Icons.health_and_safety),
+    //       child: Flexible(child: Text('Health')),
+    //     ),
+    //   ),
+    //   const SizedBox(
+    //     width: 100.0,
+    //     child: Tab(
+    //       icon: Icon(Icons.scuba_diving),
+    //       child: Flexible(child: Text('Diving')),
+    //     ),
+    //   ),
+    // ];
 
     return DefaultTabController(
       length: tabs.length,

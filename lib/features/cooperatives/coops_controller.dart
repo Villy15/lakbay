@@ -76,6 +76,26 @@ class CoopsController extends StateNotifier<bool> {
     );
   }
 
+  // Edit a cooperative
+  void editCooperative(CooperativeModel coop, BuildContext context) async {
+    state = true;
+    final result = await _coopsRepository.updateCoop(coop);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) {
+        // Handle the success here
+        state = false;
+        showSnackBar(context, 'Cooperative updated successfully');
+        context.pop();
+      },
+    );
+  }
+
   // Read all cooperatives
   Stream<List<CooperativeModel>> getAllCooperatives() {
     return _coopsRepository.readCoops();

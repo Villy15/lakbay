@@ -41,6 +41,11 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
     }
   }
 
+  void viewCurrentCooperative(WidgetRef ref) {
+    context.pop();
+    context.go('/coops/id/${widget.user?.currentCoop}');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -141,11 +146,24 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                   leading: const Icon(Icons.person),
                   onTap: () => {},
                 ),
-                ListTile(
-                  title: const Text('Bookings'),
-                  leading: const Icon(Icons.book),
-                  onTap: () => {},
-                ),
+
+                widget.user!.isCoopView ?? false
+                    ? const SizedBox.shrink()
+                    : ListTile(
+                        title: const Text('Bookings'),
+                        leading: const Icon(Icons.book),
+                        onTap: () => {},
+                      ),
+
+                // View Current Cooperative
+                widget.user!.isCoopView ?? false
+                    ? ListTile(
+                        title: const Text('View Current Cooperative'),
+                        leading: const Icon(Icons.group),
+                        onTap: () => {viewCurrentCooperative(ref)},
+                      )
+                    : const SizedBox.shrink(),
+
                 widget.user!.isManager ?? false
                     ? const SizedBox.shrink()
                     : ListTile(

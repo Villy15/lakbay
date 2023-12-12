@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
-import 'package:lakbay/features/common/widgets/app_bar.dart';
+import 'package:lakbay/features/common/providers/app_bar_provider.dart';
+import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/user_model.dart';
 
 class ReadCoopPage extends ConsumerWidget {
   final String coopId;
@@ -13,15 +17,37 @@ class ReadCoopPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
+    final scaffoldKey = ref.watch(scaffoldKeyProvider);
 
     return ref.watch(getCooperativeProvider(coopId)).when(
-          data: (data) {
+          data: (CooperativeModel coop) {
             return Scaffold(
-              appBar: CustomAppBar(title: data.name, user: user),
+              appBar: _appBar(scaffoldKey, user),
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Text(data.description ?? ''),
+                    DisplayImage(
+                      imageUrl: coop.imageUrl,
+                      height: 150,
+                      width: double.infinity,
+                      radius: BorderRadius.zero,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(coop.name),
+                    const SizedBox(height: 20),
+                    Text(coop.description ?? ''),
+                    const SizedBox(height: 20),
+
+                    // Edit Cooperative Button
+                    ElevatedButton(
+                      onPressed: () {
+                        context.pushNamed(
+                          'edit_coop',
+                          extra: coop,
+                        );
+                      },
+                      child: const Text('Edit Cooperative'),
+                    ),
                   ],
                 ),
               ),
@@ -36,5 +62,28 @@ class ReadCoopPage extends ConsumerWidget {
             body: Loader(),
           ),
         );
+  }
+
+  AppBar _appBar(GlobalKey<ScaffoldState> scaffoldKey, UserModel? user) {
+    return AppBar(
+      title: const Text("View Cooperative"),
+      // Add icon on the right side of the app bar of a person
+      actions: [
+        IconButton(
+          onPressed: () {
+            scaffoldKey.currentState?.openEndDrawer();
+          },
+          icon: CircleAvatar(
+            radius: 20.0,
+            backgroundImage: user?.profilePic != null && user?.profilePic != ''
+                ? NetworkImage(user!.profilePic)
+                // Use placeholder image if user has no profile pic
+                : const AssetImage('lib/core/images/default_profile_pic.jpg')
+                    as ImageProvider,
+            backgroundColor: Colors.transparent,
+          ),
+        ),
+      ],
+    );
   }
 }

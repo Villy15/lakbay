@@ -10,6 +10,7 @@ import 'package:lakbay/features/common/fade_through.dart';
 import 'package:lakbay/features/common/layout.dart';
 import 'package:lakbay/features/cooperatives/coops_page.dart';
 import 'package:lakbay/features/cooperatives/crud/add_coop.dart';
+import 'package:lakbay/features/cooperatives/crud/edit_coop.dart';
 import 'package:lakbay/features/cooperatives/crud/read_coop.dart';
 import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
 import 'package:lakbay/features/events/events_page.dart';
@@ -18,6 +19,7 @@ import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/market/crud/read_market.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
+import 'package:lakbay/models/coop_model.dart';
 // import 'package:lakbay/features/trips/trips_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
@@ -145,6 +147,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       transitionType: SharedAxisTransitionType.vertical,
                     ),
                   ),
+                  // Edit Cooperative
+                  GoRoute(
+                      path: 'edit',
+                      name: 'edit_coop',
+                      pageBuilder: (context, state) {
+                        CooperativeModel coop = state.extra as CooperativeModel;
+
+                        return buildPageWithSharedAxisTransition<void>(
+                          context: context,
+                          state: state,
+                          child: EditCoopPage(
+                            coop: coop,
+                          ),
+                          transitionType: SharedAxisTransitionType.vertical,
+                        );
+                      }),
                 ],
               ),
 
