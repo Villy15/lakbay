@@ -35,6 +35,11 @@ class UsersController extends StateNotifier<bool> {
     await _userRepository.editUser(uid, user);
   }
 
+  // Edit user after joining COOP
+  void editUserAfterJoinCoop(String uid, UserModel user) async {
+    await _userRepository.editUser(uid, user);
+  }
+
   // Edit user isCoopView
   void editUserIsCoopView(
       BuildContext context, String uid, bool isCoopView) async {

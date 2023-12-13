@@ -12,6 +12,8 @@ import 'package:lakbay/features/cooperatives/coops_page.dart';
 import 'package:lakbay/features/cooperatives/crud/add_coop.dart';
 import 'package:lakbay/features/cooperatives/crud/edit_coop.dart';
 import 'package:lakbay/features/cooperatives/crud/read_coop.dart';
+import 'package:lakbay/features/cooperatives/join_coop.dart';
+import 'package:lakbay/features/cooperatives/leave_coop.dart';
 import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
 import 'package:lakbay/features/events/events_page.dart';
 import 'package:lakbay/features/home/customer/customer_home_page.dart';
@@ -149,20 +151,57 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   ),
                   // Edit Cooperative
                   GoRoute(
-                      path: 'edit',
-                      name: 'edit_coop',
-                      pageBuilder: (context, state) {
-                        CooperativeModel coop = state.extra as CooperativeModel;
+                    path: 'edit',
+                    name: 'edit_coop',
+                    pageBuilder: (context, state) {
+                      CooperativeModel coop = state.extra as CooperativeModel;
 
-                        return buildPageWithSharedAxisTransition<void>(
-                          context: context,
-                          state: state,
-                          child: EditCoopPage(
-                            coop: coop,
-                          ),
-                          transitionType: SharedAxisTransitionType.vertical,
-                        );
-                      }),
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: EditCoopPage(
+                          coop: coop,
+                        ),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    },
+                  ),
+
+                  // Join Cooperative
+                  GoRoute(
+                    path: 'join',
+                    name: 'join_coop',
+                    pageBuilder: (context, state) {
+                      CooperativeModel coop = state.extra as CooperativeModel;
+
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: JoinCoopPage(
+                          coop: coop,
+                        ),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    },
+                  ),
+
+                  // Leave Cooperative
+                  GoRoute(
+                    path: 'leave',
+                    name: 'leave_coop',
+                    pageBuilder: (context, state) {
+                      CooperativeModel coop = state.extra as CooperativeModel;
+
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: LeaveCoopPage(
+                          coop: coop,
+                        ),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    },
+                  ),
                 ],
               ),
 

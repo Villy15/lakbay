@@ -14,6 +14,27 @@ class ReadCoopPage extends ConsumerWidget {
   final String coopId;
   const ReadCoopPage({super.key, required this.coopId});
 
+  void editCoop(BuildContext context, CooperativeModel coop) {
+    context.pushNamed(
+      'edit_coop',
+      extra: coop,
+    );
+  }
+
+  void joinCoop(BuildContext context, CooperativeModel coop) {
+    context.pushNamed(
+      'join_coop',
+      extra: coop,
+    );
+  }
+
+  void leaveCoop(BuildContext context, CooperativeModel coop) {
+    context.pushNamed(
+      'leave_coop',
+      extra: coop,
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
@@ -41,12 +62,25 @@ class ReadCoopPage extends ConsumerWidget {
                     // Edit Cooperative Button
                     ElevatedButton(
                       onPressed: () {
-                        context.pushNamed(
-                          'edit_coop',
-                          extra: coop,
-                        );
+                        editCoop(context, coop);
                       },
                       child: const Text('Edit Cooperative'),
+                    ),
+
+                    // Join Cooperative Button
+                    ElevatedButton(
+                      onPressed: () {
+                        joinCoop(context, coop);
+                      },
+                      child: const Text('Join Cooperative'),
+                    ),
+
+                    // Leave Cooperative Button
+                    ElevatedButton(
+                      onPressed: () {
+                        leaveCoop(context, coop);
+                      },
+                      child: const Text('Leave Cooperative'),
                     ),
                   ],
                 ),

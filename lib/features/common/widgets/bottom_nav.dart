@@ -31,9 +31,9 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         if (widget.user?.isCoopView ?? false) ...[
           // If user toggles coopview and user is manager
           const BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+            icon: Icon(Icons.today_outlined),
+            activeIcon: Icon(Icons.today),
+            label: 'Today',
           )
         ] else ...[
           const BottomNavigationBarItem(
@@ -44,18 +44,36 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         ],
 
         // Second Nav Bar
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.card_travel_outlined),
-          activeIcon: Icon(Icons.card_travel),
-          label: 'Trips',
-        ),
+        if (widget.user?.isCoopView ?? false) ...[
+          // If user toggles coopview and user is manager
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today_outlined),
+            activeIcon: Icon(Icons.calendar_today),
+            label: 'Calendar',
+          )
+        ] else ...[
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.card_travel_outlined),
+            activeIcon: Icon(Icons.card_travel),
+            label: 'Trips',
+          ),
+        ],
 
         // Third Nav Bar
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.event_available_outlined),
-          activeIcon: Icon(Icons.event_available),
-          label: 'Events',
-        ),
+        if (widget.user?.isCoopView ?? false) ...[
+          // Tourism Listings
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.list_alt_outlined),
+            activeIcon: Icon(Icons.list_alt),
+            label: 'Listings',
+          ),
+        ] else ...[
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.event_available_outlined),
+            activeIcon: Icon(Icons.event_available),
+            label: 'Events',
+          ),
+        ],
 
         // Fourth Nav Bar
         const BottomNavigationBarItem(

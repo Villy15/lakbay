@@ -96,6 +96,81 @@ class CoopsController extends StateNotifier<bool> {
     );
   }
 
+  void joinCooperative(CooperativeModel coop, BuildContext context) async {
+    state = true;
+    final result = await _coopsRepository.updateCoop(coop);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) async {
+        // Handle the success here
+        // Update user's coopsJoined, currentCoop, isCoopView = true, isManager = false
+        final user = _ref.read(userProvider);
+
+        // Using copyWith to update the user
+        final updatedUser = user?.copyWith(
+          coopsJoined: [...?user.coopsJoined, coop.uid!],
+          currentCoop: coop.uid,
+          isCoopView: true,
+          isManager: false,
+        );
+
+        // Update user
+        _ref
+            .read(usersControllerProvider.notifier)
+            .editUserAfterJoinCoop(user!.uid, updatedUser!);
+
+        state = false;
+        showSnackBar(context, 'Cooperative joined successfully');
+        context.pop();
+        _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
+  }
+
+  // Leave a cooperative
+  void leaveCooperative(CooperativeModel coop, BuildContext context) async {
+    state = true;
+    final result = await _coopsRepository.updateCoop(coop);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) async {
+        // Handle the success here
+        // Update user's coopsJoined, currentCoop, isCoopView = true, isManager = false
+        final user = _ref.read(userProvider);
+
+        // Using copyWith to update the user
+        final updatedUser = user?.copyWith(
+          coopsJoined: user.coopsJoined
+              ?.where((coopUid) => coopUid != coop.uid)
+              .toList(),
+          currentCoop: '',
+          isCoopView: false,
+          isManager: false,
+        );
+
+        // Update user
+        _ref
+            .read(usersControllerProvider.notifier)
+            .editUserAfterJoinCoop(user!.uid, updatedUser!);
+
+        state = false;
+        showSnackBar(context, 'Cooperative left successfully');
+        context.pop();
+        _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
+  }
+
   // Read all cooperatives
   Stream<List<CooperativeModel>> getAllCooperatives() {
     return _coopsRepository.readCoops();

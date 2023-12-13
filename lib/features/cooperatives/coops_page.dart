@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -9,6 +10,10 @@ import 'package:lakbay/features/cooperatives/coops_controller.dart';
 
 class CoopsPage extends ConsumerWidget {
   const CoopsPage({super.key});
+
+  void readCoop(BuildContext context, String id) {
+    context.go("/coops/id/$id");
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,7 +37,7 @@ class CoopsPage extends ConsumerWidget {
                           childAspectRatio: 3 / 2,
                           crossAxisSpacing: 20,
                           mainAxisSpacing: 20,
-                          mainAxisExtent: 230,
+                          mainAxisExtent: 240,
                         ),
                         itemCount: cooperatives.length,
                         shrinkWrap: true,
@@ -47,6 +52,9 @@ class CoopsPage extends ConsumerWidget {
                                   BorderRadius.all(Radius.circular(20)),
                             ),
                             child: InkWell(
+                              onTap: () {
+                                readCoop(context, cooperatives[index].uid!);
+                              },
                               splashColor: Colors.orange.withAlpha(30),
                               child: Column(
                                 children: [
@@ -72,29 +80,78 @@ class CoopsPage extends ConsumerWidget {
                                     ),
                                   ),
 
-                                  // Card Location City
+                                  // Card Description
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Padding(
                                       padding: const EdgeInsets.fromLTRB(
-                                          4.0, 4.0, 8.0, 8.0),
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.location_on_outlined,
-                                            color: Colors.grey,
-                                          ),
-                                          Text(
-                                            cooperatives[index].city,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
+                                          8.0, 0.0, 8.0, 0.0),
+                                      child: Text(
+                                        cooperatives[index].description ?? '',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.grey,
+                                        ),
+                                        maxLines: 2,
                                       ),
                                     ),
+                                  ),
+
+                                  // Card Location City
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              4.0, 4.0, 8.0, 8.0),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.location_on_outlined,
+                                                color: Colors.grey,
+                                              ),
+                                              Text(
+                                                '${cooperatives[index].city}, ${cooperatives[index].province}',
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Member Count
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              8.0, 4.0, 8.0, 8.0),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.people_alt_outlined,
+                                                color: Colors.grey,
+                                              ),
+                                              Text(
+                                                '${cooperatives[index].members.length} members',
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
