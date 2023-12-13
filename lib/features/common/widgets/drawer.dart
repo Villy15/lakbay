@@ -91,8 +91,8 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                // Manage cooperative button
-                widget.user!.isManager ?? false
+                // Switch View Button show if the user is a member of a cooperative
+                widget.user!.cooperativesJoined?.isNotEmpty ?? false
                     ? switchViewButton(
                         context, widget.user!.isCoopView ?? false)
                     : const SizedBox.shrink(),
@@ -164,7 +164,7 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                       )
                     : const SizedBox.shrink(),
 
-                widget.user!.isManager ?? false
+                widget.user!.isManager
                     ? const SizedBox.shrink()
                     : ListTile(
                         title: const Text('Register a Cooperative'),
@@ -255,10 +255,12 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                 ),
                 ListView.builder(
                   shrinkWrap: true,
-                  itemCount: widget.user?.coopsJoined?.length ?? 0,
+                  itemCount: widget.user?.cooperativesJoined?.length ?? 0,
                   itemBuilder: (context, index) {
                     // Store the uid of the cooperative
-                    final uid = widget.user?.coopsJoined?[index] ?? '';
+                    final uid =
+                        widget.user?.cooperativesJoined?[index].cooperativeId ??
+                            '';
 
                     return ref.watch(getCooperativeProvider(uid)).maybeWhen(
                           data: (data) => ListTile(

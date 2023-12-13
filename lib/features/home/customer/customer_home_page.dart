@@ -26,7 +26,15 @@ class CustomerHomePage extends ConsumerWidget {
                     hintText: 'Where do you want to go ${user?.name ?? ''}?',
                     onTap: () {}),
                 const SizedBox(height: 24.0),
-                const MarketCard()
+                const MarketCard(),
+
+                // Elevated Button logout
+                ElevatedButton(
+                  onPressed: () {
+                    ref.read(authControllerProvider.notifier).logout();
+                  },
+                  child: const Text('Logout'),
+                ),
               ],
             ),
           ),

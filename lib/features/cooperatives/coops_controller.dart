@@ -7,6 +7,7 @@ import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_repository.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/user_model.dart';
 
 // Get all cooperatives provider
 final getAllCooperativesProvider = StreamProvider((ref) {
@@ -51,16 +52,20 @@ class CoopsController extends StateNotifier<bool> {
         // coopUid is the uid of the newly added cooperative
         // You can use it here
 
-        // Update user's coopsJoined, coopsManaged, currentCoop, isCoopView = true, isManager = true
         final user = _ref.read(userProvider);
 
         // Using copyWith to update the user
         final updatedUser = user?.copyWith(
-          coopsJoined: [...?user.coopsJoined, coopUid],
-          coopsManaged: [...?user.coopsManaged, coopUid],
           currentCoop: coopUid,
           isCoopView: true,
-          isManager: true,
+          cooperativesJoined: [
+            ...?user.cooperativesJoined,
+            CooperativesJoined(
+              cooperativeId: coop.uid!,
+              cooperativeName: coop.name,
+              role: "Manager", // Set the role here
+            ),
+          ],
         );
 
         // Update user
@@ -108,16 +113,23 @@ class CoopsController extends StateNotifier<bool> {
       },
       (r) async {
         // Handle the success here
-        // Update user's coopsJoined, currentCoop, isCoopView = true, isManager = false
         final user = _ref.read(userProvider);
 
         // Using copyWith to update the user
         final updatedUser = user?.copyWith(
-          coopsJoined: [...?user.coopsJoined, coop.uid!],
           currentCoop: coop.uid,
           isCoopView: true,
-          isManager: false,
+          cooperativesJoined: [
+            ...?user.cooperativesJoined,
+            CooperativesJoined(
+              cooperativeId: coop.uid!,
+              cooperativeName: coop.name,
+              role: "Member", // Set the role here
+            ),
+          ],
         );
+
+        debugPrint("updatedUser: $updatedUser");
 
         // Update user
         _ref
@@ -145,17 +157,15 @@ class CoopsController extends StateNotifier<bool> {
       },
       (r) async {
         // Handle the success here
-        // Update user's coopsJoined, currentCoop, isCoopView = true, isManager = false
         final user = _ref.read(userProvider);
 
         // Using copyWith to update the user
         final updatedUser = user?.copyWith(
-          coopsJoined: user.coopsJoined
-              ?.where((coopUid) => coopUid != coop.uid)
+          cooperativesJoined: user.cooperativesJoined
+              ?.where((coopJoined) => coopJoined.cooperativeId != coop.uid)
               .toList(),
           currentCoop: '',
           isCoopView: false,
-          isManager: false,
         );
 
         // Update user
