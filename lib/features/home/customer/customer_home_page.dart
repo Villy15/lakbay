@@ -27,14 +27,6 @@ class CustomerHomePage extends ConsumerWidget {
                     onTap: () {}),
                 const SizedBox(height: 24.0),
                 const MarketCard(),
-
-                // Elevated Button logout
-                ElevatedButton(
-                  onPressed: () {
-                    ref.read(authControllerProvider.notifier).logout();
-                  },
-                  child: const Text('Logout'),
-                ),
               ],
             ),
           ),

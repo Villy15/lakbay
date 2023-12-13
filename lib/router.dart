@@ -14,6 +14,8 @@ import 'package:lakbay/features/cooperatives/crud/edit_coop.dart';
 import 'package:lakbay/features/cooperatives/crud/read_coop.dart';
 import 'package:lakbay/features/cooperatives/join_coop.dart';
 import 'package:lakbay/features/cooperatives/leave_coop.dart';
+import 'package:lakbay/features/cooperatives/my_coop/members.dart';
+import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
 import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
 import 'package:lakbay/features/events/events_page.dart';
 import 'package:lakbay/features/home/customer/customer_home_page.dart';
@@ -116,6 +118,34 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   state: state,
                   child: const TripsPage(),
                 ),
+              ),
+
+              GoRoute(
+                path: '/my_coop/:coopId',
+                pageBuilder: (context, state) =>
+                    buildPageWithDefaultTransition<void>(
+                  context: context,
+                  state: state,
+                  child: MyCoopPage(coopId: state.pathParameters['coopId']!),
+                ),
+              ),
+
+              // View My Coop Members
+              GoRoute(
+                path: '/members',
+                name: 'coop_members',
+                pageBuilder: (context, state) {
+                  CooperativeModel coop = state.extra as CooperativeModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: MembersPage(
+                      coop: coop,
+                    ),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
               ),
 
               // Coops

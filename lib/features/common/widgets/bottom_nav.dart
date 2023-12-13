@@ -76,11 +76,20 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         ],
 
         // Fourth Nav Bar
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.people_outline),
-          activeIcon: Icon(Icons.people),
-          label: 'Coops',
-        ),
+        if (widget.user?.isCoopView ?? false) ...[
+          // Tourism Listings
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.people_outline),
+            activeIcon: Icon(Icons.people),
+            label: 'My Coop',
+          ),
+        ] else ...[
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.people_outline),
+            activeIcon: Icon(Icons.people),
+            label: 'Coops',
+          ),
+        ],
 
         // Fifth Nav Bar
         const BottomNavigationBarItem(
@@ -100,7 +109,6 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
 
     switch (index) {
       case 0:
-        // If user toggles coopview and user is manager
         if (widget.user?.isCoopView ?? false) {
           context.go('/manager_dashboard');
         } else {
@@ -114,7 +122,11 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         context.go('/events');
         break;
       case 3:
-        context.go('/coops');
+        if (widget.user?.isCoopView ?? false) {
+          context.go('/my_coop/${widget.user?.currentCoop}');
+        } else {
+          context.go('/coops');
+        }
         break;
       case 4:
         context.go('/inbox');
