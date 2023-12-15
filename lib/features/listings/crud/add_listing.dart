@@ -10,6 +10,7 @@ import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/listing_model.dart';
 
 class AddListing extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -58,6 +59,10 @@ class _AddListingState extends ConsumerState<AddListing> {
   @override
   void dispose() {
     // Dispose of the controllers when the widget is disposed.
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _priceController.dispose();
+    _addressController.dispose();
 
     super.dispose();
   }
@@ -65,6 +70,26 @@ class _AddListingState extends ConsumerState<AddListing> {
   void submitAddListing() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+
+      var listing = ListingModel(
+        category: category!,
+        title: _titleController.text,
+        description: _descriptionController.text,
+        price: num.parse(_priceController.text),
+        pax: _guests,
+        bedrooms: _bedrooms,
+        beds: _beds,
+        bathrooms: _bathrooms,
+        address: _addressController.text,
+        city: widget.coop.city,
+        province: widget.coop.province,
+        cooperative: ListingCooperative(
+          cooperativeId: widget.coop.uid!,
+          cooperativeName: widget.coop.name,
+        ),
+      );
+
+      debugPrintJson(listing);
     }
   }
 
