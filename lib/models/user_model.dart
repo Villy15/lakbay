@@ -24,6 +24,14 @@ class UserModel with _$UserModel {
   bool get isManager {
     return cooperativesJoined?.any((coop) => coop.role == 'Manager') ?? false;
   }
+
+  // Get user's role
+  String get role {
+    return cooperativesJoined
+            ?.firstWhere((coop) => coop.cooperativeId == currentCoop)
+            .role ??
+        '';
+  }
 }
 
 @freezed

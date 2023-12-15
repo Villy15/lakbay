@@ -20,6 +20,8 @@ import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
 import 'package:lakbay/features/events/events_page.dart';
 import 'package:lakbay/features/home/customer/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
+import 'package:lakbay/features/listings/crud/add_listing.dart';
+import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/market/crud/read_market.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
@@ -130,9 +132,37 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 ),
               ),
 
+              GoRoute(
+                path: '/my_coop/listings/:coopId',
+                pageBuilder: (context, state) =>
+                    buildPageWithDefaultTransition<void>(
+                  context: context,
+                  state: state,
+                  child: ListingsPage(coopId: state.pathParameters['coopId']!),
+                ),
+              ),
+
+              // Add Listing to Cooperative
+              GoRoute(
+                path: '/my_coop/listings/functions/add',
+                name: 'add_listing',
+                pageBuilder: (context, state) {
+                  CooperativeModel coop = state.extra as CooperativeModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: AddListing(
+                      coop: coop,
+                    ),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
               // View My Coop Members
               GoRoute(
-                path: '/members',
+                path: '/my_coop/functions/members',
                 name: 'coop_members',
                 pageBuilder: (context, state) {
                   CooperativeModel coop = state.extra as CooperativeModel;
@@ -143,6 +173,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     child: MembersPage(
                       coop: coop,
                     ),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              // View My Coop Events
+              GoRoute(
+                path: '/my_coop/functions/events',
+                name: 'coop_events',
+                pageBuilder: (context, state) {
+                  // CooperativeModel coop = state.extra as CooperativeModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: const EventsPage(),
                     transitionType: SharedAxisTransitionType.vertical,
                   );
                 },

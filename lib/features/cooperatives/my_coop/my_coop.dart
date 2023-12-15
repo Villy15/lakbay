@@ -26,6 +26,13 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
     );
   }
 
+  void viewEvents(BuildContext context, CooperativeModel coop) {
+    context.pushNamed(
+      'coop_events',
+      extra: coop,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
@@ -56,6 +63,14 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                         viewMembers(context, coop);
                       },
                       child: const Text('View Members'),
+                    ),
+
+                    // View Events Button
+                    ElevatedButton(
+                      onPressed: () {
+                        viewEvents(context, coop);
+                      },
+                      child: const Text('View Events'),
                     ),
 
                     const SizedBox(height: 20),

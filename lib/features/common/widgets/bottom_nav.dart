@@ -119,7 +119,11 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         context.go('/trips');
         break;
       case 2:
-        context.go('/events');
+        if (widget.user?.isCoopView ?? false) {
+          context.go('/my_coop/listings/${widget.user?.currentCoop}');
+        } else {
+          context.go('/events');
+        }
         break;
       case 3:
         if (widget.user?.isCoopView ?? false) {
