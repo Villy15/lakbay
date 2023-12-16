@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logger/logger.dart';
 
 void showSnackBar(BuildContext context, String text) {
@@ -46,4 +48,14 @@ void debugPrintJson(Object object) {
 
   // Use the logger to print the pretty JSON string
   logger.d(prettyString);
+}
+
+class TimestampSerializer implements JsonConverter<DateTime, dynamic> {
+  const TimestampSerializer();
+
+  @override
+  DateTime fromJson(dynamic timestamp) => timestamp.toDate();
+
+  @override
+  Timestamp toJson(DateTime date) => Timestamp.fromDate(date);
 }

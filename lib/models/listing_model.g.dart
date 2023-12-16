@@ -20,10 +20,11 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       address: json['address'] as String,
       city: json['city'] as String,
       province: json['province'] as String,
-      imagePath: json['imagePath'] as String?,
-      imageUrl: json['imageUrl'] as String?,
       cooperative: ListingCooperative.fromJson(
           json['cooperative'] as Map<String, dynamic>),
+      images: (json['images'] as List<dynamic>?)
+          ?.map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
@@ -40,9 +41,8 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'address': instance.address,
       'city': instance.city,
       'province': instance.province,
-      'imagePath': instance.imagePath,
-      'imageUrl': instance.imageUrl,
       'cooperative': instance.cooperative.toJson(),
+      'images': instance.images?.map((e) => e.toJson()).toList(),
     };
 
 _$ListingCooperativeImpl _$$ListingCooperativeImplFromJson(
@@ -57,4 +57,16 @@ Map<String, dynamic> _$$ListingCooperativeImplToJson(
     <String, dynamic>{
       'cooperativeId': instance.cooperativeId,
       'cooperativeName': instance.cooperativeName,
+    };
+
+_$ListingImagesImpl _$$ListingImagesImplFromJson(Map<String, dynamic> json) =>
+    _$ListingImagesImpl(
+      path: json['path'] as String,
+      url: json['url'] as String?,
+    );
+
+Map<String, dynamic> _$$ListingImagesImplToJson(_$ListingImagesImpl instance) =>
+    <String, dynamic>{
+      'path': instance.path,
+      'url': instance.url,
     };

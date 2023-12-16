@@ -32,9 +32,8 @@ mixin _$ListingModel {
   String get address => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
   String get province => throw _privateConstructorUsedError;
-  String? get imagePath => throw _privateConstructorUsedError;
-  String? get imageUrl => throw _privateConstructorUsedError;
   ListingCooperative get cooperative => throw _privateConstructorUsedError;
+  List<ListingImages>? get images => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -61,9 +60,8 @@ abstract class $ListingModelCopyWith<$Res> {
       String address,
       String city,
       String province,
-      String? imagePath,
-      String? imageUrl,
-      ListingCooperative cooperative});
+      ListingCooperative cooperative,
+      List<ListingImages>? images});
 
   $ListingCooperativeCopyWith<$Res> get cooperative;
 }
@@ -93,9 +91,8 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? address = null,
     Object? city = null,
     Object? province = null,
-    Object? imagePath = freezed,
-    Object? imageUrl = freezed,
     Object? cooperative = null,
+    Object? images = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -146,18 +143,14 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.province
           : province // ignore: cast_nullable_to_non_nullable
               as String,
-      imagePath: freezed == imagePath
-          ? _value.imagePath
-          : imagePath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
       cooperative: null == cooperative
           ? _value.cooperative
           : cooperative // ignore: cast_nullable_to_non_nullable
               as ListingCooperative,
+      images: freezed == images
+          ? _value.images
+          : images // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>?,
     ) as $Val);
   }
 
@@ -191,9 +184,8 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       String address,
       String city,
       String province,
-      String? imagePath,
-      String? imageUrl,
-      ListingCooperative cooperative});
+      ListingCooperative cooperative,
+      List<ListingImages>? images});
 
   @override
   $ListingCooperativeCopyWith<$Res> get cooperative;
@@ -222,9 +214,8 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? address = null,
     Object? city = null,
     Object? province = null,
-    Object? imagePath = freezed,
-    Object? imageUrl = freezed,
     Object? cooperative = null,
+    Object? images = freezed,
   }) {
     return _then(_$ListingModelImpl(
       uid: freezed == uid
@@ -275,18 +266,14 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.province
           : province // ignore: cast_nullable_to_non_nullable
               as String,
-      imagePath: freezed == imagePath
-          ? _value.imagePath
-          : imagePath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
       cooperative: null == cooperative
           ? _value.cooperative
           : cooperative // ignore: cast_nullable_to_non_nullable
               as ListingCooperative,
+      images: freezed == images
+          ? _value._images
+          : images // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>?,
     ));
   }
 }
@@ -307,9 +294,9 @@ class _$ListingModelImpl implements _ListingModel {
       required this.address,
       required this.city,
       required this.province,
-      this.imagePath,
-      this.imageUrl,
-      required this.cooperative});
+      required this.cooperative,
+      final List<ListingImages>? images})
+      : _images = images;
 
   factory _$ListingModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ListingModelImplFromJson(json);
@@ -339,15 +326,20 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   final String province;
   @override
-  final String? imagePath;
-  @override
-  final String? imageUrl;
-  @override
   final ListingCooperative cooperative;
+  final List<ListingImages>? _images;
+  @override
+  List<ListingImages>? get images {
+    final value = _images;
+    if (value == null) return null;
+    if (_images is EqualUnmodifiableListView) return _images;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'ListingModel(uid: $uid, category: $category, title: $title, description: $description, price: $price, pax: $pax, bedrooms: $bedrooms, beds: $beds, bathrooms: $bathrooms, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, cooperative: $cooperative)';
+    return 'ListingModel(uid: $uid, category: $category, title: $title, description: $description, price: $price, pax: $pax, bedrooms: $bedrooms, beds: $beds, bathrooms: $bathrooms, address: $address, city: $city, province: $province, cooperative: $cooperative, images: $images)';
   }
 
   @override
@@ -372,12 +364,9 @@ class _$ListingModelImpl implements _ListingModel {
             (identical(other.city, city) || other.city == city) &&
             (identical(other.province, province) ||
                 other.province == province) &&
-            (identical(other.imagePath, imagePath) ||
-                other.imagePath == imagePath) &&
-            (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl) &&
             (identical(other.cooperative, cooperative) ||
-                other.cooperative == cooperative));
+                other.cooperative == cooperative) &&
+            const DeepCollectionEquality().equals(other._images, _images));
   }
 
   @JsonKey(ignore: true)
@@ -396,9 +385,8 @@ class _$ListingModelImpl implements _ListingModel {
       address,
       city,
       province,
-      imagePath,
-      imageUrl,
-      cooperative);
+      cooperative,
+      const DeepCollectionEquality().hash(_images));
 
   @JsonKey(ignore: true)
   @override
@@ -428,9 +416,8 @@ abstract class _ListingModel implements ListingModel {
       required final String address,
       required final String city,
       required final String province,
-      final String? imagePath,
-      final String? imageUrl,
-      required final ListingCooperative cooperative}) = _$ListingModelImpl;
+      required final ListingCooperative cooperative,
+      final List<ListingImages>? images}) = _$ListingModelImpl;
 
   factory _ListingModel.fromJson(Map<String, dynamic> json) =
       _$ListingModelImpl.fromJson;
@@ -460,11 +447,9 @@ abstract class _ListingModel implements ListingModel {
   @override
   String get province;
   @override
-  String? get imagePath;
-  @override
-  String? get imageUrl;
-  @override
   ListingCooperative get cooperative;
+  @override
+  List<ListingImages>? get images;
   @override
   @JsonKey(ignore: true)
   _$$ListingModelImplCopyWith<_$ListingModelImpl> get copyWith =>
@@ -626,5 +611,158 @@ abstract class _ListingCooperative implements ListingCooperative {
   @override
   @JsonKey(ignore: true)
   _$$ListingCooperativeImplCopyWith<_$ListingCooperativeImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ListingImages _$ListingImagesFromJson(Map<String, dynamic> json) {
+  return _ListingImages.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ListingImages {
+  String get path => throw _privateConstructorUsedError;
+  String? get url => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ListingImagesCopyWith<ListingImages> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ListingImagesCopyWith<$Res> {
+  factory $ListingImagesCopyWith(
+          ListingImages value, $Res Function(ListingImages) then) =
+      _$ListingImagesCopyWithImpl<$Res, ListingImages>;
+  @useResult
+  $Res call({String path, String? url});
+}
+
+/// @nodoc
+class _$ListingImagesCopyWithImpl<$Res, $Val extends ListingImages>
+    implements $ListingImagesCopyWith<$Res> {
+  _$ListingImagesCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? path = null,
+    Object? url = freezed,
+  }) {
+    return _then(_value.copyWith(
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: freezed == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ListingImagesImplCopyWith<$Res>
+    implements $ListingImagesCopyWith<$Res> {
+  factory _$$ListingImagesImplCopyWith(
+          _$ListingImagesImpl value, $Res Function(_$ListingImagesImpl) then) =
+      __$$ListingImagesImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String path, String? url});
+}
+
+/// @nodoc
+class __$$ListingImagesImplCopyWithImpl<$Res>
+    extends _$ListingImagesCopyWithImpl<$Res, _$ListingImagesImpl>
+    implements _$$ListingImagesImplCopyWith<$Res> {
+  __$$ListingImagesImplCopyWithImpl(
+      _$ListingImagesImpl _value, $Res Function(_$ListingImagesImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? path = null,
+    Object? url = freezed,
+  }) {
+    return _then(_$ListingImagesImpl(
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: freezed == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ListingImagesImpl implements _ListingImages {
+  _$ListingImagesImpl({required this.path, this.url});
+
+  factory _$ListingImagesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ListingImagesImplFromJson(json);
+
+  @override
+  final String path;
+  @override
+  final String? url;
+
+  @override
+  String toString() {
+    return 'ListingImages(path: $path, url: $url)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ListingImagesImpl &&
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.url, url) || other.url == url));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, path, url);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ListingImagesImplCopyWith<_$ListingImagesImpl> get copyWith =>
+      __$$ListingImagesImplCopyWithImpl<_$ListingImagesImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ListingImagesImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ListingImages implements ListingImages {
+  factory _ListingImages({required final String path, final String? url}) =
+      _$ListingImagesImpl;
+
+  factory _ListingImages.fromJson(Map<String, dynamic> json) =
+      _$ListingImagesImpl.fromJson;
+
+  @override
+  String get path;
+  @override
+  String? get url;
+  @override
+  @JsonKey(ignore: true)
+  _$$ListingImagesImplCopyWith<_$ListingImagesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

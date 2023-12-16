@@ -19,6 +19,7 @@ class StorageRepository {
   StorageRepository({required FirebaseStorage firebaseStorage})
       : _firebaseStorage = firebaseStorage;
 
+  // Store single file to firebase storage
   FutureEither<String> storeFile({
     required String path,
     required String id,
@@ -37,14 +38,29 @@ class StorageRepository {
     }
   }
 
-  // Load image from firebase storage
-  FutureEither<String> loadFile({
-    required String imageUrl,
+  // Store multiple files to firebase storage
+  FutureEither<List<String>> storeFiles({
+    required String path,
+    required List<String> ids,
+    required List<File?> files,
   }) async {
     try {
-      final ref = _firebaseStorage.ref().child(imageUrl);
+      List<UploadTask> uploadTasks = [];
 
-      return right(await ref.getDownloadURL());
+      for (var i = 0; i < files.length; i++) {
+        final ref = _firebaseStorage.ref().child(path).child(ids[i]);
+        uploadTasks.add(ref.putFile(files[i]!));
+      }
+
+      final snapshot = await Future.wait(uploadTasks);
+
+      List<String> urls = [];
+
+      for (var task in snapshot) {
+        urls.add(await task.ref.getDownloadURL());
+      }
+
+      return right(urls);
     } catch (e) {
       return left(Failure(e.toString()));
     }

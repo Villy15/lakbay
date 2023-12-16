@@ -18,9 +18,8 @@ class ListingModel with _$ListingModel {
     required String address,
     required String city,
     required String province,
-    String? imagePath,
-    String? imageUrl,
     required ListingCooperative cooperative,
+    List<ListingImages>? images,
   }) = _ListingModel;
 
   factory ListingModel.fromJson(Map<String, dynamic> json) =>
@@ -36,4 +35,15 @@ class ListingCooperative with _$ListingCooperative {
 
   factory ListingCooperative.fromJson(Map<String, dynamic> json) =>
       _$ListingCooperativeFromJson(json);
+}
+
+@freezed
+class ListingImages with _$ListingImages {
+  factory ListingImages({
+    required String path,
+    String? url,
+  }) = _ListingImages;
+
+  factory ListingImages.fromJson(Map<String, dynamic> json) =>
+      _$ListingImagesFromJson(json);
 }

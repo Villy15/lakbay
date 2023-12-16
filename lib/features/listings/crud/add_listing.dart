@@ -5,10 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
-import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 
@@ -29,12 +30,13 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   // Form fields
   // Step 0
-  String? category = '';
+  String? category = 'Accommodation';
 
   // Step 1
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _priceController = TextEditingController();
+  final _titleController = TextEditingController(text: 'Cozy Condo');
+  final _descriptionController =
+      TextEditingController(text: 'A wonderful place to stay');
+  final _priceController = TextEditingController(text: '1000');
 
   // Step 2
   int _guests = 1;
@@ -43,10 +45,10 @@ class _AddListingState extends ConsumerState<AddListing> {
   int _bathrooms = 1;
 
   // Step3
-  final _addressController = TextEditingController();
+  final _addressController = TextEditingController(text: '123 Main St');
 
   // Step 4
-  File? _image;
+  List<File>? _images;
 
   @override
   void initState() {
@@ -87,9 +89,45 @@ class _AddListingState extends ConsumerState<AddListing> {
           cooperativeId: widget.coop.uid!,
           cooperativeName: widget.coop.name,
         ),
+        images: _images!.map((image) {
+          final imagePath =
+              'listings/${widget.coop.name}/${image.path.split('/').last}';
+          return ListingImages(
+            path: imagePath,
+          );
+        }).toList(),
       );
 
-      debugPrintJson(listing);
+      // Prepare data for storeFiles
+      final imagePath = 'listings/${widget.coop.name}';
+      final ids = _images!.map((image) => image.path.split('/').last).toList();
+
+      // Upload images to firebase storage
+      ref
+          .read(storageRepositoryProvider)
+          .storeFiles(
+            path: imagePath,
+            ids: ids,
+            files: _images!,
+          )
+          .then((value) => value.fold(
+                (failure) => debugPrint('Failed to upload images: $failure'),
+                (imageUrls) {
+                  listing = listing.copyWith(
+                    images: listing.images!.asMap().entries.map((entry) {
+                      return entry.value.copyWith(url: imageUrls[entry.key]);
+                    }).toList(),
+                  );
+                  debugPrintJson(listing);
+
+                  ref
+                      .read(listingControllerProvider.notifier)
+                      .addListing(listing, context);
+                },
+              ));
+
+      // Add Listing
+      //
     }
   }
 
@@ -120,7 +158,7 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(coopsControllerProvider);
+    final isLoading = ref.watch(listingControllerProvider);
 
     return PopScope(
       canPop: false,
@@ -309,7 +347,13 @@ class _AddListingState extends ConsumerState<AddListing> {
             ),
           ),
           child: ListTile(
-            title: const Text('Guests'),
+            title: const Row(
+              children: [
+                Icon(Icons.people_alt_outlined),
+                SizedBox(width: 10),
+                Text('Guests'),
+              ],
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -345,7 +389,13 @@ class _AddListingState extends ConsumerState<AddListing> {
             ),
           ),
           child: ListTile(
-            title: const Text('Bedrooms'),
+            title: const Row(
+              children: [
+                Icon(Icons.king_bed_outlined),
+                SizedBox(width: 10),
+                Text('Bedrooms'),
+              ],
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -381,7 +431,13 @@ class _AddListingState extends ConsumerState<AddListing> {
             ),
           ),
           child: ListTile(
-            title: const Text('Beds'),
+            title: const Row(
+              children: [
+                Icon(Icons.single_bed_outlined),
+                SizedBox(width: 10),
+                Text('Beds'),
+              ],
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -417,7 +473,13 @@ class _AddListingState extends ConsumerState<AddListing> {
             ),
           ),
           child: ListTile(
-            title: const Text('Bathrooms'),
+            title: const Row(
+              children: [
+                Icon(Icons.bathtub_outlined),
+                SizedBox(width: 10),
+                Text('Bathrooms'),
+              ],
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -456,7 +518,7 @@ class _AddListingState extends ConsumerState<AddListing> {
         controller: _addressController,
         decoration: const InputDecoration(
           icon: Icon(
-            Icons.title_outlined,
+            Icons.location_on_outlined,
           ),
           border: OutlineInputBorder(),
           labelText: 'Address*',
@@ -488,15 +550,18 @@ class _AddListingState extends ConsumerState<AddListing> {
                     15), // Add some spacing between the icon and the container
             Expanded(
               child: ImagePickerFormField(
-                initialValue: _image,
-                onSaved: (File? file) {
-                  _image = file;
+                initialValue: _images,
+                onSaved: (List<File>? files) {
+                  _images = files;
                 },
-                validator: (File? file) {
-                  if (file == null) {
-                    return 'Please select an image';
+                validator: (List<File>? files) {
+                  if (files == null || files.isEmpty) {
+                    return 'Please select some images';
                   }
                   return null;
+                },
+                onImagesSelected: (List<File> files) {
+                  _images = files;
                 },
               ),
             ),
@@ -576,11 +641,11 @@ class _AddListingState extends ConsumerState<AddListing> {
         ),
         const Divider(),
         // Step 4
-        ListTile(
-          title: const Text('Image',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: _image != null ? Image.file(_image!) : const Text('None'),
-        ),
+        // ListTile(
+        //   title: const Text('Image',
+        //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        //   subtitle: _image != null ? Image.file(_image!) : const Text('None'),
+        // ),
         const Divider(),
 
         // Step 5
@@ -592,17 +657,18 @@ class _AddListingState extends ConsumerState<AddListing> {
     return Column(
       children: [
         IconStepper(
+          stepReachedAnimationDuration: const Duration(milliseconds: 1),
           lineColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
           stepColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
           activeStepColor: Theme.of(context).colorScheme.primary,
           enableNextPreviousButtons: false,
           icons: [
             Icon(
-              Icons.description_outlined,
+              Icons.category_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
-              Icons.pin_drop_outlined,
+              Icons.details_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
@@ -610,15 +676,19 @@ class _AddListingState extends ConsumerState<AddListing> {
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
-              Icons.people_alt_outlined,
+              Icons.map_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
-              Icons.task_rounded,
+              Icons.image_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
-              Icons.summarize,
+              Icons.question_mark_outlined,
+              color: Theme.of(context).colorScheme.background,
+            ),
+            Icon(
+              Icons.summarize_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
           ],
@@ -726,40 +796,78 @@ class _AddListingState extends ConsumerState<AddListing> {
   }
 }
 
-class ImagePickerFormField extends FormField<File> {
+class ImagePickerFormField extends FormField<List<File>> {
+  final Function(List<File>) onImagesSelected;
+
   ImagePickerFormField({
     Key? key,
-    FormFieldSetter<File>? onSaved,
-    FormFieldValidator<File>? validator,
-    File? initialValue,
+    FormFieldSetter<List<File>>? onSaved,
+    FormFieldValidator<List<File>>? validator,
+    List<File>? initialValue,
+    required this.onImagesSelected,
   }) : super(
           key: key,
           onSaved: onSaved,
           validator: validator,
-          initialValue: initialValue,
-          builder: (FormFieldState<File> state) {
+          initialValue: initialValue ?? [],
+          builder: (FormFieldState<List<File>> state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 GestureDetector(
                   onTap: () async {
                     final picker = ImagePicker();
-                    final pickedFile =
-                        await picker.pickImage(source: ImageSource.gallery);
+                    final pickedFiles = await picker.pickMultiImage();
 
-                    if (pickedFile != null) {
-                      state.didChange(File(pickedFile.path));
+                    if (pickedFiles.isNotEmpty) {
+                      List<File> files = pickedFiles
+                          .map((pickedFile) => File(pickedFile.path))
+                          .toList();
+                      state.didChange(files);
+                      onImagesSelected(files); // Use the callback here
                     }
                   },
-                  child: Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: state.value != null
-                        ? Image.file(state.value!, fit: BoxFit.cover)
-                        : const Center(child: Text('Select an image')),
+                  child: Column(
+                    children: [
+                      // If its empty
+                      if (state.value!.isEmpty)
+                        Container(
+                          height: 200,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child: const Center(child: Text('Select Images')),
+                        ),
+                      if (state.value!.isNotEmpty)
+                        Container(
+                          height: 200,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child:
+                              Image.file(state.value!.first, fit: BoxFit.cover),
+                        ),
+                      if (state.value!.length > 1)
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 1,
+                          ),
+                          itemCount: state.value!.length - 1,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Image.file(state.value![index + 1],
+                                  fit: BoxFit.cover),
+                            );
+                          },
+                        ),
+                    ],
                   ),
                 ),
                 if (state.hasError)
