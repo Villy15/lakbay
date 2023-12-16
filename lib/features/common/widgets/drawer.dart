@@ -138,37 +138,39 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                             orElse: () => const SizedBox.shrink())
                     : const SizedBox.shrink(),
                 // Display user's role
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: Row(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 16.0),
+                widget.user!.isCoopView ?? false
+                    ? Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                         child: Row(
                           children: [
-                            Icon(Icons.person_outline, size: 20),
-                            // Text Role:
-                            SizedBox(width: 10),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 16.0),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.person_outline, size: 20),
+                                  // Text Role:
+                                  SizedBox(width: 10),
+                                  Text(
+                                    'Role: ',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             Text(
-                              'Role: ',
-                              style: TextStyle(
+                              widget.user!.role,
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      Text(
-                        widget.user!.role,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                      )
+                    : const SizedBox.shrink(),
 
                 const Padding(
                   padding: EdgeInsets.fromLTRB(28, 8, 28, 0),

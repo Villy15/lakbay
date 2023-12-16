@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
 import 'package:lakbay/features/common/error.dart';
@@ -45,6 +46,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       // Not authenticated
       return isLoggingIn ? null : '/login';
     }
+
+    debugPrintJson("Loop Test");
 
     if (isLoggingIn) {
       return '/customer_home';

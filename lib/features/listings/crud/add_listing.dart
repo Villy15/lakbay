@@ -9,6 +9,7 @@ import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
+import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
@@ -45,7 +46,8 @@ class _AddListingState extends ConsumerState<AddListing> {
   int _bathrooms = 1;
 
   // Step3
-  final _addressController = TextEditingController(text: '123 Main St');
+  final _addressController = TextEditingController(text: 'Eastwood City');
+  final String address = 'Eastwood City';
 
   // Step 4
   List<File>? _images;
@@ -532,7 +534,19 @@ class _AddListingState extends ConsumerState<AddListing> {
         },
       ),
       const SizedBox(height: 10),
+      ElevatedButton(
+        onPressed: () {},
+        child: const Text('Update Map'),
+      ),
       const SizedBox(height: 10),
+
+      // Google Map
+      const SizedBox(
+        height: 400,
+        child: MapWidget(
+          address: 'Eastwood city',
+        ),
+      ),
     ]);
   }
 
