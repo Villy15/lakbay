@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
@@ -54,21 +55,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 child: Column(
                   children: [
                     greetingText(),
-                    const SizedBox(height: 80),
+                    SizedBox(height: MediaQuery.of(context).size.height / 15),
                     if (isLoading) ...[
                       const Loader(),
                       const SizedBox(height: 429),
                     ] else ...[
                       emailTextField(),
-                      const SizedBox(height: 20),
+                      SizedBox(height: MediaQuery.of(context).size.height / 25),
                       passwordTextField(),
-                      const SizedBox(height: 20),
+                      SizedBox(height: MediaQuery.of(context).size.height / 25),
                       loginButton(),
-                      const SizedBox(height: 60),
+                      SizedBox(height: MediaQuery.of(context).size.height / 30),
                       loginWithText(),
-                      const SizedBox(height: 20),
+                      SizedBox(height: MediaQuery.of(context).size.height / 30),
                       loginOptions(),
-                      const SizedBox(height: 80),
+                      SizedBox(height: MediaQuery.of(context).size.height / 25),
                     ],
                     extraFunctions(),
                   ],
@@ -82,14 +83,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Column greetingText() {
-    return const Column(
+    return Column(
       children: [
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
             "Kamusta? Tara,",
             style: TextStyle(
-              fontSize: 40,
+              fontSize: MediaQuery.of(context).size.height / 20,
               fontWeight: FontWeight.w500,
               fontFamily: 'Satisfy',
             ),
@@ -100,7 +101,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           child: Text(
             "Lakbay!",
             style: TextStyle(
-                fontSize: 40,
+                fontSize: MediaQuery.of(context).size.height / 20,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Satisfy'),
           ),
@@ -124,10 +125,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         IconButton.filled(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.background),
-            icon: Image.asset("lib/core/images/google.png"),
-            onPressed: () => signInWithGoogle(context)),
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.background),
+          icon: Image.asset("lib/core/images/google.png"),
+          onPressed: () => signInWithGoogle(context),
+        ),
         IconButton.filled(
           style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.background),
