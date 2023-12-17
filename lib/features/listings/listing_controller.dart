@@ -13,6 +13,13 @@ final getListingsByCoopProvider =
   return listingController.getListingsByCoopId(uid);
 });
 
+// getAllListings Provider
+final getAllListingsProvider =
+    StreamProvider.autoDispose<List<ListingModel>>((ref) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getAllListings();
+});
+
 final listingControllerProvider =
     StateNotifierProvider<ListingController, bool>((ref) {
   final listingRepository = ref.watch(listingRepositoryProvider);
