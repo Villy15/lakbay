@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 
@@ -15,6 +15,9 @@ class LoginPage extends ConsumerStatefulWidget {
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   bool _obscureText = true;
 
   void _togglePasswordVisibility() {
@@ -23,8 +26,33 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
   }
 
+  void login() async {
+    if (_formKey.currentState!.validate()) {
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      ref.read(authControllerProvider.notifier).signInWithEmailAndPassword(
+            context: context,
+            email: email,
+            password: password,
+          );
+    }
+  }
+
   void signInWithGoogle(BuildContext context) {
     ref.read(authControllerProvider.notifier).signInWithGoogle(context);
+  }
+
+  void signInWithEmailAndPassword({
+    required BuildContext context,
+    required String email,
+    required String password,
+  }) {
+    ref.read(authControllerProvider.notifier).signInWithEmailAndPassword(
+          context: context,
+          email: email,
+          password: password,
+        );
   }
 
   @override
@@ -181,7 +209,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         minimumSize: const Size(double.infinity, 50),
       ),
       onPressed: () {
-        context.go('/customer_home');
+        login();
       },
       child: const Text("Login"),
     );
@@ -189,6 +217,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   TextFormField passwordTextField() {
     return TextFormField(
+      controller: _passwordController,
       style: const TextStyle(color: Colors.black),
       obscureText: _obscureText,
       decoration: InputDecoration(
@@ -213,11 +242,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your password';
+        }
+        return null;
+      },
     );
   }
 
   TextFormField emailTextField() {
     return TextFormField(
+      controller: _emailController,
       style: const TextStyle(color: Colors.black),
       decoration: const InputDecoration(
         fillColor: Colors.white54,
@@ -232,6 +268,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your email';
+        }
+        return null;
+      },
     );
   }
 }
