@@ -79,6 +79,25 @@ class AuthRepository {
     }
   }
 
+  // Sign in with email and password
+  FutureEither<UserModel> signIn({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+
+      UserModel userModel = await getUserData(userCredential.user!.uid).first;
+
+      return right(userModel);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   // Register user with email and password
   FutureEither<UserModel> register({
     required String email,

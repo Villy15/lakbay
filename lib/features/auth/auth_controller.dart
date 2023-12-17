@@ -56,6 +56,22 @@ class AuthController extends StateNotifier<bool> {
         (userModel) => _ref.read(userProvider.notifier).setUser(userModel));
   }
 
+  // signInWithEmailAndPassword
+  void signInWithEmailAndPassword({
+    required BuildContext context,
+    required String email,
+    required String password,
+  }) async {
+    state = true; // true for loading
+    final user = await _authRepository.signIn(
+      email: email,
+      password: password,
+    );
+    state = false; // false for loading
+    user.fold((l) => showSnackBar(context, l.message),
+        (userModel) => _ref.read(userProvider.notifier).setUser(userModel));
+  }
+
   void register({
     required BuildContext context,
     required String email,
