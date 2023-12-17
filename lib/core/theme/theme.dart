@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -82,9 +83,17 @@ class ThemeNotifier extends StateNotifier<ThemeData> {
     if (theme == 'light') {
       _mode = ThemeMode.light;
       state = Pallete.lightTheme;
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        systemNavigationBarColor: state.colorScheme.background,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ));
     } else {
       _mode = ThemeMode.dark;
       state = Pallete.darkTheme;
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        systemNavigationBarColor: state.colorScheme.background,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ));
     }
   }
 
@@ -100,5 +109,8 @@ class ThemeNotifier extends StateNotifier<ThemeData> {
       state = Pallete.darkTheme;
       prefs.setString('theme', 'dark');
     }
+
+    // Update the system UI overlay style after changing the theme
+    getTheme();
   }
 }

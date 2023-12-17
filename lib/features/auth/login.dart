@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 
@@ -15,6 +16,9 @@ class LoginPage extends ConsumerStatefulWidget {
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   bool _obscureText = true;
 
   void _togglePasswordVisibility() {
@@ -23,8 +27,33 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
   }
 
+  void login() async {
+    if (_formKey.currentState!.validate()) {
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      ref.read(authControllerProvider.notifier).signInWithEmailAndPassword(
+            context: context,
+            email: email,
+            password: password,
+          );
+    }
+  }
+
   void signInWithGoogle(BuildContext context) {
     ref.read(authControllerProvider.notifier).signInWithGoogle(context);
+  }
+
+  void signInWithEmailAndPassword({
+    required BuildContext context,
+    required String email,
+    required String password,
+  }) {
+    ref.read(authControllerProvider.notifier).signInWithEmailAndPassword(
+          context: context,
+          email: email,
+          password: password,
+        );
   }
 
   @override
@@ -54,21 +83,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 child: Column(
                   children: [
                     greetingText(),
-                    const SizedBox(height: 80),
+                    SizedBox(height: MediaQuery.of(context).size.height / 15),
                     if (isLoading) ...[
                       const Loader(),
                       const SizedBox(height: 429),
                     ] else ...[
                       emailTextField(),
-                      const SizedBox(height: 20),
+                      SizedBox(height: MediaQuery.of(context).size.height / 25),
                       passwordTextField(),
-                      const SizedBox(height: 20),
+                      SizedBox(height: MediaQuery.of(context).size.height / 25),
                       loginButton(),
-                      const SizedBox(height: 60),
+                      SizedBox(height: MediaQuery.of(context).size.height / 30),
                       loginWithText(),
-                      const SizedBox(height: 20),
+                      SizedBox(height: MediaQuery.of(context).size.height / 30),
                       loginOptions(),
-                      const SizedBox(height: 80),
+                      SizedBox(height: MediaQuery.of(context).size.height / 25),
                     ],
                     extraFunctions(),
                   ],
@@ -82,14 +111,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Column greetingText() {
-    return const Column(
+    return Column(
       children: [
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
             "Kamusta? Tara,",
             style: TextStyle(
-              fontSize: 40,
+              fontSize: MediaQuery.of(context).size.height / 20,
               fontWeight: FontWeight.w500,
               fontFamily: 'Satisfy',
             ),
@@ -100,7 +129,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           child: Text(
             "Lakbay!",
             style: TextStyle(
-                fontSize: 40,
+                fontSize: MediaQuery.of(context).size.height / 20,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Satisfy'),
           ),
@@ -124,10 +153,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         IconButton.filled(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.background),
-            icon: Image.asset("lib/core/images/google.png"),
-            onPressed: () => signInWithGoogle(context)),
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.background),
+          icon: Image.asset("lib/core/images/google.png"),
+          onPressed: () => signInWithGoogle(context),
+        ),
         IconButton.filled(
           style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.background),
@@ -181,7 +211,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         minimumSize: const Size(double.infinity, 50),
       ),
       onPressed: () {
-        context.go('/customer_home');
+        login();
       },
       child: const Text("Login"),
     );
@@ -189,6 +219,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   TextFormField passwordTextField() {
     return TextFormField(
+      controller: _passwordController,
       style: const TextStyle(color: Colors.black),
       obscureText: _obscureText,
       decoration: InputDecoration(
@@ -213,11 +244,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your password';
+        }
+        return null;
+      },
     );
   }
 
   TextFormField emailTextField() {
     return TextFormField(
+      controller: _emailController,
       style: const TextStyle(color: Colors.black),
       decoration: const InputDecoration(
         fillColor: Colors.white54,
@@ -232,6 +270,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your email';
+        }
+        return null;
+      },
     );
   }
 }
