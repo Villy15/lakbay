@@ -6,7 +6,12 @@ import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_repository.dart';
 import 'package:lakbay/models/listing_model.dart';
 
-// nameControllerProvider
+// getListingsByCoop Family Provider
+final getListingsByCoopProvider =
+    StreamProvider.autoDispose.family<List<ListingModel>, String>((ref, uid) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getListingsByCoopId(uid);
+});
 
 final listingControllerProvider =
     StateNotifierProvider<ListingController, bool>((ref) {
@@ -49,6 +54,11 @@ class ListingController extends StateNotifier<bool> {
   // Read all listings
   Stream<List<ListingModel>> getAllListings() {
     return _listingRepository.readListings();
+  }
+
+  // Read all listings by CoopID
+  Stream<List<ListingModel>> getListingsByCoopId(String coopId) {
+    return _listingRepository.readListingsByCoopId(coopId);
   }
 
   // Read a listing

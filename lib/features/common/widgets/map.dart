@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:lakbay/core/util/utils.dart';
 
 class MapWidget extends StatefulWidget {
   final String address;
@@ -19,7 +18,6 @@ class MapWidgetState extends State<MapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrintJson(widget.address);
     return FutureBuilder<LatLng>(
       future: getLatLng(widget.address),
       builder: (BuildContext context, AsyncSnapshot<LatLng> snapshot) {

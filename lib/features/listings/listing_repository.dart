@@ -43,6 +43,18 @@ class ListingRepository {
     });
   }
 
+  // Read all listing by CoopID
+  Stream<List<ListingModel>> readListingsByCoopId(String coopId) {
+    return _listings
+        .where('cooperative.cooperativeId', isEqualTo: coopId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ListingModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Read
   Stream<ListingModel> readListing(String uid) {
     return _listings.doc(uid).snapshots().map((snapshot) {
