@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/core/theme/theme.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/firebase_options.dart';
+import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/router.dart';
 
 void main() async {
@@ -30,15 +32,22 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
+  UserModel? userModel;
   @override
   Widget build(BuildContext context) {
     final router = ref.watch(goRouterProvider);
-    final authState = ref.watch(authStateChangeProvider);
     final theme = ref.watch(themeNotifierProvider);
 
-    return authState.when(
+    return ref.watch(authStateChangeProvider).when(
         data: (data) {
-          checkAndUpdateUserData(data);
+          debugPrint("authStateChangeProvider");
+          if (data != null) {
+            debugPrintJson(data.toString());
+            checkAndUpdateUserData(ref, data);
+            debugPrint("checkAndUpdateUserData");
+          }
+
+          debugPrint("Building MaterialApp");
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'Lakbay',
@@ -53,18 +62,15 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   // This will determine if we should refetch the user data
-  void checkAndUpdateUserData(User? user) {
-    if (user != null) {
-      initializeUserData(user.uid);
-    }
-  }
+  void checkAndUpdateUserData(WidgetRef ref, User data) async {
+    userModel = await ref
+        .watch(authControllerProvider.notifier)
+        .getUserData(data.uid)
+        .first;
 
-  // Initialize the user data in the provider
-  void initializeUserData(String uid) async {
-    final userData =
-        await ref.watch(authControllerProvider.notifier).getUserData(uid).first;
+    debugPrint("CHECKANDUPDATEUSERDATA");
+    debugPrintJson(userModel!);
 
-    ref.read(userProvider.notifier).update((state) => userData);
-    setState(() {});
+    ref.read(userProvider.notifier).setUser(userModel!);
   }
 }

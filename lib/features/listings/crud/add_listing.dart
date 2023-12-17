@@ -541,10 +541,10 @@ class _AddListingState extends ConsumerState<AddListing> {
       const SizedBox(height: 10),
 
       // Google Map
-      const SizedBox(
+      SizedBox(
         height: 400,
         child: MapWidget(
-          address: 'Eastwood city',
+          address: _addressController.text,
         ),
       ),
     ]);
@@ -671,7 +671,6 @@ class _AddListingState extends ConsumerState<AddListing> {
     return Column(
       children: [
         IconStepper(
-          stepReachedAnimationDuration: const Duration(milliseconds: 1),
           lineColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
           stepColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
           activeStepColor: Theme.of(context).colorScheme.primary,

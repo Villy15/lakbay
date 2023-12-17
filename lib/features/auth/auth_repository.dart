@@ -90,7 +90,7 @@ class AuthRepository {
 
       UserModel userModel = UserModel(
           uid: userCredential.user?.uid ?? "",
-          name: userCredential.user?.displayName ?? "Lakbay Name",
+          name: userCredential.user?.displayName ?? "Lakbay User",
           profilePic: '',
           isAuthenticated: true);
 

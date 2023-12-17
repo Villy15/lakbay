@@ -5,7 +5,17 @@ import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_repository.dart';
 import 'package:lakbay/models/user_model.dart';
 
-final userProvider = StateProvider<UserModel?>((ref) => null);
+final userProvider = StateNotifierProvider<UserModelNotifier, UserModel?>(
+  (ref) => UserModelNotifier(),
+);
+
+class UserModelNotifier extends StateNotifier<UserModel?> {
+  UserModelNotifier() : super(null);
+
+  void setUser(UserModel user) {
+    state = user;
+  }
+}
 
 final authControllerProvider =
     StateNotifierProvider<AuthController, bool>((ref) {
@@ -42,10 +52,8 @@ class AuthController extends StateNotifier<bool> {
     state = true; // true for loading
     final user = await _authRepository.signInWithGoogle();
     state = false; // false for loading
-    user.fold(
-        (l) => showSnackBar(context, l.message),
-        (userModel) =>
-            _ref.read(userProvider.notifier).update((state) => userModel));
+    user.fold((l) => showSnackBar(context, l.message),
+        (userModel) => _ref.read(userProvider.notifier).setUser(userModel));
   }
 
   void register({
@@ -59,10 +67,8 @@ class AuthController extends StateNotifier<bool> {
       password: password,
     );
     state = false; // false for loading
-    user.fold(
-        (l) => showSnackBar(context, l.message),
-        (userModel) =>
-            _ref.read(userProvider.notifier).update((state) => userModel));
+    user.fold((l) => showSnackBar(context, l.message),
+        (userModel) => _ref.read(userProvider.notifier).setUser(userModel));
   }
 
   Stream<UserModel> getUserData(String uid) {

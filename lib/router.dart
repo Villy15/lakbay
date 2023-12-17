@@ -2,7 +2,6 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
 import 'package:lakbay/features/common/error.dart';
@@ -35,8 +34,12 @@ final GlobalKey<NavigatorState> _shellNavigator =
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateChangeProvider);
+  // final user = ref.watch(userProvider);
+
+  debugPrint("goRouterProvider");
 
   String? determineRedirectPath(GoRouterState state) {
+    debugPrint("determineRedirectPath");
     final isAuth = authState.valueOrNull != null;
     final isLoggingIn = state.matchedLocation == '/login';
 
@@ -47,9 +50,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       return isLoggingIn ? null : '/login';
     }
 
-    debugPrintJson("Loop Test");
-
     if (isLoggingIn) {
+      // if (user?.isCoopView ?? false) {
+      //   return '/manager_dashboard';
+      // }
       return '/customer_home';
     }
     // Authenticated

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/app_bar_provider.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
@@ -20,6 +21,8 @@ class _LayoutState extends ConsumerState<Layout> {
     final scaffoldKey = ref.watch(scaffoldKeyProvider);
     final appBarVisibility = ref.watch(navBarVisibilityProvider);
     final user = ref.watch(userProvider);
+
+    debugPrintJson(user ?? {});
 
     return Scaffold(
       key: scaffoldKey,

@@ -94,7 +94,9 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                 // Switch View Button show if the user is a member of a cooperative
                 widget.user!.cooperativesJoined?.isNotEmpty ?? false
                     ? switchViewButton(
-                        context, widget.user!.isCoopView ?? false)
+                        context,
+                        widget.user!.isCoopView ?? false,
+                      )
                     : const SizedBox.shrink(),
                 const SizedBox(height: 10),
                 // Current cooperative dropdown
