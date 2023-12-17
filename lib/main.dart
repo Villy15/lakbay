@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/core/theme/theme.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -35,26 +34,34 @@ class _MyAppState extends ConsumerState<MyApp> {
   UserModel? userModel;
   @override
   Widget build(BuildContext context) {
-    final router = ref.watch(goRouterProvider);
     final theme = ref.watch(themeNotifierProvider);
 
     return ref.watch(authStateChangeProvider).when(
         data: (data) {
-          debugPrint("authStateChangeProvider");
           if (data != null) {
-            debugPrintJson(data.toString());
             checkAndUpdateUserData(ref, data);
-            debugPrint("checkAndUpdateUserData");
+
+            return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              title: 'Lakbay',
+              theme: theme,
+              routerDelegate: ref.watch(goRouterProvider).routerDelegate,
+              routeInformationParser:
+                  ref.watch(goRouterProvider).routeInformationParser,
+              routeInformationProvider:
+                  ref.watch(goRouterProvider).routeInformationProvider,
+            );
           }
 
-          debugPrint("Building MaterialApp");
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'Lakbay',
             theme: theme,
-            routerDelegate: router.routerDelegate,
-            routeInformationParser: router.routeInformationParser,
-            routeInformationProvider: router.routeInformationProvider,
+            routerDelegate: ref.watch(goRouterProvider).routerDelegate,
+            routeInformationParser:
+                ref.watch(goRouterProvider).routeInformationParser,
+            routeInformationProvider:
+                ref.watch(goRouterProvider).routeInformationProvider,
           );
         },
         error: (error, stackTrace) => ErrorText(error: error.toString()),
@@ -67,9 +74,6 @@ class _MyAppState extends ConsumerState<MyApp> {
         .watch(authControllerProvider.notifier)
         .getUserData(data.uid)
         .first;
-
-    debugPrint("CHECKANDUPDATEUSERDATA");
-    debugPrintJson(userModel!);
 
     ref.read(userProvider.notifier).setUser(userModel!);
   }

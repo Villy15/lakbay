@@ -129,8 +129,6 @@ class CoopsController extends StateNotifier<bool> {
           ],
         );
 
-        debugPrint("updatedUser: $updatedUser");
-
         // Update user
         _ref
             .read(usersControllerProvider.notifier)
@@ -138,8 +136,9 @@ class CoopsController extends StateNotifier<bool> {
 
         state = false;
         showSnackBar(context, 'Cooperative joined successfully');
-        context.pop();
+        context.go('/manager_dashboard');
         _ref.read(navBarVisibilityProvider.notifier).show();
+        _ref.read(bottomNavBarProvider.notifier).setPosition(0);
       },
     );
   }
@@ -175,8 +174,9 @@ class CoopsController extends StateNotifier<bool> {
 
         state = false;
         showSnackBar(context, 'Cooperative left successfully');
-        context.pop();
+        context.go('/coops');
         _ref.read(navBarVisibilityProvider.notifier).show();
+        _ref.read(bottomNavBarProvider.notifier).setPosition(3);
       },
     );
   }

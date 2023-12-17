@@ -23,7 +23,7 @@ class CustomerHomePage extends ConsumerWidget {
               children: [
                 const SizedBox(height: 8.0),
                 CustomSearchBar(
-                    hintText: 'Where do you want to go ${user?.name ?? ''}?',
+                    hintText: 'Where do you want to go ${user?.name}?',
                     onTap: () {}),
                 const SizedBox(height: 24.0),
                 const MarketCard(),

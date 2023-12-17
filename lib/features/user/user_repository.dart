@@ -35,16 +35,6 @@ class UserRepository {
   }
 
   // Edit user isCoopView by uid
-  FutureVoid editUserIsCoopView(String uid, bool isCoopView) async {
-    try {
-      return right(_users.doc(uid).update({'isCoopView': isCoopView}));
-    } on FirebaseException catch (e) {
-      throw e.message!;
-    } catch (e) {
-      return left(Failure(e.toString()));
-    }
-  }
-
   // Edit user
   FutureVoid editUser(String uid, UserModel user) async {
     try {

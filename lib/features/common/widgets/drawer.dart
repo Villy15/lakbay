@@ -30,15 +30,14 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
   }
 
   void switchView(WidgetRef ref) {
-    ref.read(usersControllerProvider.notifier).editUserIsCoopView(
-        context, widget.user!.uid, !(widget.user!.isCoopView ?? false));
-    context.pop();
+    var user =
+        widget.user?.copyWith(isCoopView: !(widget.user!.isCoopView ?? false));
 
-    if (widget.user!.isCoopView ?? false) {
-      context.go('/customer_home');
-    } else {
-      context.go('/manager_dashboard');
-    }
+    ref.read(usersControllerProvider.notifier).editUserIsCoopView(
+          context,
+          widget.user!.uid,
+          user!,
+        );
   }
 
   void viewCurrentCooperative(WidgetRef ref) {

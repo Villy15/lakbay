@@ -34,16 +34,10 @@ final GlobalKey<NavigatorState> _shellNavigator =
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateChangeProvider);
-  // final user = ref.watch(userProvider);
-
-  debugPrint("goRouterProvider");
 
   String? determineRedirectPath(GoRouterState state) {
-    debugPrint("determineRedirectPath");
     final isAuth = authState.valueOrNull != null;
     final isLoggingIn = state.matchedLocation == '/login';
-
-    // debugPrint("isLoggingIn: $isLoggingIn");
 
     if (!isAuth) {
       // Not authenticated
@@ -51,9 +45,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     }
 
     if (isLoggingIn) {
-      // if (user?.isCoopView ?? false) {
-      //   return '/manager_dashboard';
-      // }
       return '/customer_home';
     }
     // Authenticated
