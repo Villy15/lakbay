@@ -221,7 +221,7 @@ class _$UserModelImpl extends _UserModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$UserModelImpl &&
@@ -425,7 +425,7 @@ class _$CooperativesJoinedImpl implements _CooperativesJoined {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CooperativesJoinedImpl &&

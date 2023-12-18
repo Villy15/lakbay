@@ -8,6 +8,7 @@ class ListingModel with _$ListingModel {
   factory ListingModel({
     String? uid,
     required String category,
+    required String type,
     required String title,
     required String description,
     required num price,

@@ -22,10 +22,16 @@ import 'package:lakbay/features/home/customer/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/listings/crud/add_listing.dart';
 import 'package:lakbay/features/listings/listings_page.dart';
+import 'package:lakbay/features/listings/crud/customer_accommodation.dart';
+import 'package:lakbay/features/listings/crud/customer_entertainment.dart';
+import 'package:lakbay/features/listings/crud/customer_foodservice.dart';
+import 'package:lakbay/features/listings/crud/customer_touring.dart';
+import 'package:lakbay/features/listings/crud/customer_transportation.dart';
 import 'package:lakbay/features/market/crud/read_market.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/listing_model.dart';
 // import 'package:lakbay/features/trips/trips_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
@@ -87,14 +93,56 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 ),
                 routes: [
                   GoRoute(
-                    path: ':id',
-                    pageBuilder: (context, state) =>
-                        buildPageWithSharedAxisTransition<void>(
-                      context: context,
-                      state: state,
-                      child: const ReadMarketPage(),
-                      transitionType: SharedAxisTransitionType.vertical,
-                    ),
+                    path: ':category',
+                    builder: (BuildContext context, GoRouterState state) {
+                      ListingModel listing = state.extra as ListingModel;
+                      switch (state.pathParameters["category"]) {
+                        case "Accommodation":
+                          return CustomerAccomodation(
+                            listing: listing,
+                          );
+                        case "Transportation":
+                          return CustomerTransportation(
+                            listing: listing,
+                          );
+                        case "Food Service":
+                          return CustomerFoodService(
+                            listing: listing,
+                          );
+                        case "Entertainment":
+                          return CustomerEntertainment(
+                            listing: listing,
+                          );
+                        // case "Touring":
+                        //   return SelectedTouringPage(
+                        //     listing: listing,
+                        //   );
+                        default:
+                          return CustomerAccomodation(
+                            listing: listing,
+                          );
+                      }
+                    },
+                    routes: const [
+                      // GoRoute(
+                      //     path: 'listing_messages_inbox',
+                      //     builder: (BuildContext context, GoRouterState state) {
+                      //       return ListingMessagesInbox(
+                      //           listingId: state.pathParameters["listingId"]!);
+                      //     },
+                      //     routes: [
+                      //       GoRoute(
+                      //         path: ':docId',
+                      //         builder:
+                      //             (BuildContext context, GoRouterState state) {
+                      //           return ListingMessages(
+                      //               docId: state.pathParameters["docId"]!,
+                      //               listingId:
+                      //                   state.pathParameters["listingId"]!);
+                      //         },
+                      //       ),
+                      //     ]),
+                    ],
                   ),
                 ],
               ),

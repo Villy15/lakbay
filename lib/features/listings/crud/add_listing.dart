@@ -31,13 +31,14 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   // Form fields
   // Step 0
-  String? category = 'Accommodation';
+  String category = 'Accommodation';
 
   // Step 1
   final _titleController = TextEditingController(text: 'Cozy Condo');
   final _descriptionController =
       TextEditingController(text: 'A wonderful place to stay');
   final _priceController = TextEditingController(text: '1000');
+  String type = 'Nature-Based';
 
   // Step 2
   int _guests = 1;
@@ -76,7 +77,8 @@ class _AddListingState extends ConsumerState<AddListing> {
       _formKey.currentState!.save();
 
       var listing = ListingModel(
-        category: category!,
+        category: category,
+        type: type,
         title: _titleController.text,
         description: _descriptionController.text,
         price: num.parse(_priceController.text),
@@ -216,9 +218,12 @@ class _AddListingState extends ConsumerState<AddListing> {
       {'name': 'Accommodation', 'icon': Icons.hotel_outlined},
       {'name': 'Transport', 'icon': Icons.directions_bus_outlined},
       {'name': 'Tours', 'icon': Icons.map_outlined},
+      {'name': 'Food Service', 'icon': Icons.restaurant_outlined},
+      {'name': 'Entertainment', 'icon': Icons.movie_creation_outlined},
     ];
 
     return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: categories.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -275,7 +280,18 @@ class _AddListingState extends ConsumerState<AddListing> {
   }
 
   Widget step1(BuildContext context) {
+    List<Map<String, dynamic>> types = [
+      {'name': 'Nature-Based', 'icon': Icons.forest_outlined},
+      {'name': 'Cultural', 'icon': Icons.diversity_2_outlined},
+      {'name': 'Sun and Beach', 'icon': Icons.beach_access_outlined},
+      {
+        'name': 'Health, Wellness, and Retirement',
+        'icon': Icons.health_and_safety_outlined
+      },
+      {'name': 'Diving and Marine Sports', 'icon': Icons.scuba_diving_outlined},
+    ];
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextFormField(
           controller: _titleController,
@@ -334,7 +350,66 @@ class _AddListingState extends ConsumerState<AddListing> {
             return null;
           },
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 30),
+        Text(
+          "Choose a type",
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: types.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            mainAxisExtent: 120,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                  color: category == types[index]['name']
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.primary.withOpacity(0.0),
+                  width: 1,
+                ),
+              ),
+              surfaceTintColor: Theme.of(context).colorScheme.background,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    type = types[index]['name'];
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Icon
+                      Icon(
+                        types[index]['icon'],
+                        size: 35,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+
+                      // Title
+                      Text(
+                        types[index]['name'],
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -604,7 +679,12 @@ class _AddListingState extends ConsumerState<AddListing> {
         ListTile(
           title: const Text('Category',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(category!),
+          subtitle: Text(category),
+        ),
+        ListTile(
+          title: const Text('Type',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          subtitle: Text(type),
         ),
         const Divider(),
 
@@ -757,8 +837,7 @@ class _AddListingState extends ConsumerState<AddListing> {
               ),
               onPressed: () {
                 if (activeStep < upperBound) {
-                  if (activeStep == 0 &&
-                      (category == '' || category!.isEmpty)) {
+                  if (activeStep == 0 && (category == '')) {
                     showSnackBar(context, 'Please select a category');
                     return;
                   }
@@ -813,15 +892,12 @@ class ImagePickerFormField extends FormField<List<File>> {
   final Function(List<File>) onImagesSelected;
 
   ImagePickerFormField({
-    Key? key,
-    FormFieldSetter<List<File>>? onSaved,
-    FormFieldValidator<List<File>>? validator,
+    super.key,
+    super.onSaved,
+    super.validator,
     List<File>? initialValue,
     required this.onImagesSelected,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
           initialValue: initialValue ?? [],
           builder: (FormFieldState<List<File>> state) {
             return Column(

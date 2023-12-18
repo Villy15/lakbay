@@ -22,6 +22,7 @@ ListingModel _$ListingModelFromJson(Map<String, dynamic> json) {
 mixin _$ListingModel {
   String? get uid => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
+  String get type => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
@@ -50,6 +51,7 @@ abstract class $ListingModelCopyWith<$Res> {
   $Res call(
       {String? uid,
       String category,
+      String type,
       String title,
       String description,
       num price,
@@ -81,6 +83,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
   $Res call({
     Object? uid = freezed,
     Object? category = null,
+    Object? type = null,
     Object? title = null,
     Object? description = null,
     Object? price = null,
@@ -102,6 +105,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as String,
       title: null == title
           ? _value.title
@@ -174,6 +181,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
   $Res call(
       {String? uid,
       String category,
+      String type,
       String title,
       String description,
       num price,
@@ -204,6 +212,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
   $Res call({
     Object? uid = freezed,
     Object? category = null,
+    Object? type = null,
     Object? title = null,
     Object? description = null,
     Object? price = null,
@@ -225,6 +234,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as String,
       title: null == title
           ? _value.title
@@ -284,6 +297,7 @@ class _$ListingModelImpl implements _ListingModel {
   _$ListingModelImpl(
       {this.uid,
       required this.category,
+      required this.type,
       required this.title,
       required this.description,
       required this.price,
@@ -305,6 +319,8 @@ class _$ListingModelImpl implements _ListingModel {
   final String? uid;
   @override
   final String category;
+  @override
+  final String type;
   @override
   final String title;
   @override
@@ -339,17 +355,18 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(uid: $uid, category: $category, title: $title, description: $description, price: $price, pax: $pax, bedrooms: $bedrooms, beds: $beds, bathrooms: $bathrooms, address: $address, city: $city, province: $province, cooperative: $cooperative, images: $images)';
+    return 'ListingModel(uid: $uid, category: $category, type: $type, title: $title, description: $description, price: $price, pax: $pax, bedrooms: $bedrooms, beds: $beds, bathrooms: $bathrooms, address: $address, city: $city, province: $province, cooperative: $cooperative, images: $images)';
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ListingModelImpl &&
             (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.category, category) ||
                 other.category == category) &&
+            (identical(other.type, type) || other.type == type) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.description, description) ||
                 other.description == description) &&
@@ -375,6 +392,7 @@ class _$ListingModelImpl implements _ListingModel {
       runtimeType,
       uid,
       category,
+      type,
       title,
       description,
       price,
@@ -406,6 +424,7 @@ abstract class _ListingModel implements ListingModel {
   factory _ListingModel(
       {final String? uid,
       required final String category,
+      required final String type,
       required final String title,
       required final String description,
       required final num price,
@@ -426,6 +445,8 @@ abstract class _ListingModel implements ListingModel {
   String? get uid;
   @override
   String get category;
+  @override
+  String get type;
   @override
   String get title;
   @override
@@ -567,7 +588,7 @@ class _$ListingCooperativeImpl implements _ListingCooperative {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ListingCooperativeImpl &&
@@ -724,7 +745,7 @@ class _$ListingImagesImpl implements _ListingImages {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ListingImagesImpl &&

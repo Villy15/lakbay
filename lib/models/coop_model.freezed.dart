@@ -271,7 +271,7 @@ class _$CooperativeModelImpl implements _CooperativeModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CooperativeModelImpl &&

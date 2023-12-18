@@ -8,7 +8,7 @@ class ListingCard extends ConsumerWidget {
   const ListingCard({super.key, required this.listing});
 
   void onTap(BuildContext context, WidgetRef ref) {
-    context.push('/market/1');
+    context.push('/market/${listing.category}', extra: listing);
   }
 
   @override
@@ -26,7 +26,7 @@ class ListingCard extends ConsumerWidget {
           onTap: () => onTap(context, ref),
           child: SizedBox(
               width: double.infinity,
-              height: 290,
+              // height: 290,
               child: Column(
                 children: [
                   // Random Image
@@ -42,17 +42,42 @@ class ListingCard extends ConsumerWidget {
                   ),
 
                   // Card Title
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
-                      child: Text(
-                        listing.title,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+                            child: Text(
+                              listing.title,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        // Rating
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.star_purple500_outlined,
+                              color: Colors.yellow[600],
+                            ),
+                            const Text(
+                              '4.8',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
 
@@ -81,72 +106,55 @@ class ListingCard extends ConsumerWidget {
                   ),
 
                   // Price, Rating, and Distance
-                  // Padding(
-                  //   padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 12.0),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                  //       // Price
-                  //       Row(
-                  //         children: [
-                  //           Text(
-                  //             '₱${listing.price}',
-                  //             style: const TextStyle(
-                  //               fontSize: 16,
-                  //               fontWeight: FontWeight.bold,
-                  //             ),
-                  //           ),
-                  //           Text(
-                  //             listing.category == 'Accommodation'
-                  //                 ? '/night'
-                  //                 : '',
-                  //             style: const TextStyle(
-                  //               fontSize: 16,
-                  //               fontWeight: FontWeight.normal,
-                  //               color: Colors.grey,
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Price
+                        Row(
+                          children: [
+                            Text(
+                              '₱${listing.price}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              listing.category == 'Accommodation'
+                                  ? '/night'
+                                  : '',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
 
-                  //       // Rating
-                  //       Row(
-                  //         children: [
-                  //           Icon(
-                  //             Icons.star_purple500_outlined,
-                  //             color: Colors.yellow[600],
-                  //           ),
-                  //           const Text(
-                  //             '4.8',
-                  //             style: TextStyle(
-                  //               fontSize: 16,
-                  //               fontWeight: FontWeight.bold,
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-
-                  //       // Distance
-                  //       Row(
-                  //         children: [
-                  //           Icon(
-                  //             listing.category == 'Accommodation'
-                  //                 ? Icons.hotel_outlined
-                  //                 : Icons.shopping_bag_outlined,
-                  //           ),
-                  //           const SizedBox(width: 4.0),
-                  //           Text(
-                  //             listing.category,
-                  //             style: const TextStyle(
-                  //               fontSize: 16,
-                  //               fontWeight: FontWeight.bold,
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
+                        // Distance
+                        Row(
+                          children: [
+                            Icon(
+                              listing.category == 'Accommodation'
+                                  ? Icons.hotel_outlined
+                                  : Icons.shopping_bag_outlined,
+                            ),
+                            const SizedBox(width: 4.0),
+                            Text(
+                              listing.category,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               )),
         ),

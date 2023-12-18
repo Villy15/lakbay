@@ -10,6 +10,7 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
     _$ListingModelImpl(
       uid: json['uid'] as String?,
       category: json['category'] as String,
+      type: json['type'] as String,
       title: json['title'] as String,
       description: json['description'] as String,
       price: json['price'] as num,
@@ -31,6 +32,7 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
     <String, dynamic>{
       'uid': instance.uid,
       'category': instance.category,
+      'type': instance.type,
       'title': instance.title,
       'description': instance.description,
       'price': instance.price,
