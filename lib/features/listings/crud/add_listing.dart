@@ -7,6 +7,7 @@ import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
@@ -25,7 +26,6 @@ class AddListing extends ConsumerStatefulWidget {
 class _AddListingState extends ConsumerState<AddListing> {
   // Form key
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   int activeStep = 0;
   int upperBound = 6;
 
@@ -41,6 +41,7 @@ class _AddListingState extends ConsumerState<AddListing> {
   String type = 'Nature-Based';
 
   // Step 2
+  //Accommodation
   int _guests = 1;
   int _bedrooms = 1;
   int _beds = 1;
@@ -73,10 +74,12 @@ class _AddListingState extends ConsumerState<AddListing> {
   }
 
   void submitAddListing() {
+    String userId = ref.watch(userProvider)!.uid;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
       var listing = ListingModel(
+        publisherId: userId,
         category: category,
         type: type,
         title: _titleController.text,
@@ -218,7 +221,7 @@ class _AddListingState extends ConsumerState<AddListing> {
       {'name': 'Accommodation', 'icon': Icons.hotel_outlined},
       {'name': 'Transport', 'icon': Icons.directions_bus_outlined},
       {'name': 'Tours', 'icon': Icons.map_outlined},
-      {'name': 'Food Service', 'icon': Icons.restaurant_outlined},
+      {'name': 'Food', 'icon': Icons.restaurant_outlined},
       {'name': 'Entertainment', 'icon': Icons.movie_creation_outlined},
     ];
 
@@ -286,7 +289,7 @@ class _AddListingState extends ConsumerState<AddListing> {
       {'name': 'Sun and Beach', 'icon': Icons.beach_access_outlined},
       {
         'name': 'Health, Wellness, and Retirement',
-        'icon': Icons.health_and_safety_outlined
+        'icon': Icons.local_hospital_outlined
       },
       {'name': 'Diving and Marine Sports', 'icon': Icons.scuba_diving_outlined},
     ];

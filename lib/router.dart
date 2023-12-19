@@ -24,10 +24,8 @@ import 'package:lakbay/features/listings/crud/add_listing.dart';
 import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation.dart';
 import 'package:lakbay/features/listings/crud/customer_entertainment.dart';
-import 'package:lakbay/features/listings/crud/customer_foodservice.dart';
-import 'package:lakbay/features/listings/crud/customer_touring.dart';
+import 'package:lakbay/features/listings/crud/customer_food.dart';
 import 'package:lakbay/features/listings/crud/customer_transportation.dart';
-import 'package:lakbay/features/market/crud/read_market.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
 import 'package:lakbay/models/coop_model.dart';
@@ -106,7 +104,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             listing: listing,
                           );
                         case "Food Service":
-                          return CustomerFoodService(
+                          return CustomerFood(
                             listing: listing,
                           );
                         case "Entertainment":
