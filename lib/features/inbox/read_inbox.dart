@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:bubble/bubble.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
@@ -30,17 +32,46 @@ class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
   @override
   void initState() {
     super.initState();
+    _messages = [
+      types.TextMessage(
+        author: _user,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        id: 'dvEosZUoe8i5hE-0vNBbhw==',
+        text: 'Hello',
+      ),
+      types.TextMessage(
+        author: _otherUser,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        id: 'abcEosZUoe8i5hE-0vNBbhw==',
+        text: 'Hi there',
+      ),
+    ];
+
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
   }
 
-  final List<types.Message> _messages = [];
-  final _user = const types.User(id: '82091008-a484-4a89-ae75-a22bf8d6f3ac');
+  late List<types.Message> _messages = [];
+  final _user = types.User(
+    id: '82091008-a484-4a89-ae75-a22bf8d6f3ac',
+    firstName: 'Villy',
+    imageUrl:
+        'https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FVilly%2FAFAC%20(square)-1.png?alt=media&token=56e1deef-caaf-413e-bf53-e9a02e78b62f',
+    lastSeen: DateTime.now().millisecondsSinceEpoch,
+  );
+  final _otherUser = types.User(
+    id: 'other-user',
+    firstName: 'Adrian Test',
+    lastSeen: DateTime.now().millisecondsSinceEpoch,
+    imageUrl:
+        'https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FVilly%2FAFAC%20(square)-1.png?alt=media&token=56e1deef-caaf-413e-bf53-e9a02e78b62f',
+  );
 
   void _addMessage(types.Message message) {
     setState(() {
       _messages.insert(0, message);
+      debugPrintJson(_messages);
     });
   }
 
@@ -226,6 +257,27 @@ class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
     }
   }
 
+  Widget _bubbleBuilder(
+    Widget child, {
+    required message,
+    required nextMessageInGroup,
+  }) =>
+      Bubble(
+        color: _user.id != message.author.id ||
+                message.type == types.MessageType.image
+            ? const Color(0xfff5f5f7)
+            : const Color(0xff6f61e8),
+        margin: nextMessageInGroup
+            ? const BubbleEdges.symmetric(horizontal: 6)
+            : null,
+        nip: nextMessageInGroup
+            ? BubbleNip.no
+            : _user.id != message.author.id
+                ? BubbleNip.leftBottom
+                : BubbleNip.rightBottom,
+        child: child,
+      );
+
   @override
   Widget build(BuildContext context) {
     return ref.watch(getUserProvider(widget.senderId)).when(
@@ -239,6 +291,7 @@ class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
               child: Scaffold(
                 appBar: _appBar(user, context),
                 body: Chat(
+                  bubbleBuilder: _bubbleBuilder,
                   onPreviewDataFetched: _handlePreviewDataFetched,
                   onMessageTap: _handleMessageTap,
                   showUserAvatars: true,
@@ -248,6 +301,7 @@ class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
                   onSendPressed: _handleSendPressed,
                   user: _user,
                   theme: DefaultChatTheme(
+                    userAvatarImageBackgroundColor: Colors.transparent,
                     seenIcon: const Icon(Icons.done_all),
                     inputTextColor: Theme.of(context).colorScheme.onBackground,
                     inputBackgroundColor:
