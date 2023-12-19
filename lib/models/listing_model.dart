@@ -9,9 +9,7 @@ class ListingModel with _$ListingModel {
   factory ListingModel({
     required String address,
     List<AvailableDate>? availableDates,
-    num? bathrooms,
-    num? beds,
-    num? bedrooms,
+    List<AvailableRoom>? availableRooms,
     required String category,
     required String city,
     required ListingCooperative cooperative,
@@ -20,7 +18,7 @@ class ListingModel with _$ListingModel {
     bool? isPublished,
     List<ListingCost>? listingCosts,
     num? pax,
-    required num price,
+    num? price,
     required String province,
     required String publisherId,
     num? rating,
@@ -66,6 +64,21 @@ class ListingCost with _$ListingCost {
 
   factory ListingCost.fromJson(Map<String, dynamic> json) =>
       _$ListingCostFromJson(json);
+}
+
+@freezed
+class AvailableRoom with _$AvailableRoom {
+  factory AvailableRoom({
+    required String roomId,
+    required num bathrooms,
+    required num bedrooms,
+    required num beds,
+    required num guests,
+    required num price,
+  }) = _AvailableRoom;
+
+  factory AvailableRoom.fromJson(Map<String, dynamic> json) =>
+      _$AvailableRoomFromJson(json);
 }
 
 @freezed

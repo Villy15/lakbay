@@ -309,27 +309,27 @@ class _BookAccommodationState extends State<BookAccommodation> {
                       style: const TextStyle(
                         fontSize: 16,
                       )),
-                  Text(
-                      '₱${(widget.listing.price * _nights).toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                      )),
+                  // Text(
+                  //     '₱${(widget.listing.price * _nights).toStringAsFixed(2)}',
+                  //     style: const TextStyle(
+                  //       fontSize: 16,
+                  //     )),
                 ],
               ),
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Divider(),
               ),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Total',
+                  Text('Total',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text(
-                      '₱${(widget.listing.price * _nights * 1.12).toStringAsFixed(2)}',
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold)),
+                  // Text(
+                  //     '₱${(widget.listing.price * _nights * 1.12).toStringAsFixed(2)}',
+                  //     style: const TextStyle(
+                  //         fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
               ),
               Align(

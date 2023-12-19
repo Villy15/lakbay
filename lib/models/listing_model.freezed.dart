@@ -22,9 +22,7 @@ ListingModel _$ListingModelFromJson(Map<String, dynamic> json) {
 mixin _$ListingModel {
   String get address => throw _privateConstructorUsedError;
   List<AvailableDate>? get availableDates => throw _privateConstructorUsedError;
-  num? get bathrooms => throw _privateConstructorUsedError;
-  num? get beds => throw _privateConstructorUsedError;
-  num? get bedrooms => throw _privateConstructorUsedError;
+  List<AvailableRoom>? get availableRooms => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
   ListingCooperative get cooperative => throw _privateConstructorUsedError;
@@ -33,7 +31,7 @@ mixin _$ListingModel {
   bool? get isPublished => throw _privateConstructorUsedError;
   List<ListingCost>? get listingCosts => throw _privateConstructorUsedError;
   num? get pax => throw _privateConstructorUsedError;
-  num get price => throw _privateConstructorUsedError;
+  num? get price => throw _privateConstructorUsedError;
   String get province => throw _privateConstructorUsedError;
   String get publisherId => throw _privateConstructorUsedError;
   num? get rating => throw _privateConstructorUsedError;
@@ -59,9 +57,7 @@ abstract class $ListingModelCopyWith<$Res> {
   $Res call(
       {String address,
       List<AvailableDate>? availableDates,
-      num? bathrooms,
-      num? beds,
-      num? bedrooms,
+      List<AvailableRoom>? availableRooms,
       String category,
       String city,
       ListingCooperative cooperative,
@@ -70,7 +66,7 @@ abstract class $ListingModelCopyWith<$Res> {
       bool? isPublished,
       List<ListingCost>? listingCosts,
       num? pax,
-      num price,
+      num? price,
       String province,
       String publisherId,
       num? rating,
@@ -98,9 +94,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
   $Res call({
     Object? address = null,
     Object? availableDates = freezed,
-    Object? bathrooms = freezed,
-    Object? beds = freezed,
-    Object? bedrooms = freezed,
+    Object? availableRooms = freezed,
     Object? category = null,
     Object? city = null,
     Object? cooperative = null,
@@ -109,7 +103,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? isPublished = freezed,
     Object? listingCosts = freezed,
     Object? pax = freezed,
-    Object? price = null,
+    Object? price = freezed,
     Object? province = null,
     Object? publisherId = null,
     Object? rating = freezed,
@@ -128,18 +122,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.availableDates
           : availableDates // ignore: cast_nullable_to_non_nullable
               as List<AvailableDate>?,
-      bathrooms: freezed == bathrooms
-          ? _value.bathrooms
-          : bathrooms // ignore: cast_nullable_to_non_nullable
-              as num?,
-      beds: freezed == beds
-          ? _value.beds
-          : beds // ignore: cast_nullable_to_non_nullable
-              as num?,
-      bedrooms: freezed == bedrooms
-          ? _value.bedrooms
-          : bedrooms // ignore: cast_nullable_to_non_nullable
-              as num?,
+      availableRooms: freezed == availableRooms
+          ? _value.availableRooms
+          : availableRooms // ignore: cast_nullable_to_non_nullable
+              as List<AvailableRoom>?,
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
@@ -172,10 +158,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.pax
           : pax // ignore: cast_nullable_to_non_nullable
               as num?,
-      price: null == price
+      price: freezed == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
-              as num,
+              as num?,
       province: null == province
           ? _value.province
           : province // ignore: cast_nullable_to_non_nullable
@@ -231,9 +217,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
   $Res call(
       {String address,
       List<AvailableDate>? availableDates,
-      num? bathrooms,
-      num? beds,
-      num? bedrooms,
+      List<AvailableRoom>? availableRooms,
       String category,
       String city,
       ListingCooperative cooperative,
@@ -242,7 +226,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       bool? isPublished,
       List<ListingCost>? listingCosts,
       num? pax,
-      num price,
+      num? price,
       String province,
       String publisherId,
       num? rating,
@@ -269,9 +253,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
   $Res call({
     Object? address = null,
     Object? availableDates = freezed,
-    Object? bathrooms = freezed,
-    Object? beds = freezed,
-    Object? bedrooms = freezed,
+    Object? availableRooms = freezed,
     Object? category = null,
     Object? city = null,
     Object? cooperative = null,
@@ -280,7 +262,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? isPublished = freezed,
     Object? listingCosts = freezed,
     Object? pax = freezed,
-    Object? price = null,
+    Object? price = freezed,
     Object? province = null,
     Object? publisherId = null,
     Object? rating = freezed,
@@ -299,18 +281,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value._availableDates
           : availableDates // ignore: cast_nullable_to_non_nullable
               as List<AvailableDate>?,
-      bathrooms: freezed == bathrooms
-          ? _value.bathrooms
-          : bathrooms // ignore: cast_nullable_to_non_nullable
-              as num?,
-      beds: freezed == beds
-          ? _value.beds
-          : beds // ignore: cast_nullable_to_non_nullable
-              as num?,
-      bedrooms: freezed == bedrooms
-          ? _value.bedrooms
-          : bedrooms // ignore: cast_nullable_to_non_nullable
-              as num?,
+      availableRooms: freezed == availableRooms
+          ? _value._availableRooms
+          : availableRooms // ignore: cast_nullable_to_non_nullable
+              as List<AvailableRoom>?,
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
@@ -343,10 +317,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.pax
           : pax // ignore: cast_nullable_to_non_nullable
               as num?,
-      price: null == price
+      price: freezed == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
-              as num,
+              as num?,
       province: null == province
           ? _value.province
           : province // ignore: cast_nullable_to_non_nullable
@@ -389,9 +363,7 @@ class _$ListingModelImpl implements _ListingModel {
   _$ListingModelImpl(
       {required this.address,
       final List<AvailableDate>? availableDates,
-      this.bathrooms,
-      this.beds,
-      this.bedrooms,
+      final List<AvailableRoom>? availableRooms,
       required this.category,
       required this.city,
       required this.cooperative,
@@ -400,7 +372,7 @@ class _$ListingModelImpl implements _ListingModel {
       this.isPublished,
       final List<ListingCost>? listingCosts,
       this.pax,
-      required this.price,
+      this.price,
       required this.province,
       required this.publisherId,
       this.rating,
@@ -410,6 +382,7 @@ class _$ListingModelImpl implements _ListingModel {
       this.typeOfTrip,
       this.uid})
       : _availableDates = availableDates,
+        _availableRooms = availableRooms,
         _images = images,
         _listingCosts = listingCosts;
 
@@ -428,12 +401,16 @@ class _$ListingModelImpl implements _ListingModel {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<AvailableRoom>? _availableRooms;
   @override
-  final num? bathrooms;
-  @override
-  final num? beds;
-  @override
-  final num? bedrooms;
+  List<AvailableRoom>? get availableRooms {
+    final value = _availableRooms;
+    if (value == null) return null;
+    if (_availableRooms is EqualUnmodifiableListView) return _availableRooms;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final String category;
   @override
@@ -467,7 +444,7 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   final num? pax;
   @override
-  final num price;
+  final num? price;
   @override
   final String province;
   @override
@@ -488,7 +465,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, bathrooms: $bathrooms, beds: $beds, bedrooms: $bedrooms, category: $category, city: $city, cooperative: $cooperative, description: $description, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, pax: $pax, price: $price, province: $province, publisherId: $publisherId, rating: $rating, timestamp: $timestamp, title: $title, type: $type, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, city: $city, cooperative: $cooperative, description: $description, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, pax: $pax, price: $price, province: $province, publisherId: $publisherId, rating: $rating, timestamp: $timestamp, title: $title, type: $type, typeOfTrip: $typeOfTrip, uid: $uid)';
   }
 
   @override
@@ -499,11 +476,8 @@ class _$ListingModelImpl implements _ListingModel {
             (identical(other.address, address) || other.address == address) &&
             const DeepCollectionEquality()
                 .equals(other._availableDates, _availableDates) &&
-            (identical(other.bathrooms, bathrooms) ||
-                other.bathrooms == bathrooms) &&
-            (identical(other.beds, beds) || other.beds == beds) &&
-            (identical(other.bedrooms, bedrooms) ||
-                other.bedrooms == bedrooms) &&
+            const DeepCollectionEquality()
+                .equals(other._availableRooms, _availableRooms) &&
             (identical(other.category, category) ||
                 other.category == category) &&
             (identical(other.city, city) || other.city == city) &&
@@ -538,9 +512,7 @@ class _$ListingModelImpl implements _ListingModel {
         runtimeType,
         address,
         const DeepCollectionEquality().hash(_availableDates),
-        bathrooms,
-        beds,
-        bedrooms,
+        const DeepCollectionEquality().hash(_availableRooms),
         category,
         city,
         cooperative,
@@ -578,9 +550,7 @@ abstract class _ListingModel implements ListingModel {
   factory _ListingModel(
       {required final String address,
       final List<AvailableDate>? availableDates,
-      final num? bathrooms,
-      final num? beds,
-      final num? bedrooms,
+      final List<AvailableRoom>? availableRooms,
       required final String category,
       required final String city,
       required final ListingCooperative cooperative,
@@ -589,7 +559,7 @@ abstract class _ListingModel implements ListingModel {
       final bool? isPublished,
       final List<ListingCost>? listingCosts,
       final num? pax,
-      required final num price,
+      final num? price,
       required final String province,
       required final String publisherId,
       final num? rating,
@@ -607,11 +577,7 @@ abstract class _ListingModel implements ListingModel {
   @override
   List<AvailableDate>? get availableDates;
   @override
-  num? get bathrooms;
-  @override
-  num? get beds;
-  @override
-  num? get bedrooms;
+  List<AvailableRoom>? get availableRooms;
   @override
   String get category;
   @override
@@ -629,7 +595,7 @@ abstract class _ListingModel implements ListingModel {
   @override
   num? get pax;
   @override
-  num get price;
+  num? get price;
   @override
   String get province;
   @override
@@ -1114,6 +1080,249 @@ abstract class _ListingCost implements ListingCost {
   @override
   @JsonKey(ignore: true)
   _$$ListingCostImplCopyWith<_$ListingCostImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AvailableRoom _$AvailableRoomFromJson(Map<String, dynamic> json) {
+  return _AvailableRoom.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AvailableRoom {
+  String get roomId => throw _privateConstructorUsedError;
+  num get bathrooms => throw _privateConstructorUsedError;
+  num get bedrooms => throw _privateConstructorUsedError;
+  num get beds => throw _privateConstructorUsedError;
+  num get guests => throw _privateConstructorUsedError;
+  num get price => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AvailableRoomCopyWith<AvailableRoom> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AvailableRoomCopyWith<$Res> {
+  factory $AvailableRoomCopyWith(
+          AvailableRoom value, $Res Function(AvailableRoom) then) =
+      _$AvailableRoomCopyWithImpl<$Res, AvailableRoom>;
+  @useResult
+  $Res call(
+      {String roomId,
+      num bathrooms,
+      num bedrooms,
+      num beds,
+      num guests,
+      num price});
+}
+
+/// @nodoc
+class _$AvailableRoomCopyWithImpl<$Res, $Val extends AvailableRoom>
+    implements $AvailableRoomCopyWith<$Res> {
+  _$AvailableRoomCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? roomId = null,
+    Object? bathrooms = null,
+    Object? bedrooms = null,
+    Object? beds = null,
+    Object? guests = null,
+    Object? price = null,
+  }) {
+    return _then(_value.copyWith(
+      roomId: null == roomId
+          ? _value.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
+              as String,
+      bathrooms: null == bathrooms
+          ? _value.bathrooms
+          : bathrooms // ignore: cast_nullable_to_non_nullable
+              as num,
+      bedrooms: null == bedrooms
+          ? _value.bedrooms
+          : bedrooms // ignore: cast_nullable_to_non_nullable
+              as num,
+      beds: null == beds
+          ? _value.beds
+          : beds // ignore: cast_nullable_to_non_nullable
+              as num,
+      guests: null == guests
+          ? _value.guests
+          : guests // ignore: cast_nullable_to_non_nullable
+              as num,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as num,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AvailableRoomImplCopyWith<$Res>
+    implements $AvailableRoomCopyWith<$Res> {
+  factory _$$AvailableRoomImplCopyWith(
+          _$AvailableRoomImpl value, $Res Function(_$AvailableRoomImpl) then) =
+      __$$AvailableRoomImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String roomId,
+      num bathrooms,
+      num bedrooms,
+      num beds,
+      num guests,
+      num price});
+}
+
+/// @nodoc
+class __$$AvailableRoomImplCopyWithImpl<$Res>
+    extends _$AvailableRoomCopyWithImpl<$Res, _$AvailableRoomImpl>
+    implements _$$AvailableRoomImplCopyWith<$Res> {
+  __$$AvailableRoomImplCopyWithImpl(
+      _$AvailableRoomImpl _value, $Res Function(_$AvailableRoomImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? roomId = null,
+    Object? bathrooms = null,
+    Object? bedrooms = null,
+    Object? beds = null,
+    Object? guests = null,
+    Object? price = null,
+  }) {
+    return _then(_$AvailableRoomImpl(
+      roomId: null == roomId
+          ? _value.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
+              as String,
+      bathrooms: null == bathrooms
+          ? _value.bathrooms
+          : bathrooms // ignore: cast_nullable_to_non_nullable
+              as num,
+      bedrooms: null == bedrooms
+          ? _value.bedrooms
+          : bedrooms // ignore: cast_nullable_to_non_nullable
+              as num,
+      beds: null == beds
+          ? _value.beds
+          : beds // ignore: cast_nullable_to_non_nullable
+              as num,
+      guests: null == guests
+          ? _value.guests
+          : guests // ignore: cast_nullable_to_non_nullable
+              as num,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as num,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AvailableRoomImpl implements _AvailableRoom {
+  _$AvailableRoomImpl(
+      {required this.roomId,
+      required this.bathrooms,
+      required this.bedrooms,
+      required this.beds,
+      required this.guests,
+      required this.price});
+
+  factory _$AvailableRoomImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AvailableRoomImplFromJson(json);
+
+  @override
+  final String roomId;
+  @override
+  final num bathrooms;
+  @override
+  final num bedrooms;
+  @override
+  final num beds;
+  @override
+  final num guests;
+  @override
+  final num price;
+
+  @override
+  String toString() {
+    return 'AvailableRoom(roomId: $roomId, bathrooms: $bathrooms, bedrooms: $bedrooms, beds: $beds, guests: $guests, price: $price)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AvailableRoomImpl &&
+            (identical(other.roomId, roomId) || other.roomId == roomId) &&
+            (identical(other.bathrooms, bathrooms) ||
+                other.bathrooms == bathrooms) &&
+            (identical(other.bedrooms, bedrooms) ||
+                other.bedrooms == bedrooms) &&
+            (identical(other.beds, beds) || other.beds == beds) &&
+            (identical(other.guests, guests) || other.guests == guests) &&
+            (identical(other.price, price) || other.price == price));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, roomId, bathrooms, bedrooms, beds, guests, price);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AvailableRoomImplCopyWith<_$AvailableRoomImpl> get copyWith =>
+      __$$AvailableRoomImplCopyWithImpl<_$AvailableRoomImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AvailableRoomImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AvailableRoom implements AvailableRoom {
+  factory _AvailableRoom(
+      {required final String roomId,
+      required final num bathrooms,
+      required final num bedrooms,
+      required final num beds,
+      required final num guests,
+      required final num price}) = _$AvailableRoomImpl;
+
+  factory _AvailableRoom.fromJson(Map<String, dynamic> json) =
+      _$AvailableRoomImpl.fromJson;
+
+  @override
+  String get roomId;
+  @override
+  num get bathrooms;
+  @override
+  num get bedrooms;
+  @override
+  num get beds;
+  @override
+  num get guests;
+  @override
+  num get price;
+  @override
+  @JsonKey(ignore: true)
+  _$$AvailableRoomImplCopyWith<_$AvailableRoomImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

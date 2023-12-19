@@ -12,9 +12,9 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       availableDates: (json['availableDates'] as List<dynamic>?)
           ?.map((e) => AvailableDate.fromJson(e as Map<String, dynamic>))
           .toList(),
-      bathrooms: json['bathrooms'] as num?,
-      beds: json['beds'] as num?,
-      bedrooms: json['bedrooms'] as num?,
+      availableRooms: (json['availableRooms'] as List<dynamic>?)
+          ?.map((e) => AvailableRoom.fromJson(e as Map<String, dynamic>))
+          .toList(),
       category: json['category'] as String,
       city: json['city'] as String,
       cooperative: ListingCooperative.fromJson(
@@ -28,7 +28,7 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           ?.map((e) => ListingCost.fromJson(e as Map<String, dynamic>))
           .toList(),
       pax: json['pax'] as num?,
-      price: json['price'] as num,
+      price: json['price'] as num?,
       province: json['province'] as String,
       publisherId: json['publisherId'] as String,
       rating: json['rating'] as num?,
@@ -44,9 +44,8 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'address': instance.address,
       'availableDates':
           instance.availableDates?.map((e) => e.toJson()).toList(),
-      'bathrooms': instance.bathrooms,
-      'beds': instance.beds,
-      'bedrooms': instance.bedrooms,
+      'availableRooms':
+          instance.availableRooms?.map((e) => e.toJson()).toList(),
       'category': instance.category,
       'city': instance.city,
       'cooperative': instance.cooperative.toJson(),
@@ -109,6 +108,26 @@ Map<String, dynamic> _$$ListingCostImplToJson(_$ListingCostImpl instance) =>
     <String, dynamic>{
       'cost': instance.cost,
       'name': instance.name,
+    };
+
+_$AvailableRoomImpl _$$AvailableRoomImplFromJson(Map<String, dynamic> json) =>
+    _$AvailableRoomImpl(
+      roomId: json['roomId'] as String,
+      bathrooms: json['bathrooms'] as num,
+      bedrooms: json['bedrooms'] as num,
+      beds: json['beds'] as num,
+      guests: json['guests'] as num,
+      price: json['price'] as num,
+    );
+
+Map<String, dynamic> _$$AvailableRoomImplToJson(_$AvailableRoomImpl instance) =>
+    <String, dynamic>{
+      'roomId': instance.roomId,
+      'bathrooms': instance.bathrooms,
+      'bedrooms': instance.bedrooms,
+      'beds': instance.beds,
+      'guests': instance.guests,
+      'price': instance.price,
     };
 
 _$AvailableDateImpl _$$AvailableDateImplFromJson(Map<String, dynamic> json) =>
