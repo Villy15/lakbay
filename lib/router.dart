@@ -21,6 +21,7 @@ import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
 import 'package:lakbay/features/events/events_page.dart';
 import 'package:lakbay/features/home/customer/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
+import 'package:lakbay/features/inbox/read_inbox.dart';
 import 'package:lakbay/features/listings/crud/add_listing.dart';
 import 'package:lakbay/features/listings/crud/read_listing.dart';
 import 'package:lakbay/features/listings/listings_page.dart';
@@ -350,6 +351,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   state: state,
                   child: const InboxPage(),
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'id/:senderId',
+                    pageBuilder: (context, state) =>
+                        buildPageWithSharedAxisTransition<void>(
+                      context: context,
+                      state: state,
+                      child: ReadInboxPage(
+                          senderId: state.pathParameters['senderId']!),
+                      transitionType: SharedAxisTransitionType.vertical,
+                    ),
+                  ),
+                ],
               ),
 
               // Manager dashboard

@@ -20,6 +20,13 @@ final getUserProvider = StreamProvider.family<UserModel, String>((ref, uid) {
   return usersController.getUser(uid);
 });
 
+// getAllUserExceptCurrentUser provider
+final getAllUsersExceptCurrentUserProvider =
+    StreamProvider.family<List<UserModel>, String>((ref, uid) {
+  final usersController = ref.watch(usersControllerProvider.notifier);
+  return usersController.getAllUsersExceptCurrentUser(uid);
+});
+
 class UsersController extends StateNotifier<bool> {
   final UserRepository _userRepository;
   final Ref _ref;
@@ -32,6 +39,11 @@ class UsersController extends StateNotifier<bool> {
   // Read all users
   Stream<List<UserModel>> getAllUsers() {
     return _userRepository.readUsers();
+  }
+
+  // Read all users except current user
+  Stream<List<UserModel>> getAllUsersExceptCurrentUser(String uid) {
+    return _userRepository.readUsersExceptCurrentUser(uid);
   }
 
   // Read a user
