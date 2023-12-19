@@ -20,6 +20,13 @@ final getAllListingsProvider =
   return listingController.getAllListings();
 });
 
+// getListingProvider
+final getListingProvider =
+    StreamProvider.autoDispose.family<ListingModel, String>((ref, uid) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getListing(uid);
+});
+
 final listingControllerProvider =
     StateNotifierProvider<ListingController, bool>((ref) {
   final listingRepository = ref.watch(listingRepositoryProvider);

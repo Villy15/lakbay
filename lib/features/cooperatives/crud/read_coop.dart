@@ -42,8 +42,9 @@ class ReadCoopPage extends ConsumerWidget {
 
     return ref.watch(getCooperativeProvider(coopId)).when(
           data: (CooperativeModel coop) {
+            // debugPrintJson(coop);
             return Scaffold(
-              appBar: _appBar(scaffoldKey, user),
+              appBar: _appBar(scaffoldKey, user, context),
               body: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -88,17 +89,16 @@ class ReadCoopPage extends ConsumerWidget {
             );
           },
           error: (error, stackTrace) => Scaffold(
-            // appBar: CustomAppBar(title: 'Error', user: user),
             body: ErrorText(error: error.toString()),
           ),
           loading: () => const Scaffold(
-            // appBar: CustomAppBar(title: 'Loading...', user: user),
             body: Loader(),
           ),
         );
   }
 
-  AppBar _appBar(GlobalKey<ScaffoldState> scaffoldKey, UserModel? user) {
+  AppBar _appBar(GlobalKey<ScaffoldState> scaffoldKey, UserModel? user,
+      BuildContext context) {
     return AppBar(
       title: const Text("View Cooperative"),
       // Add icon on the right side of the app bar of a person
@@ -111,10 +111,16 @@ class ReadCoopPage extends ConsumerWidget {
             radius: 20.0,
             backgroundImage: user?.profilePic != null && user?.profilePic != ''
                 ? NetworkImage(user!.profilePic)
-                // Use placeholder image if user has no profile pic
-                : const AssetImage('lib/core/images/default_profile_pic.jpg')
-                    as ImageProvider,
-            backgroundColor: Colors.transparent,
+                : null,
+            backgroundColor: Theme.of(context).colorScheme.onBackground,
+            child: user?.profilePic == null || user?.profilePic == ''
+                ? Text(
+                    user?.name[0].toUpperCase() ?? 'L',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.background,
+                    ),
+                  )
+                : null,
           ),
         ),
       ],

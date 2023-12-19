@@ -13,7 +13,7 @@ import 'package:lakbay/models/coop_model.dart';
 class EditCoopPage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
 
-  const EditCoopPage({Key? key, required this.coop}) : super(key: key);
+  const EditCoopPage({super.key, required this.coop});
 
   @override
   ConsumerState<EditCoopPage> createState() => _EditCoopPageState();
@@ -283,15 +283,11 @@ class _EditCoopPageState extends ConsumerState<EditCoopPage> {
 
 class ImagePickerFormField extends FormField<File> {
   ImagePickerFormField({
-    Key? key,
-    FormFieldSetter<File>? onSaved,
-    FormFieldValidator<File>? validator,
-    File? initialValue,
+    super.key,
+    super.onSaved,
+    super.validator,
+    super.initialValue,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
-          initialValue: initialValue,
           builder: (FormFieldState<File> state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,

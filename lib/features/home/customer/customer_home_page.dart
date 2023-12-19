@@ -4,6 +4,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/app_bar_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/features/home/customer/widgets/nestested_accomodation.dart';
+import 'package:lakbay/features/market/widgets/market_card.dart';
 import 'package:lakbay/models/user_model.dart';
 
 class CustomerHomePage extends ConsumerWidget {
@@ -24,7 +25,7 @@ class CustomerHomePage extends ConsumerWidget {
       initialIndex: 0,
       length: 5,
       child: Scaffold(
-        appBar: _appBar(scaffoldKey, user),
+        appBar: _appBar(scaffoldKey, user, context),
         body: const TabBarView(
           children: [
             // Accomodation
@@ -32,7 +33,7 @@ class CustomerHomePage extends ConsumerWidget {
 
             // Food
             Center(
-              child: Text('Food'),
+              child: MarketCard(),
             ),
 
             // Transport
@@ -55,7 +56,8 @@ class CustomerHomePage extends ConsumerWidget {
     );
   }
 
-  PreferredSize _appBar(GlobalKey<ScaffoldState> scaffoldKey, UserModel? user) {
+  PreferredSize _appBar(GlobalKey<ScaffoldState> scaffoldKey, UserModel? user,
+      BuildContext context) {
     List<Widget> tabs = [
       const SizedBox(
         width: 100.0,
@@ -113,13 +115,19 @@ class CustomerHomePage extends ConsumerWidget {
             },
             icon: CircleAvatar(
               radius: 20.0,
-              backgroundImage: user?.profilePic != null &&
-                      user?.profilePic != ''
-                  ? NetworkImage(user!.profilePic)
-                  // Use placeholder image if user has no profile pic
-                  : const AssetImage('lib/core/images/default_profile_pic.jpg')
-                      as ImageProvider,
-              backgroundColor: Colors.transparent,
+              backgroundImage:
+                  user?.profilePic != null && user?.profilePic != ''
+                      ? NetworkImage(user!.profilePic)
+                      : null,
+              backgroundColor: Theme.of(context).colorScheme.onBackground,
+              child: user?.profilePic == null || user?.profilePic == ''
+                  ? Text(
+                      user?.name[0].toUpperCase() ?? 'L',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.background,
+                      ),
+                    )
+                  : null,
             ),
           ),
         ],

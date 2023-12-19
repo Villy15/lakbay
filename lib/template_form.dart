@@ -7,7 +7,7 @@ import 'package:lakbay/models/coop_model.dart';
 class JoinCoopPage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
 
-  const JoinCoopPage({Key? key, required this.coop}) : super(key: key);
+  const JoinCoopPage({super.key, required this.coop});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _JoinCoopPageState();

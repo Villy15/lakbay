@@ -343,7 +343,7 @@ class _$ListingModelImpl implements _ListingModel {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ListingModelImpl &&
@@ -567,7 +567,7 @@ class _$ListingCooperativeImpl implements _ListingCooperative {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ListingCooperativeImpl &&
@@ -724,7 +724,7 @@ class _$ListingImagesImpl implements _ListingImages {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ListingImagesImpl &&

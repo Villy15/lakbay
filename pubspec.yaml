@@ -37,6 +37,7 @@ dependencies:
   firebase_storage: ^11.5.1
   flutter:
     sdk: flutter
+  flutter_chat_ui: ^1.6.10
   flutter_config: ^2.0.2
   flutter_riverpod: ^2.4.6
   fpdart: ^1.1.0

@@ -14,18 +14,23 @@ import 'package:lakbay/features/cooperatives/crud/edit_coop.dart';
 import 'package:lakbay/features/cooperatives/crud/read_coop.dart';
 import 'package:lakbay/features/cooperatives/join_coop.dart';
 import 'package:lakbay/features/cooperatives/leave_coop.dart';
-import 'package:lakbay/features/cooperatives/my_coop/members.dart';
+import 'package:lakbay/features/cooperatives/my_coop/members/members.dart';
+import 'package:lakbay/features/cooperatives/my_coop/members/read_member.dart';
 import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
 import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
 import 'package:lakbay/features/events/events_page.dart';
 import 'package:lakbay/features/home/customer/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/listings/crud/add_listing.dart';
+import 'package:lakbay/features/listings/crud/read_listing.dart';
 import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/market/crud/read_market.dart';
 import 'package:lakbay/features/market/market_page.dart';
+import 'package:lakbay/features/profile/crud/edit_profile.dart';
+import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/user_model.dart';
 // import 'package:lakbay/features/trips/trips_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
@@ -96,6 +101,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       transitionType: SharedAxisTransitionType.vertical,
                     ),
                   ),
+                  GoRoute(
+                    path: 'id/:listingId',
+                    pageBuilder: (context, state) =>
+                        buildPageWithSharedAxisTransition<void>(
+                      context: context,
+                      state: state,
+                      child: ReadListingPage(
+                          listingId: state.pathParameters['listingId']!),
+                      transitionType: SharedAxisTransitionType.vertical,
+                    ),
+                  ),
                 ],
               ),
 
@@ -160,21 +176,35 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
               // View My Coop Members
               GoRoute(
-                path: '/my_coop/functions/members',
-                name: 'coop_members',
-                pageBuilder: (context, state) {
-                  CooperativeModel coop = state.extra as CooperativeModel;
+                  path: '/my_coop/functions/members',
+                  name: 'coop_members',
+                  pageBuilder: (context, state) {
+                    CooperativeModel coop = state.extra as CooperativeModel;
 
-                  return buildPageWithSharedAxisTransition<void>(
-                    context: context,
-                    state: state,
-                    child: MembersPage(
-                      coop: coop,
+                    return buildPageWithSharedAxisTransition<void>(
+                      context: context,
+                      state: state,
+                      child: MembersPage(
+                        coop: coop,
+                      ),
+                      transitionType: SharedAxisTransitionType.vertical,
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      path: ':userId',
+                      name: 'read_member',
+                      pageBuilder: (context, state) {
+                        return buildPageWithSharedAxisTransition<void>(
+                          context: context,
+                          state: state,
+                          child: ReadMemberPage(
+                              userId: state.pathParameters['userId']!),
+                          transitionType: SharedAxisTransitionType.vertical,
+                        );
+                      },
                     ),
-                    transitionType: SharedAxisTransitionType.vertical,
-                  );
-                },
-              ),
+                  ]),
 
               // View My Coop Events
               GoRoute(
@@ -187,6 +217,38 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     context: context,
                     state: state,
                     child: const EventsPage(),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              // Profile Page
+              GoRoute(
+                path: '/profile/id/:userId',
+                pageBuilder: (context, state) {
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: ProfilePage(userId: state.pathParameters['userId']!),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+                routes: const [],
+              ),
+
+              // Edit Profile Page
+              GoRoute(
+                path: '/profile/edit',
+                name: 'edit_profile',
+                pageBuilder: (context, state) {
+                  UserModel user = state.extra as UserModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: EditProfilePage(
+                      user: user,
+                    ),
                     transitionType: SharedAxisTransitionType.vertical,
                   );
                 },

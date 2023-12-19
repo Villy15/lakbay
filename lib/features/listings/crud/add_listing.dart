@@ -813,15 +813,12 @@ class ImagePickerFormField extends FormField<List<File>> {
   final Function(List<File>) onImagesSelected;
 
   ImagePickerFormField({
-    Key? key,
-    FormFieldSetter<List<File>>? onSaved,
-    FormFieldValidator<List<File>>? validator,
+    super.key,
+    super.onSaved,
+    super.validator,
     List<File>? initialValue,
     required this.onImagesSelected,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
           initialValue: initialValue ?? [],
           builder: (FormFieldState<List<File>> state) {
             return Column(

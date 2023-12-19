@@ -45,6 +45,16 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
     context.go('/coops/id/${widget.user?.currentCoop}');
   }
 
+  void viewMyProfileCustomer() {
+    context.pop();
+    context.push('/profile/id/${widget.user?.uid}');
+  }
+
+  void viewMyProfileCoop() {
+    context.pop();
+    context.push('/my_coop/functions/members/${widget.user?.uid}');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -56,14 +66,22 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
             Column(
               children: [
                 CircleAvatar(
+                  radius: 70.0,
                   backgroundImage: widget.user?.profilePic != null &&
                           widget.user?.profilePic != ''
                       ? NetworkImage(widget.user!.profilePic)
-                      // Use placeholder image if user has no profile pic
-                      : const AssetImage(
-                              'lib/core/images/default_profile_pic.jpg')
-                          as ImageProvider,
-                  radius: 70,
+                      : null,
+                  backgroundColor: Theme.of(context).colorScheme.onBackground,
+                  child: widget.user?.profilePic == null ||
+                          widget.user?.profilePic == ''
+                      ? Text(
+                          widget.user?.name[0].toUpperCase() ?? 'L',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.background,
+                            fontSize: 40,
+                          ),
+                        )
+                      : null,
                 ),
                 const SizedBox(height: 10),
                 GestureDetector(
@@ -180,7 +198,11 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                 ListTile(
                   title: const Text('My Profile'),
                   leading: const Icon(Icons.person),
-                  onTap: () => {},
+                  onTap: () => {
+                    widget.user!.isCoopView ?? false
+                        ? viewMyProfileCoop()
+                        : viewMyProfileCustomer()
+                  },
                 ),
 
                 widget.user!.isCoopView ?? false

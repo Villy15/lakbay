@@ -7,6 +7,7 @@ import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_repository.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
 // Get all cooperatives provider
@@ -27,6 +28,13 @@ final coopsControllerProvider =
     StateNotifierProvider<CoopsController, bool>((ref) {
   final coopsRepository = ref.watch(coopsRepositoryProvider);
   return CoopsController(coopsRepository: coopsRepository, ref: ref);
+});
+
+// Get all members provider
+final getAllMembersProvider = StreamProvider.autoDispose
+    .family<List<CooperativeMembers>, String>((ref, coopUid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getAllMembers(coopUid);
 });
 
 class CoopsController extends StateNotifier<bool> {
@@ -134,6 +142,22 @@ class CoopsController extends StateNotifier<bool> {
             .read(usersControllerProvider.notifier)
             .editUserAfterJoinCoop(user!.uid, updatedUser!);
 
+        var coopMember = CooperativeMembers(
+          uid: user.uid,
+          privileges: [],
+          role: CooperativeMembersRole(
+            committeeName: '',
+            role: 'Member',
+          ),
+        );
+
+        // Add user to members in Coop
+        _ref.read(coopsControllerProvider.notifier).addMember(
+              coop.uid!,
+              coopMember,
+              context,
+            );
+
         state = false;
         showSnackBar(context, 'Cooperative joined successfully');
         context.go('/manager_dashboard');
@@ -172,6 +196,13 @@ class CoopsController extends StateNotifier<bool> {
             .read(usersControllerProvider.notifier)
             .editUserAfterJoinCoop(user!.uid, updatedUser!);
 
+        // Remove user from members in Coop
+        _ref.read(coopsControllerProvider.notifier).removeMember(
+              coop.uid!,
+              user.uid,
+              context,
+            );
+
         state = false;
         showSnackBar(context, 'Cooperative left successfully');
         context.go('/coops');
@@ -189,5 +220,55 @@ class CoopsController extends StateNotifier<bool> {
   // Read a cooperative
   Stream<CooperativeModel> getCooperative(String uid) {
     return _coopsRepository.readCoop(uid);
+  }
+
+  // Real all members
+  Stream<List<CooperativeMembers>> getAllMembers(String coopUid) {
+    return _coopsRepository.readMembers(coopUid);
+  }
+
+  // Subcollection
+  // Add Member
+  void addMember(String coopUid, CooperativeMembers coopMember,
+      BuildContext context) async {
+    state = true;
+    final result = await _coopsRepository.addMember(coopUid, coopMember);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) {
+        // Handle the success here
+        state = false;
+        // showSnackBar(context, 'Member added successfully');
+        // context.pop();
+        // _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
+  }
+
+  // Delete Member
+  void removeMember(
+      String coopUid, String memberUid, BuildContext context) async {
+    state = true;
+    final result = await _coopsRepository.deleteMember(coopUid, memberUid);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) {
+        // Handle the success here
+        state = false;
+        // showSnackBar(context, 'Member removed successfully');
+        // context.pop();
+        // _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
   }
 }

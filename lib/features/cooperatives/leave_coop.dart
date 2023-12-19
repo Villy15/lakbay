@@ -10,7 +10,7 @@ import 'package:lakbay/models/coop_model.dart';
 class LeaveCoopPage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
 
-  const LeaveCoopPage({Key? key, required this.coop}) : super(key: key);
+  const LeaveCoopPage({super.key, required this.coop});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _LeaveCoopPageState();

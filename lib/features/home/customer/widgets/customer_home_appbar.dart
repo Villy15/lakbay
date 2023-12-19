@@ -120,10 +120,17 @@ class _CustomerHomeAppBarState extends ConsumerState<CustomerHomeAppBar>
               backgroundImage: widget.user?.profilePic != null &&
                       widget.user?.profilePic != ''
                   ? NetworkImage(widget.user!.profilePic)
-                  // Use placeholder image if user has no profile pic
-                  : const AssetImage('lib/core/images/default_profile_pic.jpg')
-                      as ImageProvider,
-              backgroundColor: Colors.transparent,
+                  : null,
+              backgroundColor: Theme.of(context).colorScheme.onBackground,
+              child: widget.user?.profilePic == null ||
+                      widget.user?.profilePic == ''
+                  ? Text(
+                      widget.user?.name[0].toUpperCase() ?? 'L',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.background,
+                      ),
+                    )
+                  : null,
             ),
           ),
         ],

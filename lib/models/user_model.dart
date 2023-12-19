@@ -28,9 +28,16 @@ class UserModel with _$UserModel {
   // Get user's role
   String get role {
     return cooperativesJoined
-            ?.firstWhere((coop) => coop.cooperativeId == currentCoop)
+            ?.firstWhere(
+              (coop) => coop.cooperativeId == currentCoop,
+              orElse: () => CooperativesJoined(
+                cooperativeId: '',
+                cooperativeName: '',
+                role: 'Guest',
+              ),
+            )
             .role ??
-        '';
+        'Guest';
   }
 }
 
