@@ -9,6 +9,7 @@ String addSpaces(String description) {
   return sentences.join('.');
 }
 
+// ignore: non_constant_identifier_names
 Column TextInBottomSheet(String title, String text, BuildContext context) {
   String descriptionWithSpaces = addSpaces(text);
 

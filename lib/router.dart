@@ -34,6 +34,7 @@ import 'package:lakbay/features/profile/crud/edit_profile.dart';
 import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/user_model.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:lakbay/models/listing_model.dart';
 // import 'package:lakbay/features/trips/trips_page.dart';
