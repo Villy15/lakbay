@@ -32,7 +32,8 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       province: json['province'] as String,
       publisherId: json['publisherId'] as String,
       rating: json['rating'] as num?,
-      timestamp: const TimestampSerializer().fromJson(json['timestamp']),
+      timestamp:
+          const TimestampSerializer().fromJson(json['timestamp'] as Timestamp?),
       title: json['title'] as String,
       type: json['type'] as String,
       typeOfTrip: json['typeOfTrip'] as String?,
@@ -58,19 +59,12 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'province': instance.province,
       'publisherId': instance.publisherId,
       'rating': instance.rating,
-      'timestamp': _$JsonConverterToJson<dynamic, DateTime>(
-          instance.timestamp, const TimestampSerializer().toJson),
+      'timestamp': const TimestampSerializer().toJson(instance.timestamp),
       'title': instance.title,
       'type': instance.type,
       'typeOfTrip': instance.typeOfTrip,
       'uid': instance.uid,
     };
-
-Json? _$JsonConverterToJson<Json, Value>(
-  Value? value,
-  Json? Function(Value value) toJson,
-) =>
-    value == null ? null : toJson(value);
 
 _$ListingCooperativeImpl _$$ListingCooperativeImplFromJson(
         Map<String, dynamic> json) =>
@@ -149,7 +143,7 @@ _$AvailableTimeImpl _$$AvailableTimeImplFromJson(Map<String, dynamic> json) =>
       available: json['available'] as bool,
       currentPax: json['currentPax'] as num,
       maxPax: json['maxPax'] as num,
-      time: const TimestampSerializer().fromJson(json['time']),
+      time: DateTime.parse(json['time'] as String),
     );
 
 Map<String, dynamic> _$$AvailableTimeImplToJson(_$AvailableTimeImpl instance) =>
@@ -157,5 +151,5 @@ Map<String, dynamic> _$$AvailableTimeImplToJson(_$AvailableTimeImpl instance) =>
       'available': instance.available,
       'currentPax': instance.currentPax,
       'maxPax': instance.maxPax,
-      'time': const TimestampSerializer().toJson(instance.time),
+      'time': instance.time.toIso8601String(),
     };

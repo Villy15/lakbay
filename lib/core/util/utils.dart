@@ -50,13 +50,16 @@ void debugPrintJson(Object object) {
   logger.d(prettyString);
 }
 
-class TimestampSerializer implements JsonConverter<DateTime, dynamic> {
+class TimestampSerializer implements JsonConverter<DateTime?, Timestamp?> {
   const TimestampSerializer();
 
   @override
-  DateTime fromJson(dynamic timestamp) => timestamp?.toDate();
+  DateTime? fromJson(Timestamp? timestamp) {
+    return timestamp?.toDate();
+  }
 
   @override
-  dynamic toJson(DateTime? date) =>
-      date != null ? Timestamp.fromDate(date) : null;
+  Timestamp? toJson(DateTime? dateTime) {
+    return dateTime != null ? Timestamp.fromDate(dateTime) : null;
+  }
 }

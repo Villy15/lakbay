@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lakbay/core/util/utils.dart';
 
 class ErrorText extends StatelessWidget {
   final String error;
@@ -7,6 +8,8 @@ class ErrorText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrintJson(error);
+    debugPrintJson(stackTrace);
     return Center(
       child: Text(
         '$error\n$stackTrace',
