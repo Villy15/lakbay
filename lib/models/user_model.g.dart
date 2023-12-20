@@ -12,6 +12,9 @@ _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       profilePic: json['profilePic'] as String,
       isAuthenticated: json['isAuthenticated'] as bool,
+      imageUrl: json['imageUrl'] as String?,
+      firstName: json['firstName'] as String?,
+      lastName: json['lastName'] as String?,
       isCoopView: json['isCoopView'] as bool?,
       cooperativesJoined: (json['cooperativesJoined'] as List<dynamic>?)
           ?.map((e) => CooperativesJoined.fromJson(e as Map<String, dynamic>))
@@ -25,6 +28,9 @@ Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
       'name': instance.name,
       'profilePic': instance.profilePic,
       'isAuthenticated': instance.isAuthenticated,
+      'imageUrl': instance.imageUrl,
+      'firstName': instance.firstName,
+      'lastName': instance.lastName,
       'isCoopView': instance.isCoopView,
       'cooperativesJoined':
           instance.cooperativesJoined?.map((e) => e.toJson()).toList(),

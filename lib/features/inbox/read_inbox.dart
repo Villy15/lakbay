@@ -1,14 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
-import 'package:bubble/bubble.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
@@ -17,73 +15,40 @@ import 'package:lakbay/models/user_model.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:http/http.dart' as http;
+import 'package:mime/mime.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ReadInboxPage extends ConsumerStatefulWidget {
   final String senderId;
-  const ReadInboxPage({super.key, required this.senderId});
+  final types.Room room;
+  const ReadInboxPage({
+    super.key,
+    required this.senderId,
+    required this.room,
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ReadInboxPageState();
 }
 
 class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
+  bool _isAttachmentUploading = false;
+
   @override
   void initState() {
     super.initState();
-    _messages = [
-      types.TextMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: 'dvEosZUoe8i5hE-0vNBbhw==',
-        text: 'Hello',
-      ),
-      types.TextMessage(
-        author: _otherUser,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: 'abcEosZUoe8i5hE-0vNBbhw==',
-        text: 'Hi there',
-      ),
-    ];
 
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
   }
 
-  late List<types.Message> _messages = [];
-  final _user = types.User(
-    id: '82091008-a484-4a89-ae75-a22bf8d6f3ac',
-    firstName: 'Villy',
-    imageUrl:
-        'https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FVilly%2FAFAC%20(square)-1.png?alt=media&token=56e1deef-caaf-413e-bf53-e9a02e78b62f',
-    lastSeen: DateTime.now().millisecondsSinceEpoch,
-  );
-  final _otherUser = types.User(
-    id: 'other-user',
-    firstName: 'Adrian Test',
-    lastSeen: DateTime.now().millisecondsSinceEpoch,
-    imageUrl:
-        'https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FVilly%2FAFAC%20(square)-1.png?alt=media&token=56e1deef-caaf-413e-bf53-e9a02e78b62f',
-  );
-
-  void _addMessage(types.Message message) {
-    setState(() {
-      _messages.insert(0, message);
-      debugPrintJson(_messages);
-    });
-  }
-
   void _handleSendPressed(types.PartialText message) {
-    final textMessage = types.TextMessage(
-      author: _user,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: randomString(),
-      text: message.text,
+    FirebaseChatCore.instance.sendMessage(
+      message,
+      widget.room.id,
     );
-
-    _addMessage(textMessage);
   }
 
   void _handleAttachmentPressed() {
@@ -147,29 +112,44 @@ class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
     );
   }
 
-  String randomString() {
-    final random = Random.secure();
-    final values = List<int>.generate(16, (i) => random.nextInt(255));
-    return base64UrlEncode(values);
-  }
-
   void _handleFileSelection() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.any,
     );
 
     if (result != null && result.files.single.path != null) {
-      final message = types.FileMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: randomString(),
-        name: result.files.single.name,
-        size: result.files.single.size,
-        uri: result.files.single.path!,
-      );
+      _setAttachmentUploading(true);
+      final name = result.files.single.name;
+      final filePath = result.files.single.path!;
+      final file = File(filePath);
 
-      _addMessage(message);
+      try {
+        final reference = FirebaseStorage.instance.ref('rooms/$name');
+        await reference.putFile(file);
+        final uri = await reference.getDownloadURL();
+
+        final message = types.PartialFile(
+          mimeType: lookupMimeType(filePath),
+          name: name,
+          size: result.files.single.size,
+          uri: uri,
+        );
+
+        FirebaseChatCore.instance.sendMessage(
+          message,
+          widget.room.id,
+        );
+        _setAttachmentUploading(false);
+      } finally {
+        _setAttachmentUploading(false);
+      }
     }
+  }
+
+  void _setAttachmentUploading(bool uploading) {
+    setState(() {
+      _isAttachmentUploading = uploading;
+    });
   }
 
   void _handleImageSelection() async {
@@ -180,21 +160,34 @@ class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
     );
 
     if (result != null) {
+      _setAttachmentUploading(true);
+      final file = File(result.path);
+      final size = file.lengthSync();
       final bytes = await result.readAsBytes();
       final image = await decodeImageFromList(bytes);
+      final name = result.name;
 
-      final message = types.ImageMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        height: image.height.toDouble(),
-        id: randomString(),
-        name: result.name,
-        size: bytes.length,
-        uri: result.path,
-        width: image.width.toDouble(),
-      );
+      try {
+        final reference = FirebaseStorage.instance.ref('rooms/$name');
+        await reference.putFile(file);
+        final uri = await reference.getDownloadURL();
 
-      _addMessage(message);
+        final message = types.PartialImage(
+          height: image.height.toDouble(),
+          name: name,
+          size: size,
+          uri: uri,
+          width: image.width.toDouble(),
+        );
+
+        FirebaseChatCore.instance.sendMessage(
+          message,
+          widget.room.id,
+        );
+        _setAttachmentUploading(false);
+      } finally {
+        _setAttachmentUploading(false);
+      }
     }
   }
 
@@ -202,14 +195,9 @@ class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
     types.TextMessage message,
     types.PreviewData previewData,
   ) {
-    final index = _messages.indexWhere((element) => element.id == message.id);
-    final updatedMessage = (_messages[index] as types.TextMessage).copyWith(
-      previewData: previewData,
-    );
+    final updatedMessage = message.copyWith(previewData: previewData);
 
-    setState(() {
-      _messages[index] = updatedMessage;
-    });
+    FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
   }
 
   void _handleMessageTap(BuildContext _, types.Message message) async {
@@ -218,16 +206,11 @@ class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
 
       if (message.uri.startsWith('http')) {
         try {
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
-            isLoading: true,
+          final updatedMessage = message.copyWith(isLoading: true);
+          FirebaseChatCore.instance.updateMessage(
+            updatedMessage,
+            widget.room.id,
           );
-
-          setState(() {
-            _messages[index] = updatedMessage;
-          });
 
           final client = http.Client();
           final request = await client.get(Uri.parse(message.uri));
@@ -240,43 +223,17 @@ class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
             await file.writeAsBytes(bytes);
           }
         } finally {
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
-            isLoading: null,
+          final updatedMessage = message.copyWith(isLoading: false);
+          FirebaseChatCore.instance.updateMessage(
+            updatedMessage,
+            widget.room.id,
           );
-
-          setState(() {
-            _messages[index] = updatedMessage;
-          });
         }
       }
 
       await OpenFilex.open(localPath);
     }
   }
-
-  Widget _bubbleBuilder(
-    Widget child, {
-    required message,
-    required nextMessageInGroup,
-  }) =>
-      Bubble(
-        color: _user.id != message.author.id ||
-                message.type == types.MessageType.image
-            ? const Color(0xfff5f5f7)
-            : const Color(0xff6f61e8),
-        margin: nextMessageInGroup
-            ? const BubbleEdges.symmetric(horizontal: 6)
-            : null,
-        nip: nextMessageInGroup
-            ? BubbleNip.no
-            : _user.id != message.author.id
-                ? BubbleNip.leftBottom
-                : BubbleNip.rightBottom,
-        child: child,
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -290,25 +247,43 @@ class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
               },
               child: Scaffold(
                 appBar: _appBar(user, context),
-                body: Chat(
-                  bubbleBuilder: _bubbleBuilder,
-                  onPreviewDataFetched: _handlePreviewDataFetched,
-                  onMessageTap: _handleMessageTap,
-                  showUserAvatars: true,
-                  showUserNames: true,
-                  messages: _messages,
-                  onAttachmentPressed: _handleAttachmentPressed,
-                  onSendPressed: _handleSendPressed,
-                  user: _user,
-                  theme: DefaultChatTheme(
-                    userAvatarImageBackgroundColor: Colors.transparent,
-                    seenIcon: const Icon(Icons.done_all),
-                    inputTextColor: Theme.of(context).colorScheme.onBackground,
-                    inputBackgroundColor:
-                        Theme.of(context).colorScheme.onSecondary,
-                    backgroundColor: Theme.of(context).colorScheme.background,
-                  ),
-                ),
+                body: StreamBuilder<types.Room>(
+                    initialData: widget.room,
+                    stream: FirebaseChatCore.instance.room(widget.room.id),
+                    builder: (context, snapshot) {
+                      return StreamBuilder<List<types.Message>>(
+                          initialData: const [],
+                          stream: FirebaseChatCore.instance
+                              .messages(snapshot.data!),
+                          builder: (context, snapshot) {
+                            return Chat(
+                              isAttachmentUploading: _isAttachmentUploading,
+                              onPreviewDataFetched: _handlePreviewDataFetched,
+                              onMessageTap: _handleMessageTap,
+                              showUserAvatars: true,
+                              showUserNames: true,
+                              messages: snapshot.data ?? [],
+                              onAttachmentPressed: _handleAttachmentPressed,
+                              onSendPressed: _handleSendPressed,
+                              user: types.User(
+                                id: FirebaseChatCore
+                                        .instance.firebaseUser?.uid ??
+                                    '',
+                              ),
+                              theme: DefaultChatTheme(
+                                userAvatarImageBackgroundColor:
+                                    Colors.transparent,
+                                seenIcon: const Icon(Icons.done_all),
+                                inputTextColor:
+                                    Theme.of(context).colorScheme.onBackground,
+                                inputBackgroundColor:
+                                    Theme.of(context).colorScheme.onSecondary,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.background,
+                              ),
+                            );
+                          });
+                    }),
               ),
             );
           },

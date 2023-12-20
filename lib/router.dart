@@ -32,6 +32,7 @@ import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 // import 'package:lakbay/features/trips/trips_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
@@ -354,14 +355,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: 'id/:senderId',
-                    pageBuilder: (context, state) =>
-                        buildPageWithSharedAxisTransition<void>(
-                      context: context,
-                      state: state,
-                      child: ReadInboxPage(
-                          senderId: state.pathParameters['senderId']!),
-                      transitionType: SharedAxisTransitionType.vertical,
-                    ),
+                    pageBuilder: (context, state) {
+                      types.Room room = state.extra as types.Room;
+
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: ReadInboxPage(
+                          senderId: state.pathParameters['senderId']!,
+                          room: room,
+                        ),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    },
                   ),
                 ],
               ),

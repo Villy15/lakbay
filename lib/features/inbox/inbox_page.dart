@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
@@ -8,9 +9,19 @@ import 'package:lakbay/features/common/providers/app_bar_provider.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 // import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
-void readInbox(BuildContext context, String senderId) {
-  context.push('/inbox/id/$senderId');
+void createRoom(BuildContext context, String senderId, UserModel user) async {
+  // Create a room
+  final room = await FirebaseChatCore.instance.createRoom(
+    types.User(id: senderId),
+  );
+
+  // ignore: use_build_context_synchronously
+  context.push(
+    '/inbox/id/$senderId',
+    extra: room,
+  );
 }
 
 class InboxPage extends ConsumerWidget {
@@ -39,7 +50,7 @@ class InboxPage extends ConsumerWidget {
 
                           return ListTile(
                             onTap: () => {
-                              readInbox(context, user.uid),
+                              createRoom(context, user.uid, user),
                             },
                             title: Text(user.name),
                             subtitle: const Text('Hello po'),
