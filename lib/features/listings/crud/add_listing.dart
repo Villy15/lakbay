@@ -443,10 +443,10 @@ class _AddListingState extends ConsumerState<AddListing> {
                   isScrollControlled: true,
                   context: context,
                   builder: (BuildContext context) {
-                    String roomId = "";
+                    // String roomId = "";
                     TextEditingController roomIdController =
                         TextEditingController();
-                    num price = 0;
+                    // num price = 0;
                     TextEditingController priceController =
                         TextEditingController();
                     num guests = 0;

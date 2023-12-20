@@ -179,11 +179,12 @@ class _ReadListingPageState extends ConsumerState<ReadListingPage> {
             );
           },
           error: (error, stackTrace) => Scaffold(
-            // appBar: CustomAppBar(title: 'Error', user: user),
-            body: ErrorText(error: error.toString()),
+            body: ErrorText(
+              error: error.toString(),
+              stackTrace: stackTrace.toString(),
+            ),
           ),
           loading: () => const Scaffold(
-            // appBar: CustomAppBar(title: 'Loading...', user: user),
             body: Loader(),
           ),
         );

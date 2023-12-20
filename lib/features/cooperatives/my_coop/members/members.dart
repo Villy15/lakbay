@@ -101,7 +101,10 @@ class _MembersPageState extends ConsumerState<MembersPage> {
             );
           },
           error: (error, stackTrace) => Scaffold(
-            body: ErrorText(error: error.toString()),
+            body: ErrorText(
+              error: error.toString(),
+              stackTrace: stackTrace.toString(),
+            ),
           ),
           loading: () => const Scaffold(
             body: Loader(),

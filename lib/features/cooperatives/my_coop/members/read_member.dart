@@ -69,7 +69,10 @@ class _ReadMemberPageState extends ConsumerState<ReadMemberPage> {
                     );
                   },
                   error: (error, stackTrace) => Scaffold(
-                    body: ErrorText(error: error.toString()),
+                    body: ErrorText(
+                      error: error.toString(),
+                      stackTrace: stackTrace.toString(),
+                    ),
                   ),
                   loading: () => const Scaffold(
                     body: Loader(),
@@ -77,11 +80,12 @@ class _ReadMemberPageState extends ConsumerState<ReadMemberPage> {
                 );
           },
           error: (error, stackTrace) => Scaffold(
-            // appBar: CustomAppBar(title: 'Error', user: user),
-            body: ErrorText(error: error.toString()),
+            body: ErrorText(
+              error: error.toString(),
+              stackTrace: stackTrace.toString(),
+            ),
           ),
           loading: () => const Scaffold(
-            // appBar: CustomAppBar(title: 'Loading...', user: user),
             body: Loader(),
           ),
         );

@@ -89,7 +89,10 @@ class ReadCoopPage extends ConsumerWidget {
             );
           },
           error: (error, stackTrace) => Scaffold(
-            body: ErrorText(error: error.toString()),
+            body: ErrorText(
+              error: error.toString(),
+              stackTrace: stackTrace.toString(),
+            ),
           ),
           loading: () => const Scaffold(
             body: Loader(),

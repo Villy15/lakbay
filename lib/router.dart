@@ -436,7 +436,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       },
       errorBuilder: (context, state) {
         return Scaffold(
-          body: ErrorText(error: state.error.toString()),
+          body: ErrorText(error: state.error.toString(), stackTrace: ''),
         );
       });
 });

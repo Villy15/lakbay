@@ -54,8 +54,9 @@ class TimestampSerializer implements JsonConverter<DateTime, dynamic> {
   const TimestampSerializer();
 
   @override
-  DateTime fromJson(dynamic timestamp) => timestamp.toDate();
+  DateTime fromJson(dynamic timestamp) => timestamp?.toDate();
 
   @override
-  Timestamp toJson(DateTime date) => Timestamp.fromDate(date);
+  dynamic toJson(DateTime? date) =>
+      date != null ? Timestamp.fromDate(date) : null;
 }
