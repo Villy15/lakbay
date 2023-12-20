@@ -71,7 +71,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height / 8,
+            top: MediaQuery.of(context).size.height / 12,
             left: MediaQuery.of(context).size.width / 12,
             right: MediaQuery.of(context).size.width / 12,
             child: SizedBox(

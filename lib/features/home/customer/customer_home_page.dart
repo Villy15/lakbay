@@ -62,36 +62,36 @@ class CustomerHomePage extends ConsumerWidget {
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.hotel),
+          icon: Icon(Icons.hotel_outlined),
           child: Flexible(child: Text('Accomodation')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.food_bank),
+          icon: Icon(Icons.restaurant_outlined),
           child: Flexible(child: Text('Food')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.car_rental),
+          icon: Icon(Icons.directions_bus_outlined),
           child: Flexible(child: Text('Transport')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.tour),
+          icon: Icon(Icons.map_outlined),
           child: Flexible(child: Text('Tours')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.shopping_bag),
-          child: Flexible(child: Text('Products')),
+          icon: Icon(Icons.movie_creation_outlined),
+          child: Flexible(child: Text('Entertainment')),
         ),
       ),
     ];
