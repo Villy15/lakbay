@@ -64,15 +64,9 @@ class _MyAppState extends ConsumerState<MyApp> {
                   ref.watch(goRouterProvider).routeInformationProvider,
             );
           },
-          error: (error, stackTrace) => Scaffold(
-            body: ErrorText(
-              error: error.toString(),
-              stackTrace: stackTrace.toString(),
-            ),
-          ),
-          loading: () => const Scaffold(
-            body: Loader(),
-          ),
+          error: (error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString()),
+          loading: () => const Loader(),
         );
   }
 
