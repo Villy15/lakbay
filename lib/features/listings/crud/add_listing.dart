@@ -41,6 +41,7 @@ class _AddListingState extends ConsumerState<AddListing> {
       TextEditingController(text: 'A wonderful place to stay');
   final _priceController = TextEditingController(text: '1000');
   String type = 'Nature-Based';
+  num guests = 0;
 
   // Step 2
   //Accommodation
@@ -51,6 +52,7 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   // Step 4
   List<File>? _images;
+  List<File>? _menuImgs;
 
   @override
   void initState() {
@@ -140,11 +142,11 @@ class _AddListingState extends ConsumerState<AddListing> {
           case "Accommodation":
             return "Room Availability";
           case "Transport":
-            return "";
+            return "Transportation Details";
           case "Tours":
             return "";
           case "Food":
-            return "";
+            return "Food Service Details";
           case "Entertainment":
             return "";
         }
@@ -154,6 +156,10 @@ class _AddListingState extends ConsumerState<AddListing> {
         return 'Where are you located?';
 
       case 4:
+        switch (category) {
+          case "Food":
+            return "Add photo/s here";
+        }
         return 'Add some photos';
 
       case 5:
@@ -209,6 +215,10 @@ class _AddListingState extends ConsumerState<AddListing> {
         switch (category) {
           case "Accommodation":
             return Step2Accommodation(coop: widget.coop);
+          case "Transport":
+            return step2Transport(context);
+          case "Food":
+            return step2Food(context);
         }
         return const Text("No Supporting Details");
       case 3:

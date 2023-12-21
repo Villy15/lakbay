@@ -209,38 +209,69 @@ class _NestedTabBarCommitteesState extends State<NestedTabBarCommittees>
 
   List<Widget> tabs = [
     const SizedBox(
-      width: 100.0,
+      width: 150.0,
       child: Tab(
-        icon: Icon(Icons.beach_access),
-        child: Flexible(child: Text('Tourism')),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.beach_access),
+            SizedBox(width: 4.0),
+            Text('Tourism'),
+          ],
+        ),
       ),
     ),
     const SizedBox(
-      width: 100.0,
+      width: 150.0,
       child: Tab(
-        icon: Icon(Icons.event),
-        child: Flexible(child: Text('Events')),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.event),
+            SizedBox(width: 4.0),
+            Text('Events'),
+          ],
+        ),
       ),
     ),
     const SizedBox(
-      width: 100.0,
+      width: 150.0,
       child: Tab(
-        icon: Icon(Icons.model_training),
-        child: Flexible(child: Text('Training')),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.model_training),
+            SizedBox(width: 4.0),
+            Text('Training'),
+          ],
+        ),
       ),
     ),
     const SizedBox(
-      width: 100.0,
+      width: 150.0,
       child: Tab(
-        icon: Icon(Icons.how_to_vote),
-        child: Flexible(child: Text('Election')),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.how_to_vote),
+            SizedBox(width: 4.0),
+            Text('Election'),
+          ],
+        ),
       ),
     ),
     const SizedBox(
-      width: 100.0,
+      width: 150.0,
       child: Tab(
-        icon: Icon(Icons.fact_check),
-        child: Flexible(child: Text('Audit')),
+        // icon: Icon(Icons.pool_outlned),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.fact_check),
+            SizedBox(width: 4.0),
+            Text('Audit'),
+          ],
+        ),
       ),
     ),
   ];

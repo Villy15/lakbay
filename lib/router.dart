@@ -14,6 +14,7 @@ import 'package:lakbay/features/cooperatives/crud/edit_coop.dart';
 import 'package:lakbay/features/cooperatives/crud/read_coop.dart';
 import 'package:lakbay/features/cooperatives/join_coop.dart';
 import 'package:lakbay/features/cooperatives/leave_coop.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/manager_tools_page.dart';
 import 'package:lakbay/features/cooperatives/my_coop/members/members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/members/read_member.dart';
 import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
@@ -215,6 +216,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     context: context,
                     state: state,
                     child: AddListing(
+                      coop: coop,
+                    ),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              // Manager Tools
+              GoRoute(
+                path: '/my_coop/functions/manager_tools',
+                name: 'manager_tools',
+                pageBuilder: (context, state) {
+                  CooperativeModel coop = state.extra as CooperativeModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: ManagerToolsPage(
                       coop: coop,
                     ),
                     transitionType: SharedAxisTransitionType.vertical,
