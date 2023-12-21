@@ -37,9 +37,21 @@ class _MyAppState extends ConsumerState<MyApp> {
     final theme = ref.watch(themeNotifierProvider);
 
     return ref.watch(authStateChangeProvider).when(
-        data: (data) {
-          if (data != null) {
-            checkAndUpdateUserData(ref, data);
+          data: (data) {
+            if (data != null) {
+              checkAndUpdateUserData(ref, data);
+
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                title: 'Lakbay',
+                theme: theme,
+                routerDelegate: ref.watch(goRouterProvider).routerDelegate,
+                routeInformationParser:
+                    ref.watch(goRouterProvider).routeInformationParser,
+                routeInformationProvider:
+                    ref.watch(goRouterProvider).routeInformationProvider,
+              );
+            }
 
             return MaterialApp.router(
               debugShowCheckedModeBanner: false,
@@ -51,21 +63,11 @@ class _MyAppState extends ConsumerState<MyApp> {
               routeInformationProvider:
                   ref.watch(goRouterProvider).routeInformationProvider,
             );
-          }
-
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            title: 'Lakbay',
-            theme: theme,
-            routerDelegate: ref.watch(goRouterProvider).routerDelegate,
-            routeInformationParser:
-                ref.watch(goRouterProvider).routeInformationParser,
-            routeInformationProvider:
-                ref.watch(goRouterProvider).routeInformationProvider,
-          );
-        },
-        error: (error, stackTrace) => ErrorText(error: error.toString()),
-        loading: () => const Loader());
+          },
+          error: (error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString()),
+          loading: () => const Loader(),
+        );
   }
 
   // This will determine if we should refetch the user data

@@ -277,15 +277,11 @@ class _AddCoopPageState extends ConsumerState<AddCoopPage> {
 
 class ImagePickerFormField extends FormField<File> {
   ImagePickerFormField({
-    Key? key,
-    FormFieldSetter<File>? onSaved,
-    FormFieldValidator<File>? validator,
-    File? initialValue,
+    super.key,
+    super.onSaved,
+    super.validator,
+    super.initialValue,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
-          initialValue: initialValue,
           builder: (FormFieldState<File> state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,

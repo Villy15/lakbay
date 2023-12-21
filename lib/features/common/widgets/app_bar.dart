@@ -7,8 +7,7 @@ import 'package:lakbay/models/user_model.dart';
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String title;
   final UserModel? user;
-  const CustomAppBar({Key? key, required this.title, this.user})
-      : super(key: key);
+  const CustomAppBar({super.key, required this.title, this.user});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,10 +25,16 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             radius: 20.0,
             backgroundImage: user?.profilePic != null && user?.profilePic != ''
                 ? NetworkImage(user!.profilePic)
-                // Use placeholder image if user has no profile pic
-                : const AssetImage('lib/core/images/default_profile_pic.jpg')
-                    as ImageProvider,
-            backgroundColor: Colors.transparent,
+                : null,
+            backgroundColor: Theme.of(context).colorScheme.onBackground,
+            child: user?.profilePic == null || user?.profilePic == ''
+                ? Text(
+                    user?.name[0].toUpperCase() ?? 'L',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.background,
+                    ),
+                  )
+                : null,
           ),
         ),
       ],

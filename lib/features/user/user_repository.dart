@@ -27,6 +27,18 @@ class UserRepository {
     });
   }
 
+  // Read all users except current user
+  Stream<List<UserModel>> readUsersExceptCurrentUser(String uid) {
+    return _users.snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) {
+            return UserModel.fromJson(doc.data() as Map<String, dynamic>);
+          })
+          .where((user) => user.uid != uid)
+          .toList();
+    });
+  }
+
   // Read user by uid
   Stream<UserModel> readUser(String uid) {
     return _users.doc(uid).snapshots().map((snapshot) {

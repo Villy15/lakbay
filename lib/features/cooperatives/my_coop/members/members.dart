@@ -2,8 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/error.dart';
+import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/app_bar_provider.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
@@ -16,40 +20,107 @@ class MembersPage extends ConsumerStatefulWidget {
 }
 
 class _MembersPageState extends ConsumerState<MembersPage> {
+  void readMember(UserModel user) {
+    context.push('/my_coop/functions/members/${user.uid}');
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     final scaffoldKey = ref.watch(scaffoldKeyProvider);
 
-    return DefaultTabController(
-      initialIndex: 1,
-      length: 3,
-      child: Scaffold(
-        appBar: _appBar(scaffoldKey, user),
-        body: TabBarView(
-          children: [
-            // Regular Members
-            Container(
-              child: const Center(
-                child: Text('Regular Members'),
+    return ref.watch(getAllMembersProvider(widget.coop.uid!)).when(
+          data: (members) {
+            return DefaultTabController(
+              initialIndex: 0,
+              length: 4,
+              child: Scaffold(
+                appBar: _appBar(scaffoldKey, user),
+                body: TabBarView(
+                  children: [
+                    // All Members
+
+                    ListView.separated(
+                      itemCount: members.length,
+                      itemBuilder: (context, index) {
+                        final member = members[index];
+
+                        return ref.watch(getUserDataProvider(member.uid!)).when(
+                              data: (user) {
+                                return ListTile(
+                                  onTap: () => {
+                                    readMember(user),
+                                  },
+                                  title: Text(user.name),
+                                  subtitle: Text(member.role?.role ?? 'Test'),
+                                  leading: CircleAvatar(
+                                    radius: 20.0,
+                                    backgroundImage: user.profilePic != ''
+                                        ? NetworkImage(user.profilePic)
+                                        : null,
+                                    backgroundColor: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground,
+                                    child: user.profilePic == ''
+                                        ? Text(
+                                            user.name[0].toUpperCase(),
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .background,
+                                            ),
+                                          )
+                                        : null,
+                                  ),
+                                );
+                              },
+                              error: (error, stackTrace) => const SizedBox(),
+                              loading: () => const SizedBox(),
+                            );
+                      },
+                      separatorBuilder: (context, index) => const Divider(),
+                    ),
+
+                    // Regular Members
+                    Container(
+                      child: const Center(
+                        child: Text('Regular Members'),
+                      ),
+                    ),
+                    // Committees
+                    const NestedTabBarCommittees(),
+                    // Board
+                    Container(
+                      child: const Center(
+                        child: Text('Board'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
+            );
+          },
+          error: (error, stackTrace) => Scaffold(
+            body: ErrorText(
+              error: error.toString(),
+              stackTrace: stackTrace.toString(),
             ),
-            // Committees
-            const NestedTabBarCommittees(),
-            // Board
-            Container(
-              child: const Center(
-                child: Text('Board'),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+          loading: () => const Scaffold(
+            body: Loader(),
+          ),
+        );
   }
 
   PreferredSize _appBar(GlobalKey<ScaffoldState> scaffoldKey, UserModel? user) {
     List<Widget> tabs = [
+      const SizedBox(
+        width: 100.0,
+        child: Tab(
+          icon: Icon(Icons.person),
+          child: Flexible(child: Text('All Members')),
+        ),
+      ),
       const SizedBox(
         width: 100.0,
         child: Tab(
@@ -85,20 +156,26 @@ class _MembersPageState extends ConsumerState<MembersPage> {
             },
             icon: CircleAvatar(
               radius: 20.0,
-              backgroundImage: user?.profilePic != null &&
-                      user?.profilePic != ''
-                  ? NetworkImage(user!.profilePic)
-                  // Use placeholder image if user has no profile pic
-                  : const AssetImage('lib/core/images/default_profile_pic.jpg')
-                      as ImageProvider,
-              backgroundColor: Colors.transparent,
+              backgroundImage:
+                  user?.profilePic != null && user?.profilePic != ''
+                      ? NetworkImage(user!.profilePic)
+                      : null,
+              backgroundColor: Theme.of(context).colorScheme.onBackground,
+              child: user?.profilePic == null || user?.profilePic == ''
+                  ? Text(
+                      user?.name[0].toUpperCase() ?? 'L',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.background,
+                      ),
+                    )
+                  : null,
             ),
           ),
         ],
         bottom: TabBar(
-          // tabAlignment: TabAlignment.start,
+          tabAlignment: TabAlignment.start,
           // labelPadding: EdgeInsets.zero,
-          // isScrollable: true,
+          isScrollable: true,
           // indicatorSize: TabBarIndicatorSize.label,
           tabs: tabs,
         ),

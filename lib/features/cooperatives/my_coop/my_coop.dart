@@ -80,11 +80,12 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
             );
           },
           error: (error, stackTrace) => Scaffold(
-            // appBar: CustomAppBar(title: 'Error', user: user),
-            body: ErrorText(error: error.toString()),
+            body: ErrorText(
+              error: error.toString(),
+              stackTrace: stackTrace.toString(),
+            ),
           ),
           loading: () => const Scaffold(
-            // appBar: CustomAppBar(title: 'Loading...', user: user),
             body: Loader(),
           ),
         );
@@ -103,10 +104,16 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
             radius: 20.0,
             backgroundImage: user?.profilePic != null && user?.profilePic != ''
                 ? NetworkImage(user!.profilePic)
-                // Use placeholder image if user has no profile pic
-                : const AssetImage('lib/core/images/default_profile_pic.jpg')
-                    as ImageProvider,
-            backgroundColor: Colors.transparent,
+                : null,
+            backgroundColor: Theme.of(context).colorScheme.onBackground,
+            child: user?.profilePic == null || user?.profilePic == ''
+                ? Text(
+                    user?.name[0].toUpperCase() ?? 'L',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.background,
+                    ),
+                  )
+                : null,
           ),
         ),
       ],

@@ -14,6 +14,19 @@ final usersControllerProvider =
   return UsersController(usersRepository: usersRepository, ref: ref);
 });
 
+// getUser provider
+final getUserProvider = StreamProvider.family<UserModel, String>((ref, uid) {
+  final usersController = ref.watch(usersControllerProvider.notifier);
+  return usersController.getUser(uid);
+});
+
+// getAllUserExceptCurrentUser provider
+final getAllUsersExceptCurrentUserProvider =
+    StreamProvider.family<List<UserModel>, String>((ref, uid) {
+  final usersController = ref.watch(usersControllerProvider.notifier);
+  return usersController.getAllUsersExceptCurrentUser(uid);
+});
+
 class UsersController extends StateNotifier<bool> {
   final UserRepository _userRepository;
   final Ref _ref;
@@ -26,6 +39,11 @@ class UsersController extends StateNotifier<bool> {
   // Read all users
   Stream<List<UserModel>> getAllUsers() {
     return _userRepository.readUsers();
+  }
+
+  // Read all users except current user
+  Stream<List<UserModel>> getAllUsersExceptCurrentUser(String uid) {
+    return _userRepository.readUsersExceptCurrentUser(uid);
   }
 
   // Read a user
@@ -77,5 +95,20 @@ class UsersController extends StateNotifier<bool> {
                 : 'Switched to Customer View');
       },
     );
+  }
+
+  void editProfile(BuildContext context, String uid, UserModel user) {
+    state = true;
+    _userRepository.editUser(uid, user).then((result) {
+      state = false;
+      result.fold(
+        (l) => showSnackBar(context, l.message),
+        (r) {
+          context.pop();
+          _ref.read(userProvider.notifier).setUser(user);
+          showSnackBar(context, 'Profile Updated');
+        },
+      );
+    });
   }
 }
