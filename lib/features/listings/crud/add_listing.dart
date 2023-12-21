@@ -40,6 +40,7 @@ class _AddListingState extends ConsumerState<AddListing> {
       TextEditingController(text: 'A wonderful place to stay');
   final _priceController = TextEditingController(text: '1000');
   String type = 'Nature-Based';
+  num guests = 0;
 
   // Step 2
   //Accommodation
@@ -50,6 +51,7 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   // Step 4
   List<File>? _images;
+  List<File>? _menuImgs;
 
   @override
   void initState() {
@@ -133,7 +135,7 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   String headerText() {
     switch (activeStep) {
-      case 1:
+      case 1: 
         return 'Add details';
 
       case 2:
@@ -141,11 +143,11 @@ class _AddListingState extends ConsumerState<AddListing> {
           case "Accommodation":
             return "Room Availability";
           case "Transport":
-            return "";
+            return "Transportation Details";
           case "Tours":
             return "";
           case "Food":
-            return "";
+            return "Food Service Details";
           case "Entertainment":
             return "";
         }
@@ -155,6 +157,10 @@ class _AddListingState extends ConsumerState<AddListing> {
         return 'Where are you located?';
 
       case 4:
+        switch (category) {
+          case "Food":
+            return "Add photo/s here";
+        }
         return 'Add some photos';
 
       case 5:
@@ -210,6 +216,10 @@ class _AddListingState extends ConsumerState<AddListing> {
         switch (category) {
           case "Accommodation":
             return step2Accommodation(context);
+          case "Transport": 
+            return step2Transport(context);
+          case "Food":
+            return step2Food(context);
         }
         return const Text("No Supporting Details");
       case 3:
@@ -713,6 +723,384 @@ class _AddListingState extends ConsumerState<AddListing> {
         ),
       ],
     );
+  }
+
+  Widget step2Transport(BuildContext context) {
+    List<AvailableRoom> availableRooms = [];
+    return Column(
+      children: [
+        ListView.builder(
+            shrinkWrap: true,
+            itemCount: availableRooms.length,
+            itemBuilder: ((context, index) {
+              return Text(availableRooms[index].roomId);
+            })),
+        Center(
+          child: ElevatedButton(
+            onPressed: () {
+              showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    String roomId = "";
+                    TextEditingController roomIdController =
+                        TextEditingController();
+                    num price = 0;
+                    TextEditingController priceController =
+                        TextEditingController();
+                    num guests = 0;
+                    num bedrooms = 0;
+                    num beds = 0;
+                    num bathrooms = 0;
+                    return Container(
+                        margin: const EdgeInsets.only(top: 20),
+                        height: MediaQuery.sizeOf(context).height / 1.3,
+                        width: double.infinity,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: TextFormField(
+                                controller: roomIdController,
+                                decoration: const InputDecoration(
+                                  icon: Icon(Icons.title_outlined),
+                                  border: OutlineInputBorder(),
+                                  labelText: "Room Id",
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 10,
+                                      horizontal: 12), // Adjust padding here
+                                ),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                                height: MediaQuery.sizeOf(context).height / 50),
+                            Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: TextFormField(
+                                controller: priceController,
+                                maxLines: null,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        decimal: true),
+                                decoration: const InputDecoration(
+                                  icon: Icon(
+                                    Icons.money_outlined,
+                                  ),
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Price',
+                                  prefix: Text('₱'),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 10,
+                                      horizontal: 12), // Adjust padding here
+                                ),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                      color: Theme.of(context).dividerColor),
+                                ),
+                              ),
+                              child: ListTile(
+                                title: const Row(
+                                  children: [
+                                    Icon(Icons.people_alt_outlined),
+                                    SizedBox(width: 10),
+                                    Text('Guests'),
+                                  ],
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.remove),
+                                      onPressed: () {
+                                        if (guests > 1) {
+                                          setState(() {
+                                            guests--;
+                                          });
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text('$guests',
+                                        style: const TextStyle(fontSize: 16)),
+                                    const SizedBox(width: 10),
+                                    IconButton(
+                                      icon: const Icon(Icons.add),
+                                      onPressed: () {
+                                        setState(() {
+                                          guests++;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                      color: Theme.of(context).dividerColor),
+                                ),
+                              ),
+                              child: ListTile(
+                                title: const Row(
+                                  children: [
+                                    Icon(Icons.king_bed_outlined),
+                                    SizedBox(width: 10),
+                                    Text('Bedrooms'),
+                                  ],
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.remove),
+                                      onPressed: () {
+                                        if (bedrooms > 1) {
+                                          setState(() {
+                                            bedrooms--;
+                                          });
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text('$bedrooms',
+                                        style: const TextStyle(fontSize: 16)),
+                                    const SizedBox(width: 10),
+                                    IconButton(
+                                      icon: const Icon(Icons.add),
+                                      onPressed: () {
+                                        setState(() {
+                                          bedrooms++;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                      color: Theme.of(context).dividerColor),
+                                ),
+                              ),
+                              child: ListTile(
+                                title: const Row(
+                                  children: [
+                                    Icon(Icons.single_bed_outlined),
+                                    SizedBox(width: 10),
+                                    Text('Beds'),
+                                  ],
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.remove),
+                                      onPressed: () {
+                                        if (beds > 1) {
+                                          setState(() {
+                                            beds--;
+                                          });
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text('$beds',
+                                        style: const TextStyle(fontSize: 16)),
+                                    const SizedBox(width: 10),
+                                    IconButton(
+                                      icon: const Icon(Icons.add),
+                                      onPressed: () {
+                                        setState(() {
+                                          beds++;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                      color: Theme.of(context).dividerColor),
+                                ),
+                              ),
+                              child: ListTile(
+                                title: const Row(
+                                  children: [
+                                    Icon(Icons.bathtub_outlined),
+                                    SizedBox(width: 10),
+                                    Text('Bathrooms'),
+                                  ],
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.remove),
+                                      onPressed: () {
+                                        if (bathrooms > 1) {
+                                          setState(() {
+                                            bathrooms--;
+                                          });
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text('$bathrooms',
+                                        style: const TextStyle(fontSize: 16)),
+                                    const SizedBox(width: 10),
+                                    IconButton(
+                                      icon: const Icon(Icons.add),
+                                      onPressed: () {
+                                        setState(() {
+                                          bathrooms++;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: MediaQuery.sizeOf(context).height / 30,
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    availableRooms.add(AvailableRoom(
+                                        roomId: roomIdController.text,
+                                        bathrooms: bathrooms,
+                                        bedrooms: bedrooms,
+                                        beds: beds,
+                                        guests: guests,
+                                        price:
+                                            num.parse(priceController.text)));
+                                  });
+                                },
+                                child: const Text("Confirm"))
+                          ],
+                        ));
+                  });
+            },
+            child: const Text('Add Room'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget step2Food(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: Theme.of(context).dividerColor),
+              ),
+            ),
+            child: ListTile(
+              title: const Row(
+                children: [
+                  Icon(Icons.people_alt_outlined),
+                  SizedBox(width: 10),
+                  Text('Guests'),
+                ],
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      if (guests >= 1) {
+                        setState(() {
+                          guests--;
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(width: 10),
+                  Text('$guests', style: const TextStyle(fontSize: 16)),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      setState(() {
+                        guests++;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            )
+          ),
+        const SizedBox(height: 30),
+        const Text(
+          'Add Menu/s here:',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500
+          )
+        ),
+        GestureDetector(
+        child: Row(
+          children: [
+            Icon(
+              Icons.image_outlined,
+              color: Theme.of(context).iconTheme.color,
+            ),
+            const SizedBox(
+                width:
+                    15), // Add some spacing between the icon and the container
+            Expanded(
+              child: ImagePickerFormField(
+                context: context,
+                initialValue: _menuImgs,
+                onSaved: (List<File>? files) {
+                  _menuImgs = files;
+                },
+                validator: (List<File>? files) {
+                  if (files == null || files.isEmpty) {
+                    return 'Please select some images';
+                  }
+                  return null;
+                },
+                onImagesSelected: (List<File> files) {
+                  _menuImgs = files;
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      ]
+    );
+    
   }
 
   Widget step3(BuildContext context) {
