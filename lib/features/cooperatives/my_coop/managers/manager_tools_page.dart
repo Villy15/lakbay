@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/models/coop_model.dart';
 
 class ManagerToolsPage extends ConsumerWidget {
@@ -24,13 +25,14 @@ class ManagerToolsPage extends ConsumerWidget {
           ),
       // Delete cooperative
       'Delete Cooperative': () => ListTile(
-            leading: const Icon(Icons.delete),
-            title: const Text('Delete Cooperative'),
-            onTap: () => context.pushNamed(
-              'delete_coop',
-              extra: coop,
-            ),
-          ),
+          leading: const Icon(Icons.delete),
+          title: const Text('Delete Cooperative'),
+          onTap: () => {
+                showSnackBar(
+                  context,
+                  'Delete Cooperative',
+                )
+              }),
     };
 
     return Scaffold(
