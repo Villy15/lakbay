@@ -215,12 +215,12 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
 
                 // View Current Cooperative
                 widget.user!.isCoopView ?? false
-                    ? ListTile(
+                    ? const SizedBox.shrink()
+                    : ListTile(
                         title: const Text('View Current Cooperative'),
                         leading: const Icon(Icons.group),
                         onTap: () => {viewCurrentCooperative(ref)},
-                      )
-                    : const SizedBox.shrink(),
+                      ),
 
                 widget.user!.isManager
                     ? const SizedBox.shrink()

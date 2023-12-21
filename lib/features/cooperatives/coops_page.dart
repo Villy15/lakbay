@@ -168,9 +168,7 @@ class CoopsPage extends ConsumerWidget {
                           stackTrace: stackTrace.toString(),
                         ),
                       ),
-                      loading: () => const Scaffold(
-                        body: Loader(),
-                      ),
+                      loading: () => const Loader(),
                     )
               ],
             ),

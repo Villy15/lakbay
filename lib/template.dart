@@ -10,14 +10,15 @@ class Template extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-        appBar: CustomAppBar(title: 'Template'),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Center(child: Text('Template Page')),
-            ],
-          ),
-        ));
+      appBar: CustomAppBar(title: 'Template'),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Center(child: Text('Template Page')),
+          ],
+        ),
+      ),
+    );
   }
 }
 
