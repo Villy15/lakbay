@@ -42,7 +42,6 @@ final getAllMembersProvider = StreamProvider.autoDispose
 final getAllMembersNotInCommitteeProvider = StreamProvider.autoDispose
     .family<List<CooperativeMembers>, CommitteeParams>((ref, committeeParams) {
   final coopsController = ref.watch(coopsControllerProvider.notifier);
-  debugPrint('getAllMembersNotInCommitteeProvider');
   return coopsController.getAllMembersNotInCommittee(
       committeeParams.coopUid, committeeParams.committeeName);
 });
@@ -242,7 +241,6 @@ class CoopsController extends StateNotifier<bool> {
   // Real all members that does not belong to a committee name
   Stream<List<CooperativeMembers>> getAllMembersNotInCommittee(
       String coopUid, String committeeName) {
-    debugPrint('getAllMembersNotInCommittee: $coopUid, $committeeName');
     return _coopsRepository.readMembersNotInCommittee(coopUid, committeeName);
   }
 

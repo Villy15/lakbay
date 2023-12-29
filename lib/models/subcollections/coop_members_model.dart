@@ -29,6 +29,15 @@ class CooperativeMembers with _$CooperativeMembers {
         false;
   }
 
+  // What role does he have in the committee
+  String? committeeRole(String committeeName) {
+    return committees
+        ?.firstWhere(
+          (committee) => committee.committeeName == committeeName,
+        )
+        .role;
+  }
+
   // Is Committee Manager
   bool get isCommitteeManager {
     return committees?.any((committee) => committee.role == 'Manager') ?? false;
