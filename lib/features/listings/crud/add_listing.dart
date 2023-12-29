@@ -216,7 +216,7 @@ class _AddListingState extends ConsumerState<AddListing> {
           case "Accommodation":
             return Step2Accommodation(coop: widget.coop);
           case "Transport":
-          // return step2Transport(context);
+            return step2Transport(context);
           case "Food":
           // return step2Food(context);
         }
