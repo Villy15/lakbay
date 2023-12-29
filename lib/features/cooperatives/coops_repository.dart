@@ -110,6 +110,37 @@ class CoopsRepository {
     }
   }
 
+  // Update a member in members subcollection
+  FutureVoid updateMember(
+      String coopId, String uid, CooperativeMembers coopMember) async {
+    try {
+      return right(await members(coopId).doc(uid).update(coopMember.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Update a list of members in members subcollection
+  FutureVoid updateMembers(
+      String coopId, List<CooperativeMembers> coopMembers) async {
+    try {
+      var batch = _firestore.batch();
+
+      for (var coopMember in coopMembers) {
+        var doc = members(coopId).doc(coopMember.uid);
+        batch.update(doc, coopMember.toJson());
+      }
+
+      return right(await batch.commit());
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   // Read members
   Stream<List<CooperativeMembers>> readMembers(String coopId) {
     return members(coopId).snapshots().map((snapshot) {

@@ -135,7 +135,7 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   String headerText() {
     switch (activeStep) {
-      case 1: 
+      case 1:
         return 'Add details';
 
       case 2:
@@ -216,7 +216,7 @@ class _AddListingState extends ConsumerState<AddListing> {
         switch (category) {
           case "Accommodation":
             return step2Accommodation(context);
-          case "Transport": 
+          case "Transport":
             return step2Transport(context);
           case "Food":
             return step2Food(context);
@@ -742,10 +742,10 @@ class _AddListingState extends ConsumerState<AddListing> {
                   isScrollControlled: true,
                   context: context,
                   builder: (BuildContext context) {
-                    String roomId = "";
+                    // String roomId = "";
                     TextEditingController roomIdController =
                         TextEditingController();
-                    num price = 0;
+                    // num price = 0;
                     TextEditingController priceController =
                         TextEditingController();
                     num guests = 0;
@@ -1015,59 +1015,52 @@ class _AddListingState extends ConsumerState<AddListing> {
   }
 
   Widget step2Food(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Theme.of(context).dividerColor),
-              ),
+    return Column(children: [
+      Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Theme.of(context).dividerColor),
             ),
-            child: ListTile(
-              title: const Row(
-                children: [
-                  Icon(Icons.people_alt_outlined),
-                  SizedBox(width: 10),
-                  Text('Guests'),
-                ],
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.remove),
-                    onPressed: () {
-                      if (guests >= 1) {
-                        setState(() {
-                          guests--;
-                        });
-                      }
-                    },
-                  ),
-                  const SizedBox(width: 10),
-                  Text('$guests', style: const TextStyle(fontSize: 16)),
-                  const SizedBox(width: 10),
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      setState(() {
-                        guests++;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            )
           ),
-        const SizedBox(height: 30),
-        const Text(
-          'Add Menu/s here:',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500
-          )
-        ),
-        GestureDetector(
+          child: ListTile(
+            title: const Row(
+              children: [
+                Icon(Icons.people_alt_outlined),
+                SizedBox(width: 10),
+                Text('Guests'),
+              ],
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.remove),
+                  onPressed: () {
+                    if (guests >= 1) {
+                      setState(() {
+                        guests--;
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(width: 10),
+                Text('$guests', style: const TextStyle(fontSize: 16)),
+                const SizedBox(width: 10),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    setState(() {
+                      guests++;
+                    });
+                  },
+                ),
+              ],
+            ),
+          )),
+      const SizedBox(height: 30),
+      const Text('Add Menu/s here:',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+      GestureDetector(
         child: Row(
           children: [
             Icon(
@@ -1098,9 +1091,7 @@ class _AddListingState extends ConsumerState<AddListing> {
           ],
         ),
       ),
-      ]
-    );
-    
+    ]);
   }
 
   Widget step3(BuildContext context) {

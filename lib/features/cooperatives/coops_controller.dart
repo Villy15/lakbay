@@ -149,6 +149,8 @@ class CoopsController extends StateNotifier<bool> {
             committeeName: '',
             role: 'Member',
           ),
+          committees: [],
+          timestamp: DateTime.now(),
         );
 
         // Add user to members in Coop
@@ -268,6 +270,51 @@ class CoopsController extends StateNotifier<bool> {
         // showSnackBar(context, 'Member removed successfully');
         // context.pop();
         // _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
+  }
+
+  // Update Member
+  void updateMember(String coopUid, String memberUid,
+      CooperativeMembers coopMember, BuildContext context) async {
+    state = true;
+    final result =
+        await _coopsRepository.updateMember(coopUid, memberUid, coopMember);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) {
+        // Handle the success here
+        state = false;
+        showSnackBar(context, 'Member updated successfully');
+        // context.pop();
+        // _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
+  }
+
+  // Update a list of members
+  void updateMembers(String coopUid, List<CooperativeMembers> coopMembers,
+      BuildContext context) async {
+    state = true;
+    final result = await _coopsRepository.updateMembers(coopUid, coopMembers);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) {
+        // Handle the success here
+        state = false;
+        showSnackBar(context, 'Members updated successfully');
+        context.pop();
+        _ref.read(navBarVisibilityProvider.notifier).show();
       },
     );
   }
