@@ -8,6 +8,7 @@ import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/typdef.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
+import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
 
 final coopsRepositoryProvider = Provider((ref) {
   return CoopsRepository(firestore: ref.watch(firestoreProvider));
@@ -77,6 +78,13 @@ class CoopsRepository {
         .collection(FirebaseConstants.membersSubCollection);
   }
 
+  // Privileges Subcollection
+  CollectionReference privileges(String coopId) {
+    return _communities
+        .doc(coopId)
+        .collection(FirebaseConstants.privilegesSubCollection);
+  }
+
   // Add a member in members subcollection
   FutureEither<String> addMember(
       String coopId, CooperativeMembers coopMember) async {
@@ -141,6 +149,14 @@ class CoopsRepository {
     }
   }
 
+  // Read a member in members subcollection
+  Stream<CooperativeMembers> readMember(String coopId, String uid) {
+    return members(coopId).doc(uid).snapshots().map((snapshot) {
+      return CooperativeMembers.fromJson(
+          snapshot.data() as Map<String, dynamic>);
+    });
+  }
+
   // Read members
   Stream<List<CooperativeMembers>> readMembers(String coopId) {
     return members(coopId).snapshots().map((snapshot) {
@@ -160,5 +176,82 @@ class CoopsRepository {
         return !member.isCommitteeMember(committeeName);
       }).toList();
     });
+  }
+
+  // Add privileges subcollection
+  FutureEither addPrivileges(
+      String coopId, CooperativePrivileges coopPrivileges) async {
+    try {
+      // Generate a new document ID based on the user's ID
+      var doc = privileges(coopId).doc(coopPrivileges.committeeName);
+
+      // Update the uid of the cooperative
+      coopPrivileges = coopPrivileges.copyWith(committeeName: doc.id);
+
+      // Add the cooperative to the database
+      await doc.set(coopPrivileges.toJson());
+
+      // Return the uid of the newly added cooperative
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Read privileges
+  Stream<List<CooperativePrivileges>> readPrivileges(String coopId) {
+    return privileges(coopId).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return CooperativePrivileges.fromJson(
+            doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  // Read privileges by committeeName
+  Stream<CooperativePrivileges> readPrivilegesByCommitteeName(
+      String coopId, String committeeName) {
+    return privileges(coopId).doc(committeeName).snapshots().map((snapshot) {
+      return CooperativePrivileges.fromJson(
+          snapshot.data() as Map<String, dynamic>);
+    });
+  }
+
+  // Update privileges
+  FutureVoid updatePrivileges(
+      String coopId, CooperativePrivileges coopPrivileges) async {
+    try {
+      return right(await privileges(coopId)
+          .doc(coopPrivileges.committeeName)
+          .update(coopPrivileges.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Initialize privileges subcollection
+  FutureEither initializePrivilege(
+      String coopId, CooperativePrivileges coopPrivileges) async {
+    try {
+      // Generate a new document ID based on the user's ID
+      var doc = privileges(coopId).doc(coopPrivileges.committeeName);
+
+      // Update the uid of the cooperative
+      coopPrivileges = coopPrivileges.copyWith(committeeName: doc.id);
+
+      // Add the cooperative to the database
+      await doc.set(coopPrivileges.toJson());
+
+      // Return the uid of the newly added cooperative
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 }

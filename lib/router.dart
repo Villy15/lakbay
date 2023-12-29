@@ -16,6 +16,7 @@ import 'package:lakbay/features/cooperatives/join_coop.dart';
 import 'package:lakbay/features/cooperatives/leave_coop.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/add_committee_members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_committees_page.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/manage_privileges_page.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manager_tools_page.dart';
 import 'package:lakbay/features/cooperatives/my_coop/members/members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/members/read_member.dart';
@@ -421,6 +422,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         child: ManageCommitteesPage(
                           coop: coop,
                           committeeName: state.pathParameters['committeeName']!,
+                        ),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    },
+                  ),
+
+                  // Manage Privileges
+                  GoRoute(
+                    path: 'manage_privileges',
+                    name: 'manage_privileges',
+                    pageBuilder: (context, state) {
+                      CooperativeModel coop = state.extra as CooperativeModel;
+
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: ManagePrivileges(
+                          coop: coop,
                         ),
                         transitionType: SharedAxisTransitionType.vertical,
                       );

@@ -7,4 +7,5 @@ class FirebaseConstants {
   // Subcollections
   // Coops SubCollections
   static const membersSubCollection = 'members';
+  static const privilegesSubCollection = 'privileges';
 }

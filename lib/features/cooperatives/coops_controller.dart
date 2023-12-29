@@ -8,6 +8,7 @@ import 'package:lakbay/features/cooperatives/coops_repository.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
+import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/committee_params.dart';
 
@@ -31,6 +32,14 @@ final coopsControllerProvider =
   return CoopsController(coopsRepository: coopsRepository, ref: ref);
 });
 
+// getMemberProvider
+final getMemberProvider = StreamProvider.autoDispose
+    .family<CooperativeMembers, String>((ref, memberUid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getMember(
+      ref.read(userProvider)!.currentCoop!, memberUid);
+});
+
 // Get all members provider
 final getAllMembersProvider = StreamProvider.autoDispose
     .family<List<CooperativeMembers>, String>((ref, coopUid) {
@@ -44,6 +53,21 @@ final getAllMembersNotInCommitteeProvider = StreamProvider.autoDispose
   final coopsController = ref.watch(coopsControllerProvider.notifier);
   return coopsController.getAllMembersNotInCommittee(
       committeeParams.coopUid, committeeParams.committeeName);
+});
+
+// Get a privilege provider
+final getPrivilegeProvider = StreamProvider.autoDispose
+    .family<CooperativePrivileges, String>((ref, committeeName) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getPrivilege(
+      ref.read(userProvider)!.currentCoop!, committeeName);
+});
+
+// Get all privileges provider
+final getAllPrivilegesProvider = StreamProvider.autoDispose
+    .family<List<CooperativePrivileges>, String>((ref, coopUid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getAllPrivileges(coopUid);
 });
 
 class CoopsController extends StateNotifier<bool> {
@@ -244,6 +268,21 @@ class CoopsController extends StateNotifier<bool> {
     return _coopsRepository.readMembersNotInCommittee(coopUid, committeeName);
   }
 
+  // Real all privileges
+  Stream<List<CooperativePrivileges>> getAllPrivileges(String coopUid) {
+    return _coopsRepository.readPrivileges(coopUid);
+  }
+
+  // Read a privilege
+  Stream<CooperativePrivileges> getPrivilege(String coopUid, String committee) {
+    return _coopsRepository.readPrivilegesByCommitteeName(coopUid, committee);
+  }
+
+  // Read a member
+  Stream<CooperativeMembers> getMember(String coopUid, String memberUid) {
+    return _coopsRepository.readMember(coopUid, memberUid);
+  }
+
   // Subcollection
   // Add Member
   void addMember(String coopUid, CooperativeMembers coopMember,
@@ -330,6 +369,84 @@ class CoopsController extends StateNotifier<bool> {
         showSnackBar(context, 'Members updated successfully');
         context.pop();
         _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
+  }
+
+  // Privilege subcollection
+  // Update a privilege
+  void updatePrivilege(String coopUid, CooperativePrivileges coopPrivilege,
+      BuildContext context) async {
+    state = true;
+    final result =
+        await _coopsRepository.updatePrivileges(coopUid, coopPrivilege);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) {
+        // Handle the success here
+        state = false;
+        // showSnackBar(context, 'Privilege updated successfully');
+        // context.pop();
+        // _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
+  }
+
+  void initializePrivileges(String coopUid) async {
+    state = true;
+
+    // Initialize the list of privileges for Tourism Committee
+    CooperativePrivileges coopPrivileges = CooperativePrivileges(
+      committeeName: 'Tourism',
+      managerPrivileges: [
+        ManagerPrivileges(privilegeName: 'Add listing', isAllowed: true),
+        ManagerPrivileges(privilegeName: 'Edit listing', isAllowed: true),
+        ManagerPrivileges(privilegeName: 'Delete listing', isAllowed: true),
+      ],
+      memberPrivileges: [
+        MemberPrivileges(privilegeName: 'Add listing', isAllowed: false),
+        MemberPrivileges(privilegeName: 'Edit listing', isAllowed: false),
+        MemberPrivileges(privilegeName: 'Delete listing', isAllowed: false),
+      ],
+    );
+
+    await _coopsRepository.initializePrivilege(coopUid, coopPrivileges);
+
+    // Initialize the list of privileges for Event Committee
+    coopPrivileges = CooperativePrivileges(
+      committeeName: 'Events',
+      managerPrivileges: [
+        ManagerPrivileges(privilegeName: 'Add event', isAllowed: true),
+        ManagerPrivileges(privilegeName: 'Edit event', isAllowed: true),
+        ManagerPrivileges(privilegeName: 'Delete event', isAllowed: true),
+      ],
+      memberPrivileges: [
+        MemberPrivileges(privilegeName: 'Add event', isAllowed: false),
+        MemberPrivileges(privilegeName: 'Edit event', isAllowed: false),
+        MemberPrivileges(privilegeName: 'Delete event', isAllowed: false),
+      ],
+    );
+
+    final result =
+        await _coopsRepository.initializePrivilege(coopUid, coopPrivileges);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        // showSnackBar(context, l.message);
+      },
+      (r) {
+        // Handle the success here
+        state = false;
+        // showSnackBar(context, 'Privileges initialized successfully');
+        // context.pop();
+        // _ref.read(navBarVisibilityProvider.notifier).show();
       },
     );
   }

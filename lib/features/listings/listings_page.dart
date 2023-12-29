@@ -10,6 +10,8 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/listing_card.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/subcollections/coop_members_model.dart';
+import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
 
 class ListingsPage extends ConsumerStatefulWidget {
   final String coopId;
@@ -30,6 +32,8 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
+    final member = ref.watch(getMemberProvider(user!.uid)).asData?.value;
+    final privilege = ref.watch(getPrivilegeProvider("Tourism")).asData?.value;
 
     return ref.watch(getCooperativeProvider(widget.coopId)).when(
           data: (CooperativeModel coop) {
@@ -57,11 +61,13 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
                               ),
 
                               ElevatedButton(
-                                onPressed: () {
-                                  addListing(context, coop);
-                                },
+                                onPressed: () => addListing(context, coop),
                                 child: const Text('Add Listing'),
                               ),
+
+                              // Add Listing Button
+                              buildAddListingButton(
+                                  member, privilege, context, coop)
                             ],
 
                             // Add Listing Button
@@ -91,5 +97,30 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
             body: Loader(),
           ),
         );
+  }
+
+  Widget buildAddListingButton(
+      CooperativeMembers? member,
+      CooperativePrivileges? privilege,
+      BuildContext context,
+      CooperativeModel coop) {
+    bool isMemberNotNull = member != null;
+    bool isPrivilegeNotNull = privilege != null;
+    bool isRoleValid = member?.committeeRole("Tourism") == "Manager" ||
+        member?.committeeRole("Tourism") == "Member";
+    bool isPrivilegeAllowed =
+        privilege?.isManagerPrivilegeAllowed("Add listing") ?? false;
+
+    if (!isMemberNotNull ||
+        !isPrivilegeNotNull ||
+        !isRoleValid ||
+        !isPrivilegeAllowed) {
+      return const SizedBox.shrink();
+    }
+
+    return ElevatedButton(
+      onPressed: () => addListing(context, coop),
+      child: const Text('Add Listing'),
+    );
   }
 }
