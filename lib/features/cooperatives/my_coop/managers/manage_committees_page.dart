@@ -39,10 +39,34 @@ class _ManageCommitteesPageState extends ConsumerState<ManageCommitteesPage> {
   }
 
   void removeCommitteeMember(BuildContext context, CooperativeMembers member) {
+    if (!mounted) return;
+
     // Update member to remove committee
     member = member.copyWith(
       committees: member.committees!
           .where((committee) => committee.committeeName != widget.committeeName)
+          .toList(),
+    );
+
+    // Update member
+    ref.read(coopsControllerProvider.notifier).updateMember(
+          widget.coop.uid!,
+          member.uid!,
+          member,
+          context,
+        );
+  }
+
+  void makeMemberManager(BuildContext context, CooperativeMembers member) {
+    if (!mounted) return;
+
+    // Update member to remove committee
+    member = member.copyWith(
+      committees: member.committees!
+          .map((committee) => committee.committeeName == widget.committeeName
+              ? committee.copyWith(
+                  role: committee.role == 'Manager' ? 'Member' : 'Manager')
+              : committee)
           .toList(),
     );
 
@@ -62,11 +86,11 @@ class _ManageCommitteesPageState extends ConsumerState<ManageCommitteesPage> {
 
     return ref.watch(getAllMembersProvider(widget.coop.uid!)).when(
           data: (members) {
-            // Filter members by committee Name
-            // members = members
-            //     .where(
-            //         (member) => member.isCommitteeMember(widget.committeeName))
-            //     .toList();
+            // Filter members by committee Name and filter out managers
+            members = members
+                .where(
+                    (member) => member.isCommitteeMember(widget.committeeName))
+                .toList();
 
             // Seperate managers and members
             final managers = members
@@ -76,6 +100,9 @@ class _ManageCommitteesPageState extends ConsumerState<ManageCommitteesPage> {
                     member.committees!.any((committee) =>
                         committee.committeeName == widget.committeeName))
                 .toList();
+
+            // Remove managers from members list
+            members.removeWhere((member) => managers.contains(member));
             return Scaffold(
               appBar: AppBar(title: Text('${widget.committeeName} Committee')),
               floatingActionButton: FloatingActionButton(
@@ -184,20 +211,37 @@ class _ManageCommitteesPageState extends ConsumerState<ManageCommitteesPage> {
     return Slidable(
       key: Key(user.uid),
       endActionPane: ActionPane(
+        extentRatio: 0.75,
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
             // An action can be bigger than the others.
             borderRadius: BorderRadius.circular(8.0),
             onPressed: (context) {
-              removeCommitteeMember(context, member);
+              if (mounted) {
+                makeMemberManager(context, member);
+              }
+            },
+            backgroundColor: Theme.of(context).colorScheme.tertiary,
+            foregroundColor: Theme.of(context).colorScheme.background,
+            icon: Icons.edit,
+            label: member.isCommitteeManager ? 'Member' : 'Manager',
+          ),
+          const SizedBox(width: 8.0),
+          // Manager slide action
+          SlidableAction(
+            // An action can be bigger than the others.
+            borderRadius: BorderRadius.circular(8.0),
+            onPressed: (context) {
+              if (mounted) {
+                removeCommitteeMember(context, member);
+              }
             },
             backgroundColor: Theme.of(context).colorScheme.error,
             foregroundColor: Theme.of(context).colorScheme.background,
             icon: Icons.archive,
             label: 'Remove',
           ),
-          const SizedBox(width: 8.0),
         ],
       ),
       child: ListTile(

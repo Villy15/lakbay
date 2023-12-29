@@ -9,6 +9,7 @@ import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:lakbay/models/wrappers/committee_params.dart';
 
 // Get all cooperatives provider
 final getAllCooperativesProvider = StreamProvider((ref) {
@@ -35,6 +36,15 @@ final getAllMembersProvider = StreamProvider.autoDispose
     .family<List<CooperativeMembers>, String>((ref, coopUid) {
   final coopsController = ref.watch(coopsControllerProvider.notifier);
   return coopsController.getAllMembers(coopUid);
+});
+
+// Get all members that does not belong to a committee name provider
+final getAllMembersNotInCommitteeProvider = StreamProvider.autoDispose
+    .family<List<CooperativeMembers>, CommitteeParams>((ref, committeeParams) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  debugPrint('getAllMembersNotInCommitteeProvider');
+  return coopsController.getAllMembersNotInCommittee(
+      committeeParams.coopUid, committeeParams.committeeName);
 });
 
 class CoopsController extends StateNotifier<bool> {
@@ -229,6 +239,13 @@ class CoopsController extends StateNotifier<bool> {
     return _coopsRepository.readMembers(coopUid);
   }
 
+  // Real all members that does not belong to a committee name
+  Stream<List<CooperativeMembers>> getAllMembersNotInCommittee(
+      String coopUid, String committeeName) {
+    debugPrint('getAllMembersNotInCommittee: $coopUid, $committeeName');
+    return _coopsRepository.readMembersNotInCommittee(coopUid, committeeName);
+  }
+
   // Subcollection
   // Add Member
   void addMember(String coopUid, CooperativeMembers coopMember,
@@ -290,7 +307,7 @@ class CoopsController extends StateNotifier<bool> {
       (r) {
         // Handle the success here
         state = false;
-        showSnackBar(context, 'Member updated successfully');
+        // showSnackBar(context, 'Member updated successfully');
         // context.pop();
         // _ref.read(navBarVisibilityProvider.notifier).show();
       },

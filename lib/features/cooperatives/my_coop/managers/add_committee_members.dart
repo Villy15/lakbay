@@ -11,6 +11,7 @@ import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:lakbay/models/wrappers/committee_params.dart';
 
 class AddCommitteeMembersPage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -91,8 +92,12 @@ class _AddCommitteeMembersPageState
   @override
   Widget build(BuildContext context) {
     // final user = ref.watch(userProvider);
+    final isLoading = ref.watch(coopsControllerProvider);
 
-    return ref.watch(getAllMembersProvider(widget.coop.uid!)).when(
+    return ref
+        .watch(getAllMembersNotInCommitteeProvider(CommitteeParams(
+            coopUid: widget.coop.uid!, committeeName: widget.committeeName)))
+        .when(
           data: (members) {
             return PopScope(
               canPop: false,
@@ -126,45 +131,50 @@ class _AddCommitteeMembersPageState
                     ],
                   ),
                 ),
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // All Managers
-                        _managersHeading('Add Tourism Committee Members'),
+                body: isLoading
+                    ? const Loader()
+                    : SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // All Managers
+                              _managersHeading(
+                                  'Add ${widget.committeeName} Committee Members'),
 
-                        ListView.separated(
-                          itemCount: members.length,
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            final member = members[index];
+                              ListView.separated(
+                                itemCount: members.length,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  final member = members[index];
 
-                            // Check if member is already in the committee
-                            if (member.isCommitteeMember('Tourism')) {
-                              // Add to uids
-                              members.add(member);
-                            }
+                                  // Check if member is already in the committee
+                                  // if (member.isCommitteeMember('Tourism')) {
+                                  //   // Add to uids
+                                  //   members.add(member);
+                                  // }
 
-                            return ref
-                                .watch(getUserDataProvider(member.uid!))
-                                .when(
-                                  data: (user) {
-                                    return listMember(user, member, context);
-                                  },
-                                  error: (error, stackTrace) =>
-                                      const SizedBox(),
-                                  loading: () => const SizedBox(),
-                                );
-                          },
-                          separatorBuilder: (context, index) => const Divider(),
+                                  return ref
+                                      .watch(getUserDataProvider(member.uid!))
+                                      .when(
+                                        data: (user) {
+                                          return listMember(
+                                              user, member, context);
+                                        },
+                                        error: (error, stackTrace) =>
+                                            const SizedBox(),
+                                        loading: () => const SizedBox(),
+                                      );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    const Divider(),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
+                      ),
               ),
             );
           },
