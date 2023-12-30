@@ -215,10 +215,10 @@ class _AddListingState extends ConsumerState<AddListing> {
         switch (category) {
           case "Accommodation":
             return Step2Accommodation(coop: widget.coop);
-          case "Transport":
-            return step2Transport(context);
-          case "Food":
-            return step2Food(context);
+          // case "Transport":
+          //   return step2Transport(context);
+          // case "Food":
+          //   return step2Food(context);
         }
         return const Text("No Supporting Details");
       case 3:
