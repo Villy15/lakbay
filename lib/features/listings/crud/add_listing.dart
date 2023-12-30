@@ -7,7 +7,7 @@ import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/core/util/utils.dart';
-import 'package:lakbay/features/auth/auth_controller.dart';
+// import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
@@ -52,7 +52,7 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   // Step 4
   List<File>? _images;
-  List<File>? _menuImgs;
+  // List<File>? _menuImgs;
 
   @override
   void initState() {
@@ -215,10 +215,10 @@ class _AddListingState extends ConsumerState<AddListing> {
         switch (category) {
           case "Accommodation":
             return Step2Accommodation(coop: widget.coop);
-          // case "Transport":
-          //   return step2Transport(context);
-          // case "Food":
-          //   return step2Food(context);
+          case "Transport":
+          // return step2Transport(context);
+          case "Food":
+          // return step2Food(context);
         }
         return const Text("No Supporting Details");
       case 3:
