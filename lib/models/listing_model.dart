@@ -26,6 +26,10 @@ class ListingModel with _$ListingModel {
     @TimestampSerializer() DateTime? timestamp,
     required String title,
     required String type,
+    List<FoodService>? availableTables,
+    List<ListingImages>? menuImgs,
+    List<AvailableTransport>? availableTransport,
+    List<EntertainmentService>? availableEntertainment,
     String? typeOfTrip,
     String? uid,
   }) = _ListingModel;
@@ -82,6 +86,43 @@ class AvailableRoom with _$AvailableRoom {
 
   factory AvailableRoom.fromJson(Map<String, dynamic> json) =>
       _$AvailableRoomFromJson(json);
+}
+
+@freezed class AvailableTransport with _$AvailableTransport {
+  factory AvailableTransport({
+    required String transportId,
+    required num guests,
+    required num price,
+    required List<ListingImages> images,
+  }) = _AvailableTransport;
+
+  factory AvailableTransport.fromJson(Map<String, dynamic> json) =>
+      _$AvailableTransportFromJson(json);
+}
+
+@freezed
+class FoodService with _$FoodService {
+  factory FoodService({
+    required String tableId,
+    required num guests,
+    required bool isReserved
+  }) = _FoodService;
+
+  factory FoodService.fromJson(Map<String, dynamic> json) =>
+      _$FoodServiceFromJson(json);
+}
+
+@freezed
+class EntertainmentService with _$EntertainmentService {
+  factory EntertainmentService({
+    required String entertainmentId,
+    required num guests,
+    required num price,
+    required List<ListingImages> entertainmentImgs
+  }) = _EntertainmentService;
+
+  factory EntertainmentService.fromJson(Map<String, dynamic> json) =>
+      _$EntertainmentServiceFromJson(json);
 }
 
 @freezed

@@ -114,7 +114,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           return CustomerTransportation(
                             listing: listing,
                           );
-                        case "Food Service":
+                        case "Food":
                           return CustomerFood(
                             listing: listing,
                           );
