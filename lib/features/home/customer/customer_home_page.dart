@@ -4,6 +4,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/app_bar_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/features/home/customer/widgets/nestested_accomodation.dart';
+import 'package:lakbay/features/market/widgets/market_card.dart';
 import 'package:lakbay/models/user_model.dart';
 
 class CustomerHomePage extends ConsumerWidget {
@@ -24,7 +25,7 @@ class CustomerHomePage extends ConsumerWidget {
       initialIndex: 0,
       length: 5,
       child: Scaffold(
-        appBar: _appBar(scaffoldKey, user),
+        appBar: _appBar(scaffoldKey, user, context),
         body: const TabBarView(
           children: [
             // Accomodation
@@ -32,7 +33,7 @@ class CustomerHomePage extends ConsumerWidget {
 
             // Food
             Center(
-              child: Text('Food'),
+              child: MarketCard(),
             ),
 
             // Transport
@@ -55,41 +56,42 @@ class CustomerHomePage extends ConsumerWidget {
     );
   }
 
-  PreferredSize _appBar(GlobalKey<ScaffoldState> scaffoldKey, UserModel? user) {
+  PreferredSize _appBar(GlobalKey<ScaffoldState> scaffoldKey, UserModel? user,
+      BuildContext context) {
     List<Widget> tabs = [
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.hotel),
+          icon: Icon(Icons.hotel_outlined),
           child: Flexible(child: Text('Accomodation')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.food_bank),
+          icon: Icon(Icons.restaurant_outlined),
           child: Flexible(child: Text('Food')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.car_rental),
+          icon: Icon(Icons.directions_bus_outlined),
           child: Flexible(child: Text('Transport')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.tour),
+          icon: Icon(Icons.map_outlined),
           child: Flexible(child: Text('Tours')),
         ),
       ),
       const SizedBox(
         width: 100.0,
         child: Tab(
-          icon: Icon(Icons.shopping_bag),
-          child: Flexible(child: Text('Products')),
+          icon: Icon(Icons.movie_creation_outlined),
+          child: Flexible(child: Text('Entertainment')),
         ),
       ),
     ];
@@ -113,13 +115,19 @@ class CustomerHomePage extends ConsumerWidget {
             },
             icon: CircleAvatar(
               radius: 20.0,
-              backgroundImage: user?.profilePic != null &&
-                      user?.profilePic != ''
-                  ? NetworkImage(user!.profilePic)
-                  // Use placeholder image if user has no profile pic
-                  : const AssetImage('lib/core/images/default_profile_pic.jpg')
-                      as ImageProvider,
-              backgroundColor: Colors.transparent,
+              backgroundImage:
+                  user?.profilePic != null && user?.profilePic != ''
+                      ? NetworkImage(user!.profilePic)
+                      : null,
+              backgroundColor: Theme.of(context).colorScheme.onBackground,
+              child: user?.profilePic == null || user?.profilePic == ''
+                  ? Text(
+                      user?.name[0].toUpperCase() ?? 'L',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.background,
+                      ),
+                    )
+                  : null,
             ),
           ),
         ],

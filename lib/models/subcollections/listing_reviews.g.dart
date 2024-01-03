@@ -15,7 +15,7 @@ _$ListingReviewsImpl _$$ListingReviewsImplFromJson(Map<String, dynamic> json) =>
       review: json['review'] as String,
       positiveFeedback: json['positiveFeedback'] as String?,
       negativeFeedback: json['negativeFeedback'] as String?,
-      createdAt: const TimestampSerializer().fromJson(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt'] as String),
     );
 
 Map<String, dynamic> _$$ListingReviewsImplToJson(
@@ -28,5 +28,5 @@ Map<String, dynamic> _$$ListingReviewsImplToJson(
       'review': instance.review,
       'positiveFeedback': instance.positiveFeedback,
       'negativeFeedback': instance.negativeFeedback,
-      'createdAt': const TimestampSerializer().toJson(instance.createdAt),
+      'createdAt': instance.createdAt.toIso8601String(),
     };

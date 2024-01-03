@@ -24,6 +24,9 @@ mixin _$UserModel {
   String get name => throw _privateConstructorUsedError;
   String get profilePic => throw _privateConstructorUsedError;
   bool get isAuthenticated => throw _privateConstructorUsedError;
+  String? get imageUrl => throw _privateConstructorUsedError;
+  String? get firstName => throw _privateConstructorUsedError;
+  String? get lastName => throw _privateConstructorUsedError;
   bool? get isCoopView => throw _privateConstructorUsedError;
   List<CooperativesJoined>? get cooperativesJoined =>
       throw _privateConstructorUsedError;
@@ -45,6 +48,9 @@ abstract class $UserModelCopyWith<$Res> {
       String name,
       String profilePic,
       bool isAuthenticated,
+      String? imageUrl,
+      String? firstName,
+      String? lastName,
       bool? isCoopView,
       List<CooperativesJoined>? cooperativesJoined,
       String? currentCoop});
@@ -67,6 +73,9 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? name = null,
     Object? profilePic = null,
     Object? isAuthenticated = null,
+    Object? imageUrl = freezed,
+    Object? firstName = freezed,
+    Object? lastName = freezed,
     Object? isCoopView = freezed,
     Object? cooperativesJoined = freezed,
     Object? currentCoop = freezed,
@@ -88,6 +97,18 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.isAuthenticated
           : isAuthenticated // ignore: cast_nullable_to_non_nullable
               as bool,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      firstName: freezed == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastName: freezed == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as String?,
       isCoopView: freezed == isCoopView
           ? _value.isCoopView
           : isCoopView // ignore: cast_nullable_to_non_nullable
@@ -117,6 +138,9 @@ abstract class _$$UserModelImplCopyWith<$Res>
       String name,
       String profilePic,
       bool isAuthenticated,
+      String? imageUrl,
+      String? firstName,
+      String? lastName,
       bool? isCoopView,
       List<CooperativesJoined>? cooperativesJoined,
       String? currentCoop});
@@ -137,6 +161,9 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? name = null,
     Object? profilePic = null,
     Object? isAuthenticated = null,
+    Object? imageUrl = freezed,
+    Object? firstName = freezed,
+    Object? lastName = freezed,
     Object? isCoopView = freezed,
     Object? cooperativesJoined = freezed,
     Object? currentCoop = freezed,
@@ -158,6 +185,18 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.isAuthenticated
           : isAuthenticated // ignore: cast_nullable_to_non_nullable
               as bool,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      firstName: freezed == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastName: freezed == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as String?,
       isCoopView: freezed == isCoopView
           ? _value.isCoopView
           : isCoopView // ignore: cast_nullable_to_non_nullable
@@ -182,6 +221,9 @@ class _$UserModelImpl extends _UserModel {
       required this.name,
       required this.profilePic,
       required this.isAuthenticated,
+      this.imageUrl,
+      this.firstName,
+      this.lastName,
       this.isCoopView,
       final List<CooperativesJoined>? cooperativesJoined,
       this.currentCoop})
@@ -200,6 +242,12 @@ class _$UserModelImpl extends _UserModel {
   @override
   final bool isAuthenticated;
   @override
+  final String? imageUrl;
+  @override
+  final String? firstName;
+  @override
+  final String? lastName;
+  @override
   final bool? isCoopView;
   final List<CooperativesJoined>? _cooperativesJoined;
   @override
@@ -217,11 +265,11 @@ class _$UserModelImpl extends _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, isAuthenticated: $isAuthenticated, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop)';
+    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop)';
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$UserModelImpl &&
@@ -231,6 +279,12 @@ class _$UserModelImpl extends _UserModel {
                 other.profilePic == profilePic) &&
             (identical(other.isAuthenticated, isAuthenticated) ||
                 other.isAuthenticated == isAuthenticated) &&
+            (identical(other.imageUrl, imageUrl) ||
+                other.imageUrl == imageUrl) &&
+            (identical(other.firstName, firstName) ||
+                other.firstName == firstName) &&
+            (identical(other.lastName, lastName) ||
+                other.lastName == lastName) &&
             (identical(other.isCoopView, isCoopView) ||
                 other.isCoopView == isCoopView) &&
             const DeepCollectionEquality()
@@ -247,6 +301,9 @@ class _$UserModelImpl extends _UserModel {
       name,
       profilePic,
       isAuthenticated,
+      imageUrl,
+      firstName,
+      lastName,
       isCoopView,
       const DeepCollectionEquality().hash(_cooperativesJoined),
       currentCoop);
@@ -271,6 +328,9 @@ abstract class _UserModel extends UserModel {
       required final String name,
       required final String profilePic,
       required final bool isAuthenticated,
+      final String? imageUrl,
+      final String? firstName,
+      final String? lastName,
       final bool? isCoopView,
       final List<CooperativesJoined>? cooperativesJoined,
       final String? currentCoop}) = _$UserModelImpl;
@@ -287,6 +347,12 @@ abstract class _UserModel extends UserModel {
   String get profilePic;
   @override
   bool get isAuthenticated;
+  @override
+  String? get imageUrl;
+  @override
+  String? get firstName;
+  @override
+  String? get lastName;
   @override
   bool? get isCoopView;
   @override
@@ -425,7 +491,7 @@ class _$CooperativesJoinedImpl implements _CooperativesJoined {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CooperativesJoinedImpl &&

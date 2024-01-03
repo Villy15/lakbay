@@ -10,7 +10,7 @@ import 'package:lakbay/models/coop_model.dart';
 class LeaveCoopPage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
 
-  const LeaveCoopPage({Key? key, required this.coop}) : super(key: key);
+  const LeaveCoopPage({super.key, required this.coop});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _LeaveCoopPageState();
@@ -44,60 +44,67 @@ class _LeaveCoopPageState extends ConsumerState<LeaveCoopPage> {
   Widget build(BuildContext context) {
     final isLoading = ref.watch(coopsControllerProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Leave Cooperative')),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Cancel Button
-            TextButton(
-              onPressed: () {
-                context.pop();
-                ref.read(navBarVisibilityProvider.notifier).show();
-              },
-              child: const Text('Cancel'),
-            ),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) {
+        context.pop();
+        ref.read(navBarVisibilityProvider.notifier).show();
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Leave Cooperative')),
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Cancel Button
+              TextButton(
+                onPressed: () {
+                  context.pop();
+                  ref.read(navBarVisibilityProvider.notifier).show();
+                },
+                child: const Text('Cancel'),
+              ),
 
-            // Save Button
-            TextButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                }
+              // Save Button
+              TextButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                  }
 
-                final userUid = ref.read(userProvider)?.uid ?? '';
-                // Remove user to members in Coop
-                final updatedCoop = widget.coop.copyWith(
-                  members: widget.coop.members
-                      .where((member) => member != userUid)
-                      .toList(),
-                );
+                  final userUid = ref.read(userProvider)?.uid ?? '';
+                  // Remove user to members in Coop
+                  final updatedCoop = widget.coop.copyWith(
+                    members: widget.coop.members
+                        .where((member) => member != userUid)
+                        .toList(),
+                  );
 
-                // Update coop
-                leaveCooperative(updatedCoop);
-              },
-              child: const Text('Submit'),
-            ),
-          ],
+                  // Update coop
+                  leaveCooperative(updatedCoop);
+                },
+                child: const Text('Submit'),
+              ),
+            ],
+          ),
         ),
-      ),
-      body: isLoading
-          ? const Loader()
-          : SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 8.0,
-                  ),
-                  child: Column(
-                    children: [],
+        body: isLoading
+            ? const Loader()
+            : SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Column(
+                      children: [],
+                    ),
                   ),
                 ),
               ),
-            ),
+      ),
     );
   }
 }

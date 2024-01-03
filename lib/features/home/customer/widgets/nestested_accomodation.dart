@@ -38,7 +38,7 @@ class _NestedTabBarAccomodationState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.nature_outlined),
+            Icon(Icons.forest_outlined),
             SizedBox(width: 4.0),
             Text('Nature-based'),
           ],
@@ -51,7 +51,7 @@ class _NestedTabBarAccomodationState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.museum_outlined),
+            Icon(Icons.diversity_2_outlined),
             SizedBox(width: 4.0),
             Text('Cultural'),
           ],
@@ -91,7 +91,7 @@ class _NestedTabBarAccomodationState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.pool_outlined),
+            Icon(Icons.scuba_diving_outlined),
             SizedBox(width: 4.0),
             Text('Diving '),
           ],
@@ -151,7 +151,10 @@ class _NestedTabBarAccomodationState
             );
           },
           error: (error, stackTrace) => Scaffold(
-            body: ErrorText(error: error.toString()),
+            body: ErrorText(
+              error: error.toString(),
+              stackTrace: stackTrace.toString(),
+            ),
           ),
           loading: () => const Scaffold(
             body: Loader(),

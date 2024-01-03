@@ -10,7 +10,7 @@ import 'package:lakbay/models/coop_model.dart';
 class JoinCoopPage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
 
-  const JoinCoopPage({Key? key, required this.coop}) : super(key: key);
+  const JoinCoopPage({super.key, required this.coop});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _JoinCoopPageState();
@@ -36,66 +36,75 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
     super.dispose();
   }
 
-  void joinCooperative(CooperativeModel coop) {
-    ref.read(coopsControllerProvider.notifier).joinCooperative(coop, context);
+  void joinCooperative() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+    }
+
+    final userUid = ref.read(userProvider)?.uid ?? '';
+    // Add user to members in Coop
+    var updatedCoop = widget.coop.copyWith(
+      members: [...widget.coop.members, userUid],
+    );
+
+    // Update coop
+    ref
+        .read(coopsControllerProvider.notifier)
+        .joinCooperative(updatedCoop, context);
   }
 
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(coopsControllerProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Join Cooperative')),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Cancel Button
-            TextButton(
-              onPressed: () {
-                context.pop();
-                ref.read(navBarVisibilityProvider.notifier).show();
-              },
-              child: const Text('Cancel'),
-            ),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) {
+        context.pop();
+        ref.read(navBarVisibilityProvider.notifier).show();
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Join Cooperative')),
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Cancel Button
+              TextButton(
+                onPressed: () {
+                  context.pop();
+                  ref.read(navBarVisibilityProvider.notifier).show();
+                },
+                child: const Text('Cancel'),
+              ),
 
-            // Save Button
-            TextButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                }
-
-                final userUid = ref.read(userProvider)?.uid ?? '';
-                // Add user to members in Coop
-                var updatedCoop = widget.coop.copyWith(
-                  members: [...widget.coop.members, userUid],
-                );
-
-                // Update coop
-                joinCooperative(updatedCoop);
-              },
-              child: const Text('Submit'),
-            ),
-          ],
+              // Save Button
+              TextButton(
+                onPressed: () {
+                  joinCooperative();
+                },
+                child: const Text('Submit'),
+              ),
+            ],
+          ),
         ),
-      ),
-      body: isLoading
-          ? const Loader()
-          : SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 8.0,
-                  ),
-                  child: Column(
-                    children: [],
+        body: isLoading
+            ? const Loader()
+            : SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Column(
+                      children: [],
+                    ),
                   ),
                 ),
               ),
-            ),
+      ),
     );
   }
 }

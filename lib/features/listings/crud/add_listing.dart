@@ -7,10 +7,15 @@ import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
+// import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
+import 'package:lakbay/features/common/widgets/display_text.dart';
+import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/listings/listing_provider.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 
@@ -25,25 +30,23 @@ class AddListing extends ConsumerStatefulWidget {
 class _AddListingState extends ConsumerState<AddListing> {
   // Form key
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   int activeStep = 0;
   int upperBound = 6;
 
   // Form fields
   // Step 0
-  String? category = 'Accommodation';
+  String category = 'Accommodation';
 
   // Step 1
   final _titleController = TextEditingController(text: 'Cozy Condo');
   final _descriptionController =
       TextEditingController(text: 'A wonderful place to stay');
   final _priceController = TextEditingController(text: '1000');
+  String type = 'Nature-Based';
+  num guests = 0;
 
   // Step 2
-  int _guests = 1;
-  int _bedrooms = 1;
-  int _beds = 1;
-  int _bathrooms = 1;
+  //Accommodation
 
   // Step3
   final _addressController = TextEditingController(text: 'Eastwood City');
@@ -51,6 +54,7 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   // Step 4
   List<File>? _images;
+  // List<File>? _menuImgs;
 
   @override
   void initState() {
@@ -71,38 +75,37 @@ class _AddListingState extends ConsumerState<AddListing> {
     super.dispose();
   }
 
-  void submitAddListing() {
+  void submitAddListing(ListingModel listing, void nestedImages) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
-      var listing = ListingModel(
-        category: category!,
-        title: _titleController.text,
-        description: _descriptionController.text,
-        price: num.parse(_priceController.text),
-        pax: _guests,
-        bedrooms: _bedrooms,
-        beds: _beds,
-        bathrooms: _bathrooms,
-        address: _addressController.text,
-        city: widget.coop.city,
-        province: widget.coop.province,
-        cooperative: ListingCooperative(
-          cooperativeId: widget.coop.uid!,
-          cooperativeName: widget.coop.name,
-        ),
-        images: _images!.map((image) {
-          final imagePath =
-              'listings/${widget.coop.name}/${image.path.split('/').last}';
-          return ListingImages(
-            path: imagePath,
-          );
-        }).toList(),
-      );
+      // var listing = ListingModel(
+      //   publisherId: userId,
+      //   category: category,
+      //   type: type,
+      //   title: _titleController.text,
+      //   description: _descriptionController.text,
+      //   price: num.parse(_priceController.text),
+      //   address: _addressController.text,
+      //   city: widget.coop.city,
+      //   province: widget.coop.province,
+      //   cooperative: ListingCooperative(
+      //     cooperativeId: widget.coop.uid!,
+      //     cooperativeName: widget.coop.name,
+      //   ),
+      // images: _images!.map((image) {
+      //   final imagePath =
+      //       'listings/${widget.coop.name}/${image.path.split('/').last}';
+      //   return ListingImages(
+      //     path: imagePath,
+      //   );
+      // }).toList(),
+      // );
 
       // Prepare data for storeFiles
       final imagePath = 'listings/${widget.coop.name}';
       final ids = _images!.map((image) => image.path.split('/').last).toList();
+
+      nestedImages;
 
       // Upload images to firebase storage
       ref
@@ -115,6 +118,8 @@ class _AddListingState extends ConsumerState<AddListing> {
           .then((value) => value.fold(
                 (failure) => debugPrint('Failed to upload images: $failure'),
                 (imageUrls) {
+                  debugPrintJson(listing);
+
                   listing = listing.copyWith(
                     images: listing.images!.asMap().entries.map((entry) {
                       return entry.value.copyWith(url: imageUrls[entry.key]);
@@ -139,12 +144,28 @@ class _AddListingState extends ConsumerState<AddListing> {
         return 'Add details';
 
       case 2:
+        switch (category) {
+          case "Accommodation":
+            return "Room Availability";
+          case "Transport":
+            return "Transportation Details";
+          case "Tours":
+            return "";
+          case "Food":
+            return "Food Service Details";
+          case "Entertainment":
+            return "";
+        }
         return 'Add supporting details';
 
       case 3:
         return 'Where are you located?';
 
       case 4:
+        switch (category) {
+          case "Food":
+            return "Add photo/s here";
+        }
         return 'Add some photos';
 
       case 5:
@@ -197,7 +218,15 @@ class _AddListingState extends ConsumerState<AddListing> {
       case 1:
         return step1(context);
       case 2:
-        return step2(context);
+        switch (category) {
+          case "Accommodation":
+            return Step2Accommodation(coop: widget.coop);
+          case "Transport":
+          // return step2Transport(context);
+          case "Food":
+          // return step2Food(context);
+        }
+        return const Text("No Supporting Details");
       case 3:
         return step3(context);
       case 4:
@@ -216,9 +245,12 @@ class _AddListingState extends ConsumerState<AddListing> {
       {'name': 'Accommodation', 'icon': Icons.hotel_outlined},
       {'name': 'Transport', 'icon': Icons.directions_bus_outlined},
       {'name': 'Tours', 'icon': Icons.map_outlined},
+      {'name': 'Food', 'icon': Icons.restaurant_outlined},
+      {'name': 'Entertainment', 'icon': Icons.movie_creation_outlined},
     ];
 
     return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: categories.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -275,7 +307,18 @@ class _AddListingState extends ConsumerState<AddListing> {
   }
 
   Widget step1(BuildContext context) {
+    List<Map<String, dynamic>> types = [
+      {'name': 'Nature-Based', 'icon': Icons.forest_outlined},
+      {'name': 'Cultural', 'icon': Icons.diversity_2_outlined},
+      {'name': 'Sun and Beach', 'icon': Icons.beach_access_outlined},
+      {
+        'name': 'Health, Wellness, and Retirement',
+        'icon': Icons.local_hospital_outlined
+      },
+      {'name': 'Diving and Marine Sports', 'icon': Icons.scuba_diving_outlined},
+    ];
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextFormField(
           controller: _titleController,
@@ -334,181 +377,65 @@ class _AddListingState extends ConsumerState<AddListing> {
             return null;
           },
         ),
-        const SizedBox(height: 10),
-      ],
-    );
-  }
+        const SizedBox(height: 30),
+        Text(
+          "Choose a type",
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: types.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            mainAxisExtent: 120,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                  color: category == types[index]['name']
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.primary.withOpacity(0.0),
+                  width: 1,
+                ),
+              ),
+              surfaceTintColor: Theme.of(context).colorScheme.background,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    type = types[index]['name'];
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Icon
+                      Icon(
+                        types[index]['icon'],
+                        size: 35,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
 
-  Widget step2(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-          ),
-          child: ListTile(
-            title: const Row(
-              children: [
-                Icon(Icons.people_alt_outlined),
-                SizedBox(width: 10),
-                Text('Guests'),
-              ],
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.remove),
-                  onPressed: () {
-                    if (_guests > 1) {
-                      setState(() {
-                        _guests--;
-                      });
-                    }
-                  },
+                      // Title
+                      Text(
+                        types[index]['name'],
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 10),
-                Text('$_guests', style: const TextStyle(fontSize: 16)),
-                const SizedBox(width: 10),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    setState(() {
-                      _guests++;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-          ),
-          child: ListTile(
-            title: const Row(
-              children: [
-                Icon(Icons.king_bed_outlined),
-                SizedBox(width: 10),
-                Text('Bedrooms'),
-              ],
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.remove),
-                  onPressed: () {
-                    if (_bedrooms > 1) {
-                      setState(() {
-                        _bedrooms--;
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(width: 10),
-                Text('$_bedrooms', style: const TextStyle(fontSize: 16)),
-                const SizedBox(width: 10),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    setState(() {
-                      _bedrooms++;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-          ),
-          child: ListTile(
-            title: const Row(
-              children: [
-                Icon(Icons.single_bed_outlined),
-                SizedBox(width: 10),
-                Text('Beds'),
-              ],
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.remove),
-                  onPressed: () {
-                    if (_beds > 1) {
-                      setState(() {
-                        _beds--;
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(width: 10),
-                Text('$_beds', style: const TextStyle(fontSize: 16)),
-                const SizedBox(width: 10),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    setState(() {
-                      _beds++;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-          ),
-          child: ListTile(
-            title: const Row(
-              children: [
-                Icon(Icons.bathtub_outlined),
-                SizedBox(width: 10),
-                Text('Bathrooms'),
-              ],
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.remove),
-                  onPressed: () {
-                    if (_bathrooms > 1) {
-                      setState(() {
-                        _bathrooms--;
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(width: 10),
-                Text('$_bathrooms', style: const TextStyle(fontSize: 16)),
-                const SizedBox(width: 10),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    setState(() {
-                      _bathrooms++;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -564,6 +491,9 @@ class _AddListingState extends ConsumerState<AddListing> {
                     15), // Add some spacing between the icon and the container
             Expanded(
               child: ImagePickerFormField(
+                height: MediaQuery.sizeOf(context).height / 2.5,
+                width: MediaQuery.sizeOf(context).width,
+                context: context,
                 initialValue: _images,
                 onSaved: (List<File>? files) {
                   _images = files;
@@ -604,10 +534,14 @@ class _AddListingState extends ConsumerState<AddListing> {
         ListTile(
           title: const Text('Category',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(category!),
+          subtitle: Text(category),
+        ),
+        ListTile(
+          title: const Text('Type',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          subtitle: Text(type),
         ),
         const Divider(),
-
         // Step 1
         ListTile(
           title: const Text('Title',
@@ -626,26 +560,7 @@ class _AddListingState extends ConsumerState<AddListing> {
         ),
         const Divider(),
         // Step 2
-        ListTile(
-          title: const Text('Guests',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text('$_guests'),
-        ),
-        ListTile(
-          title: const Text('Bedrooms',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text('$_bedrooms'),
-        ),
-        ListTile(
-          title: const Text('Beds',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text('$_beds'),
-        ),
-        ListTile(
-          title: const Text('Bathrooms',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text('$_bathrooms'),
-        ),
+
         const Divider(),
         // Step 3
         ListTile(
@@ -757,8 +672,7 @@ class _AddListingState extends ConsumerState<AddListing> {
               ),
               onPressed: () {
                 if (activeStep < upperBound) {
-                  if (activeStep == 0 &&
-                      (category == '' || category!.isEmpty)) {
+                  if (activeStep == 0 && (category == '')) {
                     showSnackBar(context, 'Please select a category');
                     return;
                   }
@@ -775,7 +689,28 @@ class _AddListingState extends ConsumerState<AddListing> {
           ] else ...[
             TextButton(
               onPressed: () {
-                submitAddListing();
+                ListingModel updatedListing =
+                    ref.read(saveListingProvider)!.copyWith(
+                          address: address,
+                          category: category,
+                          city: widget.coop.city,
+                          cooperative: ListingCooperative(
+                              cooperativeId: widget.coop.uid!,
+                              cooperativeName: widget.coop.name),
+                          description: _descriptionController.text,
+                          province: widget.coop.province,
+                          publisherId: ref.read(userProvider)!.uid,
+                          title: _titleController.text,
+                          type: type,
+                          images: _images!.map((image) {
+                            final imagePath =
+                                'listings/${widget.coop.name}/${image.path.split('/').last}';
+                            return ListingImages(
+                              path: imagePath,
+                            );
+                          }).toList(),
+                        );
+                submitAddListing(updatedListing, ());
               },
               child: const Text('Submit'),
             ),
@@ -787,23 +722,21 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   Widget header() {
     return Container(
+      width: MediaQuery.sizeOf(context).width,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         borderRadius: BorderRadius.circular(5),
       ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              headerText(),
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: DisplayText(
+          text: headerText(),
+          lines: 2,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
-        ],
+        ),
       ),
     );
   }
@@ -813,15 +746,15 @@ class ImagePickerFormField extends FormField<List<File>> {
   final Function(List<File>) onImagesSelected;
 
   ImagePickerFormField({
-    Key? key,
-    FormFieldSetter<List<File>>? onSaved,
-    FormFieldValidator<List<File>>? validator,
+    super.key,
+    super.onSaved,
+    super.validator,
+    required BuildContext context,
+    required double height,
+    required double width,
     List<File>? initialValue,
     required this.onImagesSelected,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
           initialValue: initialValue ?? [],
           builder: (FormFieldState<List<File>> state) {
             return Column(
@@ -845,16 +778,32 @@ class ImagePickerFormField extends FormField<List<File>> {
                       // If its empty
                       if (state.value!.isEmpty)
                         Container(
-                          height: 200,
+                          height: height,
+                          width: width,
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(4.0),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(color: Colors.grey, width: 1),
                           ),
-                          child: const Center(child: Text('Select Images')),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.add_photo_alternate_outlined,
+                                  color: Colors.grey,
+                                  size: 50,
+                                ),
+                                DisplayText(
+                                  text: "Add Images",
+                                  lines: 1,
+                                  style: Theme.of(context).textTheme.bodySmall!,
+                                ),
+                              ]),
                         ),
                       if (state.value!.isNotEmpty)
                         Container(
-                          height: 200,
+                          height: height,
+                          width: width,
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey),
                             borderRadius: BorderRadius.circular(4.0),
@@ -895,4 +844,587 @@ class ImagePickerFormField extends FormField<List<File>> {
             );
           },
         );
+}
+
+class Step2Accommodation extends ConsumerStatefulWidget {
+  final CooperativeModel coop;
+  const Step2Accommodation({required this.coop, super.key});
+
+  @override
+  ConsumerState<Step2Accommodation> createState() => _Step2AccommodationState();
+}
+
+class _Step2AccommodationState extends ConsumerState<Step2Accommodation> {
+  @override
+  Widget build(BuildContext context) {
+    List<List<File>> images = ref.watch(addLocalImagesProvider) ?? [];
+    List<AvailableRoom> availableRooms = ref.watch(addRoomProvider) ?? [];
+    return Column(
+      children: [
+        Center(
+          child: ElevatedButton(
+            onPressed: () {
+              showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    // String roomId = "";
+                    TextEditingController roomIdController =
+                        TextEditingController();
+                    // num price = 0;
+                    TextEditingController priceController =
+                        TextEditingController();
+                    num guests = 0;
+                    num bedrooms = 0;
+                    num beds = 0;
+                    num bathrooms = 0;
+                    List<File> images = [];
+                    return addRoomBottomSheet(images, roomIdController,
+                        priceController, guests, bedrooms, beds, bathrooms);
+                  });
+            },
+            child: const Text('Add Room'),
+          ),
+        ),
+        ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: availableRooms.length,
+            itemBuilder: ((context, index) {
+              return Card(
+                elevation: 4.0, // Slight shadow for depth
+                margin: const EdgeInsets.all(8.0), // Space around the card
+                child: Column(
+                  children: [
+                    ImageSlider(
+                      images: images[index],
+                      height: MediaQuery.of(context).size.height /
+                          5, // Reduced height
+                      width: double.infinity,
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.all(12.0), // Reduced overall padding
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.vpn_key,
+                                  size: 16), // Icon representing a key or ID
+                              const SizedBox(width: 4),
+                              Text(
+                                "Room ID: ${availableRooms[index].roomId}",
+                                style: const TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.money, size: 16),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    "Price: ₱${availableRooms[index].price}",
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                              const Text(" • ",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight
+                                          .bold)), // Bigger, bolder dot separator
+
+                              Row(
+                                children: [
+                                  const Icon(Icons.people_alt_outlined,
+                                      size: 16),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    "Guests: ${availableRooms[index].guests}",
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.meeting_room_outlined,
+                                      size:
+                                          16), // Replace with appropriate icon
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    "Bedrooms: ${availableRooms[index].bedrooms}",
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                              const Text(" • ",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight
+                                          .bold)), // Bigger, bolder dot separator
+
+                              Row(
+                                children: [
+                                  const Icon(Icons.bed_outlined,
+                                      size:
+                                          16), // Replace with appropriate icon
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    "Beds: ${availableRooms[index].beds}",
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                              const Text(" • ",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight
+                                          .bold)), // Bigger, bolder dot separator
+
+                              Row(
+                                children: [
+                                  const Icon(Icons.bathtub_outlined,
+                                      size:
+                                          16), // Replace with appropriate icon
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    "Bathrooms: ${availableRooms[index].bathrooms}",
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(
+                              height: 8), // Reduced spacing before the buttons
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                      isScrollControlled: true,
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        TextEditingController roomIdController =
+                                            TextEditingController(
+                                                text: availableRooms[index]
+                                                    .roomId);
+                                        // num price = 0;
+                                        TextEditingController priceController =
+                                            TextEditingController(
+                                                text: availableRooms[index]
+                                                    .price
+                                                    .toString());
+                                        num guests =
+                                            availableRooms[index].guests;
+                                        num bedrooms =
+                                            availableRooms[index].bedrooms;
+                                        num beds = availableRooms[index].beds;
+                                        num bathrooms =
+                                            availableRooms[index].bathrooms;
+                                        List<File> images = ref.watch(
+                                            addLocalImagesProvider)![index];
+                                        return addRoomBottomSheet(
+                                            images,
+                                            roomIdController,
+                                            priceController,
+                                            guests,
+                                            bedrooms,
+                                            beds,
+                                            bathrooms);
+                                      });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 2,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4), // Reduced padding
+                                ),
+                                child: const Icon(
+                                  Icons.edit,
+                                  size: 16, // Reduced icon size
+                                ),
+                              ),
+                              const SizedBox(
+                                  width: 10), // Reduced spacing between buttons
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    availableRooms.removeAt(index);
+                                    ref
+                                        .read(addRoomProvider.notifier)
+                                        .removeRoom(index);
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 2,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4), // Reduced padding
+                                ),
+                                child: const Icon(
+                                  Icons.delete,
+                                  size: 16, // Reduced icon size
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            })),
+      ],
+    );
+  }
+
+  StatefulBuilder addRoomBottomSheet(
+      List<File> images,
+      TextEditingController roomIdController,
+      TextEditingController priceController,
+      num guests,
+      num bedrooms,
+      num beds,
+      num bathrooms) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Container(
+            margin: const EdgeInsets.only(top: 20),
+            height: MediaQuery.sizeOf(context).height / 1,
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: GestureDetector(
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.image_outlined,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
+                        const SizedBox(
+                            width:
+                                15), // Add some spacing between the icon and the container
+                        ImagePickerFormField(
+                          height: MediaQuery.sizeOf(context).height / 5,
+                          width: MediaQuery.sizeOf(context).width / 1.3,
+                          context: context,
+                          initialValue: images,
+                          onSaved: (List<File>? files) {
+                            images.clear();
+                            images.addAll(files!);
+                            // this.images.add(images);
+                            ref
+                                .read(addLocalImagesProvider.notifier)
+                                .addImages(images);
+                          },
+                          validator: (List<File>? files) {
+                            if (files == null || files.isEmpty) {
+                              return 'Please select some images';
+                            }
+                            return null;
+                          },
+                          onImagesSelected: (List<File> files) {
+                            images.clear();
+                            images.addAll(files);
+                            // this.images.add(images);
+                            ref
+                                .read(addLocalImagesProvider.notifier)
+                                .addImages(images);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: roomIdController,
+                    decoration: const InputDecoration(
+                      icon: Icon(Icons.title_outlined),
+                      border: OutlineInputBorder(),
+                      labelText: "Room Id",
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 12), // Adjust padding here
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    controller: priceController,
+                    maxLines: null,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(
+                      icon: Icon(
+                        Icons.money_outlined,
+                      ),
+                      border: OutlineInputBorder(),
+                      labelText: 'Price',
+                      prefix: Text('₱'),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 12), // Adjust padding here
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Theme.of(context).dividerColor),
+                    ),
+                  ),
+                  child: ListTile(
+                    title: const Row(
+                      children: [
+                        Icon(Icons.people_alt_outlined),
+                        SizedBox(width: 10),
+                        Text('Guests'),
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: () {
+                            if (guests >= 1) {
+                              setState(() {
+                                guests--;
+                              });
+                            }
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        Text('$guests', style: const TextStyle(fontSize: 16)),
+                        const SizedBox(width: 10),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              guests++;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Theme.of(context).dividerColor),
+                    ),
+                  ),
+                  child: ListTile(
+                    title: const Row(
+                      children: [
+                        Icon(Icons.king_bed_outlined),
+                        SizedBox(width: 10),
+                        Text('Bedrooms'),
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: () {
+                            if (bedrooms >= 1) {
+                              setState(() {
+                                bedrooms--;
+                              });
+                            }
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        Text('$bedrooms', style: const TextStyle(fontSize: 16)),
+                        const SizedBox(width: 10),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              bedrooms++;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Theme.of(context).dividerColor),
+                    ),
+                  ),
+                  child: ListTile(
+                    title: const Row(
+                      children: [
+                        Icon(Icons.single_bed_outlined),
+                        SizedBox(width: 10),
+                        Text('Beds'),
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: () {
+                            if (beds >= 1) {
+                              setState(() {
+                                beds--;
+                              });
+                            }
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        Text('$beds', style: const TextStyle(fontSize: 16)),
+                        const SizedBox(width: 10),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              beds++;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Theme.of(context).dividerColor),
+                    ),
+                  ),
+                  child: ListTile(
+                    title: const Row(
+                      children: [
+                        Icon(Icons.bathtub_outlined),
+                        SizedBox(width: 10),
+                        Text('Bathrooms'),
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: () {
+                            if (bathrooms >= 1) {
+                              setState(() {
+                                bathrooms--;
+                              });
+                            }
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        Text('$bathrooms',
+                            style: const TextStyle(fontSize: 16)),
+                        const SizedBox(width: 10),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              bathrooms++;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.sizeOf(context).height / 30,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      AvailableRoom room = AvailableRoom(
+                          available: true,
+                          images: images.map((image) {
+                            final imagePath =
+                                'listings/${widget.coop.name}/${image.path.split('/').last}';
+                            return ListingImages(
+                              path: imagePath,
+                            );
+                          }).toList(),
+                          roomId: roomIdController.text,
+                          bathrooms: bathrooms,
+                          bedrooms: bedrooms,
+                          beds: beds,
+                          guests: guests,
+                          price: num.parse(priceController.text));
+                      this.setState(() {
+                        List<AvailableRoom> rooms =
+                            ref.watch(addRoomProvider) ?? [];
+                        int index = rooms.indexWhere((element) =>
+                            element.roomId == roomIdController.text);
+                        if (index == -1) {
+                          ref.read(addRoomProvider.notifier).addRoom(room);
+                          ref
+                              .read(saveListingProvider.notifier)
+                              .saveListingProvider(ListingModel(
+                                  address: "",
+                                  category: "",
+                                  city: "",
+                                  cooperative: ListingCooperative(
+                                      cooperativeId: "", cooperativeName: ""),
+                                  description: "",
+                                  province: "",
+                                  publisherId: "",
+                                  title: "",
+                                  type: "",
+                                  availableRooms: ref.watch(addRoomProvider)));
+                        } else {
+                          ref.read(addRoomProvider)?[index] = room;
+                        }
+                      });
+                      context.pop();
+                    },
+                    child: const Text("Confirm"))
+              ],
+            ));
+      },
+    );
+  }
 }

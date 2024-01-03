@@ -13,7 +13,7 @@ import 'package:lakbay/models/coop_model.dart';
 class EditCoopPage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
 
-  const EditCoopPage({Key? key, required this.coop}) : super(key: key);
+  const EditCoopPage({super.key, required this.coop});
 
   @override
   ConsumerState<EditCoopPage> createState() => _EditCoopPageState();
@@ -154,6 +154,7 @@ class _EditCoopPageState extends ConsumerState<EditCoopPage> {
                                         15), // Add some spacing between the icon and the container
                                 Expanded(
                                   child: ImagePickerFormField(
+                                    imageUrl: widget.coop.imageUrl,
                                     initialValue: _image,
                                     onSaved: (File? file) {
                                       _image = file;
@@ -283,15 +284,12 @@ class _EditCoopPageState extends ConsumerState<EditCoopPage> {
 
 class ImagePickerFormField extends FormField<File> {
   ImagePickerFormField({
-    Key? key,
-    FormFieldSetter<File>? onSaved,
-    FormFieldValidator<File>? validator,
-    File? initialValue,
+    super.key,
+    super.onSaved,
+    super.validator,
+    super.initialValue,
+    String? imageUrl,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
-          initialValue: initialValue,
           builder: (FormFieldState<File> state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,7 +312,9 @@ class ImagePickerFormField extends FormField<File> {
                     ),
                     child: state.value != null
                         ? Image.file(state.value!, fit: BoxFit.cover)
-                        : const Center(child: Text('Select an image')),
+                        : (imageUrl != null && imageUrl.isNotEmpty)
+                            ? Image.network(imageUrl, fit: BoxFit.cover)
+                            : const Center(child: Text('Select an image')),
                   ),
                 ),
                 if (state.hasError)
