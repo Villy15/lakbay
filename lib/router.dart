@@ -18,6 +18,8 @@ import 'package:lakbay/features/cooperatives/my_coop/members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
 import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
 import 'package:lakbay/features/events/events_page.dart';
+import 'package:lakbay/features/events/crud/add_event.dart';
+import 'package:lakbay/features/events/crud/edit_event.dart';
 import 'package:lakbay/features/home/customer/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/listings/crud/add_listing.dart';
@@ -26,6 +28,8 @@ import 'package:lakbay/features/market/crud/read_market.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/event_model.dart';
+import 'package:lakbay/features/events/crud/read_event.dart';
 // import 'package:lakbay/features/trips/trips_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
@@ -109,6 +113,47 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   child: const EventsPage(),
                 ),
               ),
+
+              // GoRoute for the AddEventPage
+              GoRoute(
+                path: '/add_event',
+                pageBuilder: (context, state) =>
+                    buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child: const AddEventPage(),
+                  transitionType: SharedAxisTransitionType.vertical,
+                ),
+              ),
+             GoRoute(
+              path: '/edit_event',
+              name: 'edit_event',
+              pageBuilder: (context, state) {
+                EventModel event = state.extra as EventModel;
+
+                return buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child: EditEventPage(
+                    event: event,
+                  ),
+                  transitionType: SharedAxisTransitionType.vertical,
+                );
+              },
+            ), 
+              // GoRoute for the ReadEventPage
+            GoRoute(
+              path: '/read_event/:eventId',
+              name: 'read_event',
+              pageBuilder: (context, state) {
+                return buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child: ReadEventPage(eventId: state.pathParameters['eventId']!),
+                  transitionType: SharedAxisTransitionType.vertical,
+                );
+              },
+            ),
 
               GoRoute(
                 path: '/trips',
