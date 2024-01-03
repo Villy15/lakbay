@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 class ImageSlider extends StatefulWidget {
   final List<File> images;
   final double height;
+  final double width;
   const ImageSlider({
     super.key,
     required this.images,
     required this.height,
+    required this.width,
   });
 
   @override
@@ -42,7 +44,7 @@ class _ImageSliderState extends State<ImageSlider> {
                             child: Image.file(
                               e,
                               height: widget.height,
-                              width: double.infinity,
+                              width: widget.width,
                               fit: BoxFit.cover,
                             )))
                         .toList(),
@@ -73,7 +75,7 @@ class _ImageSliderState extends State<ImageSlider> {
                       child: Image.file(
                         e,
                         height: widget.height,
-                        width: double.infinity,
+                        width: widget.width,
                         fit: BoxFit.cover,
                       )))
                   .toList(),
