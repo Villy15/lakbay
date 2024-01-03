@@ -74,12 +74,14 @@ class ListingCost with _$ListingCost {
 @freezed
 class AvailableRoom with _$AvailableRoom {
   factory AvailableRoom({
-    required String roomId,
+    required bool available,
     required num bathrooms,
     required num bedrooms,
     required num beds,
     required num guests,
+    required List<ListingImages>? images,
     required num price,
+    required String roomId,
   }) = _AvailableRoom;
 
   factory AvailableRoom.fromJson(Map<String, dynamic> json) =>

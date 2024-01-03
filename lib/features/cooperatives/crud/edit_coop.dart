@@ -154,6 +154,7 @@ class _EditCoopPageState extends ConsumerState<EditCoopPage> {
                                         15), // Add some spacing between the icon and the container
                                 Expanded(
                                   child: ImagePickerFormField(
+                                    imageUrl: widget.coop.imageUrl,
                                     initialValue: _image,
                                     onSaved: (File? file) {
                                       _image = file;
@@ -287,6 +288,7 @@ class ImagePickerFormField extends FormField<File> {
     super.onSaved,
     super.validator,
     super.initialValue,
+    String? imageUrl,
   }) : super(
           builder: (FormFieldState<File> state) {
             return Column(
@@ -310,7 +312,9 @@ class ImagePickerFormField extends FormField<File> {
                     ),
                     child: state.value != null
                         ? Image.file(state.value!, fit: BoxFit.cover)
-                        : const Center(child: Text('Select an image')),
+                        : (imageUrl != null && imageUrl.isNotEmpty)
+                            ? Image.network(imageUrl, fit: BoxFit.cover)
+                            : const Center(child: Text('Select an image')),
                   ),
                 ),
                 if (state.hasError)

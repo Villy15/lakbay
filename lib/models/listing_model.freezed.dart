@@ -1216,12 +1216,14 @@ AvailableRoom _$AvailableRoomFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AvailableRoom {
-  String get roomId => throw _privateConstructorUsedError;
+  bool get available => throw _privateConstructorUsedError;
   num get bathrooms => throw _privateConstructorUsedError;
   num get bedrooms => throw _privateConstructorUsedError;
   num get beds => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
+  List<ListingImages>? get images => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
+  String get roomId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1236,12 +1238,14 @@ abstract class $AvailableRoomCopyWith<$Res> {
       _$AvailableRoomCopyWithImpl<$Res, AvailableRoom>;
   @useResult
   $Res call(
-      {String roomId,
+      {bool available,
       num bathrooms,
       num bedrooms,
       num beds,
       num guests,
-      num price});
+      List<ListingImages>? images,
+      num price,
+      String roomId});
 }
 
 /// @nodoc
@@ -1257,18 +1261,20 @@ class _$AvailableRoomCopyWithImpl<$Res, $Val extends AvailableRoom>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? roomId = null,
+    Object? available = null,
     Object? bathrooms = null,
     Object? bedrooms = null,
     Object? beds = null,
     Object? guests = null,
+    Object? images = freezed,
     Object? price = null,
+    Object? roomId = null,
   }) {
     return _then(_value.copyWith(
-      roomId: null == roomId
-          ? _value.roomId
-          : roomId // ignore: cast_nullable_to_non_nullable
-              as String,
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
       bathrooms: null == bathrooms
           ? _value.bathrooms
           : bathrooms // ignore: cast_nullable_to_non_nullable
@@ -1285,10 +1291,18 @@ class _$AvailableRoomCopyWithImpl<$Res, $Val extends AvailableRoom>
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
               as num,
+      images: freezed == images
+          ? _value.images
+          : images // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>?,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as num,
+      roomId: null == roomId
+          ? _value.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -1302,12 +1316,14 @@ abstract class _$$AvailableRoomImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String roomId,
+      {bool available,
       num bathrooms,
       num bedrooms,
       num beds,
       num guests,
-      num price});
+      List<ListingImages>? images,
+      num price,
+      String roomId});
 }
 
 /// @nodoc
@@ -1321,18 +1337,20 @@ class __$$AvailableRoomImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? roomId = null,
+    Object? available = null,
     Object? bathrooms = null,
     Object? bedrooms = null,
     Object? beds = null,
     Object? guests = null,
+    Object? images = freezed,
     Object? price = null,
+    Object? roomId = null,
   }) {
     return _then(_$AvailableRoomImpl(
-      roomId: null == roomId
-          ? _value.roomId
-          : roomId // ignore: cast_nullable_to_non_nullable
-              as String,
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
       bathrooms: null == bathrooms
           ? _value.bathrooms
           : bathrooms // ignore: cast_nullable_to_non_nullable
@@ -1349,10 +1367,18 @@ class __$$AvailableRoomImplCopyWithImpl<$Res>
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
               as num,
+      images: freezed == images
+          ? _value._images
+          : images // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>?,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as num,
+      roomId: null == roomId
+          ? _value.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -1361,18 +1387,21 @@ class __$$AvailableRoomImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AvailableRoomImpl implements _AvailableRoom {
   _$AvailableRoomImpl(
-      {required this.roomId,
+      {required this.available,
       required this.bathrooms,
       required this.bedrooms,
       required this.beds,
       required this.guests,
-      required this.price});
+      required final List<ListingImages>? images,
+      required this.price,
+      required this.roomId})
+      : _images = images;
 
   factory _$AvailableRoomImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvailableRoomImplFromJson(json);
 
   @override
-  final String roomId;
+  final bool available;
   @override
   final num bathrooms;
   @override
@@ -1381,12 +1410,24 @@ class _$AvailableRoomImpl implements _AvailableRoom {
   final num beds;
   @override
   final num guests;
+  final List<ListingImages>? _images;
+  @override
+  List<ListingImages>? get images {
+    final value = _images;
+    if (value == null) return null;
+    if (_images is EqualUnmodifiableListView) return _images;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final num price;
+  @override
+  final String roomId;
 
   @override
   String toString() {
-    return 'AvailableRoom(roomId: $roomId, bathrooms: $bathrooms, bedrooms: $bedrooms, beds: $beds, guests: $guests, price: $price)';
+    return 'AvailableRoom(available: $available, bathrooms: $bathrooms, bedrooms: $bedrooms, beds: $beds, guests: $guests, images: $images, price: $price, roomId: $roomId)';
   }
 
   @override
@@ -1394,20 +1435,31 @@ class _$AvailableRoomImpl implements _AvailableRoom {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AvailableRoomImpl &&
-            (identical(other.roomId, roomId) || other.roomId == roomId) &&
+            (identical(other.available, available) ||
+                other.available == available) &&
             (identical(other.bathrooms, bathrooms) ||
                 other.bathrooms == bathrooms) &&
             (identical(other.bedrooms, bedrooms) ||
                 other.bedrooms == bedrooms) &&
             (identical(other.beds, beds) || other.beds == beds) &&
             (identical(other.guests, guests) || other.guests == guests) &&
-            (identical(other.price, price) || other.price == price));
+            const DeepCollectionEquality().equals(other._images, _images) &&
+            (identical(other.price, price) || other.price == price) &&
+            (identical(other.roomId, roomId) || other.roomId == roomId));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, roomId, bathrooms, bedrooms, beds, guests, price);
+      runtimeType,
+      available,
+      bathrooms,
+      bedrooms,
+      beds,
+      guests,
+      const DeepCollectionEquality().hash(_images),
+      price,
+      roomId);
 
   @JsonKey(ignore: true)
   @override
@@ -1425,18 +1477,20 @@ class _$AvailableRoomImpl implements _AvailableRoom {
 
 abstract class _AvailableRoom implements AvailableRoom {
   factory _AvailableRoom(
-      {required final String roomId,
+      {required final bool available,
       required final num bathrooms,
       required final num bedrooms,
       required final num beds,
       required final num guests,
-      required final num price}) = _$AvailableRoomImpl;
+      required final List<ListingImages>? images,
+      required final num price,
+      required final String roomId}) = _$AvailableRoomImpl;
 
   factory _AvailableRoom.fromJson(Map<String, dynamic> json) =
       _$AvailableRoomImpl.fromJson;
 
   @override
-  String get roomId;
+  bool get available;
   @override
   num get bathrooms;
   @override
@@ -1446,7 +1500,11 @@ abstract class _AvailableRoom implements AvailableRoom {
   @override
   num get guests;
   @override
+  List<ListingImages>? get images;
+  @override
   num get price;
+  @override
+  String get roomId;
   @override
   @JsonKey(ignore: true)
   _$$AvailableRoomImplCopyWith<_$AvailableRoomImpl> get copyWith =>
