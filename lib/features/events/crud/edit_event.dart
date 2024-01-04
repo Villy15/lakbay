@@ -14,7 +14,7 @@ import 'package:lakbay/models/event_model.dart';
 class EditEventPage extends ConsumerStatefulWidget {
   final EventModel event;
 
-  const EditEventPage({super.key, required this.event});
+  const EditEventPage({Key? key, required this.event}) : super(key: key);
 
   @override
   ConsumerState<EditEventPage> createState() => _EditEventPageState();
@@ -44,10 +44,8 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
     // Set initial values
     _nameController.text = widget.event.name;
     _descriptionController.text = widget.event.description ?? '';
-    _startDateController.text =
-        DateFormat('yyyy-MM-dd').format(widget.event.startDate);
-    _endDateController.text =
-        DateFormat('yyyy-MM-dd').format(widget.event.endDate);
+    _startDateController.text = DateFormat('yyyy-MM-dd').format(widget.event.startDate);
+    _endDateController.text = DateFormat('yyyy-MM-dd').format(widget.event.endDate);
     _locationController.text = widget.event.address;
     _cityController.text = widget.event.city;
     _provinceController.text = widget.event.province;
@@ -158,8 +156,8 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
                         GestureDetector(
                           onTap: () async {
                             final picker = ImagePicker();
-                            final pickedFile = await picker.pickImage(
-                                source: ImageSource.gallery);
+                            final pickedFile =
+                                await picker.pickImage(source: ImageSource.gallery);
 
                             if (pickedFile != null) {
                               setState(() {
@@ -282,8 +280,7 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
                 if (selectedStartDate != null) {
                   setState(() {
                     startDate = selectedStartDate;
-                    _startDateController.text =
-                        DateFormat('yyyy-MM-dd').format(startDate);
+                    _startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
                   });
                 }
               },
@@ -308,8 +305,7 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
                 if (selectedEndDate != null) {
                   setState(() {
                     endDate = selectedEndDate;
-                    _endDateController.text =
-                        DateFormat('yyyy-MM-dd').format(endDate);
+                    _endDateController.text = DateFormat('yyyy-MM-dd').format(endDate);
                   });
                 }
               },
