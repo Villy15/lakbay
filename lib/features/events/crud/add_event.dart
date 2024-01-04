@@ -14,7 +14,7 @@ import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/models/event_model.dart';
 
 class AddEventPage extends ConsumerStatefulWidget {
-  const AddEventPage({Key? key}) : super(key: key);
+  const AddEventPage({super.key});
 
   @override
   ConsumerState<AddEventPage> createState() => _AddEventPageState();

@@ -14,7 +14,7 @@ import 'package:intl/intl.dart';
 class ReadEventPage extends ConsumerWidget {
   final String eventId;
 
-  const ReadEventPage({Key? key, required this.eventId}) : super(key: key);
+  const ReadEventPage({super.key, required this.eventId});
 
   void editEvent(BuildContext context, EventModel event) {
     context.pushNamed(
@@ -138,7 +138,7 @@ class ReadEventPage extends ConsumerWidget {
         );
       },
       error: (error, stackTrace) => Scaffold(
-        body: ErrorText(error: error.toString()),
+        body: ErrorText(error: error.toString(), stackTrace: '',),
       ),
       loading: () => const Scaffold(
         body: Loader(),

@@ -9,7 +9,7 @@ import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 
 class EventsPage extends ConsumerWidget {
-  const EventsPage({Key? key}) : super(key: key);
+  const EventsPage({super.key});
 
   void readEvent(BuildContext context, String eventId) {
     context.push("/read_event/$eventId");
@@ -98,7 +98,7 @@ class EventsPage extends ConsumerWidget {
                       },
                     );
                   },
-                  error: (error, stackTrace) => ErrorText(error: error.toString()),
+                  error: (error, stackTrace) => ErrorText(error: error.toString(), stackTrace: '',),
                   loading: () => const Loader(),
                 ),
               ],
