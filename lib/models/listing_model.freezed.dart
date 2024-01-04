@@ -39,6 +39,12 @@ mixin _$ListingModel {
   DateTime? get timestamp => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
+  List<FoodService>? get availableTables => throw _privateConstructorUsedError;
+  List<ListingImages>? get menuImgs => throw _privateConstructorUsedError;
+  List<AvailableTransport>? get availableTransport =>
+      throw _privateConstructorUsedError;
+  List<EntertainmentService>? get availableEntertainment =>
+      throw _privateConstructorUsedError;
   String? get typeOfTrip => throw _privateConstructorUsedError;
   String? get uid => throw _privateConstructorUsedError;
 
@@ -73,6 +79,10 @@ abstract class $ListingModelCopyWith<$Res> {
       @TimestampSerializer() DateTime? timestamp,
       String title,
       String type,
+      List<FoodService>? availableTables,
+      List<ListingImages>? menuImgs,
+      List<AvailableTransport>? availableTransport,
+      List<EntertainmentService>? availableEntertainment,
       String? typeOfTrip,
       String? uid});
 
@@ -110,6 +120,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? timestamp = freezed,
     Object? title = null,
     Object? type = null,
+    Object? availableTables = freezed,
+    Object? menuImgs = freezed,
+    Object? availableTransport = freezed,
+    Object? availableEntertainment = freezed,
     Object? typeOfTrip = freezed,
     Object? uid = freezed,
   }) {
@@ -186,6 +200,22 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      availableTables: freezed == availableTables
+          ? _value.availableTables
+          : availableTables // ignore: cast_nullable_to_non_nullable
+              as List<FoodService>?,
+      menuImgs: freezed == menuImgs
+          ? _value.menuImgs
+          : menuImgs // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>?,
+      availableTransport: freezed == availableTransport
+          ? _value.availableTransport
+          : availableTransport // ignore: cast_nullable_to_non_nullable
+              as List<AvailableTransport>?,
+      availableEntertainment: freezed == availableEntertainment
+          ? _value.availableEntertainment
+          : availableEntertainment // ignore: cast_nullable_to_non_nullable
+              as List<EntertainmentService>?,
       typeOfTrip: freezed == typeOfTrip
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
@@ -233,6 +263,10 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       @TimestampSerializer() DateTime? timestamp,
       String title,
       String type,
+      List<FoodService>? availableTables,
+      List<ListingImages>? menuImgs,
+      List<AvailableTransport>? availableTransport,
+      List<EntertainmentService>? availableEntertainment,
       String? typeOfTrip,
       String? uid});
 
@@ -269,6 +303,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? timestamp = freezed,
     Object? title = null,
     Object? type = null,
+    Object? availableTables = freezed,
+    Object? menuImgs = freezed,
+    Object? availableTransport = freezed,
+    Object? availableEntertainment = freezed,
     Object? typeOfTrip = freezed,
     Object? uid = freezed,
   }) {
@@ -345,6 +383,22 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      availableTables: freezed == availableTables
+          ? _value._availableTables
+          : availableTables // ignore: cast_nullable_to_non_nullable
+              as List<FoodService>?,
+      menuImgs: freezed == menuImgs
+          ? _value._menuImgs
+          : menuImgs // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>?,
+      availableTransport: freezed == availableTransport
+          ? _value._availableTransport
+          : availableTransport // ignore: cast_nullable_to_non_nullable
+              as List<AvailableTransport>?,
+      availableEntertainment: freezed == availableEntertainment
+          ? _value._availableEntertainment
+          : availableEntertainment // ignore: cast_nullable_to_non_nullable
+              as List<EntertainmentService>?,
       typeOfTrip: freezed == typeOfTrip
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
@@ -379,12 +433,20 @@ class _$ListingModelImpl implements _ListingModel {
       @TimestampSerializer() this.timestamp,
       required this.title,
       required this.type,
+      final List<FoodService>? availableTables,
+      final List<ListingImages>? menuImgs,
+      final List<AvailableTransport>? availableTransport,
+      final List<EntertainmentService>? availableEntertainment,
       this.typeOfTrip,
       this.uid})
       : _availableDates = availableDates,
         _availableRooms = availableRooms,
         _images = images,
-        _listingCosts = listingCosts;
+        _listingCosts = listingCosts,
+        _availableTables = availableTables,
+        _menuImgs = menuImgs,
+        _availableTransport = availableTransport,
+        _availableEntertainment = availableEntertainment;
 
   factory _$ListingModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ListingModelImplFromJson(json);
@@ -458,6 +520,48 @@ class _$ListingModelImpl implements _ListingModel {
   final String title;
   @override
   final String type;
+  final List<FoodService>? _availableTables;
+  @override
+  List<FoodService>? get availableTables {
+    final value = _availableTables;
+    if (value == null) return null;
+    if (_availableTables is EqualUnmodifiableListView) return _availableTables;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<ListingImages>? _menuImgs;
+  @override
+  List<ListingImages>? get menuImgs {
+    final value = _menuImgs;
+    if (value == null) return null;
+    if (_menuImgs is EqualUnmodifiableListView) return _menuImgs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<AvailableTransport>? _availableTransport;
+  @override
+  List<AvailableTransport>? get availableTransport {
+    final value = _availableTransport;
+    if (value == null) return null;
+    if (_availableTransport is EqualUnmodifiableListView)
+      return _availableTransport;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<EntertainmentService>? _availableEntertainment;
+  @override
+  List<EntertainmentService>? get availableEntertainment {
+    final value = _availableEntertainment;
+    if (value == null) return null;
+    if (_availableEntertainment is EqualUnmodifiableListView)
+      return _availableEntertainment;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final String? typeOfTrip;
   @override
@@ -465,7 +569,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, city: $city, cooperative: $cooperative, description: $description, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, pax: $pax, price: $price, province: $province, publisherId: $publisherId, rating: $rating, timestamp: $timestamp, title: $title, type: $type, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, city: $city, cooperative: $cooperative, description: $description, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, pax: $pax, price: $price, province: $province, publisherId: $publisherId, rating: $rating, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
   }
 
   @override
@@ -501,6 +605,13 @@ class _$ListingModelImpl implements _ListingModel {
                 other.timestamp == timestamp) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.type, type) || other.type == type) &&
+            const DeepCollectionEquality()
+                .equals(other._availableTables, _availableTables) &&
+            const DeepCollectionEquality().equals(other._menuImgs, _menuImgs) &&
+            const DeepCollectionEquality()
+                .equals(other._availableTransport, _availableTransport) &&
+            const DeepCollectionEquality().equals(
+                other._availableEntertainment, _availableEntertainment) &&
             (identical(other.typeOfTrip, typeOfTrip) ||
                 other.typeOfTrip == typeOfTrip) &&
             (identical(other.uid, uid) || other.uid == uid));
@@ -528,6 +639,10 @@ class _$ListingModelImpl implements _ListingModel {
         timestamp,
         title,
         type,
+        const DeepCollectionEquality().hash(_availableTables),
+        const DeepCollectionEquality().hash(_menuImgs),
+        const DeepCollectionEquality().hash(_availableTransport),
+        const DeepCollectionEquality().hash(_availableEntertainment),
         typeOfTrip,
         uid
       ]);
@@ -566,6 +681,10 @@ abstract class _ListingModel implements ListingModel {
       @TimestampSerializer() final DateTime? timestamp,
       required final String title,
       required final String type,
+      final List<FoodService>? availableTables,
+      final List<ListingImages>? menuImgs,
+      final List<AvailableTransport>? availableTransport,
+      final List<EntertainmentService>? availableEntertainment,
       final String? typeOfTrip,
       final String? uid}) = _$ListingModelImpl;
 
@@ -609,6 +728,14 @@ abstract class _ListingModel implements ListingModel {
   String get title;
   @override
   String get type;
+  @override
+  List<FoodService>? get availableTables;
+  @override
+  List<ListingImages>? get menuImgs;
+  @override
+  List<AvailableTransport>? get availableTransport;
+  @override
+  List<EntertainmentService>? get availableEntertainment;
   @override
   String? get typeOfTrip;
   @override
@@ -1382,6 +1509,597 @@ abstract class _AvailableRoom implements AvailableRoom {
   @JsonKey(ignore: true)
   _$$AvailableRoomImplCopyWith<_$AvailableRoomImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+AvailableTransport _$AvailableTransportFromJson(Map<String, dynamic> json) {
+  return _AvailableTransport.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AvailableTransport {
+  String get transportId => throw _privateConstructorUsedError;
+  num get guests => throw _privateConstructorUsedError;
+  num get price => throw _privateConstructorUsedError;
+  List<ListingImages> get images => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AvailableTransportCopyWith<AvailableTransport> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AvailableTransportCopyWith<$Res> {
+  factory $AvailableTransportCopyWith(
+          AvailableTransport value, $Res Function(AvailableTransport) then) =
+      _$AvailableTransportCopyWithImpl<$Res, AvailableTransport>;
+  @useResult
+  $Res call(
+      {String transportId, num guests, num price, List<ListingImages> images});
+}
+
+/// @nodoc
+class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
+    implements $AvailableTransportCopyWith<$Res> {
+  _$AvailableTransportCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? transportId = null,
+    Object? guests = null,
+    Object? price = null,
+    Object? images = null,
+  }) {
+    return _then(_value.copyWith(
+      transportId: null == transportId
+          ? _value.transportId
+          : transportId // ignore: cast_nullable_to_non_nullable
+              as String,
+      guests: null == guests
+          ? _value.guests
+          : guests // ignore: cast_nullable_to_non_nullable
+              as num,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as num,
+      images: null == images
+          ? _value.images
+          : images // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AvailableTransportImplCopyWith<$Res>
+    implements $AvailableTransportCopyWith<$Res> {
+  factory _$$AvailableTransportImplCopyWith(_$AvailableTransportImpl value,
+          $Res Function(_$AvailableTransportImpl) then) =
+      __$$AvailableTransportImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String transportId, num guests, num price, List<ListingImages> images});
+}
+
+/// @nodoc
+class __$$AvailableTransportImplCopyWithImpl<$Res>
+    extends _$AvailableTransportCopyWithImpl<$Res, _$AvailableTransportImpl>
+    implements _$$AvailableTransportImplCopyWith<$Res> {
+  __$$AvailableTransportImplCopyWithImpl(_$AvailableTransportImpl _value,
+      $Res Function(_$AvailableTransportImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? transportId = null,
+    Object? guests = null,
+    Object? price = null,
+    Object? images = null,
+  }) {
+    return _then(_$AvailableTransportImpl(
+      transportId: null == transportId
+          ? _value.transportId
+          : transportId // ignore: cast_nullable_to_non_nullable
+              as String,
+      guests: null == guests
+          ? _value.guests
+          : guests // ignore: cast_nullable_to_non_nullable
+              as num,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as num,
+      images: null == images
+          ? _value._images
+          : images // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AvailableTransportImpl implements _AvailableTransport {
+  _$AvailableTransportImpl(
+      {required this.transportId,
+      required this.guests,
+      required this.price,
+      required final List<ListingImages> images})
+      : _images = images;
+
+  factory _$AvailableTransportImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AvailableTransportImplFromJson(json);
+
+  @override
+  final String transportId;
+  @override
+  final num guests;
+  @override
+  final num price;
+  final List<ListingImages> _images;
+  @override
+  List<ListingImages> get images {
+    if (_images is EqualUnmodifiableListView) return _images;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_images);
+  }
+
+  @override
+  String toString() {
+    return 'AvailableTransport(transportId: $transportId, guests: $guests, price: $price, images: $images)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AvailableTransportImpl &&
+            (identical(other.transportId, transportId) ||
+                other.transportId == transportId) &&
+            (identical(other.guests, guests) || other.guests == guests) &&
+            (identical(other.price, price) || other.price == price) &&
+            const DeepCollectionEquality().equals(other._images, _images));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, transportId, guests, price,
+      const DeepCollectionEquality().hash(_images));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AvailableTransportImplCopyWith<_$AvailableTransportImpl> get copyWith =>
+      __$$AvailableTransportImplCopyWithImpl<_$AvailableTransportImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AvailableTransportImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AvailableTransport implements AvailableTransport {
+  factory _AvailableTransport(
+      {required final String transportId,
+      required final num guests,
+      required final num price,
+      required final List<ListingImages> images}) = _$AvailableTransportImpl;
+
+  factory _AvailableTransport.fromJson(Map<String, dynamic> json) =
+      _$AvailableTransportImpl.fromJson;
+
+  @override
+  String get transportId;
+  @override
+  num get guests;
+  @override
+  num get price;
+  @override
+  List<ListingImages> get images;
+  @override
+  @JsonKey(ignore: true)
+  _$$AvailableTransportImplCopyWith<_$AvailableTransportImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+FoodService _$FoodServiceFromJson(Map<String, dynamic> json) {
+  return _FoodService.fromJson(json);
+}
+
+/// @nodoc
+mixin _$FoodService {
+  String get tableId => throw _privateConstructorUsedError;
+  num get guests => throw _privateConstructorUsedError;
+  bool get isReserved => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $FoodServiceCopyWith<FoodService> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $FoodServiceCopyWith<$Res> {
+  factory $FoodServiceCopyWith(
+          FoodService value, $Res Function(FoodService) then) =
+      _$FoodServiceCopyWithImpl<$Res, FoodService>;
+  @useResult
+  $Res call({String tableId, num guests, bool isReserved});
+}
+
+/// @nodoc
+class _$FoodServiceCopyWithImpl<$Res, $Val extends FoodService>
+    implements $FoodServiceCopyWith<$Res> {
+  _$FoodServiceCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tableId = null,
+    Object? guests = null,
+    Object? isReserved = null,
+  }) {
+    return _then(_value.copyWith(
+      tableId: null == tableId
+          ? _value.tableId
+          : tableId // ignore: cast_nullable_to_non_nullable
+              as String,
+      guests: null == guests
+          ? _value.guests
+          : guests // ignore: cast_nullable_to_non_nullable
+              as num,
+      isReserved: null == isReserved
+          ? _value.isReserved
+          : isReserved // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$FoodServiceImplCopyWith<$Res>
+    implements $FoodServiceCopyWith<$Res> {
+  factory _$$FoodServiceImplCopyWith(
+          _$FoodServiceImpl value, $Res Function(_$FoodServiceImpl) then) =
+      __$$FoodServiceImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String tableId, num guests, bool isReserved});
+}
+
+/// @nodoc
+class __$$FoodServiceImplCopyWithImpl<$Res>
+    extends _$FoodServiceCopyWithImpl<$Res, _$FoodServiceImpl>
+    implements _$$FoodServiceImplCopyWith<$Res> {
+  __$$FoodServiceImplCopyWithImpl(
+      _$FoodServiceImpl _value, $Res Function(_$FoodServiceImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tableId = null,
+    Object? guests = null,
+    Object? isReserved = null,
+  }) {
+    return _then(_$FoodServiceImpl(
+      tableId: null == tableId
+          ? _value.tableId
+          : tableId // ignore: cast_nullable_to_non_nullable
+              as String,
+      guests: null == guests
+          ? _value.guests
+          : guests // ignore: cast_nullable_to_non_nullable
+              as num,
+      isReserved: null == isReserved
+          ? _value.isReserved
+          : isReserved // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$FoodServiceImpl implements _FoodService {
+  _$FoodServiceImpl(
+      {required this.tableId, required this.guests, required this.isReserved});
+
+  factory _$FoodServiceImpl.fromJson(Map<String, dynamic> json) =>
+      _$$FoodServiceImplFromJson(json);
+
+  @override
+  final String tableId;
+  @override
+  final num guests;
+  @override
+  final bool isReserved;
+
+  @override
+  String toString() {
+    return 'FoodService(tableId: $tableId, guests: $guests, isReserved: $isReserved)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$FoodServiceImpl &&
+            (identical(other.tableId, tableId) || other.tableId == tableId) &&
+            (identical(other.guests, guests) || other.guests == guests) &&
+            (identical(other.isReserved, isReserved) ||
+                other.isReserved == isReserved));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, tableId, guests, isReserved);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$FoodServiceImplCopyWith<_$FoodServiceImpl> get copyWith =>
+      __$$FoodServiceImplCopyWithImpl<_$FoodServiceImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$FoodServiceImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _FoodService implements FoodService {
+  factory _FoodService(
+      {required final String tableId,
+      required final num guests,
+      required final bool isReserved}) = _$FoodServiceImpl;
+
+  factory _FoodService.fromJson(Map<String, dynamic> json) =
+      _$FoodServiceImpl.fromJson;
+
+  @override
+  String get tableId;
+  @override
+  num get guests;
+  @override
+  bool get isReserved;
+  @override
+  @JsonKey(ignore: true)
+  _$$FoodServiceImplCopyWith<_$FoodServiceImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+EntertainmentService _$EntertainmentServiceFromJson(Map<String, dynamic> json) {
+  return _EntertainmentService.fromJson(json);
+}
+
+/// @nodoc
+mixin _$EntertainmentService {
+  String get entertainmentId => throw _privateConstructorUsedError;
+  num get guests => throw _privateConstructorUsedError;
+  num get price => throw _privateConstructorUsedError;
+  List<ListingImages> get entertainmentImgs =>
+      throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $EntertainmentServiceCopyWith<EntertainmentService> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $EntertainmentServiceCopyWith<$Res> {
+  factory $EntertainmentServiceCopyWith(EntertainmentService value,
+          $Res Function(EntertainmentService) then) =
+      _$EntertainmentServiceCopyWithImpl<$Res, EntertainmentService>;
+  @useResult
+  $Res call(
+      {String entertainmentId,
+      num guests,
+      num price,
+      List<ListingImages> entertainmentImgs});
+}
+
+/// @nodoc
+class _$EntertainmentServiceCopyWithImpl<$Res,
+        $Val extends EntertainmentService>
+    implements $EntertainmentServiceCopyWith<$Res> {
+  _$EntertainmentServiceCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entertainmentId = null,
+    Object? guests = null,
+    Object? price = null,
+    Object? entertainmentImgs = null,
+  }) {
+    return _then(_value.copyWith(
+      entertainmentId: null == entertainmentId
+          ? _value.entertainmentId
+          : entertainmentId // ignore: cast_nullable_to_non_nullable
+              as String,
+      guests: null == guests
+          ? _value.guests
+          : guests // ignore: cast_nullable_to_non_nullable
+              as num,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as num,
+      entertainmentImgs: null == entertainmentImgs
+          ? _value.entertainmentImgs
+          : entertainmentImgs // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$EntertainmentServiceImplCopyWith<$Res>
+    implements $EntertainmentServiceCopyWith<$Res> {
+  factory _$$EntertainmentServiceImplCopyWith(_$EntertainmentServiceImpl value,
+          $Res Function(_$EntertainmentServiceImpl) then) =
+      __$$EntertainmentServiceImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String entertainmentId,
+      num guests,
+      num price,
+      List<ListingImages> entertainmentImgs});
+}
+
+/// @nodoc
+class __$$EntertainmentServiceImplCopyWithImpl<$Res>
+    extends _$EntertainmentServiceCopyWithImpl<$Res, _$EntertainmentServiceImpl>
+    implements _$$EntertainmentServiceImplCopyWith<$Res> {
+  __$$EntertainmentServiceImplCopyWithImpl(_$EntertainmentServiceImpl _value,
+      $Res Function(_$EntertainmentServiceImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entertainmentId = null,
+    Object? guests = null,
+    Object? price = null,
+    Object? entertainmentImgs = null,
+  }) {
+    return _then(_$EntertainmentServiceImpl(
+      entertainmentId: null == entertainmentId
+          ? _value.entertainmentId
+          : entertainmentId // ignore: cast_nullable_to_non_nullable
+              as String,
+      guests: null == guests
+          ? _value.guests
+          : guests // ignore: cast_nullable_to_non_nullable
+              as num,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as num,
+      entertainmentImgs: null == entertainmentImgs
+          ? _value._entertainmentImgs
+          : entertainmentImgs // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$EntertainmentServiceImpl implements _EntertainmentService {
+  _$EntertainmentServiceImpl(
+      {required this.entertainmentId,
+      required this.guests,
+      required this.price,
+      required final List<ListingImages> entertainmentImgs})
+      : _entertainmentImgs = entertainmentImgs;
+
+  factory _$EntertainmentServiceImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EntertainmentServiceImplFromJson(json);
+
+  @override
+  final String entertainmentId;
+  @override
+  final num guests;
+  @override
+  final num price;
+  final List<ListingImages> _entertainmentImgs;
+  @override
+  List<ListingImages> get entertainmentImgs {
+    if (_entertainmentImgs is EqualUnmodifiableListView)
+      return _entertainmentImgs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_entertainmentImgs);
+  }
+
+  @override
+  String toString() {
+    return 'EntertainmentService(entertainmentId: $entertainmentId, guests: $guests, price: $price, entertainmentImgs: $entertainmentImgs)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EntertainmentServiceImpl &&
+            (identical(other.entertainmentId, entertainmentId) ||
+                other.entertainmentId == entertainmentId) &&
+            (identical(other.guests, guests) || other.guests == guests) &&
+            (identical(other.price, price) || other.price == price) &&
+            const DeepCollectionEquality()
+                .equals(other._entertainmentImgs, _entertainmentImgs));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, entertainmentId, guests, price,
+      const DeepCollectionEquality().hash(_entertainmentImgs));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$EntertainmentServiceImplCopyWith<_$EntertainmentServiceImpl>
+      get copyWith =>
+          __$$EntertainmentServiceImplCopyWithImpl<_$EntertainmentServiceImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$EntertainmentServiceImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _EntertainmentService implements EntertainmentService {
+  factory _EntertainmentService(
+          {required final String entertainmentId,
+          required final num guests,
+          required final num price,
+          required final List<ListingImages> entertainmentImgs}) =
+      _$EntertainmentServiceImpl;
+
+  factory _EntertainmentService.fromJson(Map<String, dynamic> json) =
+      _$EntertainmentServiceImpl.fromJson;
+
+  @override
+  String get entertainmentId;
+  @override
+  num get guests;
+  @override
+  num get price;
+  @override
+  List<ListingImages> get entertainmentImgs;
+  @override
+  @JsonKey(ignore: true)
+  _$$EntertainmentServiceImplCopyWith<_$EntertainmentServiceImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 AvailableDate _$AvailableDateFromJson(Map<String, dynamic> json) {

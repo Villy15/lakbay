@@ -54,7 +54,6 @@ class _AddListingState extends ConsumerState<AddListing> {
 
   // Step 4
   List<File>? _images;
-  // List<File>? _menuImgs;
 
   @override
   void initState() {
@@ -154,7 +153,7 @@ class _AddListingState extends ConsumerState<AddListing> {
           case "Food":
             return "Food Service Details";
           case "Entertainment":
-            return "";
+            return "Entertainment Details";
         }
         return 'Add supporting details';
 
@@ -221,10 +220,13 @@ class _AddListingState extends ConsumerState<AddListing> {
         switch (category) {
           case "Accommodation":
             return Step2Accommodation(coop: widget.coop);
-          case "Transport":
-          // return step2Transport(context);
+          case "Transport": 
+            return Step2Transport(coop: widget.coop);
           case "Food":
-          // return step2Food(context);
+            return Step2Food(coop: widget.coop);
+          case "Entertainment":
+            return Step2Entertainment(coop: widget.coop);
+
         }
         return const Text("No Supporting Details");
       case 3:
@@ -397,7 +399,7 @@ class _AddListingState extends ConsumerState<AddListing> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
                 side: BorderSide(
-                  color: category == types[index]['name']
+                  color: type == types[index]['name']
                       ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).colorScheme.primary.withOpacity(0.0),
                   width: 1,
@@ -844,6 +846,500 @@ class ImagePickerFormField extends FormField<List<File>> {
             );
           },
         );
+}
+
+class Step2Entertainment extends StatefulWidget {
+  final CooperativeModel coop;
+  const Step2Entertainment({required this.coop, super.key});
+
+  @override
+  State<Step2Entertainment> createState() => _Step2EntertainmentState();
+}
+
+class _Step2EntertainmentState extends State<Step2Entertainment> {
+  List<EntertainmentService> availableEntertainment = [];
+  
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (availableEntertainment.isNotEmpty == true) ... [
+          ListView.builder(
+            itemCount: availableEntertainment.length,
+            itemBuilder:(context, index) {
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // the image is shown here
+                    Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Image.file(File(availableEntertainment[index].entertainmentImgs.first.path), fit: BoxFit.cover),
+                    ),
+                    Text(
+                      availableEntertainment[index].entertainmentId,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Price: ₱${availableEntertainment[index].price} / day',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Guests: ${availableEntertainment[index].guests}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Images: ${availableEntertainment[index].entertainmentImgs.length}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          availableEntertainment.removeAt(index);
+                        });
+                      },
+                      child: const Text('Remove')
+                    )
+                  ],
+                ),
+              );
+            },
+          )
+
+        ] 
+        else ... [
+          const SizedBox(height: 15),
+          const Text(
+            'No entertainment/s added yet...',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 15)
+        ],
+        Center(
+          child: ElevatedButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  num guests = 0;
+                  List<File>? entertainmentImgs;
+                  TextEditingController entertainmentNameController = TextEditingController();
+                  TextEditingController priceController = TextEditingController();
+
+                  return SingleChildScrollView(
+                    child: StatefulBuilder(
+                      builder: (context, setState) {
+                        return Container(
+                          margin: const EdgeInsets.only(top: 20),
+                          height: MediaQuery.sizeOf(context).height / 2,
+                          width: double.infinity,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const Text('Add photo/s here: '),
+                                ImagePickerFormField(
+                                  context: context,
+                                  initialValue: entertainmentImgs,
+                                  height: MediaQuery.sizeOf(context).height / 6.5,
+                                  width: MediaQuery.sizeOf(context).width / 1.7,
+                                  onSaved: (List<File>? files) {
+                                    entertainmentImgs = files;
+                                  },
+                                  validator: (List<File>? files) {
+                                    if (files == null || files.isEmpty) {
+                                      return 'Please select some images';
+                                    }
+                                    return null;
+                                  },
+                                  onImagesSelected: (List<File> files) {
+                                    entertainmentImgs = files;
+                                  },
+                                ),
+                            
+                                const SizedBox(height: 15),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                                  child: TextFormField(
+                                    controller: entertainmentNameController,
+                                    decoration: const InputDecoration(
+                                      icon: Icon(Icons.title_outlined),
+                                      border: OutlineInputBorder(),
+                                      labelText: "Entertainment Name",
+                                      contentPadding: EdgeInsets.symmetric(
+                                        vertical: 10,
+                                        horizontal: 12
+                                      ), // Adjust padding here
+                                    ),
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter some text';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                                  child: TextFormField(
+                                    controller: priceController,
+                                    maxLines: null,
+                                    keyboardType: const TextInputType.numberWithOptions(
+                                      decimal: true
+                                    ),
+                                    decoration: const InputDecoration(
+                                      icon: Icon(
+                                        Icons.money_outlined,
+                                      ),
+                                      border: OutlineInputBorder(),
+                                      labelText: 'Price',
+                                      prefix: Text('₱'),
+                                      contentPadding: EdgeInsets.symmetric(
+                                        vertical: 10,
+                                        horizontal: 12), // Adjust padding here
+                                    ),
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter some text';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                ListTile(
+                                  title: const Row(
+                                    children: [
+                                      Icon(Icons.people_alt_outlined),
+                                      SizedBox(width: 10),
+                                      Text('Guests'),
+                                    ],
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.remove),
+                                        onPressed: () {
+                                          if (guests > 1) {
+                                            setState(() {
+                                              guests--;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text('$guests',
+                                          style: const TextStyle(fontSize: 16)),
+                                      const SizedBox(width: 10),
+                                      IconButton(
+                                        icon: const Icon(Icons.add),
+                                        onPressed: () {
+                                          setState(() {
+                                            guests++;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    this.setState(() {
+                                      availableEntertainment.add(EntertainmentService(
+                                        entertainmentId: entertainmentNameController.text,
+                                        guests: guests,
+                                        price: num.parse(priceController.text),
+                                        entertainmentImgs: entertainmentImgs!.map((image) {
+                                      final imagePath =
+                                          'listings/${widget.coop.name}/${image.path.split('/').last}';
+                                      return ListingImages(
+                                        path: imagePath,
+                                      );
+                                    }).toList(),
+                                      ));
+                                    });
+                                    Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('${entertainmentNameController.text} added'),
+                                    duration: const Duration(seconds: 1),
+                                  ),
+                                );
+                                  },
+                                   
+                                  child: const Text('Confirm')
+                                )
+                              ]
+                            ),
+                          )
+                        );
+                      }
+                    ),
+                  );
+                }
+              );
+            }, 
+            child: const Text('Add Entertainment')
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class Step2Transport extends StatefulWidget {
+  final CooperativeModel coop;
+  const Step2Transport({required this.coop, super.key});
+
+
+  @override
+  State<Step2Transport> createState() => _Step2TransportState();
+}
+
+class _Step2TransportState extends State<Step2Transport> {
+  List<AvailableTransport> availableTransport = [];
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (availableTransport.isNotEmpty == true) ... [
+          ListView.builder(
+            itemCount: availableTransport.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: ((context, index) {
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // the image is shown here
+                    Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Image.file(File(availableTransport[index].images.first.path), fit: BoxFit.cover),
+                    ),
+                    Text(
+                      availableTransport[index].transportId,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Price: ₱${availableTransport[index].price} / day',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Guests: ${availableTransport[index].guests}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Images: ${availableTransport[index].images.length}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          availableTransport.removeAt(index);
+                        });
+                      },
+                      child: const Text('Remove'),
+                    ),
+                    const Divider(),
+                  ],
+                ),
+              );
+            })),
+        ] else ... [
+          const SizedBox(height: 15),
+          const Text(
+            'No transport/s added yet...',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 15)
+        ],
+        Center(
+          child: ElevatedButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  num guests = 0;
+                  List<File>? transportImgs;
+                  TextEditingController transportNameController = TextEditingController();
+                  TextEditingController priceController = TextEditingController();
+                  return SingleChildScrollView(
+                    child: StatefulBuilder(
+                      builder: (context, setState) {
+                        return Container(
+                          margin: const EdgeInsets.only(top: 20),
+                          height: MediaQuery.sizeOf(context).height / 2,
+                          width: double.infinity,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const Text('Add photo/s here: '),
+                                  ImagePickerFormField(
+                                    context: context,
+                                    initialValue: transportImgs,
+                                    height: MediaQuery.sizeOf(context).height / 6.5,
+                                    width: MediaQuery.sizeOf(context).width / 1.7,
+                                    onSaved: (List<File>? files) {
+                                      transportImgs = files;
+                                    },
+                                    validator: (List<File>? files) {
+                                      if (files == null || files.isEmpty) {
+                                        return 'Please select some images';
+                                      }
+                                      return null;
+                                    },
+                                    onImagesSelected: (List<File> files) {
+                                      transportImgs = files;
+                                    },
+                                  ),
+                                
+                                Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                                  child: TextFormField(
+                                    controller: transportNameController,
+                                    decoration: const InputDecoration(
+                                      icon: Icon(Icons.title_outlined),
+                                      border: OutlineInputBorder(),
+                                      labelText: "Transport Name",
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10,
+                                          horizontal: 12), // Adjust padding here
+                                    ),
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter some text';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                                  child: TextFormField(
+                                    controller: priceController,
+                                    maxLines: null,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: true),
+                                    decoration: const InputDecoration(
+                                      icon: Icon(
+                                        Icons.money_outlined,
+                                      ),
+                                      border: OutlineInputBorder(),
+                                      labelText: 'Price',
+                                      prefix: Text('₱'),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10,
+                                          horizontal: 12), // Adjust padding here
+                                    ),
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter some text';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                ListTile(
+                                      title: const Row(
+                                        children: [
+                                          Icon(Icons.people_alt_outlined),
+                                          SizedBox(width: 10),
+                                          Text('Guests'),
+                                        ],
+                                      ),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.remove),
+                                            onPressed: () {
+                                              if (guests > 1) {
+                                                setState(() {
+                                                  guests--;
+                                                });
+                                              }
+                                            },
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text('$guests',
+                                              style: const TextStyle(fontSize: 16)),
+                                          const SizedBox(width: 10),
+                                          IconButton(
+                                            icon: const Icon(Icons.add),
+                                            onPressed: () {
+                                              setState(() {
+                                                guests++;
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                ),
+                                                
+                                // add transport button
+                                ElevatedButton(
+                                  onPressed: () {
+                                    this.setState(() {
+                                      availableTransport.add(AvailableTransport(
+                                        transportId: transportNameController.text,
+                                        guests: guests,
+                                        price: num.parse(priceController.text),
+                                        images: transportImgs!.map((image) {
+                                          final imagePath =
+                                              'listings/${widget.coop.name}/${image.path.split('/').last}';
+                                          return ListingImages(
+                                            path: imagePath,
+                                          );
+                                        }).toList(),
+                                      ));
+                                    });
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('${transportNameController.text} added'),
+                                        duration: const Duration(seconds: 1),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('Confirm'),
+                                )
+                                                
+                              ]
+                            ),
+                          )
+                        );
+                      }
+                    ),
+                  );
+                });
+            },
+            child: const Text('Add Transport')  
+          )
+        )
+      ]
+    );
+  }
 }
 
 class Step2Accommodation extends ConsumerStatefulWidget {
@@ -1428,3 +1924,209 @@ class _Step2AccommodationState extends ConsumerState<Step2Accommodation> {
     );
   }
 }
+
+
+class Step2Food extends StatefulWidget {
+  final CooperativeModel coop;
+  const Step2Food({required this.coop, super.key});
+
+  @override
+  State<Step2Food> createState() => _Step2FoodState();
+}
+
+class _Step2FoodState extends State<Step2Food> {
+  List<FoodService> availableTables = [];
+  List<File>? _menuImgs;
+  // initialize table number to 1
+  num tableNo = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+            'Add Menu/s here:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        GestureDetector(
+          child: Row(
+            children: [
+              Icon(
+                Icons.image_outlined,
+                color: Theme.of(context).iconTheme.color,
+              ),
+              const SizedBox(
+                  width:
+                      15), // Add some spacing between the icon and the container
+              Expanded(
+                child: ImagePickerFormField(
+                  context: context,
+                  initialValue: _menuImgs,
+                  height: MediaQuery.sizeOf(context).height / 4.5,
+                  width: MediaQuery.sizeOf(context).width / 2,
+                  onSaved: (List<File>? files) {
+                    _menuImgs = files;
+                  },
+                  validator: (List<File>? files) {
+                    if (files == null || files.isEmpty) {
+                      return 'Please select some images';
+                    }
+                    return null;
+                  },
+                  onImagesSelected: (List<File> files) {
+                    _menuImgs = files;
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        const Divider(),
+        const SizedBox(height: 15),
+        if (availableTables.isNotEmpty == true) ... [
+          ListView.builder(
+            itemCount: availableTables.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(availableTables[index].tableId),
+                subtitle: Text('Guests: ${availableTables[index].guests}'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    setState(() {
+                      availableTables.removeAt(index);
+                    });
+                  },
+                ),
+              );
+            },
+          ) 
+        ]
+        else ... [
+          const Text(
+            'No tables added yet',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        ],
+
+        const SizedBox(height: 15),
+
+        Center(
+          child: ElevatedButton(
+            onPressed: () {
+              showModalBottomSheet(
+                isScrollControlled: true,
+                context: context,
+                builder: (BuildContext context) {
+                  num guests = 0;
+                  bool isReserved = false;
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      return Stack(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(top: 20),
+                            height: MediaQuery.sizeOf(context).height / 5,
+                            width: double.infinity,
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  title: const Row(
+                                    children: [
+                                      Icon(Icons.people_alt_outlined),
+                                      SizedBox(width: 10),
+                                      Text('Guests'),
+                                    ],
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.remove),
+                                        onPressed: () {
+                                          if (guests > 1) {
+                                            setState(() {
+                                              guests--;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text('$guests',
+                                          style: const TextStyle(fontSize: 16)),
+                                      const SizedBox(width: 10),
+                                      IconButton(
+                                        icon: const Icon(Icons.add),
+                                        onPressed: () {
+                                          setState(() {
+                                            guests++;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 45),
+                                // Add Table Button
+                                ElevatedButton(
+                                  onPressed: () {
+                                    this.setState(() {
+                                      availableTables.add(FoodService(
+                                        tableId: "Table No. $tableNo",
+                                          guests: guests,
+                                          isReserved: isReserved));
+                                     tableNo++; 
+                                     debugPrint(availableTables.toString());
+                                    },);
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Table No. ${tableNo - 1} added'),
+                                        duration: const Duration(seconds: 1),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('Confirm'),
+                                )
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.table_bar_outlined,
+                                    color: Theme.of(context).dividerColor
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    'Table No. $tableNo',
+                                    style: Theme.of(context).textTheme.labelLarge,
+                                  )
+                                ],
+                              )
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              );
+            },
+            child: const Text('Add Table'),
+            // show available table numbers through listview builder 
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
