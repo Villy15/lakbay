@@ -220,13 +220,12 @@ class _AddListingState extends ConsumerState<AddListing> {
         switch (category) {
           case "Accommodation":
             return Step2Accommodation(coop: widget.coop);
-          case "Transport": 
+          case "Transport":
             return Step2Transport(coop: widget.coop);
           case "Food":
             return Step2Food(coop: widget.coop);
           case "Entertainment":
             return Step2Entertainment(coop: widget.coop);
-
         }
         return const Text("No Supporting Details");
       case 3:
@@ -858,15 +857,15 @@ class Step2Entertainment extends StatefulWidget {
 
 class _Step2EntertainmentState extends State<Step2Entertainment> {
   List<EntertainmentService> availableEntertainment = [];
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (availableEntertainment.isNotEmpty == true) ... [
+        if (availableEntertainment.isNotEmpty == true) ...[
           ListView.builder(
             itemCount: availableEntertainment.length,
-            itemBuilder:(context, index) {
+            itemBuilder: (context, index) {
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 child: Column(
@@ -879,7 +878,12 @@ class _Step2EntertainmentState extends State<Step2Entertainment> {
                         border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(4.0),
                       ),
-                      child: Image.file(File(availableEntertainment[index].entertainmentImgs.first.path), fit: BoxFit.cover),
+                      child: Image.file(
+                          File(availableEntertainment[index]
+                              .entertainmentImgs
+                              .first
+                              .path),
+                          fit: BoxFit.cover),
                     ),
                     Text(
                       availableEntertainment[index].entertainmentId,
@@ -903,193 +907,195 @@ class _Step2EntertainmentState extends State<Step2Entertainment> {
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          availableEntertainment.removeAt(index);
-                        });
-                      },
-                      child: const Text('Remove')
-                    )
+                        onPressed: () {
+                          setState(() {
+                            availableEntertainment.removeAt(index);
+                          });
+                        },
+                        child: const Text('Remove'))
                   ],
                 ),
               );
             },
           )
-
-        ] 
-        else ... [
+        ] else ...[
           const SizedBox(height: 15),
-          const Text(
-            'No entertainment/s added yet...',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+          const Text('No entertainment/s added yet...',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
           const SizedBox(height: 15)
         ],
         Center(
           child: ElevatedButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  num guests = 0;
-                  List<File>? entertainmentImgs;
-                  TextEditingController entertainmentNameController = TextEditingController();
-                  TextEditingController priceController = TextEditingController();
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      num guests = 0;
+                      List<File>? entertainmentImgs;
+                      TextEditingController entertainmentNameController =
+                          TextEditingController();
+                      TextEditingController priceController =
+                          TextEditingController();
 
-                  return SingleChildScrollView(
-                    child: StatefulBuilder(
-                      builder: (context, setState) {
-                        return Container(
-                          margin: const EdgeInsets.only(top: 20),
-                          height: MediaQuery.sizeOf(context).height / 2,
-                          width: double.infinity,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                const Text('Add photo/s here: '),
-                                ImagePickerFormField(
-                                  context: context,
-                                  initialValue: entertainmentImgs,
-                                  height: MediaQuery.sizeOf(context).height / 6.5,
-                                  width: MediaQuery.sizeOf(context).width / 1.7,
-                                  onSaved: (List<File>? files) {
-                                    entertainmentImgs = files;
-                                  },
-                                  validator: (List<File>? files) {
-                                    if (files == null || files.isEmpty) {
-                                      return 'Please select some images';
-                                    }
-                                    return null;
-                                  },
-                                  onImagesSelected: (List<File> files) {
-                                    entertainmentImgs = files;
-                                  },
-                                ),
-                            
-                                const SizedBox(height: 15),
-                                Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                                  child: TextFormField(
-                                    controller: entertainmentNameController,
-                                    decoration: const InputDecoration(
-                                      icon: Icon(Icons.title_outlined),
-                                      border: OutlineInputBorder(),
-                                      labelText: "Entertainment Name",
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 10,
-                                        horizontal: 12
-                                      ), // Adjust padding here
-                                    ),
-                                    validator: (String? value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter some text';
+                      return SingleChildScrollView(
+                        child: StatefulBuilder(builder: (context, setState) {
+                          return Container(
+                              margin: const EdgeInsets.only(top: 20),
+                              height: MediaQuery.sizeOf(context).height / 2,
+                              width: double.infinity,
+                              child: SingleChildScrollView(
+                                child: Column(children: [
+                                  const Text('Add photo/s here: '),
+                                  ImagePickerFormField(
+                                    context: context,
+                                    initialValue: entertainmentImgs,
+                                    height:
+                                        MediaQuery.sizeOf(context).height / 6.5,
+                                    width:
+                                        MediaQuery.sizeOf(context).width / 1.7,
+                                    onSaved: (List<File>? files) {
+                                      entertainmentImgs = files;
+                                    },
+                                    validator: (List<File>? files) {
+                                      if (files == null || files.isEmpty) {
+                                        return 'Please select some images';
                                       }
                                       return null;
                                     },
+                                    onImagesSelected: (List<File> files) {
+                                      entertainmentImgs = files;
+                                    },
                                   ),
-                                ),
-                                const SizedBox(height: 15),
-                                Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                                  child: TextFormField(
-                                    controller: priceController,
-                                    maxLines: null,
-                                    keyboardType: const TextInputType.numberWithOptions(
-                                      decimal: true
-                                    ),
-                                    decoration: const InputDecoration(
-                                      icon: Icon(
-                                        Icons.money_outlined,
+                                  const SizedBox(height: 15),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: TextFormField(
+                                      controller: entertainmentNameController,
+                                      decoration: const InputDecoration(
+                                        icon: Icon(Icons.title_outlined),
+                                        border: OutlineInputBorder(),
+                                        labelText: "Entertainment Name",
+                                        contentPadding: EdgeInsets.symmetric(
+                                            vertical: 10,
+                                            horizontal:
+                                                12), // Adjust padding here
                                       ),
-                                      border: OutlineInputBorder(),
-                                      labelText: 'Price',
-                                      prefix: Text('₱'),
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 10,
-                                        horizontal: 12), // Adjust padding here
+                                      validator: (String? value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter some text';
+                                        }
+                                        return null;
+                                      },
                                     ),
-                                    validator: (String? value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter some text';
-                                      }
-                                      return null;
-                                    },
                                   ),
-                                ),
-                                ListTile(
-                                  title: const Row(
-                                    children: [
-                                      Icon(Icons.people_alt_outlined),
-                                      SizedBox(width: 10),
-                                      Text('Guests'),
-                                    ],
+                                  const SizedBox(height: 15),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: TextFormField(
+                                      controller: priceController,
+                                      maxLines: null,
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                              decimal: true),
+                                      decoration: const InputDecoration(
+                                        icon: Icon(
+                                          Icons.money_outlined,
+                                        ),
+                                        border: OutlineInputBorder(),
+                                        labelText: 'Price',
+                                        prefix: Text('₱'),
+                                        contentPadding: EdgeInsets.symmetric(
+                                            vertical: 10,
+                                            horizontal:
+                                                12), // Adjust padding here
+                                      ),
+                                      validator: (String? value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter some text';
+                                        }
+                                        return null;
+                                      },
+                                    ),
                                   ),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.remove),
-                                        onPressed: () {
-                                          if (guests > 1) {
+                                  ListTile(
+                                    title: const Row(
+                                      children: [
+                                        Icon(Icons.people_alt_outlined),
+                                        SizedBox(width: 10),
+                                        Text('Guests'),
+                                      ],
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.remove),
+                                          onPressed: () {
+                                            if (guests > 1) {
+                                              setState(() {
+                                                guests--;
+                                              });
+                                            }
+                                          },
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text('$guests',
+                                            style:
+                                                const TextStyle(fontSize: 16)),
+                                        const SizedBox(width: 10),
+                                        IconButton(
+                                          icon: const Icon(Icons.add),
+                                          onPressed: () {
                                             setState(() {
-                                              guests--;
+                                              guests++;
                                             });
-                                          }
-                                        },
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Text('$guests',
-                                          style: const TextStyle(fontSize: 16)),
-                                      const SizedBox(width: 10),
-                                      IconButton(
-                                        icon: const Icon(Icons.add),
-                                        onPressed: () {
-                                          setState(() {
-                                            guests++;
-                                          });
-                                        },
-                                      ),
-                                    ],
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    this.setState(() {
-                                      availableEntertainment.add(EntertainmentService(
-                                        entertainmentId: entertainmentNameController.text,
-                                        guests: guests,
-                                        price: num.parse(priceController.text),
-                                        entertainmentImgs: entertainmentImgs!.map((image) {
-                                      final imagePath =
-                                          'listings/${widget.coop.name}/${image.path.split('/').last}';
-                                      return ListingImages(
-                                        path: imagePath,
-                                      );
-                                    }).toList(),
-                                      ));
-                                    });
-                                    Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('${entertainmentNameController.text} added'),
-                                    duration: const Duration(seconds: 1),
-                                  ),
-                                );
-                                  },
-                                   
-                                  child: const Text('Confirm')
-                                )
-                              ]
-                            ),
-                          )
-                        );
-                      }
-                    ),
-                  );
-                }
-              );
-            }, 
-            child: const Text('Add Entertainment')
-          ),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        this.setState(() {
+                                          availableEntertainment
+                                              .add(EntertainmentService(
+                                            entertainmentId:
+                                                entertainmentNameController
+                                                    .text,
+                                            guests: guests,
+                                            price:
+                                                num.parse(priceController.text),
+                                            entertainmentImgs:
+                                                entertainmentImgs!.map((image) {
+                                              final imagePath =
+                                                  'listings/${widget.coop.name}/${image.path.split('/').last}';
+                                              return ListingImages(
+                                                path: imagePath,
+                                              );
+                                            }).toList(),
+                                          ));
+                                        });
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                '${entertainmentNameController.text} added'),
+                                            duration:
+                                                const Duration(seconds: 1),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text('Confirm'))
+                                ]),
+                              ));
+                        }),
+                      );
+                    });
+              },
+              child: const Text('Add Entertainment')),
         )
       ],
     );
@@ -1100,7 +1106,6 @@ class Step2Transport extends StatefulWidget {
   final CooperativeModel coop;
   const Step2Transport({required this.coop, super.key});
 
-
   @override
   State<Step2Transport> createState() => _Step2TransportState();
 }
@@ -1109,10 +1114,9 @@ class _Step2TransportState extends State<Step2Transport> {
   List<AvailableTransport> availableTransport = [];
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (availableTransport.isNotEmpty == true) ... [
-          ListView.builder(
+    return Column(children: [
+      if (availableTransport.isNotEmpty == true) ...[
+        ListView.builder(
             itemCount: availableTransport.length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -1129,7 +1133,9 @@ class _Step2TransportState extends State<Step2Transport> {
                         border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(4.0),
                       ),
-                      child: Image.file(File(availableTransport[index].images.first.path), fit: BoxFit.cover),
+                      child: Image.file(
+                          File(availableTransport[index].images.first.path),
+                          fit: BoxFit.cover),
                     ),
                     Text(
                       availableTransport[index].transportId,
@@ -1165,39 +1171,40 @@ class _Step2TransportState extends State<Step2Transport> {
                 ),
               );
             })),
-        ] else ... [
-          const SizedBox(height: 15),
-          const Text(
-            'No transport/s added yet...',
+      ] else ...[
+        const SizedBox(height: 15),
+        const Text('No transport/s added yet...',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 15)
-        ],
-        Center(
+        const SizedBox(height: 15)
+      ],
+      Center(
           child: ElevatedButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  num guests = 0;
-                  List<File>? transportImgs;
-                  TextEditingController transportNameController = TextEditingController();
-                  TextEditingController priceController = TextEditingController();
-                  return SingleChildScrollView(
-                    child: StatefulBuilder(
-                      builder: (context, setState) {
-                        return Container(
-                          margin: const EdgeInsets.only(top: 20),
-                          height: MediaQuery.sizeOf(context).height / 2,
-                          width: double.infinity,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                const Text('Add photo/s here: '),
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      num guests = 0;
+                      List<File>? transportImgs;
+                      TextEditingController transportNameController =
+                          TextEditingController();
+                      TextEditingController priceController =
+                          TextEditingController();
+                      return SingleChildScrollView(
+                        child: StatefulBuilder(builder: (context, setState) {
+                          return Container(
+                              margin: const EdgeInsets.only(top: 20),
+                              height: MediaQuery.sizeOf(context).height / 2,
+                              width: double.infinity,
+                              child: SingleChildScrollView(
+                                child: Column(children: [
+                                  const Text('Add photo/s here: '),
                                   ImagePickerFormField(
                                     context: context,
                                     initialValue: transportImgs,
-                                    height: MediaQuery.sizeOf(context).height / 6.5,
-                                    width: MediaQuery.sizeOf(context).width / 1.7,
+                                    height:
+                                        MediaQuery.sizeOf(context).height / 6.5,
+                                    width:
+                                        MediaQuery.sizeOf(context).width / 1.7,
                                     onSaved: (List<File>? files) {
                                       transportImgs = files;
                                     },
@@ -1211,134 +1218,137 @@ class _Step2TransportState extends State<Step2Transport> {
                                       transportImgs = files;
                                     },
                                   ),
-                                
-                                Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                                  child: TextFormField(
-                                    controller: transportNameController,
-                                    decoration: const InputDecoration(
-                                      icon: Icon(Icons.title_outlined),
-                                      border: OutlineInputBorder(),
-                                      labelText: "Transport Name",
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 10,
-                                          horizontal: 12), // Adjust padding here
-                                    ),
-                                    validator: (String? value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter some text';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                                Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                                  child: TextFormField(
-                                    controller: priceController,
-                                    maxLines: null,
-                                    keyboardType:
-                                        const TextInputType.numberWithOptions(
-                                            decimal: true),
-                                    decoration: const InputDecoration(
-                                      icon: Icon(
-                                        Icons.money_outlined,
+
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: TextFormField(
+                                      controller: transportNameController,
+                                      decoration: const InputDecoration(
+                                        icon: Icon(Icons.title_outlined),
+                                        border: OutlineInputBorder(),
+                                        labelText: "Transport Name",
+                                        contentPadding: EdgeInsets.symmetric(
+                                            vertical: 10,
+                                            horizontal:
+                                                12), // Adjust padding here
                                       ),
-                                      border: OutlineInputBorder(),
-                                      labelText: 'Price',
-                                      prefix: Text('₱'),
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 10,
-                                          horizontal: 12), // Adjust padding here
+                                      validator: (String? value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter some text';
+                                        }
+                                        return null;
+                                      },
                                     ),
-                                    validator: (String? value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter some text';
-                                      }
-                                      return null;
-                                    },
                                   ),
-                                ),
-                                ListTile(
-                                      title: const Row(
-                                        children: [
-                                          Icon(Icons.people_alt_outlined),
-                                          SizedBox(width: 10),
-                                          Text('Guests'),
-                                        ],
+                                  const SizedBox(height: 15),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: TextFormField(
+                                      controller: priceController,
+                                      maxLines: null,
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                              decimal: true),
+                                      decoration: const InputDecoration(
+                                        icon: Icon(
+                                          Icons.money_outlined,
+                                        ),
+                                        border: OutlineInputBorder(),
+                                        labelText: 'Price',
+                                        prefix: Text('₱'),
+                                        contentPadding: EdgeInsets.symmetric(
+                                            vertical: 10,
+                                            horizontal:
+                                                12), // Adjust padding here
                                       ),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.remove),
-                                            onPressed: () {
-                                              if (guests > 1) {
-                                                setState(() {
-                                                  guests--;
-                                                });
-                                              }
-                                            },
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Text('$guests',
-                                              style: const TextStyle(fontSize: 16)),
-                                          const SizedBox(width: 10),
-                                          IconButton(
-                                            icon: const Icon(Icons.add),
-                                            onPressed: () {
+                                      validator: (String? value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter some text';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  ListTile(
+                                    title: const Row(
+                                      children: [
+                                        Icon(Icons.people_alt_outlined),
+                                        SizedBox(width: 10),
+                                        Text('Guests'),
+                                      ],
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.remove),
+                                          onPressed: () {
+                                            if (guests > 1) {
                                               setState(() {
-                                                guests++;
+                                                guests--;
                                               });
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                ),
-                                                
-                                // add transport button
-                                ElevatedButton(
-                                  onPressed: () {
-                                    this.setState(() {
-                                      availableTransport.add(AvailableTransport(
-                                        transportId: transportNameController.text,
-                                        guests: guests,
-                                        price: num.parse(priceController.text),
-                                        images: transportImgs!.map((image) {
-                                          final imagePath =
-                                              'listings/${widget.coop.name}/${image.path.split('/').last}';
-                                          return ListingImages(
-                                            path: imagePath,
-                                          );
-                                        }).toList(),
-                                      ));
-                                    });
-                                    Navigator.pop(context);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('${transportNameController.text} added'),
-                                        duration: const Duration(seconds: 1),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text('Confirm'),
-                                )
-                                                
-                              ]
-                            ),
-                          )
-                        );
-                      }
-                    ),
-                  );
-                });
-            },
-            child: const Text('Add Transport')  
-          )
-        )
-      ]
-    );
+                                            }
+                                          },
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text('$guests',
+                                            style:
+                                                const TextStyle(fontSize: 16)),
+                                        const SizedBox(width: 10),
+                                        IconButton(
+                                          icon: const Icon(Icons.add),
+                                          onPressed: () {
+                                            setState(() {
+                                              guests++;
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // add transport button
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      this.setState(() {
+                                        availableTransport
+                                            .add(AvailableTransport(
+                                          transportId:
+                                              transportNameController.text,
+                                          guests: guests,
+                                          price:
+                                              num.parse(priceController.text),
+                                          images: transportImgs!.map((image) {
+                                            final imagePath =
+                                                'listings/${widget.coop.name}/${image.path.split('/').last}';
+                                            return ListingImages(
+                                              path: imagePath,
+                                            );
+                                          }).toList(),
+                                        ));
+                                      });
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              '${transportNameController.text} added'),
+                                          duration: const Duration(seconds: 1),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text('Confirm'),
+                                  )
+                                ]),
+                              ));
+                        }),
+                      );
+                    });
+              },
+              child: const Text('Add Transport')))
+    ]);
   }
 }
 
@@ -1925,7 +1935,6 @@ class _Step2AccommodationState extends ConsumerState<Step2Accommodation> {
   }
 }
 
-
 class Step2Food extends StatefulWidget {
   final CooperativeModel coop;
   const Step2Food({required this.coop, super.key});
@@ -1944,8 +1953,7 @@ class _Step2FoodState extends State<Step2Food> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text(
-            'Add Menu/s here:',
+        const Text('Add Menu/s here:',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
         GestureDetector(
           child: Row(
@@ -1983,7 +1991,7 @@ class _Step2FoodState extends State<Step2Food> {
         const SizedBox(height: 10),
         const Divider(),
         const SizedBox(height: 15),
-        if (availableTables.isNotEmpty == true) ... [
+        if (availableTables.isNotEmpty == true) ...[
           ListView.builder(
             itemCount: availableTables.length,
             shrinkWrap: true,
@@ -2002,16 +2010,12 @@ class _Step2FoodState extends State<Step2Food> {
                 ),
               );
             },
-          ) 
-        ]
-        else ... [
-          const Text(
-            'No tables added yet',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+          )
+        ] else ...[
+          const Text('No tables added yet',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
         ],
-
         const SizedBox(height: 15),
-
         Center(
           child: ElevatedButton(
             onPressed: () {
@@ -2071,18 +2075,21 @@ class _Step2FoodState extends State<Step2Food> {
                                 // Add Table Button
                                 ElevatedButton(
                                   onPressed: () {
-                                    this.setState(() {
-                                      availableTables.add(FoodService(
-                                        tableId: "Table No. $tableNo",
-                                          guests: guests,
-                                          isReserved: isReserved));
-                                     tableNo++; 
-                                     debugPrint(availableTables.toString());
-                                    },);
+                                    this.setState(
+                                      () {
+                                        availableTables.add(FoodService(
+                                            tableId: "Table No. $tableNo",
+                                            guests: guests,
+                                            isReserved: isReserved));
+                                        tableNo++;
+                                        debugPrint(availableTables.toString());
+                                      },
+                                    );
                                     Navigator.pop(context);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('Table No. ${tableNo - 1} added'),
+                                        content: Text(
+                                            'Table No. ${tableNo - 1} added'),
                                         duration: const Duration(seconds: 1),
                                       ),
                                     );
@@ -2097,21 +2104,18 @@ class _Step2FoodState extends State<Step2Food> {
                             left: 0,
                             right: 0,
                             child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.table_bar_outlined,
-                                    color: Theme.of(context).dividerColor
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    'Table No. $tableNo',
-                                    style: Theme.of(context).textTheme.labelLarge,
-                                  )
-                                ],
-                              )
-                            ),
+                                child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.table_bar_outlined,
+                                    color: Theme.of(context).dividerColor),
+                                const SizedBox(width: 5),
+                                Text(
+                                  'Table No. $tableNo',
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                )
+                              ],
+                            )),
                           ),
                         ],
                       );
@@ -2121,12 +2125,10 @@ class _Step2FoodState extends State<Step2Food> {
               );
             },
             child: const Text('Add Table'),
-            // show available table numbers through listview builder 
+            // show available table numbers through listview builder
           ),
         ),
       ],
     );
   }
 }
-
-

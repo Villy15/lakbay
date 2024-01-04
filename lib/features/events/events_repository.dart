@@ -7,7 +7,6 @@ import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/typdef.dart';
 import 'package:lakbay/models/event_model.dart';
 
-
 final eventsRepositoryProvider = Provider((ref) {
   return EventsRepository(firestore: ref.watch(firestoreProvider));
 });
@@ -66,7 +65,7 @@ class EventsRepository {
   }
 
   // Join Event
- FutureEither<void> joinEvent(String eventUid, String memberUid) async {
+  FutureEither<String> joinEvent(String eventUid, String memberUid) async {
     try {
       // Get the event document reference
       final eventRef = _events.doc(eventUid);
@@ -79,7 +78,8 @@ class EventsRepository {
         return left(Failure('Event not found.'));
       }
 
-      final List<String> members = List<String>.from(eventData['members'] ?? []);
+      final List<String> members =
+          List<String>.from(eventData['members'] ?? []);
 
       // Check if the member is already in the event
       if (members.contains(memberUid)) {
@@ -92,16 +92,16 @@ class EventsRepository {
       // Update the members in the event document
       await eventRef.update({'members': members});
 
-      return right(unit);
+      return right(eventUid);
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
       return left(Failure(e.toString()));
     }
   }
-  
+
   // Leave Event
-   FutureEither<void> leaveEvent(String eventUid, String memberUid) async {
+  FutureEither<String> leaveEvent(String eventUid, String memberUid) async {
     try {
       // Get the event document reference
       final eventRef = _events.doc(eventUid);
@@ -114,7 +114,8 @@ class EventsRepository {
         return left(Failure('Event not found.'));
       }
 
-      final List<String> members = List<String>.from(eventData['members'] ?? []);
+      final List<String> members =
+          List<String>.from(eventData['members'] ?? []);
 
       // Check if the member is in the event
       if (!members.contains(memberUid)) {
@@ -127,7 +128,7 @@ class EventsRepository {
       // Update the members in the event document
       await eventRef.update({'members': members});
 
-      return right(unit);
+      return right(eventUid);
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
