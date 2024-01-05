@@ -15,6 +15,7 @@ import 'package:lakbay/features/cooperatives/crud/read_coop.dart';
 import 'package:lakbay/features/cooperatives/join_coop.dart';
 import 'package:lakbay/features/cooperatives/leave_coop.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/add_committee_members.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/join_coop_code.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_committees_page.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_privileges_page.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manager_tools_page.dart';
@@ -193,35 +194,36 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   transitionType: SharedAxisTransitionType.vertical,
                 ),
               ),
-             GoRoute(
-              path: '/edit_event',
-              name: 'edit_event',
-              pageBuilder: (context, state) {
-                EventModel event = state.extra as EventModel;
+              GoRoute(
+                path: '/edit_event',
+                name: 'edit_event',
+                pageBuilder: (context, state) {
+                  EventModel event = state.extra as EventModel;
 
-                return buildPageWithSharedAxisTransition<void>(
-                  context: context,
-                  state: state,
-                  child: EditEventPage(
-                    event: event,
-                  ),
-                  transitionType: SharedAxisTransitionType.vertical,
-                );
-              },
-            ), 
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: EditEventPage(
+                      event: event,
+                    ),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
               // GoRoute for the ReadEventPage
-            GoRoute(
-              path: '/read_event/:eventId',
-              name: 'read_event',
-              pageBuilder: (context, state) {
-                return buildPageWithSharedAxisTransition<void>(
-                  context: context,
-                  state: state,
-                  child: ReadEventPage(eventId: state.pathParameters['eventId']!),
-                  transitionType: SharedAxisTransitionType.vertical,
-                );
-              },
-            ),
+              GoRoute(
+                path: '/read_event/:eventId',
+                name: 'read_event',
+                pageBuilder: (context, state) {
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: ReadEventPage(
+                        eventId: state.pathParameters['eventId']!),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
 
               GoRoute(
                 path: '/trips',
@@ -436,6 +438,25 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     },
                   ),
 
+                  // Join Cooperative With Code
+                  GoRoute(
+                    path: 'join_code',
+                    name: 'join_coop_with_code',
+                    pageBuilder: (context, state) {
+                      CooperativeModel coop = state.extra as CooperativeModel;
+
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: JoinCoopPage(
+                          coop: coop,
+                          isMember: true,
+                        ),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    },
+                  ),
+
                   // Leave Cooperative
                   GoRoute(
                     path: 'leave',
@@ -484,6 +505,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         context: context,
                         state: state,
                         child: ManagePrivileges(
+                          coop: coop,
+                        ),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    },
+                  ),
+
+                  // Join Cooperative Code
+                  GoRoute(
+                    path: 'join_coop_code',
+                    name: 'join_coop_code',
+                    pageBuilder: (context, state) {
+                      CooperativeModel coop = state.extra as CooperativeModel;
+
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: JoinCoopCodePage(
                           coop: coop,
                         ),
                         transitionType: SharedAxisTransitionType.vertical,

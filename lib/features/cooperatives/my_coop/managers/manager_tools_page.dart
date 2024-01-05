@@ -38,6 +38,13 @@ class ManagerToolsPage extends ConsumerWidget {
     );
   }
 
+  void joinCoopCode(BuildContext context, CooperativeModel coop) {
+    context.pushNamed(
+      'join_coop_code',
+      extra: coop,
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Map<String, Function> listTileMapCoopDetails = {
@@ -61,6 +68,17 @@ class ManagerToolsPage extends ConsumerWidget {
             title: const Text('Manage Privileges'),
             onTap: () => {
               managePrivileges(
+                context,
+                coop,
+              )
+            },
+          ),
+      // Join Cooperative Code
+      'Join Cooperative Code': () => ListTile(
+            leading: const Icon(Icons.copy_rounded),
+            title: const Text('Join Cooperative Code'),
+            onTap: () => {
+              joinCoopCode(
                 context,
                 coop,
               )

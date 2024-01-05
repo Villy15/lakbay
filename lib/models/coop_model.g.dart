@@ -17,6 +17,7 @@ _$CooperativeModelImpl _$$CooperativeModelImplFromJson(
       province: json['province'] as String,
       imagePath: json['imagePath'] as String,
       imageUrl: json['imageUrl'] as String?,
+      code: json['code'] as String?,
       members:
           (json['members'] as List<dynamic>).map((e) => e as String).toList(),
       managers:
@@ -34,6 +35,7 @@ Map<String, dynamic> _$$CooperativeModelImplToJson(
       'province': instance.province,
       'imagePath': instance.imagePath,
       'imageUrl': instance.imageUrl,
+      'code': instance.code,
       'members': instance.members,
       'managers': instance.managers,
     };

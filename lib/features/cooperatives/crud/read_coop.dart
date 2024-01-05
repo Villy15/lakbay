@@ -58,6 +58,13 @@ class _ReadCoopPageState extends ConsumerState<ReadCoopPage> {
     );
   }
 
+  void joinCoopWithCode(BuildContext context, CooperativeModel coop) {
+    context.pushNamed(
+      'join_coop_with_code',
+      extra: coop,
+    );
+  }
+
   List<Widget> tabs = [
     const SizedBox(
       width: 150.0,
@@ -187,7 +194,34 @@ class _ReadCoopPageState extends ConsumerState<ReadCoopPage> {
                       if (coop.members.contains(user?.uid)) {
                         showSnackBar(context, "Switch to Coop View to leave");
                       } else {
-                        joinCoop(context, coop);
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Join Cooperative'),
+                                content: const Text(
+                                    'Are you already a member of this cooperetive?'),
+                                actions: [
+                                  // Cancel
+                                  TextButton(
+                                    onPressed: () {
+                                      context.pop();
+                                      joinCoop(context, coop);
+                                    },
+                                    child: const Text('No'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      context.pop();
+                                      joinCoopWithCode(context, coop);
+                                    },
+                                    child: const Text('Yes'),
+                                  ),
+                                ],
+                              );
+                            });
+
+                        // joinCoop(context, coop);
                       }
                     },
                     style: ElevatedButton.styleFrom(

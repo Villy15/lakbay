@@ -9,8 +9,9 @@ import 'package:lakbay/models/coop_model.dart';
 
 class JoinCoopPage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
+  final bool? isMember;
 
-  const JoinCoopPage({super.key, required this.coop});
+  const JoinCoopPage({super.key, required this.coop, this.isMember});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _JoinCoopPageState();
@@ -18,6 +19,8 @@ class JoinCoopPage extends ConsumerStatefulWidget {
 
 class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _codeController = TextEditingController();
 
   @override
   void initState() {
@@ -69,6 +72,8 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // If isMember is true, add an input where he can input the code
+
               // Cancel Button
               TextButton(
                 onPressed: () {
@@ -81,7 +86,22 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
               // Save Button
               TextButton(
                 onPressed: () {
-                  joinCooperative();
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+
+                    // Check if code is correct
+                    if (_codeController.text == widget.coop.code) {
+                      // Join Cooperative
+                      joinCooperative();
+                    } else {
+                      // Show error
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Invalid Code'),
+                        ),
+                      );
+                    }
+                  }
                 },
                 child: const Text('Submit'),
               ),
@@ -93,13 +113,33 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
             : SingleChildScrollView(
                 child: Form(
                   key: _formKey,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 16.0,
                       vertical: 8.0,
                     ),
                     child: Column(
-                      children: [],
+                      children: [
+                        widget.isMember == true
+                            ? TextFormField(
+                                controller: _codeController,
+                                decoration: const InputDecoration(
+                                  icon: Icon(
+                                    Icons.forward_rounded,
+                                  ),
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Enter Code*',
+                                  helperText: '*required',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter code';
+                                  }
+                                  return null;
+                                },
+                              )
+                            : Container(),
+                      ],
                     ),
                   ),
                 ),

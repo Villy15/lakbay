@@ -16,7 +16,7 @@ class EventsPage extends ConsumerWidget {
   }
 
   void navigateToAddEvent(BuildContext context) {
-    context.go("/add_event");
+    context.push("/add_event");
   }
 
   @override
@@ -32,75 +32,87 @@ class EventsPage extends ConsumerWidget {
             child: Column(
               children: [
                 ref.watch(getAllEventsProvider).when(
-                  data: (events) {
-                    // return a grid view of events
-                    return GridView.builder(
-                      itemCount: events.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        childAspectRatio: 3 / 2,
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20,
-                        mainAxisExtent: 240,
-                      ),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Card(
-                          clipBehavior: Clip.hardEdge,
-                          elevation: 1,
-                          surfaceTintColor: Colors.white,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                      data: (events) {
+                        // return a grid view of events
+                        return GridView.builder(
+                          itemCount: events.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 1,
+                            childAspectRatio: 3 / 2,
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                            mainAxisExtent: 240,
                           ),
-                          child: InkWell(
-                            onTap: () {
-                              readEvent(context, events[index].uid!);
-                            },
-                            splashColor: Colors.orange.withAlpha(30),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                                    child: Image.network(
-                                      events[index].imageUrl ?? '',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          events[index].name,
-                                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return Card(
+                              clipBehavior: Clip.hardEdge,
+                              elevation: 1,
+                              surfaceTintColor: Colors.white,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  readEvent(context, events[index].uid!);
+                                },
+                                splashColor: Colors.orange.withAlpha(30),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            const BorderRadius.vertical(
+                                                top: Radius.circular(20)),
+                                        child: Image.network(
+                                          events[index].imageUrl ?? '',
+                                          fit: BoxFit.cover,
                                         ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          'From ${DateFormat('MMM dd').format(events[index].startDate)} to ${DateFormat('MMM dd').format(events[index].endDate)}',
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              events[index].name,
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'From ${DateFormat('MMM dd').format(events[index].startDate)} to ${DateFormat('MMM dd').format(events[index].endDate)}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
+                              ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                  error: (error, stackTrace) => ErrorText(error: error.toString(), stackTrace: '',),
-                  loading: () => const Loader(),
-                ),
+                      error: (error, stackTrace) => ErrorText(
+                        error: error.toString(),
+                        stackTrace: '',
+                      ),
+                      loading: () => const Loader(),
+                    ),
               ],
             ),
           ),

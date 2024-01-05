@@ -28,6 +28,7 @@ mixin _$CooperativeModel {
   String get province => throw _privateConstructorUsedError;
   String get imagePath => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
+  String? get code => throw _privateConstructorUsedError;
   List<String> get members => throw _privateConstructorUsedError;
   List<String> get managers => throw _privateConstructorUsedError;
 
@@ -52,6 +53,7 @@ abstract class $CooperativeModelCopyWith<$Res> {
       String province,
       String imagePath,
       String? imageUrl,
+      String? code,
       List<String> members,
       List<String> managers});
 }
@@ -77,6 +79,7 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
     Object? province = null,
     Object? imagePath = null,
     Object? imageUrl = freezed,
+    Object? code = freezed,
     Object? members = null,
     Object? managers = null,
   }) {
@@ -113,6 +116,10 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String?,
       members: null == members
           ? _value.members
           : members // ignore: cast_nullable_to_non_nullable
@@ -142,6 +149,7 @@ abstract class _$$CooperativeModelImplCopyWith<$Res>
       String province,
       String imagePath,
       String? imageUrl,
+      String? code,
       List<String> members,
       List<String> managers});
 }
@@ -165,6 +173,7 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
     Object? province = null,
     Object? imagePath = null,
     Object? imageUrl = freezed,
+    Object? code = freezed,
     Object? members = null,
     Object? managers = null,
   }) {
@@ -201,6 +210,10 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String?,
       members: null == members
           ? _value._members
           : members // ignore: cast_nullable_to_non_nullable
@@ -225,6 +238,7 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       required this.province,
       required this.imagePath,
       this.imageUrl,
+      this.code,
       required final List<String> members,
       required final List<String> managers})
       : _members = members,
@@ -249,6 +263,8 @@ class _$CooperativeModelImpl implements _CooperativeModel {
   final String imagePath;
   @override
   final String? imageUrl;
+  @override
+  final String? code;
   final List<String> _members;
   @override
   List<String> get members {
@@ -267,7 +283,7 @@ class _$CooperativeModelImpl implements _CooperativeModel {
 
   @override
   String toString() {
-    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, members: $members, managers: $managers)';
+    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers)';
   }
 
   @override
@@ -287,6 +303,7 @@ class _$CooperativeModelImpl implements _CooperativeModel {
                 other.imagePath == imagePath) &&
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
+            (identical(other.code, code) || other.code == code) &&
             const DeepCollectionEquality().equals(other._members, _members) &&
             const DeepCollectionEquality().equals(other._managers, _managers));
   }
@@ -303,6 +320,7 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       province,
       imagePath,
       imageUrl,
+      code,
       const DeepCollectionEquality().hash(_members),
       const DeepCollectionEquality().hash(_managers));
 
@@ -331,6 +349,7 @@ abstract class _CooperativeModel implements CooperativeModel {
       required final String province,
       required final String imagePath,
       final String? imageUrl,
+      final String? code,
       required final List<String> members,
       required final List<String> managers}) = _$CooperativeModelImpl;
 
@@ -353,6 +372,8 @@ abstract class _CooperativeModel implements CooperativeModel {
   String get imagePath;
   @override
   String? get imageUrl;
+  @override
+  String? get code;
   @override
   List<String> get members;
   @override

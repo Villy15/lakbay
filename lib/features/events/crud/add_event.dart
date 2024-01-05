@@ -52,9 +52,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
   }
 
   void addEvent(EventModel event) {
-    ref
-        .read(eventsControllerProvider.notifier)
-        .addEvent(event, context);
+    ref.read(eventsControllerProvider.notifier).addEvent(event, context);
   }
 
   @override
@@ -80,26 +78,28 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                     child: Column(
                       children: [
                         GestureDetector(
-                          onTap: () async {
-                            final picker = ImagePicker();
-                            final pickedFile =
-                                await picker.pickImage(source: ImageSource.gallery);
-
-                            if (pickedFile != null) {
-                              setState(() {
-                                _image = File(pickedFile.path);
-                              });
-                            }
-                          },
-                          child: Container(
-                            height: 200,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            child: _image != null
-                                ? Image.file(_image!, fit: BoxFit.cover)
-                                : const Center(child: Text('Select an image')),
+                          child: Row(
+                            children: [
+                              Icon(Icons.image,
+                                  color: Theme.of(context).iconTheme.color),
+                              const SizedBox(
+                                  width:
+                                      15), // Add some spacing between the icon and the container
+                              Expanded(
+                                child: ImagePickerFormField(
+                                  initialValue: _image,
+                                  onSaved: (File? file) {
+                                    _image = file;
+                                  },
+                                  validator: (File? file) {
+                                    if (file == null) {
+                                      return 'Please select an image';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -117,9 +117,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                             return null;
                           },
                         ),
-
                         const SizedBox(height: 10),
-
                         TextFormField(
                           controller: _descriptionController,
                           maxLines: null,
@@ -129,9 +127,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                             labelText: 'Description',
                           ),
                         ),
-
                         const SizedBox(height: 10),
-
                         TextFormField(
                           controller: _locationController,
                           decoration: const InputDecoration(
@@ -140,9 +136,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                             labelText: 'Location',
                           ),
                         ),
-                        
                         const SizedBox(height: 10),
-
                         TextFormField(
                           controller: _cityController,
                           decoration: const InputDecoration(
@@ -151,9 +145,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                             labelText: 'City',
                           ),
                         ),
-
                         const SizedBox(height: 10),
-
                         TextFormField(
                           controller: _provinceController,
                           decoration: const InputDecoration(
@@ -162,9 +154,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                             labelText: 'Province',
                           ),
                         ),
-
                         const SizedBox(height: 10),
-
                         datePicker(context),
                       ],
                     ),
@@ -173,8 +163,18 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
               ),
         bottomNavigationBar: BottomAppBar(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Cancel Button
+              // Cancel Button
+              TextButton(
+                onPressed: () {
+                  context.pop();
+                  ref.read(navBarVisibilityProvider.notifier).show();
+                },
+                child: const Text('Cancel'),
+              ),
+
               // Save Button
               ElevatedButton(
                 onPressed: () {
@@ -183,39 +183,38 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
 
                     final userUid = ref.read(userProvider)?.uid ?? '';
                     final imagePath =
-                                    'events/${_nameController.text}/${_image?.path.split('/').last ?? ''}';
+                        'events/${_nameController.text}/${_image?.path.split('/').last ?? ''}';
 
                     var event = EventModel(
-                    name: _nameController.text,
-                    description: _descriptionController.text,
-                    address: _locationController.text,
-                    city: _cityController.text,
-                    province: _provinceController.text,
-                    imagePath: imagePath,
-                    members: [userUid],
-                    managers: [userUid],
-                    startDate: startDate,
-                    endDate: endDate,
+                      name: _nameController.text,
+                      description: _descriptionController.text,
+                      address: _locationController.text,
+                      city: _cityController.text,
+                      province: _provinceController.text,
+                      imagePath: imagePath,
+                      members: [userUid],
+                      managers: [userUid],
+                      startDate: startDate,
+                      endDate: endDate,
                     );
 
                     ref
-                          .read(storageRepositoryProvider)
-                          .storeFile(
-                            path: 'events/${_nameController.text}',
-                            id: _image?.path.split('/').last ?? '',
-                            file: _image,
-                          )
-                          .then((value) => value.fold(
-                                (failure) => debugPrint(
-                                  'Failed to upload image: $failure',
-                                ),
-                                (imageUrl) {
-                                  event = event.copyWith(imageUrl: imageUrl);
-                                  // Register cooperative
-                                  addEvent(event);
-                                },
-                              ));
-                    
+                        .read(storageRepositoryProvider)
+                        .storeFile(
+                          path: 'events/${_nameController.text}',
+                          id: _image?.path.split('/').last ?? '',
+                          file: _image,
+                        )
+                        .then((value) => value.fold(
+                              (failure) => debugPrint(
+                                'Failed to upload image: $failure',
+                              ),
+                              (imageUrl) {
+                                event = event.copyWith(imageUrl: imageUrl);
+                                // Register cooperative
+                                addEvent(event);
+                              },
+                            ));
                   }
                   context.pop();
                 },
@@ -301,4 +300,50 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
     );
     return picked;
   }
+}
+
+class ImagePickerFormField extends FormField<File> {
+  ImagePickerFormField({
+    super.key,
+    super.onSaved,
+    super.validator,
+    super.initialValue,
+  }) : super(
+          builder: (FormFieldState<File> state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () async {
+                    final picker = ImagePicker();
+                    final pickedFile =
+                        await picker.pickImage(source: ImageSource.gallery);
+
+                    if (pickedFile != null) {
+                      state.didChange(File(pickedFile.path));
+                    }
+                  },
+                  child: Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: state.value != null
+                        ? Image.file(state.value!, fit: BoxFit.cover)
+                        : const Center(child: Text('Select an image')),
+                  ),
+                ),
+                if (state.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, left: 12),
+                    child: Text(
+                      state.errorText!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
 }
