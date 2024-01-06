@@ -15,10 +15,6 @@ class EventsPage extends ConsumerWidget {
     context.push("/read_event/$eventId");
   }
 
-  void navigateToAddEvent(BuildContext context) {
-    context.push("/add_event");
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
@@ -117,12 +113,6 @@ class EventsPage extends ConsumerWidget {
             ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          navigateToAddEvent(context);
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }

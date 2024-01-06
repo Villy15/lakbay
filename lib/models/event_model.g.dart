@@ -22,6 +22,8 @@ _$EventModelImpl _$$EventModelImplFromJson(Map<String, dynamic> json) =>
           (json['managers'] as List<dynamic>).map((e) => e as String).toList(),
       startDate: DateTime.parse(json['startDate'] as String),
       endDate: DateTime.parse(json['endDate'] as String),
+      cooperative: EventCooperative.fromJson(
+          json['cooperative'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$EventModelImplToJson(_$EventModelImpl instance) =>
@@ -38,4 +40,19 @@ Map<String, dynamic> _$$EventModelImplToJson(_$EventModelImpl instance) =>
       'managers': instance.managers,
       'startDate': instance.startDate.toIso8601String(),
       'endDate': instance.endDate.toIso8601String(),
+      'cooperative': instance.cooperative.toJson(),
+    };
+
+_$EventCooperativeImpl _$$EventCooperativeImplFromJson(
+        Map<String, dynamic> json) =>
+    _$EventCooperativeImpl(
+      cooperativeId: json['cooperativeId'] as String,
+      cooperativeName: json['cooperativeName'] as String,
+    );
+
+Map<String, dynamic> _$$EventCooperativeImplToJson(
+        _$EventCooperativeImpl instance) =>
+    <String, dynamic>{
+      'cooperativeId': instance.cooperativeId,
+      'cooperativeName': instance.cooperativeName,
     };

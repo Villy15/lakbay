@@ -46,6 +46,18 @@ class EventsRepository {
     });
   }
 
+  // Read all events by CoopID
+  Stream<List<EventModel>> readEventsByCoopId(String coopId) {
+    return _events
+        .where('cooperative.cooperativeId', isEqualTo: coopId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return EventModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Read event by uid
   Stream<EventModel> readEvent(String uid) {
     return _events.doc(uid).snapshots().map((snapshot) {

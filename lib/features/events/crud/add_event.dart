@@ -10,11 +10,13 @@ import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/models/coop_model.dart';
 //import 'package:lakbay/features/events/events_repository.dart';
 import 'package:lakbay/models/event_model.dart';
 
 class AddEventPage extends ConsumerStatefulWidget {
-  const AddEventPage({super.key});
+  final CooperativeModel coop;
+  const AddEventPage({super.key, required this.coop});
 
   @override
   ConsumerState<AddEventPage> createState() => _AddEventPageState();
@@ -186,6 +188,10 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                         'events/${_nameController.text}/${_image?.path.split('/').last ?? ''}';
 
                     var event = EventModel(
+                      cooperative: EventCooperative(
+                        cooperativeId: widget.coop.uid!,
+                        cooperativeName: widget.coop.name,
+                      ),
                       name: _nameController.text,
                       description: _descriptionController.text,
                       address: _locationController.text,

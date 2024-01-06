@@ -10,6 +10,12 @@ final getAllEventsProvider = StreamProvider<List<EventModel>>((ref) {
   return eventsController.getAllEvents();
 });
 
+final getEventsByCoopIdProvider =
+    StreamProvider.autoDispose.family<List<EventModel>, String>((ref, uid) {
+  final eventsController = ref.watch(eventsControllerProvider.notifier);
+  return eventsController.getEventsByCoopId(uid);
+});
+
 final getEventsProvider =
     StreamProvider.autoDispose.family<EventModel, String>((ref, uid) {
   final coopsController = ref.watch(eventsControllerProvider.notifier);
@@ -38,6 +44,11 @@ class EventController extends StateNotifier<bool> {
 
   Stream<List<EventModel>> getAllEvents() {
     return _eventsRepository.readEvents();
+  }
+
+  // Read all events by CoopID
+  Stream<List<EventModel>> getEventsByCoopId(String coopId) {
+    return _eventsRepository.readEventsByCoopId(coopId);
   }
 
   void addEvent(EventModel event, BuildContext context) async {
@@ -72,7 +83,8 @@ class EventController extends StateNotifier<bool> {
     );
   }
 
-  void joinEvent(String eventUid, String memberUid, BuildContext context) async {
+  void joinEvent(
+      String eventUid, String memberUid, BuildContext context) async {
     state = true;
 
     final result = await _eventsRepository.joinEvent(eventUid, memberUid);
@@ -89,7 +101,8 @@ class EventController extends StateNotifier<bool> {
     );
   }
 
-  void leaveEvent(String eventUid, String memberUid, BuildContext context) async {
+  void leaveEvent(
+      String eventUid, String memberUid, BuildContext context) async {
     state = true;
 
     final result = await _eventsRepository.leaveEvent(eventUid, memberUid);

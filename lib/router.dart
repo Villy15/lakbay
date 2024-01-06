@@ -183,17 +183,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 ),
               ),
 
-              // GoRoute for the AddEventPage
-              GoRoute(
-                path: '/add_event',
-                pageBuilder: (context, state) =>
-                    buildPageWithSharedAxisTransition<void>(
-                  context: context,
-                  state: state,
-                  child: const AddEventPage(),
-                  transitionType: SharedAxisTransitionType.vertical,
-                ),
-              ),
               GoRoute(
                 path: '/edit_event',
                 name: 'edit_event',
@@ -266,6 +255,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     context: context,
                     state: state,
                     child: AddListing(
+                      coop: coop,
+                    ),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              // Add Event to Cooperative
+              GoRoute(
+                path: '/my_coop/events/functions/add',
+                name: 'add_event',
+                pageBuilder: (context, state) {
+                  CooperativeModel coop = state.extra as CooperativeModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: AddEventPage(
                       coop: coop,
                     ),
                     transitionType: SharedAxisTransitionType.vertical,

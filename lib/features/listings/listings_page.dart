@@ -33,8 +33,11 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
     );
   }
 
-  void navigateToAddEvent(BuildContext context) {
-    context.push("/add_event");
+  void addEvent(BuildContext context, CooperativeModel coop) {
+    context.pushNamed(
+      'add_event',
+      extra: coop,
+    );
   }
 
   @override
@@ -77,7 +80,9 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
                             orElse: () => const SizedBox.shrink(),
                           ),
 
-                      ref.watch(getAllEventsProvider).maybeWhen(
+                      ref
+                          .watch(getEventsByCoopIdProvider(widget.coopId))
+                          .maybeWhen(
                             data: (events) {
                               return ListView.builder(
                                 itemCount: events.length,
@@ -220,7 +225,7 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
           child: const Icon(Icons.add),
           label: 'Add Event',
           labelStyle: const TextStyle(fontSize: 18.0),
-          onTap: () => navigateToAddEvent(context),
+          onTap: () => addEvent(context, coop),
         ),
       ],
     );
