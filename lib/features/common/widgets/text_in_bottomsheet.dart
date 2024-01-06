@@ -26,50 +26,48 @@ Column TextInBottomSheet(String title, String text, BuildContext context) {
           ),
         ),
       ),
-      if (text.split('\n').length > 5)
-        TextButton(
-          onPressed: () {
-            showModalBottomSheet(
-              // show indicator drag
-              isScrollControlled: true,
-              enableDrag: true,
-              showDragHandle: true,
-              context: context,
-              builder: (context) {
-                return Container(
-                  height: MediaQuery.sizeOf(context).height * 0.7,
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        DisplayText(
-                          text: title,
-                          lines: 1,
-                          style: Theme.of(context).textTheme.titleLarge!,
+      // if (text.split('\n').length > )
+      TextButton(
+        onPressed: () {
+          showModalBottomSheet(
+            // show indicator drag
+            isScrollControlled: true,
+            enableDrag: true,
+            showDragHandle: true,
+            context: context,
+            builder: (context) {
+              return Container(
+                height: MediaQuery.sizeOf(context).height * 0.7,
+                width: double.infinity,
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DisplayText(
+                        text: title,
+                        lines: 1,
+                        style: Theme.of(context).textTheme.titleLarge!,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        descriptionWithSpaces,
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).textTheme.labelLarge?.fontSize,
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          descriptionWithSpaces,
-                          style: TextStyle(
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .labelLarge
-                                ?.fontSize,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            );
-          },
-          child: const Text('Show More'),
-        ),
+                ),
+              );
+            },
+          );
+        },
+        child: const Text('Show More'),
+      ),
     ],
   );
 }
