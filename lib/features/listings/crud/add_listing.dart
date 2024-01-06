@@ -1925,38 +1925,36 @@ class _Step2AccommodationState extends ConsumerState<Step2Accommodation> {
   }
 }
 
-
-class Step2Food extends StatefulWidget {
+class Step2Food extends ConsumerStatefulWidget {
   final CooperativeModel coop;
   const Step2Food({required this.coop, super.key});
 
-  @override
-  State<Step2Food> createState() => _Step2FoodState();
+  @override 
+  ConsumerState<Step2Food> createState() => _Step2FoodState();
 }
 
-class _Step2FoodState extends State<Step2Food> {
-  List<FoodService> availableTables = [];
-  List<File>? _menuImgs;
-  // initialize table number to 1
-  num tableNo = 1;
-
-  @override
+class _Step2FoodState extends ConsumerState<Step2Food> {
+  final List<File>_menuImgs = [];
+  @override 
   Widget build(BuildContext context) {
+    List<List<File>> images = ref.watch(addLocalImagesProvider) ?? [];
+    List <FoodService> availableTables = ref.watch(addFoodProvider) ?? [];
+
     return Column(
       children: [
         const Text(
-            'Add Menu/s here:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+          'Add Menu/s here:',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)
+        ),
         GestureDetector(
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.image_outlined,
                 color: Theme.of(context).iconTheme.color,
               ),
-              const SizedBox(
-                  width:
-                      15), // Add some spacing between the icon and the container
+              const SizedBox(width: 15),
               Expanded(
                 child: ImagePickerFormField(
                   context: context,
@@ -1964,7 +1962,9 @@ class _Step2FoodState extends State<Step2Food> {
                   height: MediaQuery.sizeOf(context).height / 4.5,
                   width: MediaQuery.sizeOf(context).width / 2,
                   onSaved: (List<File>? files) {
-                    _menuImgs = files;
+                    _menuImgs.clear();
+                    _menuImgs.addAll(files!);
+                    ref.read(addLocalImagesProvider.notifier).addImages(_menuImgs);
                   },
                   validator: (List<File>? files) {
                     if (files == null || files.isEmpty) {
@@ -1972,46 +1972,20 @@ class _Step2FoodState extends State<Step2Food> {
                     }
                     return null;
                   },
+
                   onImagesSelected: (List<File> files) {
-                    _menuImgs = files;
+                    _menuImgs.clear();
+                    _menuImgs.addAll(files);
+                    ref.read(addLocalImagesProvider.notifier).addImages(_menuImgs);
                   },
-                ),
-              ),
-            ],
+                )
+              )
+            ]
           ),
         ),
+        
         const SizedBox(height: 10),
-        const Divider(),
-        const SizedBox(height: 15),
-        if (availableTables.isNotEmpty == true) ... [
-          ListView.builder(
-            itemCount: availableTables.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(availableTables[index].tableId),
-                subtitle: Text('Guests: ${availableTables[index].guests}'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      availableTables.removeAt(index);
-                    });
-                  },
-                ),
-              );
-            },
-          ) 
-        ]
-        else ... [
-          const Text(
-            'No tables added yet',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-        ],
-
-        const SizedBox(height: 15),
-
+        
         Center(
           child: ElevatedButton(
             onPressed: () {
@@ -2021,102 +1995,7 @@ class _Step2FoodState extends State<Step2Food> {
                 builder: (BuildContext context) {
                   num guests = 0;
                   bool isReserved = false;
-                  return StatefulBuilder(
-                    builder: (context, setState) {
-                      return Stack(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(top: 20),
-                            height: MediaQuery.sizeOf(context).height / 5,
-                            width: double.infinity,
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  title: const Row(
-                                    children: [
-                                      Icon(Icons.people_alt_outlined),
-                                      SizedBox(width: 10),
-                                      Text('Guests'),
-                                    ],
-                                  ),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.remove),
-                                        onPressed: () {
-                                          if (guests > 1) {
-                                            setState(() {
-                                              guests--;
-                                            });
-                                          }
-                                        },
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Text('$guests',
-                                          style: const TextStyle(fontSize: 16)),
-                                      const SizedBox(width: 10),
-                                      IconButton(
-                                        icon: const Icon(Icons.add),
-                                        onPressed: () {
-                                          setState(() {
-                                            guests++;
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 45),
-                                // Add Table Button
-                                ElevatedButton(
-                                  onPressed: () {
-                                    this.setState(() {
-                                      availableTables.add(FoodService(
-                                        tableId: "Table No. $tableNo",
-                                          guests: guests,
-                                          isReserved: isReserved));
-                                     tableNo++; 
-                                     debugPrint(availableTables.toString());
-                                    },);
-                                    Navigator.pop(context);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Table No. ${tableNo - 1} added'),
-                                        duration: const Duration(seconds: 1),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text('Confirm'),
-                                )
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.table_bar_outlined,
-                                    color: Theme.of(context).dividerColor
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    'Table No. $tableNo',
-                                    style: Theme.of(context).textTheme.labelLarge,
-                                  )
-                                ],
-                              )
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  return addFoodBottomSheet(guests, availableTables, isReserved);
                 },
               );
             },
@@ -2124,9 +2003,336 @@ class _Step2FoodState extends State<Step2Food> {
             // show available table numbers through listview builder 
           ),
         ),
-      ],
+        const SizedBox(height: 20),
+
+        if (availableTables.isNotEmpty == true) ... [
+
+        ],
+        
+
+        if (images.isNotEmpty == true) ... [
+          const Text(
+            'Menu/s added:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)
+          ),
+          ImageSlider(
+            images: images.expand((x) => x).toList(),
+            height: MediaQuery.sizeOf(context).height / 1.3,
+            width: double.infinity,
+          )
+        ]
+        
+        
+      ]
+    );
+  }
+  
+  StatefulBuilder addFoodBottomSheet(num guests, List<FoodService> availableTables, bool isReserved) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Stack(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              height: MediaQuery.sizeOf(context).height / 5,
+              width: double.infinity,
+              child: Column(
+                children: [
+                  ListTile(
+                    title: const Row(
+                      children: [
+                        Icon(Icons.people_alt_outlined),
+                        SizedBox(width: 10),
+                        Text('Guests'),
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: () {
+                            if (guests > 1) {
+                              setState(() {
+                                guests--;
+                              });
+                            }
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        Text('$guests',
+                            style: const TextStyle(fontSize: 16)),
+                        const SizedBox(width: 10),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              guests++;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 45),
+                  // Add Table Button
+                  ElevatedButton(
+                    onPressed: () {
+                      this.setState(() {
+                        availableTables.add(FoodService(
+                          tableId: "Table No. ${availableTables.length + 1}",
+                          guests: guests,
+                          isReserved: isReserved,
+                        ));
+                      });
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Table No. ${availableTables.length} added'),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                    child: const Text('Confirm'),
+                  )
+                ],
+              ),
+            ),
+            Positioned(
+              right: 0,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }
+
+
+
+
+// class Step2Food extends ConsumerStatefulWidget {
+//   final CooperativeModel coop;
+//   const Step2Food({required this.coop, super.key});
+
+//   @override
+//   ConsumerState<Step2Food> createState() => _Step2FoodState();
+// }
+
+
+// class _Step2FoodState extends ConsumerState<Step2Food> {
+
+//   // initialize table number to 1
+//   num tableNo = 1;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     List<File>? menuImgs = [];
+//     List<List<File>> images = ref.watch(addLocalImagesProvider) ?? [];
+//     List<FoodService> availableTables = ref.watch(addFoodProvider) ?? [];
+//     return Column(
+//       children: [
+//         const Text(
+//             'Add Menu/s here:',
+//             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+//         GestureDetector(
+//           child: Row(
+//             children: [
+//               Icon(
+//                 Icons.image_outlined,
+//                 color: Theme.of(context).iconTheme.color,
+//               ),
+//               const SizedBox(
+//                   width:
+//                       15), // Add some spacing between the icon and the container
+//               Expanded(
+//                 child: ImagePickerFormField(
+//                   context: context,
+//                   initialValue: menuImgs,
+//                   height: MediaQuery.sizeOf(context).height / 4.5,
+//                   width: MediaQuery.sizeOf(context).width / 2,
+//                   onSaved: (List<File>? files) {
+//                     images.clear();
+//                     images.addAll(files!);
+                    
+//                   },
+//                   validator: (List<File>? files) {
+//                     if (files == null || files.isEmpty) {
+//                       return 'Please select some images';
+//                     }
+//                     return null;
+//                   },
+//                   onImagesSelected: (List<File> files) {
+//                     menuImgs = files;
+//                     images.clear();
+//                     images.add(files);
+                    
+//                     ref
+//                                 .read(addLocalImagesProvider.notifier)
+//                                 .addImages(images);
+//                   },
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//         const SizedBox(height: 10),
+//         const Divider(),
+//         const SizedBox(height: 15),
+//         if (availableTables.isNotEmpty == true) ... [
+//           ListView.builder(
+//             itemCount: availableTables.length,
+//             shrinkWrap: true,
+//             physics: const NeverScrollableScrollPhysics(),
+//             itemBuilder: (context, index) {
+//               return ListTile(
+//                 title: Text(availableTables[index].tableId),
+//                 subtitle: Text('Guests: ${availableTables[index].guests}'),
+//                 trailing: IconButton(
+//                   icon: const Icon(Icons.delete),
+//                   onPressed: () {
+//                     setState(() {
+//                       availableTables.removeAt(index);
+//                     });
+//                   },
+//                 ),
+//               );
+//             },
+//           ) 
+//         ]
+//         else ... [
+//           const Text(
+//             'No tables added yet',
+//             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+//         ],
+
+//         const SizedBox(height: 15),
+
+//         Center(
+//           child: ElevatedButton(
+//             onPressed: () {
+//               showModalBottomSheet(
+//                 isScrollControlled: true,
+//                 context: context,
+//                 builder: (BuildContext context) {
+//                   num guests = 0;
+//                   bool isReserved = false;
+//                   return addFoodBottomSheet(guests, availableTables, isReserved);
+//                 },
+//               );
+//             },
+//             child: const Text('Add Table'),
+//             // show available table numbers through listview builder 
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+
+//   StatefulBuilder addFoodBottomSheet(num guests, List<FoodService> availableTables, bool isReserved) {
+//     return StatefulBuilder(
+//                   builder: (context, setState) {
+//                     return Stack(
+//                       children: [
+//                         Container(
+//                           margin: const EdgeInsets.only(top: 20),
+//                           height: MediaQuery.sizeOf(context).height / 5,
+//                           width: double.infinity,
+//                           child: Column(
+//                             children: [
+//                               ListTile(
+//                                 title: const Row(
+//                                   children: [
+//                                     Icon(Icons.people_alt_outlined),
+//                                     SizedBox(width: 10),
+//                                     Text('Guests'),
+//                                   ],
+//                                 ),
+//                                 trailing: Row(
+//                                   mainAxisSize: MainAxisSize.min,
+//                                   children: [
+//                                     IconButton(
+//                                       icon: const Icon(Icons.remove),
+//                                       onPressed: () {
+//                                         if (guests > 1) {
+//                                           setState(() {
+//                                             guests--;
+//                                           });
+//                                         }
+//                                       },
+//                                     ),
+//                                     const SizedBox(width: 10),
+//                                     Text('$guests',
+//                                         style: const TextStyle(fontSize: 16)),
+//                                     const SizedBox(width: 10),
+//                                     IconButton(
+//                                       icon: const Icon(Icons.add),
+//                                       onPressed: () {
+//                                         setState(() {
+//                                           guests++;
+//                                         });
+//                                       },
+//                                     ),
+//                                   ],
+//                                 ),
+//                               ),
+//                               const SizedBox(height: 45),
+//                               // Add Table Button
+//                               ElevatedButton(
+//                                 onPressed: () {
+//                                   this.setState(() {
+//                                     availableTables.add(FoodService(
+//                                       tableId: "Table No. $tableNo",
+//                                         guests: guests,
+//                                         isReserved: isReserved));
+//                                    tableNo++; 
+//                                    debugPrint(availableTables.toString());
+//                                   },);
+//                                   Navigator.pop(context);
+//                                   ScaffoldMessenger.of(context).showSnackBar(
+//                                     SnackBar(
+//                                       content: Text('Table No. ${tableNo - 1} added'),
+//                                       duration: const Duration(seconds: 1),
+//                                     ),
+//                                   );
+//                                 },
+//                                 child: const Text('Confirm'),
+//                               )
+//                             ],
+//                           ),
+//                         ),
+//                         Positioned(
+//                           top: 0,
+//                           left: 0,
+//                           right: 0,
+//                           child: Center(
+//                             child: Row(
+//                               mainAxisAlignment: MainAxisAlignment.center,
+//                               children: [
+//                                 Icon(
+//                                   Icons.table_bar_outlined,
+//                                   color: Theme.of(context).dividerColor
+//                                 ),
+//                                 const SizedBox(width: 5),
+//                                 Text(
+//                                   'Table No. $tableNo',
+//                                   style: Theme.of(context).textTheme.labelLarge,
+//                                 )
+//                               ],
+//                             )
+//                           ),
+//                         ),
+//                       ],
+//                     );
+//                   },
+//                 );
+//   }
+// }
 
 
