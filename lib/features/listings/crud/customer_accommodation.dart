@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,9 +7,7 @@ import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
-import 'package:lakbay/features/common/widgets/leading_back_button.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
-import 'package:lakbay/features/listings/listing_provider.dart';
 import 'package:lakbay/models/listing_model.dart';
 
 class CustomerAccomodation extends ConsumerStatefulWidget {
