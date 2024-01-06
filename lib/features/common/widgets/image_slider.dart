@@ -1,11 +1,11 @@
+// import 'package:carousel_slider/carousel_controller.dart';
 import 'dart:io';
 
-// import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
 class ImageSlider extends StatefulWidget {
-  final List<File> images;
+  final dynamic images;
   final double height;
   final double width;
   const ImageSlider({
@@ -38,16 +38,28 @@ class _ImageSliderState extends State<ImageSlider> {
                   heightFactor: 0.9,
                   child: GridView.count(
                     crossAxisCount: 1,
-                    children: widget.images
-                        .map<Widget>((e) => ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.file(
-                              e,
-                              height: widget.height,
-                              width: widget.width,
-                              fit: BoxFit.cover,
-                            )))
-                        .toList(),
+                    children: widget.images.map<Widget>((e) {
+                      if (e is File) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.file(
+                            e,
+                            height: widget.height,
+                            width: widget.width,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      } else {
+                        return Image(
+                          image: NetworkImage(
+                            e,
+                          ),
+                          width: double.infinity,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        );
+                      }
+                    }).toList(),
                   ),
                 );
               },
@@ -69,16 +81,28 @@ class _ImageSliderState extends State<ImageSlider> {
                   });
                 },
               ),
-              items: widget.images
-                  .map<Widget>((e) => ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.file(
-                        e,
-                        height: widget.height,
-                        width: widget.width,
-                        fit: BoxFit.cover,
-                      )))
-                  .toList(),
+              items: widget.images.map<Widget>((e) {
+                if (e is File) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      e,
+                      height: widget.height,
+                      width: widget.width,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                } else {
+                  return Image(
+                    image: NetworkImage(
+                      e,
+                    ),
+                    width: double.infinity,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  );
+                }
+              }).toList(),
             ),
           ),
         ),

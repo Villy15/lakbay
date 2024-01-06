@@ -65,4 +65,36 @@ class StorageRepository {
       return left(Failure(e.toString()));
     }
   }
+
+  FutureEither<List<List<String>>> storeListNestedFiles({
+    required String path,
+    required List<String> ids,
+    required List<List<File?>> filesLists,
+  }) async {
+    try {
+      List<List<String>> allUrls = [];
+
+      for (var i = 0; i < filesLists.length; i++) {
+        List<UploadTask> uploadTasks = [];
+        List<String> urls = [];
+
+        for (var j = 0; j < filesLists[i].length; j++) {
+          final ref = _firebaseStorage.ref().child(path).child('${ids[i]}_$j');
+          uploadTasks.add(ref.putFile(filesLists[i][j]!));
+        }
+
+        final snapshots = await Future.wait(uploadTasks);
+
+        for (var task in snapshots) {
+          urls.add(await task.ref.getDownloadURL());
+        }
+
+        allUrls.add(urls);
+      }
+
+      return right(allUrls);
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
 }
