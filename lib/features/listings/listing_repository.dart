@@ -105,6 +105,15 @@ class ListingRepository {
     }
   }
 
+// read bookings
+  Stream<List<ListingBookings>> readBookings(listingId) {
+    return bookings(listingId).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ListingBookings.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Read a bookings with certain RoomId in subcollection
   Stream<List<ListingBookings>> readBookingsByRoomId(
       String listingId, String roomId) {
