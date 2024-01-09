@@ -23,6 +23,9 @@ import 'package:lakbay/features/cooperatives/my_coop/members/members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/members/read_member.dart';
 import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
 import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
+import 'package:lakbay/features/events/crud/confirm_event.dart';
+import 'package:lakbay/features/events/crud/event_manager_tools.dart';
+import 'package:lakbay/features/events/crud/join_event.dart';
 import 'package:lakbay/features/events/events_page.dart';
 import 'package:lakbay/features/events/crud/add_event.dart';
 import 'package:lakbay/features/events/crud/edit_event.dart';
@@ -209,6 +212,61 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     state: state,
                     child: ReadEventPage(
                         eventId: state.pathParameters['eventId']!),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              GoRoute(
+                path: '/read_event/functions/manager_tools',
+                name: 'event_manager_tools',
+                pageBuilder: (context, state) {
+                  EventModel event = state.extra as EventModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: EventManagerToolsPage(
+                      event: event,
+                    ),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              // Event Manager Tools
+
+              // Join Event
+              GoRoute(
+                path: '/join_event',
+                name: 'join_event',
+                pageBuilder: (context, state) {
+                  EventModel event = state.extra as EventModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: JoinEventPage(
+                      event: event,
+                    ),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              // Confirm Event
+              GoRoute(
+                path: '/confirm_event',
+                name: 'confirm_event',
+                pageBuilder: (context, state) {
+                  EventModel event = state.extra as EventModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: ConfirmEventPage(
+                      event: event,
+                    ),
                     transitionType: SharedAxisTransitionType.vertical,
                   );
                 },

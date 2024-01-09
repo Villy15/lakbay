@@ -111,6 +111,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                             icon: Icon(Icons.event),
                             border: OutlineInputBorder(),
                             labelText: 'Event Name*',
+                            helperText: '*required',
                           ),
                           validator: (String? value) {
                             if (value == null || value.isEmpty) {
@@ -124,10 +125,10 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                           controller: _descriptionController,
                           maxLines: null,
                           decoration: const InputDecoration(
-                            icon: Icon(Icons.description),
-                            border: OutlineInputBorder(),
-                            labelText: 'Description',
-                          ),
+                              icon: Icon(Icons.description),
+                              border: OutlineInputBorder(),
+                              labelText: 'Description',
+                              helperText: 'optional'),
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
@@ -136,25 +137,61 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                             icon: Icon(Icons.location_on),
                             border: OutlineInputBorder(),
                             labelText: 'Location',
+                            helperText: 'optional',
                           ),
                         ),
                         const SizedBox(height: 10),
-                        TextFormField(
-                          controller: _cityController,
-                          decoration: const InputDecoration(
-                            icon: Icon(Icons.location_city),
-                            border: OutlineInputBorder(),
-                            labelText: 'City',
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          controller: _provinceController,
-                          decoration: const InputDecoration(
-                            icon: Icon(Icons.landscape),
-                            border: OutlineInputBorder(),
-                            labelText: 'Province',
-                          ),
+                        Row(
+                          children: [
+                            // City
+                            Flexible(
+                              flex: 1,
+                              child: TextFormField(
+                                controller: _cityController,
+                                decoration: const InputDecoration(
+                                  // Empty icon to align with other text fields
+                                  icon: Icon(Icons.location_on,
+                                      color: Colors.transparent),
+                                  // Drop down icon
+                                  suffixIcon: Icon(Icons.arrow_drop_down),
+                                  border: OutlineInputBorder(),
+                                  labelText: 'City*',
+                                  helperText: '*required',
+                                ),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+
+                            const SizedBox(width: 10),
+
+                            // Province
+                            Flexible(
+                              flex: 1,
+                              child: TextFormField(
+                                controller: _provinceController,
+                                decoration: const InputDecoration(
+                                  // Empty icon to align with other text fields
+                                  icon: Icon(Icons.location_on,
+                                      color: Colors.transparent, size: 0),
+                                  suffixIcon: Icon(Icons.arrow_drop_down),
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Province*',
+                                  helperText: '*required',
+                                ),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 10),
                         datePicker(context),

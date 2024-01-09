@@ -50,6 +50,11 @@ class Pallete {
 
     // Scaffold Theme
     scaffoldBackgroundColor: white,
+
+    cardTheme: const CardTheme(
+      elevation: 1,
+      surfaceTintColor: white,
+    ),
   );
 
   // Dark mode app theme

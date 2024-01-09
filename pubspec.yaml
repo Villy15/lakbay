@@ -60,6 +60,7 @@ dependencies:
   mime: ^1.0.4
   open_filex: ^4.3.4
   path_provider: ^2.1.1
+  qr_flutter: ^4.1.0
   shared_preferences: ^2.2.2
   syncfusion_flutter_datepicker: ^21.2.3
 

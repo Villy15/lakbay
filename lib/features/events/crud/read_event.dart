@@ -1,168 +1,249 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/events/events_controller.dart';
-import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/event_model.dart';
-import 'package:lakbay/features/common/providers/app_bar_provider.dart';
 import 'package:intl/intl.dart';
 
-class ReadEventPage extends ConsumerWidget {
+class ReadEventPage extends ConsumerStatefulWidget {
   final String eventId;
-
   const ReadEventPage({super.key, required this.eventId});
 
-  void editEvent(BuildContext context, EventModel event) {
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _ReadEventPageState();
+}
+
+class _ReadEventPageState extends ConsumerState<ReadEventPage> {
+  void eventManagerTools(BuildContext context, EventModel event) {
     context.pushNamed(
-      'edit_event',
+      'event_manager_tools',
       extra: event,
     );
   }
 
-  void joinEvent(BuildContext context, EventModel event, EventController controller, UserModel? user) {
-    controller.joinEvent(event.uid!, user?.uid ?? '', context);
+  void joinEvent(BuildContext context, EventModel event) {
+    context.pushNamed(
+      'join_event',
+      extra: event,
+    );
   }
 
-  void leaveEvent(BuildContext context, EventModel event, EventController controller, UserModel? user) {
-    controller.leaveEvent(event.uid!, user?.uid ?? '', context);
+  void checkDetails(BuildContext context, EventModel event) {
+    context.pushNamed(
+      'confirm_event',
+      extra: event,
+    );
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
-    final scaffoldKey = ref.watch(scaffoldKeyProvider);
-
-    return ref.watch(getEventsProvider(eventId)).when(
-      data: (EventModel event) {
-        final controller = ref.read(eventsControllerProvider.notifier);
-
-        // Check if the user is a member of the event
-        final bool isMember = event.members.contains(user?.uid);
-
-        return Scaffold(
-          appBar: _appBar(scaffoldKey, user),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                DisplayImage(
-                  imageUrl: event.imageUrl,
-                  height: 150,
-                  width: double.infinity,
-                  radius: BorderRadius.zero,
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  event.name,
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Description
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(event.description ?? ''),
-                ),
-                const SizedBox(height: 20),
-
-                // Address
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    'Address: ${event.address}, ${event.city}, ${event.province}',
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Start Date
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    'Start Date: ${DateFormat('MMMM d, y').format(event.startDate)}',
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // End Date
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    'End Date: ${DateFormat('MMMM d, y').format(event.endDate)}',
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Edit Event Button
-                ElevatedButton(
-                  onPressed: () {
-                    editEvent(context, event);
-                  },
-                  child: const Text('Edit Event'),
-                ),
-
-                // Join Event Button (visible if not a member)
-                if (!isMember)
-                  ElevatedButton(
-                    onPressed: () {
-                      joinEvent(context, event, controller, user);
-                    },
-                    child: const Text('Join Event'),
-                  ),
-
-                // Leave Event Button (visible if a member)
-                if (isMember)
-                  ElevatedButton(
-                    onPressed: () {
-                      leaveEvent(context, event, controller, user);
-                    },
-                    child: const Text('Leave Event'),
-                  ),
-              ],
-            ),
-          ),
-        );
-      },
-      error: (error, stackTrace) => Scaffold(
-        body: ErrorText(error: error.toString(), stackTrace: '',),
-      ),
-      loading: () => const Scaffold(
-        body: Loader(),
-      ),
-    );
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      ref.read(navBarVisibilityProvider.notifier).hide();
+    });
   }
 
-  AppBar _appBar(GlobalKey<ScaffoldState> scaffoldKey, UserModel? user) {
-    return AppBar(
-      title: const Text("View Event"),
-      actions: [
-        IconButton(
-          onPressed: () {
-            scaffoldKey.currentState?.openEndDrawer();
+  @override
+  Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    final member = ref.watch(getMemberProvider(user!.uid)).asData?.value;
+
+    return ref.watch(getEventsProvider(widget.eventId)).when(
+          data: (EventModel event) {
+            // Check if the user is a member of the event
+            final bool isMember = event.members.contains(user.uid);
+
+            return PopScope(
+              canPop: false,
+              onPopInvoked: (bool didPop) {
+                context.pop();
+                ref.read(navBarVisibilityProvider.notifier).show();
+              },
+              child: Scaffold(
+                // Add appbar with back button
+                extendBodyBehindAppBar: true,
+                appBar: AppBar(
+                  backgroundColor: Colors.transparent,
+                  leading: IconButton(
+                    iconSize: 20,
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      context.pop();
+                      ref.read(navBarVisibilityProvider.notifier).show();
+                    },
+                  ),
+                ),
+                bottomNavigationBar: BottomAppBar(
+                  surfaceTintColor: Colors.white,
+                  height: 90,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextButton(
+                          onPressed: () {
+                            showSnackBar(context, 'Contribute Event');
+                          },
+                          child: const Text('Contribute Event'),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FilledButton(
+                          // Make it wider
+                          style: ButtonStyle(
+                            minimumSize: MaterialStateProperty.all<Size>(
+                                const Size(180, 45)),
+                          ),
+                          onPressed: () {
+                            isMember
+                                ? checkDetails(context, event)
+                                : joinEvent(context, event);
+                          },
+                          child: Text(
+                            isMember ? 'Check Event Details' : 'Join Event',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                body: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DisplayImage(
+                        imageUrl: event.imageUrl,
+                        height: 200,
+                        width: double.infinity,
+                        radius: BorderRadius.zero,
+                      ),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_today),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "${DateFormat('d MMM').format(event.startDate)} - ${DateFormat('d MMM').format(event.endDate)}",
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            member?.committeeRole("Events") == "Manager"
+                                ? OutlinedButton(
+                                    onPressed: () {
+                                      eventManagerTools(context, event);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 25,
+                                      ),
+                                    ),
+                                    child: const Text('Event Manager Tools'),
+                                  )
+                                : const SizedBox.shrink(),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Text(
+                          event.name,
+                          style: const TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Number of Participants
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.people),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${event.members.length} Participants',
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      // Description
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Text(event.description ?? ''),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Address
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.location_on),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Address: ${event.address}, ${event.city}, ${event.province}',
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Map Placeholder
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Container(
+                          height: 200,
+                          width: double.infinity,
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
           },
-          icon: CircleAvatar(
-            radius: 20.0,
-            backgroundImage: user?.profilePic != null && user?.profilePic != ''
-                ? NetworkImage(user!.profilePic)
-                : const AssetImage('lib/core/images/default_profile_pic.jpg') as ImageProvider,
-            backgroundColor: Colors.transparent,
+          error: (error, stackTrace) => Scaffold(
+            body: ErrorText(
+              error: error.toString(),
+              stackTrace: '',
+            ),
           ),
-        ),
-      ],
-    );
+          loading: () => const Scaffold(
+            body: Loader(),
+          ),
+        );
   }
 }
