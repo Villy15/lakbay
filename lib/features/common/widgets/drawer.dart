@@ -222,14 +222,25 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                         onTap: () => {viewCurrentCooperative(ref)},
                       ),
 
-                widget.user!.isManager
+                widget.user!.isCoopView ?? false
                     ? const SizedBox.shrink()
                     : ListTile(
                         title: const Text('Register a Cooperative'),
                         leading: const Icon(Icons.group_add),
                         onTap: () => registerCooperative(ref),
                       ),
-                const SizedBox(height: 10),
+                // Add Cooperative Dashboard
+                widget.user!.isCoopView ?? false
+                    ? ListTile(
+                        title: const Text('Cooperative Dashboard'),
+                        leading: const Icon(Icons.dashboard),
+                        onTap: () => {
+                          context.pop(),
+                          context.push(
+                              '/my_coop/dashboard/${widget.user?.currentCoop}'),
+                        },
+                      )
+                    : const SizedBox.shrink(),
               ],
             ),
             Column(
