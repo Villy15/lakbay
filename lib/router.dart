@@ -22,6 +22,7 @@ import 'package:lakbay/features/cooperatives/my_coop/managers/manager_tools_page
 import 'package:lakbay/features/cooperatives/my_coop/members/members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/members/read_member.dart';
 import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
+import 'package:lakbay/features/dashboard/coop_dashboard.dart';
 import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
 import 'package:lakbay/features/events/crud/confirm_event.dart';
 import 'package:lakbay/features/events/crud/event_manager_tools.dart';
@@ -399,6 +400,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     context: context,
                     state: state,
                     child: const EventsPage(),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              // My Coop Dashboard
+              GoRoute(
+                path: '/my_coop/dashboard/:uid',
+                pageBuilder: (context, state) {
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: CoopDashboard(coopId: state.pathParameters['uid']!),
                     transitionType: SharedAxisTransitionType.vertical,
                   );
                 },
