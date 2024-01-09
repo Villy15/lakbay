@@ -5,13 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
-import 'package:lakbay/features/common/error.dart';
-import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
+import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -348,72 +347,59 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                           Center(
                               child: ElevatedButton(
                             onPressed: () async {
-                              debugPrint(
-                                  "test this  uid: ${widget.listing.uid!} adn this roomid: ${widget.listing.availableRooms![index].roomId}");
-                              ref
-                                  .watch(getAllBookingsByIdProvider((
-                                    widget.listing.uid!,
-                                    widget.listing.availableRooms![index].roomId
-                                  )))
-                                  .when(
-                                    data: (List<ListingBookings> bookings) {
-                                      return ();
-                                    },
-                                    error: (error, stackTrace) => Scaffold(
-                                      body: ErrorText(
-                                        error: error.toString(),
-                                        stackTrace: stackTrace.toString(),
-                                      ),
-                                    ),
-                                    loading: () => const Scaffold(
-                                      body: Loader(),
-                                    ),
-                                  );
-                              // debugPrint("test this bookings: $bookings");
+                              final bookings = await ref.watch(
+                                  getAllBookingsByIdProvider((
+                                widget.listing.uid!,
+                                widget.listing.availableRooms![index].roomId
+                              )).future);
+
                               // Show the date range picker dialog
-                              final DateTimeRange? pickedDateRange =
-                                  await showDateRangePicker(
-                                context: context,
-                                firstDate:
-                                    DateTime(2000), // Earliest allowable date
-                                lastDate:
-                                    DateTime(2025), // Latest allowable date
-                                initialDateRange: DateTimeRange(
-                                  start: DateTime.now(),
-                                  end: DateTime.now().add(const Duration(
-                                      days: 2)), // Example initial range
-                                ),
-                                // You can add other properties like helpText, confirmText, etc.
-                              );
+                              if (context.mounted) {
+                                final DateTimeRange? pickedDateRange =
+                                    await showDateRangePicker(
+                                  context: context,
+                                  firstDate:
+                                      DateTime(2000), // Earliest allowable date
+                                  lastDate:
+                                      DateTime(2025), // Latest allowable date
+                                  initialDateRange: DateTimeRange(
+                                    start: DateTime.now(),
+                                    end: DateTime.now().add(const Duration(
+                                        days: 2)), // Example initial range
+                                  ),
+                                  // You can add other properties like helpText, confirmText, etc.
+                                );
 
-                              selectableDayPredicate:
-                              (DateTime day) {
-                                // Check if the day is in the list of booked dates
-                                // for (DateTime bookedDate in bookedDates) {
-                                //   if (day.year == bookedDate.year &&
-                                //       day.month == bookedDate.month &&
-                                //       day.day == bookedDate.day) {
-                                //     return false; // Disable this booked date
-                                //   }
-                                // }
-                                return true; // Enable all other dates
-                              };
+                                selectableDayPredicate:
+                                (DateTime day) {
+                                  // Check if the day is in the list of booked dates
+                                  // for (DateTime bookedDate in bookedDates) {
+                                  //   if (day.year == bookedDate.year &&
+                                  //       day.month == bookedDate.month &&
+                                  //       day.day == bookedDate.day) {
+                                  //     return false; // Disable this booked date
+                                  //   }
+                                  // }
+                                  // return true; // Enable all other dates
+                                };
 
-                              if (pickedDateRange != null && context.mounted) {
-                                // Handle the picked date range
-                                showConfirmBooking(
-                                    widget.listing.availableRooms![index],
-                                    pickedDateRange,
-                                    context);
-                                // ListingBookings(id: id, guests: guests, userId: userId)
-                                // ref
-                                //     .read(listingControllerProvider.notifier)
-                                //     .addBooking(
-                                //         booking, widget.listing.uid!, context);
-                                print(
-                                    "Start Date: ${pickedDateRange.start.toIso8601String()}");
-                                print(
-                                    "End Date: ${pickedDateRange.end.toIso8601String()}");
+                                if (pickedDateRange != null &&
+                                    context.mounted) {
+                                  // Handle the picked date range
+                                  showConfirmBooking(
+                                      widget.listing.availableRooms![index],
+                                      pickedDateRange,
+                                      context);
+                                  // ListingBookings(id: id, guests: guests, userId: userId)
+                                  // ref
+                                  //     .read(listingControllerProvider.notifier)
+                                  //     .addBooking(
+                                  //         booking, widget.listing.uid!, context);
+                                  print(
+                                      "Start Date: ${pickedDateRange.start.toIso8601String()}");
+                                  print(
+                                      "End Date: ${pickedDateRange.end.toIso8601String()}");
+                                }
                               }
                             },
                             style: ElevatedButton.styleFrom(
