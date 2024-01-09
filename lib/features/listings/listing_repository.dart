@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:lakbay/core/constants/firebase_constants.dart';
@@ -7,6 +8,7 @@ import 'package:lakbay/core/failure.dart';
 import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/typdef.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 final listingRepositoryProvider = Provider((ref) {
   return ListingRepository(firestore: ref.watch(firestoreProvider));
@@ -75,4 +77,44 @@ class ListingRepository {
 
   CollectionReference get _listings =>
       _firestore.collection(FirebaseConstants.listingsCollection);
+
+  CollectionReference bookings(String listingId) {
+    return _listings
+        .doc(listingId)
+        .collection(FirebaseConstants.bookingsSubCollection);
+  }
+
+  // Add a booking in bookingss subcollection
+  FutureEither<String> addBooking(
+      String listingId, ListingBookings booking) async {
+    try {
+      // Generate a new document ID based on the user's ID
+      var doc = bookings(listingId).doc();
+
+      // Update the uid of the cooperative
+      booking = booking.copyWith(id: doc.id);
+
+      // Add the cooperative to the database
+      await doc.set(booking.toJson());
+
+      // Return the uid of the newly added cooperative
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Read a bookings with certain RoomId in subcollection
+  Stream<List<ListingBookings>> readBookingsByRoomId(
+      String listingId, String roomId) {
+    return bookings(listingId)
+        .where("roomId", isEqualTo: roomId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              return ListingBookings.fromJson(
+                  doc.data() as Map<String, dynamic>);
+            }).toList());
+  }
 }
