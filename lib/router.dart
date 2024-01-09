@@ -29,7 +29,13 @@ import 'package:lakbay/features/events/crud/edit_event.dart';
 import 'package:lakbay/features/home/customer/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/inbox/read_inbox.dart';
+import 'package:lakbay/features/listings/crud/add_accommodation.dart';
+import 'package:lakbay/features/listings/crud/add_entertainment.dart';
+import 'package:lakbay/features/listings/crud/add_food.dart';
 import 'package:lakbay/features/listings/crud/add_listing.dart';
+import 'package:lakbay/features/listings/crud/add_tours.dart';
+import 'package:lakbay/features/listings/crud/add_transport.dart';
+import 'package:lakbay/features/listings/crud/choose_category.dart';
 import 'package:lakbay/features/listings/crud/read_listing.dart';
 import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation.dart';
@@ -261,16 +267,103 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 name: 'add_listing',
                 pageBuilder: (context, state) {
                   CooperativeModel coop = state.extra as CooperativeModel;
-
+                  
                   return buildPageWithSharedAxisTransition<void>(
                     context: context,
                     state: state,
-                    child: AddListing(
+                    child: ChooseCategory(
                       coop: coop,
                     ),
                     transitionType: SharedAxisTransitionType.vertical,
+
                   );
+                  
                 },
+
+                routes: [
+                  GoRoute(
+                    path: 'accommodation',
+                    name: 'add_accommodation',
+                    pageBuilder: (context, state) {
+                      CooperativeModel coop = state.extra as CooperativeModel;
+
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: AddAccommodation(
+                          coop: coop,
+                          category: "Accommodation"
+                        ),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'transport',
+                    name: 'add_transport',
+                    pageBuilder: (context, state) {
+                      CooperativeModel coop = state.extra as CooperativeModel;
+
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: AddTransport(
+                          coop: coop,
+                        ),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'food',
+                    name: 'add_food',
+                    pageBuilder: (context, state) {
+                      CooperativeModel coop = state.extra as CooperativeModel;
+
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: AddFood(
+                          coop: coop,
+                          category: 'Food'
+                        ),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'entertainment',
+                    name: 'add_entertainment',
+                    pageBuilder: (context, state) {
+                      CooperativeModel coop = state.extra as CooperativeModel;
+
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: AddEntertainment(
+                          coop: coop,
+                        ),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    },
+                  ),
+
+                  GoRoute(
+                    path: 'tour',
+                    name: 'add_tour',
+                    pageBuilder: (context, state) {
+                      CooperativeModel coop = state.extra as CooperativeModel;
+
+                      return buildPageWithSharedAxisTransition<void>(
+                        context: context,
+                        state: state,
+                        child: AddTour(coop: coop),
+                        transitionType: SharedAxisTransitionType.vertical,
+                      );
+                    }
+                  )
+                  
+                ]
               ),
 
               // Manager Tools

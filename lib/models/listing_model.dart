@@ -93,6 +93,7 @@ class AvailableRoom with _$AvailableRoom {
     required String transportId,
     required num guests,
     required num price,
+    required num luggage,
     required List<ListingImages> images,
   }) = _AvailableTransport;
 
