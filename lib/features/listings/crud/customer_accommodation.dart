@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +12,6 @@ import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
-import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
