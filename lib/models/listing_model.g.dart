@@ -155,6 +155,7 @@ _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
       transportId: json['transportId'] as String,
       guests: json['guests'] as num,
       price: json['price'] as num,
+      luggage: json['luggage'] as num,
       images: (json['images'] as List<dynamic>)
           .map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -166,6 +167,7 @@ Map<String, dynamic> _$$AvailableTransportImplToJson(
       'transportId': instance.transportId,
       'guests': instance.guests,
       'price': instance.price,
+      'luggage': instance.luggage,
       'images': instance.images.map((e) => e.toJson()).toList(),
     };
 

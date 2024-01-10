@@ -100,6 +100,7 @@ class _AddCoopPageState extends ConsumerState<AddCoopPage> {
                         imagePath: imagePath,
                         members: [userUid],
                         managers: [userUid],
+                        code: '123456',
                       );
 
                       // Upload image to Firebase Storage

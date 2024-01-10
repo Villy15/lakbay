@@ -115,20 +115,10 @@ class ListingCard extends ConsumerWidget {
                         Row(
                           children: [
                             Text(
-                              '₱${listing.price}',
+                              getCardPricing(),
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              listing.category == 'Accommodation'
-                                  ? '/night'
-                                  : '',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey,
                               ),
                             ),
                           ],
@@ -160,5 +150,38 @@ class ListingCard extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  String getCardPricing() {
+    switch (listing.category) {
+      case "Accommodation":
+        AvailableRoom? lowestPricedRoom = findRoomWithLowestPrice(listing);
+        if (lowestPricedRoom != null) {
+          return "₱${lowestPricedRoom.price} per night";
+        } else {
+          return "";
+        }
+      case "Food":
+        return "";
+      case "Transport":
+        return "";
+      case "Tours":
+        return "";
+      case "Entertainment":
+        return "";
+    }
+    return "";
+  }
+
+  AvailableRoom? findRoomWithLowestPrice(ListingModel listing) {
+    // Check if the list is not empty
+    if (listing.availableRooms == null || listing.availableRooms!.isEmpty) {
+      return null;
+    }
+
+    // Use reduce to find the room with the lowest price
+    return listing.availableRooms!.reduce((currentLowest, room) {
+      return (room.price < currentLowest.price) ? room : currentLowest;
+    });
   }
 }

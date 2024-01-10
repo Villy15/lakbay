@@ -1520,6 +1520,7 @@ mixin _$AvailableTransport {
   String get transportId => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
+  num get luggage => throw _privateConstructorUsedError;
   List<ListingImages> get images => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1535,7 +1536,11 @@ abstract class $AvailableTransportCopyWith<$Res> {
       _$AvailableTransportCopyWithImpl<$Res, AvailableTransport>;
   @useResult
   $Res call(
-      {String transportId, num guests, num price, List<ListingImages> images});
+      {String transportId,
+      num guests,
+      num price,
+      num luggage,
+      List<ListingImages> images});
 }
 
 /// @nodoc
@@ -1554,6 +1559,7 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
     Object? transportId = null,
     Object? guests = null,
     Object? price = null,
+    Object? luggage = null,
     Object? images = null,
   }) {
     return _then(_value.copyWith(
@@ -1568,6 +1574,10 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
+              as num,
+      luggage: null == luggage
+          ? _value.luggage
+          : luggage // ignore: cast_nullable_to_non_nullable
               as num,
       images: null == images
           ? _value.images
@@ -1586,7 +1596,11 @@ abstract class _$$AvailableTransportImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String transportId, num guests, num price, List<ListingImages> images});
+      {String transportId,
+      num guests,
+      num price,
+      num luggage,
+      List<ListingImages> images});
 }
 
 /// @nodoc
@@ -1603,6 +1617,7 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
     Object? transportId = null,
     Object? guests = null,
     Object? price = null,
+    Object? luggage = null,
     Object? images = null,
   }) {
     return _then(_$AvailableTransportImpl(
@@ -1617,6 +1632,10 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
+              as num,
+      luggage: null == luggage
+          ? _value.luggage
+          : luggage // ignore: cast_nullable_to_non_nullable
               as num,
       images: null == images
           ? _value._images
@@ -1633,6 +1652,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       {required this.transportId,
       required this.guests,
       required this.price,
+      required this.luggage,
       required final List<ListingImages> images})
       : _images = images;
 
@@ -1645,6 +1665,8 @@ class _$AvailableTransportImpl implements _AvailableTransport {
   final num guests;
   @override
   final num price;
+  @override
+  final num luggage;
   final List<ListingImages> _images;
   @override
   List<ListingImages> get images {
@@ -1655,7 +1677,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
 
   @override
   String toString() {
-    return 'AvailableTransport(transportId: $transportId, guests: $guests, price: $price, images: $images)';
+    return 'AvailableTransport(transportId: $transportId, guests: $guests, price: $price, luggage: $luggage, images: $images)';
   }
 
   @override
@@ -1667,13 +1689,14 @@ class _$AvailableTransportImpl implements _AvailableTransport {
                 other.transportId == transportId) &&
             (identical(other.guests, guests) || other.guests == guests) &&
             (identical(other.price, price) || other.price == price) &&
+            (identical(other.luggage, luggage) || other.luggage == luggage) &&
             const DeepCollectionEquality().equals(other._images, _images));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, transportId, guests, price,
-      const DeepCollectionEquality().hash(_images));
+      luggage, const DeepCollectionEquality().hash(_images));
 
   @JsonKey(ignore: true)
   @override
@@ -1695,6 +1718,7 @@ abstract class _AvailableTransport implements AvailableTransport {
       {required final String transportId,
       required final num guests,
       required final num price,
+      required final num luggage,
       required final List<ListingImages> images}) = _$AvailableTransportImpl;
 
   factory _AvailableTransport.fromJson(Map<String, dynamic> json) =
@@ -1706,6 +1730,8 @@ abstract class _AvailableTransport implements AvailableTransport {
   num get guests;
   @override
   num get price;
+  @override
+  num get luggage;
   @override
   List<ListingImages> get images;
   @override

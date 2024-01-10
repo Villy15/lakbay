@@ -18,8 +18,20 @@ class EventModel with _$EventModel {
     required List<String> managers,
     required DateTime startDate,
     required DateTime endDate,
+    required EventCooperative cooperative,
   }) = _EventModel;
 
   factory EventModel.fromJson(Map<String, dynamic> json) =>
       _$EventModelFromJson(json);
+}
+
+@freezed
+class EventCooperative with _$EventCooperative {
+  factory EventCooperative({
+    required String cooperativeId,
+    required String cooperativeName,
+  }) = _EventCooperative;
+
+  factory EventCooperative.fromJson(Map<String, dynamic> json) =>
+      _$EventCooperativeFromJson(json);
 }
