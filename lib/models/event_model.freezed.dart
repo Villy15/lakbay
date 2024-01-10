@@ -32,6 +32,7 @@ mixin _$EventModel {
   List<String> get managers => throw _privateConstructorUsedError;
   DateTime get startDate => throw _privateConstructorUsedError;
   DateTime get endDate => throw _privateConstructorUsedError;
+  EventCooperative get cooperative => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -57,7 +58,10 @@ abstract class $EventModelCopyWith<$Res> {
       List<String> members,
       List<String> managers,
       DateTime startDate,
-      DateTime endDate});
+      DateTime endDate,
+      EventCooperative cooperative});
+
+  $EventCooperativeCopyWith<$Res> get cooperative;
 }
 
 /// @nodoc
@@ -85,6 +89,7 @@ class _$EventModelCopyWithImpl<$Res, $Val extends EventModel>
     Object? managers = null,
     Object? startDate = null,
     Object? endDate = null,
+    Object? cooperative = null,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -135,7 +140,19 @@ class _$EventModelCopyWithImpl<$Res, $Val extends EventModel>
           ? _value.endDate
           : endDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      cooperative: null == cooperative
+          ? _value.cooperative
+          : cooperative // ignore: cast_nullable_to_non_nullable
+              as EventCooperative,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $EventCooperativeCopyWith<$Res> get cooperative {
+    return $EventCooperativeCopyWith<$Res>(_value.cooperative, (value) {
+      return _then(_value.copyWith(cooperative: value) as $Val);
+    });
   }
 }
 
@@ -159,7 +176,11 @@ abstract class _$$EventModelImplCopyWith<$Res>
       List<String> members,
       List<String> managers,
       DateTime startDate,
-      DateTime endDate});
+      DateTime endDate,
+      EventCooperative cooperative});
+
+  @override
+  $EventCooperativeCopyWith<$Res> get cooperative;
 }
 
 /// @nodoc
@@ -185,6 +206,7 @@ class __$$EventModelImplCopyWithImpl<$Res>
     Object? managers = null,
     Object? startDate = null,
     Object? endDate = null,
+    Object? cooperative = null,
   }) {
     return _then(_$EventModelImpl(
       uid: freezed == uid
@@ -235,6 +257,10 @@ class __$$EventModelImplCopyWithImpl<$Res>
           ? _value.endDate
           : endDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      cooperative: null == cooperative
+          ? _value.cooperative
+          : cooperative // ignore: cast_nullable_to_non_nullable
+              as EventCooperative,
     ));
   }
 }
@@ -254,7 +280,8 @@ class _$EventModelImpl implements _EventModel {
       required final List<String> members,
       required final List<String> managers,
       required this.startDate,
-      required this.endDate})
+      required this.endDate,
+      required this.cooperative})
       : _members = members,
         _managers = managers;
 
@@ -297,10 +324,12 @@ class _$EventModelImpl implements _EventModel {
   final DateTime startDate;
   @override
   final DateTime endDate;
+  @override
+  final EventCooperative cooperative;
 
   @override
   String toString() {
-    return 'EventModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, members: $members, managers: $managers, startDate: $startDate, endDate: $endDate)';
+    return 'EventModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, members: $members, managers: $managers, startDate: $startDate, endDate: $endDate, cooperative: $cooperative)';
   }
 
   @override
@@ -324,7 +353,9 @@ class _$EventModelImpl implements _EventModel {
             const DeepCollectionEquality().equals(other._managers, _managers) &&
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate) &&
-            (identical(other.endDate, endDate) || other.endDate == endDate));
+            (identical(other.endDate, endDate) || other.endDate == endDate) &&
+            (identical(other.cooperative, cooperative) ||
+                other.cooperative == cooperative));
   }
 
   @JsonKey(ignore: true)
@@ -342,7 +373,8 @@ class _$EventModelImpl implements _EventModel {
       const DeepCollectionEquality().hash(_members),
       const DeepCollectionEquality().hash(_managers),
       startDate,
-      endDate);
+      endDate,
+      cooperative);
 
   @JsonKey(ignore: true)
   @override
@@ -371,7 +403,8 @@ abstract class _EventModel implements EventModel {
       required final List<String> members,
       required final List<String> managers,
       required final DateTime startDate,
-      required final DateTime endDate}) = _$EventModelImpl;
+      required final DateTime endDate,
+      required final EventCooperative cooperative}) = _$EventModelImpl;
 
   factory _EventModel.fromJson(Map<String, dynamic> json) =
       _$EventModelImpl.fromJson;
@@ -401,7 +434,167 @@ abstract class _EventModel implements EventModel {
   @override
   DateTime get endDate;
   @override
+  EventCooperative get cooperative;
+  @override
   @JsonKey(ignore: true)
   _$$EventModelImplCopyWith<_$EventModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+EventCooperative _$EventCooperativeFromJson(Map<String, dynamic> json) {
+  return _EventCooperative.fromJson(json);
+}
+
+/// @nodoc
+mixin _$EventCooperative {
+  String get cooperativeId => throw _privateConstructorUsedError;
+  String get cooperativeName => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $EventCooperativeCopyWith<EventCooperative> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $EventCooperativeCopyWith<$Res> {
+  factory $EventCooperativeCopyWith(
+          EventCooperative value, $Res Function(EventCooperative) then) =
+      _$EventCooperativeCopyWithImpl<$Res, EventCooperative>;
+  @useResult
+  $Res call({String cooperativeId, String cooperativeName});
+}
+
+/// @nodoc
+class _$EventCooperativeCopyWithImpl<$Res, $Val extends EventCooperative>
+    implements $EventCooperativeCopyWith<$Res> {
+  _$EventCooperativeCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? cooperativeId = null,
+    Object? cooperativeName = null,
+  }) {
+    return _then(_value.copyWith(
+      cooperativeId: null == cooperativeId
+          ? _value.cooperativeId
+          : cooperativeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      cooperativeName: null == cooperativeName
+          ? _value.cooperativeName
+          : cooperativeName // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$EventCooperativeImplCopyWith<$Res>
+    implements $EventCooperativeCopyWith<$Res> {
+  factory _$$EventCooperativeImplCopyWith(_$EventCooperativeImpl value,
+          $Res Function(_$EventCooperativeImpl) then) =
+      __$$EventCooperativeImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String cooperativeId, String cooperativeName});
+}
+
+/// @nodoc
+class __$$EventCooperativeImplCopyWithImpl<$Res>
+    extends _$EventCooperativeCopyWithImpl<$Res, _$EventCooperativeImpl>
+    implements _$$EventCooperativeImplCopyWith<$Res> {
+  __$$EventCooperativeImplCopyWithImpl(_$EventCooperativeImpl _value,
+      $Res Function(_$EventCooperativeImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? cooperativeId = null,
+    Object? cooperativeName = null,
+  }) {
+    return _then(_$EventCooperativeImpl(
+      cooperativeId: null == cooperativeId
+          ? _value.cooperativeId
+          : cooperativeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      cooperativeName: null == cooperativeName
+          ? _value.cooperativeName
+          : cooperativeName // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$EventCooperativeImpl implements _EventCooperative {
+  _$EventCooperativeImpl(
+      {required this.cooperativeId, required this.cooperativeName});
+
+  factory _$EventCooperativeImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EventCooperativeImplFromJson(json);
+
+  @override
+  final String cooperativeId;
+  @override
+  final String cooperativeName;
+
+  @override
+  String toString() {
+    return 'EventCooperative(cooperativeId: $cooperativeId, cooperativeName: $cooperativeName)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EventCooperativeImpl &&
+            (identical(other.cooperativeId, cooperativeId) ||
+                other.cooperativeId == cooperativeId) &&
+            (identical(other.cooperativeName, cooperativeName) ||
+                other.cooperativeName == cooperativeName));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, cooperativeId, cooperativeName);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$EventCooperativeImplCopyWith<_$EventCooperativeImpl> get copyWith =>
+      __$$EventCooperativeImplCopyWithImpl<_$EventCooperativeImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$EventCooperativeImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _EventCooperative implements EventCooperative {
+  factory _EventCooperative(
+      {required final String cooperativeId,
+      required final String cooperativeName}) = _$EventCooperativeImpl;
+
+  factory _EventCooperative.fromJson(Map<String, dynamic> json) =
+      _$EventCooperativeImpl.fromJson;
+
+  @override
+  String get cooperativeId;
+  @override
+  String get cooperativeName;
+  @override
+  @JsonKey(ignore: true)
+  _$$EventCooperativeImplCopyWith<_$EventCooperativeImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

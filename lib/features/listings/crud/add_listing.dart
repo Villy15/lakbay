@@ -976,6 +976,7 @@ class _Step2EntertainmentState extends State<Step2Entertainment> {
           child: ElevatedButton(
               onPressed: () {
                 showModalBottomSheet(
+                    showDragHandle: true,
                     context: context,
                     builder: (BuildContext context) {
                       num guests = 0;
@@ -988,7 +989,7 @@ class _Step2EntertainmentState extends State<Step2Entertainment> {
                       return SingleChildScrollView(
                         child: StatefulBuilder(builder: (context, setState) {
                           return Container(
-                              margin: const EdgeInsets.only(top: 20),
+                              margin: const EdgeInsets.only(top: 10),
                               height: MediaQuery.sizeOf(context).height / 2,
                               width: double.infinity,
                               child: SingleChildScrollView(

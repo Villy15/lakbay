@@ -157,7 +157,7 @@ class ListingCard extends ConsumerWidget {
       case "Accommodation":
         AvailableRoom? lowestPricedRoom = findRoomWithLowestPrice(listing);
         if (lowestPricedRoom != null) {
-          return "₱${lowestPricedRoom.price} /night";
+          return "₱${lowestPricedRoom.price} per night";
         } else {
           return "";
         }
