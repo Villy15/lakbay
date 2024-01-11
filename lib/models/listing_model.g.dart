@@ -152,23 +152,19 @@ Map<String, dynamic> _$$AvailableRoomImplToJson(_$AvailableRoomImpl instance) =>
 _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
         Map<String, dynamic> json) =>
     _$AvailableTransportImpl(
-      transportId: json['transportId'] as String,
+      available: json['available'] as bool,
       guests: json['guests'] as num,
       price: json['price'] as num,
       luggage: json['luggage'] as num,
-      images: (json['images'] as List<dynamic>)
-          .map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
-          .toList(),
     );
 
 Map<String, dynamic> _$$AvailableTransportImplToJson(
         _$AvailableTransportImpl instance) =>
     <String, dynamic>{
-      'transportId': instance.transportId,
+      'available': instance.available,
       'guests': instance.guests,
       'price': instance.price,
       'luggage': instance.luggage,
-      'images': instance.images.map((e) => e.toJson()).toList(),
     };
 
 _$FoodServiceImpl _$$FoodServiceImplFromJson(Map<String, dynamic> json) =>

@@ -357,6 +357,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         state: state,
                         child: AddTransport(
                           coop: coop,
+                          category: "Transport"
                         ),
                         transitionType: SharedAxisTransitionType.vertical,
                       );

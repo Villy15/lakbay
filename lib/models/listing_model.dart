@@ -90,11 +90,10 @@ class AvailableRoom with _$AvailableRoom {
 
 @freezed class AvailableTransport with _$AvailableTransport {
   factory AvailableTransport({
-    required String transportId,
+    required bool available,
     required num guests,
     required num price,
-    required num luggage,
-    required List<ListingImages> images,
+    required num luggage
   }) = _AvailableTransport;
 
   factory AvailableTransport.fromJson(Map<String, dynamic> json) =>
