@@ -86,83 +86,81 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
       context: context,
       barrierDismissible: false, // User must tap button to close the dialog
       builder: (BuildContext context) {
-        List<Expense>? expenses =
-            booking.expenses ?? []; // Local list to hold expenses
+        List<Expense>? expenses = booking.expenses?.toList(growable: true) ??
+            []; // Local list to hold expenses
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
               title: const Text('Expenses'),
-              content: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Expense list view
-                    if (expenses.isEmpty)
-                      SizedBox(
-                        height: MediaQuery.sizeOf(context).height / 5,
-                        child: const Center(child: Text("No Expenses Listed")),
-                      ),
-
-                    if (expenses.isNotEmpty)
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: expenses.length,
-                        itemBuilder: (context, index) {
-                          final expense = expenses[index];
-                          return ListTile(
-                            title: Text(expense.name),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize
-                                  .min, // To keep the row tight around its children
-                              children: [
-                                Text("₱${expense.cost.toString()}"),
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () {
-                                    setState(() {
-                                      expenses.remove(expense);
-                                    });
-                                  },
+              content: Column(
+                children: [
+                  // Scrollable list of expenses
+                  Expanded(
+                    child: expenses.isEmpty
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.height / 5,
+                            child:
+                                const Center(child: Text("No Expenses Listed")),
+                          )
+                        : ListView.builder(
+                            itemCount: expenses.length,
+                            itemBuilder: (context, index) {
+                              final expense = expenses[index];
+                              return ListTile(
+                                title: Text(expense.name),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize
+                                      .min, // Keep the row tight around its children
+                                  children: [
+                                    Text("₱${expense.cost.toString()}"),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete),
+                                      onPressed: () {
+                                        setState(() {
+                                          expenses.removeAt(index);
+                                        });
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    // Form to add new expense
-                    TextFormField(
-                      controller: nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Name',
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 10), // Reduced padding
-                        labelStyle:
-                            TextStyle(fontSize: 14), // Smaller label font size
-                      ),
-                      style: const TextStyle(
-                          fontSize: 14), // Smaller text font size
+                              );
+                            },
+                          ),
+                  ),
+                  // Form to add new expense, always visible
+                  TextFormField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Name',
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                      labelStyle: TextStyle(fontSize: 14),
                     ),
-                    TextFormField(
-                      controller: costController,
-                      decoration: const InputDecoration(
-                        labelText: 'Cost',
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 10), // Reduced padding
-                        labelStyle:
-                            TextStyle(fontSize: 14), // Smaller label font size
-                      ),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      style: const TextStyle(
-                          fontSize: 14), // Smaller text font size
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  TextFormField(
+                    controller: costController,
+                    decoration: const InputDecoration(
+                      labelText: 'Cost',
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                      labelStyle: TextStyle(fontSize: 14),
                     ),
-                  ],
-                ),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ],
               ),
               actions: <Widget>[
                 TextButton(
                   child: const Text('Save & Close'),
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    booking = booking.copyWith(expenses: expenses);
+                    ref
+                        .read(listingControllerProvider.notifier)
+                        .updateBookingExpenses(
+                            context, widget.listing.uid!, booking);
                   },
                 ),
                 TextButton(
