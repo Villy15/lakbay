@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -74,6 +75,280 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
     }
 
     return allDates;
+  }
+
+  Future<void> showAddExpenseDialog(
+      BuildContext context, ListingBookings booking) async {
+    TextEditingController nameController = TextEditingController();
+    TextEditingController costController = TextEditingController();
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button to close the dialog
+      builder: (BuildContext context) {
+        List<Expense>? expenses =
+            booking.expenses ?? []; // Local list to hold expenses
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Expenses'),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // Expense list view
+                    if (expenses.isEmpty)
+                      SizedBox(
+                        height: MediaQuery.sizeOf(context).height / 5,
+                        child: const Center(child: Text("No Expenses Listed")),
+                      ),
+
+                    if (expenses.isNotEmpty)
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: expenses.length,
+                        itemBuilder: (context, index) {
+                          final expense = expenses[index];
+                          return ListTile(
+                            title: Text(expense.name),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize
+                                  .min, // To keep the row tight around its children
+                              children: [
+                                Text("₱${expense.cost.toString()}"),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    setState(() {
+                                      expenses.remove(expense);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    // Form to add new expense
+                    TextFormField(
+                      controller: nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 10), // Reduced padding
+                        labelStyle:
+                            TextStyle(fontSize: 14), // Smaller label font size
+                      ),
+                      style: const TextStyle(
+                          fontSize: 14), // Smaller text font size
+                    ),
+                    TextFormField(
+                      controller: costController,
+                      decoration: const InputDecoration(
+                        labelText: 'Cost',
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 10), // Reduced padding
+                        labelStyle:
+                            TextStyle(fontSize: 14), // Smaller label font size
+                      ),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      style: const TextStyle(
+                          fontSize: 14), // Smaller text font size
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Save & Close'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Add'),
+                  onPressed: () {
+                    // Add logic to handle the input data
+                    String name = nameController.text;
+                    num cost = num.parse(costController.text);
+                    setState(() {
+                      expenses.add(Expense(cost: cost, name: name));
+                      debugPrint("$expenses");
+                    });
+                    nameController.clear();
+                    costController.clear();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void showConfirmBooking(AvailableRoom room, DateTime startDate,
+      DateTime endDate, BuildContext context) {
+    showModalBottomSheet(
+      backgroundColor: Colors.white,
+      showDragHandle: true,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        num guests = 0;
+        TextEditingController phoneNoController = TextEditingController();
+        TextEditingController emergencyContactNameController =
+            TextEditingController();
+        TextEditingController emergencyContactNoController =
+            TextEditingController();
+        bool governmentId = true;
+        String formattedStartDate = DateFormat('MMMM dd').format(startDate);
+        String formattedEndDate = DateFormat('MMMM dd').format(endDate);
+        return DraggableScrollableSheet(
+          initialChildSize: 0.75, // 75% of screen height
+          expand: false,
+          builder: (context, scrollController) {
+            return StatefulBuilder(builder: (context, setState) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "$formattedStartDate - ",
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              formattedEndDate,
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                            height: MediaQuery.sizeOf(context).height / 20),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Number of Guests',
+                            border: OutlineInputBorder(),
+                            floatingLabelBehavior: FloatingLabelBehavior
+                                .always, // Keep the label always visible
+                            hintText: "2",
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            guests = int.tryParse(value) ?? 0;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: phoneNoController,
+                          decoration: const InputDecoration(
+                            labelText: 'Phone Number',
+                            border: OutlineInputBorder(),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            hintText: "+63",
+                          ),
+                          keyboardType: TextInputType.phone,
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: emergencyContactNameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Emergency Contact Name',
+                            border: OutlineInputBorder(),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            hintText: "Lastname Firstname",
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: emergencyContactNoController,
+                          decoration: const InputDecoration(
+                            labelText: 'Emergency Contact Number',
+                            border: OutlineInputBorder(),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            hintText: "+63",
+                          ),
+                          keyboardType: TextInputType.phone,
+                        ),
+                        const SizedBox(height: 10),
+                        Column(
+                          children: [
+                            CheckboxListTile(
+                              enabled: false,
+                              title: const Text("Government ID"),
+                              value: governmentId,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  governmentId = value ?? false;
+                                });
+                              },
+                              controlAffinity: ListTileControlAffinity
+                                  .leading, // Position the checkbox at the start of the ListTile
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.0), // Align with the checkbox title
+                              child: Text(
+                                "You're Governemnt ID is required as a means to protect cooperatives.",
+                                style: TextStyle(
+                                  fontSize:
+                                      12, // Smaller font size for fine print
+                                  color: Colors
+                                      .grey, // Optional: Grey color for fine print
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              ListingBookings booking = ListingBookings(
+                                roomId: room.roomId,
+                                startDate: startDate,
+                                endDate: endDate,
+                                email: "",
+                                governmentId:
+                                    "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
+                                guests: guests,
+                                phoneNo: phoneNoController.text,
+                                userId: ref.read(userProvider)!.uid,
+                                emergencyContactName:
+                                    emergencyContactNameController.text,
+                                emergencyContactNo:
+                                    emergencyContactNoController.text,
+                              );
+                              ref
+                                  .read(listingControllerProvider.notifier)
+                                  .addBooking(
+                                      booking, widget.listing.uid!, context);
+                            },
+                            child: const Text('Proceed'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            });
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -659,15 +934,10 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                               padding: const EdgeInsets.only(bottom: 10.0),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  var Expense = showAddExpenseDialog(context);
+                                  var Expense = showAddExpenseDialog(
+                                      context, bookings[index]);
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  shape:
-                                      const CircleBorder(), // Makes the button round
-                                  padding: const EdgeInsets.all(
-                                      10), // Padding to increase the size of the circle
-                                ),
-                                child: const Icon(Icons.attach_money_rounded),
+                                child: const Text("Show Expenses"),
                               ),
                             ),
                           ],
@@ -687,222 +957,5 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
             body: Loader(),
           ),
         );
-  }
-
-  void showConfirmBooking(AvailableRoom room, DateTime startDate,
-      DateTime endDate, BuildContext context) {
-    showModalBottomSheet(
-      backgroundColor: Colors.white,
-      showDragHandle: true,
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        num guests = 0;
-        TextEditingController phoneNoController = TextEditingController();
-        TextEditingController emergencyContactNameController =
-            TextEditingController();
-        TextEditingController emergencyContactNoController =
-            TextEditingController();
-        bool governmentId = true;
-        String formattedStartDate = DateFormat('MMMM dd').format(startDate);
-        String formattedEndDate = DateFormat('MMMM dd').format(endDate);
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75, // 75% of screen height
-          expand: false,
-          builder: (context, scrollController) {
-            return StatefulBuilder(builder: (context, setState) {
-              return SingleChildScrollView(
-                controller: scrollController,
-                child: Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0, vertical: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "$formattedStartDate - ",
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              formattedEndDate,
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                            height: MediaQuery.sizeOf(context).height / 20),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: 'Number of Guests',
-                            border: OutlineInputBorder(),
-                            floatingLabelBehavior: FloatingLabelBehavior
-                                .always, // Keep the label always visible
-                            hintText: "2",
-                          ),
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) {
-                            guests = int.tryParse(value) ?? 0;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          controller: phoneNoController,
-                          decoration: const InputDecoration(
-                            labelText: 'Phone Number',
-                            border: OutlineInputBorder(),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            hintText: "+63",
-                          ),
-                          keyboardType: TextInputType.phone,
-                        ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          controller: emergencyContactNameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Emergency Contact Name',
-                            border: OutlineInputBorder(),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            hintText: "Lastname Firstname",
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          controller: emergencyContactNoController,
-                          decoration: const InputDecoration(
-                            labelText: 'Emergency Contact Number',
-                            border: OutlineInputBorder(),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            hintText: "+63",
-                          ),
-                          keyboardType: TextInputType.phone,
-                        ),
-                        const SizedBox(height: 10),
-                        Column(
-                          children: [
-                            CheckboxListTile(
-                              enabled: false,
-                              title: const Text("Government ID"),
-                              value: governmentId,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  governmentId = value ?? false;
-                                });
-                              },
-                              controlAffinity: ListTileControlAffinity
-                                  .leading, // Position the checkbox at the start of the ListTile
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  left: 16.0), // Align with the checkbox title
-                              child: Text(
-                                "You're Governemnt ID is required as a means to protect cooperatives.",
-                                style: TextStyle(
-                                  fontSize:
-                                      12, // Smaller font size for fine print
-                                  color: Colors
-                                      .grey, // Optional: Grey color for fine print
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              ListingBookings booking = ListingBookings(
-                                roomId: room.roomId,
-                                startDate: startDate,
-                                endDate: endDate,
-                                email: "",
-                                governmentId:
-                                    "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
-                                guests: guests,
-                                phoneNo: phoneNoController.text,
-                                userId: ref.read(userProvider)!.uid,
-                                emergencyContactName:
-                                    emergencyContactNameController.text,
-                                emergencyContactNo:
-                                    emergencyContactNoController.text,
-                              );
-                              ref
-                                  .read(listingControllerProvider.notifier)
-                                  .addBooking(
-                                      booking, widget.listing.uid!, context);
-                            },
-                            child: const Text('Proceed'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            });
-          },
-        );
-      },
-    );
-  }
-
-  Future<void> showAddExpenseDialog(BuildContext context) async {
-    TextEditingController titleController = TextEditingController();
-    TextEditingController costController = TextEditingController();
-
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // User must tap button to close the dialog
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add an Expense'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextFormField(
-                  controller: titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Name',
-                  ),
-                ),
-                TextFormField(
-                  controller: costController,
-                  decoration: const InputDecoration(
-                    labelText: 'Cost',
-                  ),
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Add'),
-              onPressed: () {
-                // Add logic to handle the input data
-                String name = titleController.text;
-                num cost = num.parse(costController.text);
-                Expense(cost: cost, name: name);
-                context.pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }
