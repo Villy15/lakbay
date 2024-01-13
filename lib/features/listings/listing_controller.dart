@@ -90,6 +90,7 @@ class ListingController extends StateNotifier<bool> {
       (l) {
         // Handle the error here
         state = false;
+        context.pop;
         showSnackBar(context, l.message);
       },
       (bookingUid) async {

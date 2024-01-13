@@ -154,15 +154,18 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
               ),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('Save & Close'),
-                  onPressed: () {
-                    booking = booking.copyWith(expenses: expenses);
-                    ref
-                        .read(listingControllerProvider.notifier)
-                        .updateBookingExpenses(
-                            context, widget.listing.uid!, booking);
-                  },
-                ),
+                    child: const Text('Save & Close'),
+                    onPressed: () {
+                      if (expenses.isNotEmpty) {
+                        booking = booking.copyWith(expenses: expenses);
+                        ref
+                            .read(listingControllerProvider.notifier)
+                            .updateBookingExpenses(
+                                context, widget.listing.uid!, booking);
+                      } else {
+                        context.pop();
+                      }
+                    }),
                 TextButton(
                   child: const Text('Add'),
                   onPressed: () {
@@ -315,6 +318,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                           child: ElevatedButton(
                             onPressed: () {
                               ListingBookings booking = ListingBookings(
+                                category: "Accommodation",
                                 roomId: room.roomId,
                                 startDate: startDate,
                                 endDate: endDate,
@@ -328,6 +332,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                     emergencyContactNameController.text,
                                 emergencyContactNo:
                                     emergencyContactNoController.text,
+                                needsContributions: false,
                               );
                               ref
                                   .read(listingControllerProvider.notifier)
