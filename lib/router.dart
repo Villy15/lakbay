@@ -351,10 +351,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         return buildPageWithSharedAxisTransition<void>(
                           context: context,
                           state: state,
-                          child: AddTransport(
-                            coop: coop,
-                            category: "Transport"
-                          ),
+                          child:
+                              AddTransport(coop: coop, category: "Transport"),
                           transitionType: SharedAxisTransitionType.vertical,
                         );
                       },
@@ -435,69 +433,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   );
                 },
               ),
-                    ),
-                    GoRoute(
-                      path: 'transport',
-                      name: 'add_transport',
-                      pageBuilder: (context, state) {
-                        CooperativeModel coop = state.extra as CooperativeModel;
-
-                      return buildPageWithSharedAxisTransition<void>(
-                        context: context,
-                        state: state,
-                        child: AddTransport(
-                          coop: coop,
-                          category: "Transport"
-                        ),
-                        transitionType: SharedAxisTransitionType.vertical,
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: 'food',
-                    name: 'add_food',
-                    pageBuilder: (context, state) {
-                      CooperativeModel coop = state.extra as CooperativeModel;
-
-                        return buildPageWithSharedAxisTransition<void>(
-                          context: context,
-                          state: state,
-                          child: AddFood(coop: coop, category: 'Food'),
-                          transitionType: SharedAxisTransitionType.vertical,
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: 'entertainment',
-                      name: 'add_entertainment',
-                      pageBuilder: (context, state) {
-                        CooperativeModel coop = state.extra as CooperativeModel;
-
-                        return buildPageWithSharedAxisTransition<void>(
-                          context: context,
-                          state: state,
-                          child: AddEntertainment(
-                            coop: coop,
-                          ),
-                          transitionType: SharedAxisTransitionType.vertical,
-                        );
-                      },
-                    ),
-                    GoRoute(
-                        path: 'tour',
-                        name: 'add_tour',
-                        pageBuilder: (context, state) {
-                          CooperativeModel coop =
-                              state.extra as CooperativeModel;
-
-                          return buildPageWithSharedAxisTransition<void>(
-                            context: context,
-                            state: state,
-                            child: AddTour(coop: coop),
-                            transitionType: SharedAxisTransitionType.vertical,
-                          );
-                        })
-                  ]),
 
               // Add Event to Cooperative
               GoRoute(
