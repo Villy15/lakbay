@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lakbay/core/providers/firebase_providers.dart';
+import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
@@ -131,20 +133,33 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               ),
               onPressed: () {
                 print(widget.coop.uid);
-                List<AvailableTransport> transport = ref.watch(addTransportProvider) ?? [];
-                ListingModel updatedListing = 
-                  ref.watch(saveListingProvider)!.copyWith(
-                    address: _addressController.text,
-                    category: widget.category,
-                    city: widget.coop.city,
-                    cooperative: ListingCooperative(
-                      cooperativeId: widget.coop.uid!,
-                      cooperativeName: widget.coop.name,
-                    ),
-                    description: _descriptionController.text,
-                    images: _images?.map((e) => ListingImages(path: e.path)).toList(),
-                    availableTransport: transport
-                  );
+                AvailableTransport transport = AvailableTransport(
+                  guests: guests,
+                  luggage: luggage,
+                  price: num.parse(_feeController.text),
+                  available: true
+                );
+                ListingModel listingModel = ListingModel(
+                  address: _addressController.text,
+                      category: widget.category,
+                      city: widget.coop.city,
+                      cooperative: ListingCooperative(
+                        cooperativeId: widget.coop.uid!,
+                        cooperativeName: widget.coop.name
+                      ), 
+                      description: _descriptionController.text, 
+                      province: widget.coop.province,
+                      publisherId: "",
+                      title: _titleController.text,
+                      type: type,
+                      images: _images?.map((e) => ListingImages(path: e.path)).toList(),
+                      availableTransport: transport
+                );
+                print('this is the current transport $transport');
+                ref
+                    .read(saveListingProvider.notifier)
+                    .saveListingProvider(listingModel);
+                submitAddListing(listingModel);
               },
               child: Text(
                 'Submit',
@@ -157,6 +172,40 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         ]
       )
     );
+  }
+
+  void submitAddListing(ListingModel listing) {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      // prepare data for storeFiles
+      final imagePath = 'listings/${widget.coop.name}';
+      final ids = _images!.map((e) => e.path.split('/').last).toList();
+
+      // store files
+      ref
+          .read(storageRepositoryProvider)
+          .storeFiles(
+            path: imagePath,
+            ids: ids,
+            files: _images!
+          ).then((value) => value.fold(
+            (failure) => debugPrint('failed to store files'),
+            (urls) {
+              // add urls to images
+              listing = listing.copyWith(
+                images: listing.images!.map((e) => e.copyWith(url: urls[listing.images!.indexOf(e)])).toList()
+              );
+
+              debugPrint('success');
+
+              // add listing
+              ref
+                  .read(listingControllerProvider.notifier)
+                  .addListing(listing, context);
+            }
+          ));
+    }
   }
 
   Column steppers(BuildContext context) {

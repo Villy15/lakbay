@@ -28,7 +28,7 @@ class ListingModel with _$ListingModel {
     required String type,
     List<FoodService>? availableTables,
     List<ListingImages>? menuImgs,
-    List<AvailableTransport>? availableTransport,
+    AvailableTransport? availableTransport,
     List<EntertainmentService>? availableEntertainment,
     String? typeOfTrip,
     String? uid,

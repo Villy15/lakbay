@@ -42,9 +42,10 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       menuImgs: (json['menuImgs'] as List<dynamic>?)
           ?.map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
           .toList(),
-      availableTransport: (json['availableTransport'] as List<dynamic>?)
-          ?.map((e) => AvailableTransport.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      availableTransport: json['availableTransport'] == null
+          ? null
+          : AvailableTransport.fromJson(
+              json['availableTransport'] as Map<String, dynamic>),
       availableEntertainment: (json['availableEntertainment'] as List<dynamic>?)
           ?.map((e) => EntertainmentService.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -77,8 +78,7 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'availableTables':
           instance.availableTables?.map((e) => e.toJson()).toList(),
       'menuImgs': instance.menuImgs?.map((e) => e.toJson()).toList(),
-      'availableTransport':
-          instance.availableTransport?.map((e) => e.toJson()).toList(),
+      'availableTransport': instance.availableTransport?.toJson(),
       'availableEntertainment':
           instance.availableEntertainment?.map((e) => e.toJson()).toList(),
       'typeOfTrip': instance.typeOfTrip,

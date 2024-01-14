@@ -41,7 +41,7 @@ mixin _$ListingModel {
   String get type => throw _privateConstructorUsedError;
   List<FoodService>? get availableTables => throw _privateConstructorUsedError;
   List<ListingImages>? get menuImgs => throw _privateConstructorUsedError;
-  List<AvailableTransport>? get availableTransport =>
+  AvailableTransport? get availableTransport =>
       throw _privateConstructorUsedError;
   List<EntertainmentService>? get availableEntertainment =>
       throw _privateConstructorUsedError;
@@ -81,12 +81,13 @@ abstract class $ListingModelCopyWith<$Res> {
       String type,
       List<FoodService>? availableTables,
       List<ListingImages>? menuImgs,
-      List<AvailableTransport>? availableTransport,
+      AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
       String? typeOfTrip,
       String? uid});
 
   $ListingCooperativeCopyWith<$Res> get cooperative;
+  $AvailableTransportCopyWith<$Res>? get availableTransport;
 }
 
 /// @nodoc
@@ -211,7 +212,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
       availableTransport: freezed == availableTransport
           ? _value.availableTransport
           : availableTransport // ignore: cast_nullable_to_non_nullable
-              as List<AvailableTransport>?,
+              as AvailableTransport?,
       availableEntertainment: freezed == availableEntertainment
           ? _value.availableEntertainment
           : availableEntertainment // ignore: cast_nullable_to_non_nullable
@@ -232,6 +233,19 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
   $ListingCooperativeCopyWith<$Res> get cooperative {
     return $ListingCooperativeCopyWith<$Res>(_value.cooperative, (value) {
       return _then(_value.copyWith(cooperative: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $AvailableTransportCopyWith<$Res>? get availableTransport {
+    if (_value.availableTransport == null) {
+      return null;
+    }
+
+    return $AvailableTransportCopyWith<$Res>(_value.availableTransport!,
+        (value) {
+      return _then(_value.copyWith(availableTransport: value) as $Val);
     });
   }
 }
@@ -265,13 +279,15 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       String type,
       List<FoodService>? availableTables,
       List<ListingImages>? menuImgs,
-      List<AvailableTransport>? availableTransport,
+      AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
       String? typeOfTrip,
       String? uid});
 
   @override
   $ListingCooperativeCopyWith<$Res> get cooperative;
+  @override
+  $AvailableTransportCopyWith<$Res>? get availableTransport;
 }
 
 /// @nodoc
@@ -392,9 +408,9 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           : menuImgs // ignore: cast_nullable_to_non_nullable
               as List<ListingImages>?,
       availableTransport: freezed == availableTransport
-          ? _value._availableTransport
+          ? _value.availableTransport
           : availableTransport // ignore: cast_nullable_to_non_nullable
-              as List<AvailableTransport>?,
+              as AvailableTransport?,
       availableEntertainment: freezed == availableEntertainment
           ? _value._availableEntertainment
           : availableEntertainment // ignore: cast_nullable_to_non_nullable
@@ -435,7 +451,7 @@ class _$ListingModelImpl implements _ListingModel {
       required this.type,
       final List<FoodService>? availableTables,
       final List<ListingImages>? menuImgs,
-      final List<AvailableTransport>? availableTransport,
+      this.availableTransport,
       final List<EntertainmentService>? availableEntertainment,
       this.typeOfTrip,
       this.uid})
@@ -445,7 +461,6 @@ class _$ListingModelImpl implements _ListingModel {
         _listingCosts = listingCosts,
         _availableTables = availableTables,
         _menuImgs = menuImgs,
-        _availableTransport = availableTransport,
         _availableEntertainment = availableEntertainment;
 
   factory _$ListingModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -540,17 +555,8 @@ class _$ListingModelImpl implements _ListingModel {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<AvailableTransport>? _availableTransport;
   @override
-  List<AvailableTransport>? get availableTransport {
-    final value = _availableTransport;
-    if (value == null) return null;
-    if (_availableTransport is EqualUnmodifiableListView)
-      return _availableTransport;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
+  final AvailableTransport? availableTransport;
   final List<EntertainmentService>? _availableEntertainment;
   @override
   List<EntertainmentService>? get availableEntertainment {
@@ -608,8 +614,8 @@ class _$ListingModelImpl implements _ListingModel {
             const DeepCollectionEquality()
                 .equals(other._availableTables, _availableTables) &&
             const DeepCollectionEquality().equals(other._menuImgs, _menuImgs) &&
-            const DeepCollectionEquality()
-                .equals(other._availableTransport, _availableTransport) &&
+            (identical(other.availableTransport, availableTransport) ||
+                other.availableTransport == availableTransport) &&
             const DeepCollectionEquality().equals(
                 other._availableEntertainment, _availableEntertainment) &&
             (identical(other.typeOfTrip, typeOfTrip) ||
@@ -641,7 +647,7 @@ class _$ListingModelImpl implements _ListingModel {
         type,
         const DeepCollectionEquality().hash(_availableTables),
         const DeepCollectionEquality().hash(_menuImgs),
-        const DeepCollectionEquality().hash(_availableTransport),
+        availableTransport,
         const DeepCollectionEquality().hash(_availableEntertainment),
         typeOfTrip,
         uid
@@ -683,7 +689,7 @@ abstract class _ListingModel implements ListingModel {
       required final String type,
       final List<FoodService>? availableTables,
       final List<ListingImages>? menuImgs,
-      final List<AvailableTransport>? availableTransport,
+      final AvailableTransport? availableTransport,
       final List<EntertainmentService>? availableEntertainment,
       final String? typeOfTrip,
       final String? uid}) = _$ListingModelImpl;
@@ -733,7 +739,7 @@ abstract class _ListingModel implements ListingModel {
   @override
   List<ListingImages>? get menuImgs;
   @override
-  List<AvailableTransport>? get availableTransport;
+  AvailableTransport? get availableTransport;
   @override
   List<EntertainmentService>? get availableEntertainment;
   @override
