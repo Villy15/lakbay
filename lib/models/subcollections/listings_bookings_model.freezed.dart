@@ -20,6 +20,7 @@ ListingBookings _$ListingBookingsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ListingBookings {
+  String get category => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String? get emergencyContactName => throw _privateConstructorUsedError;
   String? get emergencyContactNo => throw _privateConstructorUsedError;
@@ -29,6 +30,7 @@ mixin _$ListingBookings {
   String get governmentId => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
   String? get id => throw _privateConstructorUsedError;
+  bool get needsContributions => throw _privateConstructorUsedError;
   String get phoneNo => throw _privateConstructorUsedError;
   String get roomId => throw _privateConstructorUsedError;
   @TimestampSerializer()
@@ -52,7 +54,8 @@ abstract class $ListingBookingsCopyWith<$Res> {
       _$ListingBookingsCopyWithImpl<$Res, ListingBookings>;
   @useResult
   $Res call(
-      {String email,
+      {String category,
+      String email,
       String? emergencyContactName,
       String? emergencyContactNo,
       @TimestampSerializer() DateTime? endDate,
@@ -60,6 +63,7 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String governmentId,
       num guests,
       String? id,
+      bool needsContributions,
       String phoneNo,
       String roomId,
       @TimestampSerializer() DateTime? selectedDate,
@@ -82,6 +86,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? category = null,
     Object? email = null,
     Object? emergencyContactName = freezed,
     Object? emergencyContactNo = freezed,
@@ -90,6 +95,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? governmentId = null,
     Object? guests = null,
     Object? id = freezed,
+    Object? needsContributions = null,
     Object? phoneNo = null,
     Object? roomId = null,
     Object? selectedDate = freezed,
@@ -99,6 +105,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? userId = null,
   }) {
     return _then(_value.copyWith(
+      category: null == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -131,6 +141,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
+      needsContributions: null == needsContributions
+          ? _value.needsContributions
+          : needsContributions // ignore: cast_nullable_to_non_nullable
+              as bool,
       phoneNo: null == phoneNo
           ? _value.phoneNo
           : phoneNo // ignore: cast_nullable_to_non_nullable
@@ -172,7 +186,8 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String email,
+      {String category,
+      String email,
       String? emergencyContactName,
       String? emergencyContactNo,
       @TimestampSerializer() DateTime? endDate,
@@ -180,6 +195,7 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String governmentId,
       num guests,
       String? id,
+      bool needsContributions,
       String phoneNo,
       String roomId,
       @TimestampSerializer() DateTime? selectedDate,
@@ -200,6 +216,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? category = null,
     Object? email = null,
     Object? emergencyContactName = freezed,
     Object? emergencyContactNo = freezed,
@@ -208,6 +225,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? governmentId = null,
     Object? guests = null,
     Object? id = freezed,
+    Object? needsContributions = null,
     Object? phoneNo = null,
     Object? roomId = null,
     Object? selectedDate = freezed,
@@ -217,6 +235,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? userId = null,
   }) {
     return _then(_$ListingBookingsImpl(
+      category: null == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -249,6 +271,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
+      needsContributions: null == needsContributions
+          ? _value.needsContributions
+          : needsContributions // ignore: cast_nullable_to_non_nullable
+              as bool,
       phoneNo: null == phoneNo
           ? _value.phoneNo
           : phoneNo // ignore: cast_nullable_to_non_nullable
@@ -285,7 +311,8 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ListingBookingsImpl implements _ListingBookings {
   _$ListingBookingsImpl(
-      {required this.email,
+      {required this.category,
+      required this.email,
       this.emergencyContactName,
       this.emergencyContactNo,
       @TimestampSerializer() this.endDate,
@@ -293,6 +320,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
       required this.governmentId,
       required this.guests,
       this.id,
+      required this.needsContributions,
       required this.phoneNo,
       required this.roomId,
       @TimestampSerializer() this.selectedDate,
@@ -305,6 +333,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
   factory _$ListingBookingsImpl.fromJson(Map<String, dynamic> json) =>
       _$$ListingBookingsImplFromJson(json);
 
+  @override
+  final String category;
   @override
   final String email;
   @override
@@ -331,6 +361,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
   @override
   final String? id;
   @override
+  final bool needsContributions;
+  @override
   final String phoneNo;
   @override
   final String roomId;
@@ -349,7 +381,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
   @override
   String toString() {
-    return 'ListingBookings(email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, phoneNo: $phoneNo, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, typeOfTrip: $typeOfTrip, userId: $userId)';
+    return 'ListingBookings(category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, phoneNo: $phoneNo, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, typeOfTrip: $typeOfTrip, userId: $userId)';
   }
 
   @override
@@ -357,6 +389,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ListingBookingsImpl &&
+            (identical(other.category, category) ||
+                other.category == category) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.emergencyContactName, emergencyContactName) ||
                 other.emergencyContactName == emergencyContactName) &&
@@ -368,6 +402,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
                 other.governmentId == governmentId) &&
             (identical(other.guests, guests) || other.guests == guests) &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.needsContributions, needsContributions) ||
+                other.needsContributions == needsContributions) &&
             (identical(other.phoneNo, phoneNo) || other.phoneNo == phoneNo) &&
             (identical(other.roomId, roomId) || other.roomId == roomId) &&
             (identical(other.selectedDate, selectedDate) ||
@@ -385,6 +421,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      category,
       email,
       emergencyContactName,
       emergencyContactNo,
@@ -393,6 +430,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
       governmentId,
       guests,
       id,
+      needsContributions,
       phoneNo,
       roomId,
       selectedDate,
@@ -418,7 +456,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
 abstract class _ListingBookings implements ListingBookings {
   factory _ListingBookings(
-      {required final String email,
+      {required final String category,
+      required final String email,
       final String? emergencyContactName,
       final String? emergencyContactNo,
       @TimestampSerializer() final DateTime? endDate,
@@ -426,6 +465,7 @@ abstract class _ListingBookings implements ListingBookings {
       required final String governmentId,
       required final num guests,
       final String? id,
+      required final bool needsContributions,
       required final String phoneNo,
       required final String roomId,
       @TimestampSerializer() final DateTime? selectedDate,
@@ -437,6 +477,8 @@ abstract class _ListingBookings implements ListingBookings {
   factory _ListingBookings.fromJson(Map<String, dynamic> json) =
       _$ListingBookingsImpl.fromJson;
 
+  @override
+  String get category;
   @override
   String get email;
   @override
@@ -454,6 +496,8 @@ abstract class _ListingBookings implements ListingBookings {
   num get guests;
   @override
   String? get id;
+  @override
+  bool get needsContributions;
   @override
   String get phoneNo;
   @override

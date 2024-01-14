@@ -90,6 +90,7 @@ class ListingController extends StateNotifier<bool> {
       (l) {
         // Handle the error here
         state = false;
+        context.pop;
         showSnackBar(context, l.message);
       },
       (bookingUid) async {
@@ -98,6 +99,21 @@ class ListingController extends StateNotifier<bool> {
         showSnackBar(context, 'Booking added successfully');
       },
     );
+  }
+
+  void updateBookingExpenses(
+      BuildContext context, String listingId, ListingBookings booking) {
+    state = true;
+    _listingRepository.updateBooking(listingId, booking).then((result) {
+      state = false;
+      result.fold(
+        (l) => showSnackBar(context, l.message),
+        (r) {
+          context.pop();
+          showSnackBar(context, 'Expenses Saved');
+        },
+      );
+    });
   }
 
   // Read all listings

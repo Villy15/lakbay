@@ -105,6 +105,18 @@ class ListingRepository {
     }
   }
 
+// Update
+  FutureVoid updateBooking(String listingId, ListingBookings booking) async {
+    try {
+      return right(
+          await bookings(listingId).doc(booking.id).update(booking.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
 // read bookings
   Stream<List<ListingBookings>> readBookings(listingId) {
     return bookings(listingId).snapshots().map((snapshot) {
