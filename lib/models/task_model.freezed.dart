@@ -32,6 +32,8 @@ mixin _$TaskModel {
   String get type => throw _privateConstructorUsedError;
   String? get eventId => throw _privateConstructorUsedError;
   String? get publisherId => throw _privateConstructorUsedError;
+  List<TaskCheckList>? get checkList => throw _privateConstructorUsedError;
+  List<String>? get assignedTo => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -54,7 +56,9 @@ abstract class $TaskModelCopyWith<$Res> {
       @TimestampSerializer() DateTime? createdAt,
       String type,
       String? eventId,
-      String? publisherId});
+      String? publisherId,
+      List<TaskCheckList>? checkList,
+      List<String>? assignedTo});
 }
 
 /// @nodoc
@@ -80,6 +84,8 @@ class _$TaskModelCopyWithImpl<$Res, $Val extends TaskModel>
     Object? type = null,
     Object? eventId = freezed,
     Object? publisherId = freezed,
+    Object? checkList = freezed,
+    Object? assignedTo = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -122,6 +128,14 @@ class _$TaskModelCopyWithImpl<$Res, $Val extends TaskModel>
           ? _value.publisherId
           : publisherId // ignore: cast_nullable_to_non_nullable
               as String?,
+      checkList: freezed == checkList
+          ? _value.checkList
+          : checkList // ignore: cast_nullable_to_non_nullable
+              as List<TaskCheckList>?,
+      assignedTo: freezed == assignedTo
+          ? _value.assignedTo
+          : assignedTo // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ) as $Val);
   }
 }
@@ -144,7 +158,9 @@ abstract class _$$TaskModelImplCopyWith<$Res>
       @TimestampSerializer() DateTime? createdAt,
       String type,
       String? eventId,
-      String? publisherId});
+      String? publisherId,
+      List<TaskCheckList>? checkList,
+      List<String>? assignedTo});
 }
 
 /// @nodoc
@@ -168,6 +184,8 @@ class __$$TaskModelImplCopyWithImpl<$Res>
     Object? type = null,
     Object? eventId = freezed,
     Object? publisherId = freezed,
+    Object? checkList = freezed,
+    Object? assignedTo = freezed,
   }) {
     return _then(_$TaskModelImpl(
       uid: freezed == uid
@@ -210,6 +228,14 @@ class __$$TaskModelImplCopyWithImpl<$Res>
           ? _value.publisherId
           : publisherId // ignore: cast_nullable_to_non_nullable
               as String?,
+      checkList: freezed == checkList
+          ? _value._checkList
+          : checkList // ignore: cast_nullable_to_non_nullable
+              as List<TaskCheckList>?,
+      assignedTo: freezed == assignedTo
+          ? _value._assignedTo
+          : assignedTo // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ));
   }
 }
@@ -227,7 +253,11 @@ class _$TaskModelImpl implements _TaskModel {
       @TimestampSerializer() this.createdAt,
       required this.type,
       this.eventId,
-      this.publisherId});
+      this.publisherId,
+      final List<TaskCheckList>? checkList,
+      final List<String>? assignedTo})
+      : _checkList = checkList,
+        _assignedTo = assignedTo;
 
   factory _$TaskModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$TaskModelImplFromJson(json);
@@ -254,10 +284,29 @@ class _$TaskModelImpl implements _TaskModel {
   final String? eventId;
   @override
   final String? publisherId;
+  final List<TaskCheckList>? _checkList;
+  @override
+  List<TaskCheckList>? get checkList {
+    final value = _checkList;
+    if (value == null) return null;
+    if (_checkList is EqualUnmodifiableListView) return _checkList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<String>? _assignedTo;
+  @override
+  List<String>? get assignedTo {
+    final value = _assignedTo;
+    if (value == null) return null;
+    if (_assignedTo is EqualUnmodifiableListView) return _assignedTo;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'TaskModel(uid: $uid, title: $title, description: $description, dueDate: $dueDate, priority: $priority, coopId: $coopId, createdAt: $createdAt, type: $type, eventId: $eventId, publisherId: $publisherId)';
+    return 'TaskModel(uid: $uid, title: $title, description: $description, dueDate: $dueDate, priority: $priority, coopId: $coopId, createdAt: $createdAt, type: $type, eventId: $eventId, publisherId: $publisherId, checkList: $checkList, assignedTo: $assignedTo)';
   }
 
   @override
@@ -278,13 +327,29 @@ class _$TaskModelImpl implements _TaskModel {
             (identical(other.type, type) || other.type == type) &&
             (identical(other.eventId, eventId) || other.eventId == eventId) &&
             (identical(other.publisherId, publisherId) ||
-                other.publisherId == publisherId));
+                other.publisherId == publisherId) &&
+            const DeepCollectionEquality()
+                .equals(other._checkList, _checkList) &&
+            const DeepCollectionEquality()
+                .equals(other._assignedTo, _assignedTo));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, uid, title, description, dueDate,
-      priority, coopId, createdAt, type, eventId, publisherId);
+  int get hashCode => Object.hash(
+      runtimeType,
+      uid,
+      title,
+      description,
+      dueDate,
+      priority,
+      coopId,
+      createdAt,
+      type,
+      eventId,
+      publisherId,
+      const DeepCollectionEquality().hash(_checkList),
+      const DeepCollectionEquality().hash(_assignedTo));
 
   @JsonKey(ignore: true)
   @override
@@ -311,7 +376,9 @@ abstract class _TaskModel implements TaskModel {
       @TimestampSerializer() final DateTime? createdAt,
       required final String type,
       final String? eventId,
-      final String? publisherId}) = _$TaskModelImpl;
+      final String? publisherId,
+      final List<TaskCheckList>? checkList,
+      final List<String>? assignedTo}) = _$TaskModelImpl;
 
   factory _TaskModel.fromJson(Map<String, dynamic> json) =
       _$TaskModelImpl.fromJson;
@@ -339,7 +406,184 @@ abstract class _TaskModel implements TaskModel {
   @override
   String? get publisherId;
   @override
+  List<TaskCheckList>? get checkList;
+  @override
+  List<String>? get assignedTo;
+  @override
   @JsonKey(ignore: true)
   _$$TaskModelImplCopyWith<_$TaskModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+TaskCheckList _$TaskCheckListFromJson(Map<String, dynamic> json) {
+  return _TaskCheckList.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TaskCheckList {
+  String get title => throw _privateConstructorUsedError;
+  bool get isDone => throw _privateConstructorUsedError;
+  String? get proofUrl => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $TaskCheckListCopyWith<TaskCheckList> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TaskCheckListCopyWith<$Res> {
+  factory $TaskCheckListCopyWith(
+          TaskCheckList value, $Res Function(TaskCheckList) then) =
+      _$TaskCheckListCopyWithImpl<$Res, TaskCheckList>;
+  @useResult
+  $Res call({String title, bool isDone, String? proofUrl});
+}
+
+/// @nodoc
+class _$TaskCheckListCopyWithImpl<$Res, $Val extends TaskCheckList>
+    implements $TaskCheckListCopyWith<$Res> {
+  _$TaskCheckListCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? title = null,
+    Object? isDone = null,
+    Object? proofUrl = freezed,
+  }) {
+    return _then(_value.copyWith(
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      isDone: null == isDone
+          ? _value.isDone
+          : isDone // ignore: cast_nullable_to_non_nullable
+              as bool,
+      proofUrl: freezed == proofUrl
+          ? _value.proofUrl
+          : proofUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TaskCheckListImplCopyWith<$Res>
+    implements $TaskCheckListCopyWith<$Res> {
+  factory _$$TaskCheckListImplCopyWith(
+          _$TaskCheckListImpl value, $Res Function(_$TaskCheckListImpl) then) =
+      __$$TaskCheckListImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String title, bool isDone, String? proofUrl});
+}
+
+/// @nodoc
+class __$$TaskCheckListImplCopyWithImpl<$Res>
+    extends _$TaskCheckListCopyWithImpl<$Res, _$TaskCheckListImpl>
+    implements _$$TaskCheckListImplCopyWith<$Res> {
+  __$$TaskCheckListImplCopyWithImpl(
+      _$TaskCheckListImpl _value, $Res Function(_$TaskCheckListImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? title = null,
+    Object? isDone = null,
+    Object? proofUrl = freezed,
+  }) {
+    return _then(_$TaskCheckListImpl(
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      isDone: null == isDone
+          ? _value.isDone
+          : isDone // ignore: cast_nullable_to_non_nullable
+              as bool,
+      proofUrl: freezed == proofUrl
+          ? _value.proofUrl
+          : proofUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TaskCheckListImpl implements _TaskCheckList {
+  _$TaskCheckListImpl(
+      {required this.title, required this.isDone, this.proofUrl});
+
+  factory _$TaskCheckListImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TaskCheckListImplFromJson(json);
+
+  @override
+  final String title;
+  @override
+  final bool isDone;
+  @override
+  final String? proofUrl;
+
+  @override
+  String toString() {
+    return 'TaskCheckList(title: $title, isDone: $isDone, proofUrl: $proofUrl)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TaskCheckListImpl &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.isDone, isDone) || other.isDone == isDone) &&
+            (identical(other.proofUrl, proofUrl) ||
+                other.proofUrl == proofUrl));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, title, isDone, proofUrl);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TaskCheckListImplCopyWith<_$TaskCheckListImpl> get copyWith =>
+      __$$TaskCheckListImplCopyWithImpl<_$TaskCheckListImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TaskCheckListImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _TaskCheckList implements TaskCheckList {
+  factory _TaskCheckList(
+      {required final String title,
+      required final bool isDone,
+      final String? proofUrl}) = _$TaskCheckListImpl;
+
+  factory _TaskCheckList.fromJson(Map<String, dynamic> json) =
+      _$TaskCheckListImpl.fromJson;
+
+  @override
+  String get title;
+  @override
+  bool get isDone;
+  @override
+  String? get proofUrl;
+  @override
+  @JsonKey(ignore: true)
+  _$$TaskCheckListImplCopyWith<_$TaskCheckListImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

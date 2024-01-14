@@ -166,6 +166,18 @@ class CoopsRepository {
     });
   }
 
+  // Read members by committeeName
+  Stream<List<CooperativeMembers>> readMembersByCommitteeName(
+      String coopId, String committeeName) {
+    return members(coopId).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return CooperativeMembers.fromJson(doc.data() as Map<String, dynamic>);
+      }).where((member) {
+        return member.isCommitteeMember(committeeName);
+      }).toList();
+    });
+  }
+
   // Read members that does not belong to committees.committeeName
   Stream<List<CooperativeMembers>> readMembersNotInCommittee(
       String coopId, String committeeName) {

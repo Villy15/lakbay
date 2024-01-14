@@ -20,6 +20,12 @@ _$TaskModelImpl _$$TaskModelImplFromJson(Map<String, dynamic> json) =>
       type: json['type'] as String,
       eventId: json['eventId'] as String?,
       publisherId: json['publisherId'] as String?,
+      checkList: (json['checkList'] as List<dynamic>?)
+          ?.map((e) => TaskCheckList.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      assignedTo: (json['assignedTo'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$$TaskModelImplToJson(_$TaskModelImpl instance) =>
@@ -34,4 +40,20 @@ Map<String, dynamic> _$$TaskModelImplToJson(_$TaskModelImpl instance) =>
       'type': instance.type,
       'eventId': instance.eventId,
       'publisherId': instance.publisherId,
+      'checkList': instance.checkList?.map((e) => e.toJson()).toList(),
+      'assignedTo': instance.assignedTo,
+    };
+
+_$TaskCheckListImpl _$$TaskCheckListImplFromJson(Map<String, dynamic> json) =>
+    _$TaskCheckListImpl(
+      title: json['title'] as String,
+      isDone: json['isDone'] as bool,
+      proofUrl: json['proofUrl'] as String?,
+    );
+
+Map<String, dynamic> _$$TaskCheckListImplToJson(_$TaskCheckListImpl instance) =>
+    <String, dynamic>{
+      'title': instance.title,
+      'isDone': instance.isDone,
+      'proofUrl': instance.proofUrl,
     };

@@ -16,6 +16,12 @@ final getTasksByCoopIdAndEventIdProvider =
   );
 });
 
+// Stream Provider for getTask
+final getTaskProvider = StreamProvider.family<TaskModel, String>((ref, uid) {
+  final tasksController = ref.watch(tasksControllerProvider.notifier);
+  return tasksController.getTask(uid);
+});
+
 // Stream Provider for getTasks
 final getTasksProvider = StreamProvider<List<TaskModel>>((ref) {
   final tasksController = ref.watch(tasksControllerProvider.notifier);
@@ -42,6 +48,11 @@ class TasksController extends StateNotifier<bool> {
   })  : _tasksRepository = tasksRepository,
         _ref = ref,
         super(false);
+
+  // Read a task
+  Stream<TaskModel> getTask(String uid) {
+    return _tasksRepository.readTask(uid);
+  }
 
   // Read all tasks
   Stream<List<TaskModel>> getTasks() {
@@ -72,6 +83,23 @@ class TasksController extends StateNotifier<bool> {
         state = false;
         showSnackBar(context, 'Task added successfully');
         context.pop();
+      },
+    );
+  }
+
+  // Update task
+  void updateTask(BuildContext context, TaskModel task) async {
+    state = true;
+    final result = await _tasksRepository.updateTask(task);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (_) {
+        state = false;
       },
     );
   }

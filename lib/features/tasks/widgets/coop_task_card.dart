@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:lakbay/models/event_model.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/models/task_model.dart';
 
 class CoopTaskCard extends ConsumerStatefulWidget {
@@ -13,6 +14,14 @@ class CoopTaskCard extends ConsumerStatefulWidget {
 }
 
 class _CoopTaskCardState extends ConsumerState<CoopTaskCard> {
+  void readTask(BuildContext context, TaskModel task) {
+    context.pushNamed(
+      'read_event_task',
+      // extra: task,
+      pathParameters: {'taskId': task.uid!},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -23,7 +32,7 @@ class _CoopTaskCardState extends ConsumerState<CoopTaskCard> {
       ),
       child: InkWell(
         splashColor: Colors.orange.withAlpha(30),
-        onTap: () {},
+        onTap: () => readTask(context, widget.task),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
           child: Column(
@@ -37,41 +46,7 @@ class _CoopTaskCardState extends ConsumerState<CoopTaskCard> {
               // Progress Bar
               const SizedBox(height: 30),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundImage: NetworkImage(
-                            "https://i.pravatar.cc/150?img=1"), // NetworkImage
-                      ),
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundImage: NetworkImage(
-                            "https://i.pravatar.cc/150?img=2"), // NetworkImage
-                      ),
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundImage: NetworkImage(
-                            "https://i.pravatar.cc/150?img=3"), // NetworkImage
-                      ),
-                    ],
-                  ),
-                  // Time Left
-                  Row(
-                    children: [
-                      const Icon(Icons.timer_outlined),
-                      const SizedBox(width: 8),
-                      Text(
-                        daysLeft(widget.task.dueDate!),
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              eventTaskMembers(context),
 
               const SizedBox(height: 20),
 
@@ -83,13 +58,74 @@ class _CoopTaskCardState extends ConsumerState<CoopTaskCard> {
     );
   }
 
+  Row eventTaskMembers(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        widget.task.assignedTo!.isNotEmpty
+            ? Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: widget.task.assignedTo!.length > 4
+                        ? 4
+                        : widget.task.assignedTo!.length,
+                    itemBuilder: (context, index) {
+                      final userId = widget.task.assignedTo?[index];
+                      return Stack(
+                        children: [
+                          ref.watch(getUserDataProvider(userId!)).maybeWhen(
+                                data: (user) {
+                                  return CircleAvatar(
+                                    radius: 20,
+                                    backgroundImage: NetworkImage(
+                                      user.profilePic,
+                                    ),
+                                  );
+                                },
+                                orElse: () => const SizedBox.shrink(),
+                              ),
+                          if (index == 3 && widget.task.assignedTo!.length > 4)
+                            Positioned(
+                              right: 0,
+                              child: CircleAvatar(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.background,
+                                radius: 20,
+                                child: Text(
+                                    '+${widget.task.assignedTo!.length - 4}'),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              )
+            : const SizedBox.shrink(),
+        // Time Left
+        Row(
+          children: [
+            const Icon(Icons.timer_outlined),
+            const SizedBox(width: 8),
+            Text(
+              daysLeft(widget.task.dueDate!),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   String daysLeft(DateTime dueDate) {
     final currentDate = DateTime.now();
     final difference = dueDate.difference(currentDate);
 
-    debugPrint('Due Date: $dueDate');
-    debugPrint('Current Date: $currentDate');
-    debugPrint('Difference: $difference');
+    // debugPrint('Due Date: $dueDate');
+    // debugPrint('Current Date: $currentDate');
+    // debugPrint('Difference: $difference');
 
     if (difference.isNegative) {
       return 'Due date passed';
@@ -99,11 +135,17 @@ class _CoopTaskCardState extends ConsumerState<CoopTaskCard> {
   }
 
   Column eventProgress(BuildContext context) {
+    final totalTasks = widget.task.checkList?.length ?? 0;
+    final completedTasks =
+        widget.task.checkList?.where((task) => task.isDone).length ?? 0;
+    final progress = totalTasks > 0 ? completedTasks / totalTasks : 0.0;
+
     return Column(
       children: [
         LinearProgressIndicator(
+          borderRadius: BorderRadius.circular(10),
           minHeight: 5,
-          value: 0.5,
+          value: progress,
           backgroundColor: Theme.of(context).colorScheme.background,
           valueColor: AlwaysStoppedAnimation<Color>(
               Theme.of(context).colorScheme.primary),
@@ -119,7 +161,7 @@ class _CoopTaskCardState extends ConsumerState<CoopTaskCard> {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             Text(
-              "2/4",
+              "$completedTasks/$totalTasks",
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ],
@@ -130,7 +172,7 @@ class _CoopTaskCardState extends ConsumerState<CoopTaskCard> {
 
   Text eventDueDate(BuildContext context) {
     return Text(
-      DateFormat('EEEE - MMM dd, y').format(widget.task.createdAt!),
+      DateFormat('EEEE - MMM dd, y').format(widget.task.dueDate!),
       style: Theme.of(context).textTheme.titleMedium,
     );
   }

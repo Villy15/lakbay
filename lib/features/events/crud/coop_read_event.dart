@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -53,6 +54,8 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
 
     return ref.watch(getEventsProvider(widget.eventId)).when(
           data: (EventModel event) {
+            debugPrintJson("File Name: coop_read_event.dart");
+
             return DefaultTabController(
               initialIndex: 0,
               length: 2,
@@ -82,7 +85,10 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
                                 itemCount: tasks.length,
                                 itemBuilder: (context, index) {
                                   final task = tasks[index];
-                                  return CoopTaskCard(task: task);
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: CoopTaskCard(task: task),
+                                  );
                                 },
                               );
                             },

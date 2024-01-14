@@ -41,6 +41,13 @@ class TasksRepository {
     }
   }
 
+  // Read a task
+  Stream<TaskModel> readTask(String uid) {
+    return _tasks.doc(uid).snapshots().map((snapshot) {
+      return TaskModel.fromJson(snapshot.data() as Map<String, dynamic>);
+    });
+  }
+
   // Read all tasks
   Stream<List<TaskModel>> readTasks() {
     return _tasks.snapshots().map((snapshot) {
@@ -62,5 +69,16 @@ class TasksRepository {
         return TaskModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
+  }
+
+  // Update a task
+  FutureVoid updateTask(TaskModel task) async {
+    try {
+      return right(await _tasks.doc(task.uid).update(task.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 }

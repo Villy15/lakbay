@@ -18,8 +18,22 @@ class TaskModel with _$TaskModel {
     required String type,
     String? eventId,
     String? publisherId,
+    List<TaskCheckList>? checkList,
+    List<String>? assignedTo,
   }) = _TaskModel;
 
   factory TaskModel.fromJson(Map<String, dynamic> json) =>
       _$TaskModelFromJson(json);
+}
+
+@freezed
+class TaskCheckList with _$TaskCheckList {
+  factory TaskCheckList({
+    required String title,
+    required bool isDone,
+    String? proofUrl,
+  }) = _TaskCheckList;
+
+  factory TaskCheckList.fromJson(Map<String, dynamic> json) =>
+      _$TaskCheckListFromJson(json);
 }
