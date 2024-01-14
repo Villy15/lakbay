@@ -25,11 +25,13 @@ import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
 import 'package:lakbay/features/dashboard/coop_dashboard.dart';
 import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
 import 'package:lakbay/features/events/crud/confirm_event.dart';
+import 'package:lakbay/features/events/crud/coop_read_event.dart';
 import 'package:lakbay/features/events/crud/event_manager_tools.dart';
 import 'package:lakbay/features/events/crud/join_event.dart';
 import 'package:lakbay/features/events/events_page.dart';
 import 'package:lakbay/features/events/crud/add_event.dart';
 import 'package:lakbay/features/events/crud/edit_event.dart';
+import 'package:lakbay/features/events/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/home/customer/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/inbox/read_inbox.dart';
@@ -311,107 +313,127 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
               // Add Listing to Cooperative
               GoRoute(
-                path: '/my_coop/listings/functions/add',
-                name: 'add_listing',
+                  path: '/my_coop/listings/functions/add',
+                  name: 'add_listing',
+                  pageBuilder: (context, state) {
+                    CooperativeModel coop = state.extra as CooperativeModel;
+
+                    return buildPageWithSharedAxisTransition<void>(
+                      context: context,
+                      state: state,
+                      child: ChooseCategory(
+                        coop: coop,
+                      ),
+                      transitionType: SharedAxisTransitionType.vertical,
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      path: 'accommodation',
+                      name: 'add_accommodation',
+                      pageBuilder: (context, state) {
+                        CooperativeModel coop = state.extra as CooperativeModel;
+
+                        return buildPageWithSharedAxisTransition<void>(
+                          context: context,
+                          state: state,
+                          child: AddAccommodation(
+                              coop: coop, category: "Accommodation"),
+                          transitionType: SharedAxisTransitionType.vertical,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'transport',
+                      name: 'add_transport',
+                      pageBuilder: (context, state) {
+                        CooperativeModel coop = state.extra as CooperativeModel;
+
+                        return buildPageWithSharedAxisTransition<void>(
+                          context: context,
+                          state: state,
+                          child: AddTransport(
+                            coop: coop,
+                          ),
+                          transitionType: SharedAxisTransitionType.vertical,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'food',
+                      name: 'add_food',
+                      pageBuilder: (context, state) {
+                        CooperativeModel coop = state.extra as CooperativeModel;
+
+                        return buildPageWithSharedAxisTransition<void>(
+                          context: context,
+                          state: state,
+                          child: AddFood(coop: coop, category: 'Food'),
+                          transitionType: SharedAxisTransitionType.vertical,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'entertainment',
+                      name: 'add_entertainment',
+                      pageBuilder: (context, state) {
+                        CooperativeModel coop = state.extra as CooperativeModel;
+
+                        return buildPageWithSharedAxisTransition<void>(
+                          context: context,
+                          state: state,
+                          child: AddEntertainment(
+                            coop: coop,
+                          ),
+                          transitionType: SharedAxisTransitionType.vertical,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                        path: 'tour',
+                        name: 'add_tour',
+                        pageBuilder: (context, state) {
+                          CooperativeModel coop =
+                              state.extra as CooperativeModel;
+
+                          return buildPageWithSharedAxisTransition<void>(
+                            context: context,
+                            state: state,
+                            child: AddTour(coop: coop),
+                            transitionType: SharedAxisTransitionType.vertical,
+                          );
+                        })
+                  ]),
+
+              GoRoute(
+                path: '/my_coop/event/:eventId',
                 pageBuilder: (context, state) {
-                  CooperativeModel coop = state.extra as CooperativeModel;
-                  
                   return buildPageWithSharedAxisTransition<void>(
                     context: context,
                     state: state,
-                    child: ChooseCategory(
-                      coop: coop,
+                    child: CoopReadEventPage(
+                        eventId: state.pathParameters['eventId']!),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              // Add tasks for event
+              GoRoute(
+                path: '/my_coop/event/task/functions/add',
+                name: 'add_event_task',
+                pageBuilder: (context, state) {
+                  EventModel event = state.extra as EventModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: AddEventTask(
+                      event: event,
                     ),
                     transitionType: SharedAxisTransitionType.vertical,
-
                   );
-                  
                 },
-
-                routes: [
-                  GoRoute(
-                    path: 'accommodation',
-                    name: 'add_accommodation',
-                    pageBuilder: (context, state) {
-                      CooperativeModel coop = state.extra as CooperativeModel;
-
-                      return buildPageWithSharedAxisTransition<void>(
-                        context: context,
-                        state: state,
-                        child: AddAccommodation(
-                          coop: coop,
-                          category: "Accommodation"
-                        ),
-                        transitionType: SharedAxisTransitionType.vertical,
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: 'transport',
-                    name: 'add_transport',
-                    pageBuilder: (context, state) {
-                      CooperativeModel coop = state.extra as CooperativeModel;
-
-                      return buildPageWithSharedAxisTransition<void>(
-                        context: context,
-                        state: state,
-                        child: AddTransport(
-                          coop: coop,
-                        ),
-                        transitionType: SharedAxisTransitionType.vertical,
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: 'food',
-                    name: 'add_food',
-                    pageBuilder: (context, state) {
-                      CooperativeModel coop = state.extra as CooperativeModel;
-
-                      return buildPageWithSharedAxisTransition<void>(
-                        context: context,
-                        state: state,
-                        child: AddFood(
-                          coop: coop,
-                          category: 'Food'
-                        ),
-                        transitionType: SharedAxisTransitionType.vertical,
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: 'entertainment',
-                    name: 'add_entertainment',
-                    pageBuilder: (context, state) {
-                      CooperativeModel coop = state.extra as CooperativeModel;
-
-                      return buildPageWithSharedAxisTransition<void>(
-                        context: context,
-                        state: state,
-                        child: AddEntertainment(
-                          coop: coop,
-                        ),
-                        transitionType: SharedAxisTransitionType.vertical,
-                      );
-                    },
-                  ),
-
-                  GoRoute(
-                    path: 'tour',
-                    name: 'add_tour',
-                    pageBuilder: (context, state) {
-                      CooperativeModel coop = state.extra as CooperativeModel;
-
-                      return buildPageWithSharedAxisTransition<void>(
-                        context: context,
-                        state: state,
-                        child: AddTour(coop: coop),
-                        transitionType: SharedAxisTransitionType.vertical,
-                      );
-                    }
-                  )
-                  
-                ]
               ),
 
               // Add Event to Cooperative

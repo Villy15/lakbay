@@ -37,7 +37,7 @@ final getAllBookingsProvider = StreamProvider.autoDispose
 
 // getAllBookingsByIdProvider
 final getAllBookingsByIdProvider = StreamProvider.autoDispose
-    .family<List<ListingBookings>, (String listingId, String roomId)>(
+    .family<List<ListingBookings>, (String coopId, String eventId)>(
         (ref, params) {
   final listingController = ref.watch(listingControllerProvider.notifier);
   return listingController.getAllBookingsById(params.$1, params.$2);

@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/models/event_model.dart';
+import 'package:lakbay/models/user_model.dart';
 
 class EventCard extends ConsumerWidget {
   final EventModel event;
   const EventCard({super.key, required this.event});
 
-  void readEvent(BuildContext context, String eventId) {
-    context.push("/read_event/$eventId");
+  void readEvent(BuildContext context, String eventId, UserModel user) {
+    if (user.isCoopView!) {
+      context.push("/my_coop/event/$eventId");
+    } else {
+      context.push("/read_event/$eventId");
+    }
   }
 
   void navigateToAddEvent(BuildContext context) {
@@ -18,6 +24,8 @@ class EventCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider);
+
     return Center(
       child: Card(
         clipBehavior: Clip.hardEdge,
@@ -28,7 +36,7 @@ class EventCard extends ConsumerWidget {
         ),
         child: InkWell(
           splashColor: Colors.orange.withAlpha(30),
-          onTap: () => readEvent(context, event.uid!),
+          onTap: () => readEvent(context, event.uid!, user!),
           child: SizedBox(
             width: double.infinity,
             // height: 290,
