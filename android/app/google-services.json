@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "329158450498-lnsua2nt6hcu7c68v70v558g2pbdpfjt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakbay",
+            "certificate_hash": "8f31b324869c6a41e44297bfefb9a1e595d91f70"
+          }
+        },
+        {
           "client_id": "329158450498-9c9rvrb5d9onmocvqtfkmcp0iji13j98.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -59,4 +67,4 @@
     }
   ],
   "configuration_version": "1"
-}sw
+}
