@@ -14,7 +14,7 @@ import 'package:lakbay/models/event_model.dart';
 class EditEventPage extends ConsumerStatefulWidget {
   final EventModel event;
 
-  const EditEventPage({Key? key, required this.event}) : super(key: key);
+  const EditEventPage({super.key, required this.event});
 
   @override
   ConsumerState<EditEventPage> createState() => _EditEventPageState();

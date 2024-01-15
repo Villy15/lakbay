@@ -45,6 +45,11 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/features/events/crud/read_event.dart';
+import 'package:lakbay/features/wiki/wiki_page.dart';
+import 'package:lakbay/features/wiki/crud/add_wiki.dart';
+import 'package:lakbay/features/wiki/crud/read_wiki.dart';
+import 'package:lakbay/features/wiki/crud/edit_wiki.dart';
+import 'package:lakbay/models/wiki_model.dart';
 // import 'package:lakbay/features/trips/trips_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
@@ -540,6 +545,60 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     },
                   ),
                 ],
+              ),
+
+              //Wiki
+              GoRoute(
+                path: '/wiki',
+                pageBuilder: (context, state) =>
+                  buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: const WikiPage(), 
+                    transitionType: SharedAxisTransitionType.vertical,
+                  ),
+              ),
+
+              // Add Wiki
+              GoRoute(
+                path: '/add_wiki',
+                pageBuilder: (context, state) =>
+                  buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: const AddWikiPage(), // Replace with your actual AddWikiPage widget
+                    transitionType: SharedAxisTransitionType.vertical,
+                  ),
+              ),
+
+              // Read Wiki
+              GoRoute(
+                 path: '/wiki/:wikiId',
+                  pageBuilder: (context, state) =>
+                      buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: ReadWikiPage(wikiId: state.pathParameters['wikiId']!),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  ),
+                ),
+              
+                // Edit Wiki
+                GoRoute(
+                  path: '/wiki/functions/edit',
+                  name: 'edit_wiki',
+                  pageBuilder: (context, state) {
+                    WikiModel wiki = state.extra as WikiModel;
+
+                    return buildPageWithSharedAxisTransition<void>(
+                      context: context,
+                      state: state,
+                      child: EditWikiPage(
+                        wiki: wiki,
+                      ),
+                    transitionType:SharedAxisTransitionType.vertical,
+                  );
+                },
               ),
 
               // Manager dashboard
