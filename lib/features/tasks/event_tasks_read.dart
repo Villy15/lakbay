@@ -41,78 +41,127 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
                     children: [
                       headerCard(context, task),
                       const SizedBox(height: 20),
-                      taskDesc(context, task),
-                      const SizedBox(height: 20),
-                      Text(
-                        "Checklist",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 10),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: task.checkList?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          final item = task.checkList![index];
-                          return Slidable(
-                            key: Key(item.title),
-                            endActionPane: ActionPane(
-                              extentRatio: 0.40,
-                              motion: const ScrollMotion(),
-                              children: [
-                                SlidableAction(
-                                  // An action can be bigger than the others.
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  onPressed: (context) {
-                                    if (mounted) {
+                      // Button for Ask for Contributions
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Text for Do you want to ask for contributions?
+                          const Text(
+                            "Ask for contributions from members?",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          const SizedBox(height: 10),
+
+                          // Button for Ask for Contributions
+                          task.askContribution == true
+                              ? Align(
+                                  alignment: Alignment.center,
+                                  child: ElevatedButton(
+                                    onPressed: () {
                                       ref
                                           .read(
                                               tasksControllerProvider.notifier)
                                           .updateTask(
                                             context,
                                             task.copyWith(
-                                              checkList: task.checkList!
-                                                  .where((e) => e != item)
-                                                  .toList(),
+                                              askContribution: false,
                                             ),
                                           );
-                                    }
-                                  },
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.error,
-                                  foregroundColor:
-                                      Theme.of(context).colorScheme.background,
-                                  icon: Icons.archive,
-                                  label: 'Remove',
+                                    },
+                                    child: const Text('Stop Asking'),
+                                  ),
+                                )
+                              : Align(
+                                  alignment: Alignment.center,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      ref
+                                          .read(
+                                              tasksControllerProvider.notifier)
+                                          .updateTask(
+                                            context,
+                                            task.copyWith(
+                                              askContribution: true,
+                                            ),
+                                          );
+                                    },
+                                    child: const Text('Ask for Contributions'),
+                                  ),
                                 ),
-                              ],
-                            ),
-                            child: CheckboxListTile(
-                              title: Text(item.title),
-                              value: item.isDone,
-                              onChanged: (value) {
-                                ref
-                                    .read(tasksControllerProvider.notifier)
-                                    .updateTask(
-                                      context,
-                                      task.copyWith(
-                                        checkList: task.checkList!
-                                            .map((e) => e == item
-                                                ? item.copyWith(
-                                                    isDone: value ?? false)
-                                                : e)
-                                            .toList(),
-                                      ),
-                                    );
-                              },
-                            ),
-                          );
-                        },
+
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: task.contributors?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              final item = task.checkList![index];
+                              return Slidable(
+                                key: Key(item.title),
+                                endActionPane: ActionPane(
+                                  extentRatio: 0.40,
+                                  motion: const ScrollMotion(),
+                                  children: [
+                                    SlidableAction(
+                                      // An action can be bigger than the others.
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      onPressed: (context) {
+                                        if (mounted) {
+                                          ref
+                                              .read(tasksControllerProvider
+                                                  .notifier)
+                                              .updateTask(
+                                                context,
+                                                task.copyWith(
+                                                  checkList: task.checkList!
+                                                      .where((e) => e != item)
+                                                      .toList(),
+                                                ),
+                                              );
+                                        }
+                                      },
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.error,
+                                      foregroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                      icon: Icons.archive,
+                                      label: 'Remove',
+                                    ),
+                                  ],
+                                ),
+                                child: CheckboxListTile(
+                                  title: Text(item.title),
+                                  value: item.isDone,
+                                  onChanged: (value) {
+                                    ref
+                                        .read(tasksControllerProvider.notifier)
+                                        .updateTask(
+                                          context,
+                                          task.copyWith(
+                                            checkList: task.checkList!
+                                                .map((e) => e == item
+                                                    ? item.copyWith(
+                                                        isDone: value ?? false)
+                                                    : e)
+                                                .toList(),
+                                          ),
+                                        );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                      ListTile(
-                        title: const Text('Add Item'),
-                        leading: const Icon(Icons.add),
-                        onTap: () => _addItem(context, task),
-                      ),
+                      const SizedBox(height: 20),
+
+                      taskDesc(context, task),
+                      const SizedBox(height: 20),
+                      taskCheckList(context, task),
                     ],
                   ),
                 );
@@ -123,6 +172,76 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
               ),
               loading: () => const Loader(),
             ));
+  }
+
+  Column taskCheckList(BuildContext context, TaskModel task) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Checklist",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 10),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: task.checkList?.length ?? 0,
+          itemBuilder: (context, index) {
+            final item = task.checkList![index];
+            return Slidable(
+              key: Key(item.title),
+              endActionPane: ActionPane(
+                extentRatio: 0.40,
+                motion: const ScrollMotion(),
+                children: [
+                  SlidableAction(
+                    // An action can be bigger than the others.
+                    borderRadius: BorderRadius.circular(8.0),
+                    onPressed: (context) {
+                      if (mounted) {
+                        ref.read(tasksControllerProvider.notifier).updateTask(
+                              context,
+                              task.copyWith(
+                                checkList: task.checkList!
+                                    .where((e) => e != item)
+                                    .toList(),
+                              ),
+                            );
+                      }
+                    },
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    foregroundColor: Theme.of(context).colorScheme.background,
+                    icon: Icons.archive,
+                    label: 'Remove',
+                  ),
+                ],
+              ),
+              child: CheckboxListTile(
+                title: Text(item.title),
+                value: item.isDone,
+                onChanged: (value) {
+                  ref.read(tasksControllerProvider.notifier).updateTask(
+                        context,
+                        task.copyWith(
+                          checkList: task.checkList!
+                              .map((e) => e == item
+                                  ? item.copyWith(isDone: value ?? false)
+                                  : e)
+                              .toList(),
+                        ),
+                      );
+                },
+              ),
+            );
+          },
+        ),
+        ListTile(
+          title: const Text('Add Item'),
+          leading: const Icon(Icons.add),
+          onTap: () => _addItem(context, task),
+        ),
+      ],
+    );
   }
 
   void _addItem(BuildContext context, TaskModel task) {

@@ -20,6 +20,8 @@ class TaskModel with _$TaskModel {
     String? publisherId,
     List<TaskCheckList>? checkList,
     List<String>? assignedTo,
+    @Default(false) bool? askContribution,
+    List<String>? contributors,
   }) = _TaskModel;
 
   factory TaskModel.fromJson(Map<String, dynamic> json) =>

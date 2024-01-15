@@ -26,6 +26,10 @@ _$TaskModelImpl _$$TaskModelImplFromJson(Map<String, dynamic> json) =>
       assignedTo: (json['assignedTo'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      askContribution: json['askContribution'] as bool? ?? false,
+      contributors: (json['contributors'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$$TaskModelImplToJson(_$TaskModelImpl instance) =>
@@ -42,6 +46,8 @@ Map<String, dynamic> _$$TaskModelImplToJson(_$TaskModelImpl instance) =>
       'publisherId': instance.publisherId,
       'checkList': instance.checkList?.map((e) => e.toJson()).toList(),
       'assignedTo': instance.assignedTo,
+      'askContribution': instance.askContribution,
+      'contributors': instance.contributors,
     };
 
 _$TaskCheckListImpl _$$TaskCheckListImplFromJson(Map<String, dynamic> json) =>

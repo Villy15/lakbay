@@ -19,27 +19,17 @@ class _CustomerTransportationState
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) {
-        context.pop();
-        ref.read(navBarVisibilityProvider.notifier).show();
-      },
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          leading: LeadingBackButton(ref: ref)
-        ),
-        body: const SingleChildScrollView(
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-
-            children: [
-              
-            ]
-          )
-        )
-      )
-    );
+        canPop: false,
+        onPopInvoked: (bool didPop) {
+          context.pop();
+          ref.read(navBarVisibilityProvider.notifier).show();
+        },
+        child: Scaffold(
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(leading: LeadingBackButton(ref: ref)),
+            body: const SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: []))));
   }
 }

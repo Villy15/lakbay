@@ -26,11 +26,12 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
             calendarStyle: CalendarStyle(
               isTodayHighlighted: true,
               selectedDecoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 shape: BoxShape.circle,
               ),
-              selectedTextStyle:
-                  TextStyle(color: Theme.of(context).colorScheme.background),
+              selectedTextStyle: TextStyle(
+                color: Theme.of(context).colorScheme.background,
+              ),
               todayDecoration: BoxDecoration(
                 color: Theme.of(context).primaryColor.withOpacity(0.5),
                 shape: BoxShape.circle,
@@ -41,14 +42,14 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
               // formatButtonVisible: false,
               leftChevronIcon: Icon(
                 Icons.chevron_left,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
               ),
               rightChevronIcon: Icon(
                 Icons.chevron_right,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
               ),
               titleTextStyle: TextStyle(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),

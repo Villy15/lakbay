@@ -34,6 +34,8 @@ mixin _$TaskModel {
   String? get publisherId => throw _privateConstructorUsedError;
   List<TaskCheckList>? get checkList => throw _privateConstructorUsedError;
   List<String>? get assignedTo => throw _privateConstructorUsedError;
+  bool? get askContribution => throw _privateConstructorUsedError;
+  List<String>? get contributors => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -58,7 +60,9 @@ abstract class $TaskModelCopyWith<$Res> {
       String? eventId,
       String? publisherId,
       List<TaskCheckList>? checkList,
-      List<String>? assignedTo});
+      List<String>? assignedTo,
+      bool? askContribution,
+      List<String>? contributors});
 }
 
 /// @nodoc
@@ -86,6 +90,8 @@ class _$TaskModelCopyWithImpl<$Res, $Val extends TaskModel>
     Object? publisherId = freezed,
     Object? checkList = freezed,
     Object? assignedTo = freezed,
+    Object? askContribution = freezed,
+    Object? contributors = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -136,6 +142,14 @@ class _$TaskModelCopyWithImpl<$Res, $Val extends TaskModel>
           ? _value.assignedTo
           : assignedTo // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      askContribution: freezed == askContribution
+          ? _value.askContribution
+          : askContribution // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      contributors: freezed == contributors
+          ? _value.contributors
+          : contributors // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ) as $Val);
   }
 }
@@ -160,7 +174,9 @@ abstract class _$$TaskModelImplCopyWith<$Res>
       String? eventId,
       String? publisherId,
       List<TaskCheckList>? checkList,
-      List<String>? assignedTo});
+      List<String>? assignedTo,
+      bool? askContribution,
+      List<String>? contributors});
 }
 
 /// @nodoc
@@ -186,6 +202,8 @@ class __$$TaskModelImplCopyWithImpl<$Res>
     Object? publisherId = freezed,
     Object? checkList = freezed,
     Object? assignedTo = freezed,
+    Object? askContribution = freezed,
+    Object? contributors = freezed,
   }) {
     return _then(_$TaskModelImpl(
       uid: freezed == uid
@@ -236,6 +254,14 @@ class __$$TaskModelImplCopyWithImpl<$Res>
           ? _value._assignedTo
           : assignedTo // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      askContribution: freezed == askContribution
+          ? _value.askContribution
+          : askContribution // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      contributors: freezed == contributors
+          ? _value._contributors
+          : contributors // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ));
   }
 }
@@ -255,9 +281,12 @@ class _$TaskModelImpl implements _TaskModel {
       this.eventId,
       this.publisherId,
       final List<TaskCheckList>? checkList,
-      final List<String>? assignedTo})
+      final List<String>? assignedTo,
+      this.askContribution = false,
+      final List<String>? contributors})
       : _checkList = checkList,
-        _assignedTo = assignedTo;
+        _assignedTo = assignedTo,
+        _contributors = contributors;
 
   factory _$TaskModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$TaskModelImplFromJson(json);
@@ -305,8 +334,21 @@ class _$TaskModelImpl implements _TaskModel {
   }
 
   @override
+  @JsonKey()
+  final bool? askContribution;
+  final List<String>? _contributors;
+  @override
+  List<String>? get contributors {
+    final value = _contributors;
+    if (value == null) return null;
+    if (_contributors is EqualUnmodifiableListView) return _contributors;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
   String toString() {
-    return 'TaskModel(uid: $uid, title: $title, description: $description, dueDate: $dueDate, priority: $priority, coopId: $coopId, createdAt: $createdAt, type: $type, eventId: $eventId, publisherId: $publisherId, checkList: $checkList, assignedTo: $assignedTo)';
+    return 'TaskModel(uid: $uid, title: $title, description: $description, dueDate: $dueDate, priority: $priority, coopId: $coopId, createdAt: $createdAt, type: $type, eventId: $eventId, publisherId: $publisherId, checkList: $checkList, assignedTo: $assignedTo, askContribution: $askContribution, contributors: $contributors)';
   }
 
   @override
@@ -331,7 +373,11 @@ class _$TaskModelImpl implements _TaskModel {
             const DeepCollectionEquality()
                 .equals(other._checkList, _checkList) &&
             const DeepCollectionEquality()
-                .equals(other._assignedTo, _assignedTo));
+                .equals(other._assignedTo, _assignedTo) &&
+            (identical(other.askContribution, askContribution) ||
+                other.askContribution == askContribution) &&
+            const DeepCollectionEquality()
+                .equals(other._contributors, _contributors));
   }
 
   @JsonKey(ignore: true)
@@ -349,7 +395,9 @@ class _$TaskModelImpl implements _TaskModel {
       eventId,
       publisherId,
       const DeepCollectionEquality().hash(_checkList),
-      const DeepCollectionEquality().hash(_assignedTo));
+      const DeepCollectionEquality().hash(_assignedTo),
+      askContribution,
+      const DeepCollectionEquality().hash(_contributors));
 
   @JsonKey(ignore: true)
   @override
@@ -378,7 +426,9 @@ abstract class _TaskModel implements TaskModel {
       final String? eventId,
       final String? publisherId,
       final List<TaskCheckList>? checkList,
-      final List<String>? assignedTo}) = _$TaskModelImpl;
+      final List<String>? assignedTo,
+      final bool? askContribution,
+      final List<String>? contributors}) = _$TaskModelImpl;
 
   factory _TaskModel.fromJson(Map<String, dynamic> json) =
       _$TaskModelImpl.fromJson;
@@ -409,6 +459,10 @@ abstract class _TaskModel implements TaskModel {
   List<TaskCheckList>? get checkList;
   @override
   List<String>? get assignedTo;
+  @override
+  bool? get askContribution;
+  @override
+  List<String>? get contributors;
   @override
   @JsonKey(ignore: true)
   _$$TaskModelImplCopyWith<_$TaskModelImpl> get copyWith =>
