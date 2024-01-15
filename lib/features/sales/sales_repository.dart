@@ -6,7 +6,6 @@ import 'package:lakbay/core/constants/firebase_constants.dart';
 import 'package:lakbay/core/failure.dart';
 import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/typdef.dart';
-import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/sale_model.dart';
 
 final salesRepositoryProvider = Provider((ref) {
@@ -36,33 +35,33 @@ class SalesRepository {
   }
 
   // Real all sales
-  Stream<List<ListingModel>> readSales() {
+  Stream<List<SaleModel>> readSales() {
     return _sales.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return ListingModel.fromJson(doc.data() as Map<String, dynamic>);
+        return SaleModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
 
   // Read all sales by CoopID
-  Stream<List<ListingModel>> readSalesByCoopId(String coopId) {
+  Stream<List<SaleModel>> readSalesByCoopId(String coopId) {
     return _sales
-        .where('cooperative.cooperativeId', isEqualTo: coopId)
+        .where('cooperativeId', isEqualTo: coopId)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-        return ListingModel.fromJson(doc.data() as Map<String, dynamic>);
+        return SaleModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
 
   // Read sale
-  Stream<ListingModel> readSale(String uid) {
+  Stream<SaleModel> readSale(String uid) {
     return _sales.doc(uid).snapshots().map((snapshot) {
-      return ListingModel.fromJson(snapshot.data() as Map<String, dynamic>);
+      return SaleModel.fromJson(snapshot.data() as Map<String, dynamic>);
     });
   }
 
   CollectionReference get _sales =>
-      _firestore.collection(FirebaseConstants.listingsCollection);
+      _firestore.collection(FirebaseConstants.salesCollection);
 }
