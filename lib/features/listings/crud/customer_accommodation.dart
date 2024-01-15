@@ -108,12 +108,21 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                             itemBuilder: (context, index) {
                               final expense = expenses[index];
                               return ListTile(
-                                title: Text(expense.name),
+                                title: Text(
+                                  expense.name,
+                                  style: const TextStyle(
+                                    fontSize: 14, // Set your desired font size
+                                    // Add other styling as needed
+                                  ),
+                                ),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize
                                       .min, // Keep the row tight around its children
                                   children: [
-                                    Text("₱${expense.cost.toString()}"),
+                                    Text(
+                                      "₱${expense.cost.toString()}",
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
                                     IconButton(
                                       icon: const Icon(Icons.delete),
                                       onPressed: () {
@@ -368,6 +377,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
           initialIndex: 0,
           length: tabs.length,
           child: Scaffold(
+            resizeToAvoidBottomInset: true,
             // Add appbar with back button
             appBar: _appBar(widget.listing.title, context),
             body: TabBarView(
@@ -954,7 +964,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                               padding: const EdgeInsets.only(bottom: 10.0),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  var Expense = showAddExpenseDialog(
+                                  showAddExpenseDialog(
                                       context, bookings[index]);
                                 },
                                 child: const Text("Show Expenses"),
