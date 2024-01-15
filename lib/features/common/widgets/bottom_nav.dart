@@ -63,9 +63,9 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         if (widget.user?.isCoopView ?? false) ...[
           // Tourism Listings
           const BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt_outlined),
-            activeIcon: Icon(Icons.list_alt),
-            label: 'Listings',
+            icon: Icon(Icons.groups_outlined),
+            activeIcon: Icon(Icons.groups),
+            label: 'Community',
           ),
         ] else ...[
           const BottomNavigationBarItem(
@@ -123,7 +123,11 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         }
         break;
       case 1:
-        context.go('/trips');
+        if (widget.user?.isCoopView ?? false) {
+          context.go('/calendar');
+        } else {
+          context.go('/trips');
+        }
         break;
       case 2:
         if (widget.user?.isCoopView ?? false) {

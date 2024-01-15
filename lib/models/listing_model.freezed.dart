@@ -41,7 +41,7 @@ mixin _$ListingModel {
   String get type => throw _privateConstructorUsedError;
   List<FoodService>? get availableTables => throw _privateConstructorUsedError;
   List<ListingImages>? get menuImgs => throw _privateConstructorUsedError;
-  List<AvailableTransport>? get availableTransport =>
+  AvailableTransport? get availableTransport =>
       throw _privateConstructorUsedError;
   List<EntertainmentService>? get availableEntertainment =>
       throw _privateConstructorUsedError;
@@ -81,12 +81,13 @@ abstract class $ListingModelCopyWith<$Res> {
       String type,
       List<FoodService>? availableTables,
       List<ListingImages>? menuImgs,
-      List<AvailableTransport>? availableTransport,
+      AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
       String? typeOfTrip,
       String? uid});
 
   $ListingCooperativeCopyWith<$Res> get cooperative;
+  $AvailableTransportCopyWith<$Res>? get availableTransport;
 }
 
 /// @nodoc
@@ -211,7 +212,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
       availableTransport: freezed == availableTransport
           ? _value.availableTransport
           : availableTransport // ignore: cast_nullable_to_non_nullable
-              as List<AvailableTransport>?,
+              as AvailableTransport?,
       availableEntertainment: freezed == availableEntertainment
           ? _value.availableEntertainment
           : availableEntertainment // ignore: cast_nullable_to_non_nullable
@@ -232,6 +233,19 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
   $ListingCooperativeCopyWith<$Res> get cooperative {
     return $ListingCooperativeCopyWith<$Res>(_value.cooperative, (value) {
       return _then(_value.copyWith(cooperative: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $AvailableTransportCopyWith<$Res>? get availableTransport {
+    if (_value.availableTransport == null) {
+      return null;
+    }
+
+    return $AvailableTransportCopyWith<$Res>(_value.availableTransport!,
+        (value) {
+      return _then(_value.copyWith(availableTransport: value) as $Val);
     });
   }
 }
@@ -265,13 +279,15 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       String type,
       List<FoodService>? availableTables,
       List<ListingImages>? menuImgs,
-      List<AvailableTransport>? availableTransport,
+      AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
       String? typeOfTrip,
       String? uid});
 
   @override
   $ListingCooperativeCopyWith<$Res> get cooperative;
+  @override
+  $AvailableTransportCopyWith<$Res>? get availableTransport;
 }
 
 /// @nodoc
@@ -392,9 +408,9 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           : menuImgs // ignore: cast_nullable_to_non_nullable
               as List<ListingImages>?,
       availableTransport: freezed == availableTransport
-          ? _value._availableTransport
+          ? _value.availableTransport
           : availableTransport // ignore: cast_nullable_to_non_nullable
-              as List<AvailableTransport>?,
+              as AvailableTransport?,
       availableEntertainment: freezed == availableEntertainment
           ? _value._availableEntertainment
           : availableEntertainment // ignore: cast_nullable_to_non_nullable
@@ -435,7 +451,7 @@ class _$ListingModelImpl implements _ListingModel {
       required this.type,
       final List<FoodService>? availableTables,
       final List<ListingImages>? menuImgs,
-      final List<AvailableTransport>? availableTransport,
+      this.availableTransport,
       final List<EntertainmentService>? availableEntertainment,
       this.typeOfTrip,
       this.uid})
@@ -445,7 +461,6 @@ class _$ListingModelImpl implements _ListingModel {
         _listingCosts = listingCosts,
         _availableTables = availableTables,
         _menuImgs = menuImgs,
-        _availableTransport = availableTransport,
         _availableEntertainment = availableEntertainment;
 
   factory _$ListingModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -540,17 +555,8 @@ class _$ListingModelImpl implements _ListingModel {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<AvailableTransport>? _availableTransport;
   @override
-  List<AvailableTransport>? get availableTransport {
-    final value = _availableTransport;
-    if (value == null) return null;
-    if (_availableTransport is EqualUnmodifiableListView)
-      return _availableTransport;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
+  final AvailableTransport? availableTransport;
   final List<EntertainmentService>? _availableEntertainment;
   @override
   List<EntertainmentService>? get availableEntertainment {
@@ -608,8 +614,8 @@ class _$ListingModelImpl implements _ListingModel {
             const DeepCollectionEquality()
                 .equals(other._availableTables, _availableTables) &&
             const DeepCollectionEquality().equals(other._menuImgs, _menuImgs) &&
-            const DeepCollectionEquality()
-                .equals(other._availableTransport, _availableTransport) &&
+            (identical(other.availableTransport, availableTransport) ||
+                other.availableTransport == availableTransport) &&
             const DeepCollectionEquality().equals(
                 other._availableEntertainment, _availableEntertainment) &&
             (identical(other.typeOfTrip, typeOfTrip) ||
@@ -641,7 +647,7 @@ class _$ListingModelImpl implements _ListingModel {
         type,
         const DeepCollectionEquality().hash(_availableTables),
         const DeepCollectionEquality().hash(_menuImgs),
-        const DeepCollectionEquality().hash(_availableTransport),
+        availableTransport,
         const DeepCollectionEquality().hash(_availableEntertainment),
         typeOfTrip,
         uid
@@ -683,7 +689,7 @@ abstract class _ListingModel implements ListingModel {
       required final String type,
       final List<FoodService>? availableTables,
       final List<ListingImages>? menuImgs,
-      final List<AvailableTransport>? availableTransport,
+      final AvailableTransport? availableTransport,
       final List<EntertainmentService>? availableEntertainment,
       final String? typeOfTrip,
       final String? uid}) = _$ListingModelImpl;
@@ -733,7 +739,7 @@ abstract class _ListingModel implements ListingModel {
   @override
   List<ListingImages>? get menuImgs;
   @override
-  List<AvailableTransport>? get availableTransport;
+  AvailableTransport? get availableTransport;
   @override
   List<EntertainmentService>? get availableEntertainment;
   @override
@@ -1517,10 +1523,10 @@ AvailableTransport _$AvailableTransportFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AvailableTransport {
-  String get transportId => throw _privateConstructorUsedError;
+  bool get available => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
-  List<ListingImages> get images => throw _privateConstructorUsedError;
+  num get luggage => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1534,8 +1540,7 @@ abstract class $AvailableTransportCopyWith<$Res> {
           AvailableTransport value, $Res Function(AvailableTransport) then) =
       _$AvailableTransportCopyWithImpl<$Res, AvailableTransport>;
   @useResult
-  $Res call(
-      {String transportId, num guests, num price, List<ListingImages> images});
+  $Res call({bool available, num guests, num price, num luggage});
 }
 
 /// @nodoc
@@ -1551,16 +1556,16 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? transportId = null,
+    Object? available = null,
     Object? guests = null,
     Object? price = null,
-    Object? images = null,
+    Object? luggage = null,
   }) {
     return _then(_value.copyWith(
-      transportId: null == transportId
-          ? _value.transportId
-          : transportId // ignore: cast_nullable_to_non_nullable
-              as String,
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
       guests: null == guests
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
@@ -1569,10 +1574,10 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as num,
-      images: null == images
-          ? _value.images
-          : images // ignore: cast_nullable_to_non_nullable
-              as List<ListingImages>,
+      luggage: null == luggage
+          ? _value.luggage
+          : luggage // ignore: cast_nullable_to_non_nullable
+              as num,
     ) as $Val);
   }
 }
@@ -1585,8 +1590,7 @@ abstract class _$$AvailableTransportImplCopyWith<$Res>
       __$$AvailableTransportImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String transportId, num guests, num price, List<ListingImages> images});
+  $Res call({bool available, num guests, num price, num luggage});
 }
 
 /// @nodoc
@@ -1600,16 +1604,16 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? transportId = null,
+    Object? available = null,
     Object? guests = null,
     Object? price = null,
-    Object? images = null,
+    Object? luggage = null,
   }) {
     return _then(_$AvailableTransportImpl(
-      transportId: null == transportId
-          ? _value.transportId
-          : transportId // ignore: cast_nullable_to_non_nullable
-              as String,
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
       guests: null == guests
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
@@ -1618,10 +1622,10 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as num,
-      images: null == images
-          ? _value._images
-          : images // ignore: cast_nullable_to_non_nullable
-              as List<ListingImages>,
+      luggage: null == luggage
+          ? _value.luggage
+          : luggage // ignore: cast_nullable_to_non_nullable
+              as num,
     ));
   }
 }
@@ -1630,32 +1634,26 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AvailableTransportImpl implements _AvailableTransport {
   _$AvailableTransportImpl(
-      {required this.transportId,
+      {required this.available,
       required this.guests,
       required this.price,
-      required final List<ListingImages> images})
-      : _images = images;
+      required this.luggage});
 
   factory _$AvailableTransportImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvailableTransportImplFromJson(json);
 
   @override
-  final String transportId;
+  final bool available;
   @override
   final num guests;
   @override
   final num price;
-  final List<ListingImages> _images;
   @override
-  List<ListingImages> get images {
-    if (_images is EqualUnmodifiableListView) return _images;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_images);
-  }
+  final num luggage;
 
   @override
   String toString() {
-    return 'AvailableTransport(transportId: $transportId, guests: $guests, price: $price, images: $images)';
+    return 'AvailableTransport(available: $available, guests: $guests, price: $price, luggage: $luggage)';
   }
 
   @override
@@ -1663,17 +1661,17 @@ class _$AvailableTransportImpl implements _AvailableTransport {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AvailableTransportImpl &&
-            (identical(other.transportId, transportId) ||
-                other.transportId == transportId) &&
+            (identical(other.available, available) ||
+                other.available == available) &&
             (identical(other.guests, guests) || other.guests == guests) &&
             (identical(other.price, price) || other.price == price) &&
-            const DeepCollectionEquality().equals(other._images, _images));
+            (identical(other.luggage, luggage) || other.luggage == luggage));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, transportId, guests, price,
-      const DeepCollectionEquality().hash(_images));
+  int get hashCode =>
+      Object.hash(runtimeType, available, guests, price, luggage);
 
   @JsonKey(ignore: true)
   @override
@@ -1692,22 +1690,22 @@ class _$AvailableTransportImpl implements _AvailableTransport {
 
 abstract class _AvailableTransport implements AvailableTransport {
   factory _AvailableTransport(
-      {required final String transportId,
+      {required final bool available,
       required final num guests,
       required final num price,
-      required final List<ListingImages> images}) = _$AvailableTransportImpl;
+      required final num luggage}) = _$AvailableTransportImpl;
 
   factory _AvailableTransport.fromJson(Map<String, dynamic> json) =
       _$AvailableTransportImpl.fromJson;
 
   @override
-  String get transportId;
+  bool get available;
   @override
   num get guests;
   @override
   num get price;
   @override
-  List<ListingImages> get images;
+  num get luggage;
   @override
   @JsonKey(ignore: true)
   _$$AvailableTransportImplCopyWith<_$AvailableTransportImpl> get copyWith =>

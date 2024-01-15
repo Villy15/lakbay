@@ -44,8 +44,10 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
     // Set initial values
     _nameController.text = widget.event.name;
     _descriptionController.text = widget.event.description ?? '';
-    _startDateController.text = DateFormat('yyyy-MM-dd').format(widget.event.startDate);
-    _endDateController.text = DateFormat('yyyy-MM-dd').format(widget.event.endDate);
+    _startDateController.text =
+        DateFormat('yyyy-MM-dd').format(widget.event.startDate);
+    _endDateController.text =
+        DateFormat('yyyy-MM-dd').format(widget.event.endDate);
     _locationController.text = widget.event.address;
     _cityController.text = widget.event.city;
     _provinceController.text = widget.event.province;
@@ -115,14 +117,16 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
                     );
 
                     // Upload image to Firebase Storage
-                    ref
-                        .read(storageRepositoryProvider)
-                        .storeFile(
-                          path: 'events/${_nameController.text}',
-                          id: _image?.path.split('/').last ?? '',
-                          file: _image,
-                        )
-                        .then((value) => value.fold(
+                    if (_image != null) {
+                      ref
+                          .read(storageRepositoryProvider)
+                          .storeFile(
+                            path: 'events/${_nameController.text}',
+                            id: _image?.path.split('/').last ?? '',
+                            file: _image,
+                          )
+                          .then(
+                            (value) => value.fold(
                               (failure) => debugPrint(
                                 'Failed to upload image: $failure',
                               ),
@@ -132,7 +136,14 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
                                 // Edit event
                                 updateEvent(updatedEvent);
                               },
-                            ));
+                            ),
+                          );
+
+                      return;
+                    }
+
+                    // Edit event
+                    updateEvent(updatedEvent);
                   }
                 },
                 child: const Text('Submit'),
@@ -152,28 +163,30 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
                     ),
                     child: Column(
                       children: [
-                        // Event Image
                         GestureDetector(
-                          onTap: () async {
-                            final picker = ImagePicker();
-                            final pickedFile =
-                                await picker.pickImage(source: ImageSource.gallery);
-
-                            if (pickedFile != null) {
-                              setState(() {
-                                _image = File(pickedFile.path);
-                              });
-                            }
-                          },
-                          child: Container(
-                            height: 200,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            child: _image != null
-                                ? Image.file(_image!, fit: BoxFit.cover)
-                                : const Center(child: Text('Select an image')),
+                          child: Row(
+                            children: [
+                              Icon(Icons.image,
+                                  color: Theme.of(context).iconTheme.color),
+                              const SizedBox(
+                                  width:
+                                      15), // Add some spacing between the icon and the container
+                              Expanded(
+                                child: ImagePickerFormField(
+                                  imageUrl: widget.event.imageUrl,
+                                  initialValue: _image,
+                                  onSaved: (File? file) {
+                                    _image = file;
+                                  },
+                                  // validator: (File? file) {
+                                  //   if (file == null) {
+                                  //     return 'Please select an image';
+                                  //   }
+                                  //   return null;
+                                  // },
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -280,7 +293,8 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
                 if (selectedStartDate != null) {
                   setState(() {
                     startDate = selectedStartDate;
-                    _startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
+                    _startDateController.text =
+                        DateFormat('yyyy-MM-dd').format(startDate);
                   });
                 }
               },
@@ -305,7 +319,8 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
                 if (selectedEndDate != null) {
                   setState(() {
                     endDate = selectedEndDate;
-                    _endDateController.text = DateFormat('yyyy-MM-dd').format(endDate);
+                    _endDateController.text =
+                        DateFormat('yyyy-MM-dd').format(endDate);
                   });
                 }
               },
@@ -330,4 +345,53 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
     );
     return picked;
   }
+}
+
+class ImagePickerFormField extends FormField<File> {
+  ImagePickerFormField({
+    super.key,
+    super.onSaved,
+    super.validator,
+    super.initialValue,
+    String? imageUrl,
+  }) : super(
+          builder: (FormFieldState<File> state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () async {
+                    final picker = ImagePicker();
+                    final pickedFile =
+                        await picker.pickImage(source: ImageSource.gallery);
+
+                    if (pickedFile != null) {
+                      state.didChange(File(pickedFile.path));
+                    }
+                  },
+                  child: Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: state.value != null
+                        ? Image.file(state.value!, fit: BoxFit.cover)
+                        : (imageUrl != null && imageUrl.isNotEmpty)
+                            ? Image.network(imageUrl, fit: BoxFit.cover)
+                            : const Center(child: Text('Select an image')),
+                  ),
+                ),
+                if (state.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, left: 12),
+                    child: Text(
+                      state.errorText!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
 }

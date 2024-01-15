@@ -12,7 +12,36 @@
           "package_name": "com.example.lakbay"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "329158450498-3gta920ckfqm92b1cu8ujoddo8g2ogf2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakbay",
+            "certificate_hash": "22b99984f5944d78a2cd3603dd83ca103a0bdc9c"
+          }
+        },
+        {
+          "client_id": "329158450498-3vdu8qps9c5slp8r1u024nfsdqn964j9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakbay",
+            "certificate_hash": "8b5c746230e36090a7816b53f3951b1dfb2cfaec"
+          }
+        },
+        {
+          "client_id": "329158450498-lnsua2nt6hcu7c68v70v558g2pbdpfjt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakbay",
+            "certificate_hash": "8f31b324869c6a41e44297bfefb9a1e595d91f70"
+          }
+        },
+        {
+          "client_id": "329158450498-9c9rvrb5d9onmocvqtfkmcp0iji13j98.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC_23hwBioqNkEcDlDV1fA9mmJpHNnXy7Y"
@@ -20,7 +49,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "329158450498-9c9rvrb5d9onmocvqtfkmcp0iji13j98.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "329158450498-rtqumgp38r9t0nejcjt0lc3r6dik1rrt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.lakbay"
+              }
+            }
+          ]
         }
       }
     }

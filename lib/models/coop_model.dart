@@ -14,6 +14,7 @@ class CooperativeModel with _$CooperativeModel {
     required String province,
     required String imagePath,
     String? imageUrl,
+    String? code,
     required List<String> members,
     required List<String> managers,
   }) = _CooperativeModel;

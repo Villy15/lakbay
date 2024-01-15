@@ -10,11 +10,13 @@ import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/models/coop_model.dart';
 //import 'package:lakbay/features/events/events_repository.dart';
 import 'package:lakbay/models/event_model.dart';
 
 class AddEventPage extends ConsumerStatefulWidget {
-  const AddEventPage({super.key});
+  final CooperativeModel coop;
+  const AddEventPage({super.key, required this.coop});
 
   @override
   ConsumerState<AddEventPage> createState() => _AddEventPageState();
@@ -52,9 +54,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
   }
 
   void addEvent(EventModel event) {
-    ref
-        .read(eventsControllerProvider.notifier)
-        .addEvent(event, context);
+    ref.read(eventsControllerProvider.notifier).addEvent(event, context);
   }
 
   @override
@@ -80,26 +80,28 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                     child: Column(
                       children: [
                         GestureDetector(
-                          onTap: () async {
-                            final picker = ImagePicker();
-                            final pickedFile =
-                                await picker.pickImage(source: ImageSource.gallery);
-
-                            if (pickedFile != null) {
-                              setState(() {
-                                _image = File(pickedFile.path);
-                              });
-                            }
-                          },
-                          child: Container(
-                            height: 200,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            child: _image != null
-                                ? Image.file(_image!, fit: BoxFit.cover)
-                                : const Center(child: Text('Select an image')),
+                          child: Row(
+                            children: [
+                              Icon(Icons.image,
+                                  color: Theme.of(context).iconTheme.color),
+                              const SizedBox(
+                                  width:
+                                      15), // Add some spacing between the icon and the container
+                              Expanded(
+                                child: ImagePickerFormField(
+                                  initialValue: _image,
+                                  onSaved: (File? file) {
+                                    _image = file;
+                                  },
+                                  validator: (File? file) {
+                                    if (file == null) {
+                                      return 'Please select an image';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -109,6 +111,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                             icon: Icon(Icons.event),
                             border: OutlineInputBorder(),
                             labelText: 'Event Name*',
+                            helperText: '*required',
                           ),
                           validator: (String? value) {
                             if (value == null || value.isEmpty) {
@@ -117,54 +120,80 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                             return null;
                           },
                         ),
-
                         const SizedBox(height: 10),
-
                         TextFormField(
                           controller: _descriptionController,
                           maxLines: null,
                           decoration: const InputDecoration(
-                            icon: Icon(Icons.description),
-                            border: OutlineInputBorder(),
-                            labelText: 'Description',
-                          ),
+                              icon: Icon(Icons.description),
+                              border: OutlineInputBorder(),
+                              labelText: 'Description',
+                              helperText: 'optional'),
                         ),
-
                         const SizedBox(height: 10),
-
                         TextFormField(
                           controller: _locationController,
                           decoration: const InputDecoration(
                             icon: Icon(Icons.location_on),
                             border: OutlineInputBorder(),
                             labelText: 'Location',
+                            helperText: 'optional',
                           ),
                         ),
-                        
                         const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            // City
+                            Flexible(
+                              flex: 1,
+                              child: TextFormField(
+                                controller: _cityController,
+                                decoration: const InputDecoration(
+                                  // Empty icon to align with other text fields
+                                  icon: Icon(Icons.location_on,
+                                      color: Colors.transparent),
+                                  // Drop down icon
+                                  suffixIcon: Icon(Icons.arrow_drop_down),
+                                  border: OutlineInputBorder(),
+                                  labelText: 'City*',
+                                  helperText: '*required',
+                                ),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
 
-                        TextFormField(
-                          controller: _cityController,
-                          decoration: const InputDecoration(
-                            icon: Icon(Icons.location_city),
-                            border: OutlineInputBorder(),
-                            labelText: 'City',
-                          ),
+                            const SizedBox(width: 10),
+
+                            // Province
+                            Flexible(
+                              flex: 1,
+                              child: TextFormField(
+                                controller: _provinceController,
+                                decoration: const InputDecoration(
+                                  // Empty icon to align with other text fields
+                                  icon: Icon(Icons.location_on,
+                                      color: Colors.transparent, size: 0),
+                                  suffixIcon: Icon(Icons.arrow_drop_down),
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Province*',
+                                  helperText: '*required',
+                                ),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-
                         const SizedBox(height: 10),
-
-                        TextFormField(
-                          controller: _provinceController,
-                          decoration: const InputDecoration(
-                            icon: Icon(Icons.landscape),
-                            border: OutlineInputBorder(),
-                            labelText: 'Province',
-                          ),
-                        ),
-
-                        const SizedBox(height: 10),
-
                         datePicker(context),
                       ],
                     ),
@@ -173,8 +202,18 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
               ),
         bottomNavigationBar: BottomAppBar(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Cancel Button
+              // Cancel Button
+              TextButton(
+                onPressed: () {
+                  context.pop();
+                  ref.read(navBarVisibilityProvider.notifier).show();
+                },
+                child: const Text('Cancel'),
+              ),
+
               // Save Button
               ElevatedButton(
                 onPressed: () {
@@ -183,39 +222,42 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
 
                     final userUid = ref.read(userProvider)?.uid ?? '';
                     final imagePath =
-                                    'events/${_nameController.text}/${_image?.path.split('/').last ?? ''}';
+                        'events/${_nameController.text}/${_image?.path.split('/').last ?? ''}';
 
                     var event = EventModel(
-                    name: _nameController.text,
-                    description: _descriptionController.text,
-                    address: _locationController.text,
-                    city: _cityController.text,
-                    province: _provinceController.text,
-                    imagePath: imagePath,
-                    members: [userUid],
-                    managers: [userUid],
-                    startDate: startDate,
-                    endDate: endDate,
+                      cooperative: EventCooperative(
+                        cooperativeId: widget.coop.uid!,
+                        cooperativeName: widget.coop.name,
+                      ),
+                      name: _nameController.text,
+                      description: _descriptionController.text,
+                      address: _locationController.text,
+                      city: _cityController.text,
+                      province: _provinceController.text,
+                      imagePath: imagePath,
+                      members: [userUid],
+                      managers: [userUid],
+                      startDate: startDate,
+                      endDate: endDate,
                     );
 
                     ref
-                          .read(storageRepositoryProvider)
-                          .storeFile(
-                            path: 'events/${_nameController.text}',
-                            id: _image?.path.split('/').last ?? '',
-                            file: _image,
-                          )
-                          .then((value) => value.fold(
-                                (failure) => debugPrint(
-                                  'Failed to upload image: $failure',
-                                ),
-                                (imageUrl) {
-                                  event = event.copyWith(imageUrl: imageUrl);
-                                  // Register cooperative
-                                  addEvent(event);
-                                },
-                              ));
-                    
+                        .read(storageRepositoryProvider)
+                        .storeFile(
+                          path: 'events/${_nameController.text}',
+                          id: _image?.path.split('/').last ?? '',
+                          file: _image,
+                        )
+                        .then((value) => value.fold(
+                              (failure) => debugPrint(
+                                'Failed to upload image: $failure',
+                              ),
+                              (imageUrl) {
+                                event = event.copyWith(imageUrl: imageUrl);
+                                // Register cooperative
+                                addEvent(event);
+                              },
+                            ));
                   }
                   context.pop();
                 },
@@ -301,4 +343,50 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
     );
     return picked;
   }
+}
+
+class ImagePickerFormField extends FormField<File> {
+  ImagePickerFormField({
+    super.key,
+    super.onSaved,
+    super.validator,
+    super.initialValue,
+  }) : super(
+          builder: (FormFieldState<File> state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () async {
+                    final picker = ImagePicker();
+                    final pickedFile =
+                        await picker.pickImage(source: ImageSource.gallery);
+
+                    if (pickedFile != null) {
+                      state.didChange(File(pickedFile.path));
+                    }
+                  },
+                  child: Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: state.value != null
+                        ? Image.file(state.value!, fit: BoxFit.cover)
+                        : const Center(child: Text('Select an image')),
+                  ),
+                ),
+                if (state.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, left: 12),
+                    child: Text(
+                      state.errorText!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
 }

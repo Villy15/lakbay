@@ -42,9 +42,10 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       menuImgs: (json['menuImgs'] as List<dynamic>?)
           ?.map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
           .toList(),
-      availableTransport: (json['availableTransport'] as List<dynamic>?)
-          ?.map((e) => AvailableTransport.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      availableTransport: json['availableTransport'] == null
+          ? null
+          : AvailableTransport.fromJson(
+              json['availableTransport'] as Map<String, dynamic>),
       availableEntertainment: (json['availableEntertainment'] as List<dynamic>?)
           ?.map((e) => EntertainmentService.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -77,8 +78,7 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'availableTables':
           instance.availableTables?.map((e) => e.toJson()).toList(),
       'menuImgs': instance.menuImgs?.map((e) => e.toJson()).toList(),
-      'availableTransport':
-          instance.availableTransport?.map((e) => e.toJson()).toList(),
+      'availableTransport': instance.availableTransport?.toJson(),
       'availableEntertainment':
           instance.availableEntertainment?.map((e) => e.toJson()).toList(),
       'typeOfTrip': instance.typeOfTrip,
@@ -152,21 +152,19 @@ Map<String, dynamic> _$$AvailableRoomImplToJson(_$AvailableRoomImpl instance) =>
 _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
         Map<String, dynamic> json) =>
     _$AvailableTransportImpl(
-      transportId: json['transportId'] as String,
+      available: json['available'] as bool,
       guests: json['guests'] as num,
       price: json['price'] as num,
-      images: (json['images'] as List<dynamic>)
-          .map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      luggage: json['luggage'] as num,
     );
 
 Map<String, dynamic> _$$AvailableTransportImplToJson(
         _$AvailableTransportImpl instance) =>
     <String, dynamic>{
-      'transportId': instance.transportId,
+      'available': instance.available,
       'guests': instance.guests,
       'price': instance.price,
-      'images': instance.images.map((e) => e.toJson()).toList(),
+      'luggage': instance.luggage,
     };
 
 _$FoodServiceImpl _$$FoodServiceImplFromJson(Map<String, dynamic> json) =>
