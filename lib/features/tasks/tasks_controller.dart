@@ -28,6 +28,13 @@ final getTasksProvider = StreamProvider<List<TaskModel>>((ref) {
   return tasksController.getTasks();
 });
 
+// Stream Provider for getTasksByUserId
+final getTasksByUserIdProvider =
+    StreamProvider.family<List<TaskModel>, String>((ref, userId) {
+  final tasksController = ref.watch(tasksControllerProvider.notifier);
+  return tasksController.getTasksByUserId(userId);
+});
+
 final tasksControllerProvider =
     StateNotifierProvider<TasksController, bool>((ref) {
   final tasksRepository = ref.watch(tasksRepositoryProvider);
@@ -66,6 +73,11 @@ class TasksController extends StateNotifier<bool> {
       coopId: coopId,
       eventId: eventId,
     );
+  }
+
+  // Read all tasks by userId
+  Stream<List<TaskModel>> getTasksByUserId(String userId) {
+    return _tasksRepository.readTasksByAssignedTo(userId);
   }
 
   // Add task

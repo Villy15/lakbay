@@ -71,6 +71,18 @@ class TasksRepository {
     });
   }
 
+  // Read all tasks where the user is assigned to
+  Stream<List<TaskModel>> readTasksByAssignedTo(String uid) {
+    return _tasks
+        .where('assignedTo', arrayContains: uid)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return TaskModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Update a task
   FutureVoid updateTask(TaskModel task) async {
     try {

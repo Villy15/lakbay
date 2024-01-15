@@ -41,122 +41,39 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
                     children: [
                       headerCard(context, task),
                       const SizedBox(height: 20),
-                      // Button for Ask for Contributions
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Text for Do you want to ask for contributions?
-                          const Text(
-                            "Ask for contributions from members?",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          // Assigned To
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Assigned To",
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(Icons.timer_outlined),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    daysLeft(task.dueDate!),
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-
                           const SizedBox(height: 10),
-
-                          // Button for Ask for Contributions
-                          task.askContribution == true
-                              ? Align(
-                                  alignment: Alignment.center,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      ref
-                                          .read(
-                                              tasksControllerProvider.notifier)
-                                          .updateTask(
-                                            context,
-                                            task.copyWith(
-                                              askContribution: false,
-                                            ),
-                                          );
-                                    },
-                                    child: const Text('Stop Asking'),
-                                  ),
-                                )
-                              : Align(
-                                  alignment: Alignment.center,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      ref
-                                          .read(
-                                              tasksControllerProvider.notifier)
-                                          .updateTask(
-                                            context,
-                                            task.copyWith(
-                                              askContribution: true,
-                                            ),
-                                          );
-                                    },
-                                    child: const Text('Ask for Contributions'),
-                                  ),
-                                ),
-
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: task.contributors?.length ?? 0,
-                            itemBuilder: (context, index) {
-                              final item = task.checkList![index];
-                              return Slidable(
-                                key: Key(item.title),
-                                endActionPane: ActionPane(
-                                  extentRatio: 0.40,
-                                  motion: const ScrollMotion(),
-                                  children: [
-                                    SlidableAction(
-                                      // An action can be bigger than the others.
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      onPressed: (context) {
-                                        if (mounted) {
-                                          ref
-                                              .read(tasksControllerProvider
-                                                  .notifier)
-                                              .updateTask(
-                                                context,
-                                                task.copyWith(
-                                                  checkList: task.checkList!
-                                                      .where((e) => e != item)
-                                                      .toList(),
-                                                ),
-                                              );
-                                        }
-                                      },
-                                      backgroundColor:
-                                          Theme.of(context).colorScheme.error,
-                                      foregroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .background,
-                                      icon: Icons.archive,
-                                      label: 'Remove',
-                                    ),
-                                  ],
-                                ),
-                                child: CheckboxListTile(
-                                  title: Text(item.title),
-                                  value: item.isDone,
-                                  onChanged: (value) {
-                                    ref
-                                        .read(tasksControllerProvider.notifier)
-                                        .updateTask(
-                                          context,
-                                          task.copyWith(
-                                            checkList: task.checkList!
-                                                .map((e) => e == item
-                                                    ? item.copyWith(
-                                                        isDone: value ?? false)
-                                                    : e)
-                                                .toList(),
-                                          ),
-                                        );
-                                  },
-                                ),
-                              );
-                            },
-                          ),
+                          eventTaskMembers(context, task),
                         ],
                       ),
+
+                      const SizedBox(height: 20),
+
+                      // Button for Ask for Contributions
+                      taskContribution(task, context),
                       const SizedBox(height: 20),
 
                       taskDesc(context, task),
@@ -172,6 +89,52 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
               ),
               loading: () => const Loader(),
             ));
+  }
+
+  Column taskContribution(TaskModel task, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Text for Do you want to ask for contributions?
+        Text(
+          "Ask for contributions from members?",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+
+        const SizedBox(height: 10),
+
+        // Button for Ask for Contributions
+        task.askContribution == true
+            ? Align(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  onPressed: () {
+                    ref.read(tasksControllerProvider.notifier).updateTask(
+                          context,
+                          task.copyWith(
+                            askContribution: false,
+                          ),
+                        );
+                  },
+                  child: const Text('Stop Asking'),
+                ),
+              )
+            : Align(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  onPressed: () {
+                    ref.read(tasksControllerProvider.notifier).updateTask(
+                          context,
+                          task.copyWith(
+                            askContribution: true,
+                          ),
+                        );
+                  },
+                  child: const Text('Ask for Contributions'),
+                ),
+              ),
+      ],
+    );
   }
 
   Column taskCheckList(BuildContext context, TaskModel task) {
@@ -316,9 +279,9 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
             // Progress Bar
             const SizedBox(height: 30),
 
-            eventTaskMembers(context, task),
+            // eventTaskMembers(context, task),
 
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
 
             eventProgress(context, task),
           ],
@@ -327,63 +290,22 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
     );
   }
 
-  Row eventTaskMembers(BuildContext context, TaskModel task) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        task.assignedTo!.isNotEmpty
-            ? Expanded(
-                child: SizedBox(
-                  height: 40,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: task.assignedTo!.length > 4
-                        ? 4
-                        : task.assignedTo!.length,
-                    itemBuilder: (context, index) {
-                      final userId = task.assignedTo?[index];
-                      return Stack(
-                        children: [
-                          ref.watch(getUserDataProvider(userId!)).maybeWhen(
-                                data: (user) {
-                                  return CircleAvatar(
-                                    radius: 20,
-                                    backgroundImage: NetworkImage(
-                                      user.profilePic,
-                                    ),
-                                  );
-                                },
-                                orElse: () => const SizedBox.shrink(),
-                              ),
-                          if (index == 3 && task.assignedTo!.length > 4)
-                            Positioned(
-                              right: 0,
-                              child: CircleAvatar(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.background,
-                                radius: 20,
-                                child: Text('+${task.assignedTo!.length - 4}'),
-                              ),
-                            ),
-                        ],
-                      );
-                    },
+  Wrap eventTaskMembers(BuildContext context, TaskModel task) {
+    return Wrap(
+      spacing: 10, // space between chips horizontally
+      children: task.assignedTo!.map((userId) {
+        return ref.watch(getUserDataProvider(userId)).maybeWhen(
+              data: (user) {
+                return Chip(
+                  avatar: CircleAvatar(
+                    backgroundImage: NetworkImage(user.profilePic),
                   ),
-                ),
-              )
-            : const SizedBox.shrink(),
-        // Time Left
-        Row(
-          children: [
-            const Icon(Icons.timer_outlined),
-            const SizedBox(width: 8),
-            Text(
-              daysLeft(task.dueDate!),
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ],
-        ),
-      ],
+                  label: Text(user.name),
+                );
+              },
+              orElse: () => const SizedBox.shrink(),
+            );
+      }).toList(),
     );
   }
 
@@ -414,7 +336,8 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
           borderRadius: BorderRadius.circular(10),
           minHeight: 5,
           value: progress,
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor:
+              Theme.of(context).colorScheme.primary.withOpacity(0.2),
           valueColor: AlwaysStoppedAnimation<Color>(
               Theme.of(context).colorScheme.primary),
         ),
