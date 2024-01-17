@@ -187,6 +187,7 @@ _$EntertainmentServiceImpl _$$EntertainmentServiceImplFromJson(
       entertainmentId: json['entertainmentId'] as String,
       guests: json['guests'] as num,
       price: json['price'] as num,
+      available: json['available'] as bool,
       entertainmentImgs: (json['entertainmentImgs'] as List<dynamic>)
           .map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -198,6 +199,7 @@ Map<String, dynamic> _$$EntertainmentServiceImplToJson(
       'entertainmentId': instance.entertainmentId,
       'guests': instance.guests,
       'price': instance.price,
+      'available': instance.available,
       'entertainmentImgs':
           instance.entertainmentImgs.map((e) => e.toJson()).toList(),
     };

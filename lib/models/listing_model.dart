@@ -118,6 +118,7 @@ class EntertainmentService with _$EntertainmentService {
     required String entertainmentId,
     required num guests,
     required num price,
+    required bool available,
     required List<ListingImages> entertainmentImgs
   }) = _EntertainmentService;
 

@@ -1894,6 +1894,7 @@ mixin _$EntertainmentService {
   String get entertainmentId => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
+  bool get available => throw _privateConstructorUsedError;
   List<ListingImages> get entertainmentImgs =>
       throw _privateConstructorUsedError;
 
@@ -1913,6 +1914,7 @@ abstract class $EntertainmentServiceCopyWith<$Res> {
       {String entertainmentId,
       num guests,
       num price,
+      bool available,
       List<ListingImages> entertainmentImgs});
 }
 
@@ -1933,6 +1935,7 @@ class _$EntertainmentServiceCopyWithImpl<$Res,
     Object? entertainmentId = null,
     Object? guests = null,
     Object? price = null,
+    Object? available = null,
     Object? entertainmentImgs = null,
   }) {
     return _then(_value.copyWith(
@@ -1948,6 +1951,10 @@ class _$EntertainmentServiceCopyWithImpl<$Res,
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as num,
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
       entertainmentImgs: null == entertainmentImgs
           ? _value.entertainmentImgs
           : entertainmentImgs // ignore: cast_nullable_to_non_nullable
@@ -1968,6 +1975,7 @@ abstract class _$$EntertainmentServiceImplCopyWith<$Res>
       {String entertainmentId,
       num guests,
       num price,
+      bool available,
       List<ListingImages> entertainmentImgs});
 }
 
@@ -1985,6 +1993,7 @@ class __$$EntertainmentServiceImplCopyWithImpl<$Res>
     Object? entertainmentId = null,
     Object? guests = null,
     Object? price = null,
+    Object? available = null,
     Object? entertainmentImgs = null,
   }) {
     return _then(_$EntertainmentServiceImpl(
@@ -2000,6 +2009,10 @@ class __$$EntertainmentServiceImplCopyWithImpl<$Res>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as num,
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
       entertainmentImgs: null == entertainmentImgs
           ? _value._entertainmentImgs
           : entertainmentImgs // ignore: cast_nullable_to_non_nullable
@@ -2015,6 +2028,7 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
       {required this.entertainmentId,
       required this.guests,
       required this.price,
+      required this.available,
       required final List<ListingImages> entertainmentImgs})
       : _entertainmentImgs = entertainmentImgs;
 
@@ -2027,6 +2041,8 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
   final num guests;
   @override
   final num price;
+  @override
+  final bool available;
   final List<ListingImages> _entertainmentImgs;
   @override
   List<ListingImages> get entertainmentImgs {
@@ -2038,7 +2054,7 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
 
   @override
   String toString() {
-    return 'EntertainmentService(entertainmentId: $entertainmentId, guests: $guests, price: $price, entertainmentImgs: $entertainmentImgs)';
+    return 'EntertainmentService(entertainmentId: $entertainmentId, guests: $guests, price: $price, available: $available, entertainmentImgs: $entertainmentImgs)';
   }
 
   @override
@@ -2050,6 +2066,8 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
                 other.entertainmentId == entertainmentId) &&
             (identical(other.guests, guests) || other.guests == guests) &&
             (identical(other.price, price) || other.price == price) &&
+            (identical(other.available, available) ||
+                other.available == available) &&
             const DeepCollectionEquality()
                 .equals(other._entertainmentImgs, _entertainmentImgs));
   }
@@ -2057,7 +2075,7 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, entertainmentId, guests, price,
-      const DeepCollectionEquality().hash(_entertainmentImgs));
+      available, const DeepCollectionEquality().hash(_entertainmentImgs));
 
   @JsonKey(ignore: true)
   @override
@@ -2080,6 +2098,7 @@ abstract class _EntertainmentService implements EntertainmentService {
           {required final String entertainmentId,
           required final num guests,
           required final num price,
+          required final bool available,
           required final List<ListingImages> entertainmentImgs}) =
       _$EntertainmentServiceImpl;
 
@@ -2092,6 +2111,8 @@ abstract class _EntertainmentService implements EntertainmentService {
   num get guests;
   @override
   num get price;
+  @override
+  bool get available;
   @override
   List<ListingImages> get entertainmentImgs;
   @override

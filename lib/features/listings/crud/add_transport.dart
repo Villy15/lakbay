@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
@@ -132,7 +131,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 backgroundColor: Theme.of(context).colorScheme.primary,
               ),
               onPressed: () {
-                print(widget.coop.uid);
+                // print(widget.coop.uid);
                 AvailableTransport transport = AvailableTransport(
                   guests: guests,
                   luggage: luggage,
@@ -155,7 +154,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                       images: _images?.map((e) => ListingImages(path: e.path)).toList(),
                       availableTransport: transport
                 );
-                print('this is the current transport $transport');
+                //print('this is the current transport $transport');
                 ref
                     .read(saveListingProvider.notifier)
                     .saveListingProvider(listingModel);

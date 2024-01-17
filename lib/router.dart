@@ -124,7 +124,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           return CustomerAccomodation(
                             listing: listing,
                           );
-                        case "Transportation":
+                        case "Transport":
                           return CustomerTransportation(
                             listing: listing,
                           );
@@ -382,6 +382,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           state: state,
                           child: AddEntertainment(
                             coop: coop,
+                            category: 'Entertainment'
                           ),
                           transitionType: SharedAxisTransitionType.vertical,
                         );
