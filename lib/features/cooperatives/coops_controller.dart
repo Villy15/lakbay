@@ -47,6 +47,14 @@ final getAllMembersProvider = StreamProvider.autoDispose
   return coopsController.getAllMembers(coopUid);
 });
 
+// Get all members belongs to a committee name provider
+final getAllMembersInCommitteeProvider = StreamProvider.autoDispose
+    .family<List<CooperativeMembers>, CommitteeParams>((ref, committeeParams) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getAllMembersInCommittee(
+      committeeParams.coopUid, committeeParams.committeeName);
+});
+
 // Get all members that does not belong to a committee name provider
 final getAllMembersNotInCommitteeProvider = StreamProvider.autoDispose
     .family<List<CooperativeMembers>, CommitteeParams>((ref, committeeParams) {
@@ -260,6 +268,12 @@ class CoopsController extends StateNotifier<bool> {
   // Real all members
   Stream<List<CooperativeMembers>> getAllMembers(String coopUid) {
     return _coopsRepository.readMembers(coopUid);
+  }
+
+  // Real all members belongs to a committee name
+  Stream<List<CooperativeMembers>> getAllMembersInCommittee(
+      String coopUid, String committeeName) {
+    return _coopsRepository.readMembersByCommitteeName(coopUid, committeeName);
   }
 
   // Real all members that does not belong to a committee name

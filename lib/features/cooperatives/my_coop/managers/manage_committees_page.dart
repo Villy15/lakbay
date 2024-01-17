@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/util/utils.dart';
 // import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
@@ -83,6 +84,7 @@ class _ManageCommitteesPageState extends ConsumerState<ManageCommitteesPage> {
   Widget build(BuildContext context) {
     // final user = ref.watch(userProvider);
     // final scaffoldKey = ref.watch(scaffoldKeyProvider);
+    debugPrintJson("File Name: manage_committees_page.dart");
 
     return ref.watch(getAllMembersProvider(widget.coop.uid!)).when(
           data: (members) {

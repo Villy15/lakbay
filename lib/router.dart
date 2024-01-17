@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
+import 'package:lakbay/features/calendar/calendar_page.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/shared_axis.dart';
 import 'package:lakbay/features/common/fade_through.dart';
@@ -25,11 +26,13 @@ import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
 import 'package:lakbay/features/dashboard/coop_dashboard.dart';
 import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
 import 'package:lakbay/features/events/crud/confirm_event.dart';
+import 'package:lakbay/features/events/crud/coop_read_event.dart';
 import 'package:lakbay/features/events/crud/event_manager_tools.dart';
 import 'package:lakbay/features/events/crud/join_event.dart';
 import 'package:lakbay/features/events/events_page.dart';
 import 'package:lakbay/features/events/crud/add_event.dart';
 import 'package:lakbay/features/events/crud/edit_event.dart';
+import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/home/customer/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/inbox/read_inbox.dart';
@@ -48,8 +51,11 @@ import 'package:lakbay/features/listings/crud/customer_transportation.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
 import 'package:lakbay/features/profile/profile_customer_page.dart';
+import 'package:lakbay/features/tasks/event_tasks_edit.dart';
+import 'package:lakbay/features/tasks/event_tasks_read.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/task_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:lakbay/models/listing_model.dart';
@@ -289,6 +295,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
 
               GoRoute(
+                path: '/calendar',
+                pageBuilder: (context, state) =>
+                    buildPageWithDefaultTransition<void>(
+                  context: context,
+                  state: state,
+                  child: const CalendarPage(),
+                ),
+              ),
+
+              GoRoute(
                 path: '/my_coop/:coopId',
                 pageBuilder: (context, state) =>
                     buildPageWithDefaultTransition<void>(
@@ -346,22 +362,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       pageBuilder: (context, state) {
                         CooperativeModel coop = state.extra as CooperativeModel;
 
-                      return buildPageWithSharedAxisTransition<void>(
-                        context: context,
-                        state: state,
-                        child: AddTransport(
-                          coop: coop,
-                          category: "Transport"
-                        ),
-                        transitionType: SharedAxisTransitionType.vertical,
-                      );
-                    },
-                  ),
-                  GoRoute(
-                    path: 'food',
-                    name: 'add_food',
-                    pageBuilder: (context, state) {
-                      CooperativeModel coop = state.extra as CooperativeModel;
+                        return buildPageWithSharedAxisTransition<void>(
+                          context: context,
+                          state: state,
+                          child:
+                              AddTransport(coop: coop, category: "Transport"),
+                          transitionType: SharedAxisTransitionType.vertical,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'food',
+                      name: 'add_food',
+                      pageBuilder: (context, state) {
+                        CooperativeModel coop = state.extra as CooperativeModel;
 
                         return buildPageWithSharedAxisTransition<void>(
                           context: context,
@@ -403,6 +417,71 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           );
                         })
                   ]),
+
+              GoRoute(
+                path: '/my_coop/event/:eventId',
+                pageBuilder: (context, state) {
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: CoopReadEventPage(
+                        eventId: state.pathParameters['eventId']!),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              // Add tasks for event
+              GoRoute(
+                path: '/my_coop/event/task/functions/add',
+                name: 'add_event_task',
+                pageBuilder: (context, state) {
+                  EventModel event = state.extra as EventModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: AddEventTask(
+                      event: event,
+                    ),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              GoRoute(
+                path: '/my_coop/event/task/functions/edit',
+                name: 'edit_event_task',
+                pageBuilder: (context, state) {
+                  TaskModel task = state.extra as TaskModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: EditEventTask(
+                      task: task,
+                    ),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
+
+              GoRoute(
+                path: '/my_coop/event/task/functions/read/:taskId',
+                name: 'read_event_task',
+                pageBuilder: (context, state) {
+                  // TaskModel task = state.extra as TaskModel;
+
+                  return buildPageWithSharedAxisTransition<void>(
+                    context: context,
+                    state: state,
+                    child: ReadEventTask(
+                      taskId: state.pathParameters['taskId']!,
+                    ),
+                    transitionType: SharedAxisTransitionType.vertical,
+                  );
+                },
+              ),
 
               // Add Event to Cooperative
               GoRoute(
@@ -750,7 +829,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     buildPageWithDefaultTransition<void>(
                   context: context,
                   state: state,
-                  child: const ManagerDashboardPage(),
+                  child: const TodayPage(),
                 ),
               ),
             ])

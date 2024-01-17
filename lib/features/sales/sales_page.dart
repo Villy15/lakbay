@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -18,15 +17,15 @@ import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
-class ListingsPage extends ConsumerStatefulWidget {
+class SalesPage extends ConsumerStatefulWidget {
   final String coopId;
-  const ListingsPage({super.key, required this.coopId});
+  const SalesPage({super.key, required this.coopId});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ListingsPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SalesPageState();
 }
 
-class _ListingsPageState extends ConsumerState<ListingsPage> {
+class _SalesPageState extends ConsumerState<SalesPage> {
   void addListing(BuildContext context, CooperativeModel coop) {
     context.pushNamed(
       'add_listing',
@@ -51,7 +50,6 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
     return ref.watch(getCooperativeProvider(widget.coopId)).when(
           data: (CooperativeModel coop) {
             // Get all listings by the cooperative
-            debugPrintJson("File Name: listings_page.dart");
             return DefaultTabController(
               initialIndex: 0,
               length: 2,

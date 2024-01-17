@@ -13,6 +13,7 @@ import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -107,12 +108,21 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                             itemBuilder: (context, index) {
                               final expense = expenses[index];
                               return ListTile(
-                                title: Text(expense.name),
+                                title: Text(
+                                  expense.name,
+                                  style: const TextStyle(
+                                    fontSize: 14, // Set your desired font size
+                                    // Add other styling as needed
+                                  ),
+                                ),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize
                                       .min, // Keep the row tight around its children
                                   children: [
-                                    Text("₱${expense.cost.toString()}"),
+                                    Text(
+                                      "₱${expense.cost.toString()}",
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
                                     IconButton(
                                       icon: const Icon(Icons.delete),
                                       onPressed: () {
@@ -367,6 +377,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
           initialIndex: 0,
           length: tabs.length,
           child: Scaffold(
+            resizeToAvoidBottomInset: true,
             // Add appbar with back button
             appBar: _appBar(widget.listing.title, context),
             body: TabBarView(
@@ -545,30 +556,40 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
           ),
           const Divider(),
 
-          // Hosted by owner
-          ListTile(
-            leading: SizedBox(
-              height: 40,
-              width: 40,
-              child: DisplayImage(
-                  imageUrl:
-                      'cooperatives/${widget.listing.cooperative.cooperativeName}/download.jpg',
-                  height: 40,
-                  width: 40,
-                  radius: BorderRadius.circular(20)),
-            ),
-            // Contact owner
-            trailing: IconButton(
-              onPressed: () {
-                // Show snackbar with reviews
-                showSnackBar(context, 'Contact owner');
-              },
-              icon: const Icon(Icons.message_rounded),
-            ),
-            title: Text(
-                'Hosted by ${widget.listing.cooperative.cooperativeName}',
-                style: Theme.of(context).textTheme.labelLarge),
-          ),
+          ref
+              .watch(getCooperativeProvider(
+                  widget.listing.cooperative.cooperativeId))
+              .maybeWhen(
+                data: (coop) {
+                  return ListTile(
+                    leading: SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: DisplayImage(
+                          imageUrl: coop.imageUrl,
+                          height: 40,
+                          width: 40,
+                          radius: BorderRadius.circular(20)),
+                    ),
+                    // Contact owner
+                    trailing: IconButton(
+                      onPressed: () {
+                        // Show snackbar with reviews
+                        showSnackBar(context, 'Contact owner');
+                      },
+                      icon: const Icon(Icons.message_rounded),
+                    ),
+                    title: Text('Hosted by ${coop.name}',
+                        style: Theme.of(context).textTheme.labelLarge),
+                  );
+                },
+                orElse: () => const ListTile(
+                  leading: Icon(Icons.error),
+                  title: Text('Error'),
+                  subtitle: Text('Something went wrong'),
+                ),
+              ),
+
           const Divider(),
         ],
       ),
@@ -586,8 +607,6 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
               .map((listingImage) => listingImage.url)
               .toList();
           return Card(
-            color: Colors.white,
-            surfaceTintColor: Colors.transparent,
             elevation: 1.0, // Slight shadow for depth
             margin: const EdgeInsets.all(8.0), // Space around the card
             child: Column(
@@ -628,13 +647,15 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                     TextSpan(
                                       text:
                                           "₱${widget.listing.availableRooms![index].price}",
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontSize: 16, // Size for the price
                                           fontWeight: FontWeight
                                               .bold, // Bold for the price
-                                          color: Colors.black),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface),
                                     ),
-                                    const TextSpan(
+                                    TextSpan(
                                       text: " per night",
                                       style: TextStyle(
                                           fontSize:
@@ -643,7 +664,9 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                               .italic, // Italicized 'per night'
                                           fontWeight: FontWeight
                                               .normal, // Normal weight for 'per night'
-                                          color: Colors.black),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface),
                                     ),
                                   ],
                                 ),
@@ -808,17 +831,21 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                 );
                               },
                               child: RichText(
-                                text: const TextSpan(
+                                text: TextSpan(
                                   children: [
                                     TextSpan(
                                       text: "Room Details",
                                       style: TextStyle(
-                                          color: Colors.grey,
+                                          // color: Colors.grey,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withOpacity(0.5),
                                           fontStyle: FontStyle
                                               .italic // Underline for emphasis
                                           ),
                                     ),
-                                    WidgetSpan(
+                                    const WidgetSpan(
                                       child: Icon(
                                         Icons
                                             .keyboard_arrow_down, // Arrow pointing down icon
@@ -855,8 +882,6 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                   String formattedEndDate =
                       DateFormat('MMMM dd').format(bookings[index].endDate!);
                   return Card(
-                    color: Colors.white,
-                    surfaceTintColor: Colors.transparent,
                     elevation: 1.0, // Slight shadow for depth
                     margin: const EdgeInsets.all(8.0), // Space around the card
                     child: Column(
@@ -913,12 +938,14 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                             TextSpan(
                                               text:
                                                   "Guests: ${bookings[index].guests}",
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                   fontSize:
                                                       16, // Size for the price
                                                   fontWeight: FontWeight
                                                       .bold, // Bold for the price
-                                                  color: Colors.black),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface),
                                             ),
                                           ],
                                         ),
@@ -937,7 +964,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                               padding: const EdgeInsets.only(bottom: 10.0),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  var Expense = showAddExpenseDialog(
+                                  showAddExpenseDialog(
                                       context, bookings[index]);
                                 },
                                 child: const Text("Show Expenses"),

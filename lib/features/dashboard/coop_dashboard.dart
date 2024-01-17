@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/features/common/error.dart';
+import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
+import 'package:lakbay/features/sales/sales_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class CoopDashboard extends ConsumerStatefulWidget {
@@ -28,6 +32,7 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrintJson("File Name: coop_dashboard.dart");
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
@@ -38,17 +43,40 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
           appBar: AppBar(
             title: const Text('Coop Dashboard'),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ListView(
-              children: [
-                dashboardFunctions(context),
-                rowSummaryCards(12000, 500),
-                lineChart(),
-                const SizedBox(height: 16),
-              ],
-            ),
-          )),
+          body: ref.watch(getSalesProvider).when(
+                data: (sales) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ListView(
+                      children: [
+                        dashboardFunctions(context),
+                        rowSummaryCards(12000, 500),
+                        lineChart(),
+                        const SizedBox(height: 16),
+                        const Text("Sample Sales"),
+
+                        // ListView of listTile of sales name
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: sales.length,
+                          itemBuilder: (context, index) {
+                            final sale = sales[index];
+                            return ListTile(
+                              title: Text(sale.category),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                error: (error, stackTrace) => ErrorText(
+                  error: error.toString(),
+                  stackTrace: stackTrace.toString(),
+                ),
+                loading: () => const Loader(),
+              )),
     );
   }
 

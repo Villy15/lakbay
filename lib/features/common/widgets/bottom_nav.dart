@@ -116,7 +116,11 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         }
         break;
       case 1:
-        context.go('/trips');
+        if (widget.user?.isCoopView ?? false) {
+          context.go('/calendar');
+        } else {
+          context.go('/trips');
+        }
         break;
       case 2:
         if (widget.user?.isCoopView ?? false) {
