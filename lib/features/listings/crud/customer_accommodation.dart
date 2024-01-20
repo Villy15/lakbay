@@ -689,7 +689,6 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                 DateTime? endDate;
                                 DateTime? startDate = await showDatePicker(
                                     context: context,
-                                    initialDate: DateTime.now(),
                                     firstDate: DateTime(2000),
                                     lastDate: DateTime(2025),
                                     selectableDayPredicate: (DateTime day) {
@@ -959,21 +958,33 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                             ],
                           ),
                         ),
-                        Row(
-                          children: [
-                            const Spacer(), // Pushes the button to the right
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 10.0),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showAddExpenseDialog(
-                                      context, bookings[index]);
-                                },
-                                child: const Text("Show Expenses"),
-                              ),
-                            ),
-                          ],
-                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: ElevatedButton(
+                              onPressed: () {
+                                context.push(
+                                    '/market/${bookings[index].category}/booking_details',
+                                    extra: bookings[index]);
+                              },
+                              child: const Text("Booking Details")),
+                        )
+                        // Padding(
+                        //   padding: const EdgeInsets.only(bottom: 10.0),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        //     children: [
+                        //       ElevatedButton(
+                        //           onPressed: () {}, child: const Text("Tasks")),
+                        //       ElevatedButton(
+                        //         onPressed: () {
+                        //           showAddExpenseDialog(
+                        //               context, bookings[index]);
+                        //         },
+                        //         child: const Text("Show Expenses"),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                       ],
                     ),
                   );

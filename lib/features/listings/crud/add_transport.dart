@@ -126,6 +126,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                   price: num.parse(_feeController.text),
                   available: true);
               ListingModel listingModel = ListingModel(
+                  publisherName: "",
                   address: _addressController.text,
                   category: widget.category,
                   city: widget.coop.city,

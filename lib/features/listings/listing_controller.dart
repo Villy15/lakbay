@@ -98,7 +98,7 @@ class ListingController extends StateNotifier<bool> {
       },
       (bookingUid) async {
         state = false;
-        context.pop;
+        Navigator.pop(context);
         _ref.read(salesRepositoryProvider).addSale(SaleModel(
             bookingId: booking.id!,
             category: booking.category,

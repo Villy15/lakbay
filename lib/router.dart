@@ -32,6 +32,7 @@ import 'package:lakbay/features/events/crud/join_event.dart';
 import 'package:lakbay/features/events/events_page.dart';
 import 'package:lakbay/features/events/crud/add_event.dart';
 import 'package:lakbay/features/events/crud/edit_event.dart';
+import 'package:lakbay/features/listings/accommodation_booking_details.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/home/customer/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
@@ -55,6 +56,7 @@ import 'package:lakbay/features/tasks/event_tasks_edit.dart';
 import 'package:lakbay/features/tasks/event_tasks_read.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/task_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -152,7 +154,42 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           );
                       }
                     },
-                    routes: const [
+                    routes: [
+                      GoRoute(
+                          path: "booking_details",
+                          name: "booking_details",
+                          builder: (BuildContext context, GoRouterState state) {
+                            ListingBookings booking =
+                                state.extra as ListingBookings;
+                            switch (state.pathParameters["category"]) {
+                              case "Accommodation":
+                                return AccommodationBookingsDetails(
+                                  booking: booking,
+                                );
+
+                              // case "Transport":
+                              //   return CustomerTransportation(
+                              //     listing: listing,
+                              //   );
+                              // case "Food":
+                              //   return CustomerFood(
+                              //     listing: listing,
+                              //   );
+                              // case "Entertainment":
+                              //   return CustomerEntertainment(
+                              //     listing: listing,
+                              //   );
+                              // case "Touring":
+                              //   return SelectedTouringPage(
+                              //     listing: listing,
+                              //   );
+                              default:
+                                return AccommodationBookingsDetails(
+                                  booking: booking,
+                                );
+                            }
+                          })
+
                       // GoRoute(
                       //     path: 'listing_messages_inbox',
                       //     builder: (BuildContext context, GoRouterState state) {
@@ -395,9 +432,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           context: context,
                           state: state,
                           child: AddEntertainment(
-                            coop: coop,
-                            category: 'Entertainment'
-                          ),
+                              coop: coop, category: 'Entertainment'),
                           transitionType: SharedAxisTransitionType.vertical,
                         );
                       },

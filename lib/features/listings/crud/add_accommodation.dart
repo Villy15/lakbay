@@ -42,6 +42,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _addressController =
       TextEditingController(text: 'Eastwood City');
+  String mapAddress = "";
   List<File>? _images;
 
   List<List<File>> roomImages = [];
@@ -84,7 +85,6 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           .then((value) => value.fold(
                 (failure) => debugPrint('Failed to upload images: $failure'),
                 (imageUrls) async {
-                  debugPrint("thiese are images $ids");
                   ListingCooperative cooperative = ListingCooperative(
                       cooperativeId: widget.coop.uid!,
                       cooperativeName: widget.coop.name);
@@ -93,6 +93,13 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                       address: _addressController.text,
                       category: widget.category,
                       city: "",
+                      images: _images!.map((image) {
+                        final imagePath =
+                            'listings/${widget.coop.name}/${image.path.split('/').last}';
+                        return ListingImages(
+                          path: imagePath,
+                        );
+                      }).toList(),
                       cooperative: cooperative,
                       description: _descriptionController.text,
                       province: "",
@@ -924,7 +931,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                                   beds: beds,
                                   guests: guests,
                                   price: num.parse(priceController.text));
-                              setState(() {
+                              this.setState(() {
                                 int index = availableRooms.indexWhere(
                                     (element) =>
                                         element.roomId ==
@@ -934,7 +941,6 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                                 } else {
                                   availableRooms[index] = room;
                                 }
-                                debugPrint("this is the room $availableRooms");
                               });
                               context.pop();
                             },
@@ -962,7 +968,11 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           }),
       const SizedBox(height: 10),
       ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            mapAddress = _addressController.text;
+          });
+        },
         child: const Text('Update Map'),
       ),
 
@@ -971,7 +981,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
       // Google Map
       SizedBox(
         height: 400,
-        child: MapWidget(address: _addressController.text),
+        child: MapWidget(address: mapAddress),
       )
     ]);
   }
