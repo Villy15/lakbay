@@ -31,6 +31,7 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       price: json['price'] as num?,
       province: json['province'] as String,
       publisherId: json['publisherId'] as String,
+      publisherName: json['publisherName'] as String,
       rating: json['rating'] as num?,
       timestamp:
           const TimestampSerializer().fromJson(json['timestamp'] as Timestamp?),
@@ -71,6 +72,7 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'price': instance.price,
       'province': instance.province,
       'publisherId': instance.publisherId,
+      'publisherName': instance.publisherName,
       'rating': instance.rating,
       'timestamp': const TimestampSerializer().toJson(instance.timestamp),
       'title': instance.title,

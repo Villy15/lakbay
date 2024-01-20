@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_repository.dart';
+import 'package:lakbay/features/sales/sales_repository.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 // getListingsByCoop Family Provider
@@ -81,10 +84,10 @@ class ListingController extends StateNotifier<bool> {
     );
   }
 
-  void addBooking(
-      ListingBookings booking, String listingId, BuildContext context) async {
+  void addBooking(ListingBookings booking, ListingModel listing,
+      BuildContext context) async {
     state = true;
-    final result = await _listingRepository.addBooking(listingId, booking);
+    final result = await _listingRepository.addBooking(listing.uid!, booking);
 
     result.fold(
       (l) {
@@ -96,6 +99,20 @@ class ListingController extends StateNotifier<bool> {
       (bookingUid) async {
         state = false;
         context.pop;
+        _ref.read(salesRepositoryProvider).addSale(SaleModel(
+            bookingId: booking.id!,
+            category: booking.category,
+            cooperativeId: listing.cooperative.cooperativeId,
+            cooperativeName: listing.cooperative.cooperativeName,
+            customerId: _ref.read(userProvider)!.uid,
+            customerName: _ref.read(userProvider)!.name,
+            listingId: listing.uid!,
+            listingName: listing.title,
+            listingPrice: booking.price,
+            price: booking.totalPrice,
+            ownerId: listing.publisherId,
+            ownerName: listing.publisherName,
+            salePrice: booking.totalPrice));
         showSnackBar(context, 'Booking added successfully');
       },
     );

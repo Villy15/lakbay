@@ -328,6 +328,8 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                           child: ElevatedButton(
                             onPressed: () {
                               ListingBookings booking = ListingBookings(
+                                price: room.price,
+                                totalPrice: room.price,
                                 category: "Accommodation",
                                 roomId: room.roomId,
                                 startDate: startDate,
@@ -346,8 +348,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                               );
                               ref
                                   .read(listingControllerProvider.notifier)
-                                  .addBooking(
-                                      booking, widget.listing.uid!, context);
+                                  .addBooking(booking, widget.listing, context);
                             },
                             child: const Text('Proceed'),
                           ),
@@ -366,6 +367,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrintJson("File Name: customer_accommodation.dart");
     // final user = ref.watch(userProvider);
     return PopScope(
         canPop: false,
