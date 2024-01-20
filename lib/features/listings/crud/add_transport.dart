@@ -119,7 +119,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              print(widget.coop.uid);
+              // print(widget.coop.uid);
               AvailableTransport transport = AvailableTransport(
                   guests: guests,
                   luggage: luggage,
@@ -135,13 +135,12 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                   description: _descriptionController.text,
                   province: widget.coop.province,
                   publisherId: "",
-                  publisherName: "",
                   title: _titleController.text,
                   type: type,
                   images:
                       _images?.map((e) => ListingImages(path: e.path)).toList(),
                   availableTransport: transport);
-              print('this is the current transport $transport');
+              //print('this is the current transport $transport');
               ref
                   .read(saveListingProvider.notifier)
                   .saveListingProvider(listingModel);
