@@ -34,6 +34,7 @@ mixin _$ListingModel {
   num? get price => throw _privateConstructorUsedError;
   String get province => throw _privateConstructorUsedError;
   String get publisherId => throw _privateConstructorUsedError;
+  String get publisherName => throw _privateConstructorUsedError;
   num? get rating => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get timestamp => throw _privateConstructorUsedError;
@@ -75,6 +76,7 @@ abstract class $ListingModelCopyWith<$Res> {
       num? price,
       String province,
       String publisherId,
+      String publisherName,
       num? rating,
       @TimestampSerializer() DateTime? timestamp,
       String title,
@@ -117,6 +119,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? price = freezed,
     Object? province = null,
     Object? publisherId = null,
+    Object? publisherName = null,
     Object? rating = freezed,
     Object? timestamp = freezed,
     Object? title = null,
@@ -184,6 +187,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
       publisherId: null == publisherId
           ? _value.publisherId
           : publisherId // ignore: cast_nullable_to_non_nullable
+              as String,
+      publisherName: null == publisherName
+          ? _value.publisherName
+          : publisherName // ignore: cast_nullable_to_non_nullable
               as String,
       rating: freezed == rating
           ? _value.rating
@@ -273,6 +280,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       num? price,
       String province,
       String publisherId,
+      String publisherName,
       num? rating,
       @TimestampSerializer() DateTime? timestamp,
       String title,
@@ -315,6 +323,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? price = freezed,
     Object? province = null,
     Object? publisherId = null,
+    Object? publisherName = null,
     Object? rating = freezed,
     Object? timestamp = freezed,
     Object? title = null,
@@ -383,6 +392,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.publisherId
           : publisherId // ignore: cast_nullable_to_non_nullable
               as String,
+      publisherName: null == publisherName
+          ? _value.publisherName
+          : publisherName // ignore: cast_nullable_to_non_nullable
+              as String,
       rating: freezed == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
@@ -445,6 +458,7 @@ class _$ListingModelImpl implements _ListingModel {
       this.price,
       required this.province,
       required this.publisherId,
+      required this.publisherName,
       this.rating,
       @TimestampSerializer() this.timestamp,
       required this.title,
@@ -527,6 +541,8 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   final String publisherId;
   @override
+  final String publisherName;
+  @override
   final num? rating;
   @override
   @TimestampSerializer()
@@ -575,7 +591,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, city: $city, cooperative: $cooperative, description: $description, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, pax: $pax, price: $price, province: $province, publisherId: $publisherId, rating: $rating, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, city: $city, cooperative: $cooperative, description: $description, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
   }
 
   @override
@@ -606,6 +622,8 @@ class _$ListingModelImpl implements _ListingModel {
                 other.province == province) &&
             (identical(other.publisherId, publisherId) ||
                 other.publisherId == publisherId) &&
+            (identical(other.publisherName, publisherName) ||
+                other.publisherName == publisherName) &&
             (identical(other.rating, rating) || other.rating == rating) &&
             (identical(other.timestamp, timestamp) ||
                 other.timestamp == timestamp) &&
@@ -641,6 +659,7 @@ class _$ListingModelImpl implements _ListingModel {
         price,
         province,
         publisherId,
+        publisherName,
         rating,
         timestamp,
         title,
@@ -683,6 +702,7 @@ abstract class _ListingModel implements ListingModel {
       final num? price,
       required final String province,
       required final String publisherId,
+      required final String publisherName,
       final num? rating,
       @TimestampSerializer() final DateTime? timestamp,
       required final String title,
@@ -725,6 +745,8 @@ abstract class _ListingModel implements ListingModel {
   String get province;
   @override
   String get publisherId;
+  @override
+  String get publisherName;
   @override
   num? get rating;
   @override
@@ -1894,6 +1916,7 @@ mixin _$EntertainmentService {
   String get entertainmentId => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
+  bool get available => throw _privateConstructorUsedError;
   List<ListingImages> get entertainmentImgs =>
       throw _privateConstructorUsedError;
 
@@ -1913,6 +1936,7 @@ abstract class $EntertainmentServiceCopyWith<$Res> {
       {String entertainmentId,
       num guests,
       num price,
+      bool available,
       List<ListingImages> entertainmentImgs});
 }
 
@@ -1933,6 +1957,7 @@ class _$EntertainmentServiceCopyWithImpl<$Res,
     Object? entertainmentId = null,
     Object? guests = null,
     Object? price = null,
+    Object? available = null,
     Object? entertainmentImgs = null,
   }) {
     return _then(_value.copyWith(
@@ -1948,6 +1973,10 @@ class _$EntertainmentServiceCopyWithImpl<$Res,
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as num,
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
       entertainmentImgs: null == entertainmentImgs
           ? _value.entertainmentImgs
           : entertainmentImgs // ignore: cast_nullable_to_non_nullable
@@ -1968,6 +1997,7 @@ abstract class _$$EntertainmentServiceImplCopyWith<$Res>
       {String entertainmentId,
       num guests,
       num price,
+      bool available,
       List<ListingImages> entertainmentImgs});
 }
 
@@ -1985,6 +2015,7 @@ class __$$EntertainmentServiceImplCopyWithImpl<$Res>
     Object? entertainmentId = null,
     Object? guests = null,
     Object? price = null,
+    Object? available = null,
     Object? entertainmentImgs = null,
   }) {
     return _then(_$EntertainmentServiceImpl(
@@ -2000,6 +2031,10 @@ class __$$EntertainmentServiceImplCopyWithImpl<$Res>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as num,
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
       entertainmentImgs: null == entertainmentImgs
           ? _value._entertainmentImgs
           : entertainmentImgs // ignore: cast_nullable_to_non_nullable
@@ -2015,6 +2050,7 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
       {required this.entertainmentId,
       required this.guests,
       required this.price,
+      required this.available,
       required final List<ListingImages> entertainmentImgs})
       : _entertainmentImgs = entertainmentImgs;
 
@@ -2027,6 +2063,8 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
   final num guests;
   @override
   final num price;
+  @override
+  final bool available;
   final List<ListingImages> _entertainmentImgs;
   @override
   List<ListingImages> get entertainmentImgs {
@@ -2038,7 +2076,7 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
 
   @override
   String toString() {
-    return 'EntertainmentService(entertainmentId: $entertainmentId, guests: $guests, price: $price, entertainmentImgs: $entertainmentImgs)';
+    return 'EntertainmentService(entertainmentId: $entertainmentId, guests: $guests, price: $price, available: $available, entertainmentImgs: $entertainmentImgs)';
   }
 
   @override
@@ -2050,6 +2088,8 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
                 other.entertainmentId == entertainmentId) &&
             (identical(other.guests, guests) || other.guests == guests) &&
             (identical(other.price, price) || other.price == price) &&
+            (identical(other.available, available) ||
+                other.available == available) &&
             const DeepCollectionEquality()
                 .equals(other._entertainmentImgs, _entertainmentImgs));
   }
@@ -2057,7 +2097,7 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, entertainmentId, guests, price,
-      const DeepCollectionEquality().hash(_entertainmentImgs));
+      available, const DeepCollectionEquality().hash(_entertainmentImgs));
 
   @JsonKey(ignore: true)
   @override
@@ -2080,6 +2120,7 @@ abstract class _EntertainmentService implements EntertainmentService {
           {required final String entertainmentId,
           required final num guests,
           required final num price,
+          required final bool available,
           required final List<ListingImages> entertainmentImgs}) =
       _$EntertainmentServiceImpl;
 
@@ -2092,6 +2133,8 @@ abstract class _EntertainmentService implements EntertainmentService {
   num get guests;
   @override
   num get price;
+  @override
+  bool get available;
   @override
   List<ListingImages> get entertainmentImgs;
   @override

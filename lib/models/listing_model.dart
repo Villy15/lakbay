@@ -22,6 +22,7 @@ class ListingModel with _$ListingModel {
     num? price,
     required String province,
     required String publisherId,
+    required String publisherName,
     num? rating,
     @TimestampSerializer() DateTime? timestamp,
     required String title,
@@ -88,13 +89,13 @@ class AvailableRoom with _$AvailableRoom {
       _$AvailableRoomFromJson(json);
 }
 
-@freezed class AvailableTransport with _$AvailableTransport {
-  factory AvailableTransport({
-    required bool available,
-    required num guests,
-    required num price,
-    required num luggage
-  }) = _AvailableTransport;
+@freezed
+class AvailableTransport with _$AvailableTransport {
+  factory AvailableTransport(
+      {required bool available,
+      required num guests,
+      required num price,
+      required num luggage}) = _AvailableTransport;
 
   factory AvailableTransport.fromJson(Map<String, dynamic> json) =>
       _$AvailableTransportFromJson(json);
@@ -102,11 +103,10 @@ class AvailableRoom with _$AvailableRoom {
 
 @freezed
 class FoodService with _$FoodService {
-  factory FoodService({
-    required String tableId,
-    required num guests,
-    required bool isReserved
-  }) = _FoodService;
+  factory FoodService(
+      {required String tableId,
+      required num guests,
+      required bool isReserved}) = _FoodService;
 
   factory FoodService.fromJson(Map<String, dynamic> json) =>
       _$FoodServiceFromJson(json);
@@ -114,12 +114,12 @@ class FoodService with _$FoodService {
 
 @freezed
 class EntertainmentService with _$EntertainmentService {
-  factory EntertainmentService({
-    required String entertainmentId,
-    required num guests,
-    required num price,
-    required List<ListingImages> entertainmentImgs
-  }) = _EntertainmentService;
+  factory EntertainmentService(
+      {required String entertainmentId,
+      required num guests,
+      required num price,
+      required bool available,
+      required List<ListingImages> entertainmentImgs}) = _EntertainmentService;
 
   factory EntertainmentService.fromJson(Map<String, dynamic> json) =>
       _$EntertainmentServiceFromJson(json);

@@ -15,7 +15,7 @@ class SaleModel with _$SaleModel {
     num? expenses,
     required String listingId,
     required String listingName,
-    required String listingPrice,
+    required num listingPrice,
     required num price,
     required String ownerId,
     required String ownerName,

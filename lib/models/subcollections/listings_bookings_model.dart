@@ -19,10 +19,12 @@ class ListingBookings with _$ListingBookings {
     String? id,
     required bool needsContributions,
     required String phoneNo,
+    required num price,
     required String roomId,
     @TimestampSerializer() DateTime? selectedDate,
     String? selectedTime,
     @TimestampSerializer() DateTime? startDate,
+    required num totalPrice,
     String? typeOfTrip,
     required String userId,
   }) = _ListingBookings;
