@@ -34,6 +34,7 @@ mixin _$ListingModel {
   num? get price => throw _privateConstructorUsedError;
   String get province => throw _privateConstructorUsedError;
   String get publisherId => throw _privateConstructorUsedError;
+  String get publisherName => throw _privateConstructorUsedError;
   num? get rating => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get timestamp => throw _privateConstructorUsedError;
@@ -75,6 +76,7 @@ abstract class $ListingModelCopyWith<$Res> {
       num? price,
       String province,
       String publisherId,
+      String publisherName,
       num? rating,
       @TimestampSerializer() DateTime? timestamp,
       String title,
@@ -117,6 +119,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? price = freezed,
     Object? province = null,
     Object? publisherId = null,
+    Object? publisherName = null,
     Object? rating = freezed,
     Object? timestamp = freezed,
     Object? title = null,
@@ -184,6 +187,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
       publisherId: null == publisherId
           ? _value.publisherId
           : publisherId // ignore: cast_nullable_to_non_nullable
+              as String,
+      publisherName: null == publisherName
+          ? _value.publisherName
+          : publisherName // ignore: cast_nullable_to_non_nullable
               as String,
       rating: freezed == rating
           ? _value.rating
@@ -273,6 +280,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       num? price,
       String province,
       String publisherId,
+      String publisherName,
       num? rating,
       @TimestampSerializer() DateTime? timestamp,
       String title,
@@ -315,6 +323,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? price = freezed,
     Object? province = null,
     Object? publisherId = null,
+    Object? publisherName = null,
     Object? rating = freezed,
     Object? timestamp = freezed,
     Object? title = null,
@@ -383,6 +392,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.publisherId
           : publisherId // ignore: cast_nullable_to_non_nullable
               as String,
+      publisherName: null == publisherName
+          ? _value.publisherName
+          : publisherName // ignore: cast_nullable_to_non_nullable
+              as String,
       rating: freezed == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
@@ -445,6 +458,7 @@ class _$ListingModelImpl implements _ListingModel {
       this.price,
       required this.province,
       required this.publisherId,
+      required this.publisherName,
       this.rating,
       @TimestampSerializer() this.timestamp,
       required this.title,
@@ -527,6 +541,8 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   final String publisherId;
   @override
+  final String publisherName;
+  @override
   final num? rating;
   @override
   @TimestampSerializer()
@@ -575,7 +591,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, city: $city, cooperative: $cooperative, description: $description, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, pax: $pax, price: $price, province: $province, publisherId: $publisherId, rating: $rating, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, city: $city, cooperative: $cooperative, description: $description, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
   }
 
   @override
@@ -606,6 +622,8 @@ class _$ListingModelImpl implements _ListingModel {
                 other.province == province) &&
             (identical(other.publisherId, publisherId) ||
                 other.publisherId == publisherId) &&
+            (identical(other.publisherName, publisherName) ||
+                other.publisherName == publisherName) &&
             (identical(other.rating, rating) || other.rating == rating) &&
             (identical(other.timestamp, timestamp) ||
                 other.timestamp == timestamp) &&
@@ -641,6 +659,7 @@ class _$ListingModelImpl implements _ListingModel {
         price,
         province,
         publisherId,
+        publisherName,
         rating,
         timestamp,
         title,
@@ -683,6 +702,7 @@ abstract class _ListingModel implements ListingModel {
       final num? price,
       required final String province,
       required final String publisherId,
+      required final String publisherName,
       final num? rating,
       @TimestampSerializer() final DateTime? timestamp,
       required final String title,
@@ -725,6 +745,8 @@ abstract class _ListingModel implements ListingModel {
   String get province;
   @override
   String get publisherId;
+  @override
+  String get publisherName;
   @override
   num? get rating;
   @override

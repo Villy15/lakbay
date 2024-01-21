@@ -23,12 +23,14 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
       id: json['id'] as String?,
       needsContributions: json['needsContributions'] as bool,
       phoneNo: json['phoneNo'] as String,
+      price: json['price'] as num,
       roomId: json['roomId'] as String,
       selectedDate: const TimestampSerializer()
           .fromJson(json['selectedDate'] as Timestamp?),
       selectedTime: json['selectedTime'] as String?,
       startDate:
           const TimestampSerializer().fromJson(json['startDate'] as Timestamp?),
+      totalPrice: json['totalPrice'] as num,
       typeOfTrip: json['typeOfTrip'] as String?,
       userId: json['userId'] as String,
     );
@@ -47,10 +49,12 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'id': instance.id,
       'needsContributions': instance.needsContributions,
       'phoneNo': instance.phoneNo,
+      'price': instance.price,
       'roomId': instance.roomId,
       'selectedDate': const TimestampSerializer().toJson(instance.selectedDate),
       'selectedTime': instance.selectedTime,
       'startDate': const TimestampSerializer().toJson(instance.startDate),
+      'totalPrice': instance.totalPrice,
       'typeOfTrip': instance.typeOfTrip,
       'userId': instance.userId,
     };
