@@ -77,6 +77,19 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         ),
       ),
     ),
+     const SizedBox(
+      width: 150.0,
+      child: Tab(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.travel_explore_outlined),
+            SizedBox(width: 4.0),
+            Text('Wiki'),
+          ],
+        ),
+      ),
+    ),
   ];
 
   @override
