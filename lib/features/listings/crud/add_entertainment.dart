@@ -1,16 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/listing_model.dart';
 
 class AddEntertainment extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -30,9 +34,8 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   int upperBound = 6;
 
   // initial values
-  String type = 'Nature-Based';
+  String type = 'Recreational/Rentals';
   num guests = 0;
-  final List<File> _entertainmentImgs = [];
   List<File>? _listingImgs = [];
   
 
@@ -40,10 +43,128 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _addressController = TextEditingController(text: 'Eastwood City');
-  
-  // controller values for supporting details
-  final TextEditingController _entertainmentNameController = TextEditingController();
+  final TextEditingController _unitsController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _capacityController = TextEditingController();
+  final TextEditingController _durationController = TextEditingController();
+  final TextEditingController _guestInfoController = TextEditingController();
+  TimeOfDay _selectedOpeningHours = TimeOfDay.now();
+  TimeOfDay _selectedClosingHours = TimeOfDay.now(); 
+
+// void submitAddListing() {
+//   if (_formKey.currentState!.validate()) {
+//     _formKey.currentState!.save();
+
+//     ref
+//         .read(storageRepositoryProvider)
+//         .storeFiles(
+//           path: 'listings/${widget.coop.name}',
+//           ids: _listingImgs!.map((image) => image.path.split('/').last).toList(),
+//           files: _listingImgs!,
+//         )
+//         .then((value) => value.fold(
+//               (failure) => debugPrint('Failed to upload images: $failure'),
+//               (imageUrls) async {
+//                 ListingCooperative cooperative = ListingCooperative(
+//                     cooperativeId: widget.coop.uid!,
+//                     cooperativeName: widget.coop.name);
+
+//                 // Prepare data for ListingModel
+//                 ListingModel listing = ListingModel(
+//                   address: _addressController.text,
+//                   category: widget.category,
+//                   description: _descriptionController.text,
+//                   title: _titleController.text,
+//                   type: type,
+//                   city: "",
+//                   province: "",
+//                   images: _listingImgs!.map((image) {
+//                     final imagePath =
+//                         'listings/${widget.coop.name}/${image.path.split('/').last}';
+//                     return ListingImages(path: imagePath);
+//                   }).toList(),
+//                   cooperative: cooperative,
+//                   publisherId: ref.read(userProvider)!.uid,
+//                   publisherName: ref.read(userProvider)!.name,
+//                   price: num.parse(_priceController.text),
+//                   pax: int.parse(_capacityController.text),
+//                   numberOfUnits: int.parse(_unitsController.text),
+//                   duration: _durationController.text,
+//                   operatingHours: {
+//                     'opening': _selectedOpeningHours.format(context),
+//                     'closing': _selectedClosingHours.format(context),
+//                   },
+//                   guestInfo: _guestInfoController.text,
+//                 );
+
+//                 // Additional processing if needed (e.g., processing room images)
+//                 listing = await processRoomImages(listing);
+
+//                 // Update image URLs in the listing model
+//                 listing = listing.copyWith(
+//                   images: listing.images!.asMap().entries.map((entry) {
+//                     return entry.value.copyWith(url: imageUrls[entry.key]);
+//                   }).toList(),
+//                 );
+
+//                 debugPrintJson(listing);
+
+//                 if (mounted) {
+//                   // Call the addListing method with the updated listing model
+//                   ref
+//                       .read(listingControllerProvider.notifier)
+//                       .addListing(listing, context);
+//                 }
+//               },
+//             ));
+//   }
+// }
+
+// Future<ListingModel> processImages(ListingModel listing) async {
+//   final imagePath = 'listings/${widget.coop.name}';
+//   final ids = listing.images!
+//       .map((image) => image.path.split('/').last)
+//       .toList();
+
+//   await ref
+//       .read(storageRepositoryProvider)
+//       .storeFiles(
+//         path: imagePath,
+//         ids: ids,
+//         files: listing.images!,
+//       )
+//       .then(
+//         (value) => value.fold(
+//           (failure) => debugPrint('Failed to upload images: $failure'),
+//           (imageUrls) {
+//             // Update the images in the listing model
+//             listing = listing.copyWith(
+//               images: listing.images!
+//                   .asMap()
+//                   .map((imageIndex, image) {
+//                     // Ensure we have a URL for each image
+//                     if (imageIndex < imageUrls.length) {
+//                       return MapEntry(
+//                           imageIndex,
+//                           image.copyWith(
+//                               url: imageUrls[imageIndex]));
+//                     }
+//                     return MapEntry(imageIndex, image);
+//                   })
+//                   .values
+//                   .toList(),
+//             );
+
+//             debugPrintJson(listing);
+//           },
+//         ),
+//       );
+
+//   return listing;
+// }
+
+
+
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(listingControllerProvider);
@@ -110,10 +231,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               Icons.question_mark_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
-            Icon(
-              Icons.summarize_outlined,
-              color: Theme.of(context).colorScheme.background,
-            ),
           ],
 
           // activeStep property set to activeStep variable defined above.
@@ -137,16 +254,13 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       case 1:
         return addDetails(context);
       case 2:
-        return addSuppDetails(context);
-      case 3:
         return addLocation(context);
-      case 4:
+      case 3:
         return addListingPhotos(context);
-      case 5:
+      case 4:
         return addGuestInfo(context);
-      case 6:
+      case 5:
         return reviewListing(context);
-
       default :
         return chooseType(context);
     }
@@ -156,7 +270,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
         const SizedBox(height: 10),
         TextFormField(
           controller: _titleController,
@@ -164,175 +277,109 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             labelText: 'Listing Title*',
             helperText: '*required',
             border: OutlineInputBorder(),
-            floatingLabelBehavior: 
-              FloatingLabelBehavior.always,
-            hintText: "Name of Listing"
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Name of Listing",
           ),
         ),
         const SizedBox(height: 10),
         TextFormField(
           controller: _descriptionController,
-          maxLines: null, 
+          maxLines: null,
           decoration: const InputDecoration(
             labelText: 'Description*',
             helperText: '*required',
             border: OutlineInputBorder(),
-            floatingLabelBehavior: 
-              FloatingLabelBehavior.always,
-            hintText: "Description of Listing"
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Description of Listing",
           ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _priceController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Price*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Price per person",
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _unitsController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Number of Units*',
+            helperText: '*optional',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Number of Units",
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _capacityController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Capacity*',
+            helperText: '*optional',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Capacity",
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _durationController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Duration*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Duration",
+          ),
+        ),
+           const SizedBox(height: 10),
+        ListTile(
+          title: const Text('Starting/Opening Hours*'),
+          subtitle: Text(
+            'Selected Time: ${_selectedOpeningHours.format(context)}',
+          ),
+          onTap: () async {
+            TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: _selectedOpeningHours,
+            );
+            if (picked != _selectedOpeningHours) {
+              setState(() {
+                _selectedOpeningHours = picked!;
+              });
+            }
+          },
+        ),
+        
+        const SizedBox(height: 10),
+        ListTile(
+          title: const Text('End/Closing Hours*'),
+          subtitle: Text(
+            'Selected Time: ${_selectedClosingHours.format(context)}',
+          ),
+          onTap: () async {
+            TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: _selectedClosingHours,
+            );
+            if (picked != _selectedClosingHours) {
+              setState(() {
+                _selectedClosingHours = picked!;
+              });
+            }
+          },
         ),
       ],
     );
-  }
-
-  Widget addSuppDetails(BuildContext context) {
-    return Column(
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            showModalBottomSheet(
-              isScrollControlled: true,
-              context: context, 
-              builder: (BuildContext context) {
-                return entertainmentSheet();
-              }
-            );
-          },
-          child: const Text('Add Entertainment/s')
-        )
-      ]
-    );
-  }
-
-  StatefulBuilder entertainmentSheet() {
-    return StatefulBuilder(
-                builder: (context, setState) {
-                  return Container(
-                    margin: const EdgeInsets.only(top: 20), 
-                    height: MediaQuery.sizeOf(context).height / 1.3,
-                    width: double.infinity,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const Text('Add photo/s here: '),
-                          ImagePickerFormField(
-                            context: context, 
-                            height: MediaQuery.sizeOf(context).height / 6.5, 
-                            width: MediaQuery.sizeOf(context).width / 1.7, 
-                            onSaved: (List<File>? files) {
-                              _entertainmentImgs.addAll(files!);
-                            },
-                            validator: (List<File>? files) {
-                              if (files == null || files.isEmpty) {
-                                return 'Please select some images';
-                              }
-                              return null;
-                            },
-                            onImagesSelected: (List<File> files) {
-                              _entertainmentImgs.addAll(files);
-                            },
-                          ),
-                          const SizedBox(height: 10),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              controller: _entertainmentNameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Entertainment Name*',
-                                helperText: '*required',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior: 
-                                  FloatingLabelBehavior.always,
-                                hintText: "Name of Entertainment"
-                              ),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              }
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              controller: _priceController,
-                              decoration: const InputDecoration(
-                                labelText: 'Price*',
-                                helperText: '*required',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior: 
-                                  FloatingLabelBehavior.always,
-                                hintText: "Price of Entertainment"
-                              ),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              }
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          ListTile(
-                            title: const Row(
-                              children: [
-                                Icon(Icons.people_alt_outlined),
-                                SizedBox(width: 10),
-                                Text('Guests')
-                              ]
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.remove), 
-                                  onPressed: () {
-                                    setState(() {
-                                      if (guests >= 1) {
-                                        guests--;
-                                      }
-                                    });
-                                  }
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  '$guests',
-                                  style: const TextStyle(fontSize: 16)
-                                ),
-                                const SizedBox(width: 10),
-                                IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    setState(() {
-                                      guests++;
-                                    });
-                                  }
-                                )
-                              ]
-                            )
-                          ),
-                          const SizedBox(height: 60),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _entertainmentImgs.clear();
-                                _entertainmentNameController.clear();
-                                _priceController.clear();
-                                guests = 0;
-                              });
-                              context.pop();
-                            },
-                            child: const Text('Add Entertainment Service')
-                          )
-                        ]
-                      )
-                    )
-                  );
-                }
-              );
   }
 
   Widget addLocation(BuildContext context) {
@@ -412,7 +459,22 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   }
 
   Widget addGuestInfo(BuildContext context) {
-    return const Column();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _guestInfoController, // Create a new TextEditingController for guest info
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Guest Information',
+            helperText: 'Enter additional information for guests (optional)',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget reviewListing(BuildContext context) {
@@ -455,44 +517,70 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           subtitle: Text(type)
         ),
         const Divider(),
-        // Step 1
-        ListTile(
-          title: const Text(
-            'Title',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(_titleController.text)
+      // Step 1
+      ListTile(
+        title: const Text(
+          'Title',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        ListTile(
-          title: const Text('Description',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(_descriptionController.text),
+        subtitle: Text(_titleController.text),
+      ),
+      ListTile(
+        title: const Text('Description',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        subtitle: Text(_descriptionController.text),
+      ),
+
+      const Divider(),
+      ListTile(
+        title: const Text('Price',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        subtitle: Text(_priceController.text),
+      ),
+      ListTile(
+        title: const Text('Number of Units',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        subtitle: Text(_unitsController.text),
+      ),
+      ListTile(
+        title: const Text('Capacity',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        subtitle: Text(_capacityController.text),
+      ),
+      ListTile(
+        title: const Text('Duration',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        subtitle: Text(_durationController.text),
+      ),
+      ListTile(
+        title: const Text('Start/Opening: ',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        subtitle: Text(
+          'Selected Time: ${_selectedOpeningHours.format(context)}',
         ),
-        
-        const Divider(),
-        ListTile(
-          title: const Text('Guest Capacity',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text("$guests"),
+      ),
+      ListTile(
+        title: const Text('End/Closing: ',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        subtitle: Text(
+          'Selected Time: ${_selectedClosingHours.format(context)}',
         ),
-        
-        
-        
-        
+      ),
+       ListTile(
+        title: const Text(
+          'Guest Information',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(_guestInfoController.text),
+      ),
       ]
     );
   }
 
   Widget chooseType(BuildContext context) {
     List<Map<String, dynamic>> types = [
-      {'name': 'Nature-Based', 'icon': Icons.forest_outlined},
-      {'name': 'Cultural', 'icon': Icons.diversity_2_outlined},
-      {'name': 'Sun and Beach', 'icon': Icons.beach_access_outlined},
-      {
-        'name': 'Health, Wellness, and Retirement',
-        'icon': Icons.local_hospital_outlined
-      },
-      {'name': 'Diving and Marine Sports', 'icon': Icons.scuba_diving_outlined},
+      {'name': 'Recreational/Rentals', 'icon': Icons.directions_bike},
+      {'name': 'Watching/Performances', 'icon': Icons.music_note},
     ];
 
     return Column(
@@ -583,16 +671,13 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       case 1:
         return 'Add details';
       case 2:
-        return 'Add supporting details';
-      case 3:
         return 'Where are you located?';
-      case 4:
+      case 3:
         return 'Add listing photo/s';
-      case 5:
+      case 4:
         return 'What do you want the guest/s to know?';
-      case 6:
+      case 5:
         return 'Review Listing';
-
       default:
         return 'Choose Type';
     }
