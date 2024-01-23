@@ -203,7 +203,7 @@ class CoopsController extends StateNotifier<bool> {
 
         state = false;
         showSnackBar(context, 'Cooperative joined successfully');
-        context.go('/manager_dashboard');
+        context.go('/today');
         _ref.read(navBarVisibilityProvider.notifier).show();
         _ref.read(bottomNavBarProvider.notifier).setPosition(0);
       },

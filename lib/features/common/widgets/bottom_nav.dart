@@ -110,7 +110,7 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
     switch (index) {
       case 0:
         if (widget.user?.isCoopView ?? false) {
-          context.go('/manager_dashboard');
+          context.go('/today');
         } else {
           context.go('/customer_home');
         }
