@@ -90,10 +90,8 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 //                   pax: int.parse(_capacityController.text),
 //                   numberOfUnits: int.parse(_unitsController.text),
 //                   duration: _durationController.text,
-//                   operatingHours: {
-//                     'opening': _selectedOpeningHours.format(context),
-//                     'closing': _selectedClosingHours.format(context),
-//                   },
+//                   openingHours: _selectedOpeningHours,
+//                   closingHours: _selectedClosingHours,
 //                   guestInfo: _guestInfoController.text,
 //                 );
 

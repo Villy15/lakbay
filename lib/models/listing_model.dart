@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:lakbay/core/util/utils.dart';
+import 'package:flutter/material.dart';
 
 part 'listing_model.freezed.dart';
 part 'listing_model.g.dart';
@@ -15,9 +16,13 @@ class ListingModel with _$ListingModel {
     required String city,
     required ListingCooperative cooperative,
     required String description,
+    num? duration,
     List<ListingImages>? images,
     bool? isPublished,
     List<ListingCost>? listingCosts,
+    num? numberOfUnits,
+    TimeOfDay? openingHours,
+    TimeOfDay? closingHours,
     num? pax,
     num? price,
     required String province,
