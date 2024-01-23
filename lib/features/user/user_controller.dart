@@ -80,7 +80,7 @@ class UsersController extends StateNotifier<bool> {
         context.pop();
 
         if (user.isCoopView ?? false) {
-          context.go('/manager_dashboard');
+          context.go('/today');
         } else {
           context.go('/customer_home');
         }
