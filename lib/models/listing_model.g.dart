@@ -16,6 +16,10 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           ?.map((e) => AvailableRoom.fromJson(e as Map<String, dynamic>))
           .toList(),
       category: json['category'] as String,
+      checkIn:
+          const TimestampSerializer().fromJson(json['checkIn'] as Timestamp?),
+      checkOut:
+          const TimestampSerializer().fromJson(json['checkOut'] as Timestamp?),
       city: json['city'] as String,
       cooperative: ListingCooperative.fromJson(
           json['cooperative'] as Map<String, dynamic>),
@@ -62,6 +66,8 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'availableRooms':
           instance.availableRooms?.map((e) => e.toJson()).toList(),
       'category': instance.category,
+      'checkIn': const TimestampSerializer().toJson(instance.checkIn),
+      'checkOut': const TimestampSerializer().toJson(instance.checkOut),
       'city': instance.city,
       'cooperative': instance.cooperative.toJson(),
       'description': instance.description,

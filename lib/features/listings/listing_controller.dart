@@ -118,6 +118,20 @@ class ListingController extends StateNotifier<bool> {
     );
   }
 
+  void updateListing(BuildContext context, ListingModel listing) {
+    state = true;
+    _listingRepository.updateListing(listing).then((result) {
+      state = false;
+      result.fold(
+        (l) => showSnackBar(context, l.message),
+        (r) {
+          context.pop();
+          showSnackBar(context, 'Listing Updated');
+        },
+      );
+    });
+  }
+
   void updateBookingExpenses(
       BuildContext context, String listingId, ListingBookings booking) {
     state = true;

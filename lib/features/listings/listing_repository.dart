@@ -6,6 +6,7 @@ import 'package:lakbay/core/constants/firebase_constants.dart';
 import 'package:lakbay/core/failure.dart';
 import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/typdef.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -28,6 +29,18 @@ class ListingRepository {
       await doc.set(listing.toJson());
 
       return right(listing.uid!);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Update
+  FutureVoid updateListing(ListingModel listing) async {
+    debugPrintJson(listing);
+    try {
+      return right(await _listings.doc(listing.uid!).update(listing.toJson()));
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {

@@ -24,6 +24,10 @@ mixin _$ListingModel {
   List<AvailableDate>? get availableDates => throw _privateConstructorUsedError;
   List<AvailableRoom>? get availableRooms => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get checkIn => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get checkOut => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
   ListingCooperative get cooperative => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
@@ -66,6 +70,8 @@ abstract class $ListingModelCopyWith<$Res> {
       List<AvailableDate>? availableDates,
       List<AvailableRoom>? availableRooms,
       String category,
+      @TimestampSerializer() DateTime? checkIn,
+      @TimestampSerializer() DateTime? checkOut,
       String city,
       ListingCooperative cooperative,
       String description,
@@ -109,6 +115,8 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? availableDates = freezed,
     Object? availableRooms = freezed,
     Object? category = null,
+    Object? checkIn = freezed,
+    Object? checkOut = freezed,
     Object? city = null,
     Object? cooperative = null,
     Object? description = null,
@@ -148,6 +156,14 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
               as String,
+      checkIn: freezed == checkIn
+          ? _value.checkIn
+          : checkIn // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      checkOut: freezed == checkOut
+          ? _value.checkOut
+          : checkOut // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       city: null == city
           ? _value.city
           : city // ignore: cast_nullable_to_non_nullable
@@ -270,6 +286,8 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       List<AvailableDate>? availableDates,
       List<AvailableRoom>? availableRooms,
       String category,
+      @TimestampSerializer() DateTime? checkIn,
+      @TimestampSerializer() DateTime? checkOut,
       String city,
       ListingCooperative cooperative,
       String description,
@@ -313,6 +331,8 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? availableDates = freezed,
     Object? availableRooms = freezed,
     Object? category = null,
+    Object? checkIn = freezed,
+    Object? checkOut = freezed,
     Object? city = null,
     Object? cooperative = null,
     Object? description = null,
@@ -352,6 +372,14 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
               as String,
+      checkIn: freezed == checkIn
+          ? _value.checkIn
+          : checkIn // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      checkOut: freezed == checkOut
+          ? _value.checkOut
+          : checkOut // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       city: null == city
           ? _value.city
           : city // ignore: cast_nullable_to_non_nullable
@@ -448,6 +476,8 @@ class _$ListingModelImpl implements _ListingModel {
       final List<AvailableDate>? availableDates,
       final List<AvailableRoom>? availableRooms,
       required this.category,
+      @TimestampSerializer() this.checkIn,
+      @TimestampSerializer() this.checkOut,
       required this.city,
       required this.cooperative,
       required this.description,
@@ -504,6 +534,12 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   final String category;
+  @override
+  @TimestampSerializer()
+  final DateTime? checkIn;
+  @override
+  @TimestampSerializer()
+  final DateTime? checkOut;
   @override
   final String city;
   @override
@@ -591,7 +627,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, city: $city, cooperative: $cooperative, description: $description, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, checkIn: $checkIn, checkOut: $checkOut, city: $city, cooperative: $cooperative, description: $description, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
   }
 
   @override
@@ -606,6 +642,9 @@ class _$ListingModelImpl implements _ListingModel {
                 .equals(other._availableRooms, _availableRooms) &&
             (identical(other.category, category) ||
                 other.category == category) &&
+            (identical(other.checkIn, checkIn) || other.checkIn == checkIn) &&
+            (identical(other.checkOut, checkOut) ||
+                other.checkOut == checkOut) &&
             (identical(other.city, city) || other.city == city) &&
             (identical(other.cooperative, cooperative) ||
                 other.cooperative == cooperative) &&
@@ -649,6 +688,8 @@ class _$ListingModelImpl implements _ListingModel {
         const DeepCollectionEquality().hash(_availableDates),
         const DeepCollectionEquality().hash(_availableRooms),
         category,
+        checkIn,
+        checkOut,
         city,
         cooperative,
         description,
@@ -692,6 +733,8 @@ abstract class _ListingModel implements ListingModel {
       final List<AvailableDate>? availableDates,
       final List<AvailableRoom>? availableRooms,
       required final String category,
+      @TimestampSerializer() final DateTime? checkIn,
+      @TimestampSerializer() final DateTime? checkOut,
       required final String city,
       required final ListingCooperative cooperative,
       required final String description,
@@ -725,6 +768,12 @@ abstract class _ListingModel implements ListingModel {
   List<AvailableRoom>? get availableRooms;
   @override
   String get category;
+  @override
+  @TimestampSerializer()
+  DateTime? get checkIn;
+  @override
+  @TimestampSerializer()
+  DateTime? get checkOut;
   @override
   String get city;
   @override

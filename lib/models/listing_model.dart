@@ -12,6 +12,8 @@ class ListingModel with _$ListingModel {
     List<AvailableDate>? availableDates,
     List<AvailableRoom>? availableRooms,
     required String category,
+    @TimestampSerializer() DateTime? checkIn,
+    @TimestampSerializer() DateTime? checkOut,
     required String city,
     required ListingCooperative cooperative,
     required String description,

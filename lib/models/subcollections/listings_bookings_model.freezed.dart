@@ -712,3 +712,418 @@ abstract class _Expense implements Expense {
   _$$ExpenseImplCopyWith<_$ExpenseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+Task _$TaskFromJson(Map<String, dynamic> json) {
+  return _Task.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Task {
+  List<String> get assigned => throw _privateConstructorUsedError;
+  String get committee => throw _privateConstructorUsedError;
+  bool get complete => throw _privateConstructorUsedError;
+  bool get openContribution => throw _privateConstructorUsedError;
+  List<TaskImages>? get imageProof => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $TaskCopyWith<Task> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TaskCopyWith<$Res> {
+  factory $TaskCopyWith(Task value, $Res Function(Task) then) =
+      _$TaskCopyWithImpl<$Res, Task>;
+  @useResult
+  $Res call(
+      {List<String> assigned,
+      String committee,
+      bool complete,
+      bool openContribution,
+      List<TaskImages>? imageProof,
+      String name});
+}
+
+/// @nodoc
+class _$TaskCopyWithImpl<$Res, $Val extends Task>
+    implements $TaskCopyWith<$Res> {
+  _$TaskCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? assigned = null,
+    Object? committee = null,
+    Object? complete = null,
+    Object? openContribution = null,
+    Object? imageProof = freezed,
+    Object? name = null,
+  }) {
+    return _then(_value.copyWith(
+      assigned: null == assigned
+          ? _value.assigned
+          : assigned // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      committee: null == committee
+          ? _value.committee
+          : committee // ignore: cast_nullable_to_non_nullable
+              as String,
+      complete: null == complete
+          ? _value.complete
+          : complete // ignore: cast_nullable_to_non_nullable
+              as bool,
+      openContribution: null == openContribution
+          ? _value.openContribution
+          : openContribution // ignore: cast_nullable_to_non_nullable
+              as bool,
+      imageProof: freezed == imageProof
+          ? _value.imageProof
+          : imageProof // ignore: cast_nullable_to_non_nullable
+              as List<TaskImages>?,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TaskImplCopyWith<$Res> implements $TaskCopyWith<$Res> {
+  factory _$$TaskImplCopyWith(
+          _$TaskImpl value, $Res Function(_$TaskImpl) then) =
+      __$$TaskImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {List<String> assigned,
+      String committee,
+      bool complete,
+      bool openContribution,
+      List<TaskImages>? imageProof,
+      String name});
+}
+
+/// @nodoc
+class __$$TaskImplCopyWithImpl<$Res>
+    extends _$TaskCopyWithImpl<$Res, _$TaskImpl>
+    implements _$$TaskImplCopyWith<$Res> {
+  __$$TaskImplCopyWithImpl(_$TaskImpl _value, $Res Function(_$TaskImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? assigned = null,
+    Object? committee = null,
+    Object? complete = null,
+    Object? openContribution = null,
+    Object? imageProof = freezed,
+    Object? name = null,
+  }) {
+    return _then(_$TaskImpl(
+      assigned: null == assigned
+          ? _value._assigned
+          : assigned // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      committee: null == committee
+          ? _value.committee
+          : committee // ignore: cast_nullable_to_non_nullable
+              as String,
+      complete: null == complete
+          ? _value.complete
+          : complete // ignore: cast_nullable_to_non_nullable
+              as bool,
+      openContribution: null == openContribution
+          ? _value.openContribution
+          : openContribution // ignore: cast_nullable_to_non_nullable
+              as bool,
+      imageProof: freezed == imageProof
+          ? _value._imageProof
+          : imageProof // ignore: cast_nullable_to_non_nullable
+              as List<TaskImages>?,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TaskImpl implements _Task {
+  _$TaskImpl(
+      {required final List<String> assigned,
+      required this.committee,
+      required this.complete,
+      required this.openContribution,
+      final List<TaskImages>? imageProof,
+      required this.name})
+      : _assigned = assigned,
+        _imageProof = imageProof;
+
+  factory _$TaskImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TaskImplFromJson(json);
+
+  final List<String> _assigned;
+  @override
+  List<String> get assigned {
+    if (_assigned is EqualUnmodifiableListView) return _assigned;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_assigned);
+  }
+
+  @override
+  final String committee;
+  @override
+  final bool complete;
+  @override
+  final bool openContribution;
+  final List<TaskImages>? _imageProof;
+  @override
+  List<TaskImages>? get imageProof {
+    final value = _imageProof;
+    if (value == null) return null;
+    if (_imageProof is EqualUnmodifiableListView) return _imageProof;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  final String name;
+
+  @override
+  String toString() {
+    return 'Task(assigned: $assigned, committee: $committee, complete: $complete, openContribution: $openContribution, imageProof: $imageProof, name: $name)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TaskImpl &&
+            const DeepCollectionEquality().equals(other._assigned, _assigned) &&
+            (identical(other.committee, committee) ||
+                other.committee == committee) &&
+            (identical(other.complete, complete) ||
+                other.complete == complete) &&
+            (identical(other.openContribution, openContribution) ||
+                other.openContribution == openContribution) &&
+            const DeepCollectionEquality()
+                .equals(other._imageProof, _imageProof) &&
+            (identical(other.name, name) || other.name == name));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_assigned),
+      committee,
+      complete,
+      openContribution,
+      const DeepCollectionEquality().hash(_imageProof),
+      name);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TaskImplCopyWith<_$TaskImpl> get copyWith =>
+      __$$TaskImplCopyWithImpl<_$TaskImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TaskImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Task implements Task {
+  factory _Task(
+      {required final List<String> assigned,
+      required final String committee,
+      required final bool complete,
+      required final bool openContribution,
+      final List<TaskImages>? imageProof,
+      required final String name}) = _$TaskImpl;
+
+  factory _Task.fromJson(Map<String, dynamic> json) = _$TaskImpl.fromJson;
+
+  @override
+  List<String> get assigned;
+  @override
+  String get committee;
+  @override
+  bool get complete;
+  @override
+  bool get openContribution;
+  @override
+  List<TaskImages>? get imageProof;
+  @override
+  String get name;
+  @override
+  @JsonKey(ignore: true)
+  _$$TaskImplCopyWith<_$TaskImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+TaskImages _$TaskImagesFromJson(Map<String, dynamic> json) {
+  return _TaskImages.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TaskImages {
+  String get path => throw _privateConstructorUsedError;
+  String? get url => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $TaskImagesCopyWith<TaskImages> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TaskImagesCopyWith<$Res> {
+  factory $TaskImagesCopyWith(
+          TaskImages value, $Res Function(TaskImages) then) =
+      _$TaskImagesCopyWithImpl<$Res, TaskImages>;
+  @useResult
+  $Res call({String path, String? url});
+}
+
+/// @nodoc
+class _$TaskImagesCopyWithImpl<$Res, $Val extends TaskImages>
+    implements $TaskImagesCopyWith<$Res> {
+  _$TaskImagesCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? path = null,
+    Object? url = freezed,
+  }) {
+    return _then(_value.copyWith(
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: freezed == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TaskImagesImplCopyWith<$Res>
+    implements $TaskImagesCopyWith<$Res> {
+  factory _$$TaskImagesImplCopyWith(
+          _$TaskImagesImpl value, $Res Function(_$TaskImagesImpl) then) =
+      __$$TaskImagesImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String path, String? url});
+}
+
+/// @nodoc
+class __$$TaskImagesImplCopyWithImpl<$Res>
+    extends _$TaskImagesCopyWithImpl<$Res, _$TaskImagesImpl>
+    implements _$$TaskImagesImplCopyWith<$Res> {
+  __$$TaskImagesImplCopyWithImpl(
+      _$TaskImagesImpl _value, $Res Function(_$TaskImagesImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? path = null,
+    Object? url = freezed,
+  }) {
+    return _then(_$TaskImagesImpl(
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: freezed == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TaskImagesImpl implements _TaskImages {
+  _$TaskImagesImpl({required this.path, this.url});
+
+  factory _$TaskImagesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TaskImagesImplFromJson(json);
+
+  @override
+  final String path;
+  @override
+  final String? url;
+
+  @override
+  String toString() {
+    return 'TaskImages(path: $path, url: $url)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TaskImagesImpl &&
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.url, url) || other.url == url));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, path, url);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TaskImagesImplCopyWith<_$TaskImagesImpl> get copyWith =>
+      __$$TaskImagesImplCopyWithImpl<_$TaskImagesImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TaskImagesImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _TaskImages implements TaskImages {
+  factory _TaskImages({required final String path, final String? url}) =
+      _$TaskImagesImpl;
+
+  factory _TaskImages.fromJson(Map<String, dynamic> json) =
+      _$TaskImagesImpl.fromJson;
+
+  @override
+  String get path;
+  @override
+  String? get url;
+  @override
+  @JsonKey(ignore: true)
+  _$$TaskImagesImplCopyWith<_$TaskImagesImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

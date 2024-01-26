@@ -159,12 +159,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           path: "booking_details",
                           name: "booking_details",
                           builder: (BuildContext context, GoRouterState state) {
-                            ListingBookings booking =
-                                state.extra as ListingBookings;
+                            final Map<String, dynamic> extra =
+                                state.extra as Map<String, dynamic>;
+                            final ListingBookings booking =
+                                extra['booking'] as ListingBookings;
+                            final ListingModel listing =
+                                extra['listing'] as ListingModel;
                             switch (state.pathParameters["category"]) {
                               case "Accommodation":
                                 return AccommodationBookingsDetails(
                                   booking: booking,
+                                  listing: listing,
                                 );
 
                               // case "Transport":
@@ -186,6 +191,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                               default:
                                 return AccommodationBookingsDetails(
                                   booking: booking,
+                                  listing: listing,
                                 );
                             }
                           })

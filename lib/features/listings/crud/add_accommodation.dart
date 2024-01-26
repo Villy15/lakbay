@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
@@ -14,6 +13,7 @@ import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/listings/widgets/image_picker_form_field.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 
@@ -47,6 +47,9 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
 
   List<List<File>> roomImages = [];
   List<AvailableRoom> availableRooms = [];
+
+  TimeOfDay checkIn = TimeOfDay.now();
+  TimeOfDay checkOut = TimeOfDay.now();
 
   @override
   void initState() {
@@ -224,7 +227,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
-              Icons.info_outline_rounded,
+              Icons.meeting_room_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
@@ -232,11 +235,11 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
-              Icons.image_outlined,
+              Icons.task,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
-              Icons.question_mark_outlined,
+              Icons.policy,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
@@ -348,13 +351,13 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
         return 'Add Rooms';
 
       case 3:
-        return 'Set Location?';
+        return 'Set Location';
 
       case 4:
-        return 'Add Photos';
+        return 'Add Fixed Tasks';
 
       case 5:
-        return 'What do you want the guest to know?';
+        return 'Add Policies';
 
       case 6:
         return 'Review Listing';
@@ -366,14 +369,11 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
 
   Widget chooseType(BuildContext context) {
     List<Map<String, dynamic>> types = [
-      {'name': 'Nature-Based', 'icon': Icons.forest_outlined},
-      {'name': 'Cultural', 'icon': Icons.diversity_2_outlined},
       {'name': 'Sun and Beach', 'icon': Icons.beach_access_outlined},
       {
         'name': 'Health, Wellness, and Retirement',
         'icon': Icons.local_hospital_outlined
       },
-      {'name': 'Diving and Marine Sports', 'icon': Icons.scuba_diving_outlined},
     ];
 
     return Column(
@@ -439,6 +439,8 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   }
 
   Widget addDetails(BuildContext context) {
+    TextEditingController checkInController = TextEditingController();
+    TextEditingController checkOutController = TextEditingController();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -457,7 +459,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
         const SizedBox(height: 10),
         TextFormField(
           controller: _descriptionController,
-          maxLines: null,
+          maxLines: 1,
           decoration: const InputDecoration(
             labelText: 'Description*',
             helperText: '*required',
@@ -467,6 +469,88 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
             hintText: "Hotel near the beach....",
           ),
         ),
+        SizedBox(height: MediaQuery.sizeOf(context).height / 25),
+        TextFormField(
+          controller: checkInController,
+          maxLines: 1,
+          decoration: const InputDecoration(
+            labelText: 'Check In*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "11:30",
+          ),
+          readOnly: true,
+          onTap: () {
+            setState(() async {
+              checkIn = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                    initialEntryMode: TimePickerEntryMode.inputOnly,
+                  ) ??
+                  TimeOfDay.now();
+              if (context.mounted) {
+                checkInController.text = checkIn.format(context);
+              }
+            });
+          },
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: checkOutController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Check Out*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "1:30",
+          ),
+          readOnly: true,
+          onTap: () {
+            setState(() async {
+              checkIn = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                    initialEntryMode: TimePickerEntryMode.inputOnly,
+                  ) ??
+                  TimeOfDay.now();
+              if (context.mounted) {
+                checkInController.text = checkIn.format(context);
+              }
+            });
+          },
+        ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          child: Row(
+            children: [
+              Expanded(
+                child: ImagePickerFormField(
+                  height: MediaQuery.sizeOf(context).height / 2.5,
+                  width: MediaQuery.sizeOf(context).width,
+                  context: context,
+                  initialValue: _images,
+                  onSaved: (List<File>? files) {
+                    _images = files;
+                  },
+                  validator: (List<File>? files) {
+                    if (files == null || files.isEmpty) {
+                      return 'Please select some images';
+                    }
+                    return null;
+                  },
+                  onImagesSelected: (List<File> files) {
+                    _images = files;
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -986,46 +1070,13 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
     ]);
   }
 
-  Widget addListingPhotos(BuildContext context) {
-    return Column(children: [
-      GestureDetector(
-        child: Row(
-          children: [
-            Icon(
-              Icons.image_outlined,
-              color: Theme.of(context).iconTheme.color,
-            ),
-            const SizedBox(
-                width:
-                    15), // Add some spacing between the icon and the container
-            Expanded(
-              child: ImagePickerFormField(
-                height: MediaQuery.sizeOf(context).height / 2.5,
-                width: MediaQuery.sizeOf(context).width,
-                context: context,
-                initialValue: _images,
-                onSaved: (List<File>? files) {
-                  _images = files;
-                },
-                validator: (List<File>? files) {
-                  if (files == null || files.isEmpty) {
-                    return 'Please select some images';
-                  }
-                  return null;
-                },
-                onImagesSelected: (List<File> files) {
-                  _images = files;
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(height: 10),
-    ]);
+  Widget addFixedTasks(BuildContext context) {
+    return const SingleChildScrollView(
+      child: Column(children: []),
+    );
   }
 
-  Widget addGuestInfo(BuildContext context) {
+  Widget addPolicies(BuildContext context) {
     return const Column();
   }
 
@@ -1087,9 +1138,9 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
       case 3:
         return addLocation(context);
       case 4:
-        return addListingPhotos(context);
+        return addFixedTasks(context);
       case 5:
-        return addGuestInfo(context);
+        return addPolicies(context);
       case 6:
         return reviewListing(context);
 
@@ -1097,108 +1148,4 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
         return chooseType(context);
     }
   }
-}
-
-class ImagePickerFormField extends FormField<List<File>> {
-  final Function(List<File>) onImagesSelected;
-
-  ImagePickerFormField({
-    super.key,
-    super.onSaved,
-    super.validator,
-    required BuildContext context,
-    required double height,
-    required double width,
-    List<File>? initialValue,
-    required this.onImagesSelected,
-  }) : super(
-          initialValue: initialValue ?? [],
-          builder: (FormFieldState<List<File>> state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () async {
-                    final picker = ImagePicker();
-                    final pickedFiles = await picker.pickMultiImage();
-
-                    if (pickedFiles.isNotEmpty) {
-                      List<File> files = pickedFiles
-                          .map((pickedFile) => File(pickedFile.path))
-                          .toList();
-                      state.didChange(files);
-                      onImagesSelected(files); // Use the callback here
-                    }
-                  },
-                  child: Column(
-                    children: [
-                      // If its empty
-                      if (state.value!.isEmpty)
-                        Container(
-                          height: height,
-                          width: width,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.grey, width: 1),
-                          ),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.add_photo_alternate_outlined,
-                                  color: Colors.grey,
-                                  size: 50,
-                                ),
-                                DisplayText(
-                                  text: "Add Images",
-                                  lines: 1,
-                                  style: Theme.of(context).textTheme.bodySmall!,
-                                ),
-                              ]),
-                        ),
-                      if (state.value!.isNotEmpty)
-                        Container(
-                          height: height,
-                          width: width,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          child:
-                              Image.file(state.value!.first, fit: BoxFit.cover),
-                        ),
-                      if (state.value!.length > 1)
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 1,
-                          ),
-                          itemCount: state.value!.length - 1,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Image.file(state.value![index + 1],
-                                  fit: BoxFit.cover),
-                            );
-                          },
-                        ),
-                    ],
-                  ),
-                ),
-                if (state.hasError)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, left: 12),
-                    child: Text(
-                      state.errorText!,
-                      style: const TextStyle(color: Colors.red, fontSize: 12),
-                    ),
-                  ),
-              ],
-            );
-          },
-        );
 }

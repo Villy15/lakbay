@@ -70,3 +70,37 @@ Map<String, dynamic> _$$ExpenseImplToJson(_$ExpenseImpl instance) =>
       'cost': instance.cost,
       'name': instance.name,
     };
+
+_$TaskImpl _$$TaskImplFromJson(Map<String, dynamic> json) => _$TaskImpl(
+      assigned:
+          (json['assigned'] as List<dynamic>).map((e) => e as String).toList(),
+      committee: json['committee'] as String,
+      complete: json['complete'] as bool,
+      openContribution: json['openContribution'] as bool,
+      imageProof: (json['imageProof'] as List<dynamic>?)
+          ?.map((e) => TaskImages.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      name: json['name'] as String,
+    );
+
+Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
+    <String, dynamic>{
+      'assigned': instance.assigned,
+      'committee': instance.committee,
+      'complete': instance.complete,
+      'openContribution': instance.openContribution,
+      'imageProof': instance.imageProof?.map((e) => e.toJson()).toList(),
+      'name': instance.name,
+    };
+
+_$TaskImagesImpl _$$TaskImagesImplFromJson(Map<String, dynamic> json) =>
+    _$TaskImagesImpl(
+      path: json['path'] as String,
+      url: json['url'] as String?,
+    );
+
+Map<String, dynamic> _$$TaskImagesImplToJson(_$TaskImagesImpl instance) =>
+    <String, dynamic>{
+      'path': instance.path,
+      'url': instance.url,
+    };

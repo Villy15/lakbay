@@ -43,3 +43,28 @@ class Expense with _$Expense {
   factory Expense.fromJson(Map<String, dynamic> json) =>
       _$ExpenseFromJson(json);
 }
+
+@freezed
+class Task with _$Task {
+  factory Task({
+    required List<String> assigned,
+    required String committee,
+    required bool complete,
+    required bool openContribution,
+    List<TaskImages>? imageProof,
+    required String name,
+  }) = _Task;
+
+  factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
+}
+
+@freezed
+class TaskImages with _$TaskImages {
+  factory TaskImages({
+    required String path,
+    String? url,
+  }) = _TaskImages;
+
+  factory TaskImages.fromJson(Map<String, dynamic> json) =>
+      _$TaskImagesFromJson(json);
+}
