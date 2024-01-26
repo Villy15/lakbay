@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/app_bar_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/features/home/customer/widgets/nestested_accomodation.dart';
 import 'package:lakbay/features/market/widgets/market_card.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -17,7 +17,7 @@ class CustomerHomePage extends ConsumerWidget {
 
     if (user?.isCoopView == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.go('/manager_dashboard');
+        context.go('/today');
       });
     }
 

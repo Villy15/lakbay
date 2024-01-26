@@ -100,6 +100,13 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
           activeIcon: Icon(Icons.inbox),
           label: 'Inbox',
         ),
+
+        // Sixth Nav Bar (Wiki button)
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.book_outlined),
+          activeIcon: Icon(Icons.book),
+          label: 'Wiki',
+        ),
       ],
     );
   }
@@ -110,7 +117,7 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
     switch (index) {
       case 0:
         if (widget.user?.isCoopView ?? false) {
-          context.go('/manager_dashboard');
+          context.go('/today');
         } else {
           context.go('/customer_home');
         }
@@ -138,6 +145,9 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         break;
       case 4:
         context.go('/inbox');
+        break;
+      case 5: 
+        context.go('/wiki'); // Navigate to the Wiki page
         break;
     }
   }

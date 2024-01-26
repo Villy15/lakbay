@@ -6,9 +6,12 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/features/events/events_controller.dart';
+import 'package:lakbay/features/events/widgets/event_card.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/listing_card.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
@@ -57,9 +60,9 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.event_outlined),
+            Icon(Icons.travel_explore_outlined),
             SizedBox(width: 4.0),
-            Text('Events'),
+            Text('Listings'),
           ],
         ),
       ),
@@ -70,9 +73,22 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Icon(Icons.event_outlined),
+            SizedBox(width: 4.0),
+            Text('Events'),
+          ],
+        ),
+      ),
+    ),
+     const SizedBox(
+      width: 150.0,
+      child: Tab(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             Icon(Icons.travel_explore_outlined),
             SizedBox(width: 4.0),
-            Text('Listings'),
+            Text('Wiki'),
           ],
         ),
       ),
@@ -104,8 +120,8 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                       buildListViewListings(
                           ref.watch(getListingsByCoopProvider(coop.uid!))),
                       // Listings
-                      buildListViewListings(
-                          ref.watch(getListingsByCoopProvider(coop.uid!))),
+                      buildListViewEvents(
+                          ref.watch(getEventsByCoopIdProvider(coop.uid!))),
                     ],
                   ),
                 ),
@@ -122,6 +138,28 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
             body: Loader(),
           ),
         );
+  }
+
+  // Build Events
+  Widget buildListViewEvents(AsyncValue<List<EventModel>> events) {
+    return events.when(
+      data: (data) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            final event = data[index];
+            return EventCard(event: event);
+          },
+        );
+      },
+      error: (error, stackTrace) =>
+          ErrorText(error: error.toString(), stackTrace: stackTrace.toString()),
+      loading: () => const Scaffold(
+        body: Loader(),
+      ),
+    );
   }
 
   Widget buildListViewListings(AsyncValue<List<ListingModel>> listings) {

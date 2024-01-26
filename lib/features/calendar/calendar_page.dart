@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/error.dart';
+import 'package:lakbay/features/tasks/tasks_controller.dart';
+import 'package:lakbay/features/tasks/widgets/today_task_card.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends ConsumerStatefulWidget {
@@ -14,9 +19,11 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('Calendar')),
-      body: ListView(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TableCalendar(
             firstDay: DateTime.utc(2010, 10, 16),
@@ -60,7 +67,29 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                 setState(() => _calendarFormat = format);
               }
             },
-          )
+          ),
+          ref.watch(getTasksByUserIdProvider(user!.uid)).when(
+                data: (tasks) {
+                  debugPrintJson("File Name: dashboard_page.dart");
+                  return Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListView.builder(
+                        itemCount: tasks.length,
+                        itemBuilder: (context, index) {
+                          final task = tasks[index];
+                          return TodayTaskCard(task: task);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (error, stack) => ErrorText(
+                  error: error.toString(),
+                  stackTrace: stack.toString(),
+                ),
+              ),
         ],
       ),
     );

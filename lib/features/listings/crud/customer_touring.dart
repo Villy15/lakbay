@@ -2,11 +2,11 @@
 
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:cooptourism/data/models/listing.dart';
-// import 'package:cooptourism/data/models/manager_dashboard.dart/sales.dart';
+// import 'package:cooptourism/data/models/today.dart/sales.dart';
 // import 'package:cooptourism/data/models/review.dart';
 // import 'package:cooptourism/data/models/task.dart';
 // import 'package:cooptourism/data/repositories/cooperative_repository.dart';
-// import 'package:cooptourism/data/repositories/manager_dashboard/sales_repository.dart';
+// import 'package:cooptourism/data/repositories/today/sales_repository.dart';
 // import 'package:cooptourism/data/repositories/review_repository.dart';
 // import 'package:cooptourism/data/repositories/task_repository.dart';
 // import 'package:cooptourism/pages/market/listing_edit.dart';
