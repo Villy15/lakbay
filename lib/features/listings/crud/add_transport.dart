@@ -153,6 +153,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                   publisherId: "",
                   title: _titleController.text,
                   type: type,
+                  publisherName: "",
                   images:
                       _images?.map((e) => ListingImages(path: e.path)).toList(),
                   availableTransport: transport);
