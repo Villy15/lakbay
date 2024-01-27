@@ -241,6 +241,17 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                         },
                       )
                     : const SizedBox.shrink(),
+
+                // Wiki Page
+
+                ListTile(
+                  title: const Text('Wiki'),
+                  leading: const Icon(Icons.book_outlined),
+                  onTap: () => {
+                    context.pop(),
+                    context.push('/wiki'),
+                  },
+                )
               ],
             ),
             Column(

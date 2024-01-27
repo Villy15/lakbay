@@ -7,6 +7,7 @@ class FirebaseConstants {
   static const tasksCollection = 'tasks';
   static const salesCollection = 'sales';
   static const wikisCollection = 'wikis';
+  static const plansCollection = 'plans';
 
   // Subcollections
   // Coops SubCollections

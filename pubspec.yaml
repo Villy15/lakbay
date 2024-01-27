@@ -62,8 +62,8 @@ dependencies:
   path_provider: ^2.1.1
   qr_flutter: ^4.1.0
   shared_preferences: ^2.2.2
-  syncfusion_flutter_charts: ^21.2.4
-  syncfusion_flutter_datepicker: ^21.2.3
+  syncfusion_flutter_charts: ^24.1.47+2
+  syncfusion_flutter_datepicker: ^24.1.47
   table_calendar: ^3.0.9
 
 dev_dependencies:

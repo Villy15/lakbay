@@ -50,23 +50,26 @@ import 'package:lakbay/features/listings/crud/customer_food.dart';
 import 'package:lakbay/features/listings/crud/customer_transportation.dart';
 import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/market/market_page.dart';
+import 'package:lakbay/features/plan/plan_page.dart';
+import 'package:lakbay/features/plan/screens/plan_add_activity.dart';
+import 'package:lakbay/features/plan/screens/plan_select_date.dart';
+import 'package:lakbay/features/plan/screens/plan_select_location.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
 import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/tasks/event_tasks_edit.dart';
 import 'package:lakbay/features/tasks/event_tasks_read.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
+import 'package:lakbay/features/wiki/crud/add_wiki.dart';
+import 'package:lakbay/features/wiki/crud/edit_wiki.dart';
+import 'package:lakbay/features/wiki/crud/read_wiki.dart';
+import 'package:lakbay/features/wiki/wiki_page.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/task_model.dart';
 import 'package:lakbay/models/user_model.dart';
-
-import 'package:lakbay/features/wiki/wiki_page.dart';
-import 'package:lakbay/features/wiki/crud/add_wiki.dart';
-import 'package:lakbay/features/wiki/crud/read_wiki.dart';
-import 'package:lakbay/features/wiki/crud/edit_wiki.dart';
 import 'package:lakbay/models/wiki_model.dart';
 
 // import 'package:lakbay/features/trips/trips_page.dart';
@@ -90,7 +93,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     }
 
     if (isLoggingIn) {
-      return '/customer_home';
+      return '/plan';
     }
     // Authenticated
     return null;
@@ -167,6 +170,32 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               }),
 
               // * CUSTOMER VIEW
+              // Plan Page
+              buildMainRoute('/plan', const PlanPage(), [
+                // Calendar Page
+                buildSubRoute(
+                  'calendar',
+                  (context, pathParameters, extra) {
+                    return const PlanSelectDate();
+                  },
+                ),
+
+                // Location Page
+                buildSubRoute(
+                  'location',
+                  (context, pathParameters, extra) {
+                    return const PlanSelectLocation();
+                  },
+                ),
+
+                // Add Activity Page
+                buildSubRoute(
+                  'add_activity',
+                  (context, pathParameters, extra) {
+                    return const PlanAddActivity();
+                  },
+                ),
+              ]),
 
               // Home Page
               buildMainRoute('/customer_home', const CustomerHomePage()),
@@ -428,6 +457,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     coop: coop,
                   );
                 },
+                name: 'add_listing',
                 subRoutes: [
                   buildSubRoute(
                     'accommodation',
