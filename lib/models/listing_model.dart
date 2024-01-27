@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:lakbay/core/util/utils.dart';
-import 'package:flutter/material.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 part 'listing_model.freezed.dart';
 part 'listing_model.g.dart';
@@ -23,14 +23,15 @@ class ListingModel with _$ListingModel {
     bool? isPublished,
     List<ListingCost>? listingCosts,
     num? numberOfUnits,
-    TimeOfDay? openingHours,
-    TimeOfDay? closingHours,
+    @TimestampSerializer() DateTime? openingHours,
+    @TimestampSerializer() DateTime? closingHours,
     num? pax,
     num? price,
     required String province,
     required String publisherId,
     required String publisherName,
     num? rating,
+    List<Task>? fixedTasks,
     @TimestampSerializer() DateTime? timestamp,
     required String title,
     required String type,

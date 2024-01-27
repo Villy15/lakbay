@@ -24,6 +24,7 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       cooperative: ListingCooperative.fromJson(
           json['cooperative'] as Map<String, dynamic>),
       description: json['description'] as String,
+      duration: json['duration'] as num?,
       images: (json['images'] as List<dynamic>?)
           ?.map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -31,12 +32,20 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       listingCosts: (json['listingCosts'] as List<dynamic>?)
           ?.map((e) => ListingCost.fromJson(e as Map<String, dynamic>))
           .toList(),
+      numberOfUnits: json['numberOfUnits'] as num?,
+      openingHours: const TimestampSerializer()
+          .fromJson(json['openingHours'] as Timestamp?),
+      closingHours: const TimestampSerializer()
+          .fromJson(json['closingHours'] as Timestamp?),
       pax: json['pax'] as num?,
       price: json['price'] as num?,
       province: json['province'] as String,
       publisherId: json['publisherId'] as String,
       publisherName: json['publisherName'] as String,
       rating: json['rating'] as num?,
+      fixedTasks: (json['fixedTasks'] as List<dynamic>?)
+          ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
+          .toList(),
       timestamp:
           const TimestampSerializer().fromJson(json['timestamp'] as Timestamp?),
       title: json['title'] as String,
@@ -71,15 +80,20 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'city': instance.city,
       'cooperative': instance.cooperative.toJson(),
       'description': instance.description,
+      'duration': instance.duration,
       'images': instance.images?.map((e) => e.toJson()).toList(),
       'isPublished': instance.isPublished,
       'listingCosts': instance.listingCosts?.map((e) => e.toJson()).toList(),
+      'numberOfUnits': instance.numberOfUnits,
+      'openingHours': const TimestampSerializer().toJson(instance.openingHours),
+      'closingHours': const TimestampSerializer().toJson(instance.closingHours),
       'pax': instance.pax,
       'price': instance.price,
       'province': instance.province,
       'publisherId': instance.publisherId,
       'publisherName': instance.publisherName,
       'rating': instance.rating,
+      'fixedTasks': instance.fixedTasks?.map((e) => e.toJson()).toList(),
       'timestamp': const TimestampSerializer().toJson(instance.timestamp),
       'title': instance.title,
       'type': instance.type,

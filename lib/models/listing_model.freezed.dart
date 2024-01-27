@@ -31,15 +31,22 @@ mixin _$ListingModel {
   String get city => throw _privateConstructorUsedError;
   ListingCooperative get cooperative => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
+  num? get duration => throw _privateConstructorUsedError;
   List<ListingImages>? get images => throw _privateConstructorUsedError;
   bool? get isPublished => throw _privateConstructorUsedError;
   List<ListingCost>? get listingCosts => throw _privateConstructorUsedError;
+  num? get numberOfUnits => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get openingHours => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get closingHours => throw _privateConstructorUsedError;
   num? get pax => throw _privateConstructorUsedError;
   num? get price => throw _privateConstructorUsedError;
   String get province => throw _privateConstructorUsedError;
   String get publisherId => throw _privateConstructorUsedError;
   String get publisherName => throw _privateConstructorUsedError;
   num? get rating => throw _privateConstructorUsedError;
+  List<Task>? get fixedTasks => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get timestamp => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
@@ -75,15 +82,20 @@ abstract class $ListingModelCopyWith<$Res> {
       String city,
       ListingCooperative cooperative,
       String description,
+      num? duration,
       List<ListingImages>? images,
       bool? isPublished,
       List<ListingCost>? listingCosts,
+      num? numberOfUnits,
+      @TimestampSerializer() DateTime? openingHours,
+      @TimestampSerializer() DateTime? closingHours,
       num? pax,
       num? price,
       String province,
       String publisherId,
       String publisherName,
       num? rating,
+      List<Task>? fixedTasks,
       @TimestampSerializer() DateTime? timestamp,
       String title,
       String type,
@@ -120,15 +132,20 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? city = null,
     Object? cooperative = null,
     Object? description = null,
+    Object? duration = freezed,
     Object? images = freezed,
     Object? isPublished = freezed,
     Object? listingCosts = freezed,
+    Object? numberOfUnits = freezed,
+    Object? openingHours = freezed,
+    Object? closingHours = freezed,
     Object? pax = freezed,
     Object? price = freezed,
     Object? province = null,
     Object? publisherId = null,
     Object? publisherName = null,
     Object? rating = freezed,
+    Object? fixedTasks = freezed,
     Object? timestamp = freezed,
     Object? title = null,
     Object? type = null,
@@ -176,6 +193,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      duration: freezed == duration
+          ? _value.duration
+          : duration // ignore: cast_nullable_to_non_nullable
+              as num?,
       images: freezed == images
           ? _value.images
           : images // ignore: cast_nullable_to_non_nullable
@@ -188,6 +209,18 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.listingCosts
           : listingCosts // ignore: cast_nullable_to_non_nullable
               as List<ListingCost>?,
+      numberOfUnits: freezed == numberOfUnits
+          ? _value.numberOfUnits
+          : numberOfUnits // ignore: cast_nullable_to_non_nullable
+              as num?,
+      openingHours: freezed == openingHours
+          ? _value.openingHours
+          : openingHours // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      closingHours: freezed == closingHours
+          ? _value.closingHours
+          : closingHours // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       pax: freezed == pax
           ? _value.pax
           : pax // ignore: cast_nullable_to_non_nullable
@@ -212,6 +245,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
               as num?,
+      fixedTasks: freezed == fixedTasks
+          ? _value.fixedTasks
+          : fixedTasks // ignore: cast_nullable_to_non_nullable
+              as List<Task>?,
       timestamp: freezed == timestamp
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
@@ -291,15 +328,20 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       String city,
       ListingCooperative cooperative,
       String description,
+      num? duration,
       List<ListingImages>? images,
       bool? isPublished,
       List<ListingCost>? listingCosts,
+      num? numberOfUnits,
+      @TimestampSerializer() DateTime? openingHours,
+      @TimestampSerializer() DateTime? closingHours,
       num? pax,
       num? price,
       String province,
       String publisherId,
       String publisherName,
       num? rating,
+      List<Task>? fixedTasks,
       @TimestampSerializer() DateTime? timestamp,
       String title,
       String type,
@@ -336,15 +378,20 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? city = null,
     Object? cooperative = null,
     Object? description = null,
+    Object? duration = freezed,
     Object? images = freezed,
     Object? isPublished = freezed,
     Object? listingCosts = freezed,
+    Object? numberOfUnits = freezed,
+    Object? openingHours = freezed,
+    Object? closingHours = freezed,
     Object? pax = freezed,
     Object? price = freezed,
     Object? province = null,
     Object? publisherId = null,
     Object? publisherName = null,
     Object? rating = freezed,
+    Object? fixedTasks = freezed,
     Object? timestamp = freezed,
     Object? title = null,
     Object? type = null,
@@ -392,6 +439,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      duration: freezed == duration
+          ? _value.duration
+          : duration // ignore: cast_nullable_to_non_nullable
+              as num?,
       images: freezed == images
           ? _value._images
           : images // ignore: cast_nullable_to_non_nullable
@@ -404,6 +455,18 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value._listingCosts
           : listingCosts // ignore: cast_nullable_to_non_nullable
               as List<ListingCost>?,
+      numberOfUnits: freezed == numberOfUnits
+          ? _value.numberOfUnits
+          : numberOfUnits // ignore: cast_nullable_to_non_nullable
+              as num?,
+      openingHours: freezed == openingHours
+          ? _value.openingHours
+          : openingHours // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      closingHours: freezed == closingHours
+          ? _value.closingHours
+          : closingHours // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       pax: freezed == pax
           ? _value.pax
           : pax // ignore: cast_nullable_to_non_nullable
@@ -428,6 +491,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
               as num?,
+      fixedTasks: freezed == fixedTasks
+          ? _value._fixedTasks
+          : fixedTasks // ignore: cast_nullable_to_non_nullable
+              as List<Task>?,
       timestamp: freezed == timestamp
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
@@ -481,15 +548,20 @@ class _$ListingModelImpl implements _ListingModel {
       required this.city,
       required this.cooperative,
       required this.description,
+      this.duration,
       final List<ListingImages>? images,
       this.isPublished,
       final List<ListingCost>? listingCosts,
+      this.numberOfUnits,
+      @TimestampSerializer() this.openingHours,
+      @TimestampSerializer() this.closingHours,
       this.pax,
       this.price,
       required this.province,
       required this.publisherId,
       required this.publisherName,
       this.rating,
+      final List<Task>? fixedTasks,
       @TimestampSerializer() this.timestamp,
       required this.title,
       required this.type,
@@ -503,6 +575,7 @@ class _$ListingModelImpl implements _ListingModel {
         _availableRooms = availableRooms,
         _images = images,
         _listingCosts = listingCosts,
+        _fixedTasks = fixedTasks,
         _availableTables = availableTables,
         _menuImgs = menuImgs,
         _availableEntertainment = availableEntertainment;
@@ -546,6 +619,8 @@ class _$ListingModelImpl implements _ListingModel {
   final ListingCooperative cooperative;
   @override
   final String description;
+  @override
+  final num? duration;
   final List<ListingImages>? _images;
   @override
   List<ListingImages>? get images {
@@ -569,6 +644,14 @@ class _$ListingModelImpl implements _ListingModel {
   }
 
   @override
+  final num? numberOfUnits;
+  @override
+  @TimestampSerializer()
+  final DateTime? openingHours;
+  @override
+  @TimestampSerializer()
+  final DateTime? closingHours;
+  @override
   final num? pax;
   @override
   final num? price;
@@ -580,6 +663,16 @@ class _$ListingModelImpl implements _ListingModel {
   final String publisherName;
   @override
   final num? rating;
+  final List<Task>? _fixedTasks;
+  @override
+  List<Task>? get fixedTasks {
+    final value = _fixedTasks;
+    if (value == null) return null;
+    if (_fixedTasks is EqualUnmodifiableListView) return _fixedTasks;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @TimestampSerializer()
   final DateTime? timestamp;
@@ -627,7 +720,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, checkIn: $checkIn, checkOut: $checkOut, city: $city, cooperative: $cooperative, description: $description, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, checkIn: $checkIn, checkOut: $checkOut, city: $city, cooperative: $cooperative, description: $description, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
   }
 
   @override
@@ -650,11 +743,19 @@ class _$ListingModelImpl implements _ListingModel {
                 other.cooperative == cooperative) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.duration, duration) ||
+                other.duration == duration) &&
             const DeepCollectionEquality().equals(other._images, _images) &&
             (identical(other.isPublished, isPublished) ||
                 other.isPublished == isPublished) &&
             const DeepCollectionEquality()
                 .equals(other._listingCosts, _listingCosts) &&
+            (identical(other.numberOfUnits, numberOfUnits) ||
+                other.numberOfUnits == numberOfUnits) &&
+            (identical(other.openingHours, openingHours) ||
+                other.openingHours == openingHours) &&
+            (identical(other.closingHours, closingHours) ||
+                other.closingHours == closingHours) &&
             (identical(other.pax, pax) || other.pax == pax) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.province, province) ||
@@ -664,6 +765,8 @@ class _$ListingModelImpl implements _ListingModel {
             (identical(other.publisherName, publisherName) ||
                 other.publisherName == publisherName) &&
             (identical(other.rating, rating) || other.rating == rating) &&
+            const DeepCollectionEquality()
+                .equals(other._fixedTasks, _fixedTasks) &&
             (identical(other.timestamp, timestamp) ||
                 other.timestamp == timestamp) &&
             (identical(other.title, title) || other.title == title) &&
@@ -693,15 +796,20 @@ class _$ListingModelImpl implements _ListingModel {
         city,
         cooperative,
         description,
+        duration,
         const DeepCollectionEquality().hash(_images),
         isPublished,
         const DeepCollectionEquality().hash(_listingCosts),
+        numberOfUnits,
+        openingHours,
+        closingHours,
         pax,
         price,
         province,
         publisherId,
         publisherName,
         rating,
+        const DeepCollectionEquality().hash(_fixedTasks),
         timestamp,
         title,
         type,
@@ -738,15 +846,20 @@ abstract class _ListingModel implements ListingModel {
       required final String city,
       required final ListingCooperative cooperative,
       required final String description,
+      final num? duration,
       final List<ListingImages>? images,
       final bool? isPublished,
       final List<ListingCost>? listingCosts,
+      final num? numberOfUnits,
+      @TimestampSerializer() final DateTime? openingHours,
+      @TimestampSerializer() final DateTime? closingHours,
       final num? pax,
       final num? price,
       required final String province,
       required final String publisherId,
       required final String publisherName,
       final num? rating,
+      final List<Task>? fixedTasks,
       @TimestampSerializer() final DateTime? timestamp,
       required final String title,
       required final String type,
@@ -781,11 +894,21 @@ abstract class _ListingModel implements ListingModel {
   @override
   String get description;
   @override
+  num? get duration;
+  @override
   List<ListingImages>? get images;
   @override
   bool? get isPublished;
   @override
   List<ListingCost>? get listingCosts;
+  @override
+  num? get numberOfUnits;
+  @override
+  @TimestampSerializer()
+  DateTime? get openingHours;
+  @override
+  @TimestampSerializer()
+  DateTime? get closingHours;
   @override
   num? get pax;
   @override
@@ -798,6 +921,8 @@ abstract class _ListingModel implements ListingModel {
   String get publisherName;
   @override
   num? get rating;
+  @override
+  List<Task>? get fixedTasks;
   @override
   @TimestampSerializer()
   DateTime? get timestamp;
