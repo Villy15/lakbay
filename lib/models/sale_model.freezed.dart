@@ -29,7 +29,7 @@ mixin _$SaleModel {
   num? get expenses => throw _privateConstructorUsedError;
   String get listingId => throw _privateConstructorUsedError;
   String get listingName => throw _privateConstructorUsedError;
-  String get listingPrice => throw _privateConstructorUsedError;
+  num get listingPrice => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
   String get ownerId => throw _privateConstructorUsedError;
   String get ownerName => throw _privateConstructorUsedError;
@@ -59,7 +59,7 @@ abstract class $SaleModelCopyWith<$Res> {
       num? expenses,
       String listingId,
       String listingName,
-      String listingPrice,
+      num listingPrice,
       num price,
       String ownerId,
       String ownerName,
@@ -140,7 +140,7 @@ class _$SaleModelCopyWithImpl<$Res, $Val extends SaleModel>
       listingPrice: null == listingPrice
           ? _value.listingPrice
           : listingPrice // ignore: cast_nullable_to_non_nullable
-              as String,
+              as num,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -191,7 +191,7 @@ abstract class _$$SaleModelImplCopyWith<$Res>
       num? expenses,
       String listingId,
       String listingName,
-      String listingPrice,
+      num listingPrice,
       num price,
       String ownerId,
       String ownerName,
@@ -270,7 +270,7 @@ class __$$SaleModelImplCopyWithImpl<$Res>
       listingPrice: null == listingPrice
           ? _value.listingPrice
           : listingPrice // ignore: cast_nullable_to_non_nullable
-              as String,
+              as num,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -347,7 +347,7 @@ class _$SaleModelImpl implements _SaleModel {
   @override
   final String listingName;
   @override
-  final String listingPrice;
+  final num listingPrice;
   @override
   final num price;
   @override
@@ -451,7 +451,7 @@ abstract class _SaleModel implements SaleModel {
       final num? expenses,
       required final String listingId,
       required final String listingName,
-      required final String listingPrice,
+      required final num listingPrice,
       required final num price,
       required final String ownerId,
       required final String ownerName,
@@ -482,7 +482,7 @@ abstract class _SaleModel implements SaleModel {
   @override
   String get listingName;
   @override
-  String get listingPrice;
+  num get listingPrice;
   @override
   num get price;
   @override

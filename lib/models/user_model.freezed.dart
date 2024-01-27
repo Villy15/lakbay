@@ -23,6 +23,7 @@ mixin _$UserModel {
   String get uid => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get profilePic => throw _privateConstructorUsedError;
+  String? get phoneNo => throw _privateConstructorUsedError;
   bool get isAuthenticated => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
   String? get firstName => throw _privateConstructorUsedError;
@@ -47,6 +48,7 @@ abstract class $UserModelCopyWith<$Res> {
       {String uid,
       String name,
       String profilePic,
+      String? phoneNo,
       bool isAuthenticated,
       String? imageUrl,
       String? firstName,
@@ -72,6 +74,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? uid = null,
     Object? name = null,
     Object? profilePic = null,
+    Object? phoneNo = freezed,
     Object? isAuthenticated = null,
     Object? imageUrl = freezed,
     Object? firstName = freezed,
@@ -93,6 +96,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.profilePic
           : profilePic // ignore: cast_nullable_to_non_nullable
               as String,
+      phoneNo: freezed == phoneNo
+          ? _value.phoneNo
+          : phoneNo // ignore: cast_nullable_to_non_nullable
+              as String?,
       isAuthenticated: null == isAuthenticated
           ? _value.isAuthenticated
           : isAuthenticated // ignore: cast_nullable_to_non_nullable
@@ -137,6 +144,7 @@ abstract class _$$UserModelImplCopyWith<$Res>
       {String uid,
       String name,
       String profilePic,
+      String? phoneNo,
       bool isAuthenticated,
       String? imageUrl,
       String? firstName,
@@ -160,6 +168,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? uid = null,
     Object? name = null,
     Object? profilePic = null,
+    Object? phoneNo = freezed,
     Object? isAuthenticated = null,
     Object? imageUrl = freezed,
     Object? firstName = freezed,
@@ -181,6 +190,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.profilePic
           : profilePic // ignore: cast_nullable_to_non_nullable
               as String,
+      phoneNo: freezed == phoneNo
+          ? _value.phoneNo
+          : phoneNo // ignore: cast_nullable_to_non_nullable
+              as String?,
       isAuthenticated: null == isAuthenticated
           ? _value.isAuthenticated
           : isAuthenticated // ignore: cast_nullable_to_non_nullable
@@ -220,6 +233,7 @@ class _$UserModelImpl extends _UserModel {
       {required this.uid,
       required this.name,
       required this.profilePic,
+      this.phoneNo,
       required this.isAuthenticated,
       this.imageUrl,
       this.firstName,
@@ -239,6 +253,8 @@ class _$UserModelImpl extends _UserModel {
   final String name;
   @override
   final String profilePic;
+  @override
+  final String? phoneNo;
   @override
   final bool isAuthenticated;
   @override
@@ -265,7 +281,7 @@ class _$UserModelImpl extends _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop)';
+    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, phoneNo: $phoneNo, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop)';
   }
 
   @override
@@ -277,6 +293,7 @@ class _$UserModelImpl extends _UserModel {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.profilePic, profilePic) ||
                 other.profilePic == profilePic) &&
+            (identical(other.phoneNo, phoneNo) || other.phoneNo == phoneNo) &&
             (identical(other.isAuthenticated, isAuthenticated) ||
                 other.isAuthenticated == isAuthenticated) &&
             (identical(other.imageUrl, imageUrl) ||
@@ -300,6 +317,7 @@ class _$UserModelImpl extends _UserModel {
       uid,
       name,
       profilePic,
+      phoneNo,
       isAuthenticated,
       imageUrl,
       firstName,
@@ -327,6 +345,7 @@ abstract class _UserModel extends UserModel {
       {required final String uid,
       required final String name,
       required final String profilePic,
+      final String? phoneNo,
       required final bool isAuthenticated,
       final String? imageUrl,
       final String? firstName,
@@ -345,6 +364,8 @@ abstract class _UserModel extends UserModel {
   String get name;
   @override
   String get profilePic;
+  @override
+  String? get phoneNo;
   @override
   bool get isAuthenticated;
   @override

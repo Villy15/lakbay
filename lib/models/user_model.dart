@@ -11,6 +11,7 @@ class UserModel with _$UserModel {
     required String uid,
     required String name,
     required String profilePic,
+    String? phoneNo,
     required bool isAuthenticated,
     String? imageUrl,
     String? firstName,

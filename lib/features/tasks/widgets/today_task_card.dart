@@ -6,15 +6,15 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/tasks/tasks_controller.dart';
 import 'package:lakbay/models/task_model.dart';
 
-class CoopTaskCard extends ConsumerStatefulWidget {
+class TodayTaskCard extends ConsumerStatefulWidget {
   final TaskModel task;
-  const CoopTaskCard({super.key, required this.task});
+  const TodayTaskCard({super.key, required this.task});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _CoopTaskCardState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _TodayTaskCardState();
 }
 
-class _CoopTaskCardState extends ConsumerState<CoopTaskCard> {
+class _TodayTaskCardState extends ConsumerState<TodayTaskCard> {
   void readTask(BuildContext context, TaskModel task) {
     context.pushNamed(
       'read_event_task',
@@ -36,22 +36,32 @@ class _CoopTaskCardState extends ConsumerState<CoopTaskCard> {
         onTap: () => readTask(context, widget.task),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              eventPriority(context),
-              const SizedBox(height: 10),
-              eventTitle(context),
-              eventDueDate(context),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  eventPriority(context),
+                  const SizedBox(height: 10),
+                  eventTitle(context),
+                  eventDueDate(context),
 
-              // Progress Bar
-              const SizedBox(height: 30),
+                  // // Progress Bar
+                  // const SizedBox(height: 30),
 
-              eventTaskMembers(context),
+                  // eventTaskMembers(context),
 
-              const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
 
-              eventProgress(context),
+                  // eventProgress(context),
+                ],
+              ),
+
+              // Type of task
+              const Spacer(),
+
+              Text(widget.task.type.capitalize()),
+              const SizedBox(width: 10),
             ],
           ),
         ),
@@ -236,5 +246,11 @@ class _CoopTaskCardState extends ConsumerState<CoopTaskCard> {
           ),
       ],
     );
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return isNotEmpty ? this[0].toUpperCase() + substring(1) : this;
   }
 }

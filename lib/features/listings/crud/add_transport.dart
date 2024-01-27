@@ -130,16 +130,16 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             ),
             onPressed: () {
               AvailableTransport transport = AvailableTransport(
-                  guests: guests,
-                  luggage: luggage,
-                  price: num.parse(_feeController.text),
-                  available: true,
-                  workingDays: workingDays,
-                  startTime: TimeOfDay.fromDateTime(startDate),
-                  endTime: TimeOfDay.fromDateTime(endDate),
-                  destination: _destinationController.text,
-                  pickupPoint: _pickupController.text,
-                  );
+                guests: guests,
+                luggage: luggage,
+                price: num.parse(_feeController.text),
+                available: true,
+                workingDays: workingDays,
+                startTime: TimeOfDay.fromDateTime(startDate),
+                endTime: TimeOfDay.fromDateTime(endDate),
+                destination: _destinationController.text,
+                pickupPoint: _pickupController.text,
+              );
 
               ListingModel listingModel = ListingModel(
                   address: _addressController.text,
@@ -153,9 +153,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                   publisherId: "",
                   title: _titleController.text,
                   type: type,
-                  images: _images
-                      ?.map((e) => ListingImages(path: e.path))
-                      .toList(),
+                  images:
+                      _images?.map((e) => ListingImages(path: e.path)).toList(),
                   availableTransport: transport);
 
               ref
@@ -280,7 +279,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
     );
   }
 
-  String headerText() {
+    String headerText() {
     switch (activeStep) {
       case 1:
         return 'Add details';
@@ -304,6 +303,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         return 'Choose Type';
     }
   }
+
 
   Widget chooseType(BuildContext context) {
     List<Map<String, dynamic>> types = [
@@ -810,7 +810,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         ]);
   }
 
-  Widget stepForm(BuildContext context) {
+ Widget stepForm(BuildContext context) {
     switch (activeStep) {
       case 1:
         return addDetails(context);
@@ -819,7 +819,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
       case 3:
         return addLocation(context);
       case 4:
-        return addListingPhotos(context);
+        return addGuestInfo(context);
       case 5:
         return addGuestInfo(context);
       case 6:

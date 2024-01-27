@@ -19,10 +19,12 @@ class ListingBookings with _$ListingBookings {
     String? id,
     required bool needsContributions,
     required String phoneNo,
+    required num price,
     required String roomId,
     @TimestampSerializer() DateTime? selectedDate,
     String? selectedTime,
     @TimestampSerializer() DateTime? startDate,
+    required num totalPrice,
     String? typeOfTrip,
     required String userId,
   }) = _ListingBookings;
@@ -40,4 +42,29 @@ class Expense with _$Expense {
 
   factory Expense.fromJson(Map<String, dynamic> json) =>
       _$ExpenseFromJson(json);
+}
+
+@freezed
+class Task with _$Task {
+  factory Task({
+    required List<String> assigned,
+    required String committee,
+    required bool complete,
+    required bool openContribution,
+    List<TaskImages>? imageProof,
+    required String name,
+  }) = _Task;
+
+  factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
+}
+
+@freezed
+class TaskImages with _$TaskImages {
+  factory TaskImages({
+    required String path,
+    String? url,
+  }) = _TaskImages;
+
+  factory TaskImages.fromJson(Map<String, dynamic> json) =>
+      _$TaskImagesFromJson(json);
 }

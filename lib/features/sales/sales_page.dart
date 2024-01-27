@@ -49,7 +49,7 @@ class _SalesPageState extends ConsumerState<SalesPage> {
 
     return ref.watch(getCooperativeProvider(widget.coopId)).when(
           data: (CooperativeModel coop) {
-            // Get all listings by the cooperative
+            // Get all sales by the cooperative
             return DefaultTabController(
               initialIndex: 0,
               length: 2,

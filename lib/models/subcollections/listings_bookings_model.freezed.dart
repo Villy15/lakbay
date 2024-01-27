@@ -32,12 +32,14 @@ mixin _$ListingBookings {
   String? get id => throw _privateConstructorUsedError;
   bool get needsContributions => throw _privateConstructorUsedError;
   String get phoneNo => throw _privateConstructorUsedError;
+  num get price => throw _privateConstructorUsedError;
   String get roomId => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get selectedDate => throw _privateConstructorUsedError;
   String? get selectedTime => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get startDate => throw _privateConstructorUsedError;
+  num get totalPrice => throw _privateConstructorUsedError;
   String? get typeOfTrip => throw _privateConstructorUsedError;
   String get userId => throw _privateConstructorUsedError;
 
@@ -65,10 +67,12 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String? id,
       bool needsContributions,
       String phoneNo,
+      num price,
       String roomId,
       @TimestampSerializer() DateTime? selectedDate,
       String? selectedTime,
       @TimestampSerializer() DateTime? startDate,
+      num totalPrice,
       String? typeOfTrip,
       String userId});
 }
@@ -97,10 +101,12 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? id = freezed,
     Object? needsContributions = null,
     Object? phoneNo = null,
+    Object? price = null,
     Object? roomId = null,
     Object? selectedDate = freezed,
     Object? selectedTime = freezed,
     Object? startDate = freezed,
+    Object? totalPrice = null,
     Object? typeOfTrip = freezed,
     Object? userId = null,
   }) {
@@ -149,6 +155,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.phoneNo
           : phoneNo // ignore: cast_nullable_to_non_nullable
               as String,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as num,
       roomId: null == roomId
           ? _value.roomId
           : roomId // ignore: cast_nullable_to_non_nullable
@@ -165,6 +175,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      totalPrice: null == totalPrice
+          ? _value.totalPrice
+          : totalPrice // ignore: cast_nullable_to_non_nullable
+              as num,
       typeOfTrip: freezed == typeOfTrip
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
@@ -197,10 +211,12 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String? id,
       bool needsContributions,
       String phoneNo,
+      num price,
       String roomId,
       @TimestampSerializer() DateTime? selectedDate,
       String? selectedTime,
       @TimestampSerializer() DateTime? startDate,
+      num totalPrice,
       String? typeOfTrip,
       String userId});
 }
@@ -227,10 +243,12 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? needsContributions = null,
     Object? phoneNo = null,
+    Object? price = null,
     Object? roomId = null,
     Object? selectedDate = freezed,
     Object? selectedTime = freezed,
     Object? startDate = freezed,
+    Object? totalPrice = null,
     Object? typeOfTrip = freezed,
     Object? userId = null,
   }) {
@@ -279,6 +297,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.phoneNo
           : phoneNo // ignore: cast_nullable_to_non_nullable
               as String,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as num,
       roomId: null == roomId
           ? _value.roomId
           : roomId // ignore: cast_nullable_to_non_nullable
@@ -295,6 +317,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      totalPrice: null == totalPrice
+          ? _value.totalPrice
+          : totalPrice // ignore: cast_nullable_to_non_nullable
+              as num,
       typeOfTrip: freezed == typeOfTrip
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
@@ -322,10 +348,12 @@ class _$ListingBookingsImpl implements _ListingBookings {
       this.id,
       required this.needsContributions,
       required this.phoneNo,
+      required this.price,
       required this.roomId,
       @TimestampSerializer() this.selectedDate,
       this.selectedTime,
       @TimestampSerializer() this.startDate,
+      required this.totalPrice,
       this.typeOfTrip,
       required this.userId})
       : _expenses = expenses;
@@ -365,6 +393,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
   @override
   final String phoneNo;
   @override
+  final num price;
+  @override
   final String roomId;
   @override
   @TimestampSerializer()
@@ -375,13 +405,15 @@ class _$ListingBookingsImpl implements _ListingBookings {
   @TimestampSerializer()
   final DateTime? startDate;
   @override
+  final num totalPrice;
+  @override
   final String? typeOfTrip;
   @override
   final String userId;
 
   @override
   String toString() {
-    return 'ListingBookings(category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, phoneNo: $phoneNo, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, typeOfTrip: $typeOfTrip, userId: $userId)';
+    return 'ListingBookings(category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, phoneNo: $phoneNo, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, userId: $userId)';
   }
 
   @override
@@ -405,6 +437,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
             (identical(other.needsContributions, needsContributions) ||
                 other.needsContributions == needsContributions) &&
             (identical(other.phoneNo, phoneNo) || other.phoneNo == phoneNo) &&
+            (identical(other.price, price) || other.price == price) &&
             (identical(other.roomId, roomId) || other.roomId == roomId) &&
             (identical(other.selectedDate, selectedDate) ||
                 other.selectedDate == selectedDate) &&
@@ -412,6 +445,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
                 other.selectedTime == selectedTime) &&
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate) &&
+            (identical(other.totalPrice, totalPrice) ||
+                other.totalPrice == totalPrice) &&
             (identical(other.typeOfTrip, typeOfTrip) ||
                 other.typeOfTrip == typeOfTrip) &&
             (identical(other.userId, userId) || other.userId == userId));
@@ -419,25 +454,28 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      category,
-      email,
-      emergencyContactName,
-      emergencyContactNo,
-      endDate,
-      const DeepCollectionEquality().hash(_expenses),
-      governmentId,
-      guests,
-      id,
-      needsContributions,
-      phoneNo,
-      roomId,
-      selectedDate,
-      selectedTime,
-      startDate,
-      typeOfTrip,
-      userId);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        category,
+        email,
+        emergencyContactName,
+        emergencyContactNo,
+        endDate,
+        const DeepCollectionEquality().hash(_expenses),
+        governmentId,
+        guests,
+        id,
+        needsContributions,
+        phoneNo,
+        price,
+        roomId,
+        selectedDate,
+        selectedTime,
+        startDate,
+        totalPrice,
+        typeOfTrip,
+        userId
+      ]);
 
   @JsonKey(ignore: true)
   @override
@@ -467,10 +505,12 @@ abstract class _ListingBookings implements ListingBookings {
       final String? id,
       required final bool needsContributions,
       required final String phoneNo,
+      required final num price,
       required final String roomId,
       @TimestampSerializer() final DateTime? selectedDate,
       final String? selectedTime,
       @TimestampSerializer() final DateTime? startDate,
+      required final num totalPrice,
       final String? typeOfTrip,
       required final String userId}) = _$ListingBookingsImpl;
 
@@ -501,6 +541,8 @@ abstract class _ListingBookings implements ListingBookings {
   @override
   String get phoneNo;
   @override
+  num get price;
+  @override
   String get roomId;
   @override
   @TimestampSerializer()
@@ -510,6 +552,8 @@ abstract class _ListingBookings implements ListingBookings {
   @override
   @TimestampSerializer()
   DateTime? get startDate;
+  @override
+  num get totalPrice;
   @override
   String? get typeOfTrip;
   @override
@@ -666,5 +710,420 @@ abstract class _Expense implements Expense {
   @override
   @JsonKey(ignore: true)
   _$$ExpenseImplCopyWith<_$ExpenseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Task _$TaskFromJson(Map<String, dynamic> json) {
+  return _Task.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Task {
+  List<String> get assigned => throw _privateConstructorUsedError;
+  String get committee => throw _privateConstructorUsedError;
+  bool get complete => throw _privateConstructorUsedError;
+  bool get openContribution => throw _privateConstructorUsedError;
+  List<TaskImages>? get imageProof => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $TaskCopyWith<Task> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TaskCopyWith<$Res> {
+  factory $TaskCopyWith(Task value, $Res Function(Task) then) =
+      _$TaskCopyWithImpl<$Res, Task>;
+  @useResult
+  $Res call(
+      {List<String> assigned,
+      String committee,
+      bool complete,
+      bool openContribution,
+      List<TaskImages>? imageProof,
+      String name});
+}
+
+/// @nodoc
+class _$TaskCopyWithImpl<$Res, $Val extends Task>
+    implements $TaskCopyWith<$Res> {
+  _$TaskCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? assigned = null,
+    Object? committee = null,
+    Object? complete = null,
+    Object? openContribution = null,
+    Object? imageProof = freezed,
+    Object? name = null,
+  }) {
+    return _then(_value.copyWith(
+      assigned: null == assigned
+          ? _value.assigned
+          : assigned // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      committee: null == committee
+          ? _value.committee
+          : committee // ignore: cast_nullable_to_non_nullable
+              as String,
+      complete: null == complete
+          ? _value.complete
+          : complete // ignore: cast_nullable_to_non_nullable
+              as bool,
+      openContribution: null == openContribution
+          ? _value.openContribution
+          : openContribution // ignore: cast_nullable_to_non_nullable
+              as bool,
+      imageProof: freezed == imageProof
+          ? _value.imageProof
+          : imageProof // ignore: cast_nullable_to_non_nullable
+              as List<TaskImages>?,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TaskImplCopyWith<$Res> implements $TaskCopyWith<$Res> {
+  factory _$$TaskImplCopyWith(
+          _$TaskImpl value, $Res Function(_$TaskImpl) then) =
+      __$$TaskImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {List<String> assigned,
+      String committee,
+      bool complete,
+      bool openContribution,
+      List<TaskImages>? imageProof,
+      String name});
+}
+
+/// @nodoc
+class __$$TaskImplCopyWithImpl<$Res>
+    extends _$TaskCopyWithImpl<$Res, _$TaskImpl>
+    implements _$$TaskImplCopyWith<$Res> {
+  __$$TaskImplCopyWithImpl(_$TaskImpl _value, $Res Function(_$TaskImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? assigned = null,
+    Object? committee = null,
+    Object? complete = null,
+    Object? openContribution = null,
+    Object? imageProof = freezed,
+    Object? name = null,
+  }) {
+    return _then(_$TaskImpl(
+      assigned: null == assigned
+          ? _value._assigned
+          : assigned // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      committee: null == committee
+          ? _value.committee
+          : committee // ignore: cast_nullable_to_non_nullable
+              as String,
+      complete: null == complete
+          ? _value.complete
+          : complete // ignore: cast_nullable_to_non_nullable
+              as bool,
+      openContribution: null == openContribution
+          ? _value.openContribution
+          : openContribution // ignore: cast_nullable_to_non_nullable
+              as bool,
+      imageProof: freezed == imageProof
+          ? _value._imageProof
+          : imageProof // ignore: cast_nullable_to_non_nullable
+              as List<TaskImages>?,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TaskImpl implements _Task {
+  _$TaskImpl(
+      {required final List<String> assigned,
+      required this.committee,
+      required this.complete,
+      required this.openContribution,
+      final List<TaskImages>? imageProof,
+      required this.name})
+      : _assigned = assigned,
+        _imageProof = imageProof;
+
+  factory _$TaskImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TaskImplFromJson(json);
+
+  final List<String> _assigned;
+  @override
+  List<String> get assigned {
+    if (_assigned is EqualUnmodifiableListView) return _assigned;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_assigned);
+  }
+
+  @override
+  final String committee;
+  @override
+  final bool complete;
+  @override
+  final bool openContribution;
+  final List<TaskImages>? _imageProof;
+  @override
+  List<TaskImages>? get imageProof {
+    final value = _imageProof;
+    if (value == null) return null;
+    if (_imageProof is EqualUnmodifiableListView) return _imageProof;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  final String name;
+
+  @override
+  String toString() {
+    return 'Task(assigned: $assigned, committee: $committee, complete: $complete, openContribution: $openContribution, imageProof: $imageProof, name: $name)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TaskImpl &&
+            const DeepCollectionEquality().equals(other._assigned, _assigned) &&
+            (identical(other.committee, committee) ||
+                other.committee == committee) &&
+            (identical(other.complete, complete) ||
+                other.complete == complete) &&
+            (identical(other.openContribution, openContribution) ||
+                other.openContribution == openContribution) &&
+            const DeepCollectionEquality()
+                .equals(other._imageProof, _imageProof) &&
+            (identical(other.name, name) || other.name == name));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_assigned),
+      committee,
+      complete,
+      openContribution,
+      const DeepCollectionEquality().hash(_imageProof),
+      name);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TaskImplCopyWith<_$TaskImpl> get copyWith =>
+      __$$TaskImplCopyWithImpl<_$TaskImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TaskImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Task implements Task {
+  factory _Task(
+      {required final List<String> assigned,
+      required final String committee,
+      required final bool complete,
+      required final bool openContribution,
+      final List<TaskImages>? imageProof,
+      required final String name}) = _$TaskImpl;
+
+  factory _Task.fromJson(Map<String, dynamic> json) = _$TaskImpl.fromJson;
+
+  @override
+  List<String> get assigned;
+  @override
+  String get committee;
+  @override
+  bool get complete;
+  @override
+  bool get openContribution;
+  @override
+  List<TaskImages>? get imageProof;
+  @override
+  String get name;
+  @override
+  @JsonKey(ignore: true)
+  _$$TaskImplCopyWith<_$TaskImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+TaskImages _$TaskImagesFromJson(Map<String, dynamic> json) {
+  return _TaskImages.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TaskImages {
+  String get path => throw _privateConstructorUsedError;
+  String? get url => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $TaskImagesCopyWith<TaskImages> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TaskImagesCopyWith<$Res> {
+  factory $TaskImagesCopyWith(
+          TaskImages value, $Res Function(TaskImages) then) =
+      _$TaskImagesCopyWithImpl<$Res, TaskImages>;
+  @useResult
+  $Res call({String path, String? url});
+}
+
+/// @nodoc
+class _$TaskImagesCopyWithImpl<$Res, $Val extends TaskImages>
+    implements $TaskImagesCopyWith<$Res> {
+  _$TaskImagesCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? path = null,
+    Object? url = freezed,
+  }) {
+    return _then(_value.copyWith(
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: freezed == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TaskImagesImplCopyWith<$Res>
+    implements $TaskImagesCopyWith<$Res> {
+  factory _$$TaskImagesImplCopyWith(
+          _$TaskImagesImpl value, $Res Function(_$TaskImagesImpl) then) =
+      __$$TaskImagesImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String path, String? url});
+}
+
+/// @nodoc
+class __$$TaskImagesImplCopyWithImpl<$Res>
+    extends _$TaskImagesCopyWithImpl<$Res, _$TaskImagesImpl>
+    implements _$$TaskImagesImplCopyWith<$Res> {
+  __$$TaskImagesImplCopyWithImpl(
+      _$TaskImagesImpl _value, $Res Function(_$TaskImagesImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? path = null,
+    Object? url = freezed,
+  }) {
+    return _then(_$TaskImagesImpl(
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: freezed == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TaskImagesImpl implements _TaskImages {
+  _$TaskImagesImpl({required this.path, this.url});
+
+  factory _$TaskImagesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TaskImagesImplFromJson(json);
+
+  @override
+  final String path;
+  @override
+  final String? url;
+
+  @override
+  String toString() {
+    return 'TaskImages(path: $path, url: $url)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TaskImagesImpl &&
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.url, url) || other.url == url));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, path, url);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TaskImagesImplCopyWith<_$TaskImagesImpl> get copyWith =>
+      __$$TaskImagesImplCopyWithImpl<_$TaskImagesImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TaskImagesImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _TaskImages implements TaskImages {
+  factory _TaskImages({required final String path, final String? url}) =
+      _$TaskImagesImpl;
+
+  factory _TaskImages.fromJson(Map<String, dynamic> json) =
+      _$TaskImagesImpl.fromJson;
+
+  @override
+  String get path;
+  @override
+  String? get url;
+  @override
+  @JsonKey(ignore: true)
+  _$$TaskImagesImplCopyWith<_$TaskImagesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

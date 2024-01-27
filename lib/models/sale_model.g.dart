@@ -17,7 +17,7 @@ _$SaleModelImpl _$$SaleModelImplFromJson(Map<String, dynamic> json) =>
       expenses: json['expenses'] as num?,
       listingId: json['listingId'] as String,
       listingName: json['listingName'] as String,
-      listingPrice: json['listingPrice'] as String,
+      listingPrice: json['listingPrice'] as num,
       price: json['price'] as num,
       ownerId: json['ownerId'] as String,
       ownerName: json['ownerName'] as String,

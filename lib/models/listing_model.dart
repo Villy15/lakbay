@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 part 'listing_model.freezed.dart';
 part 'listing_model.g.dart';
@@ -13,17 +14,25 @@ class ListingModel with _$ListingModel {
     List<AvailableDate>? availableDates,
     List<AvailableRoom>? availableRooms,
     required String category,
+    @TimestampSerializer() DateTime? checkIn,
+    @TimestampSerializer() DateTime? checkOut,
     required String city,
     required ListingCooperative cooperative,
     required String description,
+    num? duration,
     List<ListingImages>? images,
     bool? isPublished,
     List<ListingCost>? listingCosts,
+    num? numberOfUnits,
+    @TimestampSerializer() DateTime? openingHours,
+    @TimestampSerializer() DateTime? closingHours,
     num? pax,
     num? price,
     required String province,
     required String publisherId,
+    required String publisherName,
     num? rating,
+    List<Task>? fixedTasks,
     @TimestampSerializer() DateTime? timestamp,
     required String title,
     String? type,
@@ -111,11 +120,10 @@ class AvailableRoom with _$AvailableRoom {
 
 @freezed
 class FoodService with _$FoodService {
-  factory FoodService({
-    required String tableId,
-    required num guests,
-    required bool isReserved
-  }) = _FoodService;
+  factory FoodService(
+      {required String tableId,
+      required num guests,
+      required bool isReserved}) = _FoodService;
 
   factory FoodService.fromJson(Map<String, dynamic> json) =>
       _$FoodServiceFromJson(json);
@@ -123,13 +131,12 @@ class FoodService with _$FoodService {
 
 @freezed
 class EntertainmentService with _$EntertainmentService {
-  factory EntertainmentService({
-    required String entertainmentId,
-    required num guests,
-    required num price,
-    required bool available,
-    required List<ListingImages> entertainmentImgs
-  }) = _EntertainmentService;
+  factory EntertainmentService(
+      {required String entertainmentId,
+      required num guests,
+      required num price,
+      required bool available,
+      required List<ListingImages> entertainmentImgs}) = _EntertainmentService;
 
   factory EntertainmentService.fromJson(Map<String, dynamic> json) =>
       _$EntertainmentServiceFromJson(json);
