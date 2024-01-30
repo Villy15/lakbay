@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -35,7 +36,7 @@ class ListingModel with _$ListingModel {
     List<Task>? fixedTasks,
     @TimestampSerializer() DateTime? timestamp,
     required String title,
-    required String type,
+    String? type,
     List<FoodService>? availableTables,
     List<ListingImages>? menuImgs,
     AvailableTransport? availableTransport,
@@ -98,13 +99,21 @@ class AvailableRoom with _$AvailableRoom {
       _$AvailableRoomFromJson(json);
 }
 
-@freezed
-class AvailableTransport with _$AvailableTransport {
-  factory AvailableTransport(
-      {required bool available,
-      required num guests,
-      required num price,
-      required num luggage}) = _AvailableTransport;
+@freezed class AvailableTransport with _$AvailableTransport {
+  factory AvailableTransport({
+    required bool available,
+    required num guests,
+    required num price,
+    required num luggage,
+    required List<bool> workingDays,
+    @TimeOfDayConverter()
+    required TimeOfDay startTime,
+    @TimeOfDayConverter()
+    required TimeOfDay endTime,
+    required String destination,
+    required String pickupPoint
+    
+  }) = _AvailableTransport;
 
   factory AvailableTransport.fromJson(Map<String, dynamic> json) =>
       _$AvailableTransportFromJson(json);
@@ -156,4 +165,21 @@ class AvailableTime with _$AvailableTime {
 
   factory AvailableTime.fromJson(Map<String, dynamic> json) =>
       _$AvailableTimeFromJson(json);
+}
+
+class TimeOfDayConverter implements JsonConverter<TimeOfDay, Map<String, dynamic>> {
+  const TimeOfDayConverter();
+
+  @override
+  TimeOfDay fromJson(Map<String, dynamic> json) {
+    return TimeOfDay(hour: json['hour'], minute: json['minute']);
+  }
+
+  @override
+  Map<String, dynamic> toJson(TimeOfDay object) {
+    return {
+      'hour': object.hour,
+      'minute': object.minute,
+    };
+  }
 }
