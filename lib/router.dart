@@ -420,7 +420,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
               // Add Listing to Cooperative
               buildSubRoute(
-                '/my_coop/listings/functions/add',
+                '/my_coop/listings/functions/add_listing',
                 (context, pathParameters, extra) {
                   CooperativeModel coop = extra as CooperativeModel;
 
@@ -428,6 +428,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     coop: coop,
                   );
                 },
+                name: "add_listing",
                 subRoutes: [
                   buildSubRoute(
                     'accommodation',

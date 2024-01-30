@@ -31,6 +31,7 @@ mixin _$ListingModel {
   String get city => throw _privateConstructorUsedError;
   ListingCooperative get cooperative => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
+  num? get downpaymentRate => throw _privateConstructorUsedError;
   num? get duration => throw _privateConstructorUsedError;
   List<ListingImages>? get images => throw _privateConstructorUsedError;
   bool? get isPublished => throw _privateConstructorUsedError;
@@ -82,6 +83,7 @@ abstract class $ListingModelCopyWith<$Res> {
       String city,
       ListingCooperative cooperative,
       String description,
+      num? downpaymentRate,
       num? duration,
       List<ListingImages>? images,
       bool? isPublished,
@@ -132,6 +134,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? city = null,
     Object? cooperative = null,
     Object? description = null,
+    Object? downpaymentRate = freezed,
     Object? duration = freezed,
     Object? images = freezed,
     Object? isPublished = freezed,
@@ -193,6 +196,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      downpaymentRate: freezed == downpaymentRate
+          ? _value.downpaymentRate
+          : downpaymentRate // ignore: cast_nullable_to_non_nullable
+              as num?,
       duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
@@ -328,6 +335,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       String city,
       ListingCooperative cooperative,
       String description,
+      num? downpaymentRate,
       num? duration,
       List<ListingImages>? images,
       bool? isPublished,
@@ -378,6 +386,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? city = null,
     Object? cooperative = null,
     Object? description = null,
+    Object? downpaymentRate = freezed,
     Object? duration = freezed,
     Object? images = freezed,
     Object? isPublished = freezed,
@@ -439,6 +448,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      downpaymentRate: freezed == downpaymentRate
+          ? _value.downpaymentRate
+          : downpaymentRate // ignore: cast_nullable_to_non_nullable
+              as num?,
       duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
@@ -548,6 +561,7 @@ class _$ListingModelImpl implements _ListingModel {
       required this.city,
       required this.cooperative,
       required this.description,
+      this.downpaymentRate,
       this.duration,
       final List<ListingImages>? images,
       this.isPublished,
@@ -619,6 +633,8 @@ class _$ListingModelImpl implements _ListingModel {
   final ListingCooperative cooperative;
   @override
   final String description;
+  @override
+  final num? downpaymentRate;
   @override
   final num? duration;
   final List<ListingImages>? _images;
@@ -720,7 +736,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, checkIn: $checkIn, checkOut: $checkOut, city: $city, cooperative: $cooperative, description: $description, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, checkIn: $checkIn, checkOut: $checkOut, city: $city, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
   }
 
   @override
@@ -743,6 +759,8 @@ class _$ListingModelImpl implements _ListingModel {
                 other.cooperative == cooperative) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.downpaymentRate, downpaymentRate) ||
+                other.downpaymentRate == downpaymentRate) &&
             (identical(other.duration, duration) ||
                 other.duration == duration) &&
             const DeepCollectionEquality().equals(other._images, _images) &&
@@ -796,6 +814,7 @@ class _$ListingModelImpl implements _ListingModel {
         city,
         cooperative,
         description,
+        downpaymentRate,
         duration,
         const DeepCollectionEquality().hash(_images),
         isPublished,
@@ -846,6 +865,7 @@ abstract class _ListingModel implements ListingModel {
       required final String city,
       required final ListingCooperative cooperative,
       required final String description,
+      final num? downpaymentRate,
       final num? duration,
       final List<ListingImages>? images,
       final bool? isPublished,
@@ -893,6 +913,8 @@ abstract class _ListingModel implements ListingModel {
   ListingCooperative get cooperative;
   @override
   String get description;
+  @override
+  num? get downpaymentRate;
   @override
   num? get duration;
   @override

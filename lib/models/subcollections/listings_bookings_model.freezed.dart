@@ -39,6 +39,8 @@ mixin _$ListingBookings {
   String? get selectedTime => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get startDate => throw _privateConstructorUsedError;
+  String get bookingStatus => throw _privateConstructorUsedError;
+  List<Task>? get tasks => throw _privateConstructorUsedError;
   num get totalPrice => throw _privateConstructorUsedError;
   String? get typeOfTrip => throw _privateConstructorUsedError;
   String get userId => throw _privateConstructorUsedError;
@@ -72,6 +74,8 @@ abstract class $ListingBookingsCopyWith<$Res> {
       @TimestampSerializer() DateTime? selectedDate,
       String? selectedTime,
       @TimestampSerializer() DateTime? startDate,
+      String bookingStatus,
+      List<Task>? tasks,
       num totalPrice,
       String? typeOfTrip,
       String userId});
@@ -106,6 +110,8 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? selectedDate = freezed,
     Object? selectedTime = freezed,
     Object? startDate = freezed,
+    Object? bookingStatus = null,
+    Object? tasks = freezed,
     Object? totalPrice = null,
     Object? typeOfTrip = freezed,
     Object? userId = null,
@@ -175,6 +181,14 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      bookingStatus: null == bookingStatus
+          ? _value.bookingStatus
+          : bookingStatus // ignore: cast_nullable_to_non_nullable
+              as String,
+      tasks: freezed == tasks
+          ? _value.tasks
+          : tasks // ignore: cast_nullable_to_non_nullable
+              as List<Task>?,
       totalPrice: null == totalPrice
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
@@ -216,6 +230,8 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       @TimestampSerializer() DateTime? selectedDate,
       String? selectedTime,
       @TimestampSerializer() DateTime? startDate,
+      String bookingStatus,
+      List<Task>? tasks,
       num totalPrice,
       String? typeOfTrip,
       String userId});
@@ -248,6 +264,8 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? selectedDate = freezed,
     Object? selectedTime = freezed,
     Object? startDate = freezed,
+    Object? bookingStatus = null,
+    Object? tasks = freezed,
     Object? totalPrice = null,
     Object? typeOfTrip = freezed,
     Object? userId = null,
@@ -317,6 +335,14 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      bookingStatus: null == bookingStatus
+          ? _value.bookingStatus
+          : bookingStatus // ignore: cast_nullable_to_non_nullable
+              as String,
+      tasks: freezed == tasks
+          ? _value._tasks
+          : tasks // ignore: cast_nullable_to_non_nullable
+              as List<Task>?,
       totalPrice: null == totalPrice
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
@@ -353,10 +379,13 @@ class _$ListingBookingsImpl implements _ListingBookings {
       @TimestampSerializer() this.selectedDate,
       this.selectedTime,
       @TimestampSerializer() this.startDate,
+      required this.bookingStatus,
+      final List<Task>? tasks,
       required this.totalPrice,
       this.typeOfTrip,
       required this.userId})
-      : _expenses = expenses;
+      : _expenses = expenses,
+        _tasks = tasks;
 
   factory _$ListingBookingsImpl.fromJson(Map<String, dynamic> json) =>
       _$$ListingBookingsImplFromJson(json);
@@ -405,6 +434,18 @@ class _$ListingBookingsImpl implements _ListingBookings {
   @TimestampSerializer()
   final DateTime? startDate;
   @override
+  final String bookingStatus;
+  final List<Task>? _tasks;
+  @override
+  List<Task>? get tasks {
+    final value = _tasks;
+    if (value == null) return null;
+    if (_tasks is EqualUnmodifiableListView) return _tasks;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
   final num totalPrice;
   @override
   final String? typeOfTrip;
@@ -413,7 +454,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
   @override
   String toString() {
-    return 'ListingBookings(category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, phoneNo: $phoneNo, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, userId: $userId)';
+    return 'ListingBookings(category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, phoneNo: $phoneNo, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, tasks: $tasks, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, userId: $userId)';
   }
 
   @override
@@ -445,6 +486,9 @@ class _$ListingBookingsImpl implements _ListingBookings {
                 other.selectedTime == selectedTime) &&
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate) &&
+            (identical(other.bookingStatus, bookingStatus) ||
+                other.bookingStatus == bookingStatus) &&
+            const DeepCollectionEquality().equals(other._tasks, _tasks) &&
             (identical(other.totalPrice, totalPrice) ||
                 other.totalPrice == totalPrice) &&
             (identical(other.typeOfTrip, typeOfTrip) ||
@@ -472,6 +516,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
         selectedDate,
         selectedTime,
         startDate,
+        bookingStatus,
+        const DeepCollectionEquality().hash(_tasks),
         totalPrice,
         typeOfTrip,
         userId
@@ -510,6 +556,8 @@ abstract class _ListingBookings implements ListingBookings {
       @TimestampSerializer() final DateTime? selectedDate,
       final String? selectedTime,
       @TimestampSerializer() final DateTime? startDate,
+      required final String bookingStatus,
+      final List<Task>? tasks,
       required final num totalPrice,
       final String? typeOfTrip,
       required final String userId}) = _$ListingBookingsImpl;
@@ -552,6 +600,10 @@ abstract class _ListingBookings implements ListingBookings {
   @override
   @TimestampSerializer()
   DateTime? get startDate;
+  @override
+  String get bookingStatus;
+  @override
+  List<Task>? get tasks;
   @override
   num get totalPrice;
   @override

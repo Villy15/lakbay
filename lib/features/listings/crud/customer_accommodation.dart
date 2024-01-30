@@ -212,7 +212,14 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
+                              startDate = startDate.copyWith(
+                                  hour: widget.listing.checkIn!.hour,
+                                  minute: widget.listing.checkIn!.minute);
+                              endDate = endDate.copyWith(
+                                  hour: widget.listing.checkOut!.hour,
+                                  minute: widget.listing.checkOut!.minute);
                               ListingBookings booking = ListingBookings(
+                                bookingStatus: "Reserved",
                                 price: room.price,
                                 totalPrice: room.price,
                                 category: "Accommodation",
@@ -230,6 +237,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                 emergencyContactNo:
                                     emergencyContactNoController.text,
                                 needsContributions: false,
+                                tasks: widget.listing.fixedTasks,
                               );
                               ref
                                   .read(listingControllerProvider.notifier)

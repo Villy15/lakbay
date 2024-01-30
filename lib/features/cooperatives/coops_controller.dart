@@ -184,6 +184,7 @@ class CoopsController extends StateNotifier<bool> {
             .editUserAfterJoinCoop(user!.uid, updatedUser!);
 
         var coopMember = CooperativeMembers(
+          name: user.name,
           uid: user.uid,
           privileges: [],
           role: CooperativeMembersRole(

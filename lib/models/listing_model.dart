@@ -18,6 +18,7 @@ class ListingModel with _$ListingModel {
     required String city,
     required ListingCooperative cooperative,
     required String description,
+    num? downpaymentRate,
     num? duration,
     List<ListingImages>? images,
     bool? isPublished,

@@ -10,6 +10,7 @@ class CooperativeMembers with _$CooperativeMembers {
   const CooperativeMembers._();
 
   factory CooperativeMembers({
+    required String name,
     String? uid,
     List<String>? privileges,
     CooperativeMembersRole? role,

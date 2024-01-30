@@ -24,6 +24,8 @@ class ListingBookings with _$ListingBookings {
     @TimestampSerializer() DateTime? selectedDate,
     String? selectedTime,
     @TimestampSerializer() DateTime? startDate,
+    required String bookingStatus,
+    List<Task>? tasks,
     required num totalPrice,
     String? typeOfTrip,
     required String userId,
