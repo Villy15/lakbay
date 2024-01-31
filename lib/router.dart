@@ -52,6 +52,7 @@ import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/plan/plan_page.dart';
 import 'package:lakbay/features/plan/screens/plan_add_activity.dart';
+import 'package:lakbay/features/plan/screens/plan_search_listing.dart';
 import 'package:lakbay/features/plan/screens/plan_select_date.dart';
 import 'package:lakbay/features/plan/screens/plan_select_location.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
@@ -194,6 +195,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   (context, pathParameters, extra) {
                     return const PlanAddActivity();
                   },
+                  subRoutes: [
+                    // Search Listing Page
+                    buildSubRoute(
+                      'search_listing/:category',
+                      (context, pathParameters, extra) {
+                        return PlanSearchListing(
+                          category: pathParameters['category']!,
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ]),
 
