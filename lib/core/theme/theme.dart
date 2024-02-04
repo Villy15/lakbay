@@ -51,6 +51,11 @@ class Pallete {
     // Scaffold Theme
     scaffoldBackgroundColor: white,
 
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: white,
+      elevation: 1,
+    ),
+
     cardTheme: const CardTheme(
       elevation: 1,
       surfaceTintColor: white,

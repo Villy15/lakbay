@@ -7,6 +7,8 @@ part 'plan_model.g.dart';
 
 @freezed
 class PlanModel with _$PlanModel {
+  const PlanModel._();
+
   factory PlanModel({
     String? uid,
     required String location,
@@ -18,6 +20,16 @@ class PlanModel with _$PlanModel {
 
   factory PlanModel.fromJson(Map<String, dynamic> json) =>
       _$PlanModelFromJson(json);
+
+  // Check the date of the activity if it is the same as the date of the plan
+  bool isSameDate(DateTime date) {
+    return activities?.any((activity) {
+          return activity.dateTime?.year == date.year &&
+              activity.dateTime?.month == date.month &&
+              activity.dateTime?.day == date.day;
+        }) ??
+        false;
+  }
 }
 
 @freezed

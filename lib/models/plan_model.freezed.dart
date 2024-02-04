@@ -164,7 +164,7 @@ class __$$PlanModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$PlanModelImpl implements _PlanModel {
+class _$PlanModelImpl extends _PlanModel {
   _$PlanModelImpl(
       {this.uid,
       required this.location,
@@ -172,7 +172,8 @@ class _$PlanModelImpl implements _PlanModel {
       @TimestampSerializer() this.endDate,
       final List<PlanActivity>? activities,
       required this.userId})
-      : _activities = activities;
+      : _activities = activities,
+        super._();
 
   factory _$PlanModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$PlanModelImplFromJson(json);
@@ -240,7 +241,7 @@ class _$PlanModelImpl implements _PlanModel {
   }
 }
 
-abstract class _PlanModel implements PlanModel {
+abstract class _PlanModel extends PlanModel {
   factory _PlanModel(
       {final String? uid,
       required final String location,
@@ -248,6 +249,7 @@ abstract class _PlanModel implements PlanModel {
       @TimestampSerializer() final DateTime? endDate,
       final List<PlanActivity>? activities,
       required final String userId}) = _$PlanModelImpl;
+  _PlanModel._() : super._();
 
   factory _PlanModel.fromJson(Map<String, dynamic> json) =
       _$PlanModelImpl.fromJson;

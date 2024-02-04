@@ -1,4 +1,27 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lakbay/models/plan_model.dart';
+
+// TEST Without DBASE
+// List of Plan Model State Notifier Provider
+final planModelProvider =
+    StateNotifierProvider<PlanModelProvider, List<PlanModel>>(
+  (ref) => PlanModelProvider(),
+);
+
+class PlanModelProvider extends StateNotifier<List<PlanModel>> {
+  PlanModelProvider() : super([]);
+
+  void addPlan(PlanModel plan, BuildContext context) {
+    state = [...state, plan];
+    context.pop();
+  }
+
+  void removePlan(PlanModel plan) {
+    state = state.where((element) => element != plan).toList();
+  }
+}
 
 // Plan Location Provider
 final planLocationProvider =

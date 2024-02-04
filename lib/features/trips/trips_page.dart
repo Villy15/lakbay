@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/widgets/app_bar.dart';
 
 class TripsPage extends ConsumerStatefulWidget {
   const TripsPage({super.key});
@@ -11,8 +13,10 @@ class TripsPage extends ConsumerStatefulWidget {
 class _TripsPageState extends ConsumerState<TripsPage> {
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+
     return Scaffold(
-        appBar: AppBar(title: const Text('Trips')),
+        appBar: CustomAppBar(title: 'Trips', user: user),
         body: const SingleChildScrollView(
           child: Column(
             children: [

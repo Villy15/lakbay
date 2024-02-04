@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/error.dart';
+import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
-import 'package:lakbay/features/plan/plan_controller.dart';
+import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/plan/components/trip_card.dart';
 import 'package:lakbay/features/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
 
@@ -21,8 +24,8 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  TimeOfDay _startTime = const TimeOfDay(hour: 12, minute: 0);
-  TimeOfDay _endTime = const TimeOfDay(hour: 12, minute: 0);
+  TimeOfDay _startTime = const TimeOfDay(hour: 7, minute: 0);
+  TimeOfDay _endTime = const TimeOfDay(hour: 8, minute: 0);
 
   @override
   void initState() {
@@ -69,8 +72,13 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
         ],
       );
 
-      ref.watch(plansControllerProvider.notifier).addPlan(plan, context);
+      ref.read(planModelProvider.notifier).addPlan(plan, context);
+      // ref.watch(plansControllerProvider.notifier).addPlan(plan, context);
     }
+  }
+
+  void onChooseCategory() {
+    context.push('/plan/add_activity/search_listing');
   }
 
   @override
@@ -116,6 +124,11 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Column(
                 children: [
+                  heading(
+                    "Activity outside of our listings?",
+                    "Add manually here!",
+                    context,
+                  ),
                   // Name
                   activityName(),
 
@@ -127,11 +140,154 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
                   const SizedBox(height: 10),
 
                   startAndEndTime(context),
+
+                  const SizedBox(height: 10),
+
+                  const Divider(),
+                  const SizedBox(height: 10),
+
+                  // Add  an option to add a new activity
+                  heading(
+                    "Activity from our listings?",
+                    "Choose from our listings!",
+                    context,
+                  ),
+
+                  chooseCategory(context),
+
+                  const SizedBox(height: 10),
+
+                  heading(
+                    "Activity from your reservations/bookings?",
+                    "Choose from your reservations/bookings!",
+                    context,
+                  ),
+
+                  ref.watch(getAllListingsProvider).when(
+                        data: (listings) {
+                          return ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(
+                              height: 12.0,
+                            ),
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: listings.length,
+                            itemBuilder: (context, index) {
+                              final listing = listings[index];
+                              return TripCard(
+                                listing: listing,
+                              );
+                            },
+                          );
+                        },
+                        error: (error, stackTrace) => ErrorText(
+                            error: error.toString(),
+                            stackTrace: stackTrace.toString()),
+                        loading: () => const Loader(),
+                      ),
                 ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget chooseCategory(BuildContext context) {
+    List<Map<String, dynamic>> categories = [
+      {'name': 'Accommodation', 'icon': Icons.hotel_outlined},
+      {'name': 'Transport', 'icon': Icons.directions_bus_outlined},
+      {'name': 'Tour', 'icon': Icons.map_outlined},
+      {'name': 'Food', 'icon': Icons.restaurant_outlined},
+      {'name': 'Entertainment', 'icon': Icons.movie_creation_outlined},
+    ];
+
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: categories.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 1.0,
+      ),
+      itemBuilder: (context, index) {
+        final category = categories[index];
+        return InkWell(
+          onTap: () {
+            switch (category['name']) {
+              case 'Accommodation':
+                context.push('/plan/add_activity/search_listing/accommodation');
+                break;
+
+              case 'Food':
+                context.push('/plan/add_activity/search_listing/food');
+                break;
+
+              case 'Entertainment':
+                context.push('/plan/add_activity/search_listing/entertainment');
+
+                break;
+
+              case 'Transport':
+                context.push('/plan/add_activity/search_listing/transport');
+
+                break;
+
+              case 'Tour':
+                context.push('/plan/add_activity/search_listing/tour');
+
+                break;
+            }
+          },
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              CircleAvatar(
+                radius: 30.0,
+                backgroundColor: Theme.of(context).colorScheme.background,
+                child: Icon(
+                  category['icon'],
+                  size: 35.0,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                category['name'],
+                style: TextStyle(
+                  fontSize: 15.0,
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Align heading(String title, String subtitle, BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: 16,
+              color:
+                  Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
+            ),
+          ),
+          const SizedBox(height: 10)
+        ],
       ),
     );
   }

@@ -14,7 +14,17 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final scaffoldKey = ref.watch(scaffoldKeyProvider);
 
     return AppBar(
-      title: Text(title),
+      title: Text(
+        title,
+        style: title == 'Tara! Lakbay!'
+            ? const TextStyle(
+                fontFamily: 'Satisfy',
+                fontSize: 32.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepOrange,
+              )
+            : null,
+      ),
       // Add icon on the right side of the app bar of a person
       actions: [
         IconButton(
