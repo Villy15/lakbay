@@ -155,6 +155,21 @@ class ListingController extends StateNotifier<bool> {
     });
   }
 
+  void updateTasks(BuildContext context, String listingId,
+      ListingBookings booking, String message) {
+    state = true;
+    _listingRepository.updateBooking(listingId, booking).then((result) {
+      state = false;
+      result.fold(
+        (l) => showSnackBar(context, l.message),
+        (r) {
+          // context.pop();
+          // showSnackBar(context, message);
+        },
+      );
+    });
+  }
+
   // Read all listings
   Stream<List<ListingModel>> getAllListings() {
     return _listingRepository.readListings();

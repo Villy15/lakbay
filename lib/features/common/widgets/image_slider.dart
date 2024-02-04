@@ -30,40 +30,93 @@ class _ImageSliderState extends State<ImageSlider> {
       children: [
         InkWell(
           onTap: () {
-            showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context) {
-                return FractionallySizedBox(
-                  heightFactor: 0.9,
-                  child: GridView.count(
-                    crossAxisCount: 1,
-                    children: widget.images.map<Widget>((e) {
-                      if (e is File) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.file(
-                            e,
-                            height: widget.height,
-                            width: widget.width,
-                            fit: BoxFit.cover,
+            showDialog(
+                barrierColor: Colors.black.withOpacity(.9),
+                context: context,
+                builder: (context) {
+                  int dialogImageIndex = 0;
+                  return StatefulBuilder(builder: (context, setState) {
+                    return Dialog(
+                      insetPadding: const EdgeInsets.all(0),
+                      child: Stack(
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: CarouselSlider(
+                              carouselController: carouselController,
+                              options: CarouselOptions(
+                                viewportFraction: 1,
+                                height: MediaQuery.sizeOf(context).height / 2,
+                                enlargeFactor: 0,
+                                enlargeCenterPage: true,
+                                onPageChanged: (index, reason) {
+                                  setState(() {
+                                    dialogImageIndex = index;
+                                  });
+                                },
+                              ),
+                              items: widget.images.map<Widget>((e) {
+                                if (e is File) {
+                                  return ClipRRect(
+                                    // borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(
+                                      e,
+                                      height: double.infinity,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  );
+                                } else {
+                                  return ClipRRect(
+                                    // borderRadius: BorderRadius.circular(10),
+                                    child: Image(
+                                      image: NetworkImage(
+                                        e,
+                                      ),
+                                      width: double.infinity,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  );
+                                }
+                              }).toList(),
+                            ),
                           ),
-                        );
-                      } else {
-                        return Image(
-                          image: NetworkImage(
-                            e,
-                          ),
-                          width: double.infinity,
-                          height: 200,
-                          fit: BoxFit.cover,
-                        );
-                      }
-                    }).toList(),
-                  ),
-                );
-              },
-            );
+                          Positioned(
+                            bottom: 10,
+                            right: 10,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(0.1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.0, vertical: 4),
+                                child: Text(
+                                  '${dialogImageIndex + 1} / $maxImageIndex',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  });
+                });
           },
           child: SizedBox(
             height: widget.height,
@@ -74,7 +127,6 @@ class _ImageSliderState extends State<ImageSlider> {
                 height: widget.height,
                 enlargeFactor: 0,
                 enlargeCenterPage: true,
-                enableInfiniteScroll: false,
                 onPageChanged: (index, reason) {
                   setState(() {
                     currentImageIndex = index;
@@ -93,13 +145,16 @@ class _ImageSliderState extends State<ImageSlider> {
                     ),
                   );
                 } else {
-                  return Image(
-                    image: NetworkImage(
-                      e,
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image(
+                      image: NetworkImage(
+                        e,
+                      ),
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.cover,
                     ),
-                    width: double.infinity,
-                    height: 200,
-                    fit: BoxFit.cover,
                   );
                 }
               }).toList(),

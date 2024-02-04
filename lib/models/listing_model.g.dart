@@ -16,11 +16,13 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           ?.map((e) => AvailableRoom.fromJson(e as Map<String, dynamic>))
           .toList(),
       category: json['category'] as String,
+      cancellationRate: json['cancellationRate'] as num?,
       checkIn:
           const TimestampSerializer().fromJson(json['checkIn'] as Timestamp?),
       checkOut:
           const TimestampSerializer().fromJson(json['checkOut'] as Timestamp?),
       city: json['city'] as String,
+      confirmationPeriod: json['confirmationPeriod'] as num?,
       cooperative: ListingCooperative.fromJson(
           json['cooperative'] as Map<String, dynamic>),
       description: json['description'] as String,
@@ -76,9 +78,11 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'availableRooms':
           instance.availableRooms?.map((e) => e.toJson()).toList(),
       'category': instance.category,
+      'cancellationRate': instance.cancellationRate,
       'checkIn': const TimestampSerializer().toJson(instance.checkIn),
       'checkOut': const TimestampSerializer().toJson(instance.checkOut),
       'city': instance.city,
+      'confirmationPeriod': instance.confirmationPeriod,
       'cooperative': instance.cooperative.toJson(),
       'description': instance.description,
       'downpaymentRate': instance.downpaymentRate,

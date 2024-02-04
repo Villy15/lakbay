@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
-import 'package:lakbay/features/listings/crud/add_accommodation.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 
@@ -25,36 +24,31 @@ class _ChooseCategoryState extends ConsumerState<ChooseCategory> {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(listingControllerProvider);
     return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) {
-        context.pop();
-        ref.read(navBarVisibilityProvider.notifier).show();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Choose Category'),
-        ),
-        body: isLoading ?
-            const Loader() :
-            SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child:  Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: chooseCategory(context)
-                )
+        canPop: false,
+        onPopInvoked: (bool didPop) {
+          context.pop();
+          ref.read(navBarVisibilityProvider.notifier).show();
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Choose Category'),
+            ),
+            body: isLoading
+                ? const Loader()
+                : SingleChildScrollView(
+                    child: Form(
+                        key: _formKey,
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 8.0),
+                            child: chooseCategory(context))))));
+  }
 
-              )
-            )
-      )
-    );
-    
-  }  
-  
   Column chooseCategory(BuildContext context) {
     List<Map<String, dynamic>> categories = [
       {'name': 'Accommodation', 'icon': Icons.hotel_outlined},
@@ -70,10 +64,9 @@ class _ChooseCategoryState extends ConsumerState<ChooseCategory> {
         Text(
           'Select a category appropriate for your listing:',
           style: TextStyle(
-            fontSize: 17.0,
-            // fontWeight: FontWeight.w400,
-            color: Theme.of(context).colorScheme.primary
-          ),
+              fontSize: 17.0,
+              // fontWeight: FontWeight.w400,
+              color: Theme.of(context).colorScheme.primary),
         ),
         const SizedBox(height: 16.0),
         GridView.builder(
@@ -88,7 +81,7 @@ class _ChooseCategoryState extends ConsumerState<ChooseCategory> {
             final category = categories[index];
             return InkWell(
               onTap: () {
-                switch(category['name']) {
+                switch (category['name']) {
                   case 'Accommodation':
                     context.pushNamed('add_accommodation', extra: widget.coop);
                     // context.go('/my_coop/listings/functions/add/accommodation', extra: widget.coop);
@@ -97,12 +90,12 @@ class _ChooseCategoryState extends ConsumerState<ChooseCategory> {
                   case 'Food':
                     context.pushNamed('add_food', extra: widget.coop);
                     break;
-                  
+
                   case 'Entertainment':
                     context.pushNamed('add_entertainment', extra: widget.coop);
                     break;
-                  
-                  case 'Transport': 
+
+                  case 'Transport':
                     context.pushNamed('add_transport', extra: widget.coop);
                     break;
 
@@ -117,19 +110,16 @@ class _ChooseCategoryState extends ConsumerState<ChooseCategory> {
                   CircleAvatar(
                     radius: 30.0,
                     backgroundColor: Theme.of(context).colorScheme.background,
-                    child: Icon(
-                      category['icon'],
-                      size: 35.0,
-                      color: Theme.of(context).colorScheme.primary
-                    ),
+                    child: Icon(category['icon'],
+                        size: 35.0,
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                   const SizedBox(height: 8.0),
                   Text(
                     category['name'],
                     style: TextStyle(
-                      fontSize: 15.0,
-                      color: Theme.of(context).colorScheme.primary
-                    ),
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                 ],
               ),

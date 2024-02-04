@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -46,6 +47,9 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _addressController =
       TextEditingController(text: 'Eastwood City');
+  final TextEditingController checkInController = TextEditingController();
+  final TextEditingController checkOutController = TextEditingController();
+
   String mapAddress = "";
   List<File>? _images;
 
@@ -56,6 +60,13 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   TimeOfDay checkOut = TimeOfDay.now();
 
   List<Task>? fixedTasks = [];
+
+  final TextEditingController _downpaymentRateController =
+      TextEditingController();
+  final TextEditingController _cancellationRateController =
+      TextEditingController();
+  final TextEditingController _confirmationPeriodController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -200,6 +211,9 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(
+          height: 20,
+        ),
         DisplayText(
           text: "Notes:",
           lines: 1,
@@ -217,7 +231,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                     const SizedBox(height: 5),
                     DisplayText(
                       text: notes[index],
-                      lines: 3,
+                      lines: 10,
                       style: Theme.of(context).textTheme.bodySmall!,
                     ),
                   ],
@@ -484,121 +498,119 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   }
 
   Widget addDetails(BuildContext context) {
-    TextEditingController checkInController = TextEditingController();
-    TextEditingController checkOutController = TextEditingController();
-    return StatefulBuilder(builder: (context, setState) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _titleController,
-            decoration: const InputDecoration(
-              labelText: 'Listing Title*',
-              helperText: '*required',
-              border: OutlineInputBorder(),
-              floatingLabelBehavior:
-                  FloatingLabelBehavior.always, // Keep the label always visible
-              hintText: "Hotel Lakbay",
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _titleController,
+          decoration: const InputDecoration(
+            labelText: 'Listing Title*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "Hotel Lakbay",
           ),
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _descriptionController,
-            maxLines: null,
-            decoration: const InputDecoration(
-              labelText: 'Description*',
-              helperText: '*required',
-              border: OutlineInputBorder(),
-              floatingLabelBehavior:
-                  FloatingLabelBehavior.always, // Keep the label always visible
-              hintText: "Hotel near the beach....",
-            ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _descriptionController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Description*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "Hotel near the beach....",
           ),
-          SizedBox(height: MediaQuery.sizeOf(context).height / 25),
-          TextFormField(
-            controller: checkInController,
-            maxLines: 1,
-            decoration: const InputDecoration(
-              labelText: 'Check In*',
-              helperText: '*required',
-              border: OutlineInputBorder(),
-              floatingLabelBehavior:
-                  FloatingLabelBehavior.always, // Keep the label always visible
-              hintText: "11:30",
-            ),
-            readOnly: true,
-            onTap: () async {
-              final TimeOfDay? pickedTime = await showTimePicker(
-                context: context,
-                initialTime: const TimeOfDay(hour: 11, minute: 30),
-                initialEntryMode: TimePickerEntryMode.inputOnly,
-              );
+        ),
+        SizedBox(height: MediaQuery.sizeOf(context).height / 25),
+        TextFormField(
+          controller: checkInController,
+          maxLines: 1,
+          decoration: const InputDecoration(
+            labelText: 'Check In*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "11:30",
+          ),
+          readOnly: true,
+          onTap: () async {
+            final TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: const TimeOfDay(hour: 11, minute: 30),
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+            );
 
-              if (pickedTime != null) {
-                setState(() {
-                  checkInController.text = pickedTime.format(context);
-                });
-              }
-            },
+            if (pickedTime != null) {
+              setState(() {
+                checkInController.text = pickedTime.format(context);
+                checkIn = pickedTime;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: checkOutController,
+          maxLines: 1,
+          decoration: const InputDecoration(
+            labelText: 'Check Out*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "1:30",
           ),
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: checkOutController,
-            maxLines: 1,
-            decoration: const InputDecoration(
-              labelText: 'Check Out*',
-              helperText: '*required',
-              border: OutlineInputBorder(),
-              floatingLabelBehavior:
-                  FloatingLabelBehavior.always, // Keep the label always visible
-              hintText: "1:30",
-            ),
-            readOnly: true,
-            onTap: () async {
-              final TimeOfDay? pickedTime = await showTimePicker(
-                context: context,
-                initialTime: const TimeOfDay(hour: 1, minute: 30),
-                initialEntryMode: TimePickerEntryMode.inputOnly,
-              );
-              if (pickedTime != null) {
-                setState(() {
-                  checkOutController.text = pickedTime.format(context);
-                });
-              }
-            },
-          ),
-          const SizedBox(height: 10),
-          GestureDetector(
-            child: Row(
-              children: [
-                Expanded(
-                  child: ImagePickerFormField(
-                    height: MediaQuery.sizeOf(context).height / 2.5,
-                    width: MediaQuery.sizeOf(context).width,
-                    context: context,
-                    initialValue: _images,
-                    onSaved: (List<File>? files) {
-                      _images = files;
-                    },
-                    validator: (List<File>? files) {
-                      if (files == null || files.isEmpty) {
-                        return 'Please select some images';
-                      }
-                      return null;
-                    },
-                    onImagesSelected: (List<File> files) {
-                      _images = files;
-                    },
-                  ),
+          readOnly: true,
+          onTap: () async {
+            final TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: const TimeOfDay(hour: 1, minute: 30),
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+            );
+            if (pickedTime != null) {
+              setState(() {
+                checkOutController.text = pickedTime.format(context);
+                checkOut = pickedTime;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          child: Row(
+            children: [
+              Expanded(
+                child: ImagePickerFormField(
+                  height: MediaQuery.sizeOf(context).height / 2.5,
+                  width: MediaQuery.sizeOf(context).width,
+                  context: context,
+                  initialValue: _images,
+                  onSaved: (List<File>? files) {
+                    _images = files;
+                  },
+                  validator: (List<File>? files) {
+                    if (files == null || files.isEmpty) {
+                      return 'Please select some images';
+                    }
+                    return null;
+                  },
+                  onImagesSelected: (List<File> files) {
+                    _images = files;
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
-        ],
-      );
-    });
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
   }
 
   Widget addRoomDetails(BuildContext context) {
@@ -1252,9 +1264,6 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
               height: MediaQuery.sizeOf(context).height / 5,
               width: double.infinity,
               child: const Center(child: Text("No Tasks Created"))),
-        const SizedBox(
-          height: 20,
-        ),
         addNotes(
           notes,
         ),
@@ -1489,56 +1498,248 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   }
 
   Widget addPolicies(BuildContext context) {
-    return const Column();
+    List<String> notes = [
+      "Downpayment Rate: The necessary amount to be paid by a customer in order to book and reserve the service.",
+      "Cancellation Rate: The amount that would not be refunded in the situation that a customercancels their booking.",
+      "Confirmation Period: This refers to the number of days before the scheduled booking, that a customer must confirm and pay the downpayment if not the full amount. Otherwise their booking will be cancelled",
+      "Customers booking passed the cancellation period would be required to pay the downpayment or full amount upon checkout."
+    ];
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _downpaymentRateController,
+                maxLines: 1,
+                keyboardType: TextInputType.number, // For numeric input
+                decoration: const InputDecoration(
+                  labelText:
+                      'Downpayment Rate (%)*', // Indicate it's a percentage
+                  border: OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior
+                      .always, // Keep the label always visible
+                  hintText: "e.g., 20 for 20%",
+                ),
+                onTap: () {
+                  // Handle tap if needed, e.g., showing a dialog to select a percentage
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: TextFormField(
+                controller: _cancellationRateController,
+                maxLines: 1,
+                decoration: const InputDecoration(
+                  labelText: 'Cancellation Rate (%)*',
+                  border: OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior
+                      .always, // Keep the label always visible
+                  hintText: "e.g., 5 for 5%",
+                ),
+                onTap: () {},
+              ),
+            )
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        TextFormField(
+          controller: _confirmationPeriodController,
+          maxLines: 1,
+          keyboardType: TextInputType.number, // For numeric input
+          decoration: const InputDecoration(
+            labelText:
+                'Confirmation Period (Day/s)*', // Indicate it's a percentage
+            border: OutlineInputBorder(),
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "e.g., 5 for 5 Days before the booked date",
+          ),
+          onTap: () {
+            // Handle tap if needed, e.g., showing a dialog to select a percentage
+          },
+        ),
+        addNotes(notes),
+      ],
+    );
   }
 
   Widget reviewListing(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        // Step 0
-        ListTile(
-          title: const Text('Category',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(widget.category),
-        ),
-        ListTile(
-          title: const Text('Type',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(type),
-        ),
-        const Divider(),
-        // Step 1
-        ListTile(
-          title: const Text('Title',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(_titleController.text),
-        ),
-        ListTile(
-          title: const Text('Description',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(_descriptionController.text),
-        ),
-        // Step 2
-
-        const Divider(),
-        // Step 3
-        ListTile(
-          title: const Text('Address',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(_addressController.text),
-        ),
-        const Divider(),
-        // Step 4
-        // ListTile(
-        //   title: const Text('Image',
-        //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        //   subtitle: _image != null ? Image.file(_image!) : const Text('None'),
-        // ),
-        const Divider(),
-
-        // Step 5
-      ],
-    );
+    int titleLines = 1;
+    int descriptionLines = 2;
+    return StatefulBuilder(builder: (context, setState) {
+      return Column(
+        children: [
+          ImageSlider(
+              images: _images,
+              height: MediaQuery.sizeOf(context).height / 4,
+              width: double.infinity),
+          SizedBox(
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                const Row(
+                  children: [
+                    Text(
+                      "Details",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: 3,
+                        height: 2,
+                        indent: 15,
+                        color: Colors.black,
+                      ),
+                    )
+                  ],
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      RichText(
+                        maxLines: titleLines,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                        text: TextSpan(
+                          children: [
+                            const TextSpan(
+                              text: 'Listing Title: ',
+                              style: TextStyle(
+                                fontSize: 16, // Adjust the font size as needed
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: _titleController.text,
+                              style: const TextStyle(
+                                fontSize: 16, // Adjust the font size as needed
+                                color: Colors.black,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  setState(() {
+                                    if (titleLines == 1) {
+                                      titleLines = 99;
+                                    } else {
+                                      titleLines = 1;
+                                    }
+                                  });
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                      RichText(
+                        maxLines: descriptionLines,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                        text: TextSpan(
+                          children: [
+                            const TextSpan(
+                              text: 'Description: ',
+                              style: TextStyle(
+                                fontSize: 16, // Adjust the font size as needed
+                                fontWeight:
+                                    FontWeight.bold, // Make the text bold
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: _descriptionController.text,
+                              style: const TextStyle(
+                                fontSize: 16, // Adjust the font size as needed
+                                color: Colors.black,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  setState(() {
+                                    if (descriptionLines == 2) {
+                                      descriptionLines = 99;
+                                    } else {
+                                      descriptionLines = 2;
+                                    }
+                                  });
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            "Check In: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            checkIn.format(context),
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          const Text(
+                            "Check Out: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            checkOut.format(context),
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const Row(
+                  children: [
+                    Text(
+                      "Rooms",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: 3,
+                        height: 2,
+                        indent: 15,
+                        color: Colors.black,
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    });
   }
 
   Widget stepForm(BuildContext context) {

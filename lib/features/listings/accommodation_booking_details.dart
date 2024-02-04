@@ -48,7 +48,7 @@ class _AccommodationBookingsDetailsState
       ),
     ),
   ];
-
+  late ListingBookings modifiableBooking;
   @override
   void initState() {
     super.initState();
@@ -243,6 +243,12 @@ class _AccommodationBookingsDetailsState
         : ListView.builder(
             itemCount: booking.tasks!.length,
             itemBuilder: (context, taskIndex) {
+              String proofNote;
+              if (booking.tasks![taskIndex].imageProof != null) {
+                proofNote = "Proof Available";
+              } else {
+                proofNote = "No Proof Available";
+              }
               return Container(
                 margin: const EdgeInsets.only(top: 15),
                 child: Column(
@@ -286,15 +292,67 @@ class _AccommodationBookingsDetailsState
                       Checkbox(
                           value: booking.tasks![taskIndex].openContribution,
                           onChanged: (value) {
-                            setState(() {
-                              booking.tasks![taskIndex] = booking
-                                  .tasks![taskIndex]
-                                  .copyWith(openContribution: value!);
-                            });
+                            String title = "";
+                            String note = "";
+                            if (value == true) {
+                              title = "Activate \"Open for Contribution\"";
+                              note =
+                                  "Activating \"Open for Contribution\" will make this task visible to other cooperative members, giving them the opportunity to help.";
+                            } else {
+                              title = "Deactivate Open for Contribution";
+                              note =
+                                  "Deactivating Open for Contribution will make this task private to the assigned members.";
+                            }
+                            showDialog<void>(
+                              context: context,
+                              barrierDismissible:
+                                  false, // User must tap button to close the dialog
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    title,
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  content: Text(note),
+                                  actions: <Widget>[
+                                    TextButton(
+                                        child: const Text('Cancel'),
+                                        onPressed: () {
+                                          context.pop();
+                                        }),
+                                    TextButton(
+                                      child: const Text('Confirm'),
+                                      onPressed: () {
+                                        List<Task> tasks = booking.tasks!
+                                            .toList(growable: true);
+                                        tasks[taskIndex] = booking
+                                            .tasks![taskIndex]
+                                            .copyWith(openContribution: value!);
+                                        ListingBookings updatedBooking =
+                                            booking.copyWith(tasks: tasks);
+                                        debugPrint("$updatedBooking");
+                                        ref
+                                            .read(listingControllerProvider
+                                                .notifier)
+                                            .updateTasks(
+                                                context,
+                                                widget.listing.uid!,
+                                                updatedBooking,
+                                                "Tasks Updated");
+                                        context.pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           }),
                       const Text("Open for Contribution"),
                     ]),
                     SizedBox(
+                      height: MediaQuery.sizeOf(context).height / 25,
                       width: MediaQuery.sizeOf(context).width / 2,
                       child: ElevatedButton(
                         onPressed: booking.tasks![taskIndex].imageProof != null
@@ -321,7 +379,7 @@ class _AccommodationBookingsDetailsState
                           ),
                           // Apply additional styling as needed
                         ),
-                        child: const Text("View Proof"),
+                        child: Text(proofNote),
                       ),
                     ),
                     Divider(
@@ -653,6 +711,7 @@ class _AccommodationBookingsDetailsState
                   (widget.listing.uid!, widget.booking.id!)))
               .when(
                 data: (booking) {
+                  modifiableBooking = booking;
                   return Scaffold(
                     resizeToAvoidBottomInset: true,
                     // Add appbar with back button
