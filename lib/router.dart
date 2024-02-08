@@ -60,6 +60,8 @@ import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/tasks/event_tasks_edit.dart';
 import 'package:lakbay/features/tasks/event_tasks_read.dart';
+import 'package:lakbay/features/trips/screens/trips_add_trip.dart';
+import 'package:lakbay/features/trips/screens/trips_details.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
 import 'package:lakbay/features/wiki/crud/add_wiki.dart';
 import 'package:lakbay/features/wiki/crud/edit_wiki.dart';
@@ -68,6 +70,7 @@ import 'package:lakbay/features/wiki/wiki_page.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/task_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -213,7 +216,27 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               buildMainRoute('/customer_home', const CustomerHomePage()),
 
               // Trips Page
-              buildMainRoute('/trips', const TripsPage()),
+              buildMainRoute('/trips', const TripsPage(), [
+                // Add Trip
+                buildSubRoute(
+                  'add',
+                  (context, pathParameters, extra) {
+                    return const TripsAddTrip();
+                  },
+                ),
+
+                // Details
+                buildSubRoute(
+                  'details',
+                  (context, pathParameters, extra) {
+                    PlanModel plan = extra as PlanModel;
+                    return TripDetailsPlan(
+                      plan: plan,
+                    );
+                  },
+                  name: 'trips_details',
+                ),
+              ]),
 
               // Events Page
               buildMainRoute('/events', const EventsPage()),

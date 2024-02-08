@@ -24,13 +24,13 @@ class _PlanPageState extends ConsumerState<PlanPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("file name: plan_page.dart");
     final user = ref.watch(userProvider);
     final planLocation = ref.watch(planLocationProvider);
     final planStartDate = ref.watch(planStartDateProvider);
     final planEndDate = ref.watch(planEndDateProvider);
 
     final listPlans = ref.watch(planModelProvider);
-    debugPrint('listPlans: $listPlans');
 
     if (user?.isCoopView == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -75,7 +75,8 @@ class _PlanPageState extends ConsumerState<PlanPage> {
               //   isActive: true,
               //   title: TimelineCard(
               //     title: 'Hotel Iwahori',
-              //     subtitle: 'Accommodation',
+              //
+              // subtitle: 'Accommodation',
               //   ),
               // ),
 
@@ -135,7 +136,7 @@ class _PlanPageState extends ConsumerState<PlanPage> {
             // ListTile Location
             // If planLocation is not null and planStartDate is not null and planEndDate is not null
 
-            planLocation == null && planStartDate == null && planEndDate == null
+            planLocation == null || planStartDate == null || planEndDate == null
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: heading(
@@ -171,58 +172,69 @@ class _PlanPageState extends ConsumerState<PlanPage> {
               },
             ),
 
+            // Row with budget and number of travelers
+            ListTile(
+              title: const Text('Budget'),
+              leading: const Icon(Icons.attach_money_outlined),
+              subtitle: const Text('₱ 10,000'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {},
+            ),
+
             // Heading Day 01 - Day (Monday)
             if (planStartDate != null && planEndDate != null)
               ...generateDays(planStartDate, planEndDate),
 
-            planLocation == null && planStartDate == null && planEndDate == null
-                ? Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                        child: heading(
-                          // TODO 1: Change the title and subtitle
-                          //  "Already reserved/booked a listing?",
-                          // "Choose a listing and let's start from there",
-                          //  "Already reserved/booked a listing?",
-                          // "Choose a listing and let's start from there",
-                          "Want to check out our listings?",
-                          "Choose a listing and let's start from there",
-                          context,
-                        ),
-                      ),
-                      ref.watch(getAllListingsProvider).when(
-                            data: (listings) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ListView.separated(
-                                  separatorBuilder: (context, index) =>
-                                      const SizedBox(
-                                    height: 12.0,
-                                  ),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: listings.length,
-                                  itemBuilder: (context, index) {
-                                    final listing = listings[index];
-                                    return TripCard(
-                                      listing: listing,
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            error: (error, stackTrace) => ErrorText(
-                                error: error.toString(),
-                                stackTrace: stackTrace.toString()),
-                            loading: () => const Loader(),
-                          )
-                    ],
-                  )
-                : const SizedBox(),
+            // planLocation == null && planStartDate == null && planEndDate == null
+            //     ? showRecommendations(context)
+            //     : const SizedBox(),
           ],
         ),
       ),
+    );
+  }
+
+  Column showRecommendations(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: heading(
+            // TODO 1: Change the title and subtitle
+            //  "Already reserved/booked a listing?",
+            // "Choose a listing and let's start from there",
+            //  "Already reserved/booked a listing?",
+            // "Choose a listing and let's start from there",
+            "Want to check out our listings?",
+            "Choose a listing and let's start from there",
+            context,
+          ),
+        ),
+        ref.watch(getAllListingsProvider).when(
+              data: (listings) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) => const SizedBox(
+                      height: 12.0,
+                    ),
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: listings.length,
+                    itemBuilder: (context, index) {
+                      final listing = listings[index];
+                      return TripCard(
+                        listing: listing,
+                      );
+                    },
+                  ),
+                );
+              },
+              error: (error, stackTrace) => ErrorText(
+                  error: error.toString(), stackTrace: stackTrace.toString()),
+              loading: () => const Loader(),
+            )
+      ],
     );
   }
 

@@ -15,6 +15,10 @@ class PlanModel with _$PlanModel {
     @TimestampSerializer() DateTime? startDate,
     @TimestampSerializer() DateTime? endDate,
     List<PlanActivity>? activities,
+    required String name,
+    required num budget,
+    required num guests,
+    String? imageUrl,
     required String userId,
   }) = _PlanModel;
 

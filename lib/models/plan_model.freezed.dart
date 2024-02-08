@@ -27,6 +27,10 @@ mixin _$PlanModel {
   @TimestampSerializer()
   DateTime? get endDate => throw _privateConstructorUsedError;
   List<PlanActivity>? get activities => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  num get budget => throw _privateConstructorUsedError;
+  num get guests => throw _privateConstructorUsedError;
+  String? get imageUrl => throw _privateConstructorUsedError;
   String get userId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,6 +50,10 @@ abstract class $PlanModelCopyWith<$Res> {
       @TimestampSerializer() DateTime? startDate,
       @TimestampSerializer() DateTime? endDate,
       List<PlanActivity>? activities,
+      String name,
+      num budget,
+      num guests,
+      String? imageUrl,
       String userId});
 }
 
@@ -67,6 +75,10 @@ class _$PlanModelCopyWithImpl<$Res, $Val extends PlanModel>
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? activities = freezed,
+    Object? name = null,
+    Object? budget = null,
+    Object? guests = null,
+    Object? imageUrl = freezed,
     Object? userId = null,
   }) {
     return _then(_value.copyWith(
@@ -90,6 +102,22 @@ class _$PlanModelCopyWithImpl<$Res, $Val extends PlanModel>
           ? _value.activities
           : activities // ignore: cast_nullable_to_non_nullable
               as List<PlanActivity>?,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      budget: null == budget
+          ? _value.budget
+          : budget // ignore: cast_nullable_to_non_nullable
+              as num,
+      guests: null == guests
+          ? _value.guests
+          : guests // ignore: cast_nullable_to_non_nullable
+              as num,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
@@ -112,6 +140,10 @@ abstract class _$$PlanModelImplCopyWith<$Res>
       @TimestampSerializer() DateTime? startDate,
       @TimestampSerializer() DateTime? endDate,
       List<PlanActivity>? activities,
+      String name,
+      num budget,
+      num guests,
+      String? imageUrl,
       String userId});
 }
 
@@ -131,6 +163,10 @@ class __$$PlanModelImplCopyWithImpl<$Res>
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? activities = freezed,
+    Object? name = null,
+    Object? budget = null,
+    Object? guests = null,
+    Object? imageUrl = freezed,
     Object? userId = null,
   }) {
     return _then(_$PlanModelImpl(
@@ -154,6 +190,22 @@ class __$$PlanModelImplCopyWithImpl<$Res>
           ? _value._activities
           : activities // ignore: cast_nullable_to_non_nullable
               as List<PlanActivity>?,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      budget: null == budget
+          ? _value.budget
+          : budget // ignore: cast_nullable_to_non_nullable
+              as num,
+      guests: null == guests
+          ? _value.guests
+          : guests // ignore: cast_nullable_to_non_nullable
+              as num,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
@@ -171,6 +223,10 @@ class _$PlanModelImpl extends _PlanModel {
       @TimestampSerializer() this.startDate,
       @TimestampSerializer() this.endDate,
       final List<PlanActivity>? activities,
+      required this.name,
+      required this.budget,
+      required this.guests,
+      this.imageUrl,
       required this.userId})
       : _activities = activities,
         super._();
@@ -199,11 +255,19 @@ class _$PlanModelImpl extends _PlanModel {
   }
 
   @override
+  final String name;
+  @override
+  final num budget;
+  @override
+  final num guests;
+  @override
+  final String? imageUrl;
+  @override
   final String userId;
 
   @override
   String toString() {
-    return 'PlanModel(uid: $uid, location: $location, startDate: $startDate, endDate: $endDate, activities: $activities, userId: $userId)';
+    return 'PlanModel(uid: $uid, location: $location, startDate: $startDate, endDate: $endDate, activities: $activities, name: $name, budget: $budget, guests: $guests, imageUrl: $imageUrl, userId: $userId)';
   }
 
   @override
@@ -219,13 +283,28 @@ class _$PlanModelImpl extends _PlanModel {
             (identical(other.endDate, endDate) || other.endDate == endDate) &&
             const DeepCollectionEquality()
                 .equals(other._activities, _activities) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.budget, budget) || other.budget == budget) &&
+            (identical(other.guests, guests) || other.guests == guests) &&
+            (identical(other.imageUrl, imageUrl) ||
+                other.imageUrl == imageUrl) &&
             (identical(other.userId, userId) || other.userId == userId));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, uid, location, startDate,
-      endDate, const DeepCollectionEquality().hash(_activities), userId);
+  int get hashCode => Object.hash(
+      runtimeType,
+      uid,
+      location,
+      startDate,
+      endDate,
+      const DeepCollectionEquality().hash(_activities),
+      name,
+      budget,
+      guests,
+      imageUrl,
+      userId);
 
   @JsonKey(ignore: true)
   @override
@@ -248,6 +327,10 @@ abstract class _PlanModel extends PlanModel {
       @TimestampSerializer() final DateTime? startDate,
       @TimestampSerializer() final DateTime? endDate,
       final List<PlanActivity>? activities,
+      required final String name,
+      required final num budget,
+      required final num guests,
+      final String? imageUrl,
       required final String userId}) = _$PlanModelImpl;
   _PlanModel._() : super._();
 
@@ -266,6 +349,14 @@ abstract class _PlanModel extends PlanModel {
   DateTime? get endDate;
   @override
   List<PlanActivity>? get activities;
+  @override
+  String get name;
+  @override
+  num get budget;
+  @override
+  num get guests;
+  @override
+  String? get imageUrl;
   @override
   String get userId;
   @override

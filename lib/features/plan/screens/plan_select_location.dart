@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/plan/plan_providers.dart';
 
 class PlanSelectLocation extends ConsumerStatefulWidget {
@@ -19,9 +18,9 @@ class _PlanSelectLocationState extends ConsumerState<PlanSelectLocation> {
   void initState() {
     super.initState();
     _focusNode = FocusNode();
-    Future.delayed(Duration.zero, () {
-      ref.read(navBarVisibilityProvider.notifier).hide();
-    });
+    // Future.delayed(Duration.zero, () {
+    //   ref.read(navBarVisibilityProvider.notifier).hide();
+    // });
   }
 
   @override
@@ -30,7 +29,6 @@ class _PlanSelectLocationState extends ConsumerState<PlanSelectLocation> {
       canPop: false,
       onPopInvoked: (bool didPop) {
         context.pop();
-        ref.read(navBarVisibilityProvider.notifier).show();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -66,7 +64,6 @@ class _PlanSelectLocationState extends ConsumerState<PlanSelectLocation> {
                               'Marivles, Bataan',
                             );
                         context.pop();
-                        ref.read(navBarVisibilityProvider.notifier).show();
                       },
                     );
                   },

@@ -45,6 +45,9 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
       final selectedDate = ref.watch(selectedDateProvider);
 
       var plan = PlanModel(
+        name: planLocation ?? '',
+        budget: 0,
+        guests: 0,
         location: planLocation ?? '',
         startDate: planStartDate,
         endDate: planEndDate,
@@ -83,11 +86,11 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("file name: plan_add_activity.dart");
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
         context.pop();
-        ref.read(navBarVisibilityProvider.notifier).show();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -101,7 +104,7 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
               TextButton(
                 onPressed: () {
                   context.pop();
-                  ref.read(navBarVisibilityProvider.notifier).show();
+                  ();
                 },
                 child: const Text('Cancel'),
               ),
