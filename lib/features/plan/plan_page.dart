@@ -86,14 +86,10 @@ class _PlanPageState extends ConsumerState<PlanPage> {
                   .map((plan) => Column(
                         children: [
                           ...plan.activities!.map((activity) => TimelineTile(
-                                leading: Text(
-                                  DateFormat('hh:mm a')
-                                      .format(activity.startTime!),
-                                ),
                                 isActive: true,
                                 title: TimelineCard(
-                                  title: activity.title!,
-                                  subtitle: activity.description!,
+                                  plan: plan,
+                                  activity: activity,
                                 ),
                               )),
                         ],

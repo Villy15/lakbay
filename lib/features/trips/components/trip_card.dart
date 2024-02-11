@@ -10,7 +10,7 @@ class TripCard extends ConsumerWidget {
 
   void onTap(BuildContext context, WidgetRef ref) {
     // context.push('/market/${listing.category}', extra: listing);
-    context.pushNamed('trips_details', extra: plan);
+    context.push('/trips/details/${plan.uid}', extra: plan);
   }
 
   @override
@@ -19,7 +19,7 @@ class TripCard extends ConsumerWidget {
       child: Card(
         clipBehavior: Clip.hardEdge,
         elevation: 1,
-        surfaceTintColor: Colors.white,
+        // surfaceTintColor: Colors.white,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
@@ -32,7 +32,7 @@ class TripCard extends ConsumerWidget {
               child: Column(
                 children: [
                   // Random Image
-                  if (plan.imageUrl != null || plan.imageUrl!.isNotEmpty)
+                  if (plan.imageUrl! != '') ...[
                     ClipRRect(
                       borderRadius: BorderRadius.circular(
                           20), // round the corners of the image
@@ -43,39 +43,61 @@ class TripCard extends ConsumerWidget {
                         fit: BoxFit.cover,
                       ),
                     ),
+                  ] else ...[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                          20), // round the corners of the image
+                      child: const Image(
+                        // Image from root/lib/core/images/plans_stock.jpg
+                        image: AssetImage('lib/core/images/plans_stock.jpg'),
+                        width: double.infinity,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
 
                   // Card Title
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+                    padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          plan.name,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        SizedBox(
+                          // width: 200,
+                          child: Text(
+                            plan.name,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
 
                         // Location Province
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.location_on,
-                              size: 16,
-                            ),
-                            Text(
-                              plan.location,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ),
+
+                  // Location
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            size: 16,
+                          ),
+                          Text(
+                            plan.location,
+                            style: const TextStyle(
+                              fontSize: 16,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      )),
 
                   // Date Range
                   Padding(

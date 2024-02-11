@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/plan/plan_controller.dart';
 import 'package:lakbay/features/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
 
-class TripsAddTrip extends ConsumerStatefulWidget {
-  const TripsAddTrip({super.key});
+class TripsEditTrip extends ConsumerStatefulWidget {
+  final PlanModel plan;
+  const TripsEditTrip({super.key, required this.plan});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _TripsAddTripState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _TripsEditTripState();
 }
 
-class _TripsAddTripState extends ConsumerState<TripsAddTrip> {
+class _TripsEditTripState extends ConsumerState<TripsEditTrip> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   // Form fields
@@ -29,6 +29,9 @@ class _TripsAddTripState extends ConsumerState<TripsAddTrip> {
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
+    _numOfGuestsController.text = widget.plan.guests.toString();
+    _budgetController.text = widget.plan.budget.toString();
+    _nameController.text = widget.plan.name;
   }
 
   void onTapDate() {
@@ -42,23 +45,21 @@ class _TripsAddTripState extends ConsumerState<TripsAddTrip> {
   void onSubmit() {
     if (formKey.currentState!.validate()) {
       final location = ref.read(planLocationProvider);
-      final userUid = ref.read(userProvider)?.uid ?? '';
       final startDate = ref.read(planStartDateProvider);
       final endDate = ref.read(planEndDateProvider);
 
-      var plan = PlanModel(
+      var updatedPlan = widget.plan.copyWith(
         location: location!,
         name: _nameController.text,
         budget: num.parse(_budgetController.text),
         guests: num.parse(_numOfGuestsController.text),
-        userId: userUid,
         startDate: startDate,
         endDate: endDate,
-        imageUrl: '',
-        activities: [],
       );
 
-      ref.read(plansControllerProvider.notifier).addPlan(plan, context);
+      ref
+          .read(plansControllerProvider.notifier)
+          .updatePlan(updatedPlan, context);
     }
   }
 
@@ -76,7 +77,7 @@ class _TripsAddTripState extends ConsumerState<TripsAddTrip> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Add Trip'),
+          title: const Text('Edit Trip'),
         ),
         body: SingleChildScrollView(
           child: Form(

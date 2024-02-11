@@ -60,8 +60,11 @@ import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/tasks/event_tasks_edit.dart';
 import 'package:lakbay/features/tasks/event_tasks_read.dart';
+import 'package:lakbay/features/trips/screens/trips_add_activity.dart';
 import 'package:lakbay/features/trips/screens/trips_add_trip.dart';
 import 'package:lakbay/features/trips/screens/trips_details.dart';
+import 'package:lakbay/features/trips/screens/trips_edit_trip.dart';
+import 'package:lakbay/features/trips/screens/trips_info.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
 import 'package:lakbay/features/wiki/crud/add_wiki.dart';
 import 'package:lakbay/features/wiki/crud/edit_wiki.dart';
@@ -216,27 +219,64 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               buildMainRoute('/customer_home', const CustomerHomePage()),
 
               // Trips Page
-              buildMainRoute('/trips', const TripsPage(), [
-                // Add Trip
-                buildSubRoute(
-                  'add',
-                  (context, pathParameters, extra) {
-                    return const TripsAddTrip();
-                  },
-                ),
+              buildMainRoute(
+                '/trips',
+                const TripsPage(),
+                [
+                  // Add Trip
+                  buildSubRoute(
+                    'add',
+                    (context, pathParameters, extra) {
+                      return const TripsAddTrip();
+                    },
+                  ),
 
-                // Details
-                buildSubRoute(
-                  'details',
-                  (context, pathParameters, extra) {
-                    PlanModel plan = extra as PlanModel;
-                    return TripDetailsPlan(
-                      plan: plan,
-                    );
-                  },
-                  name: 'trips_details',
-                ),
-              ]),
+                  // Edit Trip
+                  buildSubRoute(
+                    'edit',
+                    (context, pathParameters, extra) {
+                      PlanModel plan = extra as PlanModel;
+                      return TripsEditTrip(
+                        plan: plan,
+                      );
+                    },
+                    name: 'edit_trip',
+                  ),
+
+                  // Details
+                  buildSubRoute(
+                    'details/:planUid',
+                    (context, pathParameters, extra) {
+                      return TripDetailsPlan(
+                        planUid: pathParameters['planUid']!,
+                      );
+                    },
+                    name: 'trips_details',
+                  ),
+
+                  // Info
+                  buildSubRoute(
+                    'info',
+                    (context, pathParameters, extra) {
+                      PlanModel plan = extra as PlanModel;
+                      return TripsInfo(
+                        plan: plan,
+                      );
+                    },
+                  ),
+
+                  // Add activity
+                  buildSubRoute(
+                    'add_activity',
+                    (context, pathParameters, extra) {
+                      PlanModel plan = extra as PlanModel;
+                      return TripsAddActivity(
+                        plan: plan,
+                      );
+                    },
+                  ),
+                ],
+              ),
 
               // Events Page
               buildMainRoute('/events', const EventsPage()),

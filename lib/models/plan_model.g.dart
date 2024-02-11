@@ -17,6 +17,9 @@ _$PlanModelImpl _$$PlanModelImplFromJson(Map<String, dynamic> json) =>
       activities: (json['activities'] as List<dynamic>?)
           ?.map((e) => PlanActivity.fromJson(e as Map<String, dynamic>))
           .toList(),
+      memories: (json['memories'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       name: json['name'] as String,
       budget: json['budget'] as num,
       guests: json['guests'] as num,
@@ -31,6 +34,7 @@ Map<String, dynamic> _$$PlanModelImplToJson(_$PlanModelImpl instance) =>
       'startDate': const TimestampSerializer().toJson(instance.startDate),
       'endDate': const TimestampSerializer().toJson(instance.endDate),
       'activities': instance.activities?.map((e) => e.toJson()).toList(),
+      'memories': instance.memories,
       'name': instance.name,
       'budget': instance.budget,
       'guests': instance.guests,
@@ -42,8 +46,11 @@ _$PlanActivityImpl _$$PlanActivityImplFromJson(Map<String, dynamic> json) =>
     _$PlanActivityImpl(
       dateTime:
           const TimestampSerializer().fromJson(json['dateTime'] as Timestamp?),
+      listingId: json['listingId'] as String?,
+      category: json['category'] as String?,
       title: json['title'] as String?,
       description: json['description'] as String?,
+      imageUrl: json['imageUrl'] as String?,
       startTime:
           const TimestampSerializer().fromJson(json['startTime'] as Timestamp?),
       endTime:
@@ -53,8 +60,11 @@ _$PlanActivityImpl _$$PlanActivityImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$PlanActivityImplToJson(_$PlanActivityImpl instance) =>
     <String, dynamic>{
       'dateTime': const TimestampSerializer().toJson(instance.dateTime),
+      'listingId': instance.listingId,
+      'category': instance.category,
       'title': instance.title,
       'description': instance.description,
+      'imageUrl': instance.imageUrl,
       'startTime': const TimestampSerializer().toJson(instance.startTime),
       'endTime': const TimestampSerializer().toJson(instance.endTime),
     };

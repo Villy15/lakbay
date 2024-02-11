@@ -50,6 +50,18 @@ class PlanRepository {
     });
   }
 
+  // Real all plans by user id
+  Stream<List<PlanModel>> readPlansByUserId(String userId) {
+    return _plans
+        .where('userId', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return PlanModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Read all plans
   Stream<List<PlanModel>> readPlans() {
     return _plans.snapshots().map((snapshot) {

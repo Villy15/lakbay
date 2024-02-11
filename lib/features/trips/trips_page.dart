@@ -6,8 +6,8 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/components/trip_card.dart';
-import 'package:lakbay/models/plan_model.dart';
 
 class TripsPage extends ConsumerStatefulWidget {
   const TripsPage({super.key});
@@ -28,36 +28,37 @@ class _TripsPageState extends ConsumerState<TripsPage> {
     final user = ref.watch(userProvider);
 
     // sample Plans
-    final plans = [
-      PlanModel(
-        uid: '1',
-        location: 'Boracay',
-        startDate: DateTime.now(),
-        endDate: DateTime.now().add(const Duration(days: 5)),
-        imageUrl:
-            'https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/listings%2FIwahori%20Multipurpose%20Cooperative%2F357817a_hb_a_050.jpg_0?alt=media&token=a150369f-6029-432d-9b50-2dbabe67249e',
-        activities: [
-          PlanActivity(
-            dateTime: DateTime.now(),
-            title: 'Beach',
-            description: 'Swimming and Sunbathing',
-            startTime: DateTime.now(),
-            endTime: DateTime.now().add(const Duration(hours: 2)),
-          ),
-          PlanActivity(
-            dateTime: DateTime.now().add(const Duration(days: 1)),
-            title: 'Island Hopping',
-            description: 'Visit nearby islands',
-            startTime: DateTime.now().add(const Duration(days: 1)),
-            endTime: DateTime.now().add(const Duration(days: 1, hours: 4)),
-          ),
-        ],
-        name: 'Boracay Trip',
-        budget: 10000,
-        guests: 2,
-        userId: user?.uid ?? '',
-      ),
-    ];
+    // final plans = [
+    //   PlanModel(
+    //     uid: '1',
+    //     location: 'Boracay',
+    //     startDate: DateTime.now(),
+    //     endDate: DateTime.now().add(const Duration(days: 5)),
+    //     imageUrl: '',
+    //     // imageUrl:
+    //     //     'https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/listings%2FIwahori%20Multipurpose%20Cooperative%2F357817a_hb_a_050.jpg_0?alt=media&token=a150369f-6029-432d-9b50-2dbabe67249e',
+    //     activities: [
+    //       PlanActivity(
+    //         dateTime: DateTime.now(),
+    //         title: 'Beach',
+    //         description: 'Swimming and Sunbathing',
+    //         startTime: DateTime.now(),
+    //         endTime: DateTime.now().add(const Duration(hours: 2)),
+    //       ),
+    //       PlanActivity(
+    //         dateTime: DateTime.now().add(const Duration(days: 1)),
+    //         title: 'Island Hopping',
+    //         description: 'Visit nearby islands',
+    //         startTime: DateTime.now().add(const Duration(days: 1)),
+    //         endTime: DateTime.now().add(const Duration(days: 1, hours: 4)),
+    //       ),
+    //     ],
+    //     name: 'Boracay Trip',
+    //     budget: 10000,
+    //     guests: 2,
+    //     userId: user?.uid ?? '',
+    //   ),
+    // ];
 
     return Scaffold(
       appBar: CustomAppBar(title: 'Trips', user: user),
@@ -78,23 +79,49 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                 ),
               ),
 
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListView.separated(
-                  separatorBuilder: (context, index) => const SizedBox(
-                    height: 12.0,
+              ref.watch(readPlansByUserIdProvider(user?.uid ?? '')).when(
+                    data: (plans) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) => const SizedBox(
+                            height: 12.0,
+                          ),
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: plans.length,
+                          itemBuilder: (context, index) {
+                            final plan = plans[index];
+                            return TripCard(
+                              plan: plan,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    error: (error, stackTrace) => ErrorText(
+                        error: error.toString(),
+                        stackTrace: stackTrace.toString()),
+                    loading: () => const Loader(),
                   ),
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: 1,
-                  itemBuilder: (context, index) {
-                    final plan = plans[index];
-                    return TripCard(
-                      plan: plan,
-                    );
-                  },
-                ),
-              ),
+
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: ListView.separated(
+              //     separatorBuilder: (context, index) => const SizedBox(
+              //       height: 12.0,
+              //     ),
+              //     physics: const NeverScrollableScrollPhysics(),
+              //     shrinkWrap: true,
+              //     itemCount: 1,
+              //     itemBuilder: (context, index) {
+              //       final plan = plans[index];
+              //       return TripCard(
+              //         plan: plan,
+              //       );
+              //     },
+              //   ),
+              // ),
 
               // Create a new Trip
               const SizedBox(height: 20),

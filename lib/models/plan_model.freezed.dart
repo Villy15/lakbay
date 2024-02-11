@@ -27,6 +27,7 @@ mixin _$PlanModel {
   @TimestampSerializer()
   DateTime? get endDate => throw _privateConstructorUsedError;
   List<PlanActivity>? get activities => throw _privateConstructorUsedError;
+  List<String>? get memories => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   num get budget => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
@@ -50,6 +51,7 @@ abstract class $PlanModelCopyWith<$Res> {
       @TimestampSerializer() DateTime? startDate,
       @TimestampSerializer() DateTime? endDate,
       List<PlanActivity>? activities,
+      List<String>? memories,
       String name,
       num budget,
       num guests,
@@ -75,6 +77,7 @@ class _$PlanModelCopyWithImpl<$Res, $Val extends PlanModel>
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? activities = freezed,
+    Object? memories = freezed,
     Object? name = null,
     Object? budget = null,
     Object? guests = null,
@@ -102,6 +105,10 @@ class _$PlanModelCopyWithImpl<$Res, $Val extends PlanModel>
           ? _value.activities
           : activities // ignore: cast_nullable_to_non_nullable
               as List<PlanActivity>?,
+      memories: freezed == memories
+          ? _value.memories
+          : memories // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -140,6 +147,7 @@ abstract class _$$PlanModelImplCopyWith<$Res>
       @TimestampSerializer() DateTime? startDate,
       @TimestampSerializer() DateTime? endDate,
       List<PlanActivity>? activities,
+      List<String>? memories,
       String name,
       num budget,
       num guests,
@@ -163,6 +171,7 @@ class __$$PlanModelImplCopyWithImpl<$Res>
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? activities = freezed,
+    Object? memories = freezed,
     Object? name = null,
     Object? budget = null,
     Object? guests = null,
@@ -190,6 +199,10 @@ class __$$PlanModelImplCopyWithImpl<$Res>
           ? _value._activities
           : activities // ignore: cast_nullable_to_non_nullable
               as List<PlanActivity>?,
+      memories: freezed == memories
+          ? _value._memories
+          : memories // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -223,12 +236,14 @@ class _$PlanModelImpl extends _PlanModel {
       @TimestampSerializer() this.startDate,
       @TimestampSerializer() this.endDate,
       final List<PlanActivity>? activities,
+      final List<String>? memories,
       required this.name,
       required this.budget,
       required this.guests,
       this.imageUrl,
       required this.userId})
       : _activities = activities,
+        _memories = memories,
         super._();
 
   factory _$PlanModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -254,6 +269,16 @@ class _$PlanModelImpl extends _PlanModel {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<String>? _memories;
+  @override
+  List<String>? get memories {
+    final value = _memories;
+    if (value == null) return null;
+    if (_memories is EqualUnmodifiableListView) return _memories;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final String name;
   @override
@@ -267,7 +292,7 @@ class _$PlanModelImpl extends _PlanModel {
 
   @override
   String toString() {
-    return 'PlanModel(uid: $uid, location: $location, startDate: $startDate, endDate: $endDate, activities: $activities, name: $name, budget: $budget, guests: $guests, imageUrl: $imageUrl, userId: $userId)';
+    return 'PlanModel(uid: $uid, location: $location, startDate: $startDate, endDate: $endDate, activities: $activities, memories: $memories, name: $name, budget: $budget, guests: $guests, imageUrl: $imageUrl, userId: $userId)';
   }
 
   @override
@@ -283,6 +308,7 @@ class _$PlanModelImpl extends _PlanModel {
             (identical(other.endDate, endDate) || other.endDate == endDate) &&
             const DeepCollectionEquality()
                 .equals(other._activities, _activities) &&
+            const DeepCollectionEquality().equals(other._memories, _memories) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.budget, budget) || other.budget == budget) &&
             (identical(other.guests, guests) || other.guests == guests) &&
@@ -300,6 +326,7 @@ class _$PlanModelImpl extends _PlanModel {
       startDate,
       endDate,
       const DeepCollectionEquality().hash(_activities),
+      const DeepCollectionEquality().hash(_memories),
       name,
       budget,
       guests,
@@ -327,6 +354,7 @@ abstract class _PlanModel extends PlanModel {
       @TimestampSerializer() final DateTime? startDate,
       @TimestampSerializer() final DateTime? endDate,
       final List<PlanActivity>? activities,
+      final List<String>? memories,
       required final String name,
       required final num budget,
       required final num guests,
@@ -349,6 +377,8 @@ abstract class _PlanModel extends PlanModel {
   DateTime? get endDate;
   @override
   List<PlanActivity>? get activities;
+  @override
+  List<String>? get memories;
   @override
   String get name;
   @override
@@ -373,8 +403,11 @@ PlanActivity _$PlanActivityFromJson(Map<String, dynamic> json) {
 mixin _$PlanActivity {
   @TimestampSerializer()
   DateTime? get dateTime => throw _privateConstructorUsedError;
+  String? get listingId => throw _privateConstructorUsedError;
+  String? get category => throw _privateConstructorUsedError;
   String? get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  String? get imageUrl => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get startTime => throw _privateConstructorUsedError;
   @TimestampSerializer()
@@ -394,8 +427,11 @@ abstract class $PlanActivityCopyWith<$Res> {
   @useResult
   $Res call(
       {@TimestampSerializer() DateTime? dateTime,
+      String? listingId,
+      String? category,
       String? title,
       String? description,
+      String? imageUrl,
       @TimestampSerializer() DateTime? startTime,
       @TimestampSerializer() DateTime? endTime});
 }
@@ -414,8 +450,11 @@ class _$PlanActivityCopyWithImpl<$Res, $Val extends PlanActivity>
   @override
   $Res call({
     Object? dateTime = freezed,
+    Object? listingId = freezed,
+    Object? category = freezed,
     Object? title = freezed,
     Object? description = freezed,
+    Object? imageUrl = freezed,
     Object? startTime = freezed,
     Object? endTime = freezed,
   }) {
@@ -424,6 +463,14 @@ class _$PlanActivityCopyWithImpl<$Res, $Val extends PlanActivity>
           ? _value.dateTime
           : dateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      listingId: freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      category: freezed == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String?,
       title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -431,6 +478,10 @@ class _$PlanActivityCopyWithImpl<$Res, $Val extends PlanActivity>
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
       startTime: freezed == startTime
           ? _value.startTime
@@ -454,8 +505,11 @@ abstract class _$$PlanActivityImplCopyWith<$Res>
   @useResult
   $Res call(
       {@TimestampSerializer() DateTime? dateTime,
+      String? listingId,
+      String? category,
       String? title,
       String? description,
+      String? imageUrl,
       @TimestampSerializer() DateTime? startTime,
       @TimestampSerializer() DateTime? endTime});
 }
@@ -472,8 +526,11 @@ class __$$PlanActivityImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? dateTime = freezed,
+    Object? listingId = freezed,
+    Object? category = freezed,
     Object? title = freezed,
     Object? description = freezed,
+    Object? imageUrl = freezed,
     Object? startTime = freezed,
     Object? endTime = freezed,
   }) {
@@ -482,6 +539,14 @@ class __$$PlanActivityImplCopyWithImpl<$Res>
           ? _value.dateTime
           : dateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      listingId: freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      category: freezed == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String?,
       title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -489,6 +554,10 @@ class __$$PlanActivityImplCopyWithImpl<$Res>
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
       startTime: freezed == startTime
           ? _value.startTime
@@ -507,8 +576,11 @@ class __$$PlanActivityImplCopyWithImpl<$Res>
 class _$PlanActivityImpl implements _PlanActivity {
   _$PlanActivityImpl(
       {@TimestampSerializer() this.dateTime,
+      this.listingId,
+      this.category,
       this.title,
       this.description,
+      this.imageUrl,
       @TimestampSerializer() this.startTime,
       @TimestampSerializer() this.endTime});
 
@@ -519,9 +591,15 @@ class _$PlanActivityImpl implements _PlanActivity {
   @TimestampSerializer()
   final DateTime? dateTime;
   @override
+  final String? listingId;
+  @override
+  final String? category;
+  @override
   final String? title;
   @override
   final String? description;
+  @override
+  final String? imageUrl;
   @override
   @TimestampSerializer()
   final DateTime? startTime;
@@ -531,7 +609,7 @@ class _$PlanActivityImpl implements _PlanActivity {
 
   @override
   String toString() {
-    return 'PlanActivity(dateTime: $dateTime, title: $title, description: $description, startTime: $startTime, endTime: $endTime)';
+    return 'PlanActivity(dateTime: $dateTime, listingId: $listingId, category: $category, title: $title, description: $description, imageUrl: $imageUrl, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -541,9 +619,15 @@ class _$PlanActivityImpl implements _PlanActivity {
             other is _$PlanActivityImpl &&
             (identical(other.dateTime, dateTime) ||
                 other.dateTime == dateTime) &&
+            (identical(other.listingId, listingId) ||
+                other.listingId == listingId) &&
+            (identical(other.category, category) ||
+                other.category == category) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.imageUrl, imageUrl) ||
+                other.imageUrl == imageUrl) &&
             (identical(other.startTime, startTime) ||
                 other.startTime == startTime) &&
             (identical(other.endTime, endTime) || other.endTime == endTime));
@@ -551,8 +635,8 @@ class _$PlanActivityImpl implements _PlanActivity {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, dateTime, title, description, startTime, endTime);
+  int get hashCode => Object.hash(runtimeType, dateTime, listingId, category,
+      title, description, imageUrl, startTime, endTime);
 
   @JsonKey(ignore: true)
   @override
@@ -571,8 +655,11 @@ class _$PlanActivityImpl implements _PlanActivity {
 abstract class _PlanActivity implements PlanActivity {
   factory _PlanActivity(
       {@TimestampSerializer() final DateTime? dateTime,
+      final String? listingId,
+      final String? category,
       final String? title,
       final String? description,
+      final String? imageUrl,
       @TimestampSerializer() final DateTime? startTime,
       @TimestampSerializer() final DateTime? endTime}) = _$PlanActivityImpl;
 
@@ -583,9 +670,15 @@ abstract class _PlanActivity implements PlanActivity {
   @TimestampSerializer()
   DateTime? get dateTime;
   @override
+  String? get listingId;
+  @override
+  String? get category;
+  @override
   String? get title;
   @override
   String? get description;
+  @override
+  String? get imageUrl;
   @override
   @TimestampSerializer()
   DateTime? get startTime;

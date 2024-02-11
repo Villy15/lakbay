@@ -78,3 +78,17 @@ class SelectedDateProvider extends StateNotifier<DateTime?> {
     state = selectedDate;
   }
 }
+
+// Current id of plan to be edited
+final currentPlanIdProvider =
+    StateNotifierProvider<CurrentPlanIdProvider, String?>(
+  (ref) => CurrentPlanIdProvider(),
+);
+
+class CurrentPlanIdProvider extends StateNotifier<String?> {
+  CurrentPlanIdProvider() : super(null);
+
+  void setCurrentPlanId(String id) {
+    state = id;
+  }
+}

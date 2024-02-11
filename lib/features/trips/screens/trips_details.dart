@@ -10,12 +10,13 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/plan/components/timeline_card.dart';
 import 'package:lakbay/features/plan/components/timeline_tile.dart';
 import 'package:lakbay/features/plan/components/trip_card.dart';
+import 'package:lakbay/features/plan/plan_controller.dart';
 import 'package:lakbay/features/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
 
 class TripDetailsPlan extends ConsumerStatefulWidget {
-  final PlanModel plan;
-  const TripDetailsPlan({super.key, required this.plan});
+  final String planUid;
+  const TripDetailsPlan({super.key, required this.planUid});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -34,84 +35,102 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
     });
   }
 
+  onTapInfo(PlanModel plan) {
+    context.push('/trips/info', extra: plan);
+  }
+
+  void onTapActivity(
+    DateTime date,
+    PlanModel plan,
+  ) {
+    ref.read(selectedDateProvider.notifier).setSelectedDate(date);
+    ref.read(planLocationProvider.notifier).setLocation(plan.location);
+    ref.read(planStartDateProvider.notifier).setStartDate(plan.startDate!);
+    ref.read(planEndDateProvider.notifier).setEndDate(plan.endDate!);
+    ref.read(currentPlanIdProvider.notifier).setCurrentPlanId(plan.uid!);
+    context.push('/trips/add_activity', extra: plan);
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 0,
-      length: 2,
-      child: PopScope(
-        canPop: false,
-        onPopInvoked: (bool didPop) {
-          context.pop();
-          ref.read(navBarVisibilityProvider.notifier).show();
-        },
-        child: Scaffold(
-          appBar: _appBar(context),
-          body: TabBarView(
-            children: [
-              // Days Plan
-              daysPlan(),
-              // TripsDaysPlan(),
+        initialIndex: 0,
+        length: 2,
+        child: PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) {
+            context.pop();
+            ref.read(navBarVisibilityProvider.notifier).show();
+          },
+          child: ref.watch(getPlanByUidProvider(widget.planUid)).when(
+                data: (plan) {
+                  return buildScaffold(context, plan);
+                },
+                error: (error, stackTrace) => ErrorText(
+                    error: error.toString(), stackTrace: stackTrace.toString()),
+                loading: () => const Loader(),
+              ),
+        ));
+  }
 
-              // Reservations
-              ref.watch(getAllListingsProvider).when(
-                    data: (listings) {
-                      return ListView.separated(
-                        padding: const EdgeInsets.all(16.0),
-                        separatorBuilder: (context, index) => const SizedBox(
-                          height: 12.0,
-                        ),
-                        shrinkWrap: true,
-                        itemCount: listings.length,
-                        itemBuilder: (context, index) {
-                          final listing = listings[index];
-                          return TripCard(
-                            listing: listing,
-                          );
-                        },
+  Scaffold buildScaffold(BuildContext context, PlanModel plan) {
+    return Scaffold(
+      appBar: _appBar(context, plan),
+      body: TabBarView(
+        children: [
+          // Days Plan
+          daysPlan(plan),
+          // TripsDaysPlan(),
+
+          // Reservations
+          ref.watch(getAllListingsProvider).when(
+                data: (listings) {
+                  return ListView.separated(
+                    padding: const EdgeInsets.all(16.0),
+                    separatorBuilder: (context, index) => const SizedBox(
+                      height: 12.0,
+                    ),
+                    shrinkWrap: true,
+                    itemCount: listings.length,
+                    itemBuilder: (context, index) {
+                      final listing = listings[index];
+                      return TripCard(
+                        listing: listing,
                       );
                     },
-                    error: (error, stackTrace) => ErrorText(
-                        error: error.toString(),
-                        stackTrace: stackTrace.toString()),
-                    loading: () => const Loader(),
-                  )
-            ],
-          ),
-        ),
+                  );
+                },
+                error: (error, stackTrace) => ErrorText(
+                    error: error.toString(), stackTrace: stackTrace.toString()),
+                loading: () => const Loader(),
+              )
+        ],
       ),
     );
   }
 
-  void onTapActivity(DateTime date) {
-    ref.read(selectedDateProvider.notifier).setSelectedDate(date);
-    context.push('/plan/add_activity');
-  }
-
-  Widget daysPlan() {
-    final listPlans = ref.watch(planModelProvider);
+  Widget daysPlan(PlanModel plan) {
     final thisDay = DateTime.now().add(Duration(days: _selectedDayIndex));
 
     return Column(
       children: [
-        rowDays(),
+        rowDays(plan),
         const SizedBox(height: 16.0),
-        ...listPlans.where((plan) => plan.isSameDate(thisDay)).map(
-              (plan) => Column(
-                children: [
-                  ...plan.activities!.map((activity) => TimelineTile(
-                        leading: Text(
-                          DateFormat('hh:mm a').format(activity.startTime!),
-                        ),
-                        isActive: true,
-                        title: TimelineCard(
-                          title: activity.title!,
-                          subtitle: activity.description!,
-                        ),
-                      )),
-                ],
-              ),
-            ),
+        Column(
+          children: [
+            ...plan.activities!
+                .where((activity) => activity.dateTime!.day == thisDay.day)
+                .map(
+                  (activity) => TimelineTile(
+                    isActive: true,
+                    title: TimelineCard(
+                      plan: plan,
+                      activity: activity,
+                    ),
+                  ),
+                ),
+          ],
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
           child: Row(
@@ -123,6 +142,7 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
                 onTap: () {
                   onTapActivity(
                     thisDay,
+                    plan,
                   );
                 },
                 child: DottedBorder(
@@ -154,71 +174,86 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
     );
   }
 
-  SizedBox rowDays() {
-    int itemCount =
-        widget.plan.endDate!.difference(widget.plan.startDate!).inDays + 1;
+  SizedBox rowDays(PlanModel plan) {
+    int itemCount = plan.endDate!.difference(plan.startDate!).inDays + 1;
     return SizedBox(
       height: 70,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: itemCount,
+        itemCount: itemCount + 1,
         itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              setState(() {
-                _selectedDayIndex = index;
+          if (index < itemCount) {
+            return InkWell(
+              onTap: () {
+                setState(() {
+                  _selectedDayIndex = index;
 
-                debugPrint('Selected Day Index: $_selectedDayIndex');
-              });
-              // Add any other logic you want to execute when a day is tapped
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    width: 3.0,
-                    color: _selectedDayIndex ==
-                            index // Check if the day is selected
-                        ? Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(0.7) // Selected indicator color
-                        : Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(0.05), // No indicator color
+                  debugPrint('Selected Day Index: $_selectedDayIndex');
+                });
+                // Add any other logic you want to execute when a day is tapped
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      width: 3.0,
+                      color: _selectedDayIndex ==
+                              index // Check if the day is selected
+                          ? Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.7) // Selected indicator color
+                          : Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.05), // No indicator color
+                    ),
                   ),
                 ),
-              ),
-              width: 150.0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Day ${index + 1}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                  Text(
-                    DateFormat('MMM dd, yyyy').format(
-                      widget.plan.startDate!.add(
-                        Duration(days: index),
+                width: 150.0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Day ${index + 1}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
                       ),
                     ),
-                  ),
-                ],
+                    Text(
+                      DateFormat('MMM dd, yyyy').format(
+                        plan.startDate!.add(
+                          Duration(days: index),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          } else {
+            return InkWell(
+              onTap: () => (),
+              child: const SizedBox(
+                width: 100,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add), // Plus icon
+                    Text("Add Day"),
+                  ],
+                ),
+              ),
+            );
+          }
         },
       ),
     );
   }
 
-  PreferredSize _appBar(BuildContext context) {
+  PreferredSize _appBar(BuildContext context, PlanModel plan) {
     List<Widget> tabs = [
       const SizedBox(
         width: 100.0,
@@ -242,6 +277,15 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
         title: const Text(
           'Trip Details Plan',
         ),
+        actions: [
+          // Details
+          IconButton(
+            onPressed: () {
+              onTapInfo(plan);
+            },
+            icon: const Icon(Icons.info),
+          ),
+        ],
         // Add icon on the right side of the app bar of a person,
         bottom: TabBar(
           tabs: tabs,

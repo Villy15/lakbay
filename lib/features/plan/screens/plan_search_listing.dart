@@ -41,6 +41,9 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     String capitalizedCategory = capitalize(widget.category);
     if (filters.containsKey(capitalizedCategory)) {
       filters[capitalizedCategory] = true;
+    } else {
+      // Make all true
+      filters.updateAll((key, value) => true);
     }
   }
 
@@ -48,6 +51,18 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
 
   void onTapLocation() {
     context.push('/plan/location');
+  }
+
+  void updateSortOrder(SortBy newSortBy) {
+    setState(() {
+      sortBy = newSortBy;
+    });
+  }
+
+  void updateFilterOptions(String category, bool isSelected) {
+    setState(() {
+      filters[category] = isSelected;
+    });
   }
 
   @override
@@ -121,6 +136,25 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
 
             ref.watch(getAllListingsProvider).when(
                   data: (listings) {
+                    // Sort
+                    switch (sortBy) {
+                      case SortBy.lowestPrice:
+                        listings.sort((a, b) => a.price!.compareTo(b.price!));
+                        break;
+                      case SortBy.highestPrice:
+                        listings.sort((a, b) => b.price!.compareTo(a.price!));
+                        break;
+                      case SortBy.rating:
+                        break;
+                      case SortBy.distance:
+                        break;
+                    }
+
+                    // Filter
+                    final filteredListings = listings.where((listing) {
+                      return filters[listing.category] == true;
+                    }).toList();
+
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListView.separated(
@@ -129,9 +163,9 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                         ),
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: listings.length,
+                        itemCount: filteredListings.length,
                         itemBuilder: (context, index) {
-                          final listing = listings[index];
+                          final listing = filteredListings[index];
                           return ListingCard(
                             listing: listing,
                           );
@@ -144,9 +178,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                       stackTrace: stackTrace.toString()),
                   loading: () => const Loader(),
                 ),
-
-            // Spacing
-            TextButton(onPressed: () => {}, child: const Text('Load More')),
           ],
         ),
       ),
@@ -179,12 +210,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-
-                          // Clear all
-                          // TextButton(
-                          //   onPressed: () {},
-                          //   child: const Text('Clear All'),
-                          // ),
                         ],
                       ),
                       // Transparent Divider
@@ -199,7 +224,8 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                         groupValue: sortBy,
                         onChanged: (value) {
                           setState(() {
-                            sortBy = value as SortBy;
+                            updateSortOrder(value as SortBy);
+                            context.pop();
                           });
                         },
                         title: const Text('Lowest Price'),
@@ -210,7 +236,8 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                         groupValue: sortBy,
                         onChanged: (value) {
                           setState(() {
-                            sortBy = value as SortBy;
+                            updateSortOrder(value as SortBy);
+                            context.pop();
                           });
                         },
                         title: const Text('Highest Price'),
@@ -262,21 +289,15 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Close button
-                            Row(
+                            const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   'Filter',
                                   style: TextStyle(
                                     fontSize: 24.0,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                ),
-
-                                // Clear all
-                                TextButton(
-                                  onPressed: () {},
-                                  child: const Text('Clear All'),
                                 ),
                               ],
                             ),
@@ -303,6 +324,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                                 onChanged: (value) {
                                   setState(() {
                                     filters[category] = value!;
+                                    updateFilterOptions(category, value);
                                   });
                                 },
                                 title: Text(category),

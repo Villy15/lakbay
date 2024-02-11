@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +18,10 @@ import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/image_picker_form_field.dart';
+import 'package:lakbay/features/plan/plan_controller.dart';
+import 'package:lakbay/features/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 class CustomerAccomodation extends ConsumerStatefulWidget {
@@ -637,6 +639,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
 
   @override
   Widget build(BuildContext context) {
+    final planUid = ref.read(currentPlanIdProvider);
     debugPrintJson("File Name: customer_accommodation.dart");
     // final user = ref.watch(userProvider);
     return PopScope(
@@ -654,7 +657,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
             appBar: _appBar(widget.listing.title, context),
             body: TabBarView(
               children: [
-                destination(),
+                destination(planUid),
                 rooms(),
                 bookings(),
               ],
@@ -743,7 +746,25 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
     );
   }
 
-  SingleChildScrollView destination() {
+  void addCurrentTrip(BuildContext context, String? planUid) {
+    final selectedDate = ref.read(selectedDateProvider);
+
+    // Edit the current plan
+    PlanActivity activity = PlanActivity(
+      listingId: widget.listing.uid,
+      category: 'Accommodation',
+      dateTime: selectedDate,
+      title: widget.listing.title,
+      imageUrl: widget.listing.images!.first.url,
+      description: widget.listing.description,
+    );
+
+    ref
+        .read(plansControllerProvider.notifier)
+        .addActivityToPlan(planUid!, activity, context);
+  }
+
+  SingleChildScrollView destination(String? planUid) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -826,7 +847,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
               ],
             ),
           ),
-          const Divider(),
+          // const Divider(),
 
           ref
               .watch(getCooperativeProvider(
@@ -863,6 +884,22 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
               ),
 
           const Divider(),
+
+          // Add this to current trip
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            child: FilledButton(
+              onPressed: () {
+                addCurrentTrip(context, planUid);
+              },
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all<Size>(
+                    const Size(double.infinity, 45)),
+              ),
+              child: const Text('Add this to current trip'),
+            ),
+          ),
         ],
       ),
     );
