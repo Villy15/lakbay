@@ -401,6 +401,7 @@ PlanActivity _$PlanActivityFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$PlanActivity {
+  String? get key => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get dateTime => throw _privateConstructorUsedError;
   String? get listingId => throw _privateConstructorUsedError;
@@ -426,7 +427,8 @@ abstract class $PlanActivityCopyWith<$Res> {
       _$PlanActivityCopyWithImpl<$Res, PlanActivity>;
   @useResult
   $Res call(
-      {@TimestampSerializer() DateTime? dateTime,
+      {String? key,
+      @TimestampSerializer() DateTime? dateTime,
       String? listingId,
       String? category,
       String? title,
@@ -449,6 +451,7 @@ class _$PlanActivityCopyWithImpl<$Res, $Val extends PlanActivity>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? key = freezed,
     Object? dateTime = freezed,
     Object? listingId = freezed,
     Object? category = freezed,
@@ -459,6 +462,10 @@ class _$PlanActivityCopyWithImpl<$Res, $Val extends PlanActivity>
     Object? endTime = freezed,
   }) {
     return _then(_value.copyWith(
+      key: freezed == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String?,
       dateTime: freezed == dateTime
           ? _value.dateTime
           : dateTime // ignore: cast_nullable_to_non_nullable
@@ -504,7 +511,8 @@ abstract class _$$PlanActivityImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@TimestampSerializer() DateTime? dateTime,
+      {String? key,
+      @TimestampSerializer() DateTime? dateTime,
       String? listingId,
       String? category,
       String? title,
@@ -525,6 +533,7 @@ class __$$PlanActivityImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? key = freezed,
     Object? dateTime = freezed,
     Object? listingId = freezed,
     Object? category = freezed,
@@ -535,6 +544,10 @@ class __$$PlanActivityImplCopyWithImpl<$Res>
     Object? endTime = freezed,
   }) {
     return _then(_$PlanActivityImpl(
+      key: freezed == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String?,
       dateTime: freezed == dateTime
           ? _value.dateTime
           : dateTime // ignore: cast_nullable_to_non_nullable
@@ -575,7 +588,8 @@ class __$$PlanActivityImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PlanActivityImpl implements _PlanActivity {
   _$PlanActivityImpl(
-      {@TimestampSerializer() this.dateTime,
+      {this.key,
+      @TimestampSerializer() this.dateTime,
       this.listingId,
       this.category,
       this.title,
@@ -587,6 +601,8 @@ class _$PlanActivityImpl implements _PlanActivity {
   factory _$PlanActivityImpl.fromJson(Map<String, dynamic> json) =>
       _$$PlanActivityImplFromJson(json);
 
+  @override
+  final String? key;
   @override
   @TimestampSerializer()
   final DateTime? dateTime;
@@ -609,7 +625,7 @@ class _$PlanActivityImpl implements _PlanActivity {
 
   @override
   String toString() {
-    return 'PlanActivity(dateTime: $dateTime, listingId: $listingId, category: $category, title: $title, description: $description, imageUrl: $imageUrl, startTime: $startTime, endTime: $endTime)';
+    return 'PlanActivity(key: $key, dateTime: $dateTime, listingId: $listingId, category: $category, title: $title, description: $description, imageUrl: $imageUrl, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -617,6 +633,7 @@ class _$PlanActivityImpl implements _PlanActivity {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PlanActivityImpl &&
+            (identical(other.key, key) || other.key == key) &&
             (identical(other.dateTime, dateTime) ||
                 other.dateTime == dateTime) &&
             (identical(other.listingId, listingId) ||
@@ -635,8 +652,8 @@ class _$PlanActivityImpl implements _PlanActivity {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, dateTime, listingId, category,
-      title, description, imageUrl, startTime, endTime);
+  int get hashCode => Object.hash(runtimeType, key, dateTime, listingId,
+      category, title, description, imageUrl, startTime, endTime);
 
   @JsonKey(ignore: true)
   @override
@@ -654,7 +671,8 @@ class _$PlanActivityImpl implements _PlanActivity {
 
 abstract class _PlanActivity implements PlanActivity {
   factory _PlanActivity(
-      {@TimestampSerializer() final DateTime? dateTime,
+      {final String? key,
+      @TimestampSerializer() final DateTime? dateTime,
       final String? listingId,
       final String? category,
       final String? title,
@@ -666,6 +684,8 @@ abstract class _PlanActivity implements PlanActivity {
   factory _PlanActivity.fromJson(Map<String, dynamic> json) =
       _$PlanActivityImpl.fromJson;
 
+  @override
+  String? get key;
   @override
   @TimestampSerializer()
   DateTime? get dateTime;

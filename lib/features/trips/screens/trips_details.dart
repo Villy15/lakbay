@@ -7,11 +7,11 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/plan/components/timeline_card.dart';
-import 'package:lakbay/features/plan/components/timeline_tile.dart';
-import 'package:lakbay/features/plan/components/trip_card.dart';
-import 'package:lakbay/features/plan/plan_controller.dart';
-import 'package:lakbay/features/plan/plan_providers.dart';
+import 'package:lakbay/features/trips/plan/components/timeline_card.dart';
+import 'package:lakbay/features/trips/plan/components/timeline_tile.dart';
+import 'package:lakbay/features/trips/plan/components/trip_card.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
 
 class TripDetailsPlan extends ConsumerStatefulWidget {
@@ -111,66 +111,83 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
 
   Widget daysPlan(PlanModel plan) {
     final thisDay = DateTime.now().add(Duration(days: _selectedDayIndex));
+// Filter and sort the activities list first
+    var filteredAndSortedActivities = plan.activities!
+        .where((activity) => activity.dateTime!.day == thisDay.day)
+        .toList(); // Convert to List for sorting
 
-    return Column(
-      children: [
-        rowDays(plan),
-        const SizedBox(height: 16.0),
-        Column(
-          children: [
-            ...plan.activities!
-                .where((activity) => activity.dateTime!.day == thisDay.day)
-                .map(
-                  (activity) => TimelineTile(
-                    isActive: true,
-                    title: TimelineCard(
-                      plan: plan,
-                      activity: activity,
-                    ),
+    // Sort the list in-place
+    filteredAndSortedActivities.sort((a, b) {
+      // Check if either activity does not have a startTime
+      var aStartTime = a.startTime;
+      var bStartTime = b.startTime;
+      if (aStartTime == null && bStartTime == null) return 0;
+      if (aStartTime == null) return 1;
+      if (bStartTime == null) return -1;
+      // If both have a startTime, compare them
+      return aStartTime.compareTo(bStartTime);
+    });
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          rowDays(plan),
+          const SizedBox(height: 16.0),
+          Column(
+            children: [
+              ...filteredAndSortedActivities.map(
+                (activity) => TimelineTile(
+                  isActive: true,
+                  title: TimelineCard(
+                    plan: plan,
+                    activity: activity,
                   ),
                 ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-          child: Row(
-            children: [
-              const SizedBox(width: 16.0),
-              const Icon(Icons.add),
-              const SizedBox(width: 8.0),
-              InkWell(
-                onTap: () {
-                  onTapActivity(
-                    thisDay,
-                    plan,
-                  );
-                },
-                child: DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: const Radius.circular(12),
-                  padding: const EdgeInsets.all(6),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(12)),
-                    child: SizedBox(
-                      height: 70,
-                      // max width
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: const Center(
-                        child: Text(
-                          'Add Activity',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+              ),
+            ],
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+            child: Row(
+              children: [
+                const SizedBox(width: 16.0),
+                const Icon(Icons.add),
+                const SizedBox(width: 8.0),
+                InkWell(
+                  onTap: () {
+                    onTapActivity(
+                      thisDay,
+                      plan,
+                    );
+                  },
+                  child: DottedBorder(
+                    borderType: BorderType.RRect,
+                    radius: const Radius.circular(12),
+                    padding: const EdgeInsets.all(6),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(12)),
+                      child: SizedBox(
+                        height: 70,
+                        // max width
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: const Center(
+                          child: Text(
+                            'Add Activity',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              )
-            ],
-          ),
-        )
-      ],
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 

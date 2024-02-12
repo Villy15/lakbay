@@ -10,7 +10,7 @@ class TripCard extends ConsumerWidget {
 
   void onTap(BuildContext context, WidgetRef ref) {
     // context.push('/market/${listing.category}', extra: listing);
-    context.push('/trips/details/${plan.uid}', extra: plan);
+    context.push('/trips/details/${plan.uid}');
   }
 
   @override

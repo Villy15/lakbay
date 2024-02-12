@@ -40,6 +40,7 @@ class PlanModel with _$PlanModel {
 @freezed
 class PlanActivity with _$PlanActivity {
   factory PlanActivity({
+    String? key,
     @TimestampSerializer() DateTime? dateTime,
     String? listingId,
     String? category,

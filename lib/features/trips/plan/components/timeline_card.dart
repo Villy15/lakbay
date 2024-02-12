@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/plan/plan_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 
@@ -55,8 +55,7 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
       if (confirmDelete == true) {
         var updatedPlan = widget.plan.copyWith(
           activities: widget.plan.activities
-              ?.where(
-                  (activity) => activity.startTime != widget.activity.startTime)
+              ?.where((activity) => activity.key != widget.activity.key)
               .toList(),
         );
 
@@ -80,12 +79,80 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
       }
 
       if (minutes == 0) {
-        return '$hours hour';
+        return '$hours hours';
       }
 
       return '$hours hours $minutes mins';
     }
     return '';
+  }
+
+  void addStartTime() {
+    // Add a start time to the activity by adding a time picker
+    showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    ).then((time) {
+      if (time != null) {
+        final updatedPlan = widget.plan.copyWith(
+          activities: widget.plan.activities?.map((activity) {
+            if (activity.key == widget.activity.key) {
+              return activity.copyWith(
+                  startTime: DateTime(
+                widget.activity.dateTime!.year,
+                widget.activity.dateTime!.month,
+                widget.activity.dateTime!.day,
+                time.hour,
+                time.minute,
+              ));
+            }
+            return activity;
+          }).toList(),
+        );
+
+        debugPrint('updatedPlan: $updatedPlan');
+
+        ref
+            .read(plansControllerProvider.notifier)
+            .updatePlan(updatedPlan, context, false);
+      }
+    });
+  }
+
+  void addEndTime() {
+    // Add a start time to the activity by adding a time picker
+    showTimePicker(
+      context: context,
+      // Make the initial time to startDate
+      initialTime: widget.activity.startTime != null
+          ? TimeOfDay.fromDateTime(
+              widget.activity.startTime!.add(const Duration(hours: 1)))
+          : TimeOfDay.now(),
+    ).then((time) {
+      if (time != null) {
+        final updatedPlan = widget.plan.copyWith(
+          activities: widget.plan.activities?.map((activity) {
+            if (activity.key == widget.activity.key) {
+              return activity.copyWith(
+                  endTime: DateTime(
+                widget.activity.dateTime!.year,
+                widget.activity.dateTime!.month,
+                widget.activity.dateTime!.day,
+                time.hour,
+                time.minute,
+              ));
+            }
+            return activity;
+          }).toList(),
+        );
+
+        debugPrint('updatedPlan: $updatedPlan');
+
+        ref
+            .read(plansControllerProvider.notifier)
+            .updatePlan(updatedPlan, context, false);
+      }
+    });
   }
 
   @override
@@ -128,14 +195,16 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
             Row(
               children: [
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: () => addStartTime(),
                   icon: const Icon(
                     Icons.timer_outlined,
                   ),
                 ),
                 // Set Duration
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: widget.activity.startTime != null
+                      ? () => addEndTime()
+                      : null,
                   icon: const Icon(
                     Icons.timelapse_outlined,
                   ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lakbay/features/plan/plan_repository.dart';
+import 'package:lakbay/features/trips/plan/plan_repository.dart';
 import 'package:lakbay/models/plan_model.dart';
 
 // getPlanByUidProvider
@@ -40,6 +40,7 @@ class PlanController extends StateNotifier<bool> {
         super(false);
 
   void addPlan(PlanModel plan, BuildContext context) async {
+    state = true;
     final result = await _planRepository.addPlan(plan);
 
     result.fold(
@@ -47,23 +48,29 @@ class PlanController extends StateNotifier<bool> {
         state = false;
       },
       (uid) {
-        state = true;
+        state = false;
         context.pop();
       },
     );
   }
 
   // Update plan by uid
-  void updatePlan(PlanModel plan, BuildContext context) async {
+  void updatePlan(PlanModel plan, BuildContext context,
+      [bool? shouldPop]) async {
+    state = true;
+
     final result = await _planRepository.updatePlanByUid(plan.uid!, plan);
+    shouldPop ??= true;
 
     result.fold(
       (failure) {
         state = false;
       },
       (uid) {
-        state = true;
-        context.pop();
+        state = false;
+        if (shouldPop == true) {
+          context.pop();
+        }
       },
     );
   }
@@ -71,6 +78,7 @@ class PlanController extends StateNotifier<bool> {
   // Update plan by adding an activity
   void addActivityToPlan(
       String planId, PlanActivity activity, BuildContext context) async {
+    state = true;
     // Read the plan by uid
     var plan = await _planRepository.readPlanByUid(planId).first;
 
@@ -88,8 +96,10 @@ class PlanController extends StateNotifier<bool> {
         state = false;
       },
       (uid) {
-        state = true;
-        context.go('/trips/details/${plan.uid}', extra: plan);
+        state = false;
+        context.pop();
+        context.pop();
+        context.pop();
       },
     );
   }
@@ -97,6 +107,7 @@ class PlanController extends StateNotifier<bool> {
   // Delete Plan Activity by uid
   void deleteActivityFromPlan(PlanModel plan, BuildContext context) async {
     // Read the plan by uid
+    state = true;
     // Update the plan
     final result = await _planRepository.updatePlanByUid(plan.uid!, plan);
 
@@ -105,7 +116,7 @@ class PlanController extends StateNotifier<bool> {
         state = false;
       },
       (uid) {
-        state = true;
+        state = false;
       },
     );
   }

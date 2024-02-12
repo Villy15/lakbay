@@ -6,8 +6,10 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/components/trip_card.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
+import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/plan_model.dart';
 
 class TripsPage extends ConsumerStatefulWidget {
   const TripsPage({super.key});
@@ -60,8 +62,14 @@ class _TripsPageState extends ConsumerState<TripsPage> {
     //   ),
     // ];
 
+    if (user?.isCoopView == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.go('/today');
+      });
+    }
+
     return Scaffold(
-      appBar: CustomAppBar(title: 'Trips', user: user),
+      appBar: CustomAppBar(title: 'Tara! Lakbay!', user: user),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -81,47 +89,13 @@ class _TripsPageState extends ConsumerState<TripsPage> {
 
               ref.watch(readPlansByUserIdProvider(user?.uid ?? '')).when(
                     data: (plans) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListView.separated(
-                          separatorBuilder: (context, index) => const SizedBox(
-                            height: 12.0,
-                          ),
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: plans.length,
-                          itemBuilder: (context, index) {
-                            final plan = plans[index];
-                            return TripCard(
-                              plan: plan,
-                            );
-                          },
-                        ),
-                      );
+                      return listOngoingTrips(plans);
                     },
                     error: (error, stackTrace) => ErrorText(
                         error: error.toString(),
                         stackTrace: stackTrace.toString()),
                     loading: () => const Loader(),
                   ),
-
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: ListView.separated(
-              //     separatorBuilder: (context, index) => const SizedBox(
-              //       height: 12.0,
-              //     ),
-              //     physics: const NeverScrollableScrollPhysics(),
-              //     shrinkWrap: true,
-              //     itemCount: 1,
-              //     itemBuilder: (context, index) {
-              //       final plan = plans[index];
-              //       return TripCard(
-              //         plan: plan,
-              //       );
-              //     },
-              //   ),
-              // ),
 
               // Create a new Trip
               const SizedBox(height: 20),
@@ -162,94 +136,7 @@ class _TripsPageState extends ConsumerState<TripsPage> {
 
               ref.watch(getAllListingsProvider).when(
                     data: (listings) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                          ),
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: 2,
-                          itemBuilder: (context, index) {
-                            final listing = listings[index];
-                            return Center(
-                              child: Card(
-                                clipBehavior: Clip.hardEdge,
-                                elevation: 1,
-                                surfaceTintColor: Colors.white,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20)),
-                                ),
-                                child: InkWell(
-                                  splashColor: Colors.orange.withAlpha(30),
-                                  onTap: () => {},
-                                  child: SizedBox(
-                                      width: double.infinity,
-                                      // height: 290,
-                                      child: Column(
-                                        children: [
-                                          // Random Image
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                                20), // round the corners of the image
-                                            child: Image(
-                                              image: NetworkImage(
-                                                  listing.images!.first.url!),
-                                              width: double.infinity,
-                                              height: 100,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-
-                                          // Card Title
-                                          Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      8.0, 8.0, 8.0, 0.0),
-                                              child: Text(
-                                                listing.title,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-
-                                          // Date Range
-                                          const Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                8.0, 0.0, 8.0, 8.0),
-                                            // Date should be 18 Feb - 22 Feb
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  "1 month ago",
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      );
+                      return gridPastTrips(listings);
                     },
                     error: (error, stackTrace) => ErrorText(
                         error: error.toString(),
@@ -259,6 +146,110 @@ class _TripsPageState extends ConsumerState<TripsPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Padding gridPastTrips(List<ListingModel> listings) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+        ),
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: 2,
+        itemBuilder: (context, index) {
+          final listing = listings[index];
+          return Center(
+            child: Card(
+              clipBehavior: Clip.hardEdge,
+              elevation: 1,
+              surfaceTintColor: Colors.white,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: InkWell(
+                splashColor: Colors.orange.withAlpha(30),
+                onTap: () => {},
+                child: SizedBox(
+                    width: double.infinity,
+                    // height: 290,
+                    child: Column(
+                      children: [
+                        // Random Image
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                              20), // round the corners of the image
+                          child: Image(
+                            image: NetworkImage(listing.images!.first.url!),
+                            width: double.infinity,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+
+                        // Card Title
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+                            child: Text(
+                              listing.title,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Date Range
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
+                          // Date should be 18 Feb - 22 Feb
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "1 month ago",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Padding listOngoingTrips(List<PlanModel> plans) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView.separated(
+        separatorBuilder: (context, index) => const SizedBox(
+          height: 12.0,
+        ),
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: plans.length,
+        itemBuilder: (context, index) {
+          final plan = plans[index];
+          return TripCard(
+            plan: plan,
+          );
+        },
       ),
     );
   }

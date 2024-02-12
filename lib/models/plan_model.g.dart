@@ -44,6 +44,7 @@ Map<String, dynamic> _$$PlanModelImplToJson(_$PlanModelImpl instance) =>
 
 _$PlanActivityImpl _$$PlanActivityImplFromJson(Map<String, dynamic> json) =>
     _$PlanActivityImpl(
+      key: json['key'] as String?,
       dateTime:
           const TimestampSerializer().fromJson(json['dateTime'] as Timestamp?),
       listingId: json['listingId'] as String?,
@@ -59,6 +60,7 @@ _$PlanActivityImpl _$$PlanActivityImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$PlanActivityImplToJson(_$PlanActivityImpl instance) =>
     <String, dynamic>{
+      'key': instance.key,
       'dateTime': const TimestampSerializer().toJson(instance.dateTime),
       'listingId': instance.listingId,
       'category': instance.category,

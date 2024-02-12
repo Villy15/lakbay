@@ -6,7 +6,7 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/listing_card.dart';
-import 'package:lakbay/features/plan/plan_providers.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 
 class PlanSearchListing extends ConsumerStatefulWidget {
   final String category;

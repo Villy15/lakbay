@@ -7,8 +7,8 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/plan/components/trip_card.dart';
-import 'package:lakbay/features/plan/plan_providers.dart';
+import 'package:lakbay/features/trips/plan/components/trip_card.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
 
 class PlanAddActivity extends ConsumerStatefulWidget {

@@ -18,8 +18,8 @@ import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/image_picker_form_field.dart';
-import 'package:lakbay/features/plan/plan_controller.dart';
-import 'package:lakbay/features/plan/plan_providers.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -640,6 +640,8 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
   @override
   Widget build(BuildContext context) {
     final planUid = ref.read(currentPlanIdProvider);
+    final isLoading = ref.watch(plansControllerProvider);
+
     debugPrintJson("File Name: customer_accommodation.dart");
     // final user = ref.watch(userProvider);
     return PopScope(
@@ -657,7 +659,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
             appBar: _appBar(widget.listing.title, context),
             body: TabBarView(
               children: [
-                destination(planUid),
+                isLoading ? const Loader() : destination(planUid),
                 rooms(),
                 bookings(),
               ],
@@ -751,6 +753,8 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
 
     // Edit the current plan
     PlanActivity activity = PlanActivity(
+      // Create a random key for the activity
+      key: DateTime.now().millisecondsSinceEpoch.toString(),
       listingId: widget.listing.uid,
       category: 'Accommodation',
       dateTime: selectedDate,

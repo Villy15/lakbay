@@ -34,7 +34,7 @@ import 'package:lakbay/features/events/crud/event_manager_tools.dart';
 import 'package:lakbay/features/events/crud/join_event.dart';
 import 'package:lakbay/features/events/crud/read_event.dart';
 import 'package:lakbay/features/events/events_page.dart';
-import 'package:lakbay/features/home/customer/customer_home_page.dart';
+import 'package:lakbay/features/explore/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/inbox/read_inbox.dart';
 import 'package:lakbay/features/listings/accommodation_booking_details.dart';
@@ -50,16 +50,16 @@ import 'package:lakbay/features/listings/crud/customer_food.dart';
 import 'package:lakbay/features/listings/crud/customer_transportation.dart';
 import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/market/market_page.dart';
-import 'package:lakbay/features/plan/plan_page.dart';
-import 'package:lakbay/features/plan/screens/plan_add_activity.dart';
-import 'package:lakbay/features/plan/screens/plan_search_listing.dart';
-import 'package:lakbay/features/plan/screens/plan_select_date.dart';
-import 'package:lakbay/features/plan/screens/plan_select_location.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
 import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/tasks/event_tasks_edit.dart';
 import 'package:lakbay/features/tasks/event_tasks_read.dart';
+import 'package:lakbay/features/trips/plan/plan_page.dart';
+import 'package:lakbay/features/trips/plan/screens/plan_add_activity.dart';
+import 'package:lakbay/features/trips/plan/screens/plan_search_listing.dart';
+import 'package:lakbay/features/trips/plan/screens/plan_select_date.dart';
+import 'package:lakbay/features/trips/plan/screens/plan_select_location.dart';
 import 'package:lakbay/features/trips/screens/trips_add_activity.dart';
 import 'package:lakbay/features/trips/screens/trips_add_trip.dart';
 import 'package:lakbay/features/trips/screens/trips_details.dart';
@@ -100,7 +100,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     }
 
     if (isLoggingIn) {
-      return '/plan';
+      return '/trips';
     }
     // Authenticated
     return null;
