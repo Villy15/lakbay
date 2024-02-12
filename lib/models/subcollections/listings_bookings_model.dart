@@ -18,6 +18,7 @@ class ListingBookings with _$ListingBookings {
     required num guests,
     String? id,
     required bool needsContributions,
+    String? paymentOption,
     required String phoneNo,
     required num price,
     required String roomId,
@@ -26,7 +27,7 @@ class ListingBookings with _$ListingBookings {
     @TimestampSerializer() DateTime? startDate,
     required String bookingStatus,
     List<Task>? tasks,
-    required num totalPrice,
+    num? totalPrice,
     String? typeOfTrip,
     required String userId,
   }) = _ListingBookings;

@@ -107,21 +107,27 @@ class ListingController extends StateNotifier<bool> {
       (bookingUid) async {
         state = false;
         Navigator.pop(context);
-        _ref.read(salesRepositoryProvider).addSale(SaleModel(
-            bookingId: booking.id!,
-            category: booking.category,
-            cooperativeId: listing.cooperative.cooperativeId,
-            cooperativeName: listing.cooperative.cooperativeName,
-            customerId: _ref.read(userProvider)!.uid,
-            customerName: _ref.read(userProvider)!.name,
-            listingId: listing.uid!,
-            listingName: listing.title,
-            listingPrice: booking.price,
-            price: booking.totalPrice,
-            ownerId: listing.publisherId,
-            ownerName: listing.publisherName,
-            salePrice: booking.totalPrice));
-        showSnackBar(context, 'Booking added successfully');
+        Navigator.pop(context);
+        Navigator.pop(context);
+        // _ref.read(salesRepositoryProvider).addSale(SaleModel(
+        //     bookingId: booking.id!,
+        //     category: booking.category,
+        //     cooperativeId: listing.cooperative.cooperativeId,
+        //     cooperativeName: listing.cooperative.cooperativeName,
+        //     customerId: _ref.read(userProvider)!.uid,
+        //     customerName: _ref.read(userProvider)!.name,
+        //     listingId: listing.uid!,
+        //     listingName: listing.title,
+        //     listingPrice: booking.price,
+        //     price: booking.totalPrice,
+        //     ownerId: listing.publisherId,
+        //     ownerName: listing.publisherName,
+        //     salePrice: booking.totalPrice));
+
+        // showSnackBar(context, 'Room booked successfully');
+        context.push(
+            '/market/${booking.category}/customer_accommodation_receipt',
+            extra: {'booking': booking, 'listing': listing});
       },
     );
   }

@@ -31,6 +31,7 @@ mixin _$ListingBookings {
   num get guests => throw _privateConstructorUsedError;
   String? get id => throw _privateConstructorUsedError;
   bool get needsContributions => throw _privateConstructorUsedError;
+  String? get paymentOption => throw _privateConstructorUsedError;
   String get phoneNo => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
   String get roomId => throw _privateConstructorUsedError;
@@ -41,7 +42,7 @@ mixin _$ListingBookings {
   DateTime? get startDate => throw _privateConstructorUsedError;
   String get bookingStatus => throw _privateConstructorUsedError;
   List<Task>? get tasks => throw _privateConstructorUsedError;
-  num get totalPrice => throw _privateConstructorUsedError;
+  num? get totalPrice => throw _privateConstructorUsedError;
   String? get typeOfTrip => throw _privateConstructorUsedError;
   String get userId => throw _privateConstructorUsedError;
 
@@ -68,6 +69,7 @@ abstract class $ListingBookingsCopyWith<$Res> {
       num guests,
       String? id,
       bool needsContributions,
+      String? paymentOption,
       String phoneNo,
       num price,
       String roomId,
@@ -76,7 +78,7 @@ abstract class $ListingBookingsCopyWith<$Res> {
       @TimestampSerializer() DateTime? startDate,
       String bookingStatus,
       List<Task>? tasks,
-      num totalPrice,
+      num? totalPrice,
       String? typeOfTrip,
       String userId});
 }
@@ -104,6 +106,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? guests = null,
     Object? id = freezed,
     Object? needsContributions = null,
+    Object? paymentOption = freezed,
     Object? phoneNo = null,
     Object? price = null,
     Object? roomId = null,
@@ -112,7 +115,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? startDate = freezed,
     Object? bookingStatus = null,
     Object? tasks = freezed,
-    Object? totalPrice = null,
+    Object? totalPrice = freezed,
     Object? typeOfTrip = freezed,
     Object? userId = null,
   }) {
@@ -157,6 +160,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.needsContributions
           : needsContributions // ignore: cast_nullable_to_non_nullable
               as bool,
+      paymentOption: freezed == paymentOption
+          ? _value.paymentOption
+          : paymentOption // ignore: cast_nullable_to_non_nullable
+              as String?,
       phoneNo: null == phoneNo
           ? _value.phoneNo
           : phoneNo // ignore: cast_nullable_to_non_nullable
@@ -189,10 +196,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.tasks
           : tasks // ignore: cast_nullable_to_non_nullable
               as List<Task>?,
-      totalPrice: null == totalPrice
+      totalPrice: freezed == totalPrice
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
-              as num,
+              as num?,
       typeOfTrip: freezed == typeOfTrip
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
@@ -224,6 +231,7 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       num guests,
       String? id,
       bool needsContributions,
+      String? paymentOption,
       String phoneNo,
       num price,
       String roomId,
@@ -232,7 +240,7 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       @TimestampSerializer() DateTime? startDate,
       String bookingStatus,
       List<Task>? tasks,
-      num totalPrice,
+      num? totalPrice,
       String? typeOfTrip,
       String userId});
 }
@@ -258,6 +266,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? guests = null,
     Object? id = freezed,
     Object? needsContributions = null,
+    Object? paymentOption = freezed,
     Object? phoneNo = null,
     Object? price = null,
     Object? roomId = null,
@@ -266,7 +275,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? startDate = freezed,
     Object? bookingStatus = null,
     Object? tasks = freezed,
-    Object? totalPrice = null,
+    Object? totalPrice = freezed,
     Object? typeOfTrip = freezed,
     Object? userId = null,
   }) {
@@ -311,6 +320,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.needsContributions
           : needsContributions // ignore: cast_nullable_to_non_nullable
               as bool,
+      paymentOption: freezed == paymentOption
+          ? _value.paymentOption
+          : paymentOption // ignore: cast_nullable_to_non_nullable
+              as String?,
       phoneNo: null == phoneNo
           ? _value.phoneNo
           : phoneNo // ignore: cast_nullable_to_non_nullable
@@ -343,10 +356,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value._tasks
           : tasks // ignore: cast_nullable_to_non_nullable
               as List<Task>?,
-      totalPrice: null == totalPrice
+      totalPrice: freezed == totalPrice
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
-              as num,
+              as num?,
       typeOfTrip: freezed == typeOfTrip
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
@@ -373,6 +386,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
       required this.guests,
       this.id,
       required this.needsContributions,
+      this.paymentOption,
       required this.phoneNo,
       required this.price,
       required this.roomId,
@@ -381,7 +395,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
       @TimestampSerializer() this.startDate,
       required this.bookingStatus,
       final List<Task>? tasks,
-      required this.totalPrice,
+      this.totalPrice,
       this.typeOfTrip,
       required this.userId})
       : _expenses = expenses,
@@ -420,6 +434,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
   @override
   final bool needsContributions;
   @override
+  final String? paymentOption;
+  @override
   final String phoneNo;
   @override
   final num price;
@@ -446,7 +462,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
   }
 
   @override
-  final num totalPrice;
+  final num? totalPrice;
   @override
   final String? typeOfTrip;
   @override
@@ -454,7 +470,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
   @override
   String toString() {
-    return 'ListingBookings(category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, phoneNo: $phoneNo, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, tasks: $tasks, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, userId: $userId)';
+    return 'ListingBookings(category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, phoneNo: $phoneNo, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, tasks: $tasks, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, userId: $userId)';
   }
 
   @override
@@ -477,6 +493,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.needsContributions, needsContributions) ||
                 other.needsContributions == needsContributions) &&
+            (identical(other.paymentOption, paymentOption) ||
+                other.paymentOption == paymentOption) &&
             (identical(other.phoneNo, phoneNo) || other.phoneNo == phoneNo) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.roomId, roomId) || other.roomId == roomId) &&
@@ -510,6 +528,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
         guests,
         id,
         needsContributions,
+        paymentOption,
         phoneNo,
         price,
         roomId,
@@ -550,6 +569,7 @@ abstract class _ListingBookings implements ListingBookings {
       required final num guests,
       final String? id,
       required final bool needsContributions,
+      final String? paymentOption,
       required final String phoneNo,
       required final num price,
       required final String roomId,
@@ -558,7 +578,7 @@ abstract class _ListingBookings implements ListingBookings {
       @TimestampSerializer() final DateTime? startDate,
       required final String bookingStatus,
       final List<Task>? tasks,
-      required final num totalPrice,
+      final num? totalPrice,
       final String? typeOfTrip,
       required final String userId}) = _$ListingBookingsImpl;
 
@@ -587,6 +607,8 @@ abstract class _ListingBookings implements ListingBookings {
   @override
   bool get needsContributions;
   @override
+  String? get paymentOption;
+  @override
   String get phoneNo;
   @override
   num get price;
@@ -605,7 +627,7 @@ abstract class _ListingBookings implements ListingBookings {
   @override
   List<Task>? get tasks;
   @override
-  num get totalPrice;
+  num? get totalPrice;
   @override
   String? get typeOfTrip;
   @override

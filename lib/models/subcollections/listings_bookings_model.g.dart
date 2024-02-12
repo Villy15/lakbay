@@ -22,6 +22,7 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
       guests: json['guests'] as num,
       id: json['id'] as String?,
       needsContributions: json['needsContributions'] as bool,
+      paymentOption: json['paymentOption'] as String?,
       phoneNo: json['phoneNo'] as String,
       price: json['price'] as num,
       roomId: json['roomId'] as String,
@@ -34,7 +35,7 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
       tasks: (json['tasks'] as List<dynamic>?)
           ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
           .toList(),
-      totalPrice: json['totalPrice'] as num,
+      totalPrice: json['totalPrice'] as num?,
       typeOfTrip: json['typeOfTrip'] as String?,
       userId: json['userId'] as String,
     );
@@ -52,6 +53,7 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'guests': instance.guests,
       'id': instance.id,
       'needsContributions': instance.needsContributions,
+      'paymentOption': instance.paymentOption,
       'phoneNo': instance.phoneNo,
       'price': instance.price,
       'roomId': instance.roomId,

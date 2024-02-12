@@ -1500,8 +1500,8 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   Widget addPolicies(BuildContext context) {
     List<String> notes = [
       "Downpayment Rate: The necessary amount to be paid by a customer in order to book and reserve the service.",
-      "Cancellation Rate: The amount that would not be refunded in the situation that a customercancels their booking.",
-      "Confirmation Period: This refers to the number of days before the scheduled booking, that a customer must confirm and pay the downpayment if not the full amount. Otherwise their booking will be cancelled",
+      "Cancellation Rate: The amount that would not be refunded in the situation that a customer cancels their booking.",
+      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel and pay the full amount in the case for a downpayment. Otherwise their booking will be cancelled",
       "Customers booking passed the cancellation period would be required to pay the downpayment or full amount upon checkout."
     ];
     return Column(
@@ -1514,13 +1514,13 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                 maxLines: 1,
                 keyboardType: TextInputType.number, // For numeric input
                 decoration: const InputDecoration(
-                  labelText:
-                      'Downpayment Rate (%)*', // Indicate it's a percentage
-                  border: OutlineInputBorder(),
-                  floatingLabelBehavior: FloatingLabelBehavior
-                      .always, // Keep the label always visible
-                  hintText: "e.g., 20 for 20%",
-                ),
+                    labelText:
+                        'Downpayment Rate (%)*', // Indicate it's a percentage
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 20",
+                    suffixText: "%"),
                 onTap: () {
                   // Handle tap if needed, e.g., showing a dialog to select a percentage
                 },
@@ -1534,12 +1534,12 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                 controller: _cancellationRateController,
                 maxLines: 1,
                 decoration: const InputDecoration(
-                  labelText: 'Cancellation Rate (%)*',
-                  border: OutlineInputBorder(),
-                  floatingLabelBehavior: FloatingLabelBehavior
-                      .always, // Keep the label always visible
-                  hintText: "e.g., 5 for 5%",
-                ),
+                    labelText: 'Cancellation Rate (%)*',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 5",
+                    suffixText: "%"),
                 onTap: () {},
               ),
             )
@@ -1553,13 +1553,13 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           maxLines: 1,
           keyboardType: TextInputType.number, // For numeric input
           decoration: const InputDecoration(
-            labelText:
-                'Confirmation Period (Day/s)*', // Indicate it's a percentage
-            border: OutlineInputBorder(),
-            floatingLabelBehavior:
-                FloatingLabelBehavior.always, // Keep the label always visible
-            hintText: "e.g., 5 for 5 Days before the booked date",
-          ),
+              labelText:
+                  'Cancellation Period (Day/s)*', // Indicate it's a percentage
+              border: OutlineInputBorder(),
+              floatingLabelBehavior:
+                  FloatingLabelBehavior.always, // Keep the label always visible
+              hintText: "e.g., 5 Days before the booked date",
+              suffixText: "Day/s"),
           onTap: () {
             // Handle tap if needed, e.g., showing a dialog to select a percentage
           },
