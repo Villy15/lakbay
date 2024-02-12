@@ -3,23 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
-import 'package:lakbay/features/common/error.dart';
-import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
-import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/plan/components/trip_card.dart';
-import 'package:lakbay/features/plan/plan_providers.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
 
-class PlanAddActivity extends ConsumerStatefulWidget {
-  const PlanAddActivity({super.key});
+class TripsAddActivity extends ConsumerStatefulWidget {
+  final PlanModel plan;
+  const TripsAddActivity({super.key, required this.plan});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      _PlanAddActivityState();
+      _TripsAddActivityState();
 }
 
-class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
+class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -45,6 +42,9 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
       final selectedDate = ref.watch(selectedDateProvider);
 
       var plan = PlanModel(
+        name: planLocation ?? '',
+        budget: 0,
+        guests: 0,
         location: planLocation ?? '',
         startDate: planStartDate,
         endDate: planEndDate,
@@ -77,45 +77,41 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
     }
   }
 
-  void onChooseCategory() {
-    context.push('/plan/add_activity/search_listing');
-  }
-
   @override
   Widget build(BuildContext context) {
+    debugPrint("file name: trips_add_activity.dart");
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
         context.pop();
-        ref.read(navBarVisibilityProvider.notifier).show();
       },
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Add Activity'),
         ),
-        bottomNavigationBar: BottomAppBar(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Cancel Button
-              TextButton(
-                onPressed: () {
-                  context.pop();
-                  ref.read(navBarVisibilityProvider.notifier).show();
-                },
-                child: const Text('Cancel'),
-              ),
+        // bottomNavigationBar: BottomAppBar(
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: [
+        //       // Cancel Button
+        //       TextButton(
+        //         onPressed: () {
+        //           context.pop();
+        //           ();
+        //         },
+        //         child: const Text('Cancel'),
+        //       ),
 
-              // Save Button
-              TextButton(
-                onPressed: () {
-                  onSave();
-                },
-                child: const Text('Submit'),
-              ),
-            ],
-          ),
-        ),
+        //       // Save Button
+        //       TextButton(
+        //         onPressed: () {
+        //           onSave();
+        //         },
+        //         child: const Text('Submit'),
+        //       ),
+        //     ],
+        //   ),
+        // ),
         body: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -124,68 +120,68 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Column(
                 children: [
-                  heading(
-                    "Activity outside of our listings?",
-                    "Add manually here!",
-                    context,
-                  ),
-                  // Name
-                  activityName(),
+                  // heading(
+                  //   "Activity outside of our listings?",
+                  //   "Add manually here!",
+                  //   context,
+                  // ),
+                  // // Name
+                  // activityName(),
 
-                  const SizedBox(height: 10),
+                  // const SizedBox(height: 10),
 
-                  // Description
-                  activityDesc(),
+                  // // Description
+                  // activityDesc(),
 
-                  const SizedBox(height: 10),
+                  // const SizedBox(height: 10),
 
-                  startAndEndTime(context),
+                  // startAndEndTime(context),
 
-                  const SizedBox(height: 10),
+                  // const SizedBox(height: 10),
 
-                  const Divider(),
-                  const SizedBox(height: 10),
+                  // const Divider(),
+                  // const SizedBox(height: 10),
 
                   // Add  an option to add a new activity
                   heading(
                     "Activity from our listings?",
-                    "Choose from our listings!",
+                    "Choose a cateogry to search for listings!",
                     context,
                   ),
 
                   chooseCategory(context),
 
-                  const SizedBox(height: 10),
+                  // const SizedBox(height: 10),
 
-                  heading(
-                    "Activity from your reservations/bookings?",
-                    "Choose from your reservations/bookings!",
-                    context,
-                  ),
+                  // heading(
+                  //   "Activity from your reservations/bookings?",
+                  //   "Choose from your reservations/bookings!",
+                  //   context,
+                  // ),
 
-                  ref.watch(getAllListingsProvider).when(
-                        data: (listings) {
-                          return ListView.separated(
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(
-                              height: 12.0,
-                            ),
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: listings.length,
-                            itemBuilder: (context, index) {
-                              final listing = listings[index];
-                              return TripCard(
-                                listing: listing,
-                              );
-                            },
-                          );
-                        },
-                        error: (error, stackTrace) => ErrorText(
-                            error: error.toString(),
-                            stackTrace: stackTrace.toString()),
-                        loading: () => const Loader(),
-                      ),
+                  // ref.watch(getAllListingsProvider).when(
+                  //       data: (listings) {
+                  //         return ListView.separated(
+                  //           separatorBuilder: (context, index) =>
+                  //               const SizedBox(
+                  //             height: 12.0,
+                  //           ),
+                  //           physics: const NeverScrollableScrollPhysics(),
+                  //           shrinkWrap: true,
+                  //           itemCount: listings.length,
+                  //           itemBuilder: (context, index) {
+                  //             final listing = listings[index];
+                  //             return TripCard(
+                  //               listing: listing,
+                  //             );
+                  //           },
+                  //         );
+                  //       },
+                  //       error: (error, stackTrace) => ErrorText(
+                  //           error: error.toString(),
+                  //           stackTrace: stackTrace.toString()),
+                  //       loading: () => const Loader(),
+                  //     ),
                 ],
               ),
             ),
@@ -202,6 +198,8 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
       {'name': 'Tour', 'icon': Icons.map_outlined},
       {'name': 'Food', 'icon': Icons.restaurant_outlined},
       {'name': 'Entertainment', 'icon': Icons.movie_creation_outlined},
+      // All the categories
+      {'name': 'All', 'icon': Icons.travel_explore_outlined},
     ];
 
     return GridView.builder(
@@ -237,6 +235,11 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
 
               case 'Tour':
                 context.push('/plan/add_activity/search_listing/tour');
+
+                break;
+
+              case 'All':
+                context.push('/plan/add_activity/search_listing/all');
 
                 break;
             }

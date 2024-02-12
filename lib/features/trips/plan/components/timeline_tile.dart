@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
 class TimelineTile extends StatelessWidget {
-  final Widget leading;
   final Widget title;
   final bool isLast;
   final bool isActive;
 
   const TimelineTile({
     super.key,
-    required this.leading,
     required this.title,
     this.isLast = false,
     this.isActive = false,
@@ -22,10 +20,6 @@ class TimelineTile extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            leading,
-            const SizedBox(
-                width: 8), // Spacing between the leading and the line
-
             Column(
               children: [
                 // Timeline indicator circle

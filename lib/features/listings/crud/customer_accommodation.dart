@@ -19,7 +19,10 @@ import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_checkout.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/image_picker_form_field.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -832,7 +835,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
         );
   }
 
-  SingleChildScrollView destination() {
+  SingleChildScrollView destination(String? planUid) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -915,7 +918,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
               ],
             ),
           ),
-          const Divider(),
+          // const Divider(),
 
           ref
               .watch(getCooperativeProvider(
@@ -952,6 +955,22 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
               ),
 
           const Divider(),
+
+          // Add this to current trip
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            child: FilledButton(
+              onPressed: () {
+                addCurrentTrip(context, planUid);
+              },
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all<Size>(
+                    const Size(double.infinity, 45)),
+              ),
+              child: const Text('Add this to current trip'),
+            ),
+          ),
         ],
       ),
     );
@@ -1199,8 +1218,30 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
     );
   }
 
+  void addCurrentTrip(BuildContext context, String? planUid) {
+    final selectedDate = ref.read(selectedDateProvider);
+
+    // Edit the current plan
+    PlanActivity activity = PlanActivity(
+      // Create a random key for the activity
+      key: DateTime.now().millisecondsSinceEpoch.toString(),
+      listingId: widget.listing.uid,
+      category: 'Accommodation',
+      dateTime: selectedDate,
+      title: widget.listing.title,
+      imageUrl: widget.listing.images!.first.url,
+      description: widget.listing.description,
+    );
+
+    ref
+        .read(plansControllerProvider.notifier)
+        .addActivityToPlan(planUid!, activity, context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final planUid = ref.read(currentPlanIdProvider);
+    final isLoading = ref.watch(plansControllerProvider);
     debugPrintJson("File Name: customer_accommodation.dart");
     // final user = ref.watch(userProvider);
     return PopScope(
@@ -1218,7 +1259,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
             appBar: _appBar(widget.listing.title, context),
             body: TabBarView(
               children: [
-                destination(),
+                isLoading ? const Loader() : destination(planUid),
                 rooms(),
                 bookings(),
               ],

@@ -83,12 +83,11 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
   Card lineChart() {
     return Card(
       child: SfCartesianChart(
-        title: ChartTitle(
+        title: const ChartTitle(
             text: 'Sales Trend by Service Category',
-            textStyle:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         // plotAreaBorderColor: Colors.transparent,
-        legend: Legend(
+        legend: const Legend(
             isVisible: true,
             alignment: ChartAlignment.center,
             position: LegendPosition.bottom),

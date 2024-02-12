@@ -15,6 +15,11 @@ class PlanModel with _$PlanModel {
     @TimestampSerializer() DateTime? startDate,
     @TimestampSerializer() DateTime? endDate,
     List<PlanActivity>? activities,
+    List<String>? memories,
+    required String name,
+    required num budget,
+    required num guests,
+    String? imageUrl,
     required String userId,
   }) = _PlanModel;
 
@@ -35,9 +40,13 @@ class PlanModel with _$PlanModel {
 @freezed
 class PlanActivity with _$PlanActivity {
   factory PlanActivity({
+    String? key,
     @TimestampSerializer() DateTime? dateTime,
+    String? listingId,
+    String? category,
     String? title,
     String? description,
+    String? imageUrl,
     @TimestampSerializer() DateTime? startTime,
     @TimestampSerializer() DateTime? endTime,
   }) = _PlanActivity;
