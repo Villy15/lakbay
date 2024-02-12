@@ -603,7 +603,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                             labelText: 'Phone Number',
                             border: OutlineInputBorder(),
                             floatingLabelBehavior: FloatingLabelBehavior.always,
-                            prefixText: "+63",
+                            prefixText: "+63 ",
                           ),
                           keyboardType: TextInputType.phone,
                         ),
@@ -624,7 +624,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                             labelText: 'Emergency Contact Number',
                             border: OutlineInputBorder(),
                             floatingLabelBehavior: FloatingLabelBehavior.always,
-                            prefixText: "+63",
+                            prefixText: "+63 ",
                           ),
                           keyboardType: TextInputType.phone,
                         ),
@@ -671,6 +671,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                             hour: widget.listing.checkOut!.hour,
                             minute: widget.listing.checkOut!.minute);
                         ListingBookings booking = ListingBookings(
+                          customerName: ref.read(userProvider)!.name,
                           bookingStatus: "Reserved",
                           price: room.price,
                           category: "Accommodation",
@@ -681,7 +682,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                           governmentId:
                               "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
                           guests: guests,
-                          phoneNo: phoneNoController.text,
+                          customerPhoneNo: phoneNoController.text,
                           userId: ref.read(userProvider)!.uid,
                           emergencyContactName:
                               emergencyContactNameController.text,

@@ -91,6 +91,16 @@ class _CustomerAccomodationCheckoutState
               ),
               // Color
               onPressed: () {
+                String paymentOption;
+                if (_selectedPaymentOption.name == "downpayment") {
+                  paymentOption = "Downpayment";
+                } else {
+                  paymentOption = "Full Payment";
+                }
+                setState(() {
+                  updatedBooking =
+                      updatedBooking.copyWith(paymentOption: paymentOption);
+                });
                 ref
                     .read(listingControllerProvider.notifier)
                     .addBooking(updatedBooking, widget.listing, context);
@@ -318,110 +328,121 @@ class _CustomerAccomodationCheckoutState
   }
 
   Widget _priceDetails(BuildContext context) {
-    bool paymentMoreInfo = false;
-    return StatefulBuilder(builder: (context, setMoreInfo) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Price details',
-                    style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 10),
-                // Radio buttons for payment options
-                RadioListTile<PaymentOption>(
-                  title: const Text('Downpayment'),
-                  value: PaymentOption.downpayment,
-                  groupValue: _selectedPaymentOption,
-                  onChanged: (PaymentOption? value) {
-                    setState(() {
-                      _selectedPaymentOption = value!;
-                    });
-                  },
-                ),
-                RadioListTile<PaymentOption>(
-                  title: const Text('Full Payment'),
-                  value: PaymentOption.fullPayment,
-                  groupValue: _selectedPaymentOption,
-                  onChanged: (PaymentOption? value) {
-                    setState(() {
-                      _selectedPaymentOption = value!;
-                    });
-                  },
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Divider(),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('₱${widget.booking.price} x $_nights nights',
-                        style: const TextStyle(
-                          fontSize: 16,
-                        )),
-                    Text(
-                        '₱${(widget.booking.price * _nights).toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                        )),
-                  ],
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Divider(),
-                ),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Price details',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Total',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
-                    Text(
-                        '₱${(widget.booking.price * _nights * (1.12 * (_selectedPaymentOption == PaymentOption.fullPayment ? 1 : widget.listing.downpaymentRate!))).toStringAsFixed(2)}',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                if (paymentMoreInfo == true)
-                  Container(
-                    child: Column(children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("VAT (12%): "),
-                          Text("₱${widget.booking.price * _nights * 0.12}"),
-                        ],
-                      ),
-                      if (_selectedPaymentOption == PaymentOption.downpayment)
-                        const Row(
-                          children: [
-                            Text("Downpayment Rate (20%):"),
-                          ],
-                        ),
-                    ]),
-                  ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      setMoreInfo(() {
-                        paymentMoreInfo = true;
-                      });
-                    },
-                    child: const Text('More info'),
-                  ),
-                ),
-              ],
-            ),
+              // Radio buttons for payment options
+              RadioListTile<PaymentOption>(
+                title: const Text('Downpayment'),
+                value: PaymentOption.downpayment,
+                groupValue: _selectedPaymentOption,
+                onChanged: (PaymentOption? value) {
+                  setState(() {
+                    _selectedPaymentOption = value!;
+                  });
+                },
+              ),
+              if (_selectedPaymentOption.name == "downpayment")
+                paymentOptionDetails(),
+
+              RadioListTile<PaymentOption>(
+                title: const Text('Full Payment'),
+                value: PaymentOption.fullPayment,
+                groupValue: _selectedPaymentOption,
+                onChanged: (PaymentOption? value) {
+                  setState(() {
+                    _selectedPaymentOption = value!;
+                  });
+                },
+              ),
+              if (_selectedPaymentOption.name == "fullPayment")
+                paymentOptionDetails(),
+            ],
           ),
         ),
-      );
+      ),
+    );
+  }
+
+  Widget paymentOptionDetails() {
+    bool paymentMoreInfo = false;
+    return StatefulBuilder(builder: (context, setMoreInfo) {
+      return Column(children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('₱${widget.booking.price} x $_nights nights',
+                style: const TextStyle(
+                  fontSize: 16,
+                )),
+            Text('₱${(widget.booking.price * _nights).toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontSize: 16,
+                )),
+          ],
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Total',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+                '₱${((widget.booking.price * _nights) * 1.12 * (_selectedPaymentOption == PaymentOption.fullPayment ? 1 : widget.listing.downpaymentRate!)).toStringAsFixed(2)}',
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        if (paymentMoreInfo == true)
+          Container(
+            child: Column(children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("VAT (12%): "),
+                  Text(
+                      "₱${(widget.booking.price * _nights) * 0.12 * (_selectedPaymentOption == PaymentOption.fullPayment ? 1 : widget.listing.downpaymentRate!)}"),
+                ],
+              ),
+              if (_selectedPaymentOption == PaymentOption.downpayment)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                        "Downpayment Rate (${(widget.listing.downpaymentRate! * 100).toStringAsFixed(0)}%):"),
+                    Text(
+                        "₱${(widget.booking.price * _nights) * widget.listing.downpaymentRate!}"),
+                  ],
+                ),
+            ]),
+          ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: () {
+              setMoreInfo(() {
+                paymentMoreInfo = true;
+              });
+            },
+            child: const Text('More info'),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: Divider(),
+        ),
+      ]);
     });
   }
 

@@ -9,6 +9,8 @@ part of 'listings_bookings_model.dart';
 _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
         Map<String, dynamic> json) =>
     _$ListingBookingsImpl(
+      customerName: json['customerName'] as String,
+      customerPhoneNo: json['customerPhoneNo'] as String,
       category: json['category'] as String,
       email: json['email'] as String,
       emergencyContactName: json['emergencyContactName'] as String?,
@@ -23,7 +25,6 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
       id: json['id'] as String?,
       needsContributions: json['needsContributions'] as bool,
       paymentOption: json['paymentOption'] as String?,
-      phoneNo: json['phoneNo'] as String,
       price: json['price'] as num,
       roomId: json['roomId'] as String,
       selectedDate: const TimestampSerializer()
@@ -43,6 +44,8 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
 Map<String, dynamic> _$$ListingBookingsImplToJson(
         _$ListingBookingsImpl instance) =>
     <String, dynamic>{
+      'customerName': instance.customerName,
+      'customerPhoneNo': instance.customerPhoneNo,
       'category': instance.category,
       'email': instance.email,
       'emergencyContactName': instance.emergencyContactName,
@@ -54,7 +57,6 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'id': instance.id,
       'needsContributions': instance.needsContributions,
       'paymentOption': instance.paymentOption,
-      'phoneNo': instance.phoneNo,
       'price': instance.price,
       'roomId': instance.roomId,
       'selectedDate': const TimestampSerializer().toJson(instance.selectedDate),

@@ -123,11 +123,10 @@ class ListingController extends StateNotifier<bool> {
         //     ownerId: listing.publisherId,
         //     ownerName: listing.publisherName,
         //     salePrice: booking.totalPrice));
-
-        // showSnackBar(context, 'Room booked successfully');
+        ListingBookings updatedBooking = booking.copyWith(id: bookingUid);
         context.push(
             '/market/${booking.category}/customer_accommodation_receipt',
-            extra: {'booking': booking, 'listing': listing});
+            extra: {'booking': updatedBooking, 'listing': listing});
       },
     );
   }
