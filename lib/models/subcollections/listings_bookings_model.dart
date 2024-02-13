@@ -22,6 +22,8 @@ class ListingBookings with _$ListingBookings {
     List<Task>? tasks,
     required String governmentId,
     required num guests,
+    required String listingId,
+    required String listingTitle,
     num? luggage,
     String? id,
     required bool needsContributions,
@@ -34,10 +36,8 @@ class ListingBookings with _$ListingBookings {
     required String bookingStatus,
     num? totalPrice,
     String? typeOfTrip,
-    @TimeOfDayConverter()
-    TimeOfDay? startTime,
-    @TimeOfDayConverter()
-    TimeOfDay? endTime,
+    @TimeOfDayConverter() TimeOfDay? startTime,
+    @TimeOfDayConverter() TimeOfDay? endTime,
   }) = _ListingBookings;
 
   factory ListingBookings.fromJson(Map<String, dynamic> json) =>
@@ -80,7 +80,8 @@ class TaskImages with _$TaskImages {
       _$TaskImagesFromJson(json);
 }
 
-class TimeOfDayConverter implements JsonConverter<TimeOfDay, Map<String, dynamic>> {
+class TimeOfDayConverter
+    implements JsonConverter<TimeOfDay, Map<String, dynamic>> {
   const TimeOfDayConverter();
 
   @override
