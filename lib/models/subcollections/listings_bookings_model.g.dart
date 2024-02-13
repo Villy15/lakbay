@@ -18,8 +18,12 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
       expenses: (json['expenses'] as List<dynamic>?)
           ?.map((e) => Expense.fromJson(e as Map<String, dynamic>))
           .toList(),
+      tasks: (json['tasks'] as List<dynamic>?)
+          ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
+          .toList(),
       governmentId: json['governmentId'] as String,
       guests: json['guests'] as num,
+      luggage: json['luggage'] as num?,
       id: json['id'] as String?,
       needsContributions: json['needsContributions'] as bool,
       phoneNo: json['phoneNo'] as String,
@@ -33,6 +37,10 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
       totalPrice: json['totalPrice'] as num,
       typeOfTrip: json['typeOfTrip'] as String?,
       userId: json['userId'] as String,
+      startTime: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
+          json['startTime'], const TimeOfDayConverter().fromJson),
+      endTime: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
+          json['endTime'], const TimeOfDayConverter().fromJson),
     );
 
 Map<String, dynamic> _$$ListingBookingsImplToJson(
@@ -44,8 +52,10 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'emergencyContactNo': instance.emergencyContactNo,
       'endDate': const TimestampSerializer().toJson(instance.endDate),
       'expenses': instance.expenses?.map((e) => e.toJson()).toList(),
+      'tasks': instance.tasks?.map((e) => e.toJson()).toList(),
       'governmentId': instance.governmentId,
       'guests': instance.guests,
+      'luggage': instance.luggage,
       'id': instance.id,
       'needsContributions': instance.needsContributions,
       'phoneNo': instance.phoneNo,
@@ -57,7 +67,23 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'totalPrice': instance.totalPrice,
       'typeOfTrip': instance.typeOfTrip,
       'userId': instance.userId,
+      'startTime': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
+          instance.startTime, const TimeOfDayConverter().toJson),
+      'endTime': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
+          instance.endTime, const TimeOfDayConverter().toJson),
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);
 
 _$ExpenseImpl _$$ExpenseImplFromJson(Map<String, dynamic> json) =>
     _$ExpenseImpl(

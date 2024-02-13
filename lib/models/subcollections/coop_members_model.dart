@@ -10,6 +10,7 @@ class CooperativeMembers with _$CooperativeMembers {
   const CooperativeMembers._();
 
   factory CooperativeMembers({
+    required String name,
     String? uid,
     List<String>? privileges,
     CooperativeMembersRole? role,
@@ -21,6 +22,7 @@ class CooperativeMembers with _$CooperativeMembers {
 
   factory CooperativeMembers.fromJson(Map<String, dynamic> json) =>
       _$CooperativeMembersFromJson(json);
+
 
   // Is Committee Member given a string
   bool isCommitteeMember(String committeeName) {

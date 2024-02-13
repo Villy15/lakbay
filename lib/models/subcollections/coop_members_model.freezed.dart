@@ -20,6 +20,7 @@ CooperativeMembers _$CooperativeMembersFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$CooperativeMembers {
+  String get name => throw _privateConstructorUsedError;
   String? get uid => throw _privateConstructorUsedError;
   List<String>? get privileges => throw _privateConstructorUsedError;
   CooperativeMembersRole? get role => throw _privateConstructorUsedError;
@@ -43,7 +44,8 @@ abstract class $CooperativeMembersCopyWith<$Res> {
       _$CooperativeMembersCopyWithImpl<$Res, CooperativeMembers>;
   @useResult
   $Res call(
-      {String? uid,
+      {String name,
+      String? uid,
       List<String>? privileges,
       CooperativeMembersRole? role,
       List<CooperativeMembersRole>? committees,
@@ -68,6 +70,7 @@ class _$CooperativeMembersCopyWithImpl<$Res, $Val extends CooperativeMembers>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? name = null,
     Object? uid = freezed,
     Object? privileges = freezed,
     Object? role = freezed,
@@ -77,6 +80,10 @@ class _$CooperativeMembersCopyWithImpl<$Res, $Val extends CooperativeMembers>
     Object? timestamp = freezed,
   }) {
     return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -142,7 +149,8 @@ abstract class _$$CooperativeMembersImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? uid,
+      {String name,
+      String? uid,
       List<String>? privileges,
       CooperativeMembersRole? role,
       List<CooperativeMembersRole>? committees,
@@ -167,6 +175,7 @@ class __$$CooperativeMembersImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? name = null,
     Object? uid = freezed,
     Object? privileges = freezed,
     Object? role = freezed,
@@ -176,6 +185,10 @@ class __$$CooperativeMembersImplCopyWithImpl<$Res>
     Object? timestamp = freezed,
   }) {
     return _then(_$CooperativeMembersImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -212,7 +225,8 @@ class __$$CooperativeMembersImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CooperativeMembersImpl extends _CooperativeMembers {
   _$CooperativeMembersImpl(
-      {this.uid,
+      {required this.name,
+      this.uid,
       final List<String>? privileges,
       this.role,
       final List<CooperativeMembersRole>? committees,
@@ -226,6 +240,8 @@ class _$CooperativeMembersImpl extends _CooperativeMembers {
   factory _$CooperativeMembersImpl.fromJson(Map<String, dynamic> json) =>
       _$$CooperativeMembersImplFromJson(json);
 
+  @override
+  final String name;
   @override
   final String? uid;
   final List<String>? _privileges;
@@ -261,7 +277,7 @@ class _$CooperativeMembersImpl extends _CooperativeMembers {
 
   @override
   String toString() {
-    return 'CooperativeMembers(uid: $uid, privileges: $privileges, role: $role, committees: $committees, isManager: $isManager, boardRole: $boardRole, timestamp: $timestamp)';
+    return 'CooperativeMembers(name: $name, uid: $uid, privileges: $privileges, role: $role, committees: $committees, isManager: $isManager, boardRole: $boardRole, timestamp: $timestamp)';
   }
 
   @override
@@ -269,6 +285,7 @@ class _$CooperativeMembersImpl extends _CooperativeMembers {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CooperativeMembersImpl &&
+            (identical(other.name, name) || other.name == name) &&
             (identical(other.uid, uid) || other.uid == uid) &&
             const DeepCollectionEquality()
                 .equals(other._privileges, _privileges) &&
@@ -287,6 +304,7 @@ class _$CooperativeMembersImpl extends _CooperativeMembers {
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      name,
       uid,
       const DeepCollectionEquality().hash(_privileges),
       role,
@@ -312,7 +330,8 @@ class _$CooperativeMembersImpl extends _CooperativeMembers {
 
 abstract class _CooperativeMembers extends CooperativeMembers {
   factory _CooperativeMembers(
-          {final String? uid,
+          {required final String name,
+          final String? uid,
           final List<String>? privileges,
           final CooperativeMembersRole? role,
           final List<CooperativeMembersRole>? committees,
@@ -325,6 +344,8 @@ abstract class _CooperativeMembers extends CooperativeMembers {
   factory _CooperativeMembers.fromJson(Map<String, dynamic> json) =
       _$CooperativeMembersImpl.fromJson;
 
+  @override
+  String get name;
   @override
   String? get uid;
   @override

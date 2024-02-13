@@ -38,6 +38,14 @@ final getAllBookingsProvider = StreamProvider.autoDispose
   return listingController.getAllBookings(listingId);
 });
 
+final getBookingByIdProvider = StreamProvider.autoDispose
+    .family<ListingBookings, (String listingId, String bookingId)>(
+        (ref, params) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getBookingById(params.$1,
+      params.$2); // Assuming getBooking is the method to fetch a single booking
+});
+
 // getAllBookingsByIdProvider
 final getAllBookingsByIdProvider = StreamProvider.autoDispose
     .family<List<ListingBookings>, (String coopId, String eventId)>(
@@ -132,6 +140,36 @@ class ListingController extends StateNotifier<bool> {
     });
   }
 
+  void updateBooking(BuildContext context, String listingId,
+      ListingBookings booking, String message) {
+    state = true;
+    _listingRepository.updateBooking(listingId, booking).then((result) {
+      state = false;
+      result.fold(
+        (l) => showSnackBar(context, l.message),
+        (r) {
+          context.pop();
+          showSnackBar(context, message);
+        },
+      );
+    });
+  }
+
+  void updateTasks(BuildContext context, String listingId,
+      ListingBookings booking, String message) {
+    state = true;
+    _listingRepository.updateBooking(listingId, booking).then((result) {
+      state = false;
+      result.fold(
+        (l) => showSnackBar(context, l.message),
+        (r) {
+          // context.pop();
+          // showSnackBar(context, message);
+        },
+      );
+    });
+  }
+
   void updateBookingExpenses(
       BuildContext context, String listingId, ListingBookings booking) {
     state = true;
@@ -172,4 +210,10 @@ class ListingController extends StateNotifier<bool> {
       String listingId, String roomId) {
     return _listingRepository.readBookingsByRoomId(listingId, roomId);
   }
+
+  // Read specific booking
+  Stream<ListingBookings> getBookingById(String listingId, String bookingId) {
+    return _listingRepository.readBookingById(listingId, bookingId);
+  }
+
 }

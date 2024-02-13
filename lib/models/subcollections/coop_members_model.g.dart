@@ -9,6 +9,7 @@ part of 'coop_members_model.dart';
 _$CooperativeMembersImpl _$$CooperativeMembersImplFromJson(
         Map<String, dynamic> json) =>
     _$CooperativeMembersImpl(
+      name: json['name'] as String,
       uid: json['uid'] as String?,
       privileges: (json['privileges'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -32,6 +33,7 @@ _$CooperativeMembersImpl _$$CooperativeMembersImplFromJson(
 Map<String, dynamic> _$$CooperativeMembersImplToJson(
         _$CooperativeMembersImpl instance) =>
     <String, dynamic>{
+      'name': instance.name,
       'uid': instance.uid,
       'privileges': instance.privileges,
       'role': instance.role?.toJson(),

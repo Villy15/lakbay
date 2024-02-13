@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
@@ -66,7 +67,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         },
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('Add Listing'),
+              title: const Text('Add Transport Listing'),
             ),
             bottomNavigationBar: bottomAppBar(),
             body: isLoading
@@ -150,10 +151,10 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                       cooperativeName: widget.coop.name),
                   description: _descriptionController.text,
                   province: widget.coop.province,
-                  publisherId: "",
+                  publisherId: ref.read(userProvider)!.uid,
                   title: _titleController.text,
                   type: type,
-                  publisherName: "",
+                  publisherName: ref.read(userProvider)!.name,
                   images:
                       _images?.map((e) => ListingImages(path: e.path)).toList(),
                   availableTransport: transport);
@@ -820,7 +821,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
       case 3:
         return addLocation(context);
       case 4:
-        return addGuestInfo(context);
+        return addListingPhotos(context);
       case 5:
         return addGuestInfo(context);
       case 6:

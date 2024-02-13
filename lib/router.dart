@@ -49,6 +49,7 @@ import 'package:lakbay/features/listings/crud/customer_entertainment.dart';
 import 'package:lakbay/features/listings/crud/customer_food.dart';
 import 'package:lakbay/features/listings/crud/customer_transportation.dart';
 import 'package:lakbay/features/listings/listings_page.dart';
+import 'package:lakbay/features/listings/transportation_booking_details.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
 import 'package:lakbay/features/profile/profile_customer_page.dart';
@@ -389,10 +390,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                                 listing: listing,
                               );
 
-                            // case 'Transport':
-                            //   return CustomerTransportation(
-                            //     listing: listing,
-                            //   );
+                            case 'Transport':
+                              return TransportationBookingsDetails(
+                                booking: booking,
+                                listing: listing,
+                              );
                             // case 'Food':
                             //   return CustomerFood(
                             //     listing: listing,
@@ -428,6 +430,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     coop: coop,
                   );
                 },
+                name: 'add_listing',
                 subRoutes: [
                   buildSubRoute(
                     'accommodation',
