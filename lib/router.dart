@@ -38,6 +38,7 @@ import 'package:lakbay/features/explore/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/inbox/read_inbox.dart';
 import 'package:lakbay/features/listings/accommodation_booking_details.dart';
+import 'package:lakbay/features/listings/bookings_page.dart';
 import 'package:lakbay/features/listings/crud/add_accommodation.dart';
 import 'package:lakbay/features/listings/crud/add_entertainment.dart';
 import 'package:lakbay/features/listings/crud/add_food.dart';
@@ -160,6 +161,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               buildSubRoute('/profile/id/:userId',
                   (context, pathParameters, extra) {
                 return ProfilePage(userId: pathParameters['userId']!);
+              }),
+
+              // Bookings Page by cutomerId
+              buildSubRoute('/bookings', (context, pathParameters, extra) {
+                return const BookingsPage();
               }),
 
               // Edit Profile Page
@@ -444,6 +450,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 '/market',
                 const MarketPage(),
                 [
+                  // view the different categories of listings
                   buildSubRoute(
                     ':category',
                     (context, pathParameters, extra) {
@@ -477,6 +484,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       }
                     },
                     subRoutes: [
+                      // path to receipt after booking also depends on the category
                       buildSubRoute('customer_accommodation_receipt',
                           (context, pathParameters, extra) {
                         final Map<String, dynamic> bookingDetails =
@@ -485,9 +493,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             bookingDetails['booking'] as ListingBookings;
                         final ListingModel listing =
                             bookingDetails['listing'] as ListingModel;
-                        return CustomerAccomodationReceipt(
-                            listing: listing, booking: booking);
+
+                        switch (pathParameters['category']) {
+                          case 'Accommodation':
+                            return CustomerAccomodationReceipt(
+                                listing: listing, booking: booking);
+
+                          default:
+                            return CustomerAccomodationReceipt(
+                                listing: listing, booking: booking);
+                        }
                       }, name: 'customer_accommodation_receipt'),
+
+                      // path to booking details. depends on category
                       buildSubRoute(
                         'booking_details',
                         (context, pathParameters, extra) {
@@ -534,6 +552,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   )
                 ],
               ),
+
               // Add Listing to Cooperative
               buildSubRoute(
                 '/my_coop/listings/functions/add_listing',

@@ -9,6 +9,7 @@ part 'listings_bookings_model.g.dart';
 class ListingBookings with _$ListingBookings {
   factory ListingBookings({
     num? amountPaid,
+    required String customerId,
     required String customerName,
     required String customerPhoneNo,
     required String category,
@@ -31,7 +32,6 @@ class ListingBookings with _$ListingBookings {
     List<Task>? tasks,
     num? totalPrice,
     String? typeOfTrip,
-    required String userId,
   }) = _ListingBookings;
 
   factory ListingBookings.fromJson(Map<String, dynamic> json) =>

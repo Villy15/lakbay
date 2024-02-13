@@ -109,8 +109,8 @@ class _CustomerAccomodationCheckoutState
                 setState(() {
                   updatedBooking = updatedBooking.copyWith(
                       paymentOption: paymentOption,
-                      totalPrice: totalPrice,
-                      amountPaid: amountDue);
+                      totalPrice: num.parse(totalPrice.toStringAsFixed(2)),
+                      amountPaid: num.parse(amountDue.toStringAsFixed(2)));
                 });
                 ref
                     .read(listingControllerProvider.notifier)

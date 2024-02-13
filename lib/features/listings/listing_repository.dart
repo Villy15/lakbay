@@ -158,4 +158,19 @@ class ListingRepository {
       }).toList();
     });
   }
+
+  // Read bookings by customer ID
+  Stream<List<ListingBookings>> readBookingsByCustomerId(String customerId) {
+    return FirebaseFirestore.instance
+        .collectionGroup(
+            'bookings') // Perform collection group query for 'bookings'
+        .where('customerId', isEqualTo: customerId) // Filter by customerId
+        .snapshots()
+        .map((querySnapshot) {
+      // Convert each document snapshot to a ListingBookings object
+      return querySnapshot.docs.map((doc) {
+        return ListingBookings.fromJson(doc.data());
+      }).toList();
+    });
+  }
 }

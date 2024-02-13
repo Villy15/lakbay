@@ -21,6 +21,7 @@ ListingBookings _$ListingBookingsFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ListingBookings {
   num? get amountPaid => throw _privateConstructorUsedError;
+  String get customerId => throw _privateConstructorUsedError;
   String get customerName => throw _privateConstructorUsedError;
   String get customerPhoneNo => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
@@ -46,7 +47,6 @@ mixin _$ListingBookings {
   List<Task>? get tasks => throw _privateConstructorUsedError;
   num? get totalPrice => throw _privateConstructorUsedError;
   String? get typeOfTrip => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -62,6 +62,7 @@ abstract class $ListingBookingsCopyWith<$Res> {
   @useResult
   $Res call(
       {num? amountPaid,
+      String customerId,
       String customerName,
       String customerPhoneNo,
       String category,
@@ -83,8 +84,7 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String bookingStatus,
       List<Task>? tasks,
       num? totalPrice,
-      String? typeOfTrip,
-      String userId});
+      String? typeOfTrip});
 }
 
 /// @nodoc
@@ -101,6 +101,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
   @override
   $Res call({
     Object? amountPaid = freezed,
+    Object? customerId = null,
     Object? customerName = null,
     Object? customerPhoneNo = null,
     Object? category = null,
@@ -123,13 +124,16 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? tasks = freezed,
     Object? totalPrice = freezed,
     Object? typeOfTrip = freezed,
-    Object? userId = null,
   }) {
     return _then(_value.copyWith(
       amountPaid: freezed == amountPaid
           ? _value.amountPaid
           : amountPaid // ignore: cast_nullable_to_non_nullable
               as num?,
+      customerId: null == customerId
+          ? _value.customerId
+          : customerId // ignore: cast_nullable_to_non_nullable
+              as String,
       customerName: null == customerName
           ? _value.customerName
           : customerName // ignore: cast_nullable_to_non_nullable
@@ -218,10 +222,6 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
               as String?,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
     ) as $Val);
   }
 }
@@ -236,6 +236,7 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
   @useResult
   $Res call(
       {num? amountPaid,
+      String customerId,
       String customerName,
       String customerPhoneNo,
       String category,
@@ -257,8 +258,7 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String bookingStatus,
       List<Task>? tasks,
       num? totalPrice,
-      String? typeOfTrip,
-      String userId});
+      String? typeOfTrip});
 }
 
 /// @nodoc
@@ -273,6 +273,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? amountPaid = freezed,
+    Object? customerId = null,
     Object? customerName = null,
     Object? customerPhoneNo = null,
     Object? category = null,
@@ -295,13 +296,16 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? tasks = freezed,
     Object? totalPrice = freezed,
     Object? typeOfTrip = freezed,
-    Object? userId = null,
   }) {
     return _then(_$ListingBookingsImpl(
       amountPaid: freezed == amountPaid
           ? _value.amountPaid
           : amountPaid // ignore: cast_nullable_to_non_nullable
               as num?,
+      customerId: null == customerId
+          ? _value.customerId
+          : customerId // ignore: cast_nullable_to_non_nullable
+              as String,
       customerName: null == customerName
           ? _value.customerName
           : customerName // ignore: cast_nullable_to_non_nullable
@@ -390,10 +394,6 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
               as String?,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }
@@ -403,6 +403,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
 class _$ListingBookingsImpl implements _ListingBookings {
   _$ListingBookingsImpl(
       {this.amountPaid,
+      required this.customerId,
       required this.customerName,
       required this.customerPhoneNo,
       required this.category,
@@ -424,8 +425,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
       required this.bookingStatus,
       final List<Task>? tasks,
       this.totalPrice,
-      this.typeOfTrip,
-      required this.userId})
+      this.typeOfTrip})
       : _expenses = expenses,
         _tasks = tasks;
 
@@ -434,6 +434,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
   @override
   final num? amountPaid;
+  @override
+  final String customerId;
   @override
   final String customerName;
   @override
@@ -497,12 +499,10 @@ class _$ListingBookingsImpl implements _ListingBookings {
   final num? totalPrice;
   @override
   final String? typeOfTrip;
-  @override
-  final String userId;
 
   @override
   String toString() {
-    return 'ListingBookings(amountPaid: $amountPaid, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, tasks: $tasks, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, userId: $userId)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, tasks: $tasks, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip)';
   }
 
   @override
@@ -512,6 +512,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
             other is _$ListingBookingsImpl &&
             (identical(other.amountPaid, amountPaid) ||
                 other.amountPaid == amountPaid) &&
+            (identical(other.customerId, customerId) ||
+                other.customerId == customerId) &&
             (identical(other.customerName, customerName) ||
                 other.customerName == customerName) &&
             (identical(other.customerPhoneNo, customerPhoneNo) ||
@@ -547,8 +549,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
             (identical(other.totalPrice, totalPrice) ||
                 other.totalPrice == totalPrice) &&
             (identical(other.typeOfTrip, typeOfTrip) ||
-                other.typeOfTrip == typeOfTrip) &&
-            (identical(other.userId, userId) || other.userId == userId));
+                other.typeOfTrip == typeOfTrip));
   }
 
   @JsonKey(ignore: true)
@@ -556,6 +557,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
   int get hashCode => Object.hashAll([
         runtimeType,
         amountPaid,
+        customerId,
         customerName,
         customerPhoneNo,
         category,
@@ -577,8 +579,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
         bookingStatus,
         const DeepCollectionEquality().hash(_tasks),
         totalPrice,
-        typeOfTrip,
-        userId
+        typeOfTrip
       ]);
 
   @JsonKey(ignore: true)
@@ -599,6 +600,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
 abstract class _ListingBookings implements ListingBookings {
   factory _ListingBookings(
       {final num? amountPaid,
+      required final String customerId,
       required final String customerName,
       required final String customerPhoneNo,
       required final String category,
@@ -620,14 +622,15 @@ abstract class _ListingBookings implements ListingBookings {
       required final String bookingStatus,
       final List<Task>? tasks,
       final num? totalPrice,
-      final String? typeOfTrip,
-      required final String userId}) = _$ListingBookingsImpl;
+      final String? typeOfTrip}) = _$ListingBookingsImpl;
 
   factory _ListingBookings.fromJson(Map<String, dynamic> json) =
       _$ListingBookingsImpl.fromJson;
 
   @override
   num? get amountPaid;
+  @override
+  String get customerId;
   @override
   String get customerName;
   @override
@@ -675,8 +678,6 @@ abstract class _ListingBookings implements ListingBookings {
   num? get totalPrice;
   @override
   String? get typeOfTrip;
-  @override
-  String get userId;
   @override
   @JsonKey(ignore: true)
   _$$ListingBookingsImplCopyWith<_$ListingBookingsImpl> get copyWith =>

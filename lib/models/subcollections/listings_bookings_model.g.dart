@@ -10,6 +10,7 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
         Map<String, dynamic> json) =>
     _$ListingBookingsImpl(
       amountPaid: json['amountPaid'] as num?,
+      customerId: json['customerId'] as String,
       customerName: json['customerName'] as String,
       customerPhoneNo: json['customerPhoneNo'] as String,
       category: json['category'] as String,
@@ -39,13 +40,13 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
           .toList(),
       totalPrice: json['totalPrice'] as num?,
       typeOfTrip: json['typeOfTrip'] as String?,
-      userId: json['userId'] as String,
     );
 
 Map<String, dynamic> _$$ListingBookingsImplToJson(
         _$ListingBookingsImpl instance) =>
     <String, dynamic>{
       'amountPaid': instance.amountPaid,
+      'customerId': instance.customerId,
       'customerName': instance.customerName,
       'customerPhoneNo': instance.customerPhoneNo,
       'category': instance.category,
@@ -68,7 +69,6 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'tasks': instance.tasks?.map((e) => e.toJson()).toList(),
       'totalPrice': instance.totalPrice,
       'typeOfTrip': instance.typeOfTrip,
-      'userId': instance.userId,
     };
 
 _$ExpenseImpl _$$ExpenseImplFromJson(Map<String, dynamic> json) =>

@@ -51,6 +51,13 @@ final getAllBookingsByIdProvider = StreamProvider.autoDispose
   return listingController.getAllBookingsById(params.$1, params.$2);
 });
 
+// getAllBookingsByCustomerIdProvider
+final getAllBookingsByCustomerIdProvider = StreamProvider.autoDispose
+    .family<List<ListingBookings>, String>((ref, listingId) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getBookingsByCustomerId(listingId);
+});
+
 final listingControllerProvider =
     StateNotifierProvider<ListingController, bool>((ref) {
   final listingRepository = ref.watch(listingRepositoryProvider);
@@ -201,5 +208,10 @@ class ListingController extends StateNotifier<bool> {
   // Read specific booking
   Stream<ListingBookings> getBookingById(String listingId, String bookingId) {
     return _listingRepository.readBookingById(listingId, bookingId);
+  }
+
+  // Read specific booking
+  Stream<List<ListingBookings>> getBookingsByCustomerId(String customerId) {
+    return _listingRepository.readBookingsByCustomerId(customerId);
   }
 }
