@@ -9,6 +9,10 @@ part 'listings_bookings_model.g.dart';
 @freezed
 class ListingBookings with _$ListingBookings {
   factory ListingBookings({
+    num? amountPaid,
+    required String customerId,
+    required String customerName,
+    required String customerPhoneNo,
     required String category,
     required String email,
     String? emergencyContactName,
@@ -21,13 +25,14 @@ class ListingBookings with _$ListingBookings {
     num? luggage,
     String? id,
     required bool needsContributions,
-    required String phoneNo,
+    String? paymentOption,
     required num price,
     required String roomId,
     @TimestampSerializer() DateTime? selectedDate,
     String? selectedTime,
     @TimestampSerializer() DateTime? startDate,
-    required num totalPrice,
+    required String bookingStatus,
+    num? totalPrice,
     String? typeOfTrip,
     required String userId,
     @TimeOfDayConverter()

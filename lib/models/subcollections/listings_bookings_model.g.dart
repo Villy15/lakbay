@@ -9,6 +9,10 @@ part of 'listings_bookings_model.dart';
 _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
         Map<String, dynamic> json) =>
     _$ListingBookingsImpl(
+      amountPaid: json['amountPaid'] as num?,
+      customerId: json['customerId'] as String,
+      customerName: json['customerName'] as String,
+      customerPhoneNo: json['customerPhoneNo'] as String,
       category: json['category'] as String,
       email: json['email'] as String,
       emergencyContactName: json['emergencyContactName'] as String?,
@@ -26,7 +30,7 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
       luggage: json['luggage'] as num?,
       id: json['id'] as String?,
       needsContributions: json['needsContributions'] as bool,
-      phoneNo: json['phoneNo'] as String,
+      paymentOption: json['paymentOption'] as String?,
       price: json['price'] as num,
       roomId: json['roomId'] as String,
       selectedDate: const TimestampSerializer()
@@ -34,7 +38,11 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
       selectedTime: json['selectedTime'] as String?,
       startDate:
           const TimestampSerializer().fromJson(json['startDate'] as Timestamp?),
-      totalPrice: json['totalPrice'] as num,
+      bookingStatus: json['bookingStatus'] as String,
+      tasks: (json['tasks'] as List<dynamic>?)
+          ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      totalPrice: json['totalPrice'] as num?,
       typeOfTrip: json['typeOfTrip'] as String?,
       userId: json['userId'] as String,
       startTime: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
@@ -46,6 +54,10 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
 Map<String, dynamic> _$$ListingBookingsImplToJson(
         _$ListingBookingsImpl instance) =>
     <String, dynamic>{
+      'amountPaid': instance.amountPaid,
+      'customerId': instance.customerId,
+      'customerName': instance.customerName,
+      'customerPhoneNo': instance.customerPhoneNo,
       'category': instance.category,
       'email': instance.email,
       'emergencyContactName': instance.emergencyContactName,
@@ -58,12 +70,14 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'luggage': instance.luggage,
       'id': instance.id,
       'needsContributions': instance.needsContributions,
-      'phoneNo': instance.phoneNo,
+      'paymentOption': instance.paymentOption,
       'price': instance.price,
       'roomId': instance.roomId,
       'selectedDate': const TimestampSerializer().toJson(instance.selectedDate),
       'selectedTime': instance.selectedTime,
       'startDate': const TimestampSerializer().toJson(instance.startDate),
+      'bookingStatus': instance.bookingStatus,
+      'tasks': instance.tasks?.map((e) => e.toJson()).toList(),
       'totalPrice': instance.totalPrice,
       'typeOfTrip': instance.typeOfTrip,
       'userId': instance.userId,
@@ -84,6 +98,7 @@ Json? _$JsonConverterToJson<Json, Value>(
   Json? Function(Value value) toJson,
 ) =>
     value == null ? null : toJson(value);
+    };
 
 _$ExpenseImpl _$$ExpenseImplFromJson(Map<String, dynamic> json) =>
     _$ExpenseImpl(

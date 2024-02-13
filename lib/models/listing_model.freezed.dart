@@ -12,7 +12,7 @@ part of 'listing_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 ListingModel _$ListingModelFromJson(Map<String, dynamic> json) {
   return _ListingModel.fromJson(json);
@@ -24,13 +24,16 @@ mixin _$ListingModel {
   List<AvailableDate>? get availableDates => throw _privateConstructorUsedError;
   List<AvailableRoom>? get availableRooms => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
+  num? get cancellationRate => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get checkIn => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get checkOut => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
+  num? get confirmationPeriod => throw _privateConstructorUsedError;
   ListingCooperative get cooperative => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
+  num? get downpaymentRate => throw _privateConstructorUsedError;
   num? get duration => throw _privateConstructorUsedError;
   List<ListingImages>? get images => throw _privateConstructorUsedError;
   bool? get isPublished => throw _privateConstructorUsedError;
@@ -77,11 +80,14 @@ abstract class $ListingModelCopyWith<$Res> {
       List<AvailableDate>? availableDates,
       List<AvailableRoom>? availableRooms,
       String category,
+      num? cancellationRate,
       @TimestampSerializer() DateTime? checkIn,
       @TimestampSerializer() DateTime? checkOut,
       String city,
+      num? confirmationPeriod,
       ListingCooperative cooperative,
       String description,
+      num? downpaymentRate,
       num? duration,
       List<ListingImages>? images,
       bool? isPublished,
@@ -127,11 +133,14 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? availableDates = freezed,
     Object? availableRooms = freezed,
     Object? category = null,
+    Object? cancellationRate = freezed,
     Object? checkIn = freezed,
     Object? checkOut = freezed,
     Object? city = null,
+    Object? confirmationPeriod = freezed,
     Object? cooperative = null,
     Object? description = null,
+    Object? downpaymentRate = freezed,
     Object? duration = freezed,
     Object? images = freezed,
     Object? isPublished = freezed,
@@ -173,6 +182,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
               as String,
+      cancellationRate: freezed == cancellationRate
+          ? _value.cancellationRate
+          : cancellationRate // ignore: cast_nullable_to_non_nullable
+              as num?,
       checkIn: freezed == checkIn
           ? _value.checkIn
           : checkIn // ignore: cast_nullable_to_non_nullable
@@ -185,6 +198,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.city
           : city // ignore: cast_nullable_to_non_nullable
               as String,
+      confirmationPeriod: freezed == confirmationPeriod
+          ? _value.confirmationPeriod
+          : confirmationPeriod // ignore: cast_nullable_to_non_nullable
+              as num?,
       cooperative: null == cooperative
           ? _value.cooperative
           : cooperative // ignore: cast_nullable_to_non_nullable
@@ -193,6 +210,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      downpaymentRate: freezed == downpaymentRate
+          ? _value.downpaymentRate
+          : downpaymentRate // ignore: cast_nullable_to_non_nullable
+              as num?,
       duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
@@ -323,11 +344,14 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       List<AvailableDate>? availableDates,
       List<AvailableRoom>? availableRooms,
       String category,
+      num? cancellationRate,
       @TimestampSerializer() DateTime? checkIn,
       @TimestampSerializer() DateTime? checkOut,
       String city,
+      num? confirmationPeriod,
       ListingCooperative cooperative,
       String description,
+      num? downpaymentRate,
       num? duration,
       List<ListingImages>? images,
       bool? isPublished,
@@ -373,11 +397,14 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? availableDates = freezed,
     Object? availableRooms = freezed,
     Object? category = null,
+    Object? cancellationRate = freezed,
     Object? checkIn = freezed,
     Object? checkOut = freezed,
     Object? city = null,
+    Object? confirmationPeriod = freezed,
     Object? cooperative = null,
     Object? description = null,
+    Object? downpaymentRate = freezed,
     Object? duration = freezed,
     Object? images = freezed,
     Object? isPublished = freezed,
@@ -419,6 +446,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
               as String,
+      cancellationRate: freezed == cancellationRate
+          ? _value.cancellationRate
+          : cancellationRate // ignore: cast_nullable_to_non_nullable
+              as num?,
       checkIn: freezed == checkIn
           ? _value.checkIn
           : checkIn // ignore: cast_nullable_to_non_nullable
@@ -431,6 +462,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.city
           : city // ignore: cast_nullable_to_non_nullable
               as String,
+      confirmationPeriod: freezed == confirmationPeriod
+          ? _value.confirmationPeriod
+          : confirmationPeriod // ignore: cast_nullable_to_non_nullable
+              as num?,
       cooperative: null == cooperative
           ? _value.cooperative
           : cooperative // ignore: cast_nullable_to_non_nullable
@@ -439,6 +474,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      downpaymentRate: freezed == downpaymentRate
+          ? _value.downpaymentRate
+          : downpaymentRate // ignore: cast_nullable_to_non_nullable
+              as num?,
       duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
@@ -543,11 +582,14 @@ class _$ListingModelImpl implements _ListingModel {
       final List<AvailableDate>? availableDates,
       final List<AvailableRoom>? availableRooms,
       required this.category,
+      this.cancellationRate,
       @TimestampSerializer() this.checkIn,
       @TimestampSerializer() this.checkOut,
       required this.city,
+      this.confirmationPeriod,
       required this.cooperative,
       required this.description,
+      this.downpaymentRate,
       this.duration,
       final List<ListingImages>? images,
       this.isPublished,
@@ -608,6 +650,8 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   final String category;
   @override
+  final num? cancellationRate;
+  @override
   @TimestampSerializer()
   final DateTime? checkIn;
   @override
@@ -616,9 +660,13 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   final String city;
   @override
+  final num? confirmationPeriod;
+  @override
   final ListingCooperative cooperative;
   @override
   final String description;
+  @override
+  final num? downpaymentRate;
   @override
   final num? duration;
   final List<ListingImages>? _images;
@@ -720,7 +768,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, checkIn: $checkIn, checkOut: $checkOut, city: $city, cooperative: $cooperative, description: $description, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, confirmationPeriod: $confirmationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
   }
 
   @override
@@ -735,14 +783,20 @@ class _$ListingModelImpl implements _ListingModel {
                 .equals(other._availableRooms, _availableRooms) &&
             (identical(other.category, category) ||
                 other.category == category) &&
+            (identical(other.cancellationRate, cancellationRate) ||
+                other.cancellationRate == cancellationRate) &&
             (identical(other.checkIn, checkIn) || other.checkIn == checkIn) &&
             (identical(other.checkOut, checkOut) ||
                 other.checkOut == checkOut) &&
             (identical(other.city, city) || other.city == city) &&
+            (identical(other.confirmationPeriod, confirmationPeriod) ||
+                other.confirmationPeriod == confirmationPeriod) &&
             (identical(other.cooperative, cooperative) ||
                 other.cooperative == cooperative) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.downpaymentRate, downpaymentRate) ||
+                other.downpaymentRate == downpaymentRate) &&
             (identical(other.duration, duration) ||
                 other.duration == duration) &&
             const DeepCollectionEquality().equals(other._images, _images) &&
@@ -791,11 +845,14 @@ class _$ListingModelImpl implements _ListingModel {
         const DeepCollectionEquality().hash(_availableDates),
         const DeepCollectionEquality().hash(_availableRooms),
         category,
+        cancellationRate,
         checkIn,
         checkOut,
         city,
+        confirmationPeriod,
         cooperative,
         description,
+        downpaymentRate,
         duration,
         const DeepCollectionEquality().hash(_images),
         isPublished,
@@ -841,11 +898,14 @@ abstract class _ListingModel implements ListingModel {
       final List<AvailableDate>? availableDates,
       final List<AvailableRoom>? availableRooms,
       required final String category,
+      final num? cancellationRate,
       @TimestampSerializer() final DateTime? checkIn,
       @TimestampSerializer() final DateTime? checkOut,
       required final String city,
+      final num? confirmationPeriod,
       required final ListingCooperative cooperative,
       required final String description,
+      final num? downpaymentRate,
       final num? duration,
       final List<ListingImages>? images,
       final bool? isPublished,
@@ -882,6 +942,8 @@ abstract class _ListingModel implements ListingModel {
   @override
   String get category;
   @override
+  num? get cancellationRate;
+  @override
   @TimestampSerializer()
   DateTime? get checkIn;
   @override
@@ -890,9 +952,13 @@ abstract class _ListingModel implements ListingModel {
   @override
   String get city;
   @override
+  num? get confirmationPeriod;
+  @override
   ListingCooperative get cooperative;
   @override
   String get description;
+  @override
+  num? get downpaymentRate;
   @override
   num? get duration;
   @override

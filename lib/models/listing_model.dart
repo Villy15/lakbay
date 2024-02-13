@@ -14,11 +14,14 @@ class ListingModel with _$ListingModel {
     List<AvailableDate>? availableDates,
     List<AvailableRoom>? availableRooms,
     required String category,
+    num? cancellationRate,
     @TimestampSerializer() DateTime? checkIn,
     @TimestampSerializer() DateTime? checkOut,
     required String city,
+    num? confirmationPeriod,
     required ListingCooperative cooperative,
     required String description,
+    num? downpaymentRate,
     num? duration,
     List<ListingImages>? images,
     bool? isPublished,
@@ -98,21 +101,18 @@ class AvailableRoom with _$AvailableRoom {
       _$AvailableRoomFromJson(json);
 }
 
-@freezed class AvailableTransport with _$AvailableTransport {
-  factory AvailableTransport({
-    required bool available,
-    required num guests,
-    required num price,
-    required num luggage,
-    required List<bool> workingDays,
-    @TimeOfDayConverter()
-    required TimeOfDay startTime,
-    @TimeOfDayConverter()
-    required TimeOfDay endTime,
-    required String destination,
-    required String pickupPoint
-    
-  }) = _AvailableTransport;
+@freezed
+class AvailableTransport with _$AvailableTransport {
+  factory AvailableTransport(
+      {required bool available,
+      required num guests,
+      required num price,
+      required num luggage,
+      required List<bool> workingDays,
+      @TimeOfDayConverter() required TimeOfDay startTime,
+      @TimeOfDayConverter() required TimeOfDay endTime,
+      required String destination,
+      required String pickupPoint}) = _AvailableTransport;
 
   factory AvailableTransport.fromJson(Map<String, dynamic> json) =>
       _$AvailableTransportFromJson(json);
@@ -171,7 +171,8 @@ class AvailableTime with _$AvailableTime {
       _$AvailableTimeFromJson(json);
 }
 
-class TimeOfDayConverter implements JsonConverter<TimeOfDay, Map<String, dynamic>> {
+class TimeOfDayConverter
+    implements JsonConverter<TimeOfDay, Map<String, dynamic>> {
   const TimeOfDayConverter();
 
   @override

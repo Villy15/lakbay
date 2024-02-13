@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,10 +13,14 @@ import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/image_picker_form_field.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/subcollections/coop_members_model.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/models/wrappers/committee_params.dart';
 
 class AddAccommodation extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -42,6 +47,9 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _addressController =
       TextEditingController(text: 'Eastwood City');
+  final TextEditingController checkInController = TextEditingController();
+  final TextEditingController checkOutController = TextEditingController();
+
   String mapAddress = "";
   List<File>? _images;
 
@@ -50,6 +58,15 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
 
   TimeOfDay checkIn = TimeOfDay.now();
   TimeOfDay checkOut = TimeOfDay.now();
+
+  List<Task>? fixedTasks = [];
+
+  final TextEditingController _downpaymentRateController =
+      TextEditingController();
+  final TextEditingController _cancellationRateController =
+      TextEditingController();
+  final TextEditingController _confirmationPeriodController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -96,6 +113,10 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                       address: _addressController.text,
                       category: widget.category,
                       city: "",
+                      checkIn: DateTime(DateTime.now().year)
+                          .copyWith(hour: checkIn.hour, minute: checkIn.minute),
+                      checkOut: DateTime(DateTime.now().year).copyWith(
+                          hour: checkOut.hour, minute: checkOut.minute),
                       images: _images!.map((image) {
                         final imagePath =
                             'listings/${widget.coop.name}/${image.path.split('/').last}';
@@ -109,7 +130,8 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                       publisherId: ref.read(userProvider)!.uid,
                       publisherName: ref.read(userProvider)!.name,
                       title: _titleController.text,
-                      type: type);
+                      type: type,
+                      fixedTasks: fixedTasks);
                   listing = await processRoomImages(listing);
                   listing = listing.copyWith(
                     images: listing.images!.asMap().entries.map((entry) {
@@ -181,6 +203,43 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           ),
         );
     return listing;
+  }
+
+  Column addNotes(
+    List<String> notes,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(
+          height: 20,
+        ),
+        DisplayText(
+          text: "Notes:",
+          lines: 1,
+          style: Theme.of(context).textTheme.headlineSmall!,
+        ),
+        ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: notes.length,
+            itemBuilder: ((context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 5),
+                    DisplayText(
+                      text: notes[index],
+                      lines: 10,
+                      style: Theme.of(context).textTheme.bodySmall!,
+                    ),
+                  ],
+                ),
+              );
+            }))
+      ],
+    );
   }
 
   @override
@@ -439,8 +498,6 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   }
 
   Widget addDetails(BuildContext context) {
-    TextEditingController checkInController = TextEditingController();
-    TextEditingController checkOutController = TextEditingController();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -459,7 +516,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
         const SizedBox(height: 10),
         TextFormField(
           controller: _descriptionController,
-          maxLines: 1,
+          maxLines: null,
           decoration: const InputDecoration(
             labelText: 'Description*',
             helperText: '*required',
@@ -482,24 +539,25 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
             hintText: "11:30",
           ),
           readOnly: true,
-          onTap: () {
-            setState(() async {
-              checkIn = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.now(),
-                    initialEntryMode: TimePickerEntryMode.inputOnly,
-                  ) ??
-                  TimeOfDay.now();
-              if (context.mounted) {
-                checkInController.text = checkIn.format(context);
-              }
-            });
+          onTap: () async {
+            final TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: const TimeOfDay(hour: 11, minute: 30),
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+            );
+
+            if (pickedTime != null) {
+              setState(() {
+                checkInController.text = pickedTime.format(context);
+                checkIn = pickedTime;
+              });
+            }
           },
         ),
         const SizedBox(height: 10),
         TextFormField(
           controller: checkOutController,
-          maxLines: null,
+          maxLines: 1,
           decoration: const InputDecoration(
             labelText: 'Check Out*',
             helperText: '*required',
@@ -509,18 +567,18 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
             hintText: "1:30",
           ),
           readOnly: true,
-          onTap: () {
-            setState(() async {
-              checkIn = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.now(),
-                    initialEntryMode: TimePickerEntryMode.inputOnly,
-                  ) ??
-                  TimeOfDay.now();
-              if (context.mounted) {
-                checkInController.text = checkIn.format(context);
-              }
-            });
+          onTap: () async {
+            final TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: const TimeOfDay(hour: 1, minute: 30),
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+            );
+            if (pickedTime != null) {
+              setState(() {
+                checkOutController.text = pickedTime.format(context);
+                checkOut = pickedTime;
+              });
+            }
           },
         ),
         const SizedBox(height: 10),
@@ -560,10 +618,9 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
       Center(
         child: ElevatedButton(
           onPressed: () {
-            showModalBottomSheet(
-                isScrollControlled: true,
+            showDialog(
                 context: context,
-                builder: (BuildContext context) {
+                builder: (context) {
                   // String roomId = "";
                   TextEditingController roomIdController =
                       TextEditingController();
@@ -575,13 +632,22 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                   num beds = 0;
                   num bathrooms = 0;
                   List<File> images = [];
-                  return addRoomBottomSheet(images, roomIdController,
-                      priceController, guests, bedrooms, beds, bathrooms);
+                  return SizedBox(
+                    child: Dialog.fullscreen(
+                      child: showAddRoomForm(images, roomIdController,
+                          priceController, guests, bedrooms, beds, bathrooms),
+                    ),
+                  );
                 });
           },
           child: const Text('Add Room'),
         ),
       ),
+      if (availableRooms.isEmpty)
+        SizedBox(
+            height: MediaQuery.sizeOf(context).height / 4,
+            width: double.infinity,
+            child: const Center(child: Text("No Rooms Created"))),
       ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
@@ -714,7 +780,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
     ]);
   }
 
-  DraggableScrollableSheet addRoomBottomSheet(
+  Widget showAddRoomForm(
       List<File> images,
       TextEditingController roomIdController,
       TextEditingController priceController,
@@ -722,317 +788,297 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
       num bedrooms,
       num beds,
       num bathrooms) {
-    return DraggableScrollableSheet(
-        initialChildSize: 0.80,
-        expand: false,
-        builder: (context, scrollController) {
-          return StatefulBuilder(builder: (context, setState) {
-            return SingleChildScrollView(
-              child: SizedBox(
-                  height: MediaQuery.sizeOf(context).height / 1,
-                  width: double.infinity,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
-                            child: GestureDetector(
-                                child: Row(children: [
-                              Icon(Icons.image_outlined,
-                                  color: Theme.of(context).iconTheme.color),
-                              const SizedBox(width: 15),
-                              ImagePickerFormField(
-                                height: MediaQuery.sizeOf(context).height / 5,
-                                width: MediaQuery.sizeOf(context).width / 1.3,
-                                context: context,
-                                initialValue: images,
-                                onSaved: (List<File>? files) {
-                                  images.clear();
-                                  images.addAll(files!);
-                                  // this.images.add(images);
-                                  roomImages.add(images);
-                                },
-                                validator: (List<File>? files) {
-                                  if (files == null || files.isEmpty) {
-                                    return 'Please select some images';
-                                  }
-                                  return null;
-                                },
-                                onImagesSelected: (List<File> files) {
-                                  images.clear();
-                                  images.addAll(files);
-                                  // this.images.add(images);
-                                  roomImages.add(images);
-                                },
-                              ),
-                            ]))),
-                        const SizedBox(height: 15),
-                        Container(
-                            margin:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
-                            child: TextFormField(
-                                controller: roomIdController,
-                                decoration: const InputDecoration(
-                                    icon: Icon(Icons.title_outlined),
-                                    border: OutlineInputBorder(),
-                                    labelText: "Room Id",
-                                    floatingLabelBehavior: FloatingLabelBehavior
-                                        .always, // Keep the label always visible
-                                    hintText: "101",
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 12.0)),
-                                validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter some text';
-                                  }
-                                  return null;
-                                })),
-                        SizedBox(
-                            height: MediaQuery.sizeOf(context).height / 50),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextFormField(
-                            controller: priceController,
-                            maxLines: null,
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            decoration: const InputDecoration(
-                              icon: Icon(
-                                Icons.money_outlined,
-                              ),
-                              border: OutlineInputBorder(),
-                              labelText: 'Price',
-                              floatingLabelBehavior: FloatingLabelBehavior
-                                  .always, // Keep the label always visible
-                              hintText: "4500",
-                              prefix: Text('₱'),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 10,
-                                  horizontal: 12), // Adjust padding here
-                            ),
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                  color: Theme.of(context).dividerColor),
-                            ),
-                          ),
-                          child: ListTile(
-                            title: const Row(
-                              children: [
-                                Icon(Icons.people_alt_outlined),
-                                SizedBox(width: 10),
-                                Text('Guests'),
-                              ],
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  onPressed: () {
-                                    if (guests >= 1) {
-                                      setState(() {
-                                        guests--;
-                                      });
-                                    }
-                                  },
-                                ),
-                                const SizedBox(width: 10),
-                                Text('$guests',
-                                    style: const TextStyle(fontSize: 16)),
-                                const SizedBox(width: 10),
-                                IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    setState(() {
-                                      guests++;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                  color: Theme.of(context).dividerColor),
-                            ),
-                          ),
-                          child: ListTile(
-                            title: const Row(
-                              children: [
-                                Icon(Icons.king_bed_outlined),
-                                SizedBox(width: 10),
-                                Text('Bedrooms'),
-                              ],
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  onPressed: () {
-                                    if (bedrooms >= 1) {
-                                      setState(() {
-                                        bedrooms--;
-                                      });
-                                    }
-                                  },
-                                ),
-                                const SizedBox(width: 10),
-                                Text('$bedrooms',
-                                    style: const TextStyle(fontSize: 16)),
-                                const SizedBox(width: 10),
-                                IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    setState(() {
-                                      bedrooms++;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                  color: Theme.of(context).dividerColor),
-                            ),
-                          ),
-                          child: ListTile(
-                            title: const Row(
-                              children: [
-                                Icon(Icons.single_bed_outlined),
-                                SizedBox(width: 10),
-                                Text('Beds'),
-                              ],
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  onPressed: () {
-                                    if (beds >= 1) {
-                                      setState(() {
-                                        beds--;
-                                      });
-                                    }
-                                  },
-                                ),
-                                const SizedBox(width: 10),
-                                Text('$beds',
-                                    style: const TextStyle(fontSize: 16)),
-                                const SizedBox(width: 10),
-                                IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    setState(() {
-                                      beds++;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                  color: Theme.of(context).dividerColor),
-                            ),
-                          ),
-                          child: ListTile(
-                            title: const Row(
-                              children: [
-                                Icon(Icons.bathtub_outlined),
-                                SizedBox(width: 10),
-                                Text('Bathrooms'),
-                              ],
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  onPressed: () {
-                                    if (bathrooms >= 1) {
-                                      setState(() {
-                                        bathrooms--;
-                                      });
-                                    }
-                                  },
-                                ),
-                                const SizedBox(width: 10),
-                                Text('$bathrooms',
-                                    style: const TextStyle(fontSize: 16)),
-                                const SizedBox(width: 10),
-                                IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    setState(() {
-                                      bathrooms++;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.sizeOf(context).height / 30,
-                        ),
-                        ElevatedButton(
-                            onPressed: () {
-                              AvailableRoom room = AvailableRoom(
-                                  available: true,
-                                  images: images.map((image) {
-                                    final imagePath =
-                                        'listings/${widget.coop.name}/${image.path.split('/').last}';
-                                    return ListingImages(
-                                      path: imagePath,
-                                    );
-                                  }).toList(),
-                                  roomId: roomIdController.text,
-                                  bathrooms: bathrooms,
-                                  bedrooms: bedrooms,
-                                  beds: beds,
-                                  guests: guests,
-                                  price: num.parse(priceController.text));
-                              this.setState(() {
-                                int index = availableRooms.indexWhere(
-                                    (element) =>
-                                        element.roomId ==
-                                        roomIdController.text);
-                                if (index == -1) {
-                                  availableRooms.add(room);
-                                } else {
-                                  availableRooms[index] = room;
-                                }
-                              });
-                              context.pop();
-                            },
-                            child: const Text("Confirm"))
-                      ])),
-            );
-          });
-        });
+    return StatefulBuilder(builder: (context, setState) {
+      return SingleChildScrollView(
+        child: SizedBox(
+            height: MediaQuery.sizeOf(context).height / 1,
+            width: double.infinity,
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: GestureDetector(
+                      child: Row(children: [
+                    Icon(Icons.image_outlined,
+                        color: Theme.of(context).iconTheme.color),
+                    const SizedBox(width: 15),
+                    ImagePickerFormField(
+                      height: MediaQuery.sizeOf(context).height / 5,
+                      width: MediaQuery.sizeOf(context).width / 1.3,
+                      context: context,
+                      initialValue: images,
+                      onSaved: (List<File>? files) {
+                        images.clear();
+                        images.addAll(files!);
+                        // this.images.add(images);
+                        roomImages.add(images);
+                      },
+                      validator: (List<File>? files) {
+                        if (files == null || files.isEmpty) {
+                          return 'Please select some images';
+                        }
+                        return null;
+                      },
+                      onImagesSelected: (List<File> files) {
+                        images.clear();
+                        images.addAll(files);
+                        // this.images.add(images);
+                        roomImages.add(images);
+                      },
+                    ),
+                  ]))),
+              const SizedBox(height: 15),
+              Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: TextFormField(
+                      controller: roomIdController,
+                      decoration: const InputDecoration(
+                          icon: Icon(Icons.title_outlined),
+                          border: OutlineInputBorder(),
+                          labelText: "Room Id",
+                          floatingLabelBehavior: FloatingLabelBehavior
+                              .always, // Keep the label always visible
+                          hintText: "101",
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 12.0)),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      })),
+              SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: TextFormField(
+                  controller: priceController,
+                  maxLines: null,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    icon: Icon(
+                      Icons.money_outlined,
+                    ),
+                    border: OutlineInputBorder(),
+                    labelText: 'Price',
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "4500",
+                    prefix: Text('₱'),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 12), // Adjust padding here
+                  ),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Theme.of(context).dividerColor),
+                  ),
+                ),
+                child: ListTile(
+                  title: const Row(
+                    children: [
+                      Icon(Icons.people_alt_outlined),
+                      SizedBox(width: 10),
+                      Text('Guests'),
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+                        onPressed: () {
+                          if (guests >= 1) {
+                            setState(() {
+                              guests--;
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      Text('$guests', style: const TextStyle(fontSize: 16)),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          setState(() {
+                            guests++;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Theme.of(context).dividerColor),
+                  ),
+                ),
+                child: ListTile(
+                  title: const Row(
+                    children: [
+                      Icon(Icons.king_bed_outlined),
+                      SizedBox(width: 10),
+                      Text('Bedrooms'),
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+                        onPressed: () {
+                          if (bedrooms >= 1) {
+                            setState(() {
+                              bedrooms--;
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      Text('$bedrooms', style: const TextStyle(fontSize: 16)),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          setState(() {
+                            bedrooms++;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Theme.of(context).dividerColor),
+                  ),
+                ),
+                child: ListTile(
+                  title: const Row(
+                    children: [
+                      Icon(Icons.single_bed_outlined),
+                      SizedBox(width: 10),
+                      Text('Beds'),
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+                        onPressed: () {
+                          if (beds >= 1) {
+                            setState(() {
+                              beds--;
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      Text('$beds', style: const TextStyle(fontSize: 16)),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          setState(() {
+                            beds++;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Theme.of(context).dividerColor),
+                  ),
+                ),
+                child: ListTile(
+                  title: const Row(
+                    children: [
+                      Icon(Icons.bathtub_outlined),
+                      SizedBox(width: 10),
+                      Text('Bathrooms'),
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+                        onPressed: () {
+                          if (bathrooms >= 1) {
+                            setState(() {
+                              bathrooms--;
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      Text('$bathrooms', style: const TextStyle(fontSize: 16)),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          setState(() {
+                            bathrooms++;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.sizeOf(context).height / 30,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    AvailableRoom room = AvailableRoom(
+                        available: true,
+                        images: images.map((image) {
+                          final imagePath =
+                              'listings/${widget.coop.name}/${image.path.split('/').last}';
+                          return ListingImages(
+                            path: imagePath,
+                          );
+                        }).toList(),
+                        roomId: roomIdController.text,
+                        bathrooms: bathrooms,
+                        bedrooms: bedrooms,
+                        beds: beds,
+                        guests: guests,
+                        price: num.parse(priceController.text));
+                    this.setState(() {
+                      int index = availableRooms.indexWhere(
+                          (element) => element.roomId == roomIdController.text);
+                      if (index == -1) {
+                        availableRooms.add(room);
+                      } else {
+                        availableRooms[index] = room;
+                      }
+                    });
+                    context.pop();
+                  },
+                  child: const Text("Confirm"))
+            ])),
+      );
+    });
   }
 
   Widget addLocation(BuildContext context) {
@@ -1071,62 +1117,629 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   }
 
   Widget addFixedTasks(BuildContext context) {
-    return const SingleChildScrollView(
-      child: Column(children: []),
+    List<String> notes = [
+      "Fixed tasks will appear for every booking. They must always be accomplished when your service is purchased.",
+      "Members that can be assigned to tasks are those belonging in the tourism committee."
+    ];
+    return Column(
+      children: [
+        ElevatedButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return SizedBox(
+                      child: Dialog.fullscreen(child: showFixedTaskForm()),
+                    );
+                  });
+            },
+            child: const Text("Add Task")),
+        const SizedBox(
+          height: 10,
+        ),
+        ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: fixedTasks?.length,
+            itemBuilder: ((context, taskIndex) {
+              return Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Colors.black, width: 1), // Border color
+                    borderRadius: BorderRadius.circular(
+                        6), // Border radius for rounded corners
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 5.0, right: 5, bottom: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Spacer(),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.black,
+                                size: 25,
+                              ), // 'X' icon
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // Aligns children at the start of the cross axis
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Task: ",
+                                style: TextStyle(
+                                  fontSize:
+                                      16, // Ensure this matches the font size of the other text
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 10.0),
+                                child: DisplayText(
+                                  text: fixedTasks![taskIndex].name,
+                                  lines: 3,
+                                  style: const TextStyle(
+                                    fontSize: 16, // Adjust text style
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Assigned: ",
+                                style: TextStyle(
+                                  fontSize:
+                                      16, // Ensure this matches the font size of the other text
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2, // 2 items per row
+                                    crossAxisSpacing:
+                                        1.5, // Space between cards horizontally
+                                    mainAxisSpacing: 1.5,
+                                    mainAxisExtent: MediaQuery.sizeOf(context)
+                                            .height /
+                                        20, // Space between cards vertically
+                                  ),
+                                  itemCount:
+                                      fixedTasks![taskIndex].assigned.length,
+                                  itemBuilder: (context, assignedIndex) {
+                                    return Container(
+                                        alignment: Alignment.centerLeft,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color:
+                                                  Colors.grey), // Border color
+                                          borderRadius: BorderRadius.circular(
+                                              4), // Border radius for rounded corners
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 10.0),
+                                          child: Text(
+                                            fixedTasks![taskIndex].assigned[
+                                                assignedIndex], // Replace with the name from your data
+                                            style: const TextStyle(
+                                              fontSize: 14, // Adjust text style
+                                              overflow: TextOverflow
+                                                  .ellipsis, // Handle long text
+                                            ),
+                                          ),
+                                        ));
+                                  }),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ));
+            })),
+        if (fixedTasks!.isEmpty)
+          SizedBox(
+              height: MediaQuery.sizeOf(context).height / 5,
+              width: double.infinity,
+              child: const Center(child: Text("No Tasks Created"))),
+        addNotes(
+          notes,
+        ),
+      ],
     );
+  }
+
+  Widget showFixedTaskForm() {
+    TextEditingController taskNameController = TextEditingController();
+    TextEditingController committeeController =
+        TextEditingController(text: "Tourism");
+    List<String> assignedMembers = [];
+    return StatefulBuilder(builder: (context, setState) {
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              IconButton(
+                iconSize: 30, // Set the icon size here
+                onPressed: () {
+                  context.pop();
+                },
+                icon: const Icon(
+                  Icons.arrow_back, // Removed the size property from here
+                ),
+              ),
+            ],
+          ),
+          const Text(
+            "Create Task",
+            style: TextStyle(
+              fontSize: 20, // Choose your desired size
+              fontWeight: FontWeight.bold, // Makes the text bold
+            ),
+          ),
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(children: [
+                TextFormField(
+                  controller: taskNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Task Name*',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "Prepare Room For Guests",
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: committeeController,
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    labelText: 'Committee Assigned*',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    suffixIcon:
+                        Icon(Icons.arrow_drop_down), // Dropdown arrow icon
+                  ),
+                  readOnly: true,
+                  enabled: false,
+                  onTap: () {},
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Column(
+                  children: [
+                    TextFormField(
+                      maxLines: 1,
+                      decoration: const InputDecoration(
+                          labelText: 'Members Assigned*',
+                          border: OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior
+                              .always, // Keep the label always visible
+                          suffixIcon: Icon(Icons.arrow_drop_down),
+                          hintText:
+                              "Press to select member" // Dropdown arrow icon
+                          ),
+                      readOnly: true,
+                      canRequestFocus: false,
+                      onTap: () async {
+                        List<CooperativeMembers> members = await ref.read(
+                            getAllMembersInCommitteeProvider(CommitteeParams(
+                          committeeName: committeeController.text,
+                          coopUid: ref.watch(userProvider)!.currentCoop!,
+                        )).future);
+
+                        members = members
+                            .where((member) =>
+                                !assignedMembers.contains(member.name))
+                            .toList();
+                        if (context.mounted) {
+                          return showModalBottomSheet(
+                            context: context,
+                            builder: (builder) {
+                              return Container(
+                                padding: const EdgeInsets.all(
+                                    10.0), // Padding for overall container
+                                child: Column(
+                                  children: [
+                                    // Optional: Add a title or header for the modal
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0),
+                                      child: Text(
+                                        "Members (${committeeController.text})",
+                                        style: const TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: ListView.builder(
+                                        itemCount: members.length,
+                                        itemBuilder: (context, index) {
+                                          return ListTile(
+                                            title: Text(
+                                              members[index].name,
+                                              style: const TextStyle(
+                                                  fontSize:
+                                                      16.0), // Adjust font size
+                                            ),
+                                            onTap: () {
+                                              setState(
+                                                () {
+                                                  assignedMembers
+                                                      .add(members[index].name);
+                                                },
+                                              );
+                                              context.pop();
+                                            },
+                                            // Optional: Add trailing icons or actions
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, // 2 items per row
+                        crossAxisSpacing:
+                            1.5, // Space between cards horizontally
+                        mainAxisSpacing: 1.5,
+                        mainAxisExtent: MediaQuery.sizeOf(context).height /
+                            8, // Space between cards vertically
+                      ),
+                      itemCount: assignedMembers
+                          .length, // Replace with the length of your data
+                      itemBuilder: (context, index) {
+                        return Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey), // Border color
+                              borderRadius: BorderRadius.circular(
+                                  4), // Border radius for rounded corners
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.close,
+                                      color: Colors.black,
+                                      size: 16,
+                                    ), // 'X' icon
+                                    onPressed: () {
+                                      setState(
+                                        () {
+                                          assignedMembers.removeAt(index);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      assignedMembers[
+                                          index], // Replace with the name from your data
+                                      style: const TextStyle(
+                                        fontSize: 14, // Adjust text style
+                                        overflow: TextOverflow
+                                            .ellipsis, // Handle long text
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ));
+                      },
+                    )
+                  ],
+                ),
+              ]),
+            ),
+          ),
+          const Spacer(),
+          ElevatedButton(
+              onPressed: () {
+                this.setState(() {
+                  fixedTasks?.add(Task(
+                      assigned: assignedMembers,
+                      committee: committeeController.text,
+                      complete: false,
+                      openContribution: false,
+                      name: taskNameController.text));
+                });
+                context.pop();
+              },
+              child: const Text("Add Task")),
+        ],
+      );
+    });
   }
 
   Widget addPolicies(BuildContext context) {
-    return const Column();
+    List<String> notes = [
+      "Downpayment Rate: The necessary amount to be paid by a customer in order to book and reserve the service.",
+      "Cancellation Rate: The amount that would not be refunded in the situation that a customer cancels their booking.",
+      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel and pay the full amount in the case for a downpayment. Otherwise their booking will be cancelled",
+      "Customers booking passed the cancellation period would be required to pay the downpayment or full amount upon checkout."
+    ];
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _downpaymentRateController,
+                maxLines: 1,
+                keyboardType: TextInputType.number, // For numeric input
+                decoration: const InputDecoration(
+                    labelText:
+                        'Downpayment Rate (%)*', // Indicate it's a percentage
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 20",
+                    suffixText: "%"),
+                onTap: () {
+                  // Handle tap if needed, e.g., showing a dialog to select a percentage
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: TextFormField(
+                controller: _cancellationRateController,
+                maxLines: 1,
+                decoration: const InputDecoration(
+                    labelText: 'Cancellation Rate (%)*',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 5",
+                    suffixText: "%"),
+                onTap: () {},
+              ),
+            )
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        TextFormField(
+          controller: _confirmationPeriodController,
+          maxLines: 1,
+          keyboardType: TextInputType.number, // For numeric input
+          decoration: const InputDecoration(
+              labelText:
+                  'Cancellation Period (Day/s)*', // Indicate it's a percentage
+              border: OutlineInputBorder(),
+              floatingLabelBehavior:
+                  FloatingLabelBehavior.always, // Keep the label always visible
+              hintText: "e.g., 5 Days before the booked date",
+              suffixText: "Day/s"),
+          onTap: () {
+            // Handle tap if needed, e.g., showing a dialog to select a percentage
+          },
+        ),
+        addNotes(notes),
+      ],
+    );
   }
 
   Widget reviewListing(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        // Step 0
-        ListTile(
-          title: const Text('Category',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(widget.category),
-        ),
-        ListTile(
-          title: const Text('Type',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(type),
-        ),
-        const Divider(),
-        // Step 1
-        ListTile(
-          title: const Text('Title',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(_titleController.text),
-        ),
-        ListTile(
-          title: const Text('Description',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(_descriptionController.text),
-        ),
-        // Step 2
-
-        const Divider(),
-        // Step 3
-        ListTile(
-          title: const Text('Address',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          subtitle: Text(_addressController.text),
-        ),
-        const Divider(),
-        // Step 4
-        // ListTile(
-        //   title: const Text('Image',
-        //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        //   subtitle: _image != null ? Image.file(_image!) : const Text('None'),
-        // ),
-        const Divider(),
-
-        // Step 5
-      ],
-    );
+    int titleLines = 1;
+    int descriptionLines = 2;
+    return StatefulBuilder(builder: (context, setState) {
+      return Column(
+        children: [
+          ImageSlider(
+              images: _images,
+              height: MediaQuery.sizeOf(context).height / 4,
+              width: double.infinity),
+          SizedBox(
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                const Row(
+                  children: [
+                    Text(
+                      "Details",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: 3,
+                        height: 2,
+                        indent: 15,
+                        color: Colors.black,
+                      ),
+                    )
+                  ],
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      RichText(
+                        maxLines: titleLines,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                        text: TextSpan(
+                          children: [
+                            const TextSpan(
+                              text: 'Listing Title: ',
+                              style: TextStyle(
+                                fontSize: 16, // Adjust the font size as needed
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: _titleController.text,
+                              style: const TextStyle(
+                                fontSize: 16, // Adjust the font size as needed
+                                color: Colors.black,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  setState(() {
+                                    if (titleLines == 1) {
+                                      titleLines = 99;
+                                    } else {
+                                      titleLines = 1;
+                                    }
+                                  });
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                      RichText(
+                        maxLines: descriptionLines,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                        text: TextSpan(
+                          children: [
+                            const TextSpan(
+                              text: 'Description: ',
+                              style: TextStyle(
+                                fontSize: 16, // Adjust the font size as needed
+                                fontWeight:
+                                    FontWeight.bold, // Make the text bold
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: _descriptionController.text,
+                              style: const TextStyle(
+                                fontSize: 16, // Adjust the font size as needed
+                                color: Colors.black,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  setState(() {
+                                    if (descriptionLines == 2) {
+                                      descriptionLines = 99;
+                                    } else {
+                                      descriptionLines = 2;
+                                    }
+                                  });
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            "Check In: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            checkIn.format(context),
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          const Text(
+                            "Check Out: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            checkOut.format(context),
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const Row(
+                  children: [
+                    Text(
+                      "Rooms",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: 3,
+                        height: 2,
+                        indent: 15,
+                        color: Colors.black,
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    });
   }
 
   Widget stepForm(BuildContext context) {

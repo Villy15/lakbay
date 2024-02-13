@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
-import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_repository.dart';
-import 'package:lakbay/features/sales/sales_repository.dart';
 import 'package:lakbay/models/listing_model.dart';
-import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 // getListingsByCoop Family Provider
@@ -52,6 +49,13 @@ final getAllBookingsByIdProvider = StreamProvider.autoDispose
         (ref, params) {
   final listingController = ref.watch(listingControllerProvider.notifier);
   return listingController.getAllBookingsById(params.$1, params.$2);
+});
+
+// getAllBookingsByCustomerIdProvider
+final getAllBookingsByCustomerIdProvider = StreamProvider.autoDispose
+    .family<List<ListingBookings>, String>((ref, listingId) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getBookingsByCustomerId(listingId);
 });
 
 final listingControllerProvider =
@@ -107,21 +111,26 @@ class ListingController extends StateNotifier<bool> {
       (bookingUid) async {
         state = false;
         Navigator.pop(context);
-        _ref.read(salesRepositoryProvider).addSale(SaleModel(
-            bookingId: booking.id!,
-            category: booking.category,
-            cooperativeId: listing.cooperative.cooperativeId,
-            cooperativeName: listing.cooperative.cooperativeName,
-            customerId: _ref.read(userProvider)!.uid,
-            customerName: _ref.read(userProvider)!.name,
-            listingId: listing.uid!,
-            listingName: listing.title,
-            listingPrice: booking.price,
-            price: booking.totalPrice,
-            ownerId: listing.publisherId,
-            ownerName: listing.publisherName,
-            salePrice: booking.totalPrice));
-        showSnackBar(context, 'Booking added successfully');
+        Navigator.pop(context);
+        Navigator.pop(context);
+        // _ref.read(salesRepositoryProvider).addSale(SaleModel(
+        //     bookingId: booking.id!,
+        //     category: booking.category,
+        //     cooperativeId: listing.cooperative.cooperativeId,
+        //     cooperativeName: listing.cooperative.cooperativeName,
+        //     customerId: _ref.read(userProvider)!.uid,
+        //     customerName: _ref.read(userProvider)!.name,
+        //     listingId: listing.uid!,
+        //     listingName: listing.title,
+        //     listingPrice: booking.price,
+        //     price: booking.totalPrice,
+        //     ownerId: listing.publisherId,
+        //     ownerName: listing.publisherName,
+        //     salePrice: booking.totalPrice));
+        ListingBookings updatedBooking = booking.copyWith(id: bookingUid);
+        context.push(
+            '/market/${booking.category}/customer_accommodation_receipt',
+            extra: {'booking': updatedBooking, 'listing': listing});
       },
     );
   }
@@ -140,8 +149,8 @@ class ListingController extends StateNotifier<bool> {
     });
   }
 
-  void updateBooking(BuildContext context, String listingId,
-      ListingBookings booking, String message) {
+  void updateBookingExpenses(
+      BuildContext context, String listingId, ListingBookings booking) {
     state = true;
     _listingRepository.updateBooking(listingId, booking).then((result) {
       state = false;
@@ -165,21 +174,6 @@ class ListingController extends StateNotifier<bool> {
         (r) {
           // context.pop();
           // showSnackBar(context, message);
-        },
-      );
-    });
-  }
-
-  void updateBookingExpenses(
-      BuildContext context, String listingId, ListingBookings booking) {
-    state = true;
-    _listingRepository.updateBooking(listingId, booking).then((result) {
-      state = false;
-      result.fold(
-        (l) => showSnackBar(context, l.message),
-        (r) {
-          context.pop();
-          showSnackBar(context, 'Expenses Saved');
         },
       );
     });
@@ -216,4 +210,8 @@ class ListingController extends StateNotifier<bool> {
     return _listingRepository.readBookingById(listingId, bookingId);
   }
 
+  // Read specific booking
+  Stream<List<ListingBookings>> getBookingsByCustomerId(String customerId) {
+    return _listingRepository.readBookingsByCustomerId(customerId);
+  }
 }

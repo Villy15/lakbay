@@ -139,13 +139,12 @@ class ListingRepository {
     });
   }
 
-  // read booking by id
+// read booking by id
   Stream<ListingBookings> readBookingById(listingId, bookingId) {
     return bookings(listingId).doc(bookingId).snapshots().map((snapshot) {
       return ListingBookings.fromJson(snapshot.data() as Map<String, dynamic>);
     });
   }
-  
 
   // Read a bookings with certain RoomId in subcollection
   Stream<List<ListingBookings>> readBookingsByRoomId(
@@ -156,6 +155,21 @@ class ListingRepository {
         .map((snapshot) {
       return snapshot.docs.map((doc) {
         return ListingBookings.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  // Read bookings by customer ID
+  Stream<List<ListingBookings>> readBookingsByCustomerId(String customerId) {
+    return FirebaseFirestore.instance
+        .collectionGroup(
+            'bookings') // Perform collection group query for 'bookings'
+        .where('customerId', isEqualTo: customerId) // Filter by customerId
+        .snapshots()
+        .map((querySnapshot) {
+      // Convert each document snapshot to a ListingBookings object
+      return querySnapshot.docs.map((doc) {
+        return ListingBookings.fromJson(doc.data());
       }).toList();
     });
   }

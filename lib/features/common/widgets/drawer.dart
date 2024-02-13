@@ -40,6 +40,11 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
         );
   }
 
+  void viewBookings(WidgetRef ref) {
+    context.pop();
+    context.go('/bookings');
+  }
+
   void viewCurrentCooperative(WidgetRef ref) {
     context.pop();
     context.go('/coops/id/${widget.user?.currentCoop}');
@@ -210,7 +215,7 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                     : ListTile(
                         title: const Text('Bookings'),
                         leading: const Icon(Icons.book),
-                        onTap: () => {},
+                        onTap: () => {viewBookings(ref)},
                       ),
 
                 // View Current Cooperative
@@ -241,6 +246,17 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                         },
                       )
                     : const SizedBox.shrink(),
+
+                // Wiki Page
+
+                ListTile(
+                  title: const Text('Wiki'),
+                  leading: const Icon(Icons.book_outlined),
+                  onTap: () => {
+                    context.pop(),
+                    context.push('/wiki'),
+                  },
+                )
               ],
             ),
             Column(

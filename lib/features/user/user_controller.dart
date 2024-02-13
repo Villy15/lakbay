@@ -82,7 +82,7 @@ class UsersController extends StateNotifier<bool> {
         if (user.isCoopView ?? false) {
           context.go('/today');
         } else {
-          context.go('/customer_home');
+          context.go('/plan');
         }
 
         _ref.read(userProvider.notifier).setUser(user);

@@ -37,10 +37,10 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
           )
         ] else ...[
           const BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          )
+            icon: Icon(Icons.card_travel_outlined),
+            activeIcon: Icon(Icons.card_travel),
+            label: 'Trips',
+          ),
         ],
 
         // Second Nav Bar
@@ -53,10 +53,10 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
           )
         ] else ...[
           const BottomNavigationBarItem(
-            icon: Icon(Icons.card_travel_outlined),
-            activeIcon: Icon(Icons.card_travel),
-            label: 'Trips',
-          ),
+            icon: Icon(Icons.explore_outlined),
+            activeIcon: Icon(Icons.explore),
+            label: 'Explore',
+          )
         ],
 
         // Third Nav Bar
@@ -100,13 +100,6 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
           activeIcon: Icon(Icons.inbox),
           label: 'Inbox',
         ),
-
-        // Sixth Nav Bar (Wiki button)
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.book_outlined),
-          activeIcon: Icon(Icons.book),
-          label: 'Wiki',
-        ),
       ],
     );
   }
@@ -119,14 +112,14 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         if (widget.user?.isCoopView ?? false) {
           context.go('/today');
         } else {
-          context.go('/customer_home');
+          context.go('/trips');
         }
         break;
       case 1:
         if (widget.user?.isCoopView ?? false) {
           context.go('/calendar');
         } else {
-          context.go('/trips');
+          context.go('/plan');
         }
         break;
       case 2:
@@ -145,9 +138,6 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         break;
       case 4:
         context.go('/inbox');
-        break;
-      case 5: 
-        context.go('/wiki'); // Navigate to the Wiki page
         break;
     }
   }

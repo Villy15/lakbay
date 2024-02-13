@@ -1,25 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/app_bar_provider.dart';
-import 'package:lakbay/features/home/customer/widgets/nestested_accomodation.dart';
+import 'package:lakbay/features/explore/widgets/nestested_accomodation.dart';
 import 'package:lakbay/features/market/widgets/market_card.dart';
 import 'package:lakbay/models/user_model.dart';
 
-class CustomerHomePage extends ConsumerWidget {
-  const CustomerHomePage({super.key});
+class PlanPage extends ConsumerWidget {
+  const PlanPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
     final scaffoldKey = ref.watch(scaffoldKeyProvider);
-
-    if (user?.isCoopView == true) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.go('/today');
-      });
-    }
 
     return DefaultTabController(
       initialIndex: 0,
@@ -100,12 +93,7 @@ class CustomerHomePage extends ConsumerWidget {
       preferredSize: const Size.fromHeight(kToolbarHeight + 75),
       child: AppBar(
         title: const Text(
-          'Lakbay',
-          style: TextStyle(
-            fontFamily: 'Satisfy',
-            fontSize: 32.0,
-            fontWeight: FontWeight.bold,
-          ),
+          'Explore',
         ),
         // Add icon on the right side of the app bar of a person
         actions: [
