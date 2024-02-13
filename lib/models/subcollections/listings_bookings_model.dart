@@ -34,7 +34,6 @@ class ListingBookings with _$ListingBookings {
     required String bookingStatus,
     num? totalPrice,
     String? typeOfTrip,
-    required String userId,
     @TimeOfDayConverter()
     TimeOfDay? startTime,
     @TimeOfDayConverter()

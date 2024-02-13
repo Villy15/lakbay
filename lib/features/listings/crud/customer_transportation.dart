@@ -1251,7 +1251,7 @@ class _CustomerTransportationState
                                             "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
                                         guests: guests,
                                         luggage: luggage,
-                                        phoneNo: phoneNoController.text,
+                                        customerPhoneNo: phoneNoController.text,
                                         emergencyContactName:
                                             emergencyContactNameController.text,
                                         emergencyContactNo:
@@ -1259,9 +1259,8 @@ class _CustomerTransportationState
                                         needsContributions: false,
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
-                                        userId: ref.read(userProvider)!.uid,
                                         expenses: [],
-                                        tasks: []);
+                                        tasks: [], customerId: '', customerName: '', bookingStatus: '');
                                     ref
                                         .read(
                                             listingControllerProvider.notifier)
@@ -1424,7 +1423,7 @@ class _CustomerTransportationState
                                             "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
                                         guests: guests,
                                         luggage: luggage,
-                                        phoneNo: phoneNoController.text,
+                                        customerPhoneNo: phoneNoController.text,
                                         emergencyContactName:
                                             emergencyContactNameController.text,
                                         emergencyContactNo:
@@ -1432,9 +1431,8 @@ class _CustomerTransportationState
                                         needsContributions: false,
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
-                                        userId: ref.read(userProvider)!.uid,
                                         expenses: [],
-                                        tasks: []);
+                                        tasks: [], customerId: '', customerName: '', bookingStatus: '');
                                     ref
                                         .read(
                                             listingControllerProvider.notifier)

@@ -149,8 +149,8 @@ class ListingController extends StateNotifier<bool> {
     });
   }
 
-  void updateBookingExpenses(
-      BuildContext context, String listingId, ListingBookings booking) {
+  void updateBooking(BuildContext context, String listingId,
+      ListingBookings booking, String message) {
     state = true;
     _listingRepository.updateBooking(listingId, booking).then((result) {
       state = false;

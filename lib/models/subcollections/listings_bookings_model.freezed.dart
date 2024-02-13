@@ -46,10 +46,8 @@ mixin _$ListingBookings {
   @TimestampSerializer()
   DateTime? get startDate => throw _privateConstructorUsedError;
   String get bookingStatus => throw _privateConstructorUsedError;
-  List<Task>? get tasks => throw _privateConstructorUsedError;
   num? get totalPrice => throw _privateConstructorUsedError;
   String? get typeOfTrip => throw _privateConstructorUsedError;
-  String get userId => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
   TimeOfDay? get startTime => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
@@ -91,9 +89,10 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String? selectedTime,
       @TimestampSerializer() DateTime? startDate,
       String bookingStatus,
-      List<Task>? tasks,
       num? totalPrice,
-      String? typeOfTrip});
+      String? typeOfTrip,
+      @TimeOfDayConverter() TimeOfDay? startTime,
+      @TimeOfDayConverter() TimeOfDay? endTime});
 }
 
 /// @nodoc
@@ -132,10 +131,8 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? selectedTime = freezed,
     Object? startDate = freezed,
     Object? bookingStatus = null,
-    Object? tasks = freezed,
     Object? totalPrice = freezed,
     Object? typeOfTrip = freezed,
-    Object? userId = null,
     Object? startTime = freezed,
     Object? endTime = freezed,
   }) {
@@ -232,10 +229,6 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.bookingStatus
           : bookingStatus // ignore: cast_nullable_to_non_nullable
               as String,
-      tasks: freezed == tasks
-          ? _value.tasks
-          : tasks // ignore: cast_nullable_to_non_nullable
-              as List<Task>?,
       totalPrice: freezed == totalPrice
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
@@ -244,10 +237,6 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
               as String?,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
       startTime: freezed == startTime
           ? _value.startTime
           : startTime // ignore: cast_nullable_to_non_nullable
@@ -292,9 +281,10 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String? selectedTime,
       @TimestampSerializer() DateTime? startDate,
       String bookingStatus,
-      List<Task>? tasks,
       num? totalPrice,
-      String? typeOfTrip});
+      String? typeOfTrip,
+      @TimeOfDayConverter() TimeOfDay? startTime,
+      @TimeOfDayConverter() TimeOfDay? endTime});
 }
 
 /// @nodoc
@@ -331,10 +321,8 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? selectedTime = freezed,
     Object? startDate = freezed,
     Object? bookingStatus = null,
-    Object? tasks = freezed,
     Object? totalPrice = freezed,
     Object? typeOfTrip = freezed,
-    Object? userId = null,
     Object? startTime = freezed,
     Object? endTime = freezed,
   }) {
@@ -431,10 +419,6 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.bookingStatus
           : bookingStatus // ignore: cast_nullable_to_non_nullable
               as String,
-      tasks: freezed == tasks
-          ? _value._tasks
-          : tasks // ignore: cast_nullable_to_non_nullable
-              as List<Task>?,
       totalPrice: freezed == totalPrice
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
@@ -443,10 +427,6 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
               as String?,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
       startTime: freezed == startTime
           ? _value.startTime
           : startTime // ignore: cast_nullable_to_non_nullable
@@ -486,9 +466,10 @@ class _$ListingBookingsImpl implements _ListingBookings {
       this.selectedTime,
       @TimestampSerializer() this.startDate,
       required this.bookingStatus,
-      final List<Task>? tasks,
       this.totalPrice,
-      this.typeOfTrip})
+      this.typeOfTrip,
+      @TimeOfDayConverter() this.startTime,
+      @TimeOfDayConverter() this.endTime})
       : _expenses = expenses,
         _tasks = tasks;
 
@@ -560,31 +541,20 @@ class _$ListingBookingsImpl implements _ListingBookings {
   final DateTime? startDate;
   @override
   final String bookingStatus;
-  final List<Task>? _tasks;
   @override
-  List<Task>? get tasks {
-    final value = _tasks;
-    if (value == null) return null;
-    if (_tasks is EqualUnmodifiableListView) return _tasks;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
+  final num? totalPrice;
   @override
-  final String userId;
+  final String? typeOfTrip;
   @override
   @TimeOfDayConverter()
   final TimeOfDay? startTime;
   @override
   @TimeOfDayConverter()
   final TimeOfDay? endTime;
-  final num? totalPrice;
-  @override
-  final String? typeOfTrip;
 
   @override
   String toString() {
-    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, tasks: $tasks, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -629,16 +599,13 @@ class _$ListingBookingsImpl implements _ListingBookings {
                 other.startDate == startDate) &&
             (identical(other.bookingStatus, bookingStatus) ||
                 other.bookingStatus == bookingStatus) &&
-            const DeepCollectionEquality().equals(other._tasks, _tasks) &&
             (identical(other.totalPrice, totalPrice) ||
                 other.totalPrice == totalPrice) &&
             (identical(other.typeOfTrip, typeOfTrip) ||
                 other.typeOfTrip == typeOfTrip) &&
-            (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.startTime, startTime) ||
                 other.startTime == startTime) &&
             (identical(other.endTime, endTime) || other.endTime == endTime));
-                other.typeOfTrip == typeOfTrip));
   }
 
   @JsonKey(ignore: true)
@@ -668,13 +635,10 @@ class _$ListingBookingsImpl implements _ListingBookings {
         selectedTime,
         startDate,
         bookingStatus,
-        const DeepCollectionEquality().hash(_tasks),
         totalPrice,
         typeOfTrip,
-        userId,
         startTime,
         endTime
-        typeOfTrip
       ]);
 
   @JsonKey(ignore: true)
@@ -717,9 +681,10 @@ abstract class _ListingBookings implements ListingBookings {
       final String? selectedTime,
       @TimestampSerializer() final DateTime? startDate,
       required final String bookingStatus,
-      final List<Task>? tasks,
       final num? totalPrice,
-      final String? typeOfTrip}) = _$ListingBookingsImpl;
+      final String? typeOfTrip,
+      @TimeOfDayConverter() final TimeOfDay? startTime,
+      @TimeOfDayConverter() final TimeOfDay? endTime}) = _$ListingBookingsImpl;
 
   factory _ListingBookings.fromJson(Map<String, dynamic> json) =
       _$ListingBookingsImpl.fromJson;
@@ -774,18 +739,15 @@ abstract class _ListingBookings implements ListingBookings {
   @override
   String get bookingStatus;
   @override
-  List<Task>? get tasks;
+  num? get totalPrice;
   @override
-  String get userId;
+  String? get typeOfTrip;
   @override
   @TimeOfDayConverter()
   TimeOfDay? get startTime;
   @override
   @TimeOfDayConverter()
   TimeOfDay? get endTime;
-  num? get totalPrice;
-  @override
-  String? get typeOfTrip;
   @override
   @JsonKey(ignore: true)
   _$$ListingBookingsImplCopyWith<_$ListingBookingsImpl> get copyWith =>

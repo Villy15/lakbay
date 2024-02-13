@@ -39,12 +39,8 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
       startDate:
           const TimestampSerializer().fromJson(json['startDate'] as Timestamp?),
       bookingStatus: json['bookingStatus'] as String,
-      tasks: (json['tasks'] as List<dynamic>?)
-          ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
-          .toList(),
       totalPrice: json['totalPrice'] as num?,
       typeOfTrip: json['typeOfTrip'] as String?,
-      userId: json['userId'] as String,
       startTime: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
           json['startTime'], const TimeOfDayConverter().fromJson),
       endTime: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
@@ -77,10 +73,8 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'selectedTime': instance.selectedTime,
       'startDate': const TimestampSerializer().toJson(instance.startDate),
       'bookingStatus': instance.bookingStatus,
-      'tasks': instance.tasks?.map((e) => e.toJson()).toList(),
       'totalPrice': instance.totalPrice,
       'typeOfTrip': instance.typeOfTrip,
-      'userId': instance.userId,
       'startTime': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
           instance.startTime, const TimeOfDayConverter().toJson),
       'endTime': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
@@ -98,7 +92,6 @@ Json? _$JsonConverterToJson<Json, Value>(
   Json? Function(Value value) toJson,
 ) =>
     value == null ? null : toJson(value);
-    };
 
 _$ExpenseImpl _$$ExpenseImplFromJson(Map<String, dynamic> json) =>
     _$ExpenseImpl(

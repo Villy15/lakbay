@@ -443,10 +443,10 @@ class _TransportationBookingsDetailsState
                       if (nameController.text.isNotEmpty &&
                           costController.text.isNotEmpty) {
                         booking = booking.copyWith(expenses: expenses);
-                        ref
-                            .read(listingControllerProvider.notifier)
-                            .updateBookingExpenses(
-                                context, widget.listing.uid!, booking);
+                        // ref
+                        //     .read(listingControllerProvider.notifier)
+                        //     // .updateBookingExpenses(
+                        //     //     context, widget.listing.uid!, booking);
                       } else {
                         context.pop();
                       }
@@ -464,10 +464,10 @@ class _TransportationBookingsDetailsState
                       if (nameController.text.isNotEmpty &&
                           costController.text.isNotEmpty) {
                         booking = booking.copyWith(expenses: expenses);
-                        ref
-                            .read(listingControllerProvider.notifier)
-                            .updateBookingExpenses(
-                                context, widget.listing.uid!, booking);
+                        // ref
+                        //     .read(listingControllerProvider.notifier)
+                        //     .updateBookingExpenses(
+                        //         context, widget.listing.uid!, booking);
                       }
                     });
                     nameController.clear();
