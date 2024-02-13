@@ -69,9 +69,9 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
           ),
         ] else ...[
           const BottomNavigationBarItem(
-            icon: Icon(Icons.event_available_outlined),
-            activeIcon: Icon(Icons.event_available),
-            label: 'Events',
+            icon: Icon(Icons.travel_explore_outlined),
+            activeIcon: Icon(Icons.travel_explore),
+            label: 'Bookings',
           ),
         ],
 
@@ -85,21 +85,27 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
           ),
         ] else ...[
           const BottomNavigationBarItem(
+            icon: Icon(Icons.event_available_outlined),
+            activeIcon: Icon(Icons.event_available),
+            label: 'Events',
+          ),
+        ],
+
+        // Fourth Nav Bar
+        if (widget.user?.isCoopView ?? false) ...[
+          // Tourism Listings
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard_outlined),
+            activeIcon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
+        ] else ...[
+          const BottomNavigationBarItem(
             icon: Icon(Icons.people_outline),
             activeIcon: Icon(Icons.people),
             label: 'Coops',
           ),
         ],
-
-        // Fifth Nav Bar
-        const BottomNavigationBarItem(
-          icon: Badge(
-              isLabelVisible: true,
-              label: Text('1'),
-              child: Icon(Icons.inbox_outlined)),
-          activeIcon: Icon(Icons.inbox),
-          label: 'Inbox',
-        ),
       ],
     );
   }
@@ -126,18 +132,22 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         if (widget.user?.isCoopView ?? false) {
           context.go('/my_coop/listings/${widget.user?.currentCoop}');
         } else {
-          context.go('/events');
+          context.go('/bookings');
         }
         break;
       case 3:
         if (widget.user?.isCoopView ?? false) {
           context.go('/my_coop/${widget.user?.currentCoop}');
         } else {
-          context.go('/coops');
+          context.go('/events');
         }
         break;
       case 4:
-        context.go('/inbox');
+        if (widget.user?.isCoopView ?? false) {
+          context.go('/my_coop/dashboard/${widget.user?.currentCoop}');
+        } else {
+          context.go('/coops');
+        }
         break;
     }
   }

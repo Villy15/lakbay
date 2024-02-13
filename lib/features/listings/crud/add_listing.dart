@@ -259,7 +259,7 @@ class _AddListingState extends ConsumerState<AddListing> {
           case "Food":
             return Step2Food(coop: widget.coop);
           case "Entertainment":
-            // return Step2Entertainment(coop: widget.coop);
+          // return Step2Entertainment(coop: widget.coop);
         }
         return const Text("No Supporting Details");
       case 3:

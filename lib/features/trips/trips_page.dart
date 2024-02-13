@@ -5,10 +5,8 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
-import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/trips/components/trip_card.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
-import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 
 class TripsPage extends ConsumerStatefulWidget {
@@ -23,6 +21,11 @@ class _TripsPageState extends ConsumerState<TripsPage> {
     context.push(
       '/trips/add',
     );
+  }
+
+  void onTap(BuildContext context, WidgetRef ref, String planId) {
+    // context.push('/market/${listing.category}', extra: listing);
+    context.push('/trips/details/$planId');
   }
 
   @override
@@ -134,9 +137,9 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                 ),
               ),
 
-              ref.watch(getAllListingsProvider).when(
-                    data: (listings) {
-                      return gridPastTrips(listings);
+              ref.watch(readPlansByUserIdProvider(user?.uid ?? '')).when(
+                    data: (plans) {
+                      return gridPastTrips(plans);
                     },
                     error: (error, stackTrace) => ErrorText(
                         error: error.toString(),
@@ -150,7 +153,7 @@ class _TripsPageState extends ConsumerState<TripsPage> {
     );
   }
 
-  Padding gridPastTrips(List<ListingModel> listings) {
+  Padding gridPastTrips(List<PlanModel> plans) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(
@@ -158,12 +161,14 @@ class _TripsPageState extends ConsumerState<TripsPage> {
           crossAxisCount: 2,
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
+          childAspectRatio: 1.5,
+          mainAxisExtent: 200,
         ),
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        itemCount: 2,
+        itemCount: plans.length,
         itemBuilder: (context, index) {
-          final listing = listings[index];
+          final plan = plans[index];
           return Center(
             child: Card(
               clipBehavior: Clip.hardEdge,
@@ -174,24 +179,37 @@ class _TripsPageState extends ConsumerState<TripsPage> {
               ),
               child: InkWell(
                 splashColor: Colors.orange.withAlpha(30),
-                onTap: () => {},
+                onTap: () => onTap(context, ref, plan.uid!),
                 child: SizedBox(
                     width: double.infinity,
                     // height: 290,
                     child: Column(
                       children: [
-                        // Random Image
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                              20), // round the corners of the image
-                          child: Image(
-                            image: NetworkImage(listing.images!.first.url!),
-                            width: double.infinity,
-                            height: 100,
-                            fit: BoxFit.cover,
+                        if (plan.imageUrl! != '') ...[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                20), // round the corners of the image
+                            child: Image(
+                              image: NetworkImage(plan.imageUrl!),
+                              width: double.infinity,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-
+                        ] else ...[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                20), // round the corners of the image
+                            child: const Image(
+                              // Image from root/lib/core/images/plans_stock.jpg
+                              image:
+                                  AssetImage('lib/core/images/plans_stock.jpg'),
+                              width: double.infinity,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
                         // Card Title
                         Align(
                           alignment: Alignment.centerLeft,
@@ -199,7 +217,7 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                             padding:
                                 const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
                             child: Text(
-                              listing.title,
+                              plan.name,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -209,21 +227,7 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                         ),
 
                         // Date Range
-                        const Padding(
-                          padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
-                          // Date should be 18 Feb - 22 Feb
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "1 month ago",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        dateCreated(plan.endDate!),
                       ],
                     )),
               ),
@@ -232,6 +236,40 @@ class _TripsPageState extends ConsumerState<TripsPage> {
         },
       ),
     );
+  }
+
+  Padding dateCreated(DateTime endDate) {
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
+      // Date should be 18 Feb - 22 Feb
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '1 month ago',
+            // timeAgo(endDate),
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String timeAgo(DateTime endDate) {
+    final difference = DateTime.now().difference(endDate);
+
+    if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} minute${difference.inMinutes != 1 ? 's' : ''} ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} hour${difference.inHours != 1 ? 's' : ''} ago';
+    } else if (difference.inDays < 30) {
+      return '${difference.inDays} day${difference.inDays != 1 ? 's' : ''} ago';
+    } else {
+      final months = (difference.inDays / 30).round();
+      return '$months month${months != 1 ? 's' : ''} ago';
+    }
   }
 
   Padding listOngoingTrips(List<PlanModel> plans) {

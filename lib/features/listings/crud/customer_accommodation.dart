@@ -19,7 +19,6 @@ import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
-import 'package:lakbay/models/user_model.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class CustomerAccomodation extends ConsumerStatefulWidget {

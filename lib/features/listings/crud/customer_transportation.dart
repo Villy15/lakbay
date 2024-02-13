@@ -1,11 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
-import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
@@ -344,8 +342,8 @@ class _CustomerTransportationState
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             ListTile(
-                              leading: Icon(Icons.flight),
-                              title: Text('One Way Trip'),
+                              leading: const Icon(Icons.flight),
+                              title: const Text('One Way Trip'),
                               onTap: () {
                                 // Continue with booking a one way trip
                                 Navigator.pop(context, 'One Way Trip');
@@ -1260,7 +1258,10 @@ class _CustomerTransportationState
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
-                                        tasks: [], customerId: '', customerName: '', bookingStatus: '');
+                                        tasks: [],
+                                        customerId: '',
+                                        customerName: '',
+                                        bookingStatus: '');
                                     ref
                                         .read(
                                             listingControllerProvider.notifier)
@@ -1432,7 +1433,10 @@ class _CustomerTransportationState
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
-                                        tasks: [], customerId: '', customerName: '', bookingStatus: '');
+                                        tasks: [],
+                                        customerId: '',
+                                        customerName: '',
+                                        bookingStatus: '');
                                     ref
                                         .read(
                                             listingControllerProvider.notifier)
