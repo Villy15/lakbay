@@ -133,7 +133,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
 
             // Divider
             const Divider(),
-
             ref.watch(getAllListingsProvider).when(
                   data: (listings) {
                     // Sort
