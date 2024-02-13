@@ -344,8 +344,8 @@ class _CustomerTransportationState
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             ListTile(
-                              leading: Icon(Icons.flight),
-                              title: Text('One Way Trip'),
+                              leading: const Icon(Icons.flight),
+                              title: const Text('One Way Trip'),
                               onTap: () {
                                 // Continue with booking a one way trip
                                 Navigator.pop(context, 'One Way Trip');
@@ -1239,6 +1239,8 @@ class _CustomerTransportationState
                                 child: ElevatedButton(
                                   onPressed: () {
                                     ListingBookings booking = ListingBookings(
+                                        listingId: widget.listing.uid!,
+                                        listingTitle: widget.listing.title,
                                         price: transport.price,
                                         roomId: widget.listing.title,
                                         category: "Transport",
@@ -1260,7 +1262,10 @@ class _CustomerTransportationState
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
-                                        tasks: [], customerId: '', customerName: '', bookingStatus: '');
+                                        tasks: [],
+                                        customerId: '',
+                                        customerName: '',
+                                        bookingStatus: '');
                                     ref
                                         .read(
                                             listingControllerProvider.notifier)
@@ -1411,6 +1416,8 @@ class _CustomerTransportationState
                                 child: ElevatedButton(
                                   onPressed: () {
                                     ListingBookings booking = ListingBookings(
+                                        listingId: widget.listing.uid!,
+                                        listingTitle: widget.listing.title,
                                         price: transport.price,
                                         roomId: widget.listing.title,
                                         category: "Transport",
@@ -1432,7 +1439,10 @@ class _CustomerTransportationState
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
-                                        tasks: [], customerId: '', customerName: '', bookingStatus: '');
+                                        tasks: [],
+                                        customerId: '',
+                                        customerName: '',
+                                        bookingStatus: '');
                                     ref
                                         .read(
                                             listingControllerProvider.notifier)

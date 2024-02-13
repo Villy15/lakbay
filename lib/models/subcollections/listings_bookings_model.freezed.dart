@@ -34,6 +34,8 @@ mixin _$ListingBookings {
   List<Task>? get tasks => throw _privateConstructorUsedError;
   String get governmentId => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
+  String get listingId => throw _privateConstructorUsedError;
+  String get listingTitle => throw _privateConstructorUsedError;
   num? get luggage => throw _privateConstructorUsedError;
   String? get id => throw _privateConstructorUsedError;
   bool get needsContributions => throw _privateConstructorUsedError;
@@ -79,6 +81,8 @@ abstract class $ListingBookingsCopyWith<$Res> {
       List<Task>? tasks,
       String governmentId,
       num guests,
+      String listingId,
+      String listingTitle,
       num? luggage,
       String? id,
       bool needsContributions,
@@ -121,6 +125,8 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? tasks = freezed,
     Object? governmentId = null,
     Object? guests = null,
+    Object? listingId = null,
+    Object? listingTitle = null,
     Object? luggage = freezed,
     Object? id = freezed,
     Object? needsContributions = null,
@@ -189,6 +195,14 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
               as num,
+      listingId: null == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String,
+      listingTitle: null == listingTitle
+          ? _value.listingTitle
+          : listingTitle // ignore: cast_nullable_to_non_nullable
+              as String,
       luggage: freezed == luggage
           ? _value.luggage
           : luggage // ignore: cast_nullable_to_non_nullable
@@ -271,6 +285,8 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       List<Task>? tasks,
       String governmentId,
       num guests,
+      String listingId,
+      String listingTitle,
       num? luggage,
       String? id,
       bool needsContributions,
@@ -311,6 +327,8 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? tasks = freezed,
     Object? governmentId = null,
     Object? guests = null,
+    Object? listingId = null,
+    Object? listingTitle = null,
     Object? luggage = freezed,
     Object? id = freezed,
     Object? needsContributions = null,
@@ -379,6 +397,14 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
               as num,
+      listingId: null == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String,
+      listingTitle: null == listingTitle
+          ? _value.listingTitle
+          : listingTitle // ignore: cast_nullable_to_non_nullable
+              as String,
       luggage: freezed == luggage
           ? _value.luggage
           : luggage // ignore: cast_nullable_to_non_nullable
@@ -456,6 +482,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
       final List<Task>? tasks,
       required this.governmentId,
       required this.guests,
+      required this.listingId,
+      required this.listingTitle,
       this.luggage,
       this.id,
       required this.needsContributions,
@@ -520,6 +548,10 @@ class _$ListingBookingsImpl implements _ListingBookings {
   @override
   final num guests;
   @override
+  final String listingId;
+  @override
+  final String listingTitle;
+  @override
   final num? luggage;
   @override
   final String? id;
@@ -554,7 +586,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
   @override
   String toString() {
-    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -583,6 +615,10 @@ class _$ListingBookingsImpl implements _ListingBookings {
             (identical(other.governmentId, governmentId) ||
                 other.governmentId == governmentId) &&
             (identical(other.guests, guests) || other.guests == guests) &&
+            (identical(other.listingId, listingId) ||
+                other.listingId == listingId) &&
+            (identical(other.listingTitle, listingTitle) ||
+                other.listingTitle == listingTitle) &&
             (identical(other.luggage, luggage) || other.luggage == luggage) &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.needsContributions, needsContributions) ||
@@ -625,6 +661,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
         const DeepCollectionEquality().hash(_tasks),
         governmentId,
         guests,
+        listingId,
+        listingTitle,
         luggage,
         id,
         needsContributions,
@@ -671,6 +709,8 @@ abstract class _ListingBookings implements ListingBookings {
       final List<Task>? tasks,
       required final String governmentId,
       required final num guests,
+      required final String listingId,
+      required final String listingTitle,
       final num? luggage,
       final String? id,
       required final bool needsContributions,
@@ -716,6 +756,10 @@ abstract class _ListingBookings implements ListingBookings {
   String get governmentId;
   @override
   num get guests;
+  @override
+  String get listingId;
+  @override
+  String get listingTitle;
   @override
   num? get luggage;
   @override

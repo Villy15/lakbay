@@ -283,6 +283,8 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                             hour: widget.listing.checkOut!.hour,
                             minute: widget.listing.checkOut!.minute);
                         ListingBookings booking = ListingBookings(
+                          listingId: widget.listing.uid!,
+                          listingTitle: widget.listing.title,
                           customerName: ref.read(userProvider)!.name,
                           bookingStatus: "Reserved",
                           price: room.price,
