@@ -9,6 +9,7 @@ part of 'listings_bookings_model.dart';
 _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
         Map<String, dynamic> json) =>
     _$ListingBookingsImpl(
+      amountPaid: json['amountPaid'] as num?,
       customerName: json['customerName'] as String,
       customerPhoneNo: json['customerPhoneNo'] as String,
       category: json['category'] as String,
@@ -44,6 +45,7 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
 Map<String, dynamic> _$$ListingBookingsImplToJson(
         _$ListingBookingsImpl instance) =>
     <String, dynamic>{
+      'amountPaid': instance.amountPaid,
       'customerName': instance.customerName,
       'customerPhoneNo': instance.customerPhoneNo,
       'category': instance.category,

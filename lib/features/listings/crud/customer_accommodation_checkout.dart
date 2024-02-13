@@ -32,11 +32,14 @@ class _CustomerAccomodationCheckoutState
   late DateTime _startDate;
   late DateTime _endDate;
   late num _nights;
+  num vat = 1.12;
   late num _maxGuestCount;
   late ListingBookings updatedBooking;
   PaymentOption _selectedPaymentOption =
       PaymentOption.downpayment; // Default value
-
+  late num vatAmount;
+  late num downpaymentAmount;
+  late num amountDue;
   @override
   void initState() {
     super.initState();
@@ -46,6 +49,10 @@ class _CustomerAccomodationCheckoutState
     _nights = _endDate.difference(_startDate).inDays;
     _maxGuestCount = widget.room.guests;
     updatedBooking = widget.booking;
+    downpaymentAmount =
+        (widget.booking.price * _nights) * widget.listing.downpaymentRate!;
+    vatAmount = downpaymentAmount * (vat - 1);
+    amountDue = vatAmount + downpaymentAmount;
   }
 
   @override
@@ -92,14 +99,18 @@ class _CustomerAccomodationCheckoutState
               // Color
               onPressed: () {
                 String paymentOption;
+                num totalPrice = (updatedBooking.price * _nights) * vat * 1;
+
                 if (_selectedPaymentOption.name == "downpayment") {
                   paymentOption = "Downpayment";
                 } else {
                   paymentOption = "Full Payment";
                 }
                 setState(() {
-                  updatedBooking =
-                      updatedBooking.copyWith(paymentOption: paymentOption);
+                  updatedBooking = updatedBooking.copyWith(
+                      paymentOption: paymentOption,
+                      totalPrice: totalPrice,
+                      amountPaid: amountDue);
                 });
                 ref
                     .read(listingControllerProvider.notifier)
@@ -175,7 +186,7 @@ class _CustomerAccomodationCheckoutState
         // Handle tap
       },
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -200,15 +211,10 @@ class _CustomerAccomodationCheckoutState
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(Icons.star,
-                            color: Theme.of(context).colorScheme.primary),
-                        Text(
-                            '${listing.rating?.toStringAsFixed(2)} (5 reviews)'),
-                      ],
-                    ),
+                    Text(
+                      "${widget.room.bedrooms} Bedroom",
+                      style: const TextStyle(fontSize: 20),
+                    )
                   ],
                 ),
               ),
@@ -348,11 +354,15 @@ class _CustomerAccomodationCheckoutState
                 onChanged: (PaymentOption? value) {
                   setState(() {
                     _selectedPaymentOption = value!;
+                    downpaymentAmount = (widget.booking.price * _nights) *
+                        widget.listing.downpaymentRate!;
+                    vatAmount = (downpaymentAmount) * (vat - 1);
+                    amountDue = vatAmount + downpaymentAmount;
                   });
                 },
               ),
               if (_selectedPaymentOption.name == "downpayment")
-                paymentOptionDetails(),
+                paymentOptionDetails(vatAmount, downpaymentAmount, amountDue),
 
               RadioListTile<PaymentOption>(
                 title: const Text('Full Payment'),
@@ -361,11 +371,13 @@ class _CustomerAccomodationCheckoutState
                 onChanged: (PaymentOption? value) {
                   setState(() {
                     _selectedPaymentOption = value!;
+                    vatAmount = (widget.booking.price * _nights) * (vat - 1);
+                    amountDue = (widget.booking.price * _nights) + vatAmount;
                   });
                 },
               ),
               if (_selectedPaymentOption.name == "fullPayment")
-                paymentOptionDetails(),
+                paymentOptionDetails(vatAmount, null, amountDue),
             ],
           ),
         ),
@@ -373,7 +385,8 @@ class _CustomerAccomodationCheckoutState
     );
   }
 
-  Widget paymentOptionDetails() {
+  Widget paymentOptionDetails(
+      num vatAmount, num? downpaymentAmount, num amountDue) {
     bool paymentMoreInfo = false;
     return StatefulBuilder(builder: (context, setMoreInfo) {
       return Column(children: [
@@ -398,8 +411,7 @@ class _CustomerAccomodationCheckoutState
           children: [
             const Text('Total',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Text(
-                '₱${((widget.booking.price * _nights) * 1.12 * (_selectedPaymentOption == PaymentOption.fullPayment ? 1 : widget.listing.downpaymentRate!)).toStringAsFixed(2)}',
+            Text('₱${amountDue.toStringAsFixed(2)}',
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ],
@@ -411,8 +423,7 @@ class _CustomerAccomodationCheckoutState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text("VAT (12%): "),
-                  Text(
-                      "₱${(widget.booking.price * _nights) * 0.12 * (_selectedPaymentOption == PaymentOption.fullPayment ? 1 : widget.listing.downpaymentRate!)}"),
+                  Text("₱${vatAmount.toStringAsFixed(2)}"),
                 ],
               ),
               if (_selectedPaymentOption == PaymentOption.downpayment)
@@ -421,8 +432,7 @@ class _CustomerAccomodationCheckoutState
                   children: [
                     Text(
                         "Downpayment Rate (${(widget.listing.downpaymentRate! * 100).toStringAsFixed(0)}%):"),
-                    Text(
-                        "₱${(widget.booking.price * _nights) * widget.listing.downpaymentRate!}"),
+                    Text("₱${downpaymentAmount?.toStringAsFixed(2)}"),
                   ],
                 ),
             ]),

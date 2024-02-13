@@ -8,6 +8,7 @@ part 'listings_bookings_model.g.dart';
 @freezed
 class ListingBookings with _$ListingBookings {
   factory ListingBookings({
+    num? amountPaid,
     required String customerName,
     required String customerPhoneNo,
     required String category,

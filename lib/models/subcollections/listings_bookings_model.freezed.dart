@@ -20,6 +20,7 @@ ListingBookings _$ListingBookingsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ListingBookings {
+  num? get amountPaid => throw _privateConstructorUsedError;
   String get customerName => throw _privateConstructorUsedError;
   String get customerPhoneNo => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
@@ -60,7 +61,8 @@ abstract class $ListingBookingsCopyWith<$Res> {
       _$ListingBookingsCopyWithImpl<$Res, ListingBookings>;
   @useResult
   $Res call(
-      {String customerName,
+      {num? amountPaid,
+      String customerName,
       String customerPhoneNo,
       String category,
       String email,
@@ -98,6 +100,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? amountPaid = freezed,
     Object? customerName = null,
     Object? customerPhoneNo = null,
     Object? category = null,
@@ -123,6 +126,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? userId = null,
   }) {
     return _then(_value.copyWith(
+      amountPaid: freezed == amountPaid
+          ? _value.amountPaid
+          : amountPaid // ignore: cast_nullable_to_non_nullable
+              as num?,
       customerName: null == customerName
           ? _value.customerName
           : customerName // ignore: cast_nullable_to_non_nullable
@@ -228,7 +235,8 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String customerName,
+      {num? amountPaid,
+      String customerName,
       String customerPhoneNo,
       String category,
       String email,
@@ -264,6 +272,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? amountPaid = freezed,
     Object? customerName = null,
     Object? customerPhoneNo = null,
     Object? category = null,
@@ -289,6 +298,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? userId = null,
   }) {
     return _then(_$ListingBookingsImpl(
+      amountPaid: freezed == amountPaid
+          ? _value.amountPaid
+          : amountPaid // ignore: cast_nullable_to_non_nullable
+              as num?,
       customerName: null == customerName
           ? _value.customerName
           : customerName // ignore: cast_nullable_to_non_nullable
@@ -389,7 +402,8 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ListingBookingsImpl implements _ListingBookings {
   _$ListingBookingsImpl(
-      {required this.customerName,
+      {this.amountPaid,
+      required this.customerName,
       required this.customerPhoneNo,
       required this.category,
       required this.email,
@@ -418,6 +432,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
   factory _$ListingBookingsImpl.fromJson(Map<String, dynamic> json) =>
       _$$ListingBookingsImplFromJson(json);
 
+  @override
+  final num? amountPaid;
   @override
   final String customerName;
   @override
@@ -486,7 +502,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
   @override
   String toString() {
-    return 'ListingBookings(customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, tasks: $tasks, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, userId: $userId)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, tasks: $tasks, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, userId: $userId)';
   }
 
   @override
@@ -494,6 +510,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ListingBookingsImpl &&
+            (identical(other.amountPaid, amountPaid) ||
+                other.amountPaid == amountPaid) &&
             (identical(other.customerName, customerName) ||
                 other.customerName == customerName) &&
             (identical(other.customerPhoneNo, customerPhoneNo) ||
@@ -537,6 +555,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
+        amountPaid,
         customerName,
         customerPhoneNo,
         category,
@@ -579,7 +598,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
 abstract class _ListingBookings implements ListingBookings {
   factory _ListingBookings(
-      {required final String customerName,
+      {final num? amountPaid,
+      required final String customerName,
       required final String customerPhoneNo,
       required final String category,
       required final String email,
@@ -606,6 +626,8 @@ abstract class _ListingBookings implements ListingBookings {
   factory _ListingBookings.fromJson(Map<String, dynamic> json) =
       _$ListingBookingsImpl.fromJson;
 
+  @override
+  num? get amountPaid;
   @override
   String get customerName;
   @override
