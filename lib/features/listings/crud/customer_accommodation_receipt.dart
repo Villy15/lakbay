@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -75,14 +76,16 @@ class CustomerAccomodationReceipt extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text("Check In:"),
-                Text(" ${booking.startDate}"),
+                Text(
+                    " ${DateFormat('MMMM dd, yyyy HH:mm').format(booking.startDate!)}"),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text("Check Out:"),
-                Text(" ${booking.endDate}"),
+                Text(
+                    " ${DateFormat('MMMM dd, yyyy HH:mm').format(booking.endDate!)}"),
               ],
             ),
             Row(

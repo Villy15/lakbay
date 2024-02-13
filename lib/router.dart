@@ -44,6 +44,7 @@ import 'package:lakbay/features/listings/crud/add_entertainment.dart';
 import 'package:lakbay/features/listings/crud/add_food.dart';
 import 'package:lakbay/features/listings/crud/add_tours.dart';
 import 'package:lakbay/features/listings/crud/add_transport.dart';
+import 'package:lakbay/features/listings/crud/category_page_controller.dart';
 import 'package:lakbay/features/listings/crud/choose_category.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
@@ -456,32 +457,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     (context, pathParameters, extra) {
                       ListingModel listing = extra as ListingModel;
 
-                      switch (pathParameters['category']) {
-                        case 'Accommodation':
-                          return CustomerAccomodation(
-                            listing: listing,
-                          );
-                        case 'Transport':
-                          return CustomerTransportation(
-                            listing: listing,
-                          );
-                        case 'Food':
-                          return CustomerFood(
-                            listing: listing,
-                          );
-                        case 'Entertainment':
-                          return CustomerEntertainment(
-                            listing: listing,
-                          );
-                        // case 'Touring':
-                        //   return SelectedTouringPage(
-                        //     listing: listing,
-                        //   );
-                        default:
-                          return CustomerAccomodation(
-                            listing: listing,
-                          );
-                      }
+                      return CategoryPageController(listing: listing);
                     },
                     subRoutes: [
                       // path to receipt after booking also depends on the category

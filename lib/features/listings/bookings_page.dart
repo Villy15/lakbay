@@ -158,4 +158,8 @@ class _BookingsPageState extends ConsumerState<BookingsPage> {
           return Text(bookings[index].id!);
         });
   }
+
+  Widget accommodationBookingCard() {
+    return const Card();
+  }
 }

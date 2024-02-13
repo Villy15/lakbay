@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/theme/theme.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -40,6 +41,12 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
         );
   }
 
+  void viewHome(WidgetRef ref) {
+    context.pop();
+    ref.read(navBarVisibilityProvider.notifier).show();
+    context.go('/customer_home');
+  }
+
   void viewBookings(WidgetRef ref) {
     context.pop();
     context.go('/bookings');
@@ -65,224 +72,239 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.background,
       child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                CircleAvatar(
-                  radius: 70.0,
-                  backgroundImage: widget.user?.profilePic != null &&
-                          widget.user?.profilePic != ''
-                      ? NetworkImage(widget.user!.profilePic)
-                      : null,
-                  backgroundColor: Theme.of(context).colorScheme.onBackground,
-                  child: widget.user?.profilePic == null ||
-                          widget.user?.profilePic == ''
-                      ? Text(
-                          widget.user?.name[0].toUpperCase() ?? 'L',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.background,
-                            fontSize: 40,
-                          ),
-                        )
-                      : null,
-                ),
-                const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () => {
-                    // Show modal bottom sheet
-                    modalBottomSheet(context)
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0),
-                        child: Text(
-                          widget.user!.name,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  CircleAvatar(
+                    radius: 70.0,
+                    backgroundImage: widget.user?.profilePic != null &&
+                            widget.user?.profilePic != ''
+                        ? NetworkImage(widget.user!.profilePic)
+                        : null,
+                    backgroundColor: Theme.of(context).colorScheme.onBackground,
+                    child: widget.user?.profilePic == null ||
+                            widget.user?.profilePic == ''
+                        ? Text(
+                            widget.user?.name[0].toUpperCase() ?? 'L',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.background,
+                              fontSize: 40,
+                            ),
+                          )
+                        : null,
+                  ),
+                  const SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: () => {
+                      // Show modal bottom sheet
+                      modalBottomSheet(context)
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0),
+                          child: Text(
+                            widget.user!.name,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                      ),
-                      // Arrow down
-                      const Icon(Icons.arrow_drop_down),
-                    ],
+                        // Arrow down
+                        const Icon(Icons.arrow_drop_down),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                // Switch View Button show if the user is a member of a cooperative
-                widget.user!.cooperativesJoined?.isNotEmpty ?? false
-                    ? switchViewButton(
-                        context,
-                        widget.user!.isCoopView ?? false,
-                      )
-                    : const SizedBox.shrink(),
-                const SizedBox(height: 10),
-                // Current cooperative dropdown
-                widget.user!.isCoopView ?? false
-                    ? ref
-                        .watch(getCooperativeProvider(
-                            widget.user?.currentCoop ?? ''))
-                        .maybeWhen(
-                            data: (data) => GestureDetector(
-                                  onTap: () => {
-                                    // Show modal bottom sheet
-                                    modalBottomSheetCooperative(context)
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      // Icon of cooperative
-                                      const Padding(
-                                        padding: EdgeInsets.only(left: 16.0),
-                                        child: Icon(Icons.group_outlined,
-                                            size: 20),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 16.0, right: 7.0),
-                                        child: Text(
-                                          data.name,
-                                          // Make it so that when the text is too long, it will be replaced with ellipsis
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
+                  const SizedBox(height: 10),
+                  // Switch View Button show if the user is a member of a cooperative
+                  widget.user!.cooperativesJoined?.isNotEmpty ?? false
+                      ? switchViewButton(
+                          context,
+                          widget.user!.isCoopView ?? false,
+                        )
+                      : const SizedBox.shrink(),
+                  const SizedBox(height: 10),
+                  // Current cooperative dropdown
+                  widget.user!.isCoopView ?? false
+                      ? ref
+                          .watch(getCooperativeProvider(
+                              widget.user?.currentCoop ?? ''))
+                          .maybeWhen(
+                              data: (data) => GestureDetector(
+                                    onTap: () => {
+                                      // Show modal bottom sheet
+                                      modalBottomSheetCooperative(context)
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        // Icon of cooperative
+                                        const Padding(
+                                          padding: EdgeInsets.only(left: 16.0),
+                                          child: Icon(Icons.group_outlined,
+                                              size: 20),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 16.0, right: 7.0),
+                                          child: Text(
+                                            data.name,
+                                            // Make it so that when the text is too long, it will be replaced with ellipsis
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      // Arrow down
-                                      const Icon(Icons.arrow_drop_down),
-                                    ],
-                                  ),
-                                ),
-                            orElse: () => const SizedBox.shrink())
-                    : const SizedBox.shrink(),
-                // Display user's role
-                widget.user!.isCoopView ?? false
-                    ? Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                        child: Row(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 16.0),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.person_outline, size: 20),
-                                  // Text Role:
-                                  SizedBox(width: 10),
-                                  Text(
-                                    'Role: ',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
+                                        // Arrow down
+                                        const Icon(Icons.arrow_drop_down),
+                                      ],
                                     ),
                                   ),
-                                ],
+                              orElse: () => const SizedBox.shrink())
+                      : const SizedBox.shrink(),
+                  // Display user's role
+                  widget.user!.isCoopView ?? false
+                      ? Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          child: Row(
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(left: 16.0),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.person_outline, size: 20),
+                                    // Text Role:
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Role: ',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Text(
-                              widget.user!.role,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                              Text(
+                                widget.user!.role,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : const SizedBox.shrink(),
+                            ],
+                          ),
+                        )
+                      : const SizedBox.shrink(),
 
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(28, 8, 28, 0),
-                  child: Divider(),
-                ),
-                ListTile(
-                  title: const Text('My Profile'),
-                  leading: const Icon(Icons.person),
-                  onTap: () => {
-                    widget.user!.isCoopView ?? false
-                        ? viewMyProfileCoop()
-                        : viewMyProfileCustomer()
-                  },
-                ),
-
-                widget.user!.isCoopView ?? false
-                    ? const SizedBox.shrink()
-                    : ListTile(
-                        title: const Text('Bookings'),
-                        leading: const Icon(Icons.book),
-                        onTap: () => {viewBookings(ref)},
-                      ),
-
-                // View Current Cooperative
-                widget.user!.isCoopView ?? false
-                    ? const SizedBox.shrink()
-                    : ListTile(
-                        title: const Text('View Current Cooperative'),
-                        leading: const Icon(Icons.group),
-                        onTap: () => {viewCurrentCooperative(ref)},
-                      ),
-
-                widget.user!.isCoopView ?? false
-                    ? const SizedBox.shrink()
-                    : ListTile(
-                        title: const Text('Register a Cooperative'),
-                        leading: const Icon(Icons.group_add),
-                        onTap: () => registerCooperative(ref),
-                      ),
-                // Add Cooperative Dashboard
-                widget.user!.isCoopView ?? false
-                    ? ListTile(
-                        title: const Text('Cooperative Dashboard'),
-                        leading: const Icon(Icons.dashboard),
-                        onTap: () => {
-                          context.pop(),
-                          context.push(
-                              '/my_coop/dashboard/${widget.user?.currentCoop}'),
-                        },
-                      )
-                    : const SizedBox.shrink(),
-
-                // Wiki Page
-
-                ListTile(
-                  title: const Text('Wiki'),
-                  leading: const Icon(Icons.book_outlined),
-                  onTap: () => {
-                    context.pop(),
-                    context.push('/wiki'),
-                  },
-                )
-              ],
-            ),
-            Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(28, 0, 28, 0),
-                  child: Divider(),
-                ),
-                // Add logout button
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
-                  child: ListTile(
-                    title: const Text('Settings'),
-                    leading: const Icon(Icons.settings),
-                    trailing: IconButton(
-                        onPressed: () => toggleTheme(ref),
-                        icon: Icon(
-                            Theme.of(context).brightness == Brightness.light
-                                ? Icons.dark_mode_outlined
-                                : Icons.dark_mode_rounded)),
-                    onTap: () => logout(),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(28, 8, 28, 0),
+                    child: Divider(),
                   ),
-                ),
-              ],
-            )
-          ],
+
+                  //Go to customer home
+                  widget.user!.isCoopView ?? false
+                      ? const SizedBox.shrink()
+                      : ListTile(
+                          title: const Text('Home'),
+                          leading: const Icon(Icons.home),
+                          onTap: () => {viewHome(ref)},
+                        ),
+
+                  // View customer profile
+                  ListTile(
+                    title: const Text('My Profile'),
+                    leading: const Icon(Icons.person),
+                    onTap: () => {
+                      widget.user!.isCoopView ?? false
+                          ? viewMyProfileCoop()
+                          : viewMyProfileCustomer()
+                    },
+                  ),
+
+                  //View customer bookings
+                  widget.user!.isCoopView ?? false
+                      ? const SizedBox.shrink()
+                      : ListTile(
+                          title: const Text('Bookings'),
+                          leading: const Icon(Icons.book),
+                          onTap: () => {viewBookings(ref)},
+                        ),
+
+                  // View Current Cooperative
+                  widget.user!.isCoopView ?? false
+                      ? const SizedBox.shrink()
+                      : ListTile(
+                          title: const Text('View Current Cooperative'),
+                          leading: const Icon(Icons.group),
+                          onTap: () => {viewCurrentCooperative(ref)},
+                        ),
+
+                  widget.user!.isCoopView ?? false
+                      ? const SizedBox.shrink()
+                      : ListTile(
+                          title: const Text('Register a Cooperative'),
+                          leading: const Icon(Icons.group_add),
+                          onTap: () => registerCooperative(ref),
+                        ),
+                  // Add Cooperative Dashboard
+                  widget.user!.isCoopView ?? false
+                      ? ListTile(
+                          title: const Text('Cooperative Dashboard'),
+                          leading: const Icon(Icons.dashboard),
+                          onTap: () => {
+                            context.pop(),
+                            context.push(
+                                '/my_coop/dashboard/${widget.user?.currentCoop}'),
+                          },
+                        )
+                      : const SizedBox.shrink(),
+
+                  // Wiki Page
+
+                  ListTile(
+                    title: const Text('Wiki'),
+                    leading: const Icon(Icons.book_outlined),
+                    onTap: () => {
+                      context.pop(),
+                      context.push('/wiki'),
+                    },
+                  )
+                ],
+              ),
+              Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(28, 0, 28, 0),
+                    child: Divider(),
+                  ),
+                  // Add logout button
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
+                    child: ListTile(
+                      title: const Text('Settings'),
+                      leading: const Icon(Icons.settings),
+                      trailing: IconButton(
+                          onPressed: () => toggleTheme(ref),
+                          icon: Icon(
+                              Theme.of(context).brightness == Brightness.light
+                                  ? Icons.dark_mode_outlined
+                                  : Icons.dark_mode_rounded)),
+                      onTap: () => logout(),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
