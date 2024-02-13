@@ -92,3 +92,17 @@ class CurrentPlanIdProvider extends StateNotifier<String?> {
     state = id;
   }
 }
+
+// Current number of guests of plan
+final currentPlanGuestsProvider =
+    StateNotifierProvider<CurrentPlanGuests, num?>(
+  (ref) => CurrentPlanGuests(),
+);
+
+class CurrentPlanGuests extends StateNotifier<num?> {
+  CurrentPlanGuests() : super(null);
+
+  void setCurrentGuests(num guests) {
+    state = guests;
+  }
+}

@@ -308,7 +308,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                             context: context,
                             builder: (context) {
                               return Dialog.fullscreen(
-                                  child: CustomerAccomodationCheckout(
+                                  child: CustomerAccommodationCheckout(
                                       listing: widget.listing,
                                       room: room,
                                       booking: booking));
