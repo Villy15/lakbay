@@ -123,7 +123,12 @@ class FoodService with _$FoodService {
   factory FoodService(
       {required String tableId,
       required num guests,
-      required bool isReserved}) = _FoodService;
+      required bool available,
+      required List<ListingImages> tableImgs,
+      required List<bool> workingDays,
+      @TimeOfDayConverter() required TimeOfDay startTime,
+      @TimeOfDayConverter() required TimeOfDay endTime,
+      }) = _FoodService;
 
   factory FoodService.fromJson(Map<String, dynamic> json) =>
       _$FoodServiceFromJson(json);

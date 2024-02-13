@@ -2116,7 +2116,13 @@ FoodService _$FoodServiceFromJson(Map<String, dynamic> json) {
 mixin _$FoodService {
   String get tableId => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
-  bool get isReserved => throw _privateConstructorUsedError;
+  bool get available => throw _privateConstructorUsedError;
+  List<ListingImages> get tableImgs => throw _privateConstructorUsedError;
+  List<bool> get workingDays => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay get startTime => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay get endTime => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -2130,7 +2136,14 @@ abstract class $FoodServiceCopyWith<$Res> {
           FoodService value, $Res Function(FoodService) then) =
       _$FoodServiceCopyWithImpl<$Res, FoodService>;
   @useResult
-  $Res call({String tableId, num guests, bool isReserved});
+  $Res call(
+      {String tableId,
+      num guests,
+      bool available,
+      List<ListingImages> tableImgs,
+      List<bool> workingDays,
+      @TimeOfDayConverter() TimeOfDay startTime,
+      @TimeOfDayConverter() TimeOfDay endTime});
 }
 
 /// @nodoc
@@ -2148,7 +2161,11 @@ class _$FoodServiceCopyWithImpl<$Res, $Val extends FoodService>
   $Res call({
     Object? tableId = null,
     Object? guests = null,
-    Object? isReserved = null,
+    Object? available = null,
+    Object? tableImgs = null,
+    Object? workingDays = null,
+    Object? startTime = null,
+    Object? endTime = null,
   }) {
     return _then(_value.copyWith(
       tableId: null == tableId
@@ -2159,10 +2176,26 @@ class _$FoodServiceCopyWithImpl<$Res, $Val extends FoodService>
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
               as num,
-      isReserved: null == isReserved
-          ? _value.isReserved
-          : isReserved // ignore: cast_nullable_to_non_nullable
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
               as bool,
+      tableImgs: null == tableImgs
+          ? _value.tableImgs
+          : tableImgs // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>,
+      workingDays: null == workingDays
+          ? _value.workingDays
+          : workingDays // ignore: cast_nullable_to_non_nullable
+              as List<bool>,
+      startTime: null == startTime
+          ? _value.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay,
+      endTime: null == endTime
+          ? _value.endTime
+          : endTime // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay,
     ) as $Val);
   }
 }
@@ -2175,7 +2208,14 @@ abstract class _$$FoodServiceImplCopyWith<$Res>
       __$$FoodServiceImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String tableId, num guests, bool isReserved});
+  $Res call(
+      {String tableId,
+      num guests,
+      bool available,
+      List<ListingImages> tableImgs,
+      List<bool> workingDays,
+      @TimeOfDayConverter() TimeOfDay startTime,
+      @TimeOfDayConverter() TimeOfDay endTime});
 }
 
 /// @nodoc
@@ -2191,7 +2231,11 @@ class __$$FoodServiceImplCopyWithImpl<$Res>
   $Res call({
     Object? tableId = null,
     Object? guests = null,
-    Object? isReserved = null,
+    Object? available = null,
+    Object? tableImgs = null,
+    Object? workingDays = null,
+    Object? startTime = null,
+    Object? endTime = null,
   }) {
     return _then(_$FoodServiceImpl(
       tableId: null == tableId
@@ -2202,10 +2246,26 @@ class __$$FoodServiceImplCopyWithImpl<$Res>
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
               as num,
-      isReserved: null == isReserved
-          ? _value.isReserved
-          : isReserved // ignore: cast_nullable_to_non_nullable
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
               as bool,
+      tableImgs: null == tableImgs
+          ? _value._tableImgs
+          : tableImgs // ignore: cast_nullable_to_non_nullable
+              as List<ListingImages>,
+      workingDays: null == workingDays
+          ? _value._workingDays
+          : workingDays // ignore: cast_nullable_to_non_nullable
+              as List<bool>,
+      startTime: null == startTime
+          ? _value.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay,
+      endTime: null == endTime
+          ? _value.endTime
+          : endTime // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay,
     ));
   }
 }
@@ -2214,7 +2274,15 @@ class __$$FoodServiceImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$FoodServiceImpl implements _FoodService {
   _$FoodServiceImpl(
-      {required this.tableId, required this.guests, required this.isReserved});
+      {required this.tableId,
+      required this.guests,
+      required this.available,
+      required final List<ListingImages> tableImgs,
+      required final List<bool> workingDays,
+      @TimeOfDayConverter() required this.startTime,
+      @TimeOfDayConverter() required this.endTime})
+      : _tableImgs = tableImgs,
+        _workingDays = workingDays;
 
   factory _$FoodServiceImpl.fromJson(Map<String, dynamic> json) =>
       _$$FoodServiceImplFromJson(json);
@@ -2224,11 +2292,33 @@ class _$FoodServiceImpl implements _FoodService {
   @override
   final num guests;
   @override
-  final bool isReserved;
+  final bool available;
+  final List<ListingImages> _tableImgs;
+  @override
+  List<ListingImages> get tableImgs {
+    if (_tableImgs is EqualUnmodifiableListView) return _tableImgs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_tableImgs);
+  }
+
+  final List<bool> _workingDays;
+  @override
+  List<bool> get workingDays {
+    if (_workingDays is EqualUnmodifiableListView) return _workingDays;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_workingDays);
+  }
+
+  @override
+  @TimeOfDayConverter()
+  final TimeOfDay startTime;
+  @override
+  @TimeOfDayConverter()
+  final TimeOfDay endTime;
 
   @override
   String toString() {
-    return 'FoodService(tableId: $tableId, guests: $guests, isReserved: $isReserved)';
+    return 'FoodService(tableId: $tableId, guests: $guests, available: $available, tableImgs: $tableImgs, workingDays: $workingDays, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -2238,13 +2328,28 @@ class _$FoodServiceImpl implements _FoodService {
             other is _$FoodServiceImpl &&
             (identical(other.tableId, tableId) || other.tableId == tableId) &&
             (identical(other.guests, guests) || other.guests == guests) &&
-            (identical(other.isReserved, isReserved) ||
-                other.isReserved == isReserved));
+            (identical(other.available, available) ||
+                other.available == available) &&
+            const DeepCollectionEquality()
+                .equals(other._tableImgs, _tableImgs) &&
+            const DeepCollectionEquality()
+                .equals(other._workingDays, _workingDays) &&
+            (identical(other.startTime, startTime) ||
+                other.startTime == startTime) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, tableId, guests, isReserved);
+  int get hashCode => Object.hash(
+      runtimeType,
+      tableId,
+      guests,
+      available,
+      const DeepCollectionEquality().hash(_tableImgs),
+      const DeepCollectionEquality().hash(_workingDays),
+      startTime,
+      endTime);
 
   @JsonKey(ignore: true)
   @override
@@ -2262,9 +2367,14 @@ class _$FoodServiceImpl implements _FoodService {
 
 abstract class _FoodService implements FoodService {
   factory _FoodService(
-      {required final String tableId,
-      required final num guests,
-      required final bool isReserved}) = _$FoodServiceImpl;
+          {required final String tableId,
+          required final num guests,
+          required final bool available,
+          required final List<ListingImages> tableImgs,
+          required final List<bool> workingDays,
+          @TimeOfDayConverter() required final TimeOfDay startTime,
+          @TimeOfDayConverter() required final TimeOfDay endTime}) =
+      _$FoodServiceImpl;
 
   factory _FoodService.fromJson(Map<String, dynamic> json) =
       _$FoodServiceImpl.fromJson;
@@ -2274,7 +2384,17 @@ abstract class _FoodService implements FoodService {
   @override
   num get guests;
   @override
-  bool get isReserved;
+  bool get available;
+  @override
+  List<ListingImages> get tableImgs;
+  @override
+  List<bool> get workingDays;
+  @override
+  @TimeOfDayConverter()
+  TimeOfDay get startTime;
+  @override
+  @TimeOfDayConverter()
+  TimeOfDay get endTime;
   @override
   @JsonKey(ignore: true)
   _$$FoodServiceImplCopyWith<_$FoodServiceImpl> get copyWith =>

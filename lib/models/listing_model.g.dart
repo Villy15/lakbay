@@ -212,14 +212,27 @@ _$FoodServiceImpl _$$FoodServiceImplFromJson(Map<String, dynamic> json) =>
     _$FoodServiceImpl(
       tableId: json['tableId'] as String,
       guests: json['guests'] as num,
-      isReserved: json['isReserved'] as bool,
+      available: json['available'] as bool,
+      tableImgs: (json['tableImgs'] as List<dynamic>)
+          .map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      workingDays:
+          (json['workingDays'] as List<dynamic>).map((e) => e as bool).toList(),
+      startTime: const TimeOfDayConverter()
+          .fromJson(json['startTime'] as Map<String, dynamic>),
+      endTime: const TimeOfDayConverter()
+          .fromJson(json['endTime'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$FoodServiceImplToJson(_$FoodServiceImpl instance) =>
     <String, dynamic>{
       'tableId': instance.tableId,
       'guests': instance.guests,
-      'isReserved': instance.isReserved,
+      'available': instance.available,
+      'tableImgs': instance.tableImgs.map((e) => e.toJson()).toList(),
+      'workingDays': instance.workingDays,
+      'startTime': const TimeOfDayConverter().toJson(instance.startTime),
+      'endTime': const TimeOfDayConverter().toJson(instance.endTime),
     };
 
 _$EntertainmentServiceImpl _$$EntertainmentServiceImplFromJson(

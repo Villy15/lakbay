@@ -31,8 +31,10 @@ mixin _$ListingBookings {
   @TimestampSerializer()
   DateTime? get endDate => throw _privateConstructorUsedError;
   List<Expense>? get expenses => throw _privateConstructorUsedError;
+  List<Task>? get tasks => throw _privateConstructorUsedError;
   String get governmentId => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
+  num? get luggage => throw _privateConstructorUsedError;
   String? get id => throw _privateConstructorUsedError;
   bool get needsContributions => throw _privateConstructorUsedError;
   String? get paymentOption => throw _privateConstructorUsedError;
@@ -44,9 +46,12 @@ mixin _$ListingBookings {
   @TimestampSerializer()
   DateTime? get startDate => throw _privateConstructorUsedError;
   String get bookingStatus => throw _privateConstructorUsedError;
-  List<Task>? get tasks => throw _privateConstructorUsedError;
   num? get totalPrice => throw _privateConstructorUsedError;
   String? get typeOfTrip => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay? get startTime => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay? get endTime => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -71,8 +76,10 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String? emergencyContactNo,
       @TimestampSerializer() DateTime? endDate,
       List<Expense>? expenses,
+      List<Task>? tasks,
       String governmentId,
       num guests,
+      num? luggage,
       String? id,
       bool needsContributions,
       String? paymentOption,
@@ -82,9 +89,10 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String? selectedTime,
       @TimestampSerializer() DateTime? startDate,
       String bookingStatus,
-      List<Task>? tasks,
       num? totalPrice,
-      String? typeOfTrip});
+      String? typeOfTrip,
+      @TimeOfDayConverter() TimeOfDay? startTime,
+      @TimeOfDayConverter() TimeOfDay? endTime});
 }
 
 /// @nodoc
@@ -110,8 +118,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? emergencyContactNo = freezed,
     Object? endDate = freezed,
     Object? expenses = freezed,
+    Object? tasks = freezed,
     Object? governmentId = null,
     Object? guests = null,
+    Object? luggage = freezed,
     Object? id = freezed,
     Object? needsContributions = null,
     Object? paymentOption = freezed,
@@ -121,9 +131,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? selectedTime = freezed,
     Object? startDate = freezed,
     Object? bookingStatus = null,
-    Object? tasks = freezed,
     Object? totalPrice = freezed,
     Object? typeOfTrip = freezed,
+    Object? startTime = freezed,
+    Object? endTime = freezed,
   }) {
     return _then(_value.copyWith(
       amountPaid: freezed == amountPaid
@@ -166,6 +177,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.expenses
           : expenses // ignore: cast_nullable_to_non_nullable
               as List<Expense>?,
+      tasks: freezed == tasks
+          ? _value.tasks
+          : tasks // ignore: cast_nullable_to_non_nullable
+              as List<Task>?,
       governmentId: null == governmentId
           ? _value.governmentId
           : governmentId // ignore: cast_nullable_to_non_nullable
@@ -174,6 +189,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
               as num,
+      luggage: freezed == luggage
+          ? _value.luggage
+          : luggage // ignore: cast_nullable_to_non_nullable
+              as num?,
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -210,10 +229,6 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.bookingStatus
           : bookingStatus // ignore: cast_nullable_to_non_nullable
               as String,
-      tasks: freezed == tasks
-          ? _value.tasks
-          : tasks // ignore: cast_nullable_to_non_nullable
-              as List<Task>?,
       totalPrice: freezed == totalPrice
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
@@ -222,6 +237,14 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
               as String?,
+      startTime: freezed == startTime
+          ? _value.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay?,
+      endTime: freezed == endTime
+          ? _value.endTime
+          : endTime // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay?,
     ) as $Val);
   }
 }
@@ -245,8 +268,10 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String? emergencyContactNo,
       @TimestampSerializer() DateTime? endDate,
       List<Expense>? expenses,
+      List<Task>? tasks,
       String governmentId,
       num guests,
+      num? luggage,
       String? id,
       bool needsContributions,
       String? paymentOption,
@@ -256,9 +281,10 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String? selectedTime,
       @TimestampSerializer() DateTime? startDate,
       String bookingStatus,
-      List<Task>? tasks,
       num? totalPrice,
-      String? typeOfTrip});
+      String? typeOfTrip,
+      @TimeOfDayConverter() TimeOfDay? startTime,
+      @TimeOfDayConverter() TimeOfDay? endTime});
 }
 
 /// @nodoc
@@ -282,8 +308,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? emergencyContactNo = freezed,
     Object? endDate = freezed,
     Object? expenses = freezed,
+    Object? tasks = freezed,
     Object? governmentId = null,
     Object? guests = null,
+    Object? luggage = freezed,
     Object? id = freezed,
     Object? needsContributions = null,
     Object? paymentOption = freezed,
@@ -293,9 +321,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? selectedTime = freezed,
     Object? startDate = freezed,
     Object? bookingStatus = null,
-    Object? tasks = freezed,
     Object? totalPrice = freezed,
     Object? typeOfTrip = freezed,
+    Object? startTime = freezed,
+    Object? endTime = freezed,
   }) {
     return _then(_$ListingBookingsImpl(
       amountPaid: freezed == amountPaid
@@ -338,6 +367,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value._expenses
           : expenses // ignore: cast_nullable_to_non_nullable
               as List<Expense>?,
+      tasks: freezed == tasks
+          ? _value._tasks
+          : tasks // ignore: cast_nullable_to_non_nullable
+              as List<Task>?,
       governmentId: null == governmentId
           ? _value.governmentId
           : governmentId // ignore: cast_nullable_to_non_nullable
@@ -346,6 +379,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
               as num,
+      luggage: freezed == luggage
+          ? _value.luggage
+          : luggage // ignore: cast_nullable_to_non_nullable
+              as num?,
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -382,10 +419,6 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.bookingStatus
           : bookingStatus // ignore: cast_nullable_to_non_nullable
               as String,
-      tasks: freezed == tasks
-          ? _value._tasks
-          : tasks // ignore: cast_nullable_to_non_nullable
-              as List<Task>?,
       totalPrice: freezed == totalPrice
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
@@ -394,6 +427,14 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
               as String?,
+      startTime: freezed == startTime
+          ? _value.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay?,
+      endTime: freezed == endTime
+          ? _value.endTime
+          : endTime // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay?,
     ));
   }
 }
@@ -412,8 +453,10 @@ class _$ListingBookingsImpl implements _ListingBookings {
       this.emergencyContactNo,
       @TimestampSerializer() this.endDate,
       final List<Expense>? expenses,
+      final List<Task>? tasks,
       required this.governmentId,
       required this.guests,
+      this.luggage,
       this.id,
       required this.needsContributions,
       this.paymentOption,
@@ -423,9 +466,10 @@ class _$ListingBookingsImpl implements _ListingBookings {
       this.selectedTime,
       @TimestampSerializer() this.startDate,
       required this.bookingStatus,
-      final List<Task>? tasks,
       this.totalPrice,
-      this.typeOfTrip})
+      this.typeOfTrip,
+      @TimeOfDayConverter() this.startTime,
+      @TimeOfDayConverter() this.endTime})
       : _expenses = expenses,
         _tasks = tasks;
 
@@ -461,10 +505,22 @@ class _$ListingBookingsImpl implements _ListingBookings {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<Task>? _tasks;
+  @override
+  List<Task>? get tasks {
+    final value = _tasks;
+    if (value == null) return null;
+    if (_tasks is EqualUnmodifiableListView) return _tasks;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final String governmentId;
   @override
   final num guests;
+  @override
+  final num? luggage;
   @override
   final String? id;
   @override
@@ -485,24 +541,20 @@ class _$ListingBookingsImpl implements _ListingBookings {
   final DateTime? startDate;
   @override
   final String bookingStatus;
-  final List<Task>? _tasks;
-  @override
-  List<Task>? get tasks {
-    final value = _tasks;
-    if (value == null) return null;
-    if (_tasks is EqualUnmodifiableListView) return _tasks;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
   @override
   final num? totalPrice;
   @override
   final String? typeOfTrip;
+  @override
+  @TimeOfDayConverter()
+  final TimeOfDay? startTime;
+  @override
+  @TimeOfDayConverter()
+  final TimeOfDay? endTime;
 
   @override
   String toString() {
-    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, governmentId: $governmentId, guests: $guests, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, tasks: $tasks, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -527,9 +579,11 @@ class _$ListingBookingsImpl implements _ListingBookings {
                 other.emergencyContactNo == emergencyContactNo) &&
             (identical(other.endDate, endDate) || other.endDate == endDate) &&
             const DeepCollectionEquality().equals(other._expenses, _expenses) &&
+            const DeepCollectionEquality().equals(other._tasks, _tasks) &&
             (identical(other.governmentId, governmentId) ||
                 other.governmentId == governmentId) &&
             (identical(other.guests, guests) || other.guests == guests) &&
+            (identical(other.luggage, luggage) || other.luggage == luggage) &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.needsContributions, needsContributions) ||
                 other.needsContributions == needsContributions) &&
@@ -545,11 +599,13 @@ class _$ListingBookingsImpl implements _ListingBookings {
                 other.startDate == startDate) &&
             (identical(other.bookingStatus, bookingStatus) ||
                 other.bookingStatus == bookingStatus) &&
-            const DeepCollectionEquality().equals(other._tasks, _tasks) &&
             (identical(other.totalPrice, totalPrice) ||
                 other.totalPrice == totalPrice) &&
             (identical(other.typeOfTrip, typeOfTrip) ||
-                other.typeOfTrip == typeOfTrip));
+                other.typeOfTrip == typeOfTrip) &&
+            (identical(other.startTime, startTime) ||
+                other.startTime == startTime) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime));
   }
 
   @JsonKey(ignore: true)
@@ -566,8 +622,10 @@ class _$ListingBookingsImpl implements _ListingBookings {
         emergencyContactNo,
         endDate,
         const DeepCollectionEquality().hash(_expenses),
+        const DeepCollectionEquality().hash(_tasks),
         governmentId,
         guests,
+        luggage,
         id,
         needsContributions,
         paymentOption,
@@ -577,9 +635,10 @@ class _$ListingBookingsImpl implements _ListingBookings {
         selectedTime,
         startDate,
         bookingStatus,
-        const DeepCollectionEquality().hash(_tasks),
         totalPrice,
-        typeOfTrip
+        typeOfTrip,
+        startTime,
+        endTime
       ]);
 
   @JsonKey(ignore: true)
@@ -609,8 +668,10 @@ abstract class _ListingBookings implements ListingBookings {
       final String? emergencyContactNo,
       @TimestampSerializer() final DateTime? endDate,
       final List<Expense>? expenses,
+      final List<Task>? tasks,
       required final String governmentId,
       required final num guests,
+      final num? luggage,
       final String? id,
       required final bool needsContributions,
       final String? paymentOption,
@@ -620,9 +681,10 @@ abstract class _ListingBookings implements ListingBookings {
       final String? selectedTime,
       @TimestampSerializer() final DateTime? startDate,
       required final String bookingStatus,
-      final List<Task>? tasks,
       final num? totalPrice,
-      final String? typeOfTrip}) = _$ListingBookingsImpl;
+      final String? typeOfTrip,
+      @TimeOfDayConverter() final TimeOfDay? startTime,
+      @TimeOfDayConverter() final TimeOfDay? endTime}) = _$ListingBookingsImpl;
 
   factory _ListingBookings.fromJson(Map<String, dynamic> json) =
       _$ListingBookingsImpl.fromJson;
@@ -649,9 +711,13 @@ abstract class _ListingBookings implements ListingBookings {
   @override
   List<Expense>? get expenses;
   @override
+  List<Task>? get tasks;
+  @override
   String get governmentId;
   @override
   num get guests;
+  @override
+  num? get luggage;
   @override
   String? get id;
   @override
@@ -673,11 +739,15 @@ abstract class _ListingBookings implements ListingBookings {
   @override
   String get bookingStatus;
   @override
-  List<Task>? get tasks;
-  @override
   num? get totalPrice;
   @override
   String? get typeOfTrip;
+  @override
+  @TimeOfDayConverter()
+  TimeOfDay? get startTime;
+  @override
+  @TimeOfDayConverter()
+  TimeOfDay? get endTime;
   @override
   @JsonKey(ignore: true)
   _$$ListingBookingsImplCopyWith<_$ListingBookingsImpl> get copyWith =>

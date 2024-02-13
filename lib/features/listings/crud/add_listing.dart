@@ -1628,13 +1628,13 @@ class _Step2FoodState extends ConsumerState<Step2Food> {
                   // Add Table Button
                   ElevatedButton(
                     onPressed: () {
-                      this.setState(() {
-                        availableTables.add(FoodService(
-                          tableId: "Table No. ${availableTables.length + 1}",
-                          guests: guests,
-                          isReserved: isReserved,
-                        ));
-                      });
+                      // this.setState(() {
+                      //   availableTables.add(FoodService(
+                      //     tableId: "Table No. ${availableTables.length + 1}",
+                      //     guests: guests,
+                      //     isReserved: isReserved,
+                      //   ));
+                      // });
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
