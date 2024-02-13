@@ -48,6 +48,7 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
     ref.read(planStartDateProvider.notifier).setStartDate(plan.startDate!);
     ref.read(planEndDateProvider.notifier).setEndDate(plan.endDate!);
     ref.read(currentPlanIdProvider.notifier).setCurrentPlanId(plan.uid!);
+    ref.read(currentPlanGuestsProvider.notifier).setCurrentGuests(plan.guests);
     context.push('/trips/add_activity', extra: plan);
   }
 
