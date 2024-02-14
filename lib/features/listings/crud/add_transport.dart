@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -14,7 +15,6 @@ import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/listing_provider.dart';
 import 'package:lakbay/models/coop_model.dart';
-import 'package:intl/intl.dart';
 import 'package:lakbay/models/listing_model.dart';
 
 class AddTransport extends ConsumerStatefulWidget {
@@ -44,7 +44,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   List<bool> workingDays = List.filled(7, false);
 
   List<File>? _images = [];
-  List<File>? _listingImgs = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -281,7 +280,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
     );
   }
 
-    String headerText() {
+  String headerText() {
     switch (activeStep) {
       case 1:
         return 'Add details';
@@ -305,7 +304,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         return 'Choose Type';
     }
   }
-
 
   Widget chooseType(BuildContext context) {
     List<Map<String, dynamic>> types = [
@@ -812,7 +810,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         ]);
   }
 
- Widget stepForm(BuildContext context) {
+  Widget stepForm(BuildContext context) {
     switch (activeStep) {
       case 1:
         return addDetails(context);

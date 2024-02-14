@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/app_bar_provider.dart';
 import 'package:lakbay/features/explore/widgets/nestested_accomodation.dart';
@@ -97,6 +98,16 @@ class PlanPage extends ConsumerWidget {
         ),
         // Add icon on the right side of the app bar of a person
         actions: [
+          IconButton(
+            onPressed: () {
+              context.push('/inbox');
+            },
+            icon: const Badge(
+              isLabelVisible: true,
+              label: Text('3'),
+              child: Icon(Icons.inbox_outlined),
+            ),
+          ),
           IconButton(
             onPressed: () {
               scaffoldKey.currentState?.openEndDrawer();

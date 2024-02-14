@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
+import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/tasks/tasks_controller.dart';
 import 'package:lakbay/features/tasks/widgets/today_task_card.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -21,7 +22,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Calendar')),
+      appBar: CustomAppBar(title: 'Calendar', user: user),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

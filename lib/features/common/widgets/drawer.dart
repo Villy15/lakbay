@@ -231,13 +231,13 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                   ),
 
                   //View customer bookings
-                  widget.user!.isCoopView ?? false
-                      ? const SizedBox.shrink()
-                      : ListTile(
-                          title: const Text('Bookings'),
-                          leading: const Icon(Icons.book),
-                          onTap: () => {viewBookings(ref)},
-                        ),
+                  // widget.user!.isCoopView ?? false
+                  //     ? const SizedBox.shrink()
+                  //     : ListTile(
+                  //         title: const Text('Bookings'),
+                  //         leading: const Icon(Icons.book),
+                  //         onTap: () => {viewBookings(ref)},
+                  //       ),
 
                   // View Current Cooperative
                   widget.user!.isCoopView ?? false

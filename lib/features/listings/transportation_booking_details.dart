@@ -14,7 +14,6 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
-import 'package:intl/intl.dart';
 import 'package:lakbay/models/wrappers/committee_params.dart';
 
 class TransportationBookingsDetails extends ConsumerStatefulWidget {
@@ -575,55 +574,53 @@ class _TransportationBookingsDetailsState
         ],
       );
     } else {
-      return Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                ListTile(
-                  title: const Text(
-                    'Trip: ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24.0,
-                    ),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        formattedStartDate,
-                        style: const TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 19.0,
-                        ),
-                      ),
-                      Text(
-                          'Departure Time: ${DateFormat('h:mm a').format(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, widget.booking.startTime!.hour, widget.booking.startTime!.minute))}'),
-                      Text(
-                          'Pickup Point: ${widget.listing.availableTransport!.pickupPoint}'),
-                      Text(
-                          'Destination: ${widget.listing.availableTransport!.destination}'),
-                      const SizedBox(height: 10),
-                      // show map widget
-                      Center(
-                        child: SizedBox(
-                          height: 150,
-                          width: double.infinity,
-                          child: MapWidget(
-                              address: widget
-                                  .listing.availableTransport!.destination),
-                        ),
-                      ),
-                      const SizedBox(height: 10)
-                    ],
+      return Column(children: [
+        Expanded(
+          child: ListView(
+            children: [
+              ListTile(
+                title: const Text(
+                  'Trip: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24.0,
                   ),
                 ),
-              ],
-            ),
-            )
-        ]
-      );
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      formattedStartDate,
+                      style: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 19.0,
+                      ),
+                    ),
+                    Text(
+                        'Departure Time: ${DateFormat('h:mm a').format(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, widget.booking.startTime!.hour, widget.booking.startTime!.minute))}'),
+                    Text(
+                        'Pickup Point: ${widget.listing.availableTransport!.pickupPoint}'),
+                    Text(
+                        'Destination: ${widget.listing.availableTransport!.destination}'),
+                    const SizedBox(height: 10),
+                    // show map widget
+                    Center(
+                      child: SizedBox(
+                        height: 150,
+                        width: double.infinity,
+                        child: MapWidget(
+                            address:
+                                widget.listing.availableTransport!.destination),
+                      ),
+                    ),
+                    const SizedBox(height: 10)
+                  ],
+                ),
+              ),
+            ],
+          ),
+        )
+      ]);
     }
   }
 
@@ -644,8 +641,7 @@ class _TransportationBookingsDetailsState
               } else {
                 proofNote = "No Proof Submitted";
               }
-              return Container(
-                  child: Column(children: [
+              return Column(children: [
                 Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     textBaseline: TextBaseline.alphabetic,
@@ -730,7 +726,7 @@ class _TransportationBookingsDetailsState
                             });
                       })
                 ])
-              ]));
+              ]);
             });
   }
 

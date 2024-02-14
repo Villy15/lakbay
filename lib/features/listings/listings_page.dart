@@ -161,6 +161,16 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
         actions: [
           IconButton(
             onPressed: () {
+              context.push('/inbox');
+            },
+            icon: const Badge(
+              isLabelVisible: true,
+              label: Text('3'),
+              child: Icon(Icons.inbox_outlined),
+            ),
+          ),
+          IconButton(
+            onPressed: () {
               scaffoldKey.currentState?.openEndDrawer();
             },
             icon: CircleAvatar(
