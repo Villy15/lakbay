@@ -21,6 +21,7 @@ class RoomCard extends ConsumerStatefulWidget {
 
 class _RoomCardState extends ConsumerState<RoomCard> {
   List<ListingBookings> bookings = [];
+
   @override
   Widget build(BuildContext context) {
     final guests = ref.read(currentPlanGuestsProvider);
@@ -37,10 +38,15 @@ class _RoomCardState extends ConsumerState<RoomCard> {
               .listing.availableRooms![index].images!
               .map((listingImage) => listingImage.url)
               .toList();
-          getBookings(room.roomId);
-          if (room.guests <= guests! &&
-              isDateInRange(
-                  startDate!, endDate!, getAllDatesFromBookings(bookings))) {
+          // getBookings(room.roomId);
+          if (room.guests <= guests!
+              // &&
+              //     isDateInRange(
+              //       startDate!,
+              //       endDate!,
+              //       getAllDatesFromBookings()
+              //     )
+              ) {
             return SizedBox(
               // height: MediaQuery.sizeOf(context).height / 2.5,
               width: MediaQuery.sizeOf(context).width / 2,
@@ -138,8 +144,15 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () {
-                                showSelectDate(context, bookings, index);
+                              onPressed: () async {
+                                final bookings = await ref.watch(
+                                    getAllBookingsByIdProvider(
+                                            (widget.listing.uid!, room.roomId))
+                                        .future);
+
+                                if (context.mounted) {
+                                  showSelectDate(context, bookings, index);
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(
@@ -542,9 +555,11 @@ class _RoomCardState extends ConsumerState<RoomCard> {
   }
 
   void getBookings(String roomId) async {
-    setState(() async {
-      bookings = await ref.watch(
-          getAllBookingsByIdProvider((widget.listing.uid!, roomId)).future);
+    final allBookings = await ref.watch(
+        getAllBookingsByIdProvider((widget.listing.uid!, roomId)).future);
+    setState(() {
+      bookings = allBookings;
     });
+    debugPrint("$allBookings");
   }
 }

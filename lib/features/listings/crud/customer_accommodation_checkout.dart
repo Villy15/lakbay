@@ -116,9 +116,9 @@ class _CustomerAccomodationCheckoutState
                 ref
                     .read(listingControllerProvider.notifier)
                     .addBooking(updatedBooking, widget.listing, context);
-                context.pop();
-                context.pop();
-                context.pop();
+                // context.pop();
+                // context.pop();
+                // context.pop();
               },
               child: Text('Confirm and Pay',
                   style: TextStyle(
