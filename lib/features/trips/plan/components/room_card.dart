@@ -148,8 +148,15 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           ],
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Text(
+                              widget.listing.category,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             TextButton(
                                 onPressed: () {
                                   // Action to perform on tap, e.g., show a dialog or navigate

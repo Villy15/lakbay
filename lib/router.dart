@@ -434,7 +434,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               buildSubRoute('/my_coop/listings/:coopId',
                   (context, pathParameters, extra) {
                 return ListingsPage(coopId: pathParameters['coopId']!);
-              }),
+              }, name: '/my_coop/listings'),
 
               // My Coop Page
               buildSubRoute('/my_coop/:coopId',
