@@ -103,16 +103,17 @@ class AvailableRoom with _$AvailableRoom {
 
 @freezed
 class AvailableTransport with _$AvailableTransport {
-  factory AvailableTransport(
-      {required bool available,
-      required num guests,
-      required num price,
-      required num luggage,
-      required List<bool> workingDays,
-      @TimeOfDayConverter() required TimeOfDay startTime,
-      @TimeOfDayConverter() required TimeOfDay endTime,
-      required String destination,
-      required String pickupPoint}) = _AvailableTransport;
+  factory AvailableTransport({
+    required bool available,
+    required num guests,
+    required num price,
+    required num luggage,
+    required List<bool> workingDays,
+    @TimeOfDayConverter() required TimeOfDay startTime,
+    @TimeOfDayConverter() required TimeOfDay endTime,
+    required String destination,
+    required String pickupPoint,
+  }) = _AvailableTransport;
 
   factory AvailableTransport.fromJson(Map<String, dynamic> json) =>
       _$AvailableTransportFromJson(json);
