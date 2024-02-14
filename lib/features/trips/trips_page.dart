@@ -79,68 +79,87 @@ class _TripsPageState extends ConsumerState<TripsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Ongoing Trips',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
               ref.watch(readPlansByUserIdProvider(user?.uid ?? '')).when(
                     data: (plans) {
-                      // debugPrintJson(plans[0]);
-                      return listOngoingTrips(plans);
-                    },
-                    error: (error, stackTrace) => ErrorText(
-                        error: error.toString(),
-                        stackTrace: stackTrace.toString()),
-                    loading: () => const Loader(),
-                  ),
+                      // Make plans empty for testing
+                      // plans = [];
 
-              // Create a new Trip
-              const SizedBox(height: 20),
-              FilledButton(
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all(const Size(
-                    double.infinity,
-                    50,
-                  )), // Set width to double.infinity
-                ),
-                onPressed: () {
-                  onNewTripPressed();
-                },
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add),
-                    SizedBox(width: 10),
-                    Text('CREATE A NEW TRIP'),
-                  ],
-                ),
-              ),
+                      if (plans.isEmpty) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'No Trips Yet',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            // Let's create a new trip header
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Create a new trip to start planning your next adventure!',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            createNewTrip(),
+                          ],
+                        );
+                      }
 
-              // Past Trips
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Ongoing Trips',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          listOngoingTrips(plans),
+                          // Create a new Trip
+                          const SizedBox(height: 20),
+                          createNewTrip(),
 
-              const SizedBox(height: 20),
+                          // Past Trips
 
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Past Trips',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+                          const SizedBox(height: 20),
 
-              ref.watch(readPlansByUserIdProvider(user?.uid ?? '')).when(
-                    data: (plans) {
-                      return gridPastTrips(plans);
+                          // const Padding(
+                          //   padding: EdgeInsets.all(8.0),
+                          //   child: Text(
+                          //     'Past Trips',
+                          //     style: TextStyle(
+                          //       fontSize: 24,
+                          //       fontWeight: FontWeight.bold,
+                          //     ),
+                          //   ),
+                          // ),
+
+                          // ref
+                          //     .watch(readPlansByUserIdProvider(user?.uid ?? ''))
+                          //     .when(
+                          //       data: (plans) {
+                          //         return gridPastTrips(plans);
+                          //       },
+                          //       error: (error, stackTrace) => ErrorText(
+                          //           error: error.toString(),
+                          //           stackTrace: stackTrace.toString()),
+                          //       loading: () => const Loader(),
+                          //     ),
+                        ],
+                      );
                     },
                     error: (error, stackTrace) => ErrorText(
                         error: error.toString(),
@@ -150,6 +169,28 @@ class _TripsPageState extends ConsumerState<TripsPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  FilledButton createNewTrip() {
+    return FilledButton(
+      style: ButtonStyle(
+        minimumSize: MaterialStateProperty.all(const Size(
+          double.infinity,
+          50,
+        )), // Set width to double.infinity
+      ),
+      onPressed: () {
+        onNewTripPressed();
+      },
+      child: const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.add),
+          SizedBox(width: 10),
+          Text('CREATE A NEW TRIP'),
+        ],
       ),
     );
   }
@@ -212,14 +253,14 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                           ),
                         ],
                         // Card Title
-                        Align(
+                        const Align(
                           alignment: Alignment.centerLeft,
                           child: Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+                            padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
                             child: Text(
-                              plan.name,
-                              style: const TextStyle(
+                              'Boracay Trip w Family', // 'Boracay Trip
+                              // plan.name,
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
