@@ -74,6 +74,13 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            context.pop();
+            context.pop();
+          },
+        ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

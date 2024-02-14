@@ -5,6 +5,7 @@ import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_repository.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -103,7 +104,8 @@ class ListingController extends StateNotifier<bool> {
       BuildContext context) async {
     state = true;
     final result = await _listingRepository.addBooking(listing.uid!, booking);
-
+    final selectedDate = _ref.read(selectedDateProvider);
+    final planUid = _ref.read(currentPlanIdProvider);
     result.fold(
       (l) {
         // Handle the error here
@@ -129,20 +131,20 @@ class ListingController extends StateNotifier<bool> {
         //     salePrice: booking.totalPrice));
         ListingBookings updatedBooking = booking.copyWith(id: bookingUid);
 
-        //         PlanActivity activity = PlanActivity(
-        //   // Create a random key for the activity
-        //   key: DateTime.now().millisecondsSinceEpoch.toString(),
-        //   listingId: widget.listing.uid,
-        //   category: 'Accommodation',
-        //   dateTime: selectedDate,
-        //   title: widget.listing.title,
-        //   imageUrl: widget.listing.images!.first.url,
-        //   description: widget.listing.description,
-        // );
+        PlanActivity activity = PlanActivity(
+          // Create a random key for the activity
+          key: DateTime.now().millisecondsSinceEpoch.toString(),
+          listingId: listing.uid,
+          category: listing.category,
+          dateTime: selectedDate,
+          title: listing.title,
+          imageUrl: listing.images!.first.url,
+          description: listing.description,
+        );
 
-        // _ref
-        //     .read(plansControllerProvider.notifier)
-        //     .addActivityToPlan(planUid!, activity, context);
+        _ref
+            .read(plansControllerProvider.notifier)
+            .addActivityToPlan(planUid!, activity, context);
         context.push('/market/${booking.category}/customer_receipt',
             extra: {'booking': updatedBooking, 'listing': listing});
       },

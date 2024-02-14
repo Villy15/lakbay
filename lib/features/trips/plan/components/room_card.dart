@@ -20,9 +20,12 @@ class RoomCard extends ConsumerStatefulWidget {
 }
 
 class _RoomCardState extends ConsumerState<RoomCard> {
+  List<ListingBookings> bookings = [];
   @override
   Widget build(BuildContext context) {
     final guests = ref.read(currentPlanGuestsProvider);
+    final startDate = ref.read(planStartDateProvider);
+    final endDate = ref.read(planEndDateProvider);
 
     return ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
@@ -34,7 +37,10 @@ class _RoomCardState extends ConsumerState<RoomCard> {
               .listing.availableRooms![index].images!
               .map((listingImage) => listingImage.url)
               .toList();
-          if (room.guests <= guests!) {
+          getBookings(room.roomId);
+          if (room.guests <= guests! &&
+              isDateInRange(
+                  startDate!, endDate!, getAllDatesFromBookings(bookings))) {
             return SizedBox(
               // height: MediaQuery.sizeOf(context).height / 2.5,
               width: MediaQuery.sizeOf(context).width / 2,
@@ -132,14 +138,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () async {
-                                final bookings = await ref.watch(
-                                    getAllBookingsByIdProvider(
-                                            (widget.listing.uid!, room.roomId))
-                                        .future);
-                                if (context.mounted) {
-                                  showSelectDate(context, bookings, index);
-                                }
+                              onPressed: () {
+                                showSelectDate(context, bookings, index);
                               },
                               style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(
@@ -289,7 +289,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
               leading: IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  context.pop();
                 },
               ),
             ),
@@ -335,6 +335,16 @@ class _RoomCardState extends ConsumerState<RoomCard> {
             ),
           );
         });
+  }
+
+  bool isDateInRange(DateTime planStartDate, DateTime planEndDate,
+      List<DateTime> bookedDates) {
+    for (DateTime date in bookedDates) {
+      if (date.isAfter(planStartDate) && date.isBefore(planEndDate)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   List<DateTime> getAllDatesFromBookings(List<ListingBookings> bookings) {
@@ -529,5 +539,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
         }));
       },
     );
+  }
+
+  void getBookings(String roomId) async {
+    setState(() async {
+      bookings = await ref.watch(
+          getAllBookingsByIdProvider((widget.listing.uid!, roomId)).future);
+    });
   }
 }
