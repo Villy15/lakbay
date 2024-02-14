@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
-import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_repository.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 // getListingsByCoop Family Provider
@@ -79,7 +80,6 @@ class ListingController extends StateNotifier<bool> {
 
   // Add a listing
   void addListing(ListingModel listing, BuildContext context) async {
-    final user = _ref.read(userProvider);
     state = true;
     final result = await _listingRepository.addListing(listing);
 
@@ -128,8 +128,22 @@ class ListingController extends StateNotifier<bool> {
         //     ownerName: listing.publisherName,
         //     salePrice: booking.totalPrice));
         ListingBookings updatedBooking = booking.copyWith(id: bookingUid);
-        context.push(
-            '/market/${booking.category}/customer_accommodation_receipt',
+
+        //         PlanActivity activity = PlanActivity(
+        //   // Create a random key for the activity
+        //   key: DateTime.now().millisecondsSinceEpoch.toString(),
+        //   listingId: widget.listing.uid,
+        //   category: 'Accommodation',
+        //   dateTime: selectedDate,
+        //   title: widget.listing.title,
+        //   imageUrl: widget.listing.images!.first.url,
+        //   description: widget.listing.description,
+        // );
+
+        // _ref
+        //     .read(plansControllerProvider.notifier)
+        //     .addActivityToPlan(planUid!, activity, context);
+        context.push('/market/${booking.category}/customer_receipt',
             extra: {'booking': updatedBooking, 'listing': listing});
       },
     );

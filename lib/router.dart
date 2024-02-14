@@ -483,7 +483,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               buildSubRoute('/my_coop/listings/:coopId',
                   (context, pathParameters, extra) {
                 return ListingsPage(coopId: pathParameters['coopId']!);
-              }, name: '/my_coop/listings'),
+              }),
 
               // My Coop Page
               buildSubRoute('/my_coop/:coopId',
@@ -507,7 +507,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     },
                     subRoutes: [
                       // path to receipt after booking also depends on the category
-                      buildSubRoute('customer_accommodation_receipt',
+                      buildSubRoute('customer_receipt',
                           (context, pathParameters, extra) {
                         final Map<String, dynamic> bookingDetails =
                             extra as Map<String, dynamic>;
@@ -517,7 +517,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             bookingDetails['listing'] as ListingModel;
 
                         switch (pathParameters['category']) {
-                          case 'Accommodation':
+                          case 'accommodation':
                             return CustomerAccomodationReceipt(
                                 listing: listing, booking: booking);
 
@@ -525,7 +525,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             return CustomerAccomodationReceipt(
                                 listing: listing, booking: booking);
                         }
-                      }, name: 'customer_accommodation_receipt'),
+                      }, name: 'customer_receipt'),
 
                       // path to booking details. depends on category
                       buildSubRoute(
@@ -539,26 +539,26 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                               bookingDetails['listing'] as ListingModel;
 
                           switch (pathParameters['category']) {
-                            case 'Accommodation':
+                            case 'accommodation':
                               return AccommodationBookingsDetails(
                                 booking: booking,
                                 listing: listing,
                               );
 
-                            case 'Transport':
+                            case 'transport':
                               return TransportationBookingsDetails(
                                 booking: booking,
                                 listing: listing,
                               );
-                            // case 'Food':
+                            // case 'food':
                             //   return CustomerFood(
                             //     listing: listing,
                             //   );
-                            // case 'Entertainment':
+                            // case 'entertainment':
                             //   return CustomerEntertainment(
                             //     listing: listing,
                             //   );
-                            // case 'Touring':
+                            // case 'touring':
                             //   return SelectedTouringPage(
                             //     listing: listing,
                             //   );

@@ -8,7 +8,7 @@ class ListingCard extends ConsumerWidget {
   const ListingCard({super.key, required this.listing});
 
   void onTap(BuildContext context, WidgetRef ref) {
-    context.push('/market/${listing.category}', extra: listing);
+    context.push('/market/${listing.category.toLowerCase()}', extra: listing);
   }
 
   @override
