@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/bookings/widgets/booking_card.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
@@ -34,7 +35,23 @@ class _BookingsPageState extends ConsumerState<BookingsPage> {
                           shrinkWrap: true,
                           itemCount: bookings.length,
                           itemBuilder: (context, index) {
-                            return Text(bookings[index].id!);
+                            final booking = bookings[index];
+
+                            return ref
+                                .watch(getListingProvider(booking.listingId))
+                                .when(
+                                  data: (listing) {
+                                    return BookingCard(
+                                      booking: booking,
+                                      listing: listing,
+                                    );
+                                  },
+                                  error: (error, stackTrace) => ErrorText(
+                                    error: error.toString(),
+                                    stackTrace: '',
+                                  ),
+                                  loading: () => const Loader(),
+                                );
                           },
                         );
                       },

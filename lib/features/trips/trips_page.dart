@@ -92,6 +92,7 @@ class _TripsPageState extends ConsumerState<TripsPage> {
 
               ref.watch(readPlansByUserIdProvider(user?.uid ?? '')).when(
                     data: (plans) {
+                      // debugPrintJson(plans[0]);
                       return listOngoingTrips(plans);
                     },
                     error: (error, stackTrace) => ErrorText(
