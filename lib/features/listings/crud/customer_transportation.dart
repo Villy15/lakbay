@@ -12,9 +12,11 @@ import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
+import 'package:lakbay/features/listings/crud/customer_transport_checkout.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/models/user_model.dart';
 
 class CustomerTransportation extends ConsumerStatefulWidget {
   final ListingModel listing;
@@ -35,6 +37,7 @@ class _CustomerTransportationState
   @override
   void initState() {
     super.initState();
+    
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
@@ -344,8 +347,8 @@ class _CustomerTransportationState
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             ListTile(
-                              leading: Icon(Icons.flight),
-                              title: Text('One Way Trip'),
+                              leading: const Icon(Icons.flight),
+                              title: const Text('One Way Trip'),
                               onTap: () {
                                 // Continue with booking a one way trip
                                 Navigator.pop(context, 'One Way Trip');
@@ -1059,7 +1062,9 @@ class _CustomerTransportationState
         builder: (BuildContext context) {
           num guests = 0;
           num luggage = 0;
-          TextEditingController phoneNoController = TextEditingController();
+          final user = ref.read(userProvider);
+          
+          TextEditingController phoneNoController = TextEditingController(text: user?.phoneNo);
           TextEditingController emergencyContactNameController =
               TextEditingController();
           TextEditingController emergencyContactNoController =
@@ -1085,7 +1090,7 @@ class _CustomerTransportationState
                 endDate,
                 startTime,
                 endTime,
-                typeOfTrip);
+                typeOfTrip, user!);
           } else {
             return twoWayTrip(
                 formattedStartDate,
@@ -1101,7 +1106,7 @@ class _CustomerTransportationState
                 endDate,
                 startTime,
                 endTime,
-                typeOfTrip);
+                typeOfTrip, user!);
           }
         });
   }
@@ -1120,7 +1125,7 @@ class _CustomerTransportationState
       DateTime endDate,
       TimeOfDay startTime,
       TimeOfDay endTime,
-      String typeOfTrip) {
+      String typeOfTrip, UserModel user) {
     return DraggableScrollableSheet(
         initialChildSize: 0.75,
         expand: false,
@@ -1238,6 +1243,7 @@ class _CustomerTransportationState
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () {
+                                    Navigator.pop(context);
                                     ListingBookings booking = ListingBookings(
                                         price: transport.price,
                                         roomId: widget.listing.title,
@@ -1260,12 +1266,19 @@ class _CustomerTransportationState
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
-                                        tasks: [], customerId: '', customerName: '', bookingStatus: '');
-                                    ref
-                                        .read(
-                                            listingControllerProvider.notifier)
-                                        .addBooking(
-                                            booking, widget.listing, context);
+                                        tasks: [], 
+                                        customerId: user.uid, 
+                                        customerName: user.name, 
+                                        bookingStatus: "Reserved");
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog.fullscreen(
+                                          child: CustomerTransportCheckout(
+                                            listing: widget.listing, transport: transport, booking: booking)
+                                        );
+                                      }
+                                    );
                                   },
                                   child: const Text('Proceed'),
                                 ))
@@ -1289,7 +1302,7 @@ class _CustomerTransportationState
       DateTime endDate,
       TimeOfDay startTime,
       TimeOfDay endTime,
-      String typeOfTrip) {
+      String typeOfTrip, UserModel user) {
     return DraggableScrollableSheet(
         initialChildSize: 0.75,
         expand: false,
@@ -1361,7 +1374,7 @@ class _CustomerTransportationState
                                 border: OutlineInputBorder(),
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.always,
-                                hintText: '+63',
+                                prefix: Text('+63')
                               ),
                               keyboardType: TextInputType.phone,
                             ),
@@ -1410,6 +1423,7 @@ class _CustomerTransportationState
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () {
+                                    
                                     ListingBookings booking = ListingBookings(
                                         price: transport.price,
                                         roomId: widget.listing.title,
@@ -1432,12 +1446,20 @@ class _CustomerTransportationState
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
-                                        tasks: [], customerId: '', customerName: '', bookingStatus: '');
-                                    ref
-                                        .read(
-                                            listingControllerProvider.notifier)
-                                        .addBooking(
-                                            booking, widget.listing, context);
+                                        tasks: [], 
+                                        customerId: user.uid, 
+                                        customerName: user.name, 
+                                        bookingStatus: 'Reserved');
+                                    
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog.fullscreen(
+                                          child: CustomerTransportCheckout(
+                                            listing: widget.listing, transport: transport, booking: booking)
+                                        );
+                                      }
+                                    );
                                   },
                                   child: const Text('Proceed'),
                                 ))
@@ -1445,5 +1467,30 @@ class _CustomerTransportationState
                         ))));
           });
         });
+  }
+
+  void showSelectDate(BuildContext context, List<ListingBookings> bookings, int index) {
+    DateTime startDate = DateTime.now();
+    DateTime endDate = DateTime.now();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Select Date'),
+            leading: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }
+            )
+          ),
+          body: const Dialog.fullscreen(
+            child: Column()
+          )
+        );
+      }
+    );
   }
 }

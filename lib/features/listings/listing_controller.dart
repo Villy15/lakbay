@@ -110,9 +110,9 @@ class ListingController extends StateNotifier<bool> {
       },
       (bookingUid) async {
         state = false;
-        Navigator.pop(context);
-        Navigator.pop(context);
-        Navigator.pop(context);
+        // Navigator.pop(context);
+        // Navigator.pop(context);
+        // Navigator.pop(context);
         // _ref.read(salesRepositoryProvider).addSale(SaleModel(
         //     bookingId: booking.id!,
         //     category: booking.category,
@@ -129,7 +129,7 @@ class ListingController extends StateNotifier<bool> {
         //     salePrice: booking.totalPrice));
         ListingBookings updatedBooking = booking.copyWith(id: bookingUid);
         context.push(
-            '/market/${booking.category}/customer_accommodation_receipt',
+            '/market/${booking.category}/customer_receipt',
             extra: {'booking': updatedBooking, 'listing': listing});
       },
     );

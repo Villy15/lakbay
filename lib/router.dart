@@ -50,6 +50,7 @@ import 'package:lakbay/features/listings/crud/customer_accommodation.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_entertainment.dart';
 import 'package:lakbay/features/listings/crud/customer_food.dart';
+import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_transportation.dart';
 import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/listings/transportation_booking_details.dart';
@@ -462,7 +463,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     },
                     subRoutes: [
                       // path to receipt after booking also depends on the category
-                      buildSubRoute('customer_accommodation_receipt',
+                      buildSubRoute('customer_receipt',
                           (context, pathParameters, extra) {
                         final Map<String, dynamic> bookingDetails =
                             extra as Map<String, dynamic>;
@@ -476,11 +477,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             return CustomerAccomodationReceipt(
                                 listing: listing, booking: booking);
 
+                          case 'Transport':
+                            return CustomerTransportReceipt(listing: listing, booking: booking);      
+
                           default:
                             return CustomerAccomodationReceipt(
                                 listing: listing, booking: booking);
                         }
-                      }, name: 'customer_accommodation_receipt'),
+                      }, name: 'customer_receipt'),
 
                       // path to booking details. depends on category
                       buildSubRoute(
