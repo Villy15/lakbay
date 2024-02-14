@@ -65,7 +65,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
       TextEditingController();
   final TextEditingController _cancellationRateController =
       TextEditingController();
-  final TextEditingController _confirmationPeriodController =
+  final TextEditingController _cancellationPeriodController =
       TextEditingController();
 
   @override
@@ -109,36 +109,43 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                       cooperativeId: widget.coop.uid!,
                       cooperativeName: widget.coop.name);
                   ListingModel listing = ListingModel(
-                      availableRooms: availableRooms,
-                      address: _addressController.text,
-                      category: widget.category,
-                      city: "",
-                      checkIn: DateTime(DateTime.now().year)
-                          .copyWith(hour: checkIn.hour, minute: checkIn.minute),
-                      checkOut: DateTime(DateTime.now().year).copyWith(
-                          hour: checkOut.hour, minute: checkOut.minute),
-                      images: _images!.map((image) {
-                        final imagePath =
-                            'listings/${widget.coop.name}/${image.path.split('/').last}';
-                        return ListingImages(
-                          path: imagePath,
-                        );
-                      }).toList(),
-                      cooperative: cooperative,
-                      description: _descriptionController.text,
-                      province: "",
-                      publisherId: ref.read(userProvider)!.uid,
-                      publisherName: ref.read(userProvider)!.name,
-                      title: _titleController.text,
-                      type: type,
-                      fixedTasks: fixedTasks);
+                    availableRooms: availableRooms,
+                    address: _addressController.text,
+                    category: widget.category,
+                    city: "",
+                    checkIn: DateTime(DateTime.now().year)
+                        .copyWith(hour: checkIn.hour, minute: checkIn.minute),
+                    checkOut: DateTime(DateTime.now().year)
+                        .copyWith(hour: checkOut.hour, minute: checkOut.minute),
+                    images: _images!.map((image) {
+                      final imagePath =
+                          'listings/${widget.coop.name}/${image.path.split('/').last}';
+                      return ListingImages(
+                        path: imagePath,
+                      );
+                    }).toList(),
+                    cooperative: cooperative,
+                    description: _descriptionController.text,
+                    province: "",
+                    publisherId: ref.read(userProvider)!.uid,
+                    publisherName: ref.read(userProvider)!.name,
+                    title: _titleController.text,
+                    type: type,
+                    fixedTasks: fixedTasks,
+                    downpaymentRate:
+                        num.parse((_downpaymentRateController.text)) / 100,
+                    cancellationRate:
+                        num.parse((_cancellationRateController.text)) / 100,
+                    cancellationPeriod:
+                        num.parse((_cancellationPeriodController.text)),
+                  );
                   listing = await processRoomImages(listing);
                   listing = listing.copyWith(
                     images: listing.images!.asMap().entries.map((entry) {
                       return entry.value.copyWith(url: imageUrls[entry.key]);
                     }).toList(),
                   );
-                  debugPrintJson(listing);
+                  debugPrint("$listing");
                   if (mounted) {
                     ref
                         .read(listingControllerProvider.notifier)
@@ -169,7 +176,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           (value) => value.fold(
             (failure) => debugPrint('Failed to upload images: $failure'),
             (imageUrls) {
-              debugPrintJson(listing);
+              debugPrint("$listing");
               listing = listing.copyWith(
                 availableRooms: listing.availableRooms!
                     .asMap()
@@ -198,7 +205,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                     .values
                     .toList(),
               );
-              debugPrintJson(listing);
+              debugPrint("$listing");
             },
           ),
         );
@@ -789,294 +796,333 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
       num beds,
       num bathrooms) {
     return StatefulBuilder(builder: (context, setState) {
-      return SingleChildScrollView(
-        child: SizedBox(
-            height: MediaQuery.sizeOf(context).height / 1,
-            width: double.infinity,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: GestureDetector(
-                      child: Row(children: [
-                    Icon(Icons.image_outlined,
-                        color: Theme.of(context).iconTheme.color),
-                    const SizedBox(width: 15),
-                    ImagePickerFormField(
-                      height: MediaQuery.sizeOf(context).height / 5,
-                      width: MediaQuery.sizeOf(context).width / 1.3,
-                      context: context,
-                      initialValue: images,
-                      onSaved: (List<File>? files) {
-                        images.clear();
-                        images.addAll(files!);
-                        // this.images.add(images);
-                        roomImages.add(images);
-                      },
-                      validator: (List<File>? files) {
-                        if (files == null || files.isEmpty) {
-                          return 'Please select some images';
-                        }
-                        return null;
-                      },
-                      onImagesSelected: (List<File> files) {
-                        images.clear();
-                        images.addAll(files);
-                        // this.images.add(images);
-                        roomImages.add(images);
-                      },
-                    ),
-                  ]))),
-              const SizedBox(height: 15),
-              Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: TextFormField(
-                      controller: roomIdController,
-                      decoration: const InputDecoration(
-                          icon: Icon(Icons.title_outlined),
-                          border: OutlineInputBorder(),
-                          labelText: "Room Id",
-                          floatingLabelBehavior: FloatingLabelBehavior
-                              .always, // Keep the label always visible
-                          hintText: "101",
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 12.0)),
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      })),
-              SizedBox(height: MediaQuery.sizeOf(context).height / 50),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                child: TextFormField(
-                  controller: priceController,
-                  maxLines: null,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    icon: Icon(
-                      Icons.money_outlined,
-                    ),
-                    border: OutlineInputBorder(),
-                    labelText: 'Price',
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    hintText: "4500",
-                    prefix: Text('₱'),
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 12), // Adjust padding here
-                  ),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
+      return Column(
+        children: [
+          AppBar(
+            leading: IconButton(
+              iconSize: 30,
+              onPressed: () {
+                Navigator.of(context).pop(); // Corrected the navigation method
+              },
+              icon: const Icon(
+                Icons.arrow_back,
               ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Theme.of(context).dividerColor),
-                  ),
-                ),
-                child: ListTile(
-                  title: const Row(
-                    children: [
-                      Icon(Icons.people_alt_outlined),
-                      SizedBox(width: 10),
-                      Text('Guests'),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: () {
-                          if (guests >= 1) {
-                            setState(() {
-                              guests--;
-                            });
-                          }
-                        },
-                      ),
-                      const SizedBox(width: 10),
-                      Text('$guests', style: const TextStyle(fontSize: 16)),
-                      const SizedBox(width: 10),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          setState(() {
-                            guests++;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+            ),
+            title: const Text(
+              "Create Room",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Theme.of(context).dividerColor),
-                  ),
-                ),
-                child: ListTile(
-                  title: const Row(
-                    children: [
-                      Icon(Icons.king_bed_outlined),
-                      SizedBox(width: 10),
-                      Text('Bedrooms'),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: () {
-                          if (bedrooms >= 1) {
-                            setState(() {
-                              bedrooms--;
-                            });
-                          }
-                        },
-                      ),
-                      const SizedBox(width: 10),
-                      Text('$bedrooms', style: const TextStyle(fontSize: 16)),
-                      const SizedBox(width: 10),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          setState(() {
-                            bedrooms++;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Theme.of(context).dividerColor),
-                  ),
-                ),
-                child: ListTile(
-                  title: const Row(
-                    children: [
-                      Icon(Icons.single_bed_outlined),
-                      SizedBox(width: 10),
-                      Text('Beds'),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: () {
-                          if (beds >= 1) {
-                            setState(() {
-                              beds--;
-                            });
-                          }
-                        },
-                      ),
-                      const SizedBox(width: 10),
-                      Text('$beds', style: const TextStyle(fontSize: 16)),
-                      const SizedBox(width: 10),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          setState(() {
-                            beds++;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Theme.of(context).dividerColor),
-                  ),
-                ),
-                child: ListTile(
-                  title: const Row(
-                    children: [
-                      Icon(Icons.bathtub_outlined),
-                      SizedBox(width: 10),
-                      Text('Bathrooms'),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: () {
-                          if (bathrooms >= 1) {
-                            setState(() {
-                              bathrooms--;
-                            });
-                          }
-                        },
-                      ),
-                      const SizedBox(width: 10),
-                      Text('$bathrooms', style: const TextStyle(fontSize: 16)),
-                      const SizedBox(width: 10),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          setState(() {
-                            bathrooms++;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.sizeOf(context).height / 30,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    AvailableRoom room = AvailableRoom(
-                        available: true,
-                        images: images.map((image) {
-                          final imagePath =
-                              'listings/${widget.coop.name}/${image.path.split('/').last}';
-                          return ListingImages(
-                            path: imagePath,
-                          );
-                        }).toList(),
-                        roomId: roomIdController.text,
-                        bathrooms: bathrooms,
-                        bedrooms: bedrooms,
-                        beds: beds,
-                        guests: guests,
-                        price: num.parse(priceController.text));
-                    this.setState(() {
-                      int index = availableRooms.indexWhere(
-                          (element) => element.roomId == roomIdController.text);
-                      if (index == -1) {
-                        availableRooms.add(room);
-                      } else {
-                        availableRooms[index] = room;
-                      }
-                    });
-                    context.pop();
-                  },
-                  child: const Text("Confirm"))
-            ])),
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: SizedBox(
+                  height: MediaQuery.sizeOf(context).height / 1,
+                  width: double.infinity,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: GestureDetector(
+                                child: Row(children: [
+                              Icon(Icons.image_outlined,
+                                  color: Theme.of(context).iconTheme.color),
+                              const SizedBox(width: 15),
+                              ImagePickerFormField(
+                                height: MediaQuery.sizeOf(context).height / 5,
+                                width: MediaQuery.sizeOf(context).width / 1.3,
+                                context: context,
+                                initialValue: images,
+                                onSaved: (List<File>? files) {
+                                  images.clear();
+                                  images.addAll(files!);
+                                  // this.images.add(images);
+                                  roomImages.add(images);
+                                },
+                                validator: (List<File>? files) {
+                                  if (files == null || files.isEmpty) {
+                                    return 'Please select some images';
+                                  }
+                                  return null;
+                                },
+                                onImagesSelected: (List<File> files) {
+                                  images.clear();
+                                  images.addAll(files);
+                                  // this.images.add(images);
+                                  roomImages.add(images);
+                                },
+                              ),
+                            ]))),
+                        const SizedBox(height: 15),
+                        Container(
+                            margin:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: TextFormField(
+                                controller: roomIdController,
+                                decoration: const InputDecoration(
+                                    icon: Icon(Icons.title_outlined),
+                                    border: OutlineInputBorder(),
+                                    labelText: "Room Id",
+                                    floatingLabelBehavior: FloatingLabelBehavior
+                                        .always, // Keep the label always visible
+                                    hintText: "101",
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 12.0)),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                })),
+                        SizedBox(
+                            height: MediaQuery.sizeOf(context).height / 50),
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          child: TextFormField(
+                            controller: priceController,
+                            maxLines: null,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            decoration: const InputDecoration(
+                              icon: Icon(
+                                Icons.money_outlined,
+                              ),
+                              border: OutlineInputBorder(),
+                              labelText: 'Price',
+                              floatingLabelBehavior: FloatingLabelBehavior
+                                  .always, // Keep the label always visible
+                              hintText: "4500",
+                              prefix: Text('₱'),
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 12), // Adjust padding here
+                            ),
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                  color: Theme.of(context).dividerColor),
+                            ),
+                          ),
+                          child: ListTile(
+                            title: const Row(
+                              children: [
+                                Icon(Icons.people_alt_outlined),
+                                SizedBox(width: 10),
+                                Text('Guests'),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  onPressed: () {
+                                    if (guests >= 1) {
+                                      setState(() {
+                                        guests--;
+                                      });
+                                    }
+                                  },
+                                ),
+                                const SizedBox(width: 10),
+                                Text('$guests',
+                                    style: const TextStyle(fontSize: 16)),
+                                const SizedBox(width: 10),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () {
+                                    setState(() {
+                                      guests++;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                  color: Theme.of(context).dividerColor),
+                            ),
+                          ),
+                          child: ListTile(
+                            title: const Row(
+                              children: [
+                                Icon(Icons.king_bed_outlined),
+                                SizedBox(width: 10),
+                                Text('Bedrooms'),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  onPressed: () {
+                                    if (bedrooms >= 1) {
+                                      setState(() {
+                                        bedrooms--;
+                                      });
+                                    }
+                                  },
+                                ),
+                                const SizedBox(width: 10),
+                                Text('$bedrooms',
+                                    style: const TextStyle(fontSize: 16)),
+                                const SizedBox(width: 10),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () {
+                                    setState(() {
+                                      bedrooms++;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                  color: Theme.of(context).dividerColor),
+                            ),
+                          ),
+                          child: ListTile(
+                            title: const Row(
+                              children: [
+                                Icon(Icons.single_bed_outlined),
+                                SizedBox(width: 10),
+                                Text('Beds'),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  onPressed: () {
+                                    if (beds >= 1) {
+                                      setState(() {
+                                        beds--;
+                                      });
+                                    }
+                                  },
+                                ),
+                                const SizedBox(width: 10),
+                                Text('$beds',
+                                    style: const TextStyle(fontSize: 16)),
+                                const SizedBox(width: 10),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () {
+                                    setState(() {
+                                      beds++;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                  color: Theme.of(context).dividerColor),
+                            ),
+                          ),
+                          child: ListTile(
+                            title: const Row(
+                              children: [
+                                Icon(Icons.bathtub_outlined),
+                                SizedBox(width: 10),
+                                Text('Bathrooms'),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  onPressed: () {
+                                    if (bathrooms >= 1) {
+                                      setState(() {
+                                        bathrooms--;
+                                      });
+                                    }
+                                  },
+                                ),
+                                const SizedBox(width: 10),
+                                Text('$bathrooms',
+                                    style: const TextStyle(fontSize: 16)),
+                                const SizedBox(width: 10),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () {
+                                    setState(() {
+                                      bathrooms++;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.sizeOf(context).height / 30,
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              AvailableRoom room = AvailableRoom(
+                                  available: true,
+                                  images: images.map((image) {
+                                    final imagePath =
+                                        'listings/${widget.coop.name}/${image.path.split('/').last}';
+                                    return ListingImages(
+                                      path: imagePath,
+                                    );
+                                  }).toList(),
+                                  roomId: roomIdController.text,
+                                  bathrooms: bathrooms,
+                                  bedrooms: bedrooms,
+                                  beds: beds,
+                                  guests: guests,
+                                  price: num.parse(priceController.text));
+                              this.setState(() {
+                                int index = availableRooms.indexWhere(
+                                    (element) =>
+                                        element.roomId ==
+                                        roomIdController.text);
+                                if (index == -1) {
+                                  availableRooms.add(room);
+                                } else {
+                                  availableRooms[index] = room;
+                                }
+                              });
+                              context.pop();
+                            },
+                            child: const Text("Confirm"))
+                      ])),
+            ),
+          ),
+        ],
       );
     });
   }
@@ -1279,25 +1325,22 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
     return StatefulBuilder(builder: (context, setState) {
       return Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              IconButton(
-                iconSize: 30, // Set the icon size here
-                onPressed: () {
-                  context.pop();
-                },
-                icon: const Icon(
-                  Icons.arrow_back, // Removed the size property from here
-                ),
+          AppBar(
+            leading: IconButton(
+              iconSize: 30,
+              onPressed: () {
+                Navigator.of(context).pop(); // Corrected the navigation method
+              },
+              icon: const Icon(
+                Icons.arrow_back,
               ),
-            ],
-          ),
-          const Text(
-            "Create Task",
-            style: TextStyle(
-              fontSize: 20, // Choose your desired size
-              fontWeight: FontWeight.bold, // Makes the text bold
+            ),
+            title: const Text(
+              "Create Task",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           SingleChildScrollView(
@@ -1549,7 +1592,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           height: 10,
         ),
         TextFormField(
-          controller: _confirmationPeriodController,
+          controller: _cancellationPeriodController,
           maxLines: 1,
           keyboardType: TextInputType.number, // For numeric input
           decoration: const InputDecoration(

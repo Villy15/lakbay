@@ -155,6 +155,99 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
     });
   }
 
+  void addExpense() {
+    TextEditingController controller = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text('Add Expense',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
+              const Text('Enter the amount spent'),
+              const SizedBox(height: 20),
+              TextField(
+                controller: controller,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  hintText: '₱100',
+                  prefixText: '₱',
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Add'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Show modal bottomsheet that adds checkList items
+  void addCheckList() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text('Add Check List',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
+              const Text('Enter the item'),
+              const SizedBox(height: 20),
+              const TextField(
+                decoration: InputDecoration(
+                  hintText: 'Item',
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Add'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -179,6 +272,7 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
               },
               loading: () => const CircularProgressIndicator(),
               error: (error, stackTrace) {
+                debugPrint('Error: $error');
                 return Text('Error: $error');
               },
             ),
@@ -211,13 +305,13 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                 ),
                 // Manage expenses
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: () => addExpense(),
                   icon: const Icon(
                     Icons.attach_money,
                   ),
                 ),
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: () => addCheckList(),
                   icon: const Icon(
                     Icons.checklist_outlined,
                   ),
@@ -288,6 +382,45 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                                   .withOpacity(0.5))),
                     ],
                     const SizedBox(height: 8),
+                    // Check in and check out time lables
+                    Row(
+                      children: [
+                        Text(
+                          'Check In:     ',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          DateFormat('hh:mm a').format(listing.checkIn!),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(
+                          'Check Out:  ',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          DateFormat('hh:mm a').format(listing.checkOut!),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(

@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
-import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
@@ -38,7 +38,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
   String type = 'Nature-Based';
   final List<File> _menuImgs = [];
   List<File>? _images = [];
-  List<List<File>> _tableImgs = [];
+  final List<List<File>> _tableImgs = [];
   List<File> tableImgs = [];
   late DateTime startDate = DateTime.now();
   late DateTime endDate = DateTime.now();
@@ -211,12 +211,12 @@ class _AddFoodState extends ConsumerState<AddFood> {
   //       ?.expand(
   //           (fileList) => fileList.map((file) => file.path.split('/').last))
   //       .toList();
-    
+
   //   await ref
   //             .read(storageRepositoryProvider)
   //             .storeListNestedFiles(
-  //               path: imagePath, 
-  //               ids: ids, 
+  //               path: imagePath,
+  //               ids: ids,
   //               filesLists: images);
   // }
 
@@ -720,37 +720,35 @@ class _AddFoodState extends ConsumerState<AddFood> {
                         ),
                         SizedBox(
                             height: MediaQuery.sizeOf(context).height / 50),
-                        Container(
-                            child: ListTile(
-                                title: const Row(children: [
-                                  Icon(Icons.people_alt_outlined),
-                                  SizedBox(width: 10),
-                                  Text('Guests')
-                                ]),
-                                trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                          icon: const Icon(Icons.remove),
-                                          onPressed: () {
-                                            if (guests >= 1) {
-                                              setState(() {
-                                                guests--;
-                                              });
-                                            }
-                                          }),
-                                      const SizedBox(width: 10),
-                                      Text('$guests',
-                                          style: const TextStyle(fontSize: 16)),
-                                      const SizedBox(width: 10),
-                                      IconButton(
-                                          icon: const Icon(Icons.add),
-                                          onPressed: () {
-                                            setState(() {
-                                              guests++;
-                                            });
-                                          })
-                                    ]))),
+                        ListTile(
+                            title: const Row(children: [
+                              Icon(Icons.people_alt_outlined),
+                              SizedBox(width: 10),
+                              Text('Guests')
+                            ]),
+                            trailing:
+                                Row(mainAxisSize: MainAxisSize.min, children: [
+                              IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  onPressed: () {
+                                    if (guests >= 1) {
+                                      setState(() {
+                                        guests--;
+                                      });
+                                    }
+                                  }),
+                              const SizedBox(width: 10),
+                              Text('$guests',
+                                  style: const TextStyle(fontSize: 16)),
+                              const SizedBox(width: 10),
+                              IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () {
+                                    setState(() {
+                                      guests++;
+                                    });
+                                  })
+                            ])),
                         const SizedBox(height: 30),
                         ElevatedButton(
                           onPressed: () {
@@ -778,7 +776,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
 
                               // clear all field
                               tableIdController.clear();
-                              _tableImgs!.clear();
+                              _tableImgs.clear();
                               guests = 0;
                             });
                             context.pop();

@@ -1,6 +1,7 @@
 // import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
@@ -10,24 +11,24 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 enum PaymentOption { downpayment, fullPayment }
 
-class CustomerAccomodationCheckout extends ConsumerStatefulWidget {
+class CustomerAccommodationCheckout extends ConsumerStatefulWidget {
   final ListingModel listing;
   final AvailableRoom room;
   final ListingBookings booking;
 
-  const CustomerAccomodationCheckout(
+  const CustomerAccommodationCheckout(
       {super.key,
       required this.listing,
       required this.room,
       required this.booking});
 
   @override
-  ConsumerState<CustomerAccomodationCheckout> createState() =>
+  ConsumerState<CustomerAccommodationCheckout> createState() =>
       _CustomerAccomodationCheckoutState();
 }
 
 class _CustomerAccomodationCheckoutState
-    extends ConsumerState<CustomerAccomodationCheckout> {
+    extends ConsumerState<CustomerAccommodationCheckout> {
   late num _guestCount;
   late DateTime _startDate;
   late DateTime _endDate;
@@ -115,6 +116,9 @@ class _CustomerAccomodationCheckoutState
                 ref
                     .read(listingControllerProvider.notifier)
                     .addBooking(updatedBooking, widget.listing, context);
+                context.pop();
+                context.pop();
+                context.pop();
               },
               child: Text('Confirm and Pay',
                   style: TextStyle(

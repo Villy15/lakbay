@@ -18,7 +18,7 @@ class ListingModel with _$ListingModel {
     @TimestampSerializer() DateTime? checkIn,
     @TimestampSerializer() DateTime? checkOut,
     required String city,
-    num? confirmationPeriod,
+    num? cancellationPeriod,
     required ListingCooperative cooperative,
     required String description,
     num? downpaymentRate,
@@ -103,16 +103,17 @@ class AvailableRoom with _$AvailableRoom {
 
 @freezed
 class AvailableTransport with _$AvailableTransport {
-  factory AvailableTransport(
-      {required bool available,
-      required num guests,
-      required num price,
-      required num luggage,
-      required List<bool> workingDays,
-      @TimeOfDayConverter() required TimeOfDay startTime,
-      @TimeOfDayConverter() required TimeOfDay endTime,
-      required String destination,
-      required String pickupPoint}) = _AvailableTransport;
+  factory AvailableTransport({
+    required bool available,
+    required num guests,
+    required num price,
+    required num luggage,
+    required List<bool> workingDays,
+    @TimeOfDayConverter() required TimeOfDay startTime,
+    @TimeOfDayConverter() required TimeOfDay endTime,
+    required String destination,
+    required String pickupPoint,
+  }) = _AvailableTransport;
 
   factory AvailableTransport.fromJson(Map<String, dynamic> json) =>
       _$AvailableTransportFromJson(json);
@@ -120,15 +121,15 @@ class AvailableTransport with _$AvailableTransport {
 
 @freezed
 class FoodService with _$FoodService {
-  factory FoodService(
-      {required String tableId,
-      required num guests,
-      required bool available,
-      required List<ListingImages> tableImgs,
-      required List<bool> workingDays,
-      @TimeOfDayConverter() required TimeOfDay startTime,
-      @TimeOfDayConverter() required TimeOfDay endTime,
-      }) = _FoodService;
+  factory FoodService({
+    required String tableId,
+    required num guests,
+    required bool available,
+    required List<ListingImages> tableImgs,
+    required List<bool> workingDays,
+    @TimeOfDayConverter() required TimeOfDay startTime,
+    @TimeOfDayConverter() required TimeOfDay endTime,
+  }) = _FoodService;
 
   factory FoodService.fromJson(Map<String, dynamic> json) =>
       _$FoodServiceFromJson(json);

@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
+import 'package:lakbay/features/bookings/bookings_page.dart';
+import 'package:lakbay/features/bookings/screens/bookings_accomodation_customer.dart';
 import 'package:lakbay/features/calendar/calendar_page.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/fade_through.dart';
@@ -38,7 +40,6 @@ import 'package:lakbay/features/explore/customer_home_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/inbox/read_inbox.dart';
 import 'package:lakbay/features/listings/accommodation_booking_details.dart';
-import 'package:lakbay/features/listings/bookings_page.dart';
 import 'package:lakbay/features/listings/crud/add_accommodation.dart';
 import 'package:lakbay/features/listings/crud/add_entertainment.dart';
 import 'package:lakbay/features/listings/crud/add_food.dart';
@@ -46,7 +47,6 @@ import 'package:lakbay/features/listings/crud/add_tours.dart';
 import 'package:lakbay/features/listings/crud/add_transport.dart';
 import 'package:lakbay/features/listings/crud/category_page_controller.dart';
 import 'package:lakbay/features/listings/crud/choose_category.dart';
-import 'package:lakbay/features/listings/crud/customer_accommodation.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_entertainment.dart';
 import 'package:lakbay/features/listings/crud/customer_food.dart';
@@ -166,11 +166,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 return ProfilePage(userId: pathParameters['userId']!);
               }),
 
-              // Bookings Page by cutomerId
-              buildSubRoute('/bookings', (context, pathParameters, extra) {
-                return const BookingsPage();
-              }),
-
               // Edit Profile Page
               buildSubRoute('/profile/edit', (context, pathParameters, extra) {
                 UserModel user = extra as UserModel;
@@ -283,6 +278,59 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       return TripsAddActivity(
                         plan: plan,
                       );
+                    },
+                  ),
+                ],
+              ),
+
+              // Bookings Page by cutomerId
+              buildSubRoute(
+                '/bookings',
+                (context, pathParameters, extra) {
+                  return const BookingsPage();
+                },
+                subRoutes: [
+                  // Booking Details
+                  buildSubRoute(
+                    'booking_details',
+                    (context, pathParameters, extra) {
+                      final Map<String, dynamic> bookingDetails =
+                          extra as Map<String, dynamic>;
+                      final ListingBookings booking =
+                          bookingDetails['booking'] as ListingBookings;
+                      final ListingModel listing =
+                          bookingDetails['listing'] as ListingModel;
+
+                      switch (listing.category) {
+                        case 'Accommodation':
+                          return BookingsAccomodationCustomer(
+                            booking: booking,
+                            listing: listing,
+                          );
+
+                        case 'Transport':
+                          return TransportationBookingsDetails(
+                            booking: booking,
+                            listing: listing,
+                          );
+                        // case 'Food':
+                        //   return CustomerFood(
+                        //     listing: listing,
+                        //   );
+                        // case 'Entertainment':
+                        //   return CustomerEntertainment(
+                        //     listing: listing,
+                        //   );
+                        // case 'Touring':
+                        //   return SelectedTouringPage(
+                        //     listing: listing,
+                        //   );
+                        default:
+                          return AccommodationBookingsDetails(
+                            booking: booking,
+                            listing: listing,
+                          );
+                      }
                     },
                   ),
                 ],
@@ -473,7 +521,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             bookingDetails['listing'] as ListingModel;
 
                         switch (pathParameters['category']) {
-                          case 'Accommodation':
+                          case 'accommodation':
                             return CustomerAccomodationReceipt(
                                 listing: listing, booking: booking);
 
@@ -498,26 +546,26 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                               bookingDetails['listing'] as ListingModel;
 
                           switch (pathParameters['category']) {
-                            case 'Accommodation':
+                            case 'accommodation':
                               return AccommodationBookingsDetails(
                                 booking: booking,
                                 listing: listing,
                               );
 
-                            case 'Transport':
+                            case 'transport':
                               return TransportationBookingsDetails(
                                 booking: booking,
                                 listing: listing,
                               );
-                            // case 'Food':
+                            // case 'food':
                             //   return CustomerFood(
                             //     listing: listing,
                             //   );
-                            // case 'Entertainment':
+                            // case 'entertainment':
                             //   return CustomerEntertainment(
                             //     listing: listing,
                             //   );
-                            // case 'Touring':
+                            // case 'touring':
                             //   return SelectedTouringPage(
                             //     listing: listing,
                             //   );

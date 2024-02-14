@@ -1,6 +1,7 @@
 // custom_app_bar.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/common/providers/app_bar_provider.dart';
 import 'package:lakbay/models/user_model.dart';
 
@@ -27,6 +28,18 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
       ),
       // Add icon on the right side of the app bar of a person
       actions: [
+        // Inbox Icon Button for the app bar
+        IconButton(
+          onPressed: () {
+            context.push('/inbox');
+          },
+          icon: const Badge(
+            isLabelVisible: true,
+            label: Text('3'),
+            child: Icon(Icons.inbox_outlined),
+          ),
+        ),
+
         IconButton(
           onPressed: () {
             scaffoldKey.currentState?.openEndDrawer();

@@ -1,25 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
-import 'package:lakbay/models/listing_model.dart';
 
 class AddEntertainment extends ConsumerStatefulWidget {
   final CooperativeModel coop;
   final String category;
-  const AddEntertainment({required this.coop, required this.category, super.key});
+  const AddEntertainment(
+      {required this.coop, required this.category, super.key});
 
   @override
   ConsumerState<AddEntertainment> createState() => _AddEntertainmentState();
@@ -37,19 +34,19 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   String type = 'Recreational/Rentals';
   num guests = 0;
   List<File>? _listingImgs = [];
-  
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController(text: 'Eastwood City');
+  final TextEditingController _addressController =
+      TextEditingController(text: 'Eastwood City');
   final TextEditingController _unitsController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
   final TextEditingController _guestInfoController = TextEditingController();
   TimeOfDay _selectedOpeningHours = TimeOfDay.now();
-  TimeOfDay _selectedClosingHours = TimeOfDay.now(); 
+  TimeOfDay _selectedClosingHours = TimeOfDay.now();
 
 // void submitAddListing() {
 //   if (_formKey.currentState!.validate()) {
@@ -161,39 +158,29 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 //   return listing;
 // }
 
-
-
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(listingControllerProvider);
     return PopScope(
-      canPop: false,
-      onPopInvoked: (didPop) {
-        context.pop();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Entertainment Listing')
-        ),
-        bottomNavigationBar: bottomAppBar(),
-        body: isLoading
-              ? const Loader()
-              : SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: Column(
-                      children: [
-                        steppers(context),
-                        stepForm(context)
-                      ]
-                    )
-                  )
-                )
-              )
-      )
-    );
+        canPop: false,
+        onPopInvoked: (didPop) {
+          context.pop();
+        },
+        child: Scaffold(
+            appBar: AppBar(title: const Text('Entertainment Listing')),
+            bottomNavigationBar: bottomAppBar(),
+            body: isLoading
+                ? const Loader()
+                : SingleChildScrollView(
+                    child: Form(
+                        key: _formKey,
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 8.0),
+                            child: Column(children: [
+                              steppers(context),
+                              stepForm(context)
+                            ]))))));
   }
 
   Column steppers(BuildContext context) {
@@ -248,7 +235,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   }
 
   Widget stepForm(BuildContext context) {
-    switch(activeStep) {
+    switch (activeStep) {
       case 1:
         return addDetails(context);
       case 2:
@@ -259,7 +246,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
         return addGuestInfo(context);
       case 5:
         return reviewListing(context);
-      default :
+      default:
         return chooseType(context);
     }
   }
@@ -339,7 +326,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             hintText: "Duration",
           ),
         ),
-           const SizedBox(height: 10),
+        const SizedBox(height: 10),
         ListTile(
           title: const Text('Starting/Opening Hours*'),
           subtitle: Text(
@@ -357,7 +344,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             }
           },
         ),
-        
         const SizedBox(height: 10),
         ListTile(
           title: const Text('End/Closing Hours*'),
@@ -381,9 +367,8 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   }
 
   Widget addLocation(BuildContext context) {
-    return Column(
-      children: [
-        TextFormField(
+    return Column(children: [
+      TextFormField(
           controller: _addressController,
           decoration: const InputDecoration(
             labelText: 'Address*',
@@ -395,65 +380,51 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               return 'Please enter some text';
             }
             return null;
-          }
-        ),
-        const SizedBox(height: 10),
-        ElevatedButton(
-          onPressed: () {
+          }),
+      const SizedBox(height: 10),
+      ElevatedButton(
+        onPressed: () {},
+        child: const Text('Update Map'),
+      ),
 
-          },
-          child: const Text('Update Map'),
-        ),
+      const SizedBox(height: 10),
 
-        const SizedBox(height: 10),
-        
-        // Google Map
-        SizedBox(
-          height: 400,
-          child: MapWidget(
-            address: _addressController.text
-          ),
-        )
-      ]
-    );
+      // Google Map
+      SizedBox(
+        height: 400,
+        child: MapWidget(address: _addressController.text),
+      )
+    ]);
   }
 
   Widget addListingPhotos(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          child: Row(
-            children: [
-              Icon(
-                Icons.image_outlined,
-                color: Theme.of(context).iconTheme.color
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: ImagePickerFormField(
-                  height: MediaQuery.sizeOf(context).height / 2.5,
-                  width: MediaQuery.sizeOf(context).width,
-                  context: context,
-                  initialValue: _listingImgs,
-                  onSaved: (List<File>? files) {
-                    _listingImgs = files;
-                  },
-                  validator: (List<File>? files) {
-                    if (files == null || files.isEmpty) {
-                      return 'Please select some images';
-                    }
-                    return null;
-                  },
-                  onImagesSelected: (List<File> files) {
-                    _listingImgs = files;
-                  },
-                ),
-              )
-            ]
-          )
+    return Column(children: [
+      GestureDetector(
+          child: Row(children: [
+        Icon(Icons.image_outlined, color: Theme.of(context).iconTheme.color),
+        const SizedBox(width: 15),
+        Expanded(
+          child: ImagePickerFormField(
+            height: MediaQuery.sizeOf(context).height / 2.5,
+            width: MediaQuery.sizeOf(context).width,
+            context: context,
+            initialValue: _listingImgs,
+            onSaved: (List<File>? files) {
+              _listingImgs = files;
+            },
+            validator: (List<File>? files) {
+              if (files == null || files.isEmpty) {
+                return 'Please select some images';
+              }
+              return null;
+            },
+            onImagesSelected: (List<File> files) {
+              _listingImgs = files;
+            },
+          ),
         )
-      ]
-    );
+      ]))
+    ]);
   }
 
   Widget addGuestInfo(BuildContext context) {
@@ -462,7 +433,8 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       children: [
         const SizedBox(height: 10),
         TextFormField(
-          controller: _guestInfoController, // Create a new TextEditingController for guest info
+          controller:
+              _guestInfoController, // Create a new TextEditingController for guest info
           maxLines: null,
           decoration: const InputDecoration(
             labelText: 'Guest Information',
@@ -477,102 +449,94 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 
   Widget reviewListing(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget> [
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          if (_listingImgs?.isNotEmpty == true) ...[
+            const Padding(
+              padding: EdgeInsets.only(top: 8.0, left: 12.0),
+              child: DisplayText(
+                  text: "Listing Photo/s",
+                  lines: 1,
+                  style:
+                      TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ImageSlider(
+                  images: _listingImgs,
+                  height: MediaQuery.sizeOf(context).height / 2.5,
+                  width: double.infinity),
+            ),
+          ],
 
-        if (_listingImgs?.isNotEmpty == true)... [
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 12.0),
-            child: DisplayText(
-              text: "Listing Photo/s",
-              lines: 1,
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)
+          ListTile(
+              title: const Text('Category',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              subtitle: Text(widget.category)),
+          ListTile(
+              title: const Text(
+                'Type',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(type)),
+          const Divider(),
+          // Step 1
+          ListTile(
+            title: const Text(
+              'Title',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(_titleController.text),
+          ),
+          ListTile(
+            title: const Text('Description',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(_descriptionController.text),
+          ),
+
+          const Divider(),
+          ListTile(
+            title: const Text('Price',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(_priceController.text),
+          ),
+          ListTile(
+            title: const Text('Number of Units',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(_unitsController.text),
+          ),
+          ListTile(
+            title: const Text('Capacity',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(_capacityController.text),
+          ),
+          ListTile(
+            title: const Text('Duration',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(_durationController.text),
+          ),
+          ListTile(
+            title: const Text('Start/Opening: ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(
+              'Selected Time: ${_selectedOpeningHours.format(context)}',
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ImageSlider(
-              images: _listingImgs,
-              height: MediaQuery.sizeOf(context).height / 2.5, 
-              width: double.infinity
+          ListTile(
+            title: const Text('End/Closing: ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(
+              'Selected Time: ${_selectedClosingHours.format(context)}',
             ),
           ),
-        ],
-        
-        ListTile(
-          title: const Text(
-            'Category',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+          ListTile(
+            title: const Text(
+              'Guest Information',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(_guestInfoController.text),
           ),
-          subtitle: Text(widget.category)
-        ),
-        ListTile(
-          title: const Text(
-            'Type',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            
-          ),
-          subtitle: Text(type)
-        ),
-        const Divider(),
-      // Step 1
-      ListTile(
-        title: const Text(
-          'Title',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(_titleController.text),
-      ),
-      ListTile(
-        title: const Text('Description',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        subtitle: Text(_descriptionController.text),
-      ),
-
-      const Divider(),
-      ListTile(
-        title: const Text('Price',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        subtitle: Text(_priceController.text),
-      ),
-      ListTile(
-        title: const Text('Number of Units',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        subtitle: Text(_unitsController.text),
-      ),
-      ListTile(
-        title: const Text('Capacity',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        subtitle: Text(_capacityController.text),
-      ),
-      ListTile(
-        title: const Text('Duration',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        subtitle: Text(_durationController.text),
-      ),
-      ListTile(
-        title: const Text('Start/Opening: ',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        subtitle: Text(
-          'Selected Time: ${_selectedOpeningHours.format(context)}',
-        ),
-      ),
-      ListTile(
-        title: const Text('End/Closing: ',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        subtitle: Text(
-          'Selected Time: ${_selectedClosingHours.format(context)}',
-        ),
-      ),
-       ListTile(
-        title: const Text(
-          'Guest Information',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(_guestInfoController.text),
-      ),
-      ]
-    );
+        ]);
   }
 
   Widget chooseType(BuildContext context) {
@@ -683,96 +647,87 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 
   BottomAppBar bottomAppBar() {
     return BottomAppBar(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          if (activeStep == 0) ... [
-            TextButton(
-              onPressed: () {
-                context.pop();
-                // ref.read(navBarVisibilityProvider.notifier).show();
-              },
-              child: const Text('Cancel')
-            )
-          ]
-          else ... [
-            TextButton(
-              onPressed: () {
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      if (activeStep == 0) ...[
+        TextButton(
+            onPressed: () {
+              context.pop();
+              // ref.read(navBarVisibilityProvider.notifier).show();
+            },
+            child: const Text('Cancel'))
+      ] else ...[
+        TextButton(
+            onPressed: () {
+              setState(() {
+                activeStep--;
+              });
+            },
+            child: const Text('Back'))
+      ],
+
+      // Next
+      if (activeStep != upperBound) ...[
+        ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () {
+              if (activeStep < upperBound) {
                 setState(() {
-                  activeStep--;
+                  activeStep++;
                 });
-              },
-              child: const Text('Back')
-            )
-          ],
-          
-          // Next
-          if (activeStep != upperBound) ... [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
+              }
+            },
+            child: Text(
+              'Next',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
-              onPressed: () {
-                if (activeStep < upperBound) {
-                  setState(() {
-                    activeStep++;
-                  });
-                }
-              },
-              child: Text(
-                'Next',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
-              )
-            )
-          ]
-          else ... [
-            TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
+            ))
+      ] else ...[
+        TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () {
+              // print(widget.coop.uid);
+              // AvailableTransport transport = AvailableTransport(
+              //   guests: guests,
+              //   luggage: luggage,
+              //   price: num.parse(_feeController.text),
+              //   available: true
+              // );
+              // ListingModel listingModel = ListingModel(
+              //   address: _addressController.text,
+              //       category: widget.category,
+              //       city: widget.coop.city,
+              //       cooperative: ListingCooperative(
+              //         cooperativeId: widget.coop.uid!,
+              //         cooperativeName: widget.coop.name
+              //       ),
+              //       description: _descriptionController.text,
+              //       province: widget.coop.province,
+              //       publisherId: "",
+              //       title: _titleController.text,
+              //       type: type,
+              //       images: _images?.map((e) => ListingImages(path: e.path)).toList(),
+              //       availableTransport: transport
+              // );
+              // print('this is the current transport $transport');
+              // ref
+              //     .read(saveListingProvider.notifier)
+              //     .saveListingProvider(listingModel);
+              // submitAddListing(listingModel);
+            },
+            child: Text(
+              'Submit',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
-              onPressed: () {
-                // print(widget.coop.uid);
-                // AvailableTransport transport = AvailableTransport(
-                //   guests: guests,
-                //   luggage: luggage,
-                //   price: num.parse(_feeController.text),
-                //   available: true
-                // );
-                // ListingModel listingModel = ListingModel(
-                //   address: _addressController.text,
-                //       category: widget.category,
-                //       city: widget.coop.city,
-                //       cooperative: ListingCooperative(
-                //         cooperativeId: widget.coop.uid!,
-                //         cooperativeName: widget.coop.name
-                //       ), 
-                //       description: _descriptionController.text, 
-                //       province: widget.coop.province,
-                //       publisherId: "",
-                //       title: _titleController.text,
-                //       type: type,
-                //       images: _images?.map((e) => ListingImages(path: e.path)).toList(),
-                //       availableTransport: transport
-                // );
-                // print('this is the current transport $transport');
-                // ref
-                //     .read(saveListingProvider.notifier)
-                //     .saveListingProvider(listingModel);
-                // submitAddListing(listingModel);
-              },
-              child: Text(
-                'Submit',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
-              )
-            )
-          ]
-        ]
-      )
-    );
+            ))
+      ]
+    ]));
   }
 }
 

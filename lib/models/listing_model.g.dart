@@ -22,7 +22,7 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       checkOut:
           const TimestampSerializer().fromJson(json['checkOut'] as Timestamp?),
       city: json['city'] as String,
-      confirmationPeriod: json['confirmationPeriod'] as num?,
+      cancellationPeriod: json['cancellationPeriod'] as num?,
       cooperative: ListingCooperative.fromJson(
           json['cooperative'] as Map<String, dynamic>),
       description: json['description'] as String,
@@ -82,7 +82,7 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'checkIn': const TimestampSerializer().toJson(instance.checkIn),
       'checkOut': const TimestampSerializer().toJson(instance.checkOut),
       'city': instance.city,
-      'confirmationPeriod': instance.confirmationPeriod,
+      'cancellationPeriod': instance.cancellationPeriod,
       'cooperative': instance.cooperative.toJson(),
       'description': instance.description,
       'downpaymentRate': instance.downpaymentRate,

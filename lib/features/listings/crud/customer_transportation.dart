@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -1245,6 +1244,8 @@ class _CustomerTransportationState
                                   onPressed: () {
                                     Navigator.pop(context);
                                     ListingBookings booking = ListingBookings(
+                                        listingId: widget.listing.uid!,
+                                        listingTitle: widget.listing.title,
                                         price: transport.price,
                                         roomId: widget.listing.title,
                                         category: "Transport",
@@ -1425,6 +1426,8 @@ class _CustomerTransportationState
                                   onPressed: () {
                                     
                                     ListingBookings booking = ListingBookings(
+                                        listingId: widget.listing.uid!,
+                                        listingTitle: widget.listing.title,
                                         price: transport.price,
                                         roomId: widget.listing.title,
                                         category: "Transport",

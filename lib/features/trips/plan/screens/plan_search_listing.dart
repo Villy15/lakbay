@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/listings/widgets/listing_card.dart';
+import 'package:lakbay/features/trips/plan/components/room_card.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
+import 'package:lakbay/models/listing_model.dart';
 
 class PlanSearchListing extends ConsumerStatefulWidget {
   final String category;
@@ -133,7 +134,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
 
             // Divider
             const Divider(),
-
             ref.watch(getAllListingsProvider).when(
                   data: (listings) {
                     // Sort
@@ -166,9 +166,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                         itemCount: filteredListings.length,
                         itemBuilder: (context, index) {
                           final listing = filteredListings[index];
-                          return ListingCard(
-                            listing: listing,
-                          );
+                          return listingCardController(listing);
                         },
                       ),
                     );
@@ -336,5 +334,27 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                     ),
                   ));
         });
+  }
+
+  Widget listingCardController(ListingModel listing) {
+    switch (listing.category) {
+      case "Accommodation":
+        return RoomCard(listing: listing);
+
+      case "Transport":
+        return const Text("works");
+
+      case "Food":
+        return const Text("works");
+
+      case "Tour":
+        return const Text("works");
+
+      case "Entertainment":
+        return const Text("works");
+
+      default:
+        return const Text("An Error Occurred!");
+    }
   }
 }
