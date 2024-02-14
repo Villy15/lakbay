@@ -38,6 +38,7 @@ final getAllBookingsProvider = StreamProvider.autoDispose
   return listingController.getAllBookings(listingId);
 });
 
+// getBookingByIdProvider
 final getBookingByIdProvider = StreamProvider.autoDispose
     .family<ListingBookings, (String listingId, String bookingId)>(
         (ref, params) {
@@ -48,7 +49,7 @@ final getBookingByIdProvider = StreamProvider.autoDispose
 
 // getAllBookingsByIdProvider
 final getAllBookingsByIdProvider = StreamProvider.autoDispose
-    .family<List<ListingBookings>, (String coopId, String eventId)>(
+    .family<List<ListingBookings>, (String coopId, String roomId)>(
         (ref, params) {
   final listingController = ref.watch(listingControllerProvider.notifier);
   return listingController.getAllBookingsById(params.$1, params.$2);
@@ -59,6 +60,21 @@ final getAllBookingsByCustomerIdProvider = StreamProvider.autoDispose
     .family<List<ListingBookings>, String>((ref, listingId) {
   final listingController = ref.watch(listingControllerProvider.notifier);
   return listingController.getBookingsByCustomerId(listingId);
+});
+
+// getRoomByIdProvider
+final getRoomByIdProvider = StreamProvider.autoDispose
+    .family<AvailableRoom, (String listingId, String roomId)>((ref, params) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getRoomById(params.$1,
+      params.$2); // Assuming getBooking is the method to fetch a single booking
+});
+
+// getRoomByPropertiesProvider
+final getRoomByPropertiesProvider = StreamProvider.autoDispose
+    .family<List<AvailableRoom>, ({num? guests})>((ref, params) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getRoomByProperties(guests: params.guests);
 });
 
 final listingControllerProvider =
@@ -80,7 +96,8 @@ class ListingController extends StateNotifier<bool> {
         super(false);
 
   // Add a listing
-  void addListing(ListingModel listing, BuildContext context) async {
+  void addListing(ListingModel listing, BuildContext context,
+      {List<AvailableRoom>? rooms}) async {
     state = true;
     final result = await _listingRepository.addListing(listing);
 
@@ -91,6 +108,9 @@ class ListingController extends StateNotifier<bool> {
         showSnackBar(context, l.message);
       },
       (listingUid) async {
+        rooms?.forEach((room) async {
+          await _listingRepository.addRoom(listingUid, room);
+        });
         state = false;
         context.pop();
         context.pop();
@@ -221,13 +241,23 @@ class ListingController extends StateNotifier<bool> {
     return _listingRepository.readBookingsByRoomId(listingId, roomId);
   }
 
-  // Read specific booking
+  // Read booking by bookingId
   Stream<ListingBookings> getBookingById(String listingId, String bookingId) {
     return _listingRepository.readBookingById(listingId, bookingId);
   }
 
-  // Read specific booking
+  // Read booking by customer id
   Stream<List<ListingBookings>> getBookingsByCustomerId(String customerId) {
     return _listingRepository.readBookingsByCustomerId(customerId);
+  }
+
+  // Read room by roomId
+  Stream<AvailableRoom> getRoomById(String listingId, String roomId) {
+    return _listingRepository.readRoomById(listingId, roomId);
+  }
+
+  // Read room by customerId
+  Stream<List<AvailableRoom>> getRoomByProperties({num? guests}) {
+    return _listingRepository.readRoomByProperties(guests: guests);
   }
 }

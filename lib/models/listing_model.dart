@@ -87,6 +87,9 @@ class ListingCost with _$ListingCost {
 @freezed
 class AvailableRoom with _$AvailableRoom {
   factory AvailableRoom({
+    String? uid,
+    String? listingId,
+    String? listingName,
     required bool available,
     required num bathrooms,
     required num bedrooms,

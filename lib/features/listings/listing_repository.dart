@@ -173,4 +173,64 @@ class ListingRepository {
       }).toList();
     });
   }
+
+  CollectionReference rooms(String listingId) {
+    return _listings
+        .doc(listingId)
+        .collection(FirebaseConstants.roomsSubCollections);
+  }
+
+// addRoom
+  FutureEither<String> addRoom(String listingId, AvailableRoom room) async {
+    try {
+      // Generate a new document ID based on the user's ID
+      var doc = rooms(listingId).doc();
+
+      // Update the uid of the room
+      room = room.copyWith(uid: doc.id);
+
+      // Add the cooperative to the database
+      await doc.set(room.toJson());
+
+      // Return the uid of the newly added room
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Update Room
+  FutureVoid updateRoom(AvailableRoom room) async {
+    debugPrintJson(room);
+    try {
+      return right(
+          await rooms(room.listingId!).doc(room.uid!).update(room.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+// read room by roomId
+  Stream<AvailableRoom> readRoomById(listingId, roomId) {
+    return rooms(listingId).doc(roomId).snapshots().map((snapshot) {
+      return AvailableRoom.fromJson(snapshot.data() as Map<String, dynamic>);
+    });
+  }
+
+  // Read room by properties
+  Stream<List<AvailableRoom>> readRoomByProperties({num? guests}) {
+    return FirebaseFirestore.instance
+        .collectionGroup('rooms')
+        .where('guests', isEqualTo: guests)
+        .snapshots()
+        .map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return AvailableRoom.fromJson(doc.data());
+      }).toList();
+    });
+  }
 }

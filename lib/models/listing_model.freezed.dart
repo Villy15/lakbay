@@ -1484,6 +1484,9 @@ AvailableRoom _$AvailableRoomFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AvailableRoom {
+  String? get uid => throw _privateConstructorUsedError;
+  String? get listingId => throw _privateConstructorUsedError;
+  String? get listingName => throw _privateConstructorUsedError;
   bool get available => throw _privateConstructorUsedError;
   num get bathrooms => throw _privateConstructorUsedError;
   num get bedrooms => throw _privateConstructorUsedError;
@@ -1506,7 +1509,10 @@ abstract class $AvailableRoomCopyWith<$Res> {
       _$AvailableRoomCopyWithImpl<$Res, AvailableRoom>;
   @useResult
   $Res call(
-      {bool available,
+      {String? uid,
+      String? listingId,
+      String? listingName,
+      bool available,
       num bathrooms,
       num bedrooms,
       num beds,
@@ -1529,6 +1535,9 @@ class _$AvailableRoomCopyWithImpl<$Res, $Val extends AvailableRoom>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
+    Object? listingId = freezed,
+    Object? listingName = freezed,
     Object? available = null,
     Object? bathrooms = null,
     Object? bedrooms = null,
@@ -1539,6 +1548,18 @@ class _$AvailableRoomCopyWithImpl<$Res, $Val extends AvailableRoom>
     Object? roomId = null,
   }) {
     return _then(_value.copyWith(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingId: freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingName: freezed == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String?,
       available: null == available
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
@@ -1584,7 +1605,10 @@ abstract class _$$AvailableRoomImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {bool available,
+      {String? uid,
+      String? listingId,
+      String? listingName,
+      bool available,
       num bathrooms,
       num bedrooms,
       num beds,
@@ -1605,6 +1629,9 @@ class __$$AvailableRoomImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
+    Object? listingId = freezed,
+    Object? listingName = freezed,
     Object? available = null,
     Object? bathrooms = null,
     Object? bedrooms = null,
@@ -1615,6 +1642,18 @@ class __$$AvailableRoomImplCopyWithImpl<$Res>
     Object? roomId = null,
   }) {
     return _then(_$AvailableRoomImpl(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingId: freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingName: freezed == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String?,
       available: null == available
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
@@ -1655,7 +1694,10 @@ class __$$AvailableRoomImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AvailableRoomImpl implements _AvailableRoom {
   _$AvailableRoomImpl(
-      {required this.available,
+      {this.uid,
+      this.listingId,
+      this.listingName,
+      required this.available,
       required this.bathrooms,
       required this.bedrooms,
       required this.beds,
@@ -1668,6 +1710,12 @@ class _$AvailableRoomImpl implements _AvailableRoom {
   factory _$AvailableRoomImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvailableRoomImplFromJson(json);
 
+  @override
+  final String? uid;
+  @override
+  final String? listingId;
+  @override
+  final String? listingName;
   @override
   final bool available;
   @override
@@ -1695,7 +1743,7 @@ class _$AvailableRoomImpl implements _AvailableRoom {
 
   @override
   String toString() {
-    return 'AvailableRoom(available: $available, bathrooms: $bathrooms, bedrooms: $bedrooms, beds: $beds, guests: $guests, images: $images, price: $price, roomId: $roomId)';
+    return 'AvailableRoom(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, bathrooms: $bathrooms, bedrooms: $bedrooms, beds: $beds, guests: $guests, images: $images, price: $price, roomId: $roomId)';
   }
 
   @override
@@ -1703,6 +1751,11 @@ class _$AvailableRoomImpl implements _AvailableRoom {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AvailableRoomImpl &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.listingId, listingId) ||
+                other.listingId == listingId) &&
+            (identical(other.listingName, listingName) ||
+                other.listingName == listingName) &&
             (identical(other.available, available) ||
                 other.available == available) &&
             (identical(other.bathrooms, bathrooms) ||
@@ -1720,6 +1773,9 @@ class _$AvailableRoomImpl implements _AvailableRoom {
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      uid,
+      listingId,
+      listingName,
       available,
       bathrooms,
       bedrooms,
@@ -1745,7 +1801,10 @@ class _$AvailableRoomImpl implements _AvailableRoom {
 
 abstract class _AvailableRoom implements AvailableRoom {
   factory _AvailableRoom(
-      {required final bool available,
+      {final String? uid,
+      final String? listingId,
+      final String? listingName,
+      required final bool available,
       required final num bathrooms,
       required final num bedrooms,
       required final num beds,
@@ -1757,6 +1816,12 @@ abstract class _AvailableRoom implements AvailableRoom {
   factory _AvailableRoom.fromJson(Map<String, dynamic> json) =
       _$AvailableRoomImpl.fromJson;
 
+  @override
+  String? get uid;
+  @override
+  String? get listingId;
+  @override
+  String? get listingName;
   @override
   bool get available;
   @override

@@ -153,6 +153,9 @@ Map<String, dynamic> _$$ListingCostImplToJson(_$ListingCostImpl instance) =>
 
 _$AvailableRoomImpl _$$AvailableRoomImplFromJson(Map<String, dynamic> json) =>
     _$AvailableRoomImpl(
+      uid: json['uid'] as String?,
+      listingId: json['listingId'] as String?,
+      listingName: json['listingName'] as String?,
       available: json['available'] as bool,
       bathrooms: json['bathrooms'] as num,
       bedrooms: json['bedrooms'] as num,
@@ -167,6 +170,9 @@ _$AvailableRoomImpl _$$AvailableRoomImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$AvailableRoomImplToJson(_$AvailableRoomImpl instance) =>
     <String, dynamic>{
+      'uid': instance.uid,
+      'listingId': instance.listingId,
+      'listingName': instance.listingName,
       'available': instance.available,
       'bathrooms': instance.bathrooms,
       'bedrooms': instance.bedrooms,

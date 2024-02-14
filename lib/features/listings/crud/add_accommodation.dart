@@ -149,7 +149,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                   if (mounted) {
                     ref
                         .read(listingControllerProvider.notifier)
-                        .addListing(listing, context);
+                        .addListing(listing, context, rooms: availableRooms);
                   }
                 },
               ));
