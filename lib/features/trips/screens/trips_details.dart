@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/bookings/widgets/booking_card.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/trips/plan/components/timeline_card.dart';
 import 'package:lakbay/features/trips/plan/components/timeline_tile.dart';
-import 'package:lakbay/features/trips/plan/components/trip_card.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
@@ -75,6 +76,8 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
   }
 
   Scaffold buildScaffold(BuildContext context, PlanModel plan) {
+    final user = ref.read(userProvider);
+
     return Scaffold(
       appBar: _appBar(context, plan),
       body: TabBarView(
@@ -84,20 +87,43 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
           // TripsDaysPlan(),
 
           // Reservations
-          ref.watch(getAllListingsProvider).when(
-                data: (listings) {
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(16.0),
-                    separatorBuilder: (context, index) => const SizedBox(
-                      height: 12.0,
-                    ),
+          ref.watch(getAllBookingsByCustomerIdProvider(user!.uid)).when(
+                data: (bookings) {
+                  if (bookings.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'No Bookings Yet',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: listings.length,
+                    itemCount: bookings.length,
                     itemBuilder: (context, index) {
-                      final listing = listings[index];
-                      return TripCard(
-                        listing: listing,
-                      );
+                      final booking = bookings[index];
+
+                      return ref
+                          .watch(getListingProvider(booking.listingId))
+                          .when(
+                            data: (listing) {
+                              return BookingCard(
+                                booking: booking,
+                                listing: listing,
+                              );
+                            },
+                            error: (error, stackTrace) => ErrorText(
+                              error: error.toString(),
+                              stackTrace: '',
+                            ),
+                            loading: () => const Loader(),
+                          );
                     },
                   );
                 },
