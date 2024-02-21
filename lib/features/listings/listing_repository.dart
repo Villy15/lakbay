@@ -237,6 +237,15 @@ class ListingRepository {
     }
   }
 
+// read room by listingId
+  Stream<List<AvailableRoom>> readRoomsByListingId(listingId) {
+    return roomsCollection(listingId).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return AvailableRoom.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
 // read room by roomId
   Stream<AvailableRoom> readRoomById(listingId, roomId) {
     return roomsCollection(listingId).doc(roomId).snapshots().map((snapshot) {
@@ -246,20 +255,15 @@ class ListingRepository {
 
   // Read room by properties
   Stream<List<AvailableRoom>> readRoomByProperties(
-      {List<String>? unavailableRoomIds, num? guests}) {
-    Query query = FirebaseFirestore.instance.collectionGroup('rooms');
+      List<String> unavailableRoomIds, num guests) {
+    Query query =
+        FirebaseFirestore.instance.collectionGroup('accommodationRooms');
 
-    if (unavailableRoomIds!.isNotEmpty) {
-      // query = query
-      // .where('roomId', whereNotIn: unavailableRoomIds.toList())
-      // .where('guests', isGreaterThanOrEqualTo: guests);
-    } else {
-      // query = query.where('guests', isGreaterThanOrEqualTo: guests);
+    if (unavailableRoomIds.isNotEmpty) {
+      query = query.where('uid', whereNotIn: unavailableRoomIds);
     }
     return query.snapshots().map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
-        debugPrint(
-            "here ${AvailableRoom.fromJson(doc.data()! as Map<String, dynamic>)}");
         return AvailableRoom.fromJson(doc.data()! as Map<String, dynamic>);
       }).toList();
     });

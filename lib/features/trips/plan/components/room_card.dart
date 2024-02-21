@@ -40,10 +40,22 @@ class _RoomCardState extends ConsumerState<RoomCard> {
       height: 600,
       width: double.infinity,
       child: ref
-          .watch(getRoomByPropertiesProvider(GetRoomsParams(
-              unavailableRoomUids: unavailableRoomUids, guests: guests)))
+          .watch(getRoomByPropertiesProvider(RoomsParams(
+              unavailableRoomUids: unavailableRoomUids, guests: guests!)))
           .when(
               data: (List<AvailableRoom> rooms) {
+                if (rooms.isNotEmpty) {
+                } else {
+                  return Center(
+                    child: Column(
+                      children: [
+                        const Text("No Rooms Available"),
+                        Text(
+                            "(${DateFormat('MMMM dd').format(startDate!)} - ${DateFormat('MMMM dd').format(endDate!)})")
+                      ],
+                    ),
+                  );
+                }
                 return ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -349,286 +361,6 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                       stackTrace: stackTrace.toString()))),
               loading: () => const Scaffold(body: Loader())),
     );
-
-    // return ListView.builder(
-    //     physics: const NeverScrollableScrollPhysics(),
-    //     shrinkWrap: true,
-    //     itemCount: widget.listing.availableRooms!.length,
-    //     itemBuilder: (context, index) {
-    //       final AvailableRoom room = widget.listing.availableRooms![index];
-    //       final List<String?> imageUrls = widget
-    //           .listing.availableRooms![index].images!
-    //           .map((listingImage) => listingImage.url)
-    //           .toList();
-
-    //       return ref.watch(getRoomByPropertiesProvider((guests: guests))).when(
-    //           data: (List<AvailableRoom> rooms) {
-    //             debugPrint("$bookings");
-    //             if (room.guests >= guests! &&
-    //                 isDateInRange(startDate!, endDate!,
-    //                     getAllDatesFromBookings(bookings))) {
-    //               return SizedBox(
-    //                 height: MediaQuery.sizeOf(context).height / 2.5,
-    //                 width: MediaQuery.sizeOf(context).width / 2,
-    //                 child: Card(
-    //                     child: Column(
-    //                   children: [
-    //                     ImageSlider(
-    //                         images: imageUrls,
-    //                         height: MediaQuery.sizeOf(context).height / 4,
-    //                         width: MediaQuery.sizeOf(context).width / 2),
-    //                     Padding(
-    //                       padding: const EdgeInsets.only(
-    //                           left: 20.0,
-    //                           right: 10,
-    //                           top: 10,
-    //                           bottom: 10), // Reduced overall padding
-    //                       child: Column(
-    //                         crossAxisAlignment: CrossAxisAlignment.start,
-    //                         mainAxisAlignment: MainAxisAlignment.start,
-    //                         children: [
-    //                           Row(
-    //                             mainAxisAlignment:
-    //                                 MainAxisAlignment.spaceBetween,
-    //                             children: [
-    //                               Column(
-    //                                 crossAxisAlignment:
-    //                                     CrossAxisAlignment.start,
-    //                                 children: [
-    //                                   Text(
-    //                                     widget.listing.title,
-    //                                     style: const TextStyle(
-    //                                       fontSize:
-    //                                           18, // Increased font size, larger than the previous one
-    //                                       fontWeight:
-    //                                           FontWeight.bold, // Bold text
-    //                                     ),
-    //                                   ),
-    //                                   Text(
-    //                                     "${room.bedrooms} Bedroom",
-    //                                     style: const TextStyle(
-    //                                       fontSize:
-    //                                           14, // Increased font size, larger than the previous one
-    //                                       fontWeight:
-    //                                           FontWeight.w500, // Bold text
-    //                                     ),
-    //                                   ),
-    //                                   RichText(
-    //                                     text: TextSpan(
-    //                                       children: [
-    //                                         TextSpan(
-    //                                           text: "₱${room.price}",
-    //                                           style: TextStyle(
-    //                                               fontSize:
-    //                                                   14, // Size for the price
-    //                                               fontWeight: FontWeight
-    //                                                   .w500, // Bold for the price
-    //                                               color: Theme.of(context)
-    //                                                   .colorScheme
-    //                                                   .onSurface),
-    //                                         ),
-    //                                         TextSpan(
-    //                                           text: " per night",
-    //                                           style: TextStyle(
-    //                                               fontSize:
-    //                                                   14, // Smaller size for 'per night'
-    //                                               fontStyle: FontStyle
-    //                                                   .italic, // Italicized 'per night'
-    //                                               fontWeight: FontWeight
-    //                                                   .normal, // Normal weight for 'per night'
-    //                                               color: Theme.of(context)
-    //                                                   .colorScheme
-    //                                                   .onSurface),
-    //                                         ),
-    //                                       ],
-    //                                     ),
-    //                                   ),
-    //                                 ],
-    //                               ),
-    //                             ],
-    //                           ),
-    //                           SizedBox(
-    //                             height: MediaQuery.sizeOf(context).height / 20,
-    //                           ),
-    //                           Row(
-    //                             mainAxisAlignment:
-    //                                 MainAxisAlignment.spaceEvenly,
-    //                             children: [
-    //                               ElevatedButton(
-    //                                 onPressed: () {
-    //                                   context.push(
-    //                                       '/market/${widget.listing.category}',
-    //                                       extra: widget.listing);
-    //                                 },
-    //                                 style: ElevatedButton.styleFrom(
-    //                                   padding: const EdgeInsets.symmetric(
-    //                                       horizontal: 25, vertical: 5),
-    //                                 ),
-    //                                 child: const Text(
-    //                                   'View Listing',
-    //                                   style: TextStyle(fontSize: 14),
-    //                                 ),
-    //                               ),
-    //                               ElevatedButton(
-    //                                 onPressed: () {
-    //                                   // final bookings = await ref.watch(
-    //                                   //     getAllBookingsByIdProvider((
-    //                                   //   widget.listing.uid!,
-    //                                   //   room.roomId
-    //                                   // )).future);
-
-    //                                   if (context.mounted) {
-    //                                     showSelectDate(
-    //                                         context, bookings, index);
-    //                                   }
-    //                                 },
-    //                                 style: ElevatedButton.styleFrom(
-    //                                   padding: const EdgeInsets.symmetric(
-    //                                       horizontal: 25, vertical: 5),
-    //                                 ),
-    //                                 child: const Text(
-    //                                   'Book Now',
-    //                                   style: TextStyle(fontSize: 14),
-    //                                 ),
-    //                               ),
-    //                             ],
-    //                           ),
-    //                           Row(
-    //                             mainAxisAlignment:
-    //                                 MainAxisAlignment.spaceBetween,
-    //                             children: [
-    //                               Text(
-    //                                 widget.listing.category,
-    //                                 style: const TextStyle(
-    //                                   fontSize: 16,
-    //                                   fontWeight: FontWeight.bold,
-    //                                 ),
-    //                               ),
-    //                               TextButton(
-    //                                   onPressed: () {
-    //                                     // Action to perform on tap, e.g., show a dialog or navigate
-    //                                     showDialog(
-    //                                       context: context,
-    //                                       builder: (BuildContext context) {
-    //                                         return AlertDialog(
-    //                                           title: const Text("Room Details"),
-    //                                           content: SizedBox(
-    //                                             height:
-    //                                                 MediaQuery.sizeOf(context)
-    //                                                         .height /
-    //                                                     4,
-    //                                             width:
-    //                                                 MediaQuery.sizeOf(context)
-    //                                                         .width /
-    //                                                     1.5,
-    //                                             child: Column(
-    //                                               children: [
-    //                                                 Row(
-    //                                                   children: [
-    //                                                     const Icon(
-    //                                                         Icons
-    //                                                             .people_alt_outlined,
-    //                                                         size: 30),
-    //                                                     Text(
-    //                                                       "Guests: ${room.guests}",
-    //                                                       style:
-    //                                                           const TextStyle(
-    //                                                               fontSize: 18),
-    //                                                     ),
-    //                                                   ],
-    //                                                 ),
-    //                                                 const SizedBox(
-    //                                                   height: 10,
-    //                                                 ),
-    //                                                 Row(
-    //                                                   children: [
-    //                                                     const Icon(
-    //                                                         Icons.bed_rounded,
-    //                                                         size: 30),
-    //                                                     Text(
-    //                                                       "Beds: ${room.beds}",
-    //                                                       style:
-    //                                                           const TextStyle(
-    //                                                               fontSize: 18),
-    //                                                     ),
-    //                                                   ],
-    //                                                 ),
-    //                                                 const SizedBox(
-    //                                                   height: 10,
-    //                                                 ),
-    //                                                 Row(
-    //                                                   children: [
-    //                                                     const Icon(
-    //                                                         Icons
-    //                                                             .bathtub_outlined,
-    //                                                         size: 30),
-    //                                                     Text(
-    //                                                       "Bathrooms: ${room.bathrooms}",
-    //                                                       style:
-    //                                                           const TextStyle(
-    //                                                               fontSize: 18),
-    //                                                     ),
-    //                                                   ],
-    //                                                 ),
-    //                                               ],
-    //                                             ),
-    //                                           ),
-    //                                           actions: [
-    //                                             TextButton(
-    //                                               child: const Text("Close"),
-    //                                               onPressed: () {
-    //                                                 Navigator.of(context).pop();
-    //                                               },
-    //                                             ),
-    //                                           ],
-    //                                         );
-    //                                       },
-    //                                     );
-    //                                   },
-    //                                   child: RichText(
-    //                                     text: TextSpan(
-    //                                       children: [
-    //                                         TextSpan(
-    //                                           text: "Room Details",
-    //                                           style: TextStyle(
-    //                                               // color: Colors.grey,
-    //                                               color: Theme.of(context)
-    //                                                   .colorScheme
-    //                                                   .onSurface
-    //                                                   .withOpacity(0.5),
-    //                                               fontStyle: FontStyle
-    //                                                   .italic // Underline for emphasis
-    //                                               ),
-    //                                         ),
-    //                                         const WidgetSpan(
-    //                                           child: Icon(
-    //                                             Icons
-    //                                                 .keyboard_arrow_down, // Arrow pointing down icon
-    //                                             size:
-    //                                                 16.0, // Adjust the size to fit your design
-    //                                             color: Colors.grey,
-    //                                           ),
-    //                                         ),
-    //                                       ],
-    //                                     ),
-    //                                   )),
-    //                             ],
-    //                           )
-    //                         ],
-    //                       ),
-    //                     )
-    //                   ],
-    //                 )),
-    //               );
-    //             } else {}
-    //             return null;
-    //           },
-    //           error: ((error, stackTrace) => Scaffold(
-    //               body: ErrorText(
-    //                   error: error.toString(),
-    //                   stackTrace: stackTrace.toString()))),
-    //           loading: () => const Scaffold(body: Loader()));
-    //     });
   }
 
   void showSelectDate(BuildContext context, List<ListingBookings> bookings,
@@ -726,17 +458,17 @@ class _RoomCardState extends ConsumerState<RoomCard> {
 
     for (ListingBookings booking in bookings) {
       // Add start date
-      DateTime currentDate = booking.startDate!;
+      DateTime currentDate = ref.read(planStartDateProvider) as DateTime;
 
       // Keep adding dates until you reach the end date
-      while (currentDate.isBefore(booking.endDate!) ||
+      if (currentDate.isBefore(booking.endDate!) ||
           currentDate.isAtSameMomentAs(booking.endDate!)) {
         unavailableRoomUids.add(booking.roomUid!);
         // Move to next day
         currentDate = currentDate.add(const Duration(days: 1));
       }
     }
-
+    debugPrint("getUnavailableRoomUids $unavailableRoomUids");
     return unavailableRoomUids;
   }
 
@@ -874,6 +606,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           price: room.price,
                           category: "Accommodation",
                           roomId: room.roomId,
+                          roomUid: room.uid,
                           startDate: startDate,
                           endDate: endDate,
                           email: "",

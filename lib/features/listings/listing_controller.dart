@@ -72,6 +72,14 @@ final getBookingsByPropertiesProvider = StreamProvider.autoDispose
 });
 
 // getRoomByIdProvider
+final getAllRoomsByListingIdProvider = StreamProvider.autoDispose
+    .family<List<AvailableRoom>, String>((ref, listingId) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getAllRoomsbyListingId(
+      listingId); // Assuming getBooking is the method to fetch a single booking
+});
+
+// getRoomByIdProvider
 final getRoomByIdProvider = StreamProvider.autoDispose
     .family<AvailableRoom, (String listingId, String roomId)>((ref, params) {
   final listingController = ref.watch(listingControllerProvider.notifier);
@@ -81,11 +89,11 @@ final getRoomByIdProvider = StreamProvider.autoDispose
 
 // getRoomByPropertiesProvider
 final getRoomByPropertiesProvider = StreamProvider.autoDispose
-    .family<List<AvailableRoom>, GetRoomsParams>((ref, params) {
+    .family<List<AvailableRoom>, RoomsParams>((ref, params) {
   final listingController = ref.watch(listingControllerProvider.notifier);
 
   return listingController.getRoomByProperties(
-      unavailableRoomIds: params.unavailableRoomUids, guests: params.guests);
+      params.unavailableRoomUids, params.guests);
 });
 
 // getRoomByPropertiesProvider
@@ -296,15 +304,19 @@ class ListingController extends StateNotifier<bool> {
   }
 
   // Read room by roomId
+  Stream<List<AvailableRoom>> getAllRoomsbyListingId(String listingId) {
+    return _listingRepository.readRoomsByListingId(listingId);
+  }
+
+  // Read room by roomId
   Stream<AvailableRoom> getRoomById(String listingId, String roomId) {
     return _listingRepository.readRoomById(listingId, roomId);
   }
 
   // Read room by customer properties
   Stream<List<AvailableRoom>> getRoomByProperties(
-      {List<String>? unavailableRoomIds, num? guests}) {
-    return _listingRepository.readRoomByProperties(
-        unavailableRoomIds: unavailableRoomIds, guests: guests);
+      List<String> unavailableRoomIds, num guests) {
+    return _listingRepository.readRoomByProperties(unavailableRoomIds, guests);
   }
 
   // Read transport by customer properties

@@ -14,34 +14,34 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-GetRoomsParams _$GetRoomsParamsFromJson(Map<String, dynamic> json) {
-  return _GetRoomsParams.fromJson(json);
+RoomsParams _$RoomsParamsFromJson(Map<String, dynamic> json) {
+  return _RoomsParams.fromJson(json);
 }
 
 /// @nodoc
-mixin _$GetRoomsParams {
-  List<String>? get unavailableRoomUids => throw _privateConstructorUsedError;
-  num? get guests => throw _privateConstructorUsedError;
+mixin _$RoomsParams {
+  List<String> get unavailableRoomUids => throw _privateConstructorUsedError;
+  num get guests => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $GetRoomsParamsCopyWith<GetRoomsParams> get copyWith =>
+  $RoomsParamsCopyWith<RoomsParams> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $GetRoomsParamsCopyWith<$Res> {
-  factory $GetRoomsParamsCopyWith(
-          GetRoomsParams value, $Res Function(GetRoomsParams) then) =
-      _$GetRoomsParamsCopyWithImpl<$Res, GetRoomsParams>;
+abstract class $RoomsParamsCopyWith<$Res> {
+  factory $RoomsParamsCopyWith(
+          RoomsParams value, $Res Function(RoomsParams) then) =
+      _$RoomsParamsCopyWithImpl<$Res, RoomsParams>;
   @useResult
-  $Res call({List<String>? unavailableRoomUids, num? guests});
+  $Res call({List<String> unavailableRoomUids, num guests});
 }
 
 /// @nodoc
-class _$GetRoomsParamsCopyWithImpl<$Res, $Val extends GetRoomsParams>
-    implements $GetRoomsParamsCopyWith<$Res> {
-  _$GetRoomsParamsCopyWithImpl(this._value, this._then);
+class _$RoomsParamsCopyWithImpl<$Res, $Val extends RoomsParams>
+    implements $RoomsParamsCopyWith<$Res> {
+  _$RoomsParamsCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -51,93 +51,92 @@ class _$GetRoomsParamsCopyWithImpl<$Res, $Val extends GetRoomsParams>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? unavailableRoomUids = freezed,
-    Object? guests = freezed,
+    Object? unavailableRoomUids = null,
+    Object? guests = null,
   }) {
     return _then(_value.copyWith(
-      unavailableRoomUids: freezed == unavailableRoomUids
+      unavailableRoomUids: null == unavailableRoomUids
           ? _value.unavailableRoomUids
           : unavailableRoomUids // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      guests: freezed == guests
+              as List<String>,
+      guests: null == guests
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
-              as num?,
+              as num,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$GetRoomsParamsImplCopyWith<$Res>
-    implements $GetRoomsParamsCopyWith<$Res> {
-  factory _$$GetRoomsParamsImplCopyWith(_$GetRoomsParamsImpl value,
-          $Res Function(_$GetRoomsParamsImpl) then) =
-      __$$GetRoomsParamsImplCopyWithImpl<$Res>;
+abstract class _$$RoomsParamsImplCopyWith<$Res>
+    implements $RoomsParamsCopyWith<$Res> {
+  factory _$$RoomsParamsImplCopyWith(
+          _$RoomsParamsImpl value, $Res Function(_$RoomsParamsImpl) then) =
+      __$$RoomsParamsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<String>? unavailableRoomUids, num? guests});
+  $Res call({List<String> unavailableRoomUids, num guests});
 }
 
 /// @nodoc
-class __$$GetRoomsParamsImplCopyWithImpl<$Res>
-    extends _$GetRoomsParamsCopyWithImpl<$Res, _$GetRoomsParamsImpl>
-    implements _$$GetRoomsParamsImplCopyWith<$Res> {
-  __$$GetRoomsParamsImplCopyWithImpl(
-      _$GetRoomsParamsImpl _value, $Res Function(_$GetRoomsParamsImpl) _then)
+class __$$RoomsParamsImplCopyWithImpl<$Res>
+    extends _$RoomsParamsCopyWithImpl<$Res, _$RoomsParamsImpl>
+    implements _$$RoomsParamsImplCopyWith<$Res> {
+  __$$RoomsParamsImplCopyWithImpl(
+      _$RoomsParamsImpl _value, $Res Function(_$RoomsParamsImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? unavailableRoomUids = freezed,
-    Object? guests = freezed,
+    Object? unavailableRoomUids = null,
+    Object? guests = null,
   }) {
-    return _then(_$GetRoomsParamsImpl(
-      unavailableRoomUids: freezed == unavailableRoomUids
+    return _then(_$RoomsParamsImpl(
+      unavailableRoomUids: null == unavailableRoomUids
           ? _value._unavailableRoomUids
           : unavailableRoomUids // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      guests: freezed == guests
+              as List<String>,
+      guests: null == guests
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
-              as num?,
+              as num,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$GetRoomsParamsImpl implements _GetRoomsParams {
-  _$GetRoomsParamsImpl({final List<String>? unavailableRoomUids, this.guests})
+class _$RoomsParamsImpl implements _RoomsParams {
+  _$RoomsParamsImpl(
+      {required final List<String> unavailableRoomUids, required this.guests})
       : _unavailableRoomUids = unavailableRoomUids;
 
-  factory _$GetRoomsParamsImpl.fromJson(Map<String, dynamic> json) =>
-      _$$GetRoomsParamsImplFromJson(json);
+  factory _$RoomsParamsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RoomsParamsImplFromJson(json);
 
-  final List<String>? _unavailableRoomUids;
+  final List<String> _unavailableRoomUids;
   @override
-  List<String>? get unavailableRoomUids {
-    final value = _unavailableRoomUids;
-    if (value == null) return null;
+  List<String> get unavailableRoomUids {
     if (_unavailableRoomUids is EqualUnmodifiableListView)
       return _unavailableRoomUids;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
+    return EqualUnmodifiableListView(_unavailableRoomUids);
   }
 
   @override
-  final num? guests;
+  final num guests;
 
   @override
   String toString() {
-    return 'GetRoomsParams(unavailableRoomUids: $unavailableRoomUids, guests: $guests)';
+    return 'RoomsParams(unavailableRoomUids: $unavailableRoomUids, guests: $guests)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$GetRoomsParamsImpl &&
+            other is _$RoomsParamsImpl &&
             const DeepCollectionEquality()
                 .equals(other._unavailableRoomUids, _unavailableRoomUids) &&
             (identical(other.guests, guests) || other.guests == guests));
@@ -151,32 +150,31 @@ class _$GetRoomsParamsImpl implements _GetRoomsParams {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$GetRoomsParamsImplCopyWith<_$GetRoomsParamsImpl> get copyWith =>
-      __$$GetRoomsParamsImplCopyWithImpl<_$GetRoomsParamsImpl>(
-          this, _$identity);
+  _$$RoomsParamsImplCopyWith<_$RoomsParamsImpl> get copyWith =>
+      __$$RoomsParamsImplCopyWithImpl<_$RoomsParamsImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$GetRoomsParamsImplToJson(
+    return _$$RoomsParamsImplToJson(
       this,
     );
   }
 }
 
-abstract class _GetRoomsParams implements GetRoomsParams {
-  factory _GetRoomsParams(
-      {final List<String>? unavailableRoomUids,
-      final num? guests}) = _$GetRoomsParamsImpl;
+abstract class _RoomsParams implements RoomsParams {
+  factory _RoomsParams(
+      {required final List<String> unavailableRoomUids,
+      required final num guests}) = _$RoomsParamsImpl;
 
-  factory _GetRoomsParams.fromJson(Map<String, dynamic> json) =
-      _$GetRoomsParamsImpl.fromJson;
+  factory _RoomsParams.fromJson(Map<String, dynamic> json) =
+      _$RoomsParamsImpl.fromJson;
 
   @override
-  List<String>? get unavailableRoomUids;
+  List<String> get unavailableRoomUids;
   @override
-  num? get guests;
+  num get guests;
   @override
   @JsonKey(ignore: true)
-  _$$GetRoomsParamsImplCopyWith<_$GetRoomsParamsImpl> get copyWith =>
+  _$$RoomsParamsImplCopyWith<_$RoomsParamsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

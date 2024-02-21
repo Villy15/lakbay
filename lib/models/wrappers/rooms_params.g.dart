@@ -6,16 +6,15 @@ part of 'rooms_params.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$GetRoomsParamsImpl _$$GetRoomsParamsImplFromJson(Map<String, dynamic> json) =>
-    _$GetRoomsParamsImpl(
-      unavailableRoomUids: (json['unavailableRoomUids'] as List<dynamic>?)
-          ?.map((e) => e as String)
+_$RoomsParamsImpl _$$RoomsParamsImplFromJson(Map<String, dynamic> json) =>
+    _$RoomsParamsImpl(
+      unavailableRoomUids: (json['unavailableRoomUids'] as List<dynamic>)
+          .map((e) => e as String)
           .toList(),
-      guests: json['guests'] as num?,
+      guests: json['guests'] as num,
     );
 
-Map<String, dynamic> _$$GetRoomsParamsImplToJson(
-        _$GetRoomsParamsImpl instance) =>
+Map<String, dynamic> _$$RoomsParamsImplToJson(_$RoomsParamsImpl instance) =>
     <String, dynamic>{
       'unavailableRoomUids': instance.unavailableRoomUids,
       'guests': instance.guests,
