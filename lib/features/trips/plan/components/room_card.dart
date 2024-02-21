@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +11,7 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/models/wrappers/rooms_params.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class RoomCard extends ConsumerStatefulWidget {
@@ -41,8 +40,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
       height: 600,
       width: double.infinity,
       child: ref
-          .watch(getRoomByPropertiesProvider(
-              (unavailableRoomUids: unavailableRoomUids, guests: guests)))
+          .watch(getRoomByPropertiesProvider(GetRoomsParams(
+              unavailableRoomUids: unavailableRoomUids, guests: guests)))
           .when(
               data: (List<AvailableRoom> rooms) {
                 return ListView.builder(

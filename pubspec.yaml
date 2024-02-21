@@ -33,6 +33,7 @@ dependencies:
   cloud_firestore: ^4.13.1
   cupertino_icons: ^1.0.2
   dotted_border: ^2.1.0
+  excel: ^4.0.2
   file_picker: ^6.1.1
   firebase_auth: ^4.14.0
   firebase_core: ^2.22.0

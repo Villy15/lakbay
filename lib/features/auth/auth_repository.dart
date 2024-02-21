@@ -123,6 +123,37 @@ class AuthRepository {
     }
   }
 
+  // Register with email and password and add additional user data
+  FutureEither<UserModel> registerMembers({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+  }) async {
+    try {
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      UserModel userModel = UserModel(
+        uid: userCredential.user?.uid ?? "",
+        isCoopView: false,
+        name: '$firstName $lastName',
+        firstName: firstName,
+        lastName: lastName,
+        profilePic: '',
+        isAuthenticated: true,
+      );
+
+      await _users.doc(userCredential.user!.uid).set(userModel.toJson());
+
+      return right(userModel);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   Stream<UserModel> getUserData(String uid) {
     return _users.doc(uid).snapshots().map((event) {
       return UserModel.fromJson(event.data() as Map<String, dynamic>);

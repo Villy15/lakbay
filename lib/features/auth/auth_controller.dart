@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_repository.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/join_coop_code.dart';
 import 'package:lakbay/models/user_model.dart';
 
 final userProvider = StateNotifierProvider<UserModelNotifier, UserModel?>(
@@ -94,5 +95,21 @@ class AuthController extends StateNotifier<bool> {
   // logout
   void logout() async {
     _authRepository.signOut();
+  }
+
+  // void register a list of members
+  void registerMembers(List<MemberData> members) async {
+    state = true; // true for loading
+
+    for (var member in members) {
+      _authRepository.registerMembers(
+        email: member.email,
+        password: member.password,
+        firstName: member.firstName,
+        lastName: member.lastName,
+      );
+    }
+
+    state = false; // false for loading
   }
 }

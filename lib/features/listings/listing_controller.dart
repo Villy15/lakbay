@@ -9,6 +9,7 @@ import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/models/wrappers/rooms_params.dart';
 
 // getListingsByCoop Family Provider
 final getListingsByCoopProvider =
@@ -79,9 +80,8 @@ final getRoomByIdProvider = StreamProvider.autoDispose
 });
 
 // getRoomByPropertiesProvider
-final getRoomByPropertiesProvider = StreamProvider.autoDispose.family<
-    List<AvailableRoom>,
-    ({List<String>? unavailableRoomUids, num? guests})>((ref, params) {
+final getRoomByPropertiesProvider = StreamProvider.autoDispose
+    .family<List<AvailableRoom>, GetRoomsParams>((ref, params) {
   final listingController = ref.watch(listingControllerProvider.notifier);
 
   return listingController.getRoomByProperties(
