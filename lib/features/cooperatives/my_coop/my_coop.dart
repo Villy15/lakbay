@@ -80,7 +80,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         ),
       ),
     ),
-     const SizedBox(
+    const SizedBox(
       width: 150.0,
       child: Tab(
         child: Row(
@@ -120,6 +120,11 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                       buildListViewListings(
                           ref.watch(getListingsByCoopProvider(coop.uid!))),
                       // Listings
+                      buildListViewEvents(
+                          ref.watch(getEventsByCoopIdProvider(coop.uid!))),
+
+                      // Wiki
+                      // Listingsx
                       buildListViewEvents(
                           ref.watch(getEventsByCoopIdProvider(coop.uid!))),
                     ],

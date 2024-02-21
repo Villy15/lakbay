@@ -211,6 +211,42 @@ class CoopsController extends StateNotifier<bool> {
     );
   }
 
+  void registerMembers(
+      CooperativeModel coop, BuildContext context, UserModel userModel) async {
+    state = true;
+    final result = await _coopsRepository.updateCoop(coop);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) async {
+        var coopMember = CooperativeMembers(
+          name: userModel.name,
+          uid: userModel.uid,
+          privileges: [],
+          role: CooperativeMembersRole(
+            committeeName: '',
+            role: 'Member',
+          ),
+          committees: [],
+          timestamp: DateTime.now(),
+        );
+
+        // Add user to members in Coop
+        _ref.read(coopsControllerProvider.notifier).addMember(
+              coop.uid!,
+              coopMember,
+              context,
+            );
+
+        state = false;
+      },
+    );
+  }
+
   // Leave a cooperative
   void leaveCooperative(CooperativeModel coop, BuildContext context) async {
     state = true;
