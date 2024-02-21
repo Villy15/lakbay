@@ -34,7 +34,8 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
       needsContributions: json['needsContributions'] as bool,
       paymentOption: json['paymentOption'] as String?,
       price: json['price'] as num,
-      roomId: json['roomId'] as String,
+      roomId: json['roomId'] as String?,
+      roomUid: json['roomUid'] as String?,
       selectedDate: const TimestampSerializer()
           .fromJson(json['selectedDate'] as Timestamp?),
       selectedTime: json['selectedTime'] as String?,
@@ -73,6 +74,7 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'paymentOption': instance.paymentOption,
       'price': instance.price,
       'roomId': instance.roomId,
+      'roomUid': instance.roomUid,
       'selectedDate': const TimestampSerializer().toJson(instance.selectedDate),
       'selectedTime': instance.selectedTime,
       'startDate': const TimestampSerializer().toJson(instance.startDate),

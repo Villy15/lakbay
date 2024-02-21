@@ -41,7 +41,8 @@ mixin _$ListingBookings {
   bool get needsContributions => throw _privateConstructorUsedError;
   String? get paymentOption => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
-  String get roomId => throw _privateConstructorUsedError;
+  String? get roomId => throw _privateConstructorUsedError;
+  String? get roomUid => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get selectedDate => throw _privateConstructorUsedError;
   String? get selectedTime => throw _privateConstructorUsedError;
@@ -88,7 +89,8 @@ abstract class $ListingBookingsCopyWith<$Res> {
       bool needsContributions,
       String? paymentOption,
       num price,
-      String roomId,
+      String? roomId,
+      String? roomUid,
       @TimestampSerializer() DateTime? selectedDate,
       String? selectedTime,
       @TimestampSerializer() DateTime? startDate,
@@ -132,7 +134,8 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? needsContributions = null,
     Object? paymentOption = freezed,
     Object? price = null,
-    Object? roomId = null,
+    Object? roomId = freezed,
+    Object? roomUid = freezed,
     Object? selectedDate = freezed,
     Object? selectedTime = freezed,
     Object? startDate = freezed,
@@ -223,10 +226,14 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as num,
-      roomId: null == roomId
+      roomId: freezed == roomId
           ? _value.roomId
           : roomId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      roomUid: freezed == roomUid
+          ? _value.roomUid
+          : roomUid // ignore: cast_nullable_to_non_nullable
+              as String?,
       selectedDate: freezed == selectedDate
           ? _value.selectedDate
           : selectedDate // ignore: cast_nullable_to_non_nullable
@@ -292,7 +299,8 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       bool needsContributions,
       String? paymentOption,
       num price,
-      String roomId,
+      String? roomId,
+      String? roomUid,
       @TimestampSerializer() DateTime? selectedDate,
       String? selectedTime,
       @TimestampSerializer() DateTime? startDate,
@@ -334,7 +342,8 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? needsContributions = null,
     Object? paymentOption = freezed,
     Object? price = null,
-    Object? roomId = null,
+    Object? roomId = freezed,
+    Object? roomUid = freezed,
     Object? selectedDate = freezed,
     Object? selectedTime = freezed,
     Object? startDate = freezed,
@@ -425,10 +434,14 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as num,
-      roomId: null == roomId
+      roomId: freezed == roomId
           ? _value.roomId
           : roomId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      roomUid: freezed == roomUid
+          ? _value.roomUid
+          : roomUid // ignore: cast_nullable_to_non_nullable
+              as String?,
       selectedDate: freezed == selectedDate
           ? _value.selectedDate
           : selectedDate // ignore: cast_nullable_to_non_nullable
@@ -489,7 +502,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
       required this.needsContributions,
       this.paymentOption,
       required this.price,
-      required this.roomId,
+      this.roomId,
+      this.roomUid,
       @TimestampSerializer() this.selectedDate,
       this.selectedTime,
       @TimestampSerializer() this.startDate,
@@ -562,7 +576,9 @@ class _$ListingBookingsImpl implements _ListingBookings {
   @override
   final num price;
   @override
-  final String roomId;
+  final String? roomId;
+  @override
+  final String? roomUid;
   @override
   @TimestampSerializer()
   final DateTime? selectedDate;
@@ -586,7 +602,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
   @override
   String toString() {
-    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -627,6 +643,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
                 other.paymentOption == paymentOption) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.roomId, roomId) || other.roomId == roomId) &&
+            (identical(other.roomUid, roomUid) || other.roomUid == roomUid) &&
             (identical(other.selectedDate, selectedDate) ||
                 other.selectedDate == selectedDate) &&
             (identical(other.selectedTime, selectedTime) ||
@@ -669,6 +686,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
         paymentOption,
         price,
         roomId,
+        roomUid,
         selectedDate,
         selectedTime,
         startDate,
@@ -716,7 +734,8 @@ abstract class _ListingBookings implements ListingBookings {
       required final bool needsContributions,
       final String? paymentOption,
       required final num price,
-      required final String roomId,
+      final String? roomId,
+      final String? roomUid,
       @TimestampSerializer() final DateTime? selectedDate,
       final String? selectedTime,
       @TimestampSerializer() final DateTime? startDate,
@@ -771,7 +790,9 @@ abstract class _ListingBookings implements ListingBookings {
   @override
   num get price;
   @override
-  String get roomId;
+  String? get roomId;
+  @override
+  String? get roomUid;
   @override
   @TimestampSerializer()
   DateTime? get selectedDate;

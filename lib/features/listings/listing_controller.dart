@@ -62,6 +62,14 @@ final getAllBookingsByCustomerIdProvider = StreamProvider.autoDispose
   return listingController.getBookingsByCustomerId(listingId);
 });
 
+// getAllBookingsByProperties
+final getBookingsByPropertiesProvider = StreamProvider.autoDispose
+    .family<List<ListingBookings>, (String category, DateTime startDate)>(
+        (ref, params) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getBookingsByProperties(params.$1, params.$2);
+});
+
 // getRoomByIdProvider
 final getRoomByIdProvider = StreamProvider.autoDispose
     .family<AvailableRoom, (String listingId, String roomId)>((ref, params) {
@@ -71,10 +79,28 @@ final getRoomByIdProvider = StreamProvider.autoDispose
 });
 
 // getRoomByPropertiesProvider
-final getRoomByPropertiesProvider = StreamProvider.autoDispose
-    .family<List<AvailableRoom>, ({num? guests})>((ref, params) {
+final getRoomByPropertiesProvider = StreamProvider.autoDispose.family<
+    List<AvailableRoom>,
+    ({List<String>? unavailableRoomUids, num? guests})>((ref, params) {
   final listingController = ref.watch(listingControllerProvider.notifier);
-  return listingController.getRoomByProperties(guests: params.guests);
+
+  return listingController.getRoomByProperties(
+      unavailableRoomIds: params.unavailableRoomUids, guests: params.guests);
+});
+
+// getRoomByPropertiesProvider
+final getTransportByPropertiesProvider = StreamProvider.autoDispose
+    .family<List<AvailableTransport>, ({num? guests})>((ref, params) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+
+  return listingController.getTransportByProperties(guests: params.guests);
+});
+
+// getRoomByPropertiesProvider
+final getEntertainmentByPropertiesProvider = StreamProvider.autoDispose
+    .family<List<EntertainmentService>, ({num? guests})>((ref, params) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getEntertainmentByProperties(guests: params.guests);
 });
 
 final listingControllerProvider =
@@ -96,8 +122,13 @@ class ListingController extends StateNotifier<bool> {
         super(false);
 
   // Add a listing
-  void addListing(ListingModel listing, BuildContext context,
-      {List<AvailableRoom>? rooms}) async {
+  void addListing(
+    ListingModel listing,
+    BuildContext context, {
+    List<AvailableRoom>? rooms,
+    List<AvailableTransport>? transport,
+    List<EntertainmentService>? entertainment,
+  }) async {
     state = true;
     final result = await _listingRepository.addListing(listing);
 
@@ -109,7 +140,14 @@ class ListingController extends StateNotifier<bool> {
       },
       (listingUid) async {
         rooms?.forEach((room) async {
-          await _listingRepository.addRoom(listingUid, room);
+          await _listingRepository.addRoom(listingUid, listing, room);
+        });
+        transport?.forEach((transport) async {
+          await _listingRepository.addTransport(listingUid, listing, transport);
+        });
+        entertainment?.forEach((entertainment) async {
+          await _listingRepository.addEntertainment(
+              listingUid, listing, entertainment);
         });
         state = false;
         context.pop();
@@ -251,13 +289,32 @@ class ListingController extends StateNotifier<bool> {
     return _listingRepository.readBookingsByCustomerId(customerId);
   }
 
+  // Read booking by date conflicts
+  Stream<List<ListingBookings>> getBookingsByProperties(
+      String category, DateTime startDate) {
+    return _listingRepository.readBookingsByProperties(category, startDate);
+  }
+
   // Read room by roomId
   Stream<AvailableRoom> getRoomById(String listingId, String roomId) {
     return _listingRepository.readRoomById(listingId, roomId);
   }
 
-  // Read room by customerId
-  Stream<List<AvailableRoom>> getRoomByProperties({num? guests}) {
-    return _listingRepository.readRoomByProperties(guests: guests);
+  // Read room by customer properties
+  Stream<List<AvailableRoom>> getRoomByProperties(
+      {List<String>? unavailableRoomIds, num? guests}) {
+    return _listingRepository.readRoomByProperties(
+        unavailableRoomIds: unavailableRoomIds, guests: guests);
+  }
+
+  // Read transport by customer properties
+  Stream<List<AvailableTransport>> getTransportByProperties({num? guests}) {
+    return _listingRepository.readTransportByProperties(guests: guests);
+  }
+
+  // Read entertainment by customer properties
+  Stream<List<EntertainmentService>> getEntertainmentByProperties(
+      {num? guests}) {
+    return _listingRepository.readEntertainmentByProperties(guests: guests);
   }
 }

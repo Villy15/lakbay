@@ -289,6 +289,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                           price: room.price,
                           category: "Accommodation",
                           roomId: room.roomId,
+                          roomUid: room.uid,
                           startDate: startDate,
                           endDate: endDate,
                           email: "",
