@@ -172,7 +172,7 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
                               .titleLarge
                               ?.fontSize))),
               Text(
-                  '${widget.listing.availableTables!.first.startTime.format(context)} - ${widget.listing.availableTables!.first.endTime.format(context)}',
+                  '${widget.listing.availableDeals!.first.startTime.format(context)} - ${widget.listing.availableDeals!.first.endTime.format(context)}',
                   style: const TextStyle(fontSize: 12))
             ]),
             Column(children: [
@@ -188,7 +188,7 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Text(
                       getWorkingDays(
-                          widget.listing.availableTables!.first.workingDays),
+                          widget.listing.availableDeals!.first.workingDays),
                       style: const TextStyle(fontSize: 12)))
             ])
           ])),

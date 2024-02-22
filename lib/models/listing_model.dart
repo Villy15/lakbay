@@ -39,7 +39,7 @@ class ListingModel with _$ListingModel {
     @TimestampSerializer() DateTime? timestamp,
     required String title,
     String? type,
-    List<FoodService>? availableTables,
+    List<FoodService>? availableDeals,
     List<ListingImages>? menuImgs,
     AvailableTransport? availableTransport,
     List<EntertainmentService>? availableEntertainment,
@@ -125,10 +125,12 @@ class AvailableTransport with _$AvailableTransport {
 @freezed
 class FoodService with _$FoodService {
   factory FoodService({
-    required String tableId,
+    required String dealName,
+    required String dealDescription,
     required num guests,
     required bool available,
-    required List<ListingImages> tableImgs,
+    required num price,
+    required List<ListingImages> dealImgs,
     required List<bool> workingDays,
     @TimeOfDayConverter() required TimeOfDay startTime,
     @TimeOfDayConverter() required TimeOfDay endTime,
