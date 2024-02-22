@@ -107,6 +107,9 @@ class AvailableRoom with _$AvailableRoom {
 @freezed
 class AvailableTransport with _$AvailableTransport {
   factory AvailableTransport({
+    String? uid,
+    String? listingId,
+    String? listingName,
     required bool available,
     required num guests,
     required num price,
@@ -143,6 +146,7 @@ class FoodService with _$FoodService {
 @freezed
 class EntertainmentService with _$EntertainmentService {
   factory EntertainmentService(
+      String? uid, String? listingId, String? listingName,
       {required String entertainmentId,
       required num guests,
       required num price,

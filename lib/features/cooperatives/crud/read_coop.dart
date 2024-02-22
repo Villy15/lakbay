@@ -194,34 +194,34 @@ class _ReadCoopPageState extends ConsumerState<ReadCoopPage> {
                       if (coop.members.contains(user?.uid)) {
                         showSnackBar(context, "Switch to Coop View to leave");
                       } else {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Join Cooperative'),
-                                content: const Text(
-                                    'Are you already a member of this cooperetive?'),
-                                actions: [
-                                  // Cancel
-                                  TextButton(
-                                    onPressed: () {
-                                      context.pop();
-                                      joinCoop(context, coop);
-                                    },
-                                    child: const Text('No'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      context.pop();
-                                      joinCoopWithCode(context, coop);
-                                    },
-                                    child: const Text('Yes'),
-                                  ),
-                                ],
-                              );
-                            });
+                        // showDialog(
+                        //     context: context,
+                        //     builder: (context) {
+                        //       return AlertDialog(
+                        //         title: const Text('Join Cooperative'),
+                        //         content: const Text(
+                        //             'Are you already a member of this cooperetive?'),
+                        //         actions: [
+                        //           // Cancel
+                        //           TextButton(
+                        //             onPressed: () {
+                        //               context.pop();
+                        //               joinCoop(context, coop);
+                        //             },
+                        //             child: const Text('No'),
+                        //           ),
+                        //           TextButton(
+                        //             onPressed: () {
+                        //               context.pop();
+                        //               joinCoopWithCode(context, coop);
+                        //             },
+                        //             child: const Text('Yes'),
+                        //           ),
+                        //         ],
+                        //       );
+                        //     });
 
-                        // joinCoop(context, coop);
+                        joinCoop(context, coop);
                       }
                     },
                     style: ElevatedButton.styleFrom(

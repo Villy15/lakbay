@@ -89,18 +89,18 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
 
-                    // Check if code is correct
-                    if (_codeController.text == widget.coop.code) {
-                      // Join Cooperative
-                      joinCooperative();
-                    } else {
-                      // Show error
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Invalid Code'),
-                        ),
-                      );
-                    }
+                    // // Check if code is correct
+                    // if (_codeController.text == widget.coop.code) {
+                    //   // Join Cooperative
+                    joinCooperative();
+                    // } else {
+                    //   // Show error
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     const SnackBar(
+                    //       content: Text('Invalid Code'),
+                    //     ),
+                    //   );
+                    // }
                   }
                 },
                 child: const Text('Submit'),

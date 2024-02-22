@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
+import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
 
@@ -145,7 +146,7 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                   // Add  an option to add a new activity
                   heading(
                     "Activity from our listings?",
-                    "Choose a cateogry to search for listings!",
+                    "Choose a category to search for listings!",
                     context,
                   ),
 
@@ -213,10 +214,22 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
       itemBuilder: (context, index) {
         final category = categories[index];
         return InkWell(
-          onTap: () {
+          onTap: () async {
             switch (category['name']) {
               case 'Accommodation':
-                context.push('/plan/add_activity/search_listing/accommodation');
+                final bookings = await ref.watch(
+                    getBookingsByPropertiesProvider((
+                  category['name'],
+                  ref.watch(planStartDateProvider)!
+                )).future);
+                if (context.mounted) {
+                  context.push(
+                      '/plan/add_activity/search_listing/accommodation',
+                      extra: {
+                        'bookings': bookings,
+                        'category': category["name"]
+                      });
+                }
                 break;
 
               case 'Food':
