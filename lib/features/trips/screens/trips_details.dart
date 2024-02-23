@@ -139,9 +139,15 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
   Widget daysPlan(PlanModel plan) {
     final thisDay = DateTime.now().add(Duration(days: _selectedDayIndex));
 // Filter and sort the activities list first
-    var filteredAndSortedActivities = plan.activities!
-        .where((activity) => activity.dateTime!.day == thisDay.day)
-        .toList(); // Convert to List for sorting
+    var filteredAndSortedActivities = plan.activities!.where((activity) {
+      if (activity.category == "Accommodation") {
+        return (activity.startTime!.day == thisDay.day) ||
+            (activity.endTime!.day == thisDay.day);
+      }
+      return activity.dateTime!.day == thisDay.day;
+    }).toList(); // Convert to List for sorting
+
+    debugPrint("filteredList: $filteredAndSortedActivities");
 
     // Sort the list in-place
     filteredAndSortedActivities.sort((a, b) {
@@ -166,9 +172,7 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
                 (activity) => TimelineTile(
                   isActive: true,
                   title: TimelineCard(
-                    plan: plan,
-                    activity: activity,
-                  ),
+                      plan: plan, activity: activity, thisDay: thisDay),
                 ),
               ),
             ],

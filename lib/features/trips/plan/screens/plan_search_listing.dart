@@ -139,14 +139,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                         ),
                       ],
                     ),
-                    // Change Location
-                    // FilledButton(
-                    //   onPressed: () {
-                    //     // Change Location
-                    //     onTapLocation();
-                    //   },
-                    //   child: const Text('Change Location'),
-                    // ),
                   ],
                 ),
               ),

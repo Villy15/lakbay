@@ -203,6 +203,8 @@ class ListingController extends StateNotifier<bool> {
           listingId: listing.uid,
           category: listing.category,
           dateTime: selectedDate,
+          startTime: booking.startDate,
+          endTime: booking.endDate,
           title: listing.title,
           imageUrl: listing.images!.first.url,
           description: listing.description,

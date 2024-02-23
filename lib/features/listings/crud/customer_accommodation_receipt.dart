@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
-class CustomerAccomodationReceipt extends StatelessWidget {
+class CustomerAccomodationReceipt extends ConsumerWidget {
   final ListingModel listing;
   final ListingBookings booking;
 
@@ -12,7 +14,7 @@ class CustomerAccomodationReceipt extends StatelessWidget {
       {super.key, required this.listing, required this.booking});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -160,6 +162,9 @@ class CustomerAccomodationReceipt extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                   onPressed: () {
+                    ref
+                        .read(parentStateProvider.notifier)
+                        .executeFunction(context);
                     context.pop();
                   },
                   child: const Text("Close")),
