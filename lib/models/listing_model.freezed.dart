@@ -54,7 +54,7 @@ mixin _$ListingModel {
   DateTime? get timestamp => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String? get type => throw _privateConstructorUsedError;
-  List<FoodService>? get availableTables => throw _privateConstructorUsedError;
+  List<FoodService>? get availableDeals => throw _privateConstructorUsedError;
   List<ListingImages>? get menuImgs => throw _privateConstructorUsedError;
   AvailableTransport? get availableTransport =>
       throw _privateConstructorUsedError;
@@ -105,7 +105,7 @@ abstract class $ListingModelCopyWith<$Res> {
       @TimestampSerializer() DateTime? timestamp,
       String title,
       String? type,
-      List<FoodService>? availableTables,
+      List<FoodService>? availableDeals,
       List<ListingImages>? menuImgs,
       AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
@@ -158,7 +158,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? timestamp = freezed,
     Object? title = null,
     Object? type = freezed,
-    Object? availableTables = freezed,
+    Object? availableDeals = freezed,
     Object? menuImgs = freezed,
     Object? availableTransport = freezed,
     Object? availableEntertainment = freezed,
@@ -282,9 +282,9 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String?,
-      availableTables: freezed == availableTables
-          ? _value.availableTables
-          : availableTables // ignore: cast_nullable_to_non_nullable
+      availableDeals: freezed == availableDeals
+          ? _value.availableDeals
+          : availableDeals // ignore: cast_nullable_to_non_nullable
               as List<FoodService>?,
       menuImgs: freezed == menuImgs
           ? _value.menuImgs
@@ -369,7 +369,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       @TimestampSerializer() DateTime? timestamp,
       String title,
       String? type,
-      List<FoodService>? availableTables,
+      List<FoodService>? availableDeals,
       List<ListingImages>? menuImgs,
       AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
@@ -422,7 +422,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? timestamp = freezed,
     Object? title = null,
     Object? type = freezed,
-    Object? availableTables = freezed,
+    Object? availableDeals = freezed,
     Object? menuImgs = freezed,
     Object? availableTransport = freezed,
     Object? availableEntertainment = freezed,
@@ -546,9 +546,9 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String?,
-      availableTables: freezed == availableTables
-          ? _value._availableTables
-          : availableTables // ignore: cast_nullable_to_non_nullable
+      availableDeals: freezed == availableDeals
+          ? _value._availableDeals
+          : availableDeals // ignore: cast_nullable_to_non_nullable
               as List<FoodService>?,
       menuImgs: freezed == menuImgs
           ? _value._menuImgs
@@ -607,7 +607,7 @@ class _$ListingModelImpl implements _ListingModel {
       @TimestampSerializer() this.timestamp,
       required this.title,
       this.type,
-      final List<FoodService>? availableTables,
+      final List<FoodService>? availableDeals,
       final List<ListingImages>? menuImgs,
       this.availableTransport,
       final List<EntertainmentService>? availableEntertainment,
@@ -618,7 +618,7 @@ class _$ListingModelImpl implements _ListingModel {
         _images = images,
         _listingCosts = listingCosts,
         _fixedTasks = fixedTasks,
-        _availableTables = availableTables,
+        _availableDeals = availableDeals,
         _menuImgs = menuImgs,
         _availableEntertainment = availableEntertainment;
 
@@ -728,12 +728,12 @@ class _$ListingModelImpl implements _ListingModel {
   final String title;
   @override
   final String? type;
-  final List<FoodService>? _availableTables;
+  final List<FoodService>? _availableDeals;
   @override
-  List<FoodService>? get availableTables {
-    final value = _availableTables;
+  List<FoodService>? get availableDeals {
+    final value = _availableDeals;
     if (value == null) return null;
-    if (_availableTables is EqualUnmodifiableListView) return _availableTables;
+    if (_availableDeals is EqualUnmodifiableListView) return _availableDeals;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -768,7 +768,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableTables: $availableTables, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
   }
 
   @override
@@ -826,7 +826,7 @@ class _$ListingModelImpl implements _ListingModel {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.type, type) || other.type == type) &&
             const DeepCollectionEquality()
-                .equals(other._availableTables, _availableTables) &&
+                .equals(other._availableDeals, _availableDeals) &&
             const DeepCollectionEquality().equals(other._menuImgs, _menuImgs) &&
             (identical(other.availableTransport, availableTransport) ||
                 other.availableTransport == availableTransport) &&
@@ -870,7 +870,7 @@ class _$ListingModelImpl implements _ListingModel {
         timestamp,
         title,
         type,
-        const DeepCollectionEquality().hash(_availableTables),
+        const DeepCollectionEquality().hash(_availableDeals),
         const DeepCollectionEquality().hash(_menuImgs),
         availableTransport,
         const DeepCollectionEquality().hash(_availableEntertainment),
@@ -923,7 +923,7 @@ abstract class _ListingModel implements ListingModel {
       @TimestampSerializer() final DateTime? timestamp,
       required final String title,
       final String? type,
-      final List<FoodService>? availableTables,
+      final List<FoodService>? availableDeals,
       final List<ListingImages>? menuImgs,
       final AvailableTransport? availableTransport,
       final List<EntertainmentService>? availableEntertainment,
@@ -997,7 +997,7 @@ abstract class _ListingModel implements ListingModel {
   @override
   String? get type;
   @override
-  List<FoodService>? get availableTables;
+  List<FoodService>? get availableDeals;
   @override
   List<ListingImages>? get menuImgs;
   @override
@@ -1850,6 +1850,9 @@ AvailableTransport _$AvailableTransportFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AvailableTransport {
+  String? get uid => throw _privateConstructorUsedError;
+  String? get listingId => throw _privateConstructorUsedError;
+  String? get listingName => throw _privateConstructorUsedError;
   bool get available => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
@@ -1875,7 +1878,10 @@ abstract class $AvailableTransportCopyWith<$Res> {
       _$AvailableTransportCopyWithImpl<$Res, AvailableTransport>;
   @useResult
   $Res call(
-      {bool available,
+      {String? uid,
+      String? listingId,
+      String? listingName,
+      bool available,
       num guests,
       num price,
       num luggage,
@@ -1899,6 +1905,9 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
+    Object? listingId = freezed,
+    Object? listingName = freezed,
     Object? available = null,
     Object? guests = null,
     Object? price = null,
@@ -1910,6 +1919,18 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
     Object? pickupPoint = null,
   }) {
     return _then(_value.copyWith(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingId: freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingName: freezed == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String?,
       available: null == available
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
@@ -1959,7 +1980,10 @@ abstract class _$$AvailableTransportImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {bool available,
+      {String? uid,
+      String? listingId,
+      String? listingName,
+      bool available,
       num guests,
       num price,
       num luggage,
@@ -1981,6 +2005,9 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
+    Object? listingId = freezed,
+    Object? listingName = freezed,
     Object? available = null,
     Object? guests = null,
     Object? price = null,
@@ -1992,6 +2019,18 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
     Object? pickupPoint = null,
   }) {
     return _then(_$AvailableTransportImpl(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingId: freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingName: freezed == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String?,
       available: null == available
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
@@ -2036,7 +2075,10 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AvailableTransportImpl implements _AvailableTransport {
   _$AvailableTransportImpl(
-      {required this.available,
+      {this.uid,
+      this.listingId,
+      this.listingName,
+      required this.available,
       required this.guests,
       required this.price,
       required this.luggage,
@@ -2050,6 +2092,12 @@ class _$AvailableTransportImpl implements _AvailableTransport {
   factory _$AvailableTransportImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvailableTransportImplFromJson(json);
 
+  @override
+  final String? uid;
+  @override
+  final String? listingId;
+  @override
+  final String? listingName;
   @override
   final bool available;
   @override
@@ -2079,7 +2127,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
 
   @override
   String toString() {
-    return 'AvailableTransport(available: $available, guests: $guests, price: $price, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, destination: $destination, pickupPoint: $pickupPoint)';
+    return 'AvailableTransport(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, guests: $guests, price: $price, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, destination: $destination, pickupPoint: $pickupPoint)';
   }
 
   @override
@@ -2087,6 +2135,11 @@ class _$AvailableTransportImpl implements _AvailableTransport {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AvailableTransportImpl &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.listingId, listingId) ||
+                other.listingId == listingId) &&
+            (identical(other.listingName, listingName) ||
+                other.listingName == listingName) &&
             (identical(other.available, available) ||
                 other.available == available) &&
             (identical(other.guests, guests) || other.guests == guests) &&
@@ -2107,6 +2160,9 @@ class _$AvailableTransportImpl implements _AvailableTransport {
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      uid,
+      listingId,
+      listingName,
       available,
       guests,
       price,
@@ -2134,7 +2190,10 @@ class _$AvailableTransportImpl implements _AvailableTransport {
 
 abstract class _AvailableTransport implements AvailableTransport {
   factory _AvailableTransport(
-      {required final bool available,
+      {final String? uid,
+      final String? listingId,
+      final String? listingName,
+      required final bool available,
       required final num guests,
       required final num price,
       required final num luggage,
@@ -2147,6 +2206,12 @@ abstract class _AvailableTransport implements AvailableTransport {
   factory _AvailableTransport.fromJson(Map<String, dynamic> json) =
       _$AvailableTransportImpl.fromJson;
 
+  @override
+  String? get uid;
+  @override
+  String? get listingId;
+  @override
+  String? get listingName;
   @override
   bool get available;
   @override
@@ -2179,10 +2244,12 @@ FoodService _$FoodServiceFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$FoodService {
-  String get tableId => throw _privateConstructorUsedError;
+  String get dealName => throw _privateConstructorUsedError;
+  String get dealDescription => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
   bool get available => throw _privateConstructorUsedError;
-  List<ListingImages> get tableImgs => throw _privateConstructorUsedError;
+  num get price => throw _privateConstructorUsedError;
+  List<ListingImages> get dealImgs => throw _privateConstructorUsedError;
   List<bool> get workingDays => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
   TimeOfDay get startTime => throw _privateConstructorUsedError;
@@ -2202,10 +2269,12 @@ abstract class $FoodServiceCopyWith<$Res> {
       _$FoodServiceCopyWithImpl<$Res, FoodService>;
   @useResult
   $Res call(
-      {String tableId,
+      {String dealName,
+      String dealDescription,
       num guests,
       bool available,
-      List<ListingImages> tableImgs,
+      num price,
+      List<ListingImages> dealImgs,
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime});
@@ -2224,18 +2293,24 @@ class _$FoodServiceCopyWithImpl<$Res, $Val extends FoodService>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? tableId = null,
+    Object? dealName = null,
+    Object? dealDescription = null,
     Object? guests = null,
     Object? available = null,
-    Object? tableImgs = null,
+    Object? price = null,
+    Object? dealImgs = null,
     Object? workingDays = null,
     Object? startTime = null,
     Object? endTime = null,
   }) {
     return _then(_value.copyWith(
-      tableId: null == tableId
-          ? _value.tableId
-          : tableId // ignore: cast_nullable_to_non_nullable
+      dealName: null == dealName
+          ? _value.dealName
+          : dealName // ignore: cast_nullable_to_non_nullable
+              as String,
+      dealDescription: null == dealDescription
+          ? _value.dealDescription
+          : dealDescription // ignore: cast_nullable_to_non_nullable
               as String,
       guests: null == guests
           ? _value.guests
@@ -2245,9 +2320,13 @@ class _$FoodServiceCopyWithImpl<$Res, $Val extends FoodService>
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
               as bool,
-      tableImgs: null == tableImgs
-          ? _value.tableImgs
-          : tableImgs // ignore: cast_nullable_to_non_nullable
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as num,
+      dealImgs: null == dealImgs
+          ? _value.dealImgs
+          : dealImgs // ignore: cast_nullable_to_non_nullable
               as List<ListingImages>,
       workingDays: null == workingDays
           ? _value.workingDays
@@ -2274,10 +2353,12 @@ abstract class _$$FoodServiceImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String tableId,
+      {String dealName,
+      String dealDescription,
       num guests,
       bool available,
-      List<ListingImages> tableImgs,
+      num price,
+      List<ListingImages> dealImgs,
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime});
@@ -2294,18 +2375,24 @@ class __$$FoodServiceImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? tableId = null,
+    Object? dealName = null,
+    Object? dealDescription = null,
     Object? guests = null,
     Object? available = null,
-    Object? tableImgs = null,
+    Object? price = null,
+    Object? dealImgs = null,
     Object? workingDays = null,
     Object? startTime = null,
     Object? endTime = null,
   }) {
     return _then(_$FoodServiceImpl(
-      tableId: null == tableId
-          ? _value.tableId
-          : tableId // ignore: cast_nullable_to_non_nullable
+      dealName: null == dealName
+          ? _value.dealName
+          : dealName // ignore: cast_nullable_to_non_nullable
+              as String,
+      dealDescription: null == dealDescription
+          ? _value.dealDescription
+          : dealDescription // ignore: cast_nullable_to_non_nullable
               as String,
       guests: null == guests
           ? _value.guests
@@ -2315,9 +2402,13 @@ class __$$FoodServiceImplCopyWithImpl<$Res>
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
               as bool,
-      tableImgs: null == tableImgs
-          ? _value._tableImgs
-          : tableImgs // ignore: cast_nullable_to_non_nullable
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as num,
+      dealImgs: null == dealImgs
+          ? _value._dealImgs
+          : dealImgs // ignore: cast_nullable_to_non_nullable
               as List<ListingImages>,
       workingDays: null == workingDays
           ? _value._workingDays
@@ -2339,31 +2430,37 @@ class __$$FoodServiceImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$FoodServiceImpl implements _FoodService {
   _$FoodServiceImpl(
-      {required this.tableId,
+      {required this.dealName,
+      required this.dealDescription,
       required this.guests,
       required this.available,
-      required final List<ListingImages> tableImgs,
+      required this.price,
+      required final List<ListingImages> dealImgs,
       required final List<bool> workingDays,
       @TimeOfDayConverter() required this.startTime,
       @TimeOfDayConverter() required this.endTime})
-      : _tableImgs = tableImgs,
+      : _dealImgs = dealImgs,
         _workingDays = workingDays;
 
   factory _$FoodServiceImpl.fromJson(Map<String, dynamic> json) =>
       _$$FoodServiceImplFromJson(json);
 
   @override
-  final String tableId;
+  final String dealName;
+  @override
+  final String dealDescription;
   @override
   final num guests;
   @override
   final bool available;
-  final List<ListingImages> _tableImgs;
   @override
-  List<ListingImages> get tableImgs {
-    if (_tableImgs is EqualUnmodifiableListView) return _tableImgs;
+  final num price;
+  final List<ListingImages> _dealImgs;
+  @override
+  List<ListingImages> get dealImgs {
+    if (_dealImgs is EqualUnmodifiableListView) return _dealImgs;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_tableImgs);
+    return EqualUnmodifiableListView(_dealImgs);
   }
 
   final List<bool> _workingDays;
@@ -2383,7 +2480,7 @@ class _$FoodServiceImpl implements _FoodService {
 
   @override
   String toString() {
-    return 'FoodService(tableId: $tableId, guests: $guests, available: $available, tableImgs: $tableImgs, workingDays: $workingDays, startTime: $startTime, endTime: $endTime)';
+    return 'FoodService(dealName: $dealName, dealDescription: $dealDescription, guests: $guests, available: $available, price: $price, dealImgs: $dealImgs, workingDays: $workingDays, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -2391,12 +2488,15 @@ class _$FoodServiceImpl implements _FoodService {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$FoodServiceImpl &&
-            (identical(other.tableId, tableId) || other.tableId == tableId) &&
+            (identical(other.dealName, dealName) ||
+                other.dealName == dealName) &&
+            (identical(other.dealDescription, dealDescription) ||
+                other.dealDescription == dealDescription) &&
             (identical(other.guests, guests) || other.guests == guests) &&
             (identical(other.available, available) ||
                 other.available == available) &&
-            const DeepCollectionEquality()
-                .equals(other._tableImgs, _tableImgs) &&
+            (identical(other.price, price) || other.price == price) &&
+            const DeepCollectionEquality().equals(other._dealImgs, _dealImgs) &&
             const DeepCollectionEquality()
                 .equals(other._workingDays, _workingDays) &&
             (identical(other.startTime, startTime) ||
@@ -2408,10 +2508,12 @@ class _$FoodServiceImpl implements _FoodService {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      tableId,
+      dealName,
+      dealDescription,
       guests,
       available,
-      const DeepCollectionEquality().hash(_tableImgs),
+      price,
+      const DeepCollectionEquality().hash(_dealImgs),
       const DeepCollectionEquality().hash(_workingDays),
       startTime,
       endTime);
@@ -2432,10 +2534,12 @@ class _$FoodServiceImpl implements _FoodService {
 
 abstract class _FoodService implements FoodService {
   factory _FoodService(
-          {required final String tableId,
+          {required final String dealName,
+          required final String dealDescription,
           required final num guests,
           required final bool available,
-          required final List<ListingImages> tableImgs,
+          required final num price,
+          required final List<ListingImages> dealImgs,
           required final List<bool> workingDays,
           @TimeOfDayConverter() required final TimeOfDay startTime,
           @TimeOfDayConverter() required final TimeOfDay endTime}) =
@@ -2445,13 +2549,17 @@ abstract class _FoodService implements FoodService {
       _$FoodServiceImpl.fromJson;
 
   @override
-  String get tableId;
+  String get dealName;
+  @override
+  String get dealDescription;
   @override
   num get guests;
   @override
   bool get available;
   @override
-  List<ListingImages> get tableImgs;
+  num get price;
+  @override
+  List<ListingImages> get dealImgs;
   @override
   List<bool> get workingDays;
   @override
@@ -2472,6 +2580,9 @@ EntertainmentService _$EntertainmentServiceFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$EntertainmentService {
+  String? get uid => throw _privateConstructorUsedError;
+  String? get listingId => throw _privateConstructorUsedError;
+  String? get listingName => throw _privateConstructorUsedError;
   String get entertainmentId => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
@@ -2492,7 +2603,10 @@ abstract class $EntertainmentServiceCopyWith<$Res> {
       _$EntertainmentServiceCopyWithImpl<$Res, EntertainmentService>;
   @useResult
   $Res call(
-      {String entertainmentId,
+      {String? uid,
+      String? listingId,
+      String? listingName,
+      String entertainmentId,
       num guests,
       num price,
       bool available,
@@ -2513,6 +2627,9 @@ class _$EntertainmentServiceCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
+    Object? listingId = freezed,
+    Object? listingName = freezed,
     Object? entertainmentId = null,
     Object? guests = null,
     Object? price = null,
@@ -2520,6 +2637,18 @@ class _$EntertainmentServiceCopyWithImpl<$Res,
     Object? entertainmentImgs = null,
   }) {
     return _then(_value.copyWith(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingId: freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingName: freezed == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String?,
       entertainmentId: null == entertainmentId
           ? _value.entertainmentId
           : entertainmentId // ignore: cast_nullable_to_non_nullable
@@ -2553,7 +2682,10 @@ abstract class _$$EntertainmentServiceImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String entertainmentId,
+      {String? uid,
+      String? listingId,
+      String? listingName,
+      String entertainmentId,
       num guests,
       num price,
       bool available,
@@ -2571,6 +2703,9 @@ class __$$EntertainmentServiceImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
+    Object? listingId = freezed,
+    Object? listingName = freezed,
     Object? entertainmentId = null,
     Object? guests = null,
     Object? price = null,
@@ -2578,6 +2713,18 @@ class __$$EntertainmentServiceImplCopyWithImpl<$Res>
     Object? entertainmentImgs = null,
   }) {
     return _then(_$EntertainmentServiceImpl(
+      freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      freezed == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String?,
       entertainmentId: null == entertainmentId
           ? _value.entertainmentId
           : entertainmentId // ignore: cast_nullable_to_non_nullable
@@ -2605,7 +2752,7 @@ class __$$EntertainmentServiceImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$EntertainmentServiceImpl implements _EntertainmentService {
-  _$EntertainmentServiceImpl(
+  _$EntertainmentServiceImpl(this.uid, this.listingId, this.listingName,
       {required this.entertainmentId,
       required this.guests,
       required this.price,
@@ -2616,6 +2763,12 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
   factory _$EntertainmentServiceImpl.fromJson(Map<String, dynamic> json) =>
       _$$EntertainmentServiceImplFromJson(json);
 
+  @override
+  final String? uid;
+  @override
+  final String? listingId;
+  @override
+  final String? listingName;
   @override
   final String entertainmentId;
   @override
@@ -2635,7 +2788,7 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
 
   @override
   String toString() {
-    return 'EntertainmentService(entertainmentId: $entertainmentId, guests: $guests, price: $price, available: $available, entertainmentImgs: $entertainmentImgs)';
+    return 'EntertainmentService(uid: $uid, listingId: $listingId, listingName: $listingName, entertainmentId: $entertainmentId, guests: $guests, price: $price, available: $available, entertainmentImgs: $entertainmentImgs)';
   }
 
   @override
@@ -2643,6 +2796,11 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$EntertainmentServiceImpl &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.listingId, listingId) ||
+                other.listingId == listingId) &&
+            (identical(other.listingName, listingName) ||
+                other.listingName == listingName) &&
             (identical(other.entertainmentId, entertainmentId) ||
                 other.entertainmentId == entertainmentId) &&
             (identical(other.guests, guests) || other.guests == guests) &&
@@ -2655,8 +2813,16 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, entertainmentId, guests, price,
-      available, const DeepCollectionEquality().hash(_entertainmentImgs));
+  int get hashCode => Object.hash(
+      runtimeType,
+      uid,
+      listingId,
+      listingName,
+      entertainmentId,
+      guests,
+      price,
+      available,
+      const DeepCollectionEquality().hash(_entertainmentImgs));
 
   @JsonKey(ignore: true)
   @override
@@ -2676,6 +2842,7 @@ class _$EntertainmentServiceImpl implements _EntertainmentService {
 
 abstract class _EntertainmentService implements EntertainmentService {
   factory _EntertainmentService(
+          final String? uid, final String? listingId, final String? listingName,
           {required final String entertainmentId,
           required final num guests,
           required final num price,
@@ -2686,6 +2853,12 @@ abstract class _EntertainmentService implements EntertainmentService {
   factory _EntertainmentService.fromJson(Map<String, dynamic> json) =
       _$EntertainmentServiceImpl.fromJson;
 
+  @override
+  String? get uid;
+  @override
+  String? get listingId;
+  @override
+  String? get listingName;
   @override
   String get entertainmentId;
   @override

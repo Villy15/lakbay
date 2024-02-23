@@ -9,13 +9,14 @@ import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/listings/listing_provider.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 class AddFood extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -38,52 +39,184 @@ class _AddFoodState extends ConsumerState<AddFood> {
   String type = 'Nature-Based';
   final List<File> _menuImgs = [];
   List<File>? _images = [];
-  final List<List<File>> _tableImgs = [];
-  List<File> tableImgs = [];
+  List<List<File>> _dealImgs = [];
+  List<List<File>> tempDealImgs = [];
+  List<List<File>> two = [];
+  List<File> dealImgs = [];
   late DateTime startDate = DateTime.now();
   late DateTime endDate = DateTime.now();
   List<bool> workingDays = List.filled(7, false);
   num guests = 0;
-  List<FoodService> availableTables = [];
+  List<FoodService> availableDeals = [];
+  List<Task>? fixedTasks = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _feeController = TextEditingController();
-  final TextEditingController _tableIdController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _dealNameController = TextEditingController();
+  final TextEditingController _dealDescriptionController =
+      TextEditingController();
   final TextEditingController _addressController =
       TextEditingController(text: 'Eastwood City');
 
-  void submitAddListing(ListingModel listing) {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      ref.read(navBarVisibilityProvider.notifier).hide();
+    });
+  }
+
+  void submitAddListing() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+
+      // Prepare data for storeFiles
+      final imagePath = 'listings/${widget.coop.name}';
+      final ids = _images!.map((image) => image.path.split('/').last).toList();
+
+      // Upload images to firebase storage
+      ref
+          .read(storageRepositoryProvider)
+          .storeFiles(
+            path: imagePath,
+            ids: ids,
+            files: _images!,
+          )
+          .then((value) => value.fold(
+                (failure) => debugPrint('Failed to upload images: $failure'),
+                (imageUrls) async {
+                  ListingCooperative cooperative = ListingCooperative(
+                      cooperativeId: widget.coop.uid!,
+                      cooperativeName: widget.coop.name);
+                  ListingModel listing = ListingModel(
+                    availableDeals: availableDeals,
+                    address: _addressController.text,
+                    category: widget.category,
+                    city: "",
+                    images: _images!.map((image) {
+                      final imagePath =
+                          'listings/${widget.coop.name}/${image.path.split('/').last}';
+                      return ListingImages(
+                        path: imagePath,
+                      );
+                    }).toList(),
+                    cooperative: cooperative,
+                    description: _descriptionController.text,
+                    province: "",
+                    publisherId: ref.read(userProvider)!.uid,
+                    publisherName: ref.read(userProvider)!.name,
+                    title: _titleController.text,
+                    type: type,
+                    fixedTasks: fixedTasks,
+                  );
+                  listing = await processMenuImages(listing);
+                  listing = await processDealImages(listing);
+                  listing = listing.copyWith(
+                    images: listing.images!.asMap().entries.map((entry) {
+                      return entry.value.copyWith(url: imageUrls[entry.key]);
+                    }).toList(),
+                  );
+                  debugPrint("$listing");
+                  if (mounted) {
+                    ref
+                        .read(listingControllerProvider.notifier)
+                        .addListing(listing, context);
+                  }
+                },
+              ));
+
+      // Add Listing
+      //
     }
+  }
 
-    // prepare data for storeFiles
+  Future<ListingModel> processMenuImages(ListingModel listing) async {
+    final images = _menuImgs;
     final imagePath = 'listings/${widget.coop.name}';
-    final ids = _images!.map((image) => image.path.split('/').last).toList();
-    final menuImgsIds =
-        _menuImgs.map((image) => image.path.split('/').last).toList();
-
-    // store files (both listing imgs and menu imgs)
-    ref
+    final ids = images.map((image) => image.path.split('/').last).toList();
+    await ref
         .read(storageRepositoryProvider)
-        .storeFiles(path: imagePath, ids: ids, files: _images!)
-        .then(((value) => value
-                .fold((failure) => debugPrint('Failed to store files'), (urls) {
-              // add urls to images
+        .storeFiles(path: imagePath, ids: ids, files: images)
+        .then(
+          (value) => value.fold(
+            (failure) => debugPrint('Failed to store files'),
+            (urls) {
+              debugPrint('these are the urls: $urls');
               listing = listing.copyWith(
-                  images: listing.images!
-                      .map((e) =>
-                          e.copyWith(url: urls[listing.images!.indexOf(e)]))
-                      .toList());
+                menuImgs: images
+                    .asMap()
+                    .map((index, image) {
+                      return MapEntry(
+                          index,
+                          ListingImages(
+                              path: image.path, url: urls[index].toString()));
+                    })
+                    .values
+                    .toList(),
+              );
+            },
+          ),
+        );
+    return listing;
+  }
 
-              debugPrint('Successfully added!');
+  Future<ListingModel> processDealImages(ListingModel listing) async {
+    debugPrint("this is working!");
+    final images = _dealImgs;
+    debugPrint('these are the images: $images');
+    final imagePath = 'listings/${widget.coop.name}';
+    final ids = images
+        .expand((fileList) => fileList.map((file) => file.path.split('/').last))
+        .toList();
+    debugPrint('these are the deals ids: $ids');
+    await ref
+        .read(storageRepositoryProvider)
+        .storeListNestedFiles(
+          path: imagePath,
+          ids: ids,
+          filesLists: images,
+        )
+        .then(
+          (value) => value.fold(
+            (failure) => debugPrint('Failed to upload images: $failure'),
+            (imageUrls) {
+              debugPrint('image urls: $imageUrls');
+              debugPrint("faggot!: $listing");
 
-              ref
-                  .read(listingControllerProvider.notifier)
-                  .addListing(listing, context);
-            })));
+              // add the urls to corresponding img
+              listing = listing.copyWith(
+                availableDeals: listing.availableDeals!
+                    .asMap()
+                    .map((dealIndex, deal) {
+                      List<String> dealImageUrls = imageUrls[dealIndex];
+
+                      List<ListingImages> updatedImages = deal.dealImgs
+                          .asMap()
+                          .map((imageIndex, image) {
+                            String imageUrl = dealImageUrls.length > imageIndex
+                                ? dealImageUrls[imageIndex]
+                                : ''; // Default empty URL
+                            return MapEntry(
+                                imageIndex, image.copyWith(url: imageUrl));
+                          })
+                          .values
+                          .toList();
+
+                      return MapEntry(
+                          dealIndex, deal.copyWith(dealImgs: updatedImages));
+                    })
+                    .values
+                    .toList(),
+              );
+
+              debugPrint("$listing");
+            },
+          ),
+        );
+    return listing;
   }
 
   @override
@@ -159,40 +292,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              ListingModel listing = ListingModel(
-                  availableTables: availableTables,
-                  address: _addressController.text,
-                  category: widget.category,
-                  city: widget.coop.city,
-                  price: num.parse(_feeController.text),
-                  images: _images!.map((image) {
-                    final imagePath =
-                        'listings/${widget.coop.name}/${image.path.split('/').last}';
-                    return ListingImages(
-                      path: imagePath,
-                    );
-                  }).toList(),
-                  cooperative: ListingCooperative(
-                    cooperativeId: widget.coop.uid!,
-                    cooperativeName: widget.coop.name,
-                  ),
-                  description: _descriptionController.text,
-                  province: widget.coop.province,
-                  publisherId: ref.read(userProvider)!.uid,
-                  publisherName: ref.read(userProvider)!.name,
-                  title: _titleController.text,
-                  type: "",
-                  menuImgs: _menuImgs.map(
-                    (image) {
-                      final imagePath =
-                          'listings/${widget.coop.name}/${image.path.split('/').last}';
-                      return ListingImages(path: imagePath);
-                    },
-                  ).toList());
-              ref
-                  .read(saveListingProvider.notifier)
-                  .saveListingProvider(listing);
-              submitAddListing(listing);
+              submitAddListing();
             },
             child: Text(
               'Submit',
@@ -203,22 +303,6 @@ class _AddFoodState extends ConsumerState<AddFood> {
       ]
     ]));
   }
-
-  // Future<ListingModel> processTableImgs(ListingModel listing) {
-  //   final images = _tableImgs;
-  //   final imagePath = 'listings/${widget.coop.name}';
-  //   final ids = images
-  //       ?.expand(
-  //           (fileList) => fileList.map((file) => file.path.split('/').last))
-  //       .toList();
-
-  //   await ref
-  //             .read(storageRepositoryProvider)
-  //             .storeListNestedFiles(
-  //               path: imagePath,
-  //               ids: ids,
-  //               filesLists: images);
-  // }
 
   Column steppers(BuildContext context) {
     return Column(
@@ -417,9 +501,8 @@ class _AddFoodState extends ConsumerState<AddFood> {
         TextFormField(
           controller: _feeController,
           decoration: const InputDecoration(
-            labelText: 'Reservation Fee*',
+            labelText: 'Reservation Fee',
             prefix: Text('₱'),
-            helperText: '*required',
             border: OutlineInputBorder(),
           ),
         ),
@@ -450,6 +533,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
               onImagesSelected: (images) {
                 setState(() {
                   _menuImgs.addAll(images);
+                  debugPrint('menu images added: $_menuImgs');
                 });
               },
             ))
@@ -505,7 +589,9 @@ class _AddFoodState extends ConsumerState<AddFood> {
           ElevatedButton(
               onPressed: () async {
                 final TimeOfDay? time = await showTimePicker(
-                    context: context, initialTime: TimeOfDay.now());
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                    initialEntryMode: TimePickerEntryMode.inputOnly);
                 if (time != null) {
                   setState(() {
                     startDate = DateTime(
@@ -531,7 +617,9 @@ class _AddFoodState extends ConsumerState<AddFood> {
           ElevatedButton(
               onPressed: () async {
                 final TimeOfDay? time = await showTimePicker(
-                    context: context, initialTime: TimeOfDay.now());
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                    initialEntryMode: TimePickerEntryMode.inputOnly);
                 if (time != null) {
                   setState(() {
                     endDate = DateTime(
@@ -582,14 +670,14 @@ class _AddFoodState extends ConsumerState<AddFood> {
       })),
       const SizedBox(height: 15),
       const Text(
-        'Tables Available',
+        'Deals Available',
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
       ),
       const Text(
-        'Add the tables available...',
+        'Add some deals for your guests to enjoy...',
         style: TextStyle(
           fontSize: 15.0,
           fontStyle: FontStyle.italic,
@@ -599,15 +687,15 @@ class _AddFoodState extends ConsumerState<AddFood> {
       ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: availableTables.length,
+          itemCount: availableDeals.length,
           itemBuilder: ((context, index) {
             return Card(
                 elevation: 4.0,
                 margin: const EdgeInsets.all(8.0),
                 child: Column(children: [
                   ImageSlider(
-                    images: availableTables[index]
-                        .tableImgs
+                    images: availableDeals[index]
+                        .dealImgs
                         .map((image) => File(image.path))
                         .toList(),
                     height: MediaQuery.sizeOf(context).height / 3,
@@ -617,14 +705,14 @@ class _AddFoodState extends ConsumerState<AddFood> {
                       padding: const EdgeInsets.all(12),
                       child: Column(children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Icon(Icons.table_restaurant_outlined,
-                                size: 16),
-                            const SizedBox(width: 4),
-                            Text(availableTables[index].tableId,
+                            Text(availableDeals[index].dealName,
                                 style: const TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text("₱${availableDeals[index].price.toString()}",
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold))
                           ],
                         ),
                         const SizedBox(height: 4)
@@ -638,17 +726,17 @@ class _AddFoodState extends ConsumerState<AddFood> {
                 context: context,
                 isScrollControlled: true,
                 builder: (BuildContext context) {
-                  return addTableBottomSheet(
-                      tableImgs, _tableIdController, guests);
+                  return addDealBottomSheet(
+                      dealImgs, _dealNameController, guests);
                 });
           },
-          child: const Text('Add Table'),
+          child: const Text('Add Deal'),
         ),
       ),
     ]);
   }
 
-  DraggableScrollableSheet addTableBottomSheet(
+  DraggableScrollableSheet addDealBottomSheet(
       List<File> images, TextEditingController tableIdController, num guests) {
     return DraggableScrollableSheet(
       initialChildSize: 0.80,
@@ -656,134 +744,180 @@ class _AddFoodState extends ConsumerState<AddFood> {
       builder: (context, scrollController) {
         return StatefulBuilder(builder: (context, setState) {
           return SingleChildScrollView(
-              child: SizedBox(
-                  height: MediaQuery.of(context).size.height / 1.3,
-                  width: double.infinity,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
-                            child: GestureDetector(
-                                child: Row(children: [
-                              Icon(Icons.image_outlined,
-                                  color: Theme.of(context).iconTheme.color),
-                              const SizedBox(width: 15),
-                              Expanded(
-                                child: ImagePickerFormField(
-                                  height: MediaQuery.sizeOf(context).height / 5,
-                                  width: MediaQuery.sizeOf(context).width / 1.3,
-                                  context: context,
-                                  initialValue: tableImgs,
-                                  onSaved: (List<File>? files) {
-                                    images.clear();
-                                    images.addAll(files!);
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: GestureDetector(
+                        child: Row(children: [
+                      Icon(Icons.image_outlined,
+                          color: Theme.of(context).iconTheme.color),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: ImagePickerFormField(
+                          height: MediaQuery.sizeOf(context).height / 5,
+                          width: MediaQuery.sizeOf(context).width / 1.3,
+                          context: context,
+                          initialValue: images,
+                          onSaved: (List<File>? files) {
+                            images.clear();
+                            images.addAll(files!);
 
-                                    _tableImgs.add(images);
-                                  },
-                                  validator: (List<File>? files) {
-                                    if (files == null || files.isEmpty) {
-                                      return 'Please select some images';
-                                    }
-                                    return null;
-                                  },
-                                  onImagesSelected: (List<File> files) {
-                                    images.clear();
-                                    images.addAll(files);
-
-                                    _tableImgs.add(images);
-                                  },
-                                ),
-                              )
-                            ]))),
-                        const SizedBox(height: 30),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: TextFormField(
-                              controller: tableIdController,
-                              decoration: const InputDecoration(
-                                  labelText: 'Table ID*',
-                                  helperText: '*required',
-                                  border: OutlineInputBorder(),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  hintText: "e.g. Table 1",
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 12)),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              }),
-                        ),
-                        SizedBox(
-                            height: MediaQuery.sizeOf(context).height / 50),
-                        ListTile(
-                            title: const Row(children: [
-                              Icon(Icons.people_alt_outlined),
-                              SizedBox(width: 10),
-                              Text('Guests')
-                            ]),
-                            trailing:
-                                Row(mainAxisSize: MainAxisSize.min, children: [
-                              IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  onPressed: () {
-                                    if (guests >= 1) {
-                                      setState(() {
-                                        guests--;
-                                      });
-                                    }
-                                  }),
-                              const SizedBox(width: 10),
-                              Text('$guests',
-                                  style: const TextStyle(fontSize: 16)),
-                              const SizedBox(width: 10),
-                              IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    setState(() {
-                                      guests++;
-                                    });
-                                  })
-                            ])),
-                        const SizedBox(height: 30),
-                        ElevatedButton(
-                          onPressed: () {
-                            FoodService table = FoodService(
-                                available: true,
-                                tableId: _tableIdController.text,
-                                guests: guests,
-                                startTime: TimeOfDay.fromDateTime(startDate),
-                                endTime: TimeOfDay.fromDateTime(endDate),
-                                workingDays: workingDays,
-                                tableImgs: images
-                                    .map((image) =>
-                                        ListingImages(path: image.path))
-                                    .toList());
-                            this.setState(() {
-                              int index = availableTables.indexWhere(
-                                  (element) =>
-                                      element.tableId ==
-                                      tableIdController.text);
-                              if (index == -1) {
-                                availableTables.add(table);
-                              } else {
-                                availableTables[index] = table;
-                              }
-
-                              // clear all field
-                              tableIdController.clear();
-                              _tableImgs.clear();
-                              guests = 0;
-                            });
-                            context.pop();
+                            tempDealImgs.add(images);
                           },
-                          child: const Text('Confirm'),
-                        )
-                      ])));
+                          validator: (List<File>? files) {
+                            if (files == null || files.isEmpty) {
+                              return 'Please select some images';
+                            }
+                            return null;
+                          },
+                          onImagesSelected: (List<File> files) {
+                            images.clear();
+                            images.addAll(files);
+
+                            tempDealImgs.add(List.from(images));
+                            // once testing is added, add it to the dealImgs
+                          },
+                        ),
+                      )
+                    ]))),
+                const SizedBox(height: 30),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: TextFormField(
+                      controller: tableIdController,
+                      decoration: const InputDecoration(
+                          labelText: 'Deal Name*',
+                          helperText: '*required',
+                          border: OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: "Bundle Meal No. 1",
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 12)),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      }),
+                ),
+                const SizedBox(height: 15),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: TextFormField(
+                      controller: _dealDescriptionController,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                          labelText: 'Description*',
+                          helperText: '*required',
+                          border: OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: "This meal includes...",
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 12)),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      }),
+                ),
+                const SizedBox(height: 15),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: TextFormField(
+                      controller: _priceController,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                          labelText: 'Price*',
+                          helperText: '*required',
+                          border: OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: "₱",
+                          prefix: Text('₱'),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 12)),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      }),
+                ),
+                SizedBox(height: MediaQuery.sizeOf(context).height / 60),
+                ListTile(
+                    title: const Row(children: [
+                      Icon(Icons.people_alt_outlined),
+                      SizedBox(width: 10),
+                      Text('Guests')
+                    ]),
+                    trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                      IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: () {
+                            if (guests >= 1) {
+                              setState(() {
+                                guests--;
+                              });
+                            }
+                          }),
+                      const SizedBox(width: 10),
+                      Text('$guests', style: const TextStyle(fontSize: 16)),
+                      const SizedBox(width: 10),
+                      IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              guests++;
+                            });
+                          })
+                    ])),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () {
+                    debugPrint(
+                        'this is the testing, i think it will work: $tempDealImgs');
+                    // move testing to dealImgs
+                    _dealImgs = List.from(tempDealImgs);
+                    FoodService deal = FoodService(
+                        available: true,
+                        dealName: _dealNameController.text,
+                        dealDescription: _dealDescriptionController.text,
+                        price: num.parse(_priceController.text),
+                        guests: guests,
+                        startTime: TimeOfDay.fromDateTime(startDate),
+                        endTime: TimeOfDay.fromDateTime(endDate),
+                        workingDays: workingDays,
+                        dealImgs: images
+                            .map((image) => ListingImages(path: image.path))
+                            .toList());
+                    this.setState(() {
+                      int index = availableDeals.indexWhere((element) =>
+                          element.dealName == _dealNameController.text);
+                      if (index == -1) {
+                        debugPrint('this is the new testing: $tempDealImgs');
+                        availableDeals.add(deal);
+                      } else {
+                        debugPrint('this is the new testing: $tempDealImgs');
+                        availableDeals[index] = deal;
+                      }
+
+                      // clear all field
+                      _dealNameController.clear();
+                      _dealDescriptionController.clear();
+                      _priceController.clear();
+                      _dealImgs.add(images);
+                      images.clear();
+
+                      debugPrint('this is the testing: $_dealImgs');
+                      guests = 0;
+                    });
+                    context.pop();
+                  },
+                  child: const Text('Confirm'),
+                )
+              ]));
         });
       },
     );
@@ -899,7 +1033,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
             subtitle: Text("₱${_feeController.text}"),
           ),
           const Divider(),
-          if (availableTables.isNotEmpty == true) ...[
+          if (availableDeals.isNotEmpty == true) ...[
             const Padding(
               padding: EdgeInsets.only(top: 8.0, left: 16.0),
               child: DisplayText(
@@ -912,15 +1046,15 @@ class _AddFoodState extends ConsumerState<AddFood> {
             ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: availableTables.length,
+                itemCount: availableDeals.length,
                 itemBuilder: ((context, index) {
                   return Card(
                       elevation: 4.0,
                       margin: const EdgeInsets.all(8.0),
                       child: Column(children: [
                         ImageSlider(
-                          images: availableTables[index]
-                              .tableImgs
+                          images: availableDeals[index]
+                              .dealImgs
                               .map((image) => File(image.path))
                               .toList(),
                           height: MediaQuery.sizeOf(context).height / 3,
@@ -932,10 +1066,10 @@ class _AddFoodState extends ConsumerState<AddFood> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(Icons.table_restaurant_outlined,
+                                  const Icon(Icons.card_giftcard_outlined,
                                       size: 16),
                                   const SizedBox(width: 4),
-                                  Text(availableTables[index].tableId,
+                                  Text(availableDeals[index].dealName,
                                       style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold)),

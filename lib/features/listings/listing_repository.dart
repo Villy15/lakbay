@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:lakbay/core/constants/firebase_constants.dart';
@@ -174,20 +175,41 @@ class ListingRepository {
     });
   }
 
-  CollectionReference rooms(String listingId) {
+  // Read bookings by category and only gets bookings where the endDate is less than my startDate
+  Stream<List<ListingBookings>> readBookingsByProperties(
+      String category, DateTime startDate) {
+    final convertedStartDate = Timestamp.fromDate(startDate);
+
+    return FirebaseFirestore.instance
+        .collectionGroup(
+            'bookings') // Perform collection group query for 'bookings'
+        .where('category', isEqualTo: category)
+        .where('startDate', isGreaterThan: convertedStartDate)
+        .snapshots()
+        .map((querySnapshot) {
+      // Convert each document snapshot to a ListingBookings object
+      return querySnapshot.docs.map((doc) {
+        return ListingBookings.fromJson(doc.data());
+      }).toList();
+    });
+  }
+
+  CollectionReference roomsCollection(String listingId) {
     return _listings
         .doc(listingId)
-        .collection(FirebaseConstants.roomsSubCollections);
+        .collection(FirebaseConstants.roomsSubCollection);
   }
 
 // addRoom
-  FutureEither<String> addRoom(String listingId, AvailableRoom room) async {
+  FutureEither<String> addRoom(
+      String listingId, ListingModel listing, AvailableRoom room) async {
     try {
       // Generate a new document ID based on the user's ID
-      var doc = rooms(listingId).doc();
+      var doc = roomsCollection(listingId).doc();
 
       // Update the uid of the room
-      room = room.copyWith(uid: doc.id);
+      room = room.copyWith(
+          uid: doc.id, listingId: listing.uid, listingName: listing.title);
 
       // Add the cooperative to the database
       await doc.set(room.toJson());
@@ -205,8 +227,9 @@ class ListingRepository {
   FutureVoid updateRoom(AvailableRoom room) async {
     debugPrintJson(room);
     try {
-      return right(
-          await rooms(room.listingId!).doc(room.uid!).update(room.toJson()));
+      return right(await roomsCollection(room.listingId!)
+          .doc(room.uid!)
+          .update(room.toJson()));
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
@@ -214,22 +237,170 @@ class ListingRepository {
     }
   }
 
+// read room by listingId
+  Stream<List<AvailableRoom>> readRoomsByListingId(listingId) {
+    return roomsCollection(listingId).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return AvailableRoom.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
 // read room by roomId
   Stream<AvailableRoom> readRoomById(listingId, roomId) {
-    return rooms(listingId).doc(roomId).snapshots().map((snapshot) {
+    return roomsCollection(listingId).doc(roomId).snapshots().map((snapshot) {
       return AvailableRoom.fromJson(snapshot.data() as Map<String, dynamic>);
     });
   }
 
   // Read room by properties
-  Stream<List<AvailableRoom>> readRoomByProperties({num? guests}) {
+  Stream<List<AvailableRoom>> readRoomByProperties(
+      List<String> unavailableRoomIds, num guests) {
+    Query query =
+        FirebaseFirestore.instance.collectionGroup('accommodationRooms');
+
+    if (unavailableRoomIds.isNotEmpty) {
+      query = query.where('uid', whereNotIn: unavailableRoomIds);
+    }
+    return query.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return AvailableRoom.fromJson(doc.data()! as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  CollectionReference transportCollection(String listingId) {
+    return _listings
+        .doc(listingId)
+        .collection(FirebaseConstants.transportSubcollection);
+  }
+
+// addRoom
+  FutureEither<String> addTransport(String listingId, ListingModel listing,
+      AvailableTransport transport) async {
+    try {
+      // Generate a new document ID based on the user's ID
+      var doc = transportCollection(listingId).doc();
+
+      // Update the uid of the transport
+      transport = transport.copyWith(
+          uid: doc.id, listingId: listing.uid, listingName: listing.title);
+
+      // Add the cooperative to the database
+      await doc.set(transport.toJson());
+
+      // Return the uid of the newly added transport
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+// Update transport
+  FutureVoid updateTransport(AvailableTransport transport) async {
+    debugPrintJson(transport);
+    try {
+      return right(await transportCollection(transport.listingId!)
+          .doc(transport.uid!)
+          .update(transport.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+// read transport by transportId
+  Stream<AvailableTransport> readTransportById(listingId, transportId) {
+    return transportCollection(listingId)
+        .doc(transportId)
+        .snapshots()
+        .map((snapshot) {
+      return AvailableTransport.fromJson(
+          snapshot.data() as Map<String, dynamic>);
+    });
+  }
+
+// Read room by properties
+  Stream<List<AvailableTransport>> readTransportByProperties({num? guests}) {
     return FirebaseFirestore.instance
-        .collectionGroup('rooms')
+        .collectionGroup('transport')
         .where('guests', isEqualTo: guests)
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
-        return AvailableRoom.fromJson(doc.data());
+        return AvailableTransport.fromJson(doc.data());
+      }).toList();
+    });
+  }
+
+  CollectionReference entertainmentCollection(String listingId) {
+    return _listings
+        .doc(listingId)
+        .collection(FirebaseConstants.entertainmentSubcollection);
+  }
+
+// addRoom
+  FutureEither<String> addEntertainment(String listingId, ListingModel listing,
+      EntertainmentService entertainment) async {
+    try {
+      // Generate a new document ID based on the user's ID
+      var doc = entertainmentCollection(listingId).doc();
+
+      // Update the uid of the entertainment
+      entertainment = entertainment.copyWith(
+          uid: doc.id, listingId: listing.uid, listingName: listing.title);
+
+      // Add the cooperative to the database
+      await doc.set(entertainment.toJson());
+
+      // Return the uid of the newly added entertainment
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+// Update entertainment
+  FutureVoid updateEntertainment(EntertainmentService entertainment) async {
+    debugPrintJson(entertainment);
+    try {
+      return right(await entertainmentCollection(entertainment.listingId!)
+          .doc(entertainment.uid!)
+          .update(entertainment.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+// read entertainment by entertainmentId
+  Stream<EntertainmentService> readEntertainmentById(
+      listingId, entertainmentId) {
+    return entertainmentCollection(listingId)
+        .doc(entertainmentId)
+        .snapshots()
+        .map((snapshot) {
+      return EntertainmentService.fromJson(
+          snapshot.data() as Map<String, dynamic>);
+    });
+  }
+
+// Read room by properties
+  Stream<List<EntertainmentService>> readEntertainmentByProperties(
+      {num? guests}) {
+    return FirebaseFirestore.instance
+        .collectionGroup('entertainment')
+        .where('guests', isEqualTo: guests)
+        .snapshots()
+        .map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return EntertainmentService.fromJson(doc.data());
       }).toList();
     });
   }

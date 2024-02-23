@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_repository.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/join_coop_code.dart';
 import 'package:lakbay/models/user_model.dart';
 
 final userProvider = StateNotifierProvider<UserModelNotifier, UserModel?>(
@@ -94,5 +97,57 @@ class AuthController extends StateNotifier<bool> {
   // logout
   void logout() async {
     _authRepository.signOut();
+  }
+
+  // void register a list of members
+  void registerMembers(BuildContext context, List<MemberData> members,
+      String? currentCoop) async {
+    FirebaseApp tempApp = await Firebase.initializeApp(
+        name: 'lakbayTemp', options: Firebase.app().options);
+
+    state = true; // true for loading
+    int successCount = 0;
+
+    final coop = await _ref
+        .read(coopsControllerProvider.notifier)
+        .getCooperative(currentCoop!)
+        .first;
+
+    for (var member in members) {
+      final result = await _authRepository.registerMembers(
+        email: member.email,
+        password: member.password,
+        firstName: member.firstName,
+        lastName: member.lastName,
+        tempApp: tempApp,
+        coop: coop,
+      );
+
+      result.fold(
+        (l) {
+          showSnackBar(context, l.message);
+        },
+        (userModel) {
+          // Update Cooperative members
+
+          var updatedCoop = coop.copyWith(
+            members: [...coop.members, userModel.uid],
+          );
+
+          _ref.read(coopsControllerProvider.notifier).registerMembers(
+                updatedCoop,
+                context,
+                userModel,
+              );
+
+          successCount++;
+        },
+      );
+    }
+
+    state = false; // false for loading
+
+    // ignore: use_build_context_synchronously
+    showSnackBar(context, '$successCount member(s) registered successfully!');
   }
 }

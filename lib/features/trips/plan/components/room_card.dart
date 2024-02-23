@@ -11,47 +11,63 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/models/wrappers/rooms_params.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class RoomCard extends ConsumerStatefulWidget {
-  final ListingModel listing;
-  const RoomCard({super.key, required this.listing});
+  final String category;
+  final List<ListingBookings> bookings;
+  const RoomCard({super.key, required this.category, required this.bookings});
 
   @override
   ConsumerState<RoomCard> createState() => _RoomCardState();
 }
 
 class _RoomCardState extends ConsumerState<RoomCard> {
-  List<ListingBookings> bookings = [];
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final guests = ref.read(currentPlanGuestsProvider);
     final startDate = ref.read(planStartDateProvider);
     final endDate = ref.read(planEndDateProvider);
+    List<String> unavailableRoomUids = getUnavailableRoomUids(widget.bookings);
 
-    return ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: widget.listing.availableRooms!.length,
-        itemBuilder: (context, index) {
-          final AvailableRoom room = widget.listing.availableRooms![index];
-          final List<String?> imageUrls = widget
-              .listing.availableRooms![index].images!
-              .map((listingImage) => listingImage.url)
-              .toList();
-
-          return ref
-              .watch(getAllBookingsByIdProvider(
-                  (widget.listing.uid!, room.roomId)))
-              .when(
-                  data: (List<ListingBookings> bookings) {
-                    debugPrint("$bookings");
-                    if (room.guests >= guests! &&
-                        isDateInRange(startDate!, endDate!,
-                            getAllDatesFromBookings(bookings))) {
+    return SizedBox(
+      height: 600,
+      width: double.infinity,
+      child: ref
+          .watch(getRoomByPropertiesProvider(RoomsParams(
+              unavailableRoomUids: unavailableRoomUids, guests: guests!)))
+          .when(
+              data: (List<AvailableRoom> rooms) {
+                if (rooms.isNotEmpty) {
+                } else {
+                  return Center(
+                    child: Column(
+                      children: [
+                        const Text("No Rooms Available"),
+                        Text(
+                            "(${DateFormat('MMMM dd').format(startDate!)} - ${DateFormat('MMMM dd').format(endDate!)})")
+                      ],
+                    ),
+                  );
+                }
+                return ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: rooms.length,
+                    itemBuilder: ((context, index) {
+                      final List<String?> imageUrls = rooms[index]
+                          .images!
+                          .map((listingImage) => listingImage.url)
+                          .toList();
+                      final room = rooms[index];
                       return SizedBox(
-                        height: MediaQuery.sizeOf(context).height / 2.5,
+                        height: MediaQuery.sizeOf(context).height / 1.5,
                         width: MediaQuery.sizeOf(context).width / 2,
                         child: Card(
                             child: Column(
@@ -79,7 +95,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            widget.listing.title,
+                                            room.listingName!,
                                             style: const TextStyle(
                                               fontSize:
                                                   18, // Increased font size, larger than the previous one
@@ -132,62 +148,88 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                   ),
                                   SizedBox(
                                     height:
-                                        MediaQuery.sizeOf(context).height / 20,
+                                        MediaQuery.sizeOf(context).height / 30,
                                   ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          context.push(
-                                              '/market/${widget.listing.category}',
-                                              extra: widget.listing);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 25, vertical: 5),
-                                        ),
-                                        child: const Text(
-                                          'View Listing',
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          // final bookings = await ref.watch(
-                                          //     getAllBookingsByIdProvider((
-                                          //   widget.listing.uid!,
-                                          //   room.roomId
-                                          // )).future);
-
-                                          if (context.mounted) {
-                                            showSelectDate(
-                                                context, bookings, index);
-                                          }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 25, vertical: 5),
-                                        ),
-                                        child: const Text(
-                                          'Book Now',
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  ref
+                                      .watch(
+                                          getListingProvider(room.listingId!))
+                                      .when(
+                                          data: (ListingModel listing) {
+                                            return Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    context.push(
+                                                        '/market/${widget.category}',
+                                                        extra: listing);
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 25,
+                                                        vertical: 5),
+                                                  ),
+                                                  child: const Text(
+                                                    'View Listing',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    showSelectDate(
+                                                        context,
+                                                        widget.bookings,
+                                                        listing,
+                                                        room);
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 25,
+                                                        vertical: 5),
+                                                  ),
+                                                  child: const Text(
+                                                    'Book Now',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                          error: ((error, stackTrace) =>
+                                              Scaffold(
+                                                  body: ErrorText(
+                                                      error: error.toString(),
+                                                      stackTrace: stackTrace
+                                                          .toString()))),
+                                          loading: () =>
+                                              const Scaffold(body: Loader())),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        widget.listing.category,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                      Expanded(
+                                          child: Row(
+                                        children: [
+                                          const Icon(Icons.bed_outlined),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            widget.category,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      )),
                                       TextButton(
                                           onPressed: () {
                                             // Action to perform on tap, e.g., show a dialog or navigate
@@ -311,19 +353,18 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           ],
                         )),
                       );
-                    } else {}
-                    return null;
-                  },
-                  error: ((error, stackTrace) => Scaffold(
-                      body: ErrorText(
-                          error: error.toString(),
-                          stackTrace: stackTrace.toString()))),
-                  loading: () => const Scaffold(body: Loader()));
-        });
+                    }));
+              },
+              error: ((error, stackTrace) => Scaffold(
+                  body: ErrorText(
+                      error: error.toString(),
+                      stackTrace: stackTrace.toString()))),
+              loading: () => const Scaffold(body: Loader())),
+    );
   }
 
-  void showSelectDate(
-      BuildContext context, List<ListingBookings> bookings, int index) {
+  void showSelectDate(BuildContext context, List<ListingBookings> bookings,
+      ListingModel listing, AvailableRoom room) {
     DateTime startDate = DateTime.now();
     DateTime endDate = DateTime.now();
     showDialog(
@@ -373,8 +414,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
             bottomNavigationBar: BottomAppBar(
               child: FilledButton(
                 onPressed: () {
-                  showConfirmBooking(widget.listing.availableRooms![index],
-                      startDate, endDate, context);
+                  showConfirmBooking(
+                      room, listing, startDate, endDate, context);
                 },
                 child: const Text('Save'),
               ),
@@ -412,8 +453,27 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     return allDates;
   }
 
-  void showConfirmBooking(AvailableRoom room, DateTime startDate,
-      DateTime endDate, BuildContext context) {
+  List<String> getUnavailableRoomUids(List<ListingBookings> bookings) {
+    List<String> unavailableRoomUids = [];
+
+    for (ListingBookings booking in bookings) {
+      // Add start date
+      DateTime currentDate = ref.read(planStartDateProvider) as DateTime;
+
+      // Keep adding dates until you reach the end date
+      if (currentDate.isBefore(booking.endDate!) ||
+          currentDate.isAtSameMomentAs(booking.endDate!)) {
+        unavailableRoomUids.add(booking.roomUid!);
+        // Move to next day
+        currentDate = currentDate.add(const Duration(days: 1));
+      }
+    }
+    debugPrint("getUnavailableRoomUids $unavailableRoomUids");
+    return unavailableRoomUids;
+  }
+
+  void showConfirmBooking(AvailableRoom room, ListingModel listing,
+      DateTime startDate, DateTime endDate, BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -533,19 +593,20 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                     child: ElevatedButton(
                       onPressed: () {
                         startDate = startDate.copyWith(
-                            hour: widget.listing.checkIn!.hour,
-                            minute: widget.listing.checkIn!.minute);
+                            hour: listing.checkIn!.hour,
+                            minute: listing.checkIn!.minute);
                         endDate = endDate.copyWith(
-                            hour: widget.listing.checkOut!.hour,
-                            minute: widget.listing.checkOut!.minute);
+                            hour: listing.checkOut!.hour,
+                            minute: listing.checkOut!.minute);
                         ListingBookings booking = ListingBookings(
-                          listingId: widget.listing.uid!,
-                          listingTitle: widget.listing.title,
+                          listingId: listing.uid!,
+                          listingTitle: listing.title,
                           customerName: ref.read(userProvider)!.name,
                           bookingStatus: "Reserved",
                           price: room.price,
                           category: "Accommodation",
                           roomId: room.roomId,
+                          roomUid: room.uid,
                           startDate: startDate,
                           endDate: endDate,
                           email: "",
@@ -558,7 +619,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                               emergencyContactNameController.text,
                           emergencyContactNo: emergencyContactNoController.text,
                           needsContributions: false,
-                          tasks: widget.listing.fixedTasks,
+                          tasks: listing.fixedTasks,
                         );
 
                         showDialog(
@@ -566,7 +627,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                             builder: (context) {
                               return Dialog.fullscreen(
                                   child: CustomerAccommodationCheckout(
-                                      listing: widget.listing,
+                                      listing: listing,
                                       room: room,
                                       booking: booking));
                             });

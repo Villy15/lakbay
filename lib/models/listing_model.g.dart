@@ -53,7 +53,7 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           const TimestampSerializer().fromJson(json['timestamp'] as Timestamp?),
       title: json['title'] as String,
       type: json['type'] as String?,
-      availableTables: (json['availableTables'] as List<dynamic>?)
+      availableDeals: (json['availableDeals'] as List<dynamic>?)
           ?.map((e) => FoodService.fromJson(e as Map<String, dynamic>))
           .toList(),
       menuImgs: (json['menuImgs'] as List<dynamic>?)
@@ -103,8 +103,8 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'timestamp': const TimestampSerializer().toJson(instance.timestamp),
       'title': instance.title,
       'type': instance.type,
-      'availableTables':
-          instance.availableTables?.map((e) => e.toJson()).toList(),
+      'availableDeals':
+          instance.availableDeals?.map((e) => e.toJson()).toList(),
       'menuImgs': instance.menuImgs?.map((e) => e.toJson()).toList(),
       'availableTransport': instance.availableTransport?.toJson(),
       'availableEntertainment':
@@ -186,6 +186,9 @@ Map<String, dynamic> _$$AvailableRoomImplToJson(_$AvailableRoomImpl instance) =>
 _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
         Map<String, dynamic> json) =>
     _$AvailableTransportImpl(
+      uid: json['uid'] as String?,
+      listingId: json['listingId'] as String?,
+      listingName: json['listingName'] as String?,
       available: json['available'] as bool,
       guests: json['guests'] as num,
       price: json['price'] as num,
@@ -203,6 +206,9 @@ _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
 Map<String, dynamic> _$$AvailableTransportImplToJson(
         _$AvailableTransportImpl instance) =>
     <String, dynamic>{
+      'uid': instance.uid,
+      'listingId': instance.listingId,
+      'listingName': instance.listingName,
       'available': instance.available,
       'guests': instance.guests,
       'price': instance.price,
@@ -216,10 +222,12 @@ Map<String, dynamic> _$$AvailableTransportImplToJson(
 
 _$FoodServiceImpl _$$FoodServiceImplFromJson(Map<String, dynamic> json) =>
     _$FoodServiceImpl(
-      tableId: json['tableId'] as String,
+      dealName: json['dealName'] as String,
+      dealDescription: json['dealDescription'] as String,
       guests: json['guests'] as num,
       available: json['available'] as bool,
-      tableImgs: (json['tableImgs'] as List<dynamic>)
+      price: json['price'] as num,
+      dealImgs: (json['dealImgs'] as List<dynamic>)
           .map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
           .toList(),
       workingDays:
@@ -232,10 +240,12 @@ _$FoodServiceImpl _$$FoodServiceImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$FoodServiceImplToJson(_$FoodServiceImpl instance) =>
     <String, dynamic>{
-      'tableId': instance.tableId,
+      'dealName': instance.dealName,
+      'dealDescription': instance.dealDescription,
       'guests': instance.guests,
       'available': instance.available,
-      'tableImgs': instance.tableImgs.map((e) => e.toJson()).toList(),
+      'price': instance.price,
+      'dealImgs': instance.dealImgs.map((e) => e.toJson()).toList(),
       'workingDays': instance.workingDays,
       'startTime': const TimeOfDayConverter().toJson(instance.startTime),
       'endTime': const TimeOfDayConverter().toJson(instance.endTime),
@@ -244,6 +254,9 @@ Map<String, dynamic> _$$FoodServiceImplToJson(_$FoodServiceImpl instance) =>
 _$EntertainmentServiceImpl _$$EntertainmentServiceImplFromJson(
         Map<String, dynamic> json) =>
     _$EntertainmentServiceImpl(
+      json['uid'] as String?,
+      json['listingId'] as String?,
+      json['listingName'] as String?,
       entertainmentId: json['entertainmentId'] as String,
       guests: json['guests'] as num,
       price: json['price'] as num,
@@ -256,6 +269,9 @@ _$EntertainmentServiceImpl _$$EntertainmentServiceImplFromJson(
 Map<String, dynamic> _$$EntertainmentServiceImplToJson(
         _$EntertainmentServiceImpl instance) =>
     <String, dynamic>{
+      'uid': instance.uid,
+      'listingId': instance.listingId,
+      'listingName': instance.listingName,
       'entertainmentId': instance.entertainmentId,
       'guests': instance.guests,
       'price': instance.price,

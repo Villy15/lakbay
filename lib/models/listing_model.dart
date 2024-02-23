@@ -39,7 +39,7 @@ class ListingModel with _$ListingModel {
     @TimestampSerializer() DateTime? timestamp,
     required String title,
     String? type,
-    List<FoodService>? availableTables,
+    List<FoodService>? availableDeals,
     List<ListingImages>? menuImgs,
     AvailableTransport? availableTransport,
     List<EntertainmentService>? availableEntertainment,
@@ -107,6 +107,9 @@ class AvailableRoom with _$AvailableRoom {
 @freezed
 class AvailableTransport with _$AvailableTransport {
   factory AvailableTransport({
+    String? uid,
+    String? listingId,
+    String? listingName,
     required bool available,
     required num guests,
     required num price,
@@ -125,10 +128,12 @@ class AvailableTransport with _$AvailableTransport {
 @freezed
 class FoodService with _$FoodService {
   factory FoodService({
-    required String tableId,
+    required String dealName,
+    required String dealDescription,
     required num guests,
     required bool available,
-    required List<ListingImages> tableImgs,
+    required num price,
+    required List<ListingImages> dealImgs,
     required List<bool> workingDays,
     @TimeOfDayConverter() required TimeOfDay startTime,
     @TimeOfDayConverter() required TimeOfDay endTime,
@@ -141,6 +146,7 @@ class FoodService with _$FoodService {
 @freezed
 class EntertainmentService with _$EntertainmentService {
   factory EntertainmentService(
+      String? uid, String? listingId, String? listingName,
       {required String entertainmentId,
       required num guests,
       required num price,

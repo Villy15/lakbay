@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
@@ -289,6 +290,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                           price: room.price,
                           category: "Accommodation",
                           roomId: room.roomId,
+                          roomUid: room.uid,
                           startDate: startDate,
                           endDate: endDate,
                           email: "",
@@ -313,10 +315,6 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                       room: room,
                                       booking: booking));
                             });
-
-                        // ref
-                        //     .read(listingControllerProvider.notifier)
-                        //     .addBooking(booking, widget.listing, context);
                       },
                       child: const Text('Proceed'),
                     ),
@@ -472,217 +470,229 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
   }
 
   Widget rooms() {
-    return ListView.builder(
-        // physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: widget.listing.availableRooms!.length,
-        itemBuilder: ((context, index) {
-          List<String?> imageUrls = widget
-              .listing.availableRooms![index].images!
-              .map((listingImage) => listingImage.url)
-              .toList();
-          return Card(
-            elevation: 1.0, // Slight shadow for depth
-            margin: const EdgeInsets.all(8.0), // Space around the card
-            child: Column(
-              children: [
-                ImageSlider(
-                  images: imageUrls,
-                  height: MediaQuery.of(context).size.height /
-                      3.5, // Reduced height
-                  width: double.infinity,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 20.0,
-                      right: 10,
-                      top: 10,
-                      bottom: 10), // Reduced overall padding
+    return ref.watch(getAllRoomsByListingIdProvider(widget.listing.uid!)).when(
+        data: (List<AvailableRoom> rooms) {
+          return ListView.builder(
+              // physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: rooms.length,
+              itemBuilder: ((context, index) {
+                List<String?> imageUrls = rooms[index]
+                    .images!
+                    .map((listingImage) => listingImage.url)
+                    .toList();
+                return Card(
+                  elevation: 1.0, // Slight shadow for depth
+                  margin: const EdgeInsets.all(8.0), // Space around the card
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${widget.listing.availableRooms![index].bedrooms} Bedroom",
-                                style: const TextStyle(
-                                  fontSize:
-                                      18, // Increased font size, larger than the previous one
-                                  fontWeight: FontWeight.bold, // Bold text
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text:
-                                          "₱${widget.listing.availableRooms![index].price}",
-                                      style: TextStyle(
-                                          fontSize: 16, // Size for the price
-                                          fontWeight: FontWeight
-                                              .bold, // Bold for the price
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface),
-                                    ),
-                                    TextSpan(
-                                      text: " per night",
-                                      style: TextStyle(
-                                          fontSize:
-                                              14, // Smaller size for 'per night'
-                                          fontStyle: FontStyle
-                                              .italic, // Italicized 'per night'
-                                          fontWeight: FontWeight
-                                              .normal, // Normal weight for 'per night'
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          Center(
-                              child: ElevatedButton(
-                            onPressed: () async {
-                              final bookings = await ref.watch(
-                                  getAllBookingsByIdProvider((
-                                widget.listing.uid!,
-                                widget.listing.availableRooms![index].roomId
-                              )).future);
-                              if (context.mounted) {
-                                showSelectDate(context, bookings, index);
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 50, vertical: 15),
-                            ),
-                            child: const Text(
-                              'Book Now',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          )),
-                        ],
+                      ImageSlider(
+                        images: imageUrls,
+                        height: MediaQuery.of(context).size.height /
+                            3.5, // Reduced height
+                        width: double.infinity,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                              onPressed: () {
-                                // Action to perform on tap, e.g., show a dialog or navigate
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Room Details"),
-                                      content: SizedBox(
-                                        height:
-                                            MediaQuery.sizeOf(context).height /
-                                                4,
-                                        width:
-                                            MediaQuery.sizeOf(context).width /
-                                                1.5,
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                    Icons.people_alt_outlined,
-                                                    size: 30),
-                                                Text(
-                                                  "Guests: ${widget.listing.availableRooms![index].guests}",
-                                                  style: const TextStyle(
-                                                      fontSize: 18),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Row(
-                                              children: [
-                                                const Icon(Icons.bed_rounded,
-                                                    size: 30),
-                                                Text(
-                                                  "Beds: ${widget.listing.availableRooms![index].beds}",
-                                                  style: const TextStyle(
-                                                      fontSize: 18),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                    Icons.bathtub_outlined,
-                                                    size: 30),
-                                                Text(
-                                                  "Bathrooms: ${widget.listing.availableRooms![index].bathrooms}",
-                                                  style: const TextStyle(
-                                                      fontSize: 18),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          child: const Text("Close"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              child: RichText(
-                                text: TextSpan(
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 20.0,
+                            right: 10,
+                            top: 10,
+                            bottom: 10), // Reduced overall padding
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    TextSpan(
-                                      text: "Room Details",
-                                      style: TextStyle(
-                                          // color: Colors.grey,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                              .withOpacity(0.5),
-                                          fontStyle: FontStyle
-                                              .italic // Underline for emphasis
-                                          ),
+                                    Text(
+                                      "${rooms[index].bedrooms} Bedroom",
+                                      style: const TextStyle(
+                                        fontSize:
+                                            18, // Increased font size, larger than the previous one
+                                        fontWeight:
+                                            FontWeight.bold, // Bold text
+                                      ),
                                     ),
-                                    const WidgetSpan(
-                                      child: Icon(
-                                        Icons
-                                            .keyboard_arrow_down, // Arrow pointing down icon
-                                        size:
-                                            16.0, // Adjust the size to fit your design
-                                        color: Colors.grey,
+                                    RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: "₱${rooms[index].price}",
+                                            style: TextStyle(
+                                                fontSize:
+                                                    16, // Size for the price
+                                                fontWeight: FontWeight
+                                                    .bold, // Bold for the price
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface),
+                                          ),
+                                          TextSpan(
+                                            text: " per night",
+                                            style: TextStyle(
+                                                fontSize:
+                                                    14, // Smaller size for 'per night'
+                                                fontStyle: FontStyle
+                                                    .italic, // Italicized 'per night'
+                                                fontWeight: FontWeight
+                                                    .normal, // Normal weight for 'per night'
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
-                              )),
-                        ],
-                      )
+                                Center(
+                                    child: ElevatedButton(
+                                  onPressed: () async {
+                                    final bookings = await ref.watch(
+                                        getAllBookingsByIdProvider((
+                                      widget.listing.uid!,
+                                      widget
+                                          .listing.availableRooms![index].roomId
+                                    )).future);
+                                    if (context.mounted) {
+                                      showSelectDate(context, bookings, index);
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 50, vertical: 15),
+                                  ),
+                                  child: const Text(
+                                    'Book Now',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                )),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                    onPressed: () {
+                                      // Action to perform on tap, e.g., show a dialog or navigate
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text("Room Details"),
+                                            content: SizedBox(
+                                              height: MediaQuery.sizeOf(context)
+                                                      .height /
+                                                  4,
+                                              width: MediaQuery.sizeOf(context)
+                                                      .width /
+                                                  1.5,
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      const Icon(
+                                                          Icons
+                                                              .people_alt_outlined,
+                                                          size: 30),
+                                                      Text(
+                                                        "Guests: ${rooms[index].guests}",
+                                                        style: const TextStyle(
+                                                            fontSize: 18),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      const Icon(
+                                                          Icons.bed_rounded,
+                                                          size: 30),
+                                                      Text(
+                                                        "Beds: ${rooms[index].beds}",
+                                                        style: const TextStyle(
+                                                            fontSize: 18),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      const Icon(
+                                                          Icons
+                                                              .bathtub_outlined,
+                                                          size: 30),
+                                                      Text(
+                                                        "Bathrooms: ${rooms[index].bathrooms}",
+                                                        style: const TextStyle(
+                                                            fontSize: 18),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                child: const Text("Close"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: "Room Details",
+                                            style: TextStyle(
+                                                // color: Colors.grey,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface
+                                                    .withOpacity(0.5),
+                                                fontStyle: FontStyle
+                                                    .italic // Underline for emphasis
+                                                ),
+                                          ),
+                                          const WidgetSpan(
+                                            child: Icon(
+                                              Icons
+                                                  .keyboard_arrow_down, // Arrow pointing down icon
+                                              size:
+                                                  16.0, // Adjust the size to fit your design
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          );
-        }));
+                );
+              }));
+        },
+        error: ((error, stackTrace) => Scaffold(
+            body: ErrorText(
+                error: error.toString(), stackTrace: stackTrace.toString()))),
+        loading: () => const Scaffold(body: Loader()));
   }
 
   void addCurrentTrip(BuildContext context, String? planUid) {

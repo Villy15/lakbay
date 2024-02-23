@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -8,6 +9,7 @@ import 'package:lakbay/core/constants/firebase_constants.dart';
 import 'package:lakbay/core/failure.dart';
 import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/typdef.dart';
+import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
 final authRepositoryProvider = Provider((ref) {
@@ -112,6 +114,50 @@ class AuthRepository {
           name: userCredential.user?.displayName ?? "Lakbay User",
           profilePic: '',
           isAuthenticated: true);
+
+      await _users.doc(userCredential.user!.uid).set(userModel.toJson());
+
+      return right(userModel);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Register with email and password and add additional user data
+  FutureEither<UserModel> registerMembers({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+    required FirebaseApp tempApp,
+    required CooperativeModel coop,
+  }) async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instanceFor(app: tempApp)
+              .createUserWithEmailAndPassword(email: email, password: password);
+
+      // UserCredential userCredential = await _auth
+      //     .createUserWithEmailAndPassword(email: email, password: password);
+
+      UserModel userModel = UserModel(
+          uid: userCredential.user?.uid ?? "",
+          isCoopView: false,
+          name: '$firstName $lastName',
+          firstName: firstName,
+          lastName: lastName,
+          profilePic: '',
+          isAuthenticated: true,
+          currentCoop: coop.uid,
+          cooperativesJoined: [
+            CooperativesJoined(
+              cooperativeId: coop.uid!,
+              role: 'Member',
+              cooperativeName: coop.name,
+            )
+          ]);
 
       await _users.doc(userCredential.user!.uid).set(userModel.toJson());
 

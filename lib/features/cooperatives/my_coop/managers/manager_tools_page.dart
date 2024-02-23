@@ -74,9 +74,9 @@ class ManagerToolsPage extends ConsumerWidget {
             },
           ),
       // Join Cooperative Code
-      'Join Cooperative Code': () => ListTile(
-            leading: const Icon(Icons.copy_rounded),
-            title: const Text('Join Cooperative Code'),
+      'Add Members with CSV': () => ListTile(
+            leading: const Icon(Icons.group_add),
+            title: const Text('Add Members with CSV'),
             onTap: () => {
               joinCoopCode(
                 context,
