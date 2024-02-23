@@ -1,13 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
-import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
-import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
-import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 
 class CustomerEntertainment extends ConsumerStatefulWidget {
@@ -20,6 +15,8 @@ class CustomerEntertainment extends ConsumerStatefulWidget {
 }
 
 class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
+  int numberOfPersons = 1; 
+
   @override
   void initState() {
     super.initState();
@@ -30,158 +27,296 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          iconSize: 20,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.pop();
-            ref.read(navBarVisibilityProvider.notifier).show();
-          },
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) {
+        Navigator.of(context).pop();
+        ref.read(navBarVisibilityProvider.notifier).show();
+      },
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop();
+              ref.read(navBarVisibilityProvider.notifier).show();
+            },
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Slider
-            CarouselSlider(
-              options: CarouselOptions(
-                viewportFraction: 1.0,
-                height: 250.0,
-                enlargeFactor: 0,
-                enlargeCenterPage: true,
-                enableInfiniteScroll: false,
-                onPageChanged: (index, reason) {},
-              ),
-              items: [
-                Image(
-                  image: NetworkImage(
-                    widget.listing.images!.first.url!,
-                  ),
-                  width: double.infinity,
-                  height: 200,
-                  fit: BoxFit.cover,
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CarouselSlider(
+                options: CarouselOptions(
+                  viewportFraction: 1.0,
+                  height: 250.0,
+                  enlargeFactor: 0,
+                  enlargeCenterPage: true,
+                  enableInfiniteScroll: false,
+                  onPageChanged: (index, reason) {},
                 ),
-              ],
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 14.0),
-                    child: DisplayText(
-                      text: widget.listing.title,
-                      lines: 2,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
+                items: [
+                  Image(
+                    image: NetworkImage(
+                      widget.listing.images!.first.url!,
                     ),
+                    width: double.infinity,
+                    height: 200,
+                    fit: BoxFit.cover,
                   ),
-                  // Location
-                  DisplayText(
-                    text:
-                        "Location: ${widget.listing.province}, ${widget.listing.city}",
-                    lines: 4,
-                    style: TextStyle(
-                      fontSize:
-                          Theme.of(context).textTheme.labelLarge?.fontSize,
-                    ),
-                  ),
-
-                  DisplayText(
-                    text: "${widget.listing.category} · ${widget.listing.type}",
-                    lines: 1,
-                    style: TextStyle(
-                      fontSize:
-                          Theme.of(context).textTheme.labelLarge?.fontSize,
-                    ),
-                  ),
-
-                  const Divider(),
-                  DisplayText(
-                    text: 'Description',
-                    lines: 1,
-                    style: TextStyle(
-                      fontSize:
-                          Theme.of(context).textTheme.titleLarge?.fontSize,
-                    ),
-                  ),
-                  TextInBottomSheet(
-                      "About this space", widget.listing.description, context),
-
-                  const Divider(),
-                  // DisplayText(
-                  //   text: 'Where you\'ll sleep',
-                  //   lines: 1,
-                  //   style: TextStyle(
-                  //     fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
-                  //   ),
-                  // ),
                 ],
               ),
-            ),
-            // const Divider(),
 
-            ref
-                .watch(getCooperativeProvider(
-                    widget.listing.cooperative.cooperativeId))
-                .maybeWhen(
-                  data: (coop) {
-                    return ListTile(
-                      leading: SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: DisplayImage(
-                            imageUrl: coop.imageUrl,
-                            height: 40,
-                            width: 40,
-                            radius: BorderRadius.circular(20)),
-                      ),
-                      // Contact owner
-                      trailing: IconButton(
-                        onPressed: () {
-                          // Show snackbar with reviews
-                          showSnackBar(context, 'Contact owner');
-                        },
-                        icon: const Icon(Icons.message_rounded),
-                      ),
-                      title: Text('Hosted by ${coop.name}',
-                          style: Theme.of(context).textTheme.labelLarge),
-                    );
-                  },
-                  orElse: () => const ListTile(
-                    leading: Icon(Icons.error),
-                    title: Text('Error'),
-                    subtitle: Text('Something went wrong'),
+              // Title
+              Padding(
+                padding: const EdgeInsets.only(top: 14.0, left: 12.0),
+                child: DisplayText(
+                  text: widget.listing.title,
+                  lines: 2,
+                  style: const TextStyle(
+                      fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              // Location
+              Padding(
+                padding: const EdgeInsets.only(top: 5, left: 12.0),
+                child: DisplayText(
+                  text:
+                      "Location: ${widget.listing.province}, ${widget.listing.city}",
+                  lines: 4,
+                  style: const TextStyle(
+                      fontSize: 14),
+                ),
+              ),
+
+              // No. of guests
+              Padding(
+                padding: const EdgeInsets.only(top: 5, left: 12.0),
+                child: DisplayText(
+                  text:
+                      "Number of guests per booking: ${widget.listing.pax ?? 1}",
+                  lines: 1,
+                  style: const TextStyle(
+                      fontSize: 14),
+                ),
+              ),
+
+              const Divider(),
+
+              Padding(
+                padding: const EdgeInsets.only(top: 5, left: 12.0),
+                child: DisplayText(
+                  text: 'Description',
+                  lines: 1,
+                  style: TextStyle(
+                    fontSize:
+                        Theme.of(context).textTheme.titleMedium?.fontSize,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-
-            const Divider(),
-
-            // Add this to current trip
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              child: FilledButton(
-                onPressed: () {
-                  // addCurrentTrip(context, planUid);
-                },
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all<Size>(
-                      const Size(double.infinity, 45)),
-                ),
-                child: const Text('Add this to current trip'),
               ),
-            ),
-          ],
+
+              Padding(
+                padding: const EdgeInsets.only(top: 5, left: 12.0),
+                child: DisplayText(
+                  text: widget.listing.description,
+                  lines: 4,
+                  style: const TextStyle(
+                       fontSize: 14),
+                ),
+              ),
+
+              const SizedBox(height: 15),
+            ],
+          ),
+        ),
+        bottomNavigationBar: BottomAppBar(
+          surfaceTintColor: Colors.white,
+          height: 90,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Rental Fee',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                                "₱${widget.listing.price.toString()}",
+                                style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FilledButton(
+                  style: ButtonStyle(
+                    minimumSize:
+                        MaterialStateProperty.all<Size>(const Size(180, 45)),
+                  ),
+                  onPressed: () {
+                    // Define opening and closing hours
+                    final int openingHour = widget.listing.openingHours!.hour;
+                    final int closingHour = widget.listing.closingHours!.hour;
+                    final int intervalDurationInMinutes = widget.listing.duration!.toInt(); 
+
+                    // Calculate available times
+                    List<Widget> availableTimes = [];
+                    for (int hour = openingHour; hour < closingHour; hour++) {
+                      for (int minute = 0; minute < 60; minute += intervalDurationInMinutes) {
+                        String time =
+                            '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+                        availableTimes.add(
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            // Center the buttons horizontally
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    // Calculate total price
+                                    num totalPrice = numberOfPersons * widget.listing.price!.toInt();
+
+                                    return AlertDialog(
+                                      title: Column(
+                                        children: [
+                                          Text("Selected Time: $time", style: const TextStyle(fontSize: 14),), // Display the selected time
+                                          const Text("Number of Persons", style: TextStyle(fontSize: 14),),
+                                        ],
+                                      ),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    if (numberOfPersons > 1) {
+                                                      numberOfPersons--;
+                                                    }
+                                                  });
+                                                },
+                                                icon: const Icon(Icons.remove),
+                                              ),
+                                              Text(
+                                                numberOfPersons.toString(),
+                                                style: const TextStyle(fontSize: 20),
+                                              ),
+                                              IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    numberOfPersons++;
+                                                  });
+                                                },
+                                                icon: const Icon(Icons.add),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10), // Add space below the buttons
+                                          Text(
+                                            'Total Price: ₱$totalPrice', // Display total price
+                                            style: const TextStyle(fontSize: 18),
+                                          ),
+                                        ],
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text("Cancel"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text("Confirm"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size(100, 36), // Adjust the width and height as needed
+                                ),
+                                child: Text(time),
+                              ),
+                              const SizedBox(width: 50), // Add space between button and text
+                              Text(
+                                'Slots : ${widget.listing.numberOfUnits}',
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Available times"),
+                          content: SizedBox(
+                            width: 550, // Adjust the width as needed
+                            height: 200, // Adjust the height as needed
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: availableTimes,
+                              ),
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.all(
+                              25.0), // Adjust the padding as needed
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Close"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: const Text('Add to trip'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

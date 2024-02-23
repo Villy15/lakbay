@@ -751,7 +751,7 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
         ListView.builder(
             // physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: widget.listing.availableRooms!.length,
+            itemCount: widget.listing.availableRooms?.length,
             itemBuilder: ((context, index) {
               List<String?> imageUrls = widget
                   .listing.availableRooms![index].images!

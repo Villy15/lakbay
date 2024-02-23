@@ -44,6 +44,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   List<bool> workingDays = List.filled(7, false);
 
   List<File>? _images = [];
+  List<TextEditingController> _departureTimeController = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
