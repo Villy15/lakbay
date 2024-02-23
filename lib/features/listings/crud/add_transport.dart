@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -44,7 +43,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   List<bool> workingDays = List.filled(7, false);
 
   List<File>? _images = [];
-  List<TextEditingController> _departureTimeController = [];
+  final List<TextEditingController> _departureTimeController = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -198,9 +197,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 debugPrint('success');
 
                 // add listing
-                ref
-                    .read(listingControllerProvider.notifier)
-                    .addListing(listing, context);
+                ref.read(listingControllerProvider.notifier).addListing(
+                    listing, context,
+                    transport: listing.availableTransport);
               }));
     }
   }
