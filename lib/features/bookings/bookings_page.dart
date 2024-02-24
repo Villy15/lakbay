@@ -59,6 +59,7 @@ class _BookingsPageState extends ConsumerState<BookingsPage> {
               children: [
                 ref.watch(getAllBookingsByCustomerIdProvider(user!.uid)).when(
                       data: (bookings) {
+                        debugPrint("bookings: $bookings");
                         // If bookings is empty, show a message
                         if (bookings.isEmpty) {
                           return Column(
