@@ -37,26 +37,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     List<String> unavailableRoomUids =
         getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
 
-    return SizedBox(
-      height: 600,
-      width: double.infinity,
-      child: ref
-          .watch(getRoomByPropertiesProvider(RoomsParams(
-              unavailableRoomUids: unavailableRoomUids, guests: guests!)))
-          .when(
-              data: (List<AvailableRoom> rooms) {
-                if (rooms.isNotEmpty) {
-                } else {
-                  return Center(
-                    child: Column(
-                      children: [
-                        const Text("No Rooms Available"),
-                        Text(
-                            "(${DateFormat('MMMM dd').format(startDate)} - ${DateFormat('MMMM dd').format(endDate)})")
-                      ],
-                    ),
-                  );
-                }
+    return ref
+        .watch(getRoomByPropertiesProvider(RoomsParams(
+            unavailableRoomUids: unavailableRoomUids, guests: guests!)))
+        .when(
+            data: (List<AvailableRoom> rooms) {
+              if (rooms.isNotEmpty) {
                 return ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -67,301 +53,301 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           .map((listingImage) => listingImage.url)
                           .toList();
                       final room = rooms[index];
-                      return SizedBox(
-                        height: MediaQuery.sizeOf(context).height / 1.5,
-                        width: MediaQuery.sizeOf(context).width / 2,
-                        child: Card(
+                      return Card(
+                          child: Column(
+                        children: [
+                          ImageSlider(
+                              images: imageUrls,
+                              height: MediaQuery.sizeOf(context).height / 4,
+                              width: MediaQuery.sizeOf(context).width / 2),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20.0,
+                                right: 10,
+                                top: 10,
+                                bottom: 10), // Reduced overall padding
                             child: Column(
-                          children: [
-                            ImageSlider(
-                                images: imageUrls,
-                                height: MediaQuery.sizeOf(context).height / 4,
-                                width: MediaQuery.sizeOf(context).width / 2),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 20.0,
-                                  right: 10,
-                                  top: 10,
-                                  bottom: 10), // Reduced overall padding
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            room.listingName!,
-                                            style: const TextStyle(
-                                              fontSize:
-                                                  18, // Increased font size, larger than the previous one
-                                              fontWeight:
-                                                  FontWeight.bold, // Bold text
-                                            ),
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          room.listingName!,
+                                          style: const TextStyle(
+                                            fontSize:
+                                                18, // Increased font size, larger than the previous one
+                                            fontWeight:
+                                                FontWeight.bold, // Bold text
                                           ),
-                                          Text(
-                                            "${room.bedrooms} Bedroom",
-                                            style: const TextStyle(
-                                              fontSize:
-                                                  14, // Increased font size, larger than the previous one
-                                              fontWeight:
-                                                  FontWeight.w500, // Bold text
-                                            ),
+                                        ),
+                                        Text(
+                                          "${room.bedrooms} Bedroom",
+                                          style: const TextStyle(
+                                            fontSize:
+                                                14, // Increased font size, larger than the previous one
+                                            fontWeight:
+                                                FontWeight.w500, // Bold text
                                           ),
-                                          RichText(
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: "₱${room.price}",
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                          14, // Size for the price
-                                                      fontWeight: FontWeight
-                                                          .w500, // Bold for the price
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurface),
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: "₱${room.price}",
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        14, // Size for the price
+                                                    fontWeight: FontWeight
+                                                        .w500, // Bold for the price
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurface),
+                                              ),
+                                              TextSpan(
+                                                text: " per night",
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        14, // Smaller size for 'per night'
+                                                    fontStyle: FontStyle
+                                                        .italic, // Italicized 'per night'
+                                                    fontWeight: FontWeight
+                                                        .normal, // Normal weight for 'per night'
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurface),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.sizeOf(context).height / 30,
+                                ),
+                                ref
+                                    .watch(getListingProvider(room.listingId!))
+                                    .when(
+                                        data: (ListingModel listing) {
+                                          return Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  context.push(
+                                                      '/market/${widget.category}',
+                                                      extra: listing);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 25,
+                                                      vertical: 5),
                                                 ),
-                                                TextSpan(
-                                                  text: " per night",
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                          14, // Smaller size for 'per night'
-                                                      fontStyle: FontStyle
-                                                          .italic, // Italicized 'per night'
-                                                      fontWeight: FontWeight
-                                                          .normal, // Normal weight for 'per night'
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurface),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height:
-                                        MediaQuery.sizeOf(context).height / 30,
-                                  ),
-                                  ref
-                                      .watch(
-                                          getListingProvider(room.listingId!))
-                                      .when(
-                                          data: (ListingModel listing) {
-                                            return Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                ElevatedButton(
-                                                  onPressed: () {
-                                                    context.push(
-                                                        '/market/${widget.category}',
-                                                        extra: listing);
-                                                  },
+                                                child: const Text(
+                                                  'View Listing',
                                                   style:
-                                                      ElevatedButton.styleFrom(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 25,
-                                                        vertical: 5),
-                                                  ),
-                                                  child: const Text(
-                                                    'View Listing',
-                                                    style:
-                                                        TextStyle(fontSize: 14),
-                                                  ),
+                                                      TextStyle(fontSize: 14),
                                                 ),
-                                                ElevatedButton(
-                                                  onPressed: () {
-                                                    showSelectDate(
-                                                        context,
-                                                        widget.bookings,
-                                                        listing,
-                                                        room);
-                                                  },
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  showSelectDate(
+                                                      context,
+                                                      widget.bookings,
+                                                      listing,
+                                                      room);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 25,
+                                                      vertical: 5),
+                                                ),
+                                                child: const Text(
+                                                  'Book Now',
                                                   style:
-                                                      ElevatedButton.styleFrom(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 25,
-                                                        vertical: 5),
-                                                  ),
-                                                  child: const Text(
-                                                    'Book Now',
-                                                    style:
-                                                        TextStyle(fontSize: 14),
-                                                  ),
+                                                      TextStyle(fontSize: 14),
                                                 ),
-                                              ],
-                                            );
-                                          },
-                                          error: ((error, stackTrace) =>
-                                              Scaffold(
-                                                  body: ErrorText(
-                                                      error: error.toString(),
-                                                      stackTrace: stackTrace
-                                                          .toString()))),
-                                          loading: () =>
-                                              const Scaffold(body: Loader())),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                          child: Row(
-                                        children: [
-                                          const Icon(Icons.bed_outlined),
-                                          const SizedBox(
-                                            width: 5,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                        error: ((error, stackTrace) => Scaffold(
+                                            body: ErrorText(
+                                                error: error.toString(),
+                                                stackTrace:
+                                                    stackTrace.toString()))),
+                                        loading: () =>
+                                            const Scaffold(body: Loader())),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                        child: Row(
+                                      children: [
+                                        const Icon(Icons.bed_outlined),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          widget.category,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                          Text(
-                                            widget.category,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                      TextButton(
-                                          onPressed: () {
-                                            // Action to perform on tap, e.g., show a dialog or navigate
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: const Text(
-                                                      "Room Details"),
-                                                  content: SizedBox(
-                                                    height: MediaQuery.sizeOf(
-                                                                context)
-                                                            .height /
-                                                        4,
-                                                    width: MediaQuery.sizeOf(
-                                                                context)
-                                                            .width /
-                                                        1.5,
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            const Icon(
-                                                                Icons
-                                                                    .people_alt_outlined,
-                                                                size: 30),
-                                                            Text(
-                                                              "Guests: ${room.guests}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          18),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            const Icon(
-                                                                Icons
-                                                                    .bed_rounded,
-                                                                size: 30),
-                                                            Text(
-                                                              "Beds: ${room.beds}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          18),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            const Icon(
-                                                                Icons
-                                                                    .bathtub_outlined,
-                                                                size: 30),
-                                                            Text(
-                                                              "Bathrooms: ${room.bathrooms}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          18),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  actions: [
-                                                    TextButton(
-                                                      child:
-                                                          const Text("Close"),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: RichText(
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: "Room Details",
-                                                  style: TextStyle(
-                                                      // color: Colors.grey,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurface
-                                                          .withOpacity(0.5),
-                                                      fontStyle: FontStyle
-                                                          .italic // Underline for emphasis
+                                        ),
+                                      ],
+                                    )),
+                                    TextButton(
+                                        onPressed: () {
+                                          // Action to perform on tap, e.g., show a dialog or navigate
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title:
+                                                    const Text("Room Details"),
+                                                content: SizedBox(
+                                                  height:
+                                                      MediaQuery.sizeOf(context)
+                                                              .height /
+                                                          4,
+                                                  width:
+                                                      MediaQuery.sizeOf(context)
+                                                              .width /
+                                                          1.5,
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          const Icon(
+                                                              Icons
+                                                                  .people_alt_outlined,
+                                                              size: 30),
+                                                          Text(
+                                                            "Guests: ${room.guests}",
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        18),
+                                                          ),
+                                                        ],
                                                       ),
-                                                ),
-                                                const WidgetSpan(
-                                                  child: Icon(
-                                                    Icons
-                                                        .keyboard_arrow_down, // Arrow pointing down icon
-                                                    size:
-                                                        16.0, // Adjust the size to fit your design
-                                                    color: Colors.grey,
+                                                      const SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          const Icon(
+                                                              Icons.bed_rounded,
+                                                              size: 30),
+                                                          Text(
+                                                            "Beds: ${room.beds}",
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        18),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          const Icon(
+                                                              Icons
+                                                                  .bathtub_outlined,
+                                                              size: 30),
+                                                          Text(
+                                                            "Bathrooms: ${room.bathrooms}",
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        18),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          )),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        )),
-                      );
+                                                actions: [
+                                                  TextButton(
+                                                    child: const Text("Close"),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: "Room Details",
+                                                style: TextStyle(
+                                                    // color: Colors.grey,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurface
+                                                        .withOpacity(0.5),
+                                                    fontStyle: FontStyle
+                                                        .italic // Underline for emphasis
+                                                    ),
+                                              ),
+                                              const WidgetSpan(
+                                                child: Icon(
+                                                  Icons
+                                                      .keyboard_arrow_down, // Arrow pointing down icon
+                                                  size:
+                                                      16.0, // Adjust the size to fit your design
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ));
                     }));
-              },
-              error: ((error, stackTrace) => Scaffold(
-                  body: ErrorText(
-                      error: error.toString(),
-                      stackTrace: stackTrace.toString()))),
-              loading: () => const Scaffold(body: Loader())),
-    );
+              } else {
+                return Center(
+                  child: Column(
+                    children: [
+                      const Text("No Rooms Available"),
+                      Text(
+                          "(${DateFormat('MMMM dd').format(startDate)} - ${DateFormat('MMMM dd').format(endDate)})")
+                    ],
+                  ),
+                );
+              }
+            },
+            error: ((error, stackTrace) => Scaffold(
+                body: ErrorText(
+                    error: error.toString(),
+                    stackTrace: stackTrace.toString()))),
+            loading: () => const Scaffold(body: Loader()));
   }
 
   void showSelectDate(BuildContext context, List<ListingBookings> bookings,
@@ -449,6 +435,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     List<String> unavailableRoomUids = [];
     Map<String, List<DateTime>> rooms = {};
 
+// Put all the dates booked under a certain room uid in map with its corresponding value being a list of all the dates
     for (ListingBookings booking in bookings) {
       DateTime currentDate = booking.startDate!;
 
@@ -466,16 +453,13 @@ class _RoomCardState extends ConsumerState<RoomCard> {
         // Sort the list of dates for the room UID
         rooms[booking.roomUid!]!.sort();
       }
-
-      debugPrint("rooms: $rooms");
     }
-
+// for each room in the map, you check if there is a date overlap, trying to find if there is any availability that fits your desired plan dates
     rooms.forEach((roomUid, dateList) {
       if (isDateOverlap(startDate, endDate, dateList) == true) {
         unavailableRoomUids.add(roomUid);
       }
     });
-    debugPrint("getUnavailableRoomUids $unavailableRoomUids");
     return unavailableRoomUids;
   }
 
@@ -485,6 +469,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
 
     int remainingDays = 0;
 
+// for every date in the datelist of the room, you will compare it to your plan date range, if its within range, it means that date isn't allowed
     for (DateTime element in dateList) {
       DateTime date = startDate;
       while (date.isBefore(endDate) || date.isAtSameMomentAs(endDate)) {
@@ -496,10 +481,10 @@ class _RoomCardState extends ConsumerState<RoomCard> {
 
         date = date.add(const Duration(days: 1));
       }
+      //this counts the amount of days compared against your plan, meaning that if remaining days is larger than the difference between now and your enddate, there is an available room for you
       remainingDays = remainingDays + 1;
     }
-    debugPrint("remainingDays: $remainingDays");
-    debugPrint("difference: ${endDate.difference(DateTime.now()).inDays}");
+
     if (remainingDays <= endDate.difference(DateTime.now()).inDays) {
       return false;
     } else {

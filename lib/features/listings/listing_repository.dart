@@ -1,13 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:lakbay/core/constants/firebase_constants.dart';
 import 'package:lakbay/core/failure.dart';
 import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/typdef.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -39,7 +37,6 @@ class ListingRepository {
 
   // Update
   FutureVoid updateListing(ListingModel listing) async {
-    debugPrintJson(listing);
     try {
       return right(await _listings.doc(listing.uid!).update(listing.toJson()));
     } on FirebaseException catch (e) {
@@ -74,6 +71,15 @@ class ListingRepository {
   Stream<ListingModel> readListing(String uid) {
     return _listings.doc(uid).snapshots().map((snapshot) {
       return ListingModel.fromJson(snapshot.data() as Map<String, dynamic>);
+    });
+  }
+
+  // Read room by properties
+  Stream<List<ListingModel>> readListingsByProperties(Query query) {
+    return query.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return ListingModel.fromJson(doc.data()! as Map<String, dynamic>);
+      }).toList();
     });
   }
 
@@ -176,20 +182,11 @@ class ListingRepository {
   }
 
   // Read bookings by category and only gets bookings where the endDate is less than my startDate
-  Stream<List<ListingBookings>> readBookingsByProperties(
-      String category, DateTime startDate) {
-    final convertedStartDate = Timestamp.fromDate(startDate);
-
-    return FirebaseFirestore.instance
-        .collectionGroup(
-            'bookings') // Perform collection group query for 'bookings'
-        .where('category', isEqualTo: category)
-        .where('startDate', isGreaterThan: convertedStartDate)
-        .snapshots()
-        .map((querySnapshot) {
+  Stream<List<ListingBookings>> readBookingsByProperties(Query query) {
+    return query.snapshots().map((querySnapshot) {
       // Convert each document snapshot to a ListingBookings object
       return querySnapshot.docs.map((doc) {
-        return ListingBookings.fromJson(doc.data());
+        return ListingBookings.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -225,7 +222,6 @@ class ListingRepository {
 
   // Update Room
   FutureVoid updateRoom(AvailableRoom room) async {
-    debugPrintJson(room);
     try {
       return right(await roomsCollection(room.listingId!)
           .doc(room.uid!)
@@ -277,7 +273,6 @@ class ListingRepository {
 // addRoom
   FutureEither<String> addTransport(String listingId, ListingModel listing,
       AvailableTransport transport) async {
-    debugPrint("transport2: $transport");
     try {
       // Generate a new document ID based on the user's ID
       var doc = transportCollection(listingId).doc();
@@ -300,7 +295,6 @@ class ListingRepository {
 
 // Update transport
   FutureVoid updateTransport(AvailableTransport transport) async {
-    debugPrintJson(transport);
     try {
       return right(await transportCollection(transport.listingId!)
           .doc(transport.uid!)
@@ -324,14 +318,10 @@ class ListingRepository {
   }
 
 // Read room by properties
-  Stream<List<AvailableTransport>> readTransportByProperties({num? guests}) {
-    return FirebaseFirestore.instance
-        .collectionGroup('transport')
-        .where('guests', isEqualTo: guests)
-        .snapshots()
-        .map((querySnapshot) {
+  Stream<List<AvailableTransport>> readTransportByProperties(Query query) {
+    return query.snapshots().map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
-        return AvailableTransport.fromJson(doc.data());
+        return AvailableTransport.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -367,7 +357,6 @@ class ListingRepository {
 
 // Update entertainment
   FutureVoid updateEntertainment(EntertainmentService entertainment) async {
-    debugPrintJson(entertainment);
     try {
       return right(await entertainmentCollection(entertainment.listingId!)
           .doc(entertainment.uid!)

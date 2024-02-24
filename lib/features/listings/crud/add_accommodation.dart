@@ -145,11 +145,11 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                       return entry.value.copyWith(url: imageUrls[entry.key]);
                     }).toList(),
                   );
-                  debugPrint("$listing");
+                  // debugPrint("$listing");
                   if (mounted) {
-                    ref
-                        .read(listingControllerProvider.notifier)
-                        .addListing(listing, context, rooms: availableRooms);
+                    ref.read(listingControllerProvider.notifier).addListing(
+                        listing, context,
+                        rooms: listing.availableRooms);
                   }
                 },
               ));
@@ -176,7 +176,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           (value) => value.fold(
             (failure) => debugPrint('Failed to upload images: $failure'),
             (imageUrls) {
-              debugPrint("$listing");
+              // debugPrint("$listing");
               listing = listing.copyWith(
                 availableRooms: listing.availableRooms!
                     .asMap()
@@ -205,7 +205,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                     .values
                     .toList(),
               );
-              debugPrint("$listing");
+              // debugPrint("$listing");
             },
           ),
         );
