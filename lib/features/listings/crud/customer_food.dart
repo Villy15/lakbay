@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
+import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/plan_model.dart';
 
 class CustomerFood extends ConsumerStatefulWidget {
   final ListingModel listing;
@@ -20,8 +25,7 @@ class CustomerFood extends ConsumerStatefulWidget {
 class _CustomerFoodState extends ConsumerState<CustomerFood> {
   List<SizedBox> tabs = [
     const SizedBox(width: 100, child: Tab(child: Text('Details'))),
-    const SizedBox(width: 100, child: Tab(child: Text('Tables'))),
-    const SizedBox(width: 100, child: Tab(child: Text('Bookings'))),
+    const SizedBox(width: 100, child: Tab(child: Text('Menu and Deals'))),
   ];
   @override
   void initState() {
@@ -33,6 +37,8 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
 
   @override
   Widget build(BuildContext context) {
+    final planUid = ref.read(currentPlanIdProvider);
+    final isLoading = ref.watch(plansControllerProvider);
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
@@ -58,10 +64,13 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
                       indicatorSize: TabBarIndicatorSize.label,
                       tabs: tabs),
                 ),
-                body: TabBarView(children: [details()]))));
+                body: TabBarView(children: [
+                  isLoading ? const Loader() : details(planUid),
+                  menu(),
+                ]))));
   }
 
-  SingleChildScrollView details() {
+  SingleChildScrollView details(String? planUid) {
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       CarouselSlider(
@@ -101,7 +110,7 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
                       fontSize:
                           Theme.of(context).textTheme.labelLarge?.fontSize)),
               DisplayText(
-                  text: '${widget.listing.category} · ${widget.listing.type}',
+                  text: widget.listing.category,
                   lines: 1,
                   style: TextStyle(
                       fontSize:
@@ -126,38 +135,8 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
               ],
             ],
           )),
-      const SizedBox(height: 10),
       const Divider(),
-      Padding(
-        padding: const EdgeInsets.only(left: 10.0),
-        child: DisplayText(
-            text: 'Menu',
-            lines: 1,
-            style: TextStyle(
-                fontSize: Theme.of(context).textTheme.titleLarge?.fontSize)),
-      ),
-      const SizedBox(height: 10),
-      CarouselSlider(
-          options: CarouselOptions(
-              viewportFraction: 0.3,
-              height: 100.0,
-              enlargeFactor: 0,
-              enableInfiniteScroll: false,
-              onPageChanged: (index, reason) {}),
-          items: (widget.listing.menuImgs ?? []).map((img) {
-            return Builder(builder: (BuildContext context) {
-              return Container(
-                  width: 100,
-                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                  decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                          image: NetworkImage('${img.url}'),
-                          fit: BoxFit.cover)));
-            });
-          }).toList()),
-      const Divider(),
+
       Padding(
           padding: const EdgeInsets.all(8.0),
           child:
@@ -192,7 +171,7 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
                       style: const TextStyle(fontSize: 12)))
             ])
           ])),
-      const SizedBox(height: 30),
+      const SizedBox(height: 12),
       const Divider(),
       ListTile(
           leading: SizedBox(
@@ -212,8 +191,127 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
           title: Text('Hosted by ${widget.listing.cooperative.cooperativeName}',
               style: Theme.of(context).textTheme.labelLarge)),
       const Divider(),
-      const SizedBox(height: 5)
+
+      // Add this to current trip
+      Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+          child: FilledButton(
+              onPressed: () {
+                addCurrentTrip(context, planUid);
+              },
+              style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all<Size>(
+                      const Size(double.infinity, 45))),
+              child: const Text('Add this to current trip'))),
     ]));
+  }
+
+  SingleChildScrollView menu() {
+    return SingleChildScrollView(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const SizedBox(height: 10),
+      Padding(
+        padding: const EdgeInsets.only(left: 10.0),
+        child: DisplayText(
+            text: 'Menu',
+            lines: 1,
+            style: TextStyle(
+                fontSize: Theme.of(context).textTheme.titleLarge?.fontSize)),
+      ),
+      const SizedBox(height: 10),
+      // Menu Images
+      // replace with ImageSlider instead of Carousel Slider
+      Padding(
+        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+        child: ImageSlider(
+            images:
+                (widget.listing.menuImgs ?? []).map((img) => img.url!).toList(),
+            height: MediaQuery.sizeOf(context).height / 1.3,
+            width: double.infinity),
+      ),
+      const SizedBox(height: 10),
+      const Divider(),
+      Padding(
+        padding: const EdgeInsets.only(left: 10.0),
+        child: DisplayText(
+            text: 'Deals that you may like',
+            lines: 1,
+            style: TextStyle(
+                fontSize: Theme.of(context).textTheme.titleLarge?.fontSize)),
+      ),
+
+      ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: widget.listing.availableDeals!.length,
+          itemBuilder: ((context, index) {
+            return Card(
+              elevation: 4.0,
+              margin: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  ImageSlider(
+                    images: widget.listing.availableDeals![index].dealImgs
+                        .map((img) => img.url!)
+                        .toList(),
+                    height: MediaQuery.sizeOf(context).height / 5.5,
+                    width: double.infinity,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              widget.listing.availableDeals![index].dealName,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold
+                              )
+                            ),
+                            Text("₱${widget.listing.availableDeals![index].price.toString()}",
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold))
+                          ]
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          widget.listing.availableDeals![index].dealDescription,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal
+                          )
+                        )
+                      ]
+                    )
+                  )
+                ]
+              )
+            );
+          })),
+    ]));
+  }
+
+  void addCurrentTrip(BuildContext context, String? planUid) {
+    final selectedDate = ref.read(selectedDateProvider);
+
+    // edit the current plan
+    PlanActivity activity = PlanActivity(
+        // create a random key for the activity
+        key: DateTime.now().millisecondsSinceEpoch.toString(),
+        listingId: widget.listing.uid,
+        category: widget.listing.category,
+        dateTime: selectedDate,
+        title: widget.listing.title,
+        imageUrl: widget.listing.images!.first.url!,
+        description: widget.listing.description);
+
+    ref
+        .read(plansControllerProvider.notifier)
+        .addActivityToPlan(planUid!, activity, context);
   }
 
   String getWorkingDays(List<bool> workingDays) {

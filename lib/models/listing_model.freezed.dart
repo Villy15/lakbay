@@ -1855,6 +1855,8 @@ mixin _$AvailableTransport {
   String? get listingName => throw _privateConstructorUsedError;
   bool get available => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  List<TimeOfDay>? get departureTimes => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
   num get luggage => throw _privateConstructorUsedError;
   List<bool> get workingDays => throw _privateConstructorUsedError;
@@ -1883,6 +1885,7 @@ abstract class $AvailableTransportCopyWith<$Res> {
       String? listingName,
       bool available,
       num guests,
+      @TimeOfDayConverter() List<TimeOfDay>? departureTimes,
       num price,
       num luggage,
       List<bool> workingDays,
@@ -1910,6 +1913,7 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
     Object? listingName = freezed,
     Object? available = null,
     Object? guests = null,
+    Object? departureTimes = freezed,
     Object? price = null,
     Object? luggage = null,
     Object? workingDays = null,
@@ -1939,6 +1943,10 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
               as num,
+      departureTimes: freezed == departureTimes
+          ? _value.departureTimes
+          : departureTimes // ignore: cast_nullable_to_non_nullable
+              as List<TimeOfDay>?,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -1985,6 +1993,7 @@ abstract class _$$AvailableTransportImplCopyWith<$Res>
       String? listingName,
       bool available,
       num guests,
+      @TimeOfDayConverter() List<TimeOfDay>? departureTimes,
       num price,
       num luggage,
       List<bool> workingDays,
@@ -2010,6 +2019,7 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
     Object? listingName = freezed,
     Object? available = null,
     Object? guests = null,
+    Object? departureTimes = freezed,
     Object? price = null,
     Object? luggage = null,
     Object? workingDays = null,
@@ -2039,6 +2049,10 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
               as num,
+      departureTimes: freezed == departureTimes
+          ? _value._departureTimes
+          : departureTimes // ignore: cast_nullable_to_non_nullable
+              as List<TimeOfDay>?,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -2080,6 +2094,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       this.listingName,
       required this.available,
       required this.guests,
+      @TimeOfDayConverter() final List<TimeOfDay>? departureTimes,
       required this.price,
       required this.luggage,
       required final List<bool> workingDays,
@@ -2087,7 +2102,8 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       @TimeOfDayConverter() required this.endTime,
       required this.destination,
       required this.pickupPoint})
-      : _workingDays = workingDays;
+      : _departureTimes = departureTimes,
+        _workingDays = workingDays;
 
   factory _$AvailableTransportImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvailableTransportImplFromJson(json);
@@ -2102,6 +2118,17 @@ class _$AvailableTransportImpl implements _AvailableTransport {
   final bool available;
   @override
   final num guests;
+  final List<TimeOfDay>? _departureTimes;
+  @override
+  @TimeOfDayConverter()
+  List<TimeOfDay>? get departureTimes {
+    final value = _departureTimes;
+    if (value == null) return null;
+    if (_departureTimes is EqualUnmodifiableListView) return _departureTimes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final num price;
   @override
@@ -2127,7 +2154,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
 
   @override
   String toString() {
-    return 'AvailableTransport(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, guests: $guests, price: $price, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, destination: $destination, pickupPoint: $pickupPoint)';
+    return 'AvailableTransport(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, guests: $guests, departureTimes: $departureTimes, price: $price, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, destination: $destination, pickupPoint: $pickupPoint)';
   }
 
   @override
@@ -2143,6 +2170,8 @@ class _$AvailableTransportImpl implements _AvailableTransport {
             (identical(other.available, available) ||
                 other.available == available) &&
             (identical(other.guests, guests) || other.guests == guests) &&
+            const DeepCollectionEquality()
+                .equals(other._departureTimes, _departureTimes) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.luggage, luggage) || other.luggage == luggage) &&
             const DeepCollectionEquality()
@@ -2165,6 +2194,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       listingName,
       available,
       guests,
+      const DeepCollectionEquality().hash(_departureTimes),
       price,
       luggage,
       const DeepCollectionEquality().hash(_workingDays),
@@ -2195,6 +2225,7 @@ abstract class _AvailableTransport implements AvailableTransport {
       final String? listingName,
       required final bool available,
       required final num guests,
+      @TimeOfDayConverter() final List<TimeOfDay>? departureTimes,
       required final num price,
       required final num luggage,
       required final List<bool> workingDays,
@@ -2216,6 +2247,9 @@ abstract class _AvailableTransport implements AvailableTransport {
   bool get available;
   @override
   num get guests;
+  @override
+  @TimeOfDayConverter()
+  List<TimeOfDay>? get departureTimes;
   @override
   num get price;
   @override

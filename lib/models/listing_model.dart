@@ -112,6 +112,7 @@ class AvailableTransport with _$AvailableTransport {
     String? listingName,
     required bool available,
     required num guests,
+    @TimeOfDayConverter() List<TimeOfDay>? departureTimes,
     required num price,
     required num luggage,
     required List<bool> workingDays,

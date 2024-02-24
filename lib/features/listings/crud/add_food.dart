@@ -13,10 +13,13 @@ import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/models/wrappers/committee_params.dart';
 
 class AddFood extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -33,7 +36,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
 
   // stepper
   int activeStep = 0;
-  int upperBound = 5;
+  int upperBound = 6;
 
   // initial values
   String type = 'Nature-Based';
@@ -161,6 +164,490 @@ class _AddFoodState extends ConsumerState<AddFood> {
           ),
         );
     return listing;
+  }
+
+  Widget addFixedTasks(BuildContext context) {
+    List<String> notes = [
+      "Fixed tasks will appear for every booking. They must always be accomplished when your service is purchased.",
+      "Members that can be assigned to tasks are those belonging in the tourism committee."
+    ];
+    return Column(
+      children: [
+        ElevatedButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return SizedBox(
+                      child: Dialog.fullscreen(child: showFixedTaskForm()),
+                    );
+                  });
+            },
+            child: const Text("Add Task")),
+        const SizedBox(
+          height: 10,
+        ),
+        ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: fixedTasks?.length,
+            itemBuilder: ((context, taskIndex) {
+              return Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Colors.black, width: 1), // Border color
+                    borderRadius: BorderRadius.circular(
+                        6), // Border radius for rounded corners
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 5.0, right: 5, bottom: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Spacer(),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.black,
+                                size: 25,
+                              ), // 'X' icon
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // Aligns children at the start of the cross axis
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Task: ",
+                                style: TextStyle(
+                                  fontSize:
+                                      16, // Ensure this matches the font size of the other text
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 10.0),
+                                child: DisplayText(
+                                  text: fixedTasks![taskIndex].name,
+                                  lines: 3,
+                                  style: const TextStyle(
+                                    fontSize: 16, // Adjust text style
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Assigned: ",
+                                style: TextStyle(
+                                  fontSize:
+                                      16, // Ensure this matches the font size of the other text
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2, // 2 items per row
+                                    crossAxisSpacing:
+                                        1.5, // Space between cards horizontally
+                                    mainAxisSpacing: 1.5,
+                                    mainAxisExtent: MediaQuery.sizeOf(context)
+                                            .height /
+                                        20, // Space between cards vertically
+                                  ),
+                                  itemCount:
+                                      fixedTasks![taskIndex].assigned.length,
+                                  itemBuilder: (context, assignedIndex) {
+                                    return Container(
+                                        alignment: Alignment.centerLeft,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color:
+                                                  Colors.grey), // Border color
+                                          borderRadius: BorderRadius.circular(
+                                              4), // Border radius for rounded corners
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 10.0),
+                                          child: Text(
+                                            fixedTasks![taskIndex].assigned[
+                                                assignedIndex], // Replace with the name from your data
+                                            style: const TextStyle(
+                                              fontSize: 14, // Adjust text style
+                                              overflow: TextOverflow
+                                                  .ellipsis, // Handle long text
+                                            ),
+                                          ),
+                                        ));
+                                  }),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ));
+            })),
+        if (fixedTasks!.isEmpty)
+          SizedBox(
+              height: MediaQuery.sizeOf(context).height / 5,
+              width: double.infinity,
+              child: const Center(child: Text("No Tasks Created"))),
+        addNotes(
+          notes,
+        ),
+      ],
+    );
+  }
+
+  Widget showFixedTaskForm() {
+    TextEditingController taskNameController = TextEditingController();
+    TextEditingController committeeController =
+        TextEditingController(text: "Tourism");
+    List<String> assignedMembers = [];
+    return StatefulBuilder(builder: (context, setState) {
+      return Column(
+        children: [
+          AppBar(
+            leading: IconButton(
+              iconSize: 30,
+              onPressed: () {
+                Navigator.of(context).pop(); // Corrected the navigation method
+              },
+              icon: const Icon(
+                Icons.arrow_back,
+              ),
+            ),
+            title: const Text(
+              "Create Task",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(children: [
+                TextFormField(
+                  controller: taskNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Task Name*',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., Clean the tables",
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: committeeController,
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    labelText: 'Committee Assigned*',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    suffixIcon:
+                        Icon(Icons.arrow_drop_down), // Dropdown arrow icon
+                  ),
+                  readOnly: true,
+                  enabled: false,
+                  onTap: () {},
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Column(
+                  children: [
+                    TextFormField(
+                      maxLines: 1,
+                      decoration: const InputDecoration(
+                          labelText: 'Members Assigned*',
+                          border: OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior
+                              .always, // Keep the label always visible
+                          suffixIcon: Icon(Icons.arrow_drop_down),
+                          hintText:
+                              "Press to select member" // Dropdown arrow icon
+                          ),
+                      readOnly: true,
+                      canRequestFocus: false,
+                      onTap: () async {
+                        List<CooperativeMembers> members = await ref.read(
+                            getAllMembersInCommitteeProvider(CommitteeParams(
+                          committeeName: committeeController.text,
+                          coopUid: ref.watch(userProvider)!.currentCoop!,
+                        )).future);
+
+                        members = members
+                            .where((member) =>
+                                !assignedMembers.contains(member.name))
+                            .toList();
+                        if (context.mounted) {
+                          return showModalBottomSheet(
+                            context: context,
+                            builder: (builder) {
+                              return Container(
+                                padding: const EdgeInsets.all(
+                                    10.0), // Padding for overall container
+                                child: Column(
+                                  children: [
+                                    // Optional: Add a title or header for the modal
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0),
+                                      child: Text(
+                                        "Members (${committeeController.text})",
+                                        style: const TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: ListView.builder(
+                                        itemCount: members.length,
+                                        itemBuilder: (context, index) {
+                                          return ListTile(
+                                            title: Text(
+                                              members[index].name,
+                                              style: const TextStyle(
+                                                  fontSize:
+                                                      16.0), // Adjust font size
+                                            ),
+                                            onTap: () {
+                                              setState(
+                                                () {
+                                                  assignedMembers
+                                                      .add(members[index].name);
+                                                },
+                                              );
+                                              context.pop();
+                                            },
+                                            // Optional: Add trailing icons or actions
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, // 2 items per row
+                        crossAxisSpacing:
+                            1.5, // Space between cards horizontally
+                        mainAxisSpacing: 1.5,
+                        mainAxisExtent: MediaQuery.sizeOf(context).height /
+                            8, // Space between cards vertically
+                      ),
+                      itemCount: assignedMembers
+                          .length, // Replace with the length of your data
+                      itemBuilder: (context, index) {
+                        return Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey), // Border color
+                              borderRadius: BorderRadius.circular(
+                                  4), // Border radius for rounded corners
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.close,
+                                      color: Colors.black,
+                                      size: 16,
+                                    ), // 'X' icon
+                                    onPressed: () {
+                                      setState(
+                                        () {
+                                          assignedMembers.removeAt(index);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      assignedMembers[
+                                          index], // Replace with the name from your data
+                                      style: const TextStyle(
+                                        fontSize: 14, // Adjust text style
+                                        overflow: TextOverflow
+                                            .ellipsis, // Handle long text
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ));
+                      },
+                    )
+                  ],
+                ),
+              ]),
+            ),
+          ),
+          const Spacer(),
+          ElevatedButton(
+              onPressed: () {
+                this.setState(() {
+                  fixedTasks?.add(Task(
+                      assigned: assignedMembers,
+                      committee: committeeController.text,
+                      complete: false,
+                      openContribution: false,
+                      name: taskNameController.text));
+                });
+                context.pop();
+              },
+              child: const Text("Add Task")),
+        ],
+      );
+    });
+  }
+
+  Widget addPolicies(BuildContext context) {
+    List<String> notes = [
+      "Downpayment Rate: The necessary amount to be paid by a customer in order to book and reserve the service.",
+      "Cancellation Rate: The amount that would not be refunded in the situation that a customer cancels their booking.",
+      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel and pay the full amount in the case for a downpayment. Otherwise their booking will be cancelled",
+      "Customers booking passed the cancellation period would be required to pay the downpayment or full amount upon checkout."
+    ];
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                maxLines: 1,
+                keyboardType: TextInputType.number, // For numeric input
+                decoration: const InputDecoration(
+                    labelText:
+                        'Downpayment Rate (%)*', // Indicate it's a percentage
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 20",
+                    suffixText: "%"),
+                onTap: () {
+                  // Handle tap if needed, e.g., showing a dialog to select a percentage
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: TextFormField(
+                maxLines: 1,
+                decoration: const InputDecoration(
+                    labelText: 'Cancellation Rate (%)*',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 5",
+                    suffixText: "%"),
+                onTap: () {},
+              ),
+            )
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        TextFormField(
+          maxLines: 1,
+          keyboardType: TextInputType.number, // For numeric input
+          decoration: const InputDecoration(
+              labelText:
+                  'Cancellation Period (Day/s)*', // Indicate it's a percentage
+              border: OutlineInputBorder(),
+              floatingLabelBehavior:
+                  FloatingLabelBehavior.always, // Keep the label always visible
+              hintText: "e.g., 5 Days before the booked date",
+              suffixText: "Day/s"),
+          onTap: () {
+            // Handle tap if needed, e.g., showing a dialog to select a percentage
+          },
+        ),
+        addNotes(notes),
+      ],
+    );
+  }
+
+  Column addNotes(
+    List<String> notes,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(
+          height: 20,
+        ),
+        DisplayText(
+          text: "Notes:",
+          lines: 1,
+          style: Theme.of(context).textTheme.headlineSmall!,
+        ),
+        ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: notes.length,
+            itemBuilder: ((context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 5),
+                    DisplayText(
+                      text: notes[index],
+                      lines: 10,
+                      style: Theme.of(context).textTheme.bodySmall!,
+                    ),
+                  ],
+                ),
+              );
+            }))
+      ],
+    );
   }
 
   Future<ListingModel> processDealImages(ListingModel listing) async {
@@ -330,9 +817,10 @@ class _AddFoodState extends ConsumerState<AddFood> {
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
-              Icons.question_mark_outlined,
+              Icons.task,
               color: Theme.of(context).colorScheme.background,
             ),
+            Icon(Icons.policy, color: Theme.of(context).colorScheme.background),
             Icon(
               Icons.summarize_outlined,
               color: Theme.of(context).colorScheme.background,
@@ -388,9 +876,12 @@ class _AddFoodState extends ConsumerState<AddFood> {
         return 'Add some photos';
 
       case 4:
-        return 'What do you want the guests to know?';
+        return 'Add Fixed Tasks';
 
       case 5:
+        return 'Add Policies';
+
+      case 6:
         return 'Review Listing';
 
       default:
@@ -1113,8 +1604,10 @@ class _AddFoodState extends ConsumerState<AddFood> {
       case 3:
         return addListingPhotos(context);
       case 4:
-        return addGuestInfo(context);
+        return addFixedTasks(context);
       case 5:
+        return addPolicies(context);
+      case 6:
         return reviewListing(context);
 
       default:

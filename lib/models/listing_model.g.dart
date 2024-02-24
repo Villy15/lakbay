@@ -191,6 +191,10 @@ _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
       listingName: json['listingName'] as String?,
       available: json['available'] as bool,
       guests: json['guests'] as num,
+      departureTimes: (json['departureTimes'] as List<dynamic>?)
+          ?.map((e) =>
+              const TimeOfDayConverter().fromJson(e as Map<String, dynamic>))
+          .toList(),
       price: json['price'] as num,
       luggage: json['luggage'] as num,
       workingDays:
@@ -211,6 +215,9 @@ Map<String, dynamic> _$$AvailableTransportImplToJson(
       'listingName': instance.listingName,
       'available': instance.available,
       'guests': instance.guests,
+      'departureTimes': instance.departureTimes
+          ?.map(const TimeOfDayConverter().toJson)
+          .toList(),
       'price': instance.price,
       'luggage': instance.luggage,
       'workingDays': instance.workingDays,
