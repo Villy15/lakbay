@@ -134,7 +134,7 @@ class ListingController extends StateNotifier<bool> {
     ListingModel listing,
     BuildContext context, {
     List<AvailableRoom>? rooms,
-    List<AvailableTransport>? transport,
+    AvailableTransport? transport,
     List<EntertainmentService>? entertainment,
   }) async {
     state = true;
@@ -150,17 +150,21 @@ class ListingController extends StateNotifier<bool> {
         rooms?.forEach((room) async {
           await _listingRepository.addRoom(listingUid, listing, room);
         });
-        transport?.forEach((transport) async {
+        debugPrint("transport: $transport");
+        if (transport != null) {
           await _listingRepository.addTransport(listingUid, listing, transport);
-        });
+        }
+
         entertainment?.forEach((entertainment) async {
           await _listingRepository.addEntertainment(
               listingUid, listing, entertainment);
         });
         state = false;
-        context.pop();
-        context.pop();
-        showSnackBar(context, 'Listing added successfully');
+        if (context.mounted) {
+          context.pop();
+          context.pop();
+          showSnackBar(context, 'Listing added successfully');
+        }
         _ref.read(navBarVisibilityProvider.notifier).show();
       },
     );
@@ -203,6 +207,8 @@ class ListingController extends StateNotifier<bool> {
           listingId: listing.uid,
           category: listing.category,
           dateTime: selectedDate,
+          startTime: booking.startDate,
+          endTime: booking.endDate,
           title: listing.title,
           imageUrl: listing.images!.first.url,
           description: listing.description,

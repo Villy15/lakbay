@@ -1,34 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-
-
 
 class CustomerTransportCheckout extends ConsumerStatefulWidget {
   final ListingModel listing;
   final AvailableTransport transport;
   final ListingBookings booking;
 
-  const CustomerTransportCheckout({
-    super.key,
-    required this.listing,
-    required this.transport,
-    required this.booking
-  });
+  const CustomerTransportCheckout(
+      {super.key,
+      required this.listing,
+      required this.transport,
+      required this.booking});
 
   @override
   ConsumerState<CustomerTransportCheckout> createState() =>
       _CustomerTransportCheckoutState();
-
 }
 
-class _CustomerTransportCheckoutState extends ConsumerState<CustomerTransportCheckout> {
+class _CustomerTransportCheckoutState
+    extends ConsumerState<CustomerTransportCheckout> {
   late num _guestCount;
   late DateTime _startDate;
   late DateTime _endDate;
@@ -40,7 +35,6 @@ class _CustomerTransportCheckoutState extends ConsumerState<CustomerTransportChe
   late num? days;
 
   num vat = 1.12;
-
 
   @override
   void initState() {
@@ -57,279 +51,185 @@ class _CustomerTransportCheckoutState extends ConsumerState<CustomerTransportChe
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(context, "Checkout"),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _listingSummary(context, widget.listing),
-            _tripDetails(context),
-            _priceDetails(context),
-            _listingRules(context),
-            _confirmPay(context)
-            //_paymentMethod(context)
-          ]
-        )
-      )
-    );
+        appBar: _appBar(context, "Checkout"),
+        body: SingleChildScrollView(
+            child: Column(children: [
+          _listingSummary(context, widget.listing),
+          _tripDetails(context),
+          _priceDetails(context),
+          _listingRules(context),
+          _confirmPay(context)
+          //_paymentMethod(context)
+        ])));
   }
 
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
-      title: Text(
-        title,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.primary
-        )
-      ),
-      iconTheme: IconThemeData(
-        color: Theme.of(context).colorScheme.primary
-      ),
+      title: Text(title,
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
     );
   }
 
   Widget _listingSummary(BuildContext context, ListingModel listing) {
     List<String?> imageUrls = widget.listing.images!.map((e) => e.url).toList();
     return InkWell(
-      onTap: () {
-
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 100,
-              width: 150,
-              child: ImageSlider(
-                images: imageUrls,
-                height: 100,
-                width: 150
-              )
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.listing.title,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
-                      )
-                    ),
-                  ]
-                )
-              )
-            )
-          ]
-        )
-      )
-    );
+        onTap: () {},
+        child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              SizedBox(
+                  height: 100,
+                  width: 150,
+                  child:
+                      ImageSlider(images: imageUrls, height: 100, width: 150)),
+              Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(widget.listing.title,
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                          ])))
+            ])));
   }
-
 
   String _formatTimeOfDay(TimeOfDay time) {
     final now = DateTime.now();
     final dt = DateTime(now.year, now.month, now.day, time.hour, time.minute);
-    final format = DateFormat.jm();  //"6:00 AM"
+    final format = DateFormat.jm(); //"6:00 AM"
     return format.format(dt);
   }
 
   Widget _tripDetails(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Your trip (${widget.booking.typeOfTrip})',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+        padding: const EdgeInsets.all(16),
+        child: Card(
+            child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (widget.booking.typeOfTrip == "One Way Trip") ... [
-                        const Text(
-                          'Date',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold
-                          )
-                        ),
-                        Text(
-                          DateFormat.yMMMd().format(_startDate)
-                        ),
-                        Text(
-                          _formatTimeOfDay(widget.booking.startTime!)
-                        )
-                      ]
-                      else ... [
-                        const Text(
-                          'Dates',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold
-                          )
-                        ),
-                        Text(
-                          '${DateFormat.yMMMd().format(_startDate)} and ${DateFormat.yMMMd().format(_endDate)}'
-                        ),
-                        
-                        Text(
-                          '${_formatTimeOfDay(widget.booking.startTime!)} and ${_formatTimeOfDay(widget.booking.endTime!)}'
-                        )
-                      ],
-                      
                       Text(
-                        'Number of Guests: $_guestCount',
+                        'Your trip (${widget.booking.typeOfTrip})',
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
-                      
-                      
-                    ]
-                  ),
-                  TextButton(
-                    onPressed: () async {
-
-                    },
-                    child: const Text('Edit')
-                  )
-                ]
-              )
-            ]
-          )
-        )
-      )
-    );
+                      const SizedBox(height: 10),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (widget.booking.typeOfTrip ==
+                                      "One Way Trip") ...[
+                                    const Text('Date',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold)),
+                                    Text(DateFormat.yMMMd().format(_startDate)),
+                                    Text(_formatTimeOfDay(
+                                        widget.booking.startTime!))
+                                  ] else ...[
+                                    const Text('Dates',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold)),
+                                    Text(
+                                        '${DateFormat.yMMMd().format(_startDate)} and ${DateFormat.yMMMd().format(_endDate)}'),
+                                    Text(
+                                        '${_formatTimeOfDay(widget.booking.startTime!)} and ${_formatTimeOfDay(widget.booking.endTime!)}')
+                                  ],
+                                  Text(
+                                    'Number of Guests: $_guestCount',
+                                  ),
+                                ]),
+                            TextButton(
+                                onPressed: () async {},
+                                child: const Text('Edit'))
+                          ])
+                    ]))));
   }
 
   Widget _priceDetails(BuildContext context) {
     bool paymentMoreInfo = false;
-    return  StatefulBuilder(
-      builder: (context, setState) {
-        return Padding(
+    return StatefulBuilder(builder: (context, setState) {
+      return Padding(
           padding: const EdgeInsets.all(16.0),
           child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Price details',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold
-                    )
-                  ),
-                  const SizedBox(height: 10),
-                  // show the only payment option which is full payment 
-                  ListTile(
-                    leading: Icon(
-                      Icons.circle,
-                      color: Theme.of(context).colorScheme.primary
-                    ),
-                    title: Text(_paymentOption)
-                  ),
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '₱${widget.booking.price} x $_guestCount guests',
-                            style: const TextStyle(
-                              fontSize: 16
-                            )
-                          ),
-                          Text(
-                            '₱${(widget.booking.price * _guestCount).toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              fontSize: 16
-                            )
-                          )
-                        ]
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Total:',
+              child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Price details',
                             style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                            )
-                          ),
-                          Text(
-                            '₱${amountTotal.toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold
-                            )
-                          )
-                        ]
-                      ),
-                      if (paymentMoreInfo == true)
-                      Container(
-                        child: Column(
-                          children: [
-                            Row(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 10),
+                        // show the only payment option which is full payment
+                        ListTile(
+                            leading: Icon(Icons.circle,
+                                color: Theme.of(context).colorScheme.primary),
+                            title: Text(_paymentOption)),
+                        Column(children: [
+                          Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'VAT (12%)',
-                                  style: TextStyle(
-                                    fontSize: 12
-                                  )
-                                ),
                                 Text(
-                                  '₱${vatAmount.toStringAsFixed(2)}',
-                                  style: const TextStyle(
-                                    fontSize: 16
-                                  )
-                                )
-                              ]
-                            )
-                          ]
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              paymentMoreInfo = true;
-                            });
-                          },
-                          child: const Text('More info'),
-                        ),
-                      ),
-
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Divider()
-                      )
-                      
-                    ]
-                  )
-                ]
-              )
-            )
-          )
-        ); 
-      }
-    );
+                                    '₱${widget.booking.price} x $_guestCount guests',
+                                    style: const TextStyle(fontSize: 16)),
+                                Text(
+                                    '₱${(widget.booking.price * _guestCount).toStringAsFixed(2)}',
+                                    style: const TextStyle(fontSize: 16))
+                              ]),
+                          const SizedBox(height: 20),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('Total:',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold)),
+                                Text('₱${amountTotal.toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold))
+                              ]),
+                          if (paymentMoreInfo == true)
+                            Container(
+                              child: Column(children: [
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text('VAT (12%)',
+                                          style: TextStyle(fontSize: 12)),
+                                      Text('₱${vatAmount.toStringAsFixed(2)}',
+                                          style: const TextStyle(fontSize: 16))
+                                    ])
+                              ]),
+                            ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  paymentMoreInfo = true;
+                                });
+                              },
+                              child: const Text('More info'),
+                            ),
+                          ),
+                          const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: Divider())
+                        ])
+                      ]))));
+    });
   }
 
   Widget _listingRules(BuildContext context) {
@@ -374,56 +274,40 @@ class _CustomerTransportCheckoutState extends ConsumerState<CustomerTransportChe
 
   Widget _confirmPay(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const Text(
-              'By confirming below, you agree to our terms and conditions',
-              style: TextStyle(fontSize: 16),
-              textAlign: TextAlign.center 
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange.shade700,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)
-                )
-              ),
-              onPressed: () {
-                setState(() {
-                  // Add your payment action here
-                  updatedBooking = updatedBooking.copyWith(
-                    paymentOption: _paymentOption,
-                    totalPrice: num.parse(amountTotal.toStringAsFixed(2)),
-                    amountPaid: num.parse(amountTotal.toStringAsFixed(2)),
-                    
-                  );
-                });
+        child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(children: [
+              const Text(
+                  'By confirming below, you agree to our terms and conditions',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange.shade700,
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  onPressed: () {
+                    setState(() {
+                      // Add your payment action here
+                      updatedBooking = updatedBooking.copyWith(
+                        paymentOption: _paymentOption,
+                        totalPrice: num.parse(amountTotal.toStringAsFixed(2)),
+                        amountPaid: num.parse(amountTotal.toStringAsFixed(2)),
+                      );
+                    });
 
-                
-
-                ref
-                    .read(listingControllerProvider.notifier)
-                    .addBooking(updatedBooking, widget.listing, context);
-                // Navigator.pop(context);
-                
-              }, 
-
-              child: Text(
-                'Confirm and Pay',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.background,
-                  fontSize: 16
-                )
-              )
-            )
-          ]
-        )
-      )
-    );
+                    ref
+                        .read(listingControllerProvider.notifier)
+                        .addBooking(updatedBooking, widget.listing, context);
+                    // Navigator.pop(context);
+                  },
+                  child: Text('Confirm and Pay',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.background,
+                          fontSize: 16)))
+            ])));
   }
 
   Widget _paymentMethod(BuildContext context) {

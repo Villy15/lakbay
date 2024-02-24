@@ -11,10 +11,12 @@ import 'package:lakbay/models/plan_model.dart';
 class TimelineCard extends ConsumerStatefulWidget {
   final PlanModel plan;
   final PlanActivity activity;
+  final DateTime thisDay;
   const TimelineCard({
     super.key,
     required this.plan,
     required this.activity,
+    required this.thisDay,
   });
 
   @override
@@ -383,43 +385,47 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                     ],
                     const SizedBox(height: 8),
                     // Check in and check out time lables
-                    Row(
-                      children: [
-                        Text(
-                          'Check In:     ',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 12,
+                    if (widget.activity.category == "Accommodation" &&
+                        widget.thisDay.day == widget.activity.startTime!.day)
+                      Row(
+                        children: [
+                          Text(
+                            'Check In:     ',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                        Text(
-                          DateFormat('hh:mm a').format(listing.checkIn!),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 12,
+                          Text(
+                            DateFormat('hh:mm a').format(listing.checkIn!),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                     const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Text(
-                          'Check Out:  ',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 12,
+                    if (widget.activity.category == "Accommodation" &&
+                        widget.thisDay.day == widget.activity.endTime!.day)
+                      Row(
+                        children: [
+                          Text(
+                            'Check Out:  ',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                        Text(
-                          DateFormat('hh:mm a').format(listing.checkOut!),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 12,
+                          Text(
+                            DateFormat('hh:mm a').format(listing.checkOut!),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
 
                     Align(
                       alignment: Alignment.centerRight,

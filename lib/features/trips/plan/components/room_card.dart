@@ -34,7 +34,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     final guests = ref.read(currentPlanGuestsProvider);
     final startDate = ref.read(planStartDateProvider);
     final endDate = ref.read(planEndDateProvider);
-    List<String> unavailableRoomUids = getUnavailableRoomUids(widget.bookings);
+    List<String> unavailableRoomUids =
+        getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
 
     return SizedBox(
       height: 600,
@@ -51,7 +52,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                       children: [
                         const Text("No Rooms Available"),
                         Text(
-                            "(${DateFormat('MMMM dd').format(startDate!)} - ${DateFormat('MMMM dd').format(endDate!)})")
+                            "(${DateFormat('MMMM dd').format(startDate)} - ${DateFormat('MMMM dd').format(endDate)})")
                       ],
                     ),
                   );
@@ -424,16 +425,6 @@ class _RoomCardState extends ConsumerState<RoomCard> {
         });
   }
 
-  bool isDateInRange(DateTime planStartDate, DateTime planEndDate,
-      List<DateTime> bookedDates) {
-    for (DateTime date in bookedDates) {
-      if (date.isAfter(planStartDate) && date.isBefore(planEndDate)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   List<DateTime> getAllDatesFromBookings(List<ListingBookings> bookings) {
     List<DateTime> allDates = [];
 
@@ -453,23 +444,77 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     return allDates;
   }
 
-  List<String> getUnavailableRoomUids(List<ListingBookings> bookings) {
+  List<String> getUnavailableRoomUids(
+      List<ListingBookings> bookings, DateTime startDate, DateTime endDate) {
     List<String> unavailableRoomUids = [];
+    Map<String, List<DateTime>> rooms = {};
 
     for (ListingBookings booking in bookings) {
-      // Add start date
-      DateTime currentDate = ref.read(planStartDateProvider) as DateTime;
+      DateTime currentDate = booking.startDate!;
 
-      // Keep adding dates until you reach the end date
-      if (currentDate.isBefore(booking.endDate!) ||
-          currentDate.isAtSameMomentAs(booking.endDate!)) {
-        unavailableRoomUids.add(booking.roomUid!);
-        // Move to next day
-        currentDate = currentDate.add(const Duration(days: 1));
+      if (_isDateInRange(currentDate, startDate, endDate)) {
+        while ((currentDate.isBefore(booking.endDate!) ||
+            currentDate.isAtSameMomentAs(booking.endDate!))) {
+          if (rooms.containsKey(booking.roomUid)) {
+            rooms[booking.roomUid!]!.add(currentDate);
+          } else {
+            rooms[booking.roomUid!] = [currentDate];
+          }
+          // Move to the next day
+          currentDate = currentDate.add(const Duration(days: 1));
+        }
+        // Sort the list of dates for the room UID
+        rooms[booking.roomUid!]!.sort();
       }
+
+      debugPrint("rooms: $rooms");
     }
+
+    rooms.forEach((roomUid, dateList) {
+      if (isDateOverlap(startDate, endDate, dateList) == true) {
+        unavailableRoomUids.add(roomUid);
+      }
+    });
     debugPrint("getUnavailableRoomUids $unavailableRoomUids");
     return unavailableRoomUids;
+  }
+
+  bool isDateOverlap(
+      DateTime startDate, DateTime endDate, List<DateTime> dateList) {
+    // Loop through each date in the list
+
+    int remainingDays = 0;
+
+    for (DateTime element in dateList) {
+      DateTime date = startDate;
+      while (date.isBefore(endDate) || date.isAtSameMomentAs(endDate)) {
+        // Check if the current date is present in the date list
+        // Check if the current date is within the range
+        if (_isDateInRange(element, startDate, endDate) == false) {
+          return false; // Return false if date not in range
+        }
+
+        date = date.add(const Duration(days: 1));
+      }
+      remainingDays = remainingDays + 1;
+    }
+    debugPrint("remainingDays: $remainingDays");
+    debugPrint("difference: ${endDate.difference(DateTime.now()).inDays}");
+    if (remainingDays <= endDate.difference(DateTime.now()).inDays) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool _isDateInRange(DateTime date, DateTime rangeStart, DateTime rangeEnd) {
+    if ((date.isAtSameMomentAs(rangeStart) || date.isAfter(rangeStart)) &&
+            (date.isAtSameMomentAs(rangeEnd)) ||
+        date.isBefore(rangeEnd.add(const Duration(days: 1)))) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void showConfirmBooking(AvailableRoom room, ListingModel listing,

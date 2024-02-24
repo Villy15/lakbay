@@ -209,7 +209,7 @@ class ListingRepository {
 
       // Update the uid of the room
       room = room.copyWith(
-          uid: doc.id, listingId: listing.uid, listingName: listing.title);
+          uid: doc.id, listingId: listingId, listingName: listing.title);
 
       // Add the cooperative to the database
       await doc.set(room.toJson());
@@ -256,8 +256,7 @@ class ListingRepository {
   // Read room by properties
   Stream<List<AvailableRoom>> readRoomByProperties(
       List<String> unavailableRoomIds, num guests) {
-    Query query =
-        FirebaseFirestore.instance.collectionGroup('accommodationRooms');
+    Query query = FirebaseFirestore.instance.collectionGroup('availableRooms');
 
     if (unavailableRoomIds.isNotEmpty) {
       query = query.where('uid', whereNotIn: unavailableRoomIds);
@@ -278,13 +277,14 @@ class ListingRepository {
 // addRoom
   FutureEither<String> addTransport(String listingId, ListingModel listing,
       AvailableTransport transport) async {
+    debugPrint("transport2: $transport");
     try {
       // Generate a new document ID based on the user's ID
       var doc = transportCollection(listingId).doc();
 
       // Update the uid of the transport
       transport = transport.copyWith(
-          uid: doc.id, listingId: listing.uid, listingName: listing.title);
+          uid: doc.id, listingId: listingId, listingName: listing.title);
 
       // Add the cooperative to the database
       await doc.set(transport.toJson());
