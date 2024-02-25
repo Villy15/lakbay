@@ -153,6 +153,21 @@ class ListingRepository {
     });
   }
 
+  // Read all bookings by cooperativeId
+  Stream<List<ListingBookings>> readBookingsByCoopId(String coopId) {
+    return FirebaseFirestore.instance
+        .collectionGroup(
+            'bookings') // Perform collection group query for 'bookings'
+        .where('cooperativeId', isEqualTo: coopId) // Filter by cooperativeId
+        .snapshots()
+        .map((querySnapshot) {
+      // Convert each document snapshot to a ListingBookings object
+      return querySnapshot.docs.map((doc) {
+        return ListingBookings.fromJson(doc.data());
+      }).toList();
+    });
+  }
+
   // Read a bookings with certain RoomId in subcollection
   Stream<List<ListingBookings>> readBookingsByRoomId(
       String listingId, String roomId) {

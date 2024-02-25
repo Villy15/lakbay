@@ -188,8 +188,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                 error: error.toString(),
                                                 stackTrace:
                                                     stackTrace.toString()))),
-                                        loading: () =>
-                                            const Scaffold(body: Loader())),
+                                        loading: () => const Loader()),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -347,7 +346,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                 body: ErrorText(
                     error: error.toString(),
                     stackTrace: stackTrace.toString()))),
-            loading: () => const Scaffold(body: Loader()));
+            loading: () => const Loader());
   }
 
   void showSelectDate(BuildContext context, List<ListingBookings> bookings,

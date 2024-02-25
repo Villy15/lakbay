@@ -304,6 +304,8 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                           emergencyContactNo: emergencyContactNoController.text,
                           needsContributions: false,
                           tasks: widget.listing.fixedTasks,
+                          cooperativeId:
+                              widget.listing.cooperative.cooperativeId,
                         );
 
                         showDialog(

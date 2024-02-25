@@ -79,6 +79,13 @@ final getBookingsByPropertiesProvider = StreamProvider.autoDispose
   return listingController.getBookingsByProperties(query);
 });
 
+// getAllBookingsByCoopId
+final getAllBookingsByCoopIdProvider = StreamProvider.autoDispose
+    .family<List<ListingBookings>, String>((ref, coopId) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getAllBookingsByCoopId(coopId);
+});
+
 // getRoomByIdProvider
 final getAllRoomsByListingIdProvider = StreamProvider.autoDispose
     .family<List<AvailableRoom>, String>((ref, listingId) {
@@ -298,6 +305,11 @@ class ListingController extends StateNotifier<bool> {
   // Read a listing
   Stream<List<ListingBookings>> getAllBookings(String listingId) {
     return _listingRepository.readBookings(listingId);
+  }
+
+  // Read all bookings by cooperativeId
+  Stream<List<ListingBookings>> getAllBookingsByCoopId(String coopId) {
+    return _listingRepository.readBookingsByCoopId(coopId);
   }
 
   // Read all bookings by roomId
