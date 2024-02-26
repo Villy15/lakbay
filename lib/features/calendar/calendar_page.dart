@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/calendar/components/booking_card.dart';
+import 'package:lakbay/features/calendar/components/event_card.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
@@ -10,6 +11,7 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:lakbay/models/wrappers/calendar_wrapper.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends ConsumerStatefulWidget {
@@ -20,7 +22,7 @@ class CalendarPage extends ConsumerStatefulWidget {
 }
 
 class _CalendarPageState extends ConsumerState<CalendarPage> {
-  late ValueNotifier<List<ListingBookings>> _selectedEvents;
+  late ValueNotifier<List<CalendarEvent>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.week;
 
   DateTime _focusedDay = DateTime.now();
@@ -28,6 +30,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
 
+  late List<CalendarEvent>? calendarEventData;
   late List<ListingBookings>? bookingsData;
   late List<EventModel>? eventsData;
 
@@ -44,13 +47,13 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
     super.dispose();
   }
 
-  List<ListingBookings> _getEventsForDay(DateTime day) {
-    final events = bookingsData
-        ?.where((booking) =>
-            isSameDay(booking.startDate, day) ||
-            isSameDay(booking.endDate, day) ||
-            (booking.startDate!.isBefore(day) && booking.endDate!.isAfter(day)))
-        .map((booking) => booking)
+  List<CalendarEvent> _getEventsForDay(DateTime day) {
+    final events = calendarEventData
+        ?.where((event) =>
+            isSameDay(event.startDate, day) ||
+            isSameDay(event.endDate, day) ||
+            (event.startDate!.isBefore(day) && event.endDate!.isAfter(day)))
+        .map((event) => event)
         .toList();
 
     return events ?? [];
@@ -78,8 +81,32 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
         .watch(getAllBookingsByCoopIdProvider(user.currentCoop!))
         .maybeWhen(
           data: (bookings) {
+            calendarEventData = [];
             bookingsData = bookings;
             eventsData = events;
+
+            for (var booking in bookings) {
+              calendarEventData?.add(CalendarEvent(
+                type: 'booking',
+                title: booking.listingTitle,
+                startDate: booking.startDate,
+                endDate: booking.endDate,
+                guests: booking.guests.toString(),
+                bookingStatus: booking.bookingStatus,
+                listingId: booking.listingId,
+              ));
+            }
+
+            for (var event in events!) {
+              calendarEventData?.add(CalendarEvent(
+                type: 'event',
+                title: event.name,
+                startDate: event.startDate,
+                endDate: event.endDate,
+                eventId: event.uid,
+              ));
+            }
+
             _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
 
             // ref.read(listBookingsProvider.notifier).setListBookings(bookings);
@@ -156,27 +183,51 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
             startingDayOfWeek: StartingDayOfWeek.monday,
           ),
           Expanded(
-            child: ValueListenableBuilder<List<ListingBookings>>(
+            child: ValueListenableBuilder<List<CalendarEvent>>(
               valueListenable: _selectedEvents,
               builder: (context, value, _) {
-                return ListView.builder(
+                return ListView.separated(
                   itemCount: value.length,
+                  separatorBuilder: (context, index) => const Padding(
+                    padding: EdgeInsets.all(8.0),
+                  ),
                   itemBuilder: (context, index) {
-                    final booking = value[index];
+                    final calendarEvent = value[index];
 
-                    return ref
-                        .watch(getListingProvider(booking.listingId))
-                        .when(
-                          data: (listing) {
-                            return BookingCard(
-                                booking: booking, listing: listing);
-                          },
-                          loading: () => const CircularProgressIndicator(),
-                          error: (error, stack) => ErrorText(
-                            error: error.toString(),
-                            stackTrace: stack.toString(),
-                          ),
-                        );
+                    if (calendarEvent.type == 'booking') {
+                      final booking = bookingsData!.firstWhere((element) =>
+                          element.listingId == calendarEvent.listingId);
+                      return ref
+                          .watch(getListingProvider(booking.listingId))
+                          .when(
+                            data: (listing) {
+                              return BookingCard(
+                                booking: booking,
+                                listing: listing,
+                              );
+                            },
+                            loading: () => const CircularProgressIndicator(),
+                            error: (error, stack) => ErrorText(
+                              error: error.toString(),
+                              stackTrace: stack.toString(),
+                            ),
+                          );
+                    } else {
+                      final event = eventsData!.firstWhere(
+                          (element) => element.uid == calendarEvent.eventId);
+                      return ref.watch(getEventsProvider(event.uid!)).when(
+                            data: (event) {
+                              return EventCard(
+                                event: event,
+                              );
+                            },
+                            loading: () => const CircularProgressIndicator(),
+                            error: (error, stack) => ErrorText(
+                              error: error.toString(),
+                              stackTrace: stack.toString(),
+                            ),
+                          );
+                    }
                   },
                 );
               },
