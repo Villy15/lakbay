@@ -25,10 +25,6 @@ class _BookingsAccomodationCustomerState
     extends ConsumerState<BookingsAccomodationCustomer> {
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration.zero, () {
-      ref.read(navBarVisibilityProvider.notifier).hide();
-    });
-
     List<String?> imageUrls =
         widget.listing.images!.map((listingImage) => listingImage.url).toList();
     Map<String, Map<String, dynamic>> generalActions = {

@@ -7,6 +7,7 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 class TimelineCard extends ConsumerStatefulWidget {
   final PlanModel plan;
@@ -24,9 +25,12 @@ class TimelineCard extends ConsumerStatefulWidget {
 }
 
 class _TimelineCardState extends ConsumerState<TimelineCard> {
-  void onTap(ListingModel listing) {
+  void onTap(ListingBookings booking, ListingModel listing) {
     // Action for Check In Details
-    context.push('/market/${listing.category}', extra: listing);
+    context.push(
+      '/bookings/booking_details',
+      extra: {'booking': booking, 'listing': listing},
+    );
   }
 
   void deleteActivity() {
@@ -268,9 +272,22 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
               ),
             ),
           ),
-        ref.watch(getListingProvider(widget.activity.listingId!)).when(
-              data: (listing) {
-                return _buildCard(context, listing);
+        ref
+            .watch(getBookingByIdProvider(
+                (widget.activity.listingId!, widget.activity.bookingId!)))
+            .when(
+              data: (booking) {
+                return ref
+                    .watch(getListingProvider(widget.activity.listingId!))
+                    .when(
+                        data: (listing) {
+                          return _buildCard(context, booking, listing);
+                        },
+                        error: ((error, stackTrace) {
+                          debugPrint('Error: $error');
+                          return Text('Error: $error');
+                        }),
+                        loading: () => const CircularProgressIndicator());
               },
               loading: () => const CircularProgressIndicator(),
               error: (error, stackTrace) {
@@ -326,7 +343,8 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
     );
   }
 
-  Card _buildCard(BuildContext context, ListingModel listing) {
+  Card _buildCard(
+      BuildContext context, ListingBookings booking, ListingModel listing) {
     return Card(
       clipBehavior: Clip.hardEdge,
       elevation: 1,
@@ -335,7 +353,7 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
       ),
       child: InkWell(
         splashColor: Colors.orange.withAlpha(30),
-        onTap: () => onTap(listing),
+        onTap: () => onTap(booking, listing),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
@@ -397,7 +415,7 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                             ),
                           ),
                           Text(
-                            DateFormat('hh:mm a').format(listing.checkIn!),
+                            DateFormat('hh:mm a').format(booking.startDate!),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 12,
@@ -418,7 +436,7 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                             ),
                           ),
                           Text(
-                            DateFormat('hh:mm a').format(listing.checkOut!),
+                            DateFormat('hh:mm a').format(booking.endDate!),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 12,

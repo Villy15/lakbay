@@ -70,9 +70,9 @@ final getAllBookingsByIdProvider = StreamProvider.autoDispose
 
 // getAllBookingsByCustomerIdProvider
 final getAllBookingsByCustomerIdProvider = StreamProvider.autoDispose
-    .family<List<ListingBookings>, String>((ref, listingId) {
+    .family<List<ListingBookings>, String>((ref, customerId) {
   final listingController = ref.watch(listingControllerProvider.notifier);
-  return listingController.getBookingsByCustomerId(listingId);
+  return listingController.getBookingsByCustomerId(customerId);
 });
 
 // getAllBookingsByProperties
@@ -227,6 +227,7 @@ class ListingController extends StateNotifier<bool> {
           // Create a random key for the activity
           key: DateTime.now().millisecondsSinceEpoch.toString(),
           listingId: listing.uid,
+          bookingId: bookingUid,
           category: listing.category,
           dateTime: selectedDate,
           startTime: booking.startDate,
