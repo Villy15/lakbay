@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lakbay/models/listing_model.dart';
 
-class CommunityHubListingCard extends StatelessWidget {
+class CommunityHubListingCard extends ConsumerWidget {
   const CommunityHubListingCard({
     super.key,
     required this.listing,
@@ -9,8 +11,12 @@ class CommunityHubListingCard extends StatelessWidget {
 
   final ListingModel listing;
 
+  void onTap(BuildContext context, WidgetRef ref) {
+    context.push('/market/${listing.category.toLowerCase()}', extra: listing);
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       elevation: 1,
       borderOnForeground: true,
@@ -21,7 +27,9 @@ class CommunityHubListingCard extends StatelessWidget {
       //   vertical: 4.0,
       // ),
       child: ListTile(
-        onTap: () {},
+        onTap: () {
+          onTap(context, ref);
+        },
         title: Text(
           listing.title,
           style: const TextStyle(
