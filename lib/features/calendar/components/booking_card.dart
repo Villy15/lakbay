@@ -26,10 +26,10 @@ class BookingCard extends StatelessWidget {
       borderOnForeground: true,
       // Add a border to the card
       surfaceTintColor: Theme.of(context).colorScheme.background,
-      margin: const EdgeInsets.symmetric(
-        horizontal: 12.0,
-        vertical: 4.0,
-      ),
+      // margin: const EdgeInsets.symmetric(
+      //   horizontal: 12.0,
+      //   vertical: 4.0,
+      // ),
       child: ListTile(
         onTap: () {
           _onTap(context);
@@ -45,14 +45,14 @@ class BookingCard extends StatelessWidget {
             ),
 
             // Customer Name
-            Text(
-              "Customer: ${booking.customerName}",
-            ),
+            // Text(
+            //   "Customer: ${booking.customerName}",
+            // ),
 
-            // Guests
-            Text(
-              "Guests: ${booking.guests}",
-            ),
+            // // Guests
+            // Text(
+            //   "Guests: ${booking.guests}",
+            // ),
           ],
         ),
         trailing: Text(

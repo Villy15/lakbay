@@ -201,9 +201,12 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                           .watch(getListingProvider(booking.listingId))
                           .when(
                             data: (listing) {
-                              return BookingCard(
-                                booking: booking,
-                                listing: listing,
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: BookingCard(
+                                  booking: booking,
+                                  listing: listing,
+                                ),
                               );
                             },
                             loading: () => const CircularProgressIndicator(),
@@ -217,8 +220,11 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                           (element) => element.uid == calendarEvent.eventId);
                       return ref.watch(getEventsProvider(event.uid!)).when(
                             data: (event) {
-                              return EventCard(
-                                event: event,
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: EventCard(
+                                  event: event,
+                                ),
                               );
                             },
                             loading: () => const CircularProgressIndicator(),
