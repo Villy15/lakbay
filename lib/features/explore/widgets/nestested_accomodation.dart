@@ -123,8 +123,11 @@ class _NestedTabBarAccomodationState
                         itemCount: listings.length,
                         itemBuilder: (context, index) {
                           final listing = listings[index];
-                          return ListingCard(
-                            listing: listing,
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListingCard(
+                              listing: listing,
+                            ),
                           );
                         },
                       ),

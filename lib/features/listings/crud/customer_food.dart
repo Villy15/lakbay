@@ -227,7 +227,8 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
             images:
                 (widget.listing.menuImgs ?? []).map((img) => img.url!).toList(),
             height: MediaQuery.sizeOf(context).height / 1.3,
-            width: double.infinity),
+            width: double.infinity,
+            radius: BorderRadius.circular(10)),
       ),
       const SizedBox(height: 10),
       const Divider(),
@@ -246,51 +247,46 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
           itemCount: widget.listing.availableDeals!.length,
           itemBuilder: ((context, index) {
             return Card(
-              elevation: 4.0,
-              margin: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
+                elevation: 4.0,
+                margin: const EdgeInsets.all(8.0),
+                child: Column(children: [
                   ImageSlider(
-                    images: widget.listing.availableDeals![index].dealImgs
-                        .map((img) => img.url!)
-                        .toList(),
-                    height: MediaQuery.sizeOf(context).height / 5.5,
-                    width: double.infinity,
-                  ),
+                      images: widget.listing.availableDeals![index].dealImgs
+                          .map((img) => img.url!)
+                          .toList(),
+                      height: MediaQuery.sizeOf(context).height / 5.5,
+                      width: double.infinity,
+                      radius: BorderRadius.circular(10)),
                   Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                      widget.listing.availableDeals![index]
+                                          .dealName,
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
+                                  Text(
+                                      "₱${widget.listing.availableDeals![index].price.toString()}",
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold))
+                                ]),
+                            const SizedBox(height: 10),
                             Text(
-                              widget.listing.availableDeals![index].dealName,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold
-                              )
-                            ),
-                            Text("₱${widget.listing.availableDeals![index].price.toString()}",
+                                widget.listing.availableDeals![index]
+                                    .dealDescription,
                                 style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold))
-                          ]
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          widget.listing.availableDeals![index].dealDescription,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal
-                          )
-                        )
-                      ]
-                    )
-                  )
-                ]
-              )
-            );
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal))
+                          ]))
+                ]));
           })),
     ]));
   }

@@ -8,11 +8,13 @@ class ImageSlider extends StatefulWidget {
   final dynamic images;
   final double height;
   final double width;
+  final BorderRadius radius;
   const ImageSlider({
     super.key,
     required this.images,
     required this.height,
     required this.width,
+    required this.radius,
   });
 
   @override
@@ -136,7 +138,7 @@ class _ImageSliderState extends State<ImageSlider> {
               items: widget.images.map<Widget>((e) {
                 if (e is File) {
                   return ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: widget.radius,
                     child: Image.file(
                       e,
                       height: widget.height,
@@ -146,7 +148,7 @@ class _ImageSliderState extends State<ImageSlider> {
                   );
                 } else {
                   return ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: widget.radius,
                     child: Image(
                       image: NetworkImage(
                         e,
@@ -166,7 +168,7 @@ class _ImageSliderState extends State<ImageSlider> {
           right: 10,
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: widget.radius,
               color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
               boxShadow: [
                 BoxShadow(

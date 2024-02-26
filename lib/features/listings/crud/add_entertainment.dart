@@ -465,7 +465,8 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               child: ImageSlider(
                   images: _listingImgs,
                   height: MediaQuery.sizeOf(context).height / 2.5,
-                  width: double.infinity),
+                  width: double.infinity,
+                  radius: BorderRadius.circular(10)),
             ),
           ],
 

@@ -45,7 +45,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                       ImageSlider(
                           images: imageUrls,
                           height: MediaQuery.sizeOf(context).height / 4,
-                          width: MediaQuery.sizeOf(context).width / 2),
+                          width: MediaQuery.sizeOf(context).width / 2,
+                          radius: BorderRadius.circular(10)),
                       Padding(
                         padding: const EdgeInsets.only(
                             left: 20.0,

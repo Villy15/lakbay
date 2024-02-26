@@ -199,10 +199,10 @@ class _CustomerAccomodationCheckoutState
               height: 100.0, // Define height
               width: 150.0, // and width
               child: ImageSlider(
-                images: imageUrls,
-                height: 100,
-                width: 150,
-              ), // Your ImageSlider widget
+                  images: imageUrls,
+                  height: 100,
+                  width: 150,
+                  radius: BorderRadius.circular(10)), // Your ImageSlider widget
             ),
             Expanded(
               child: Padding(

@@ -1007,7 +1007,8 @@ class _AddFoodState extends ConsumerState<AddFood> {
           ImageSlider(
               images: _menuImgs,
               height: MediaQuery.sizeOf(context).height / 1.7,
-              width: double.infinity)
+              width: double.infinity,
+              radius: BorderRadius.circular(10))
         ] else ...[
           GestureDetector(
               child:
@@ -1185,13 +1186,13 @@ class _AddFoodState extends ConsumerState<AddFood> {
                 margin: const EdgeInsets.all(8.0),
                 child: Column(children: [
                   ImageSlider(
-                    images: availableDeals[index]
-                        .dealImgs
-                        .map((image) => File(image.path))
-                        .toList(),
-                    height: MediaQuery.sizeOf(context).height / 3,
-                    width: double.infinity,
-                  ),
+                      images: availableDeals[index]
+                          .dealImgs
+                          .map((image) => File(image.path))
+                          .toList(),
+                      height: MediaQuery.sizeOf(context).height / 3,
+                      width: double.infinity,
+                      radius: BorderRadius.circular(10)),
                   Padding(
                       padding: const EdgeInsets.all(12),
                       child: Column(children: [
@@ -1497,7 +1498,8 @@ class _AddFoodState extends ConsumerState<AddFood> {
               child: ImageSlider(
                   images: _images,
                   height: MediaQuery.sizeOf(context).height / 2.5,
-                  width: double.infinity),
+                  width: double.infinity,
+                  radius: BorderRadius.circular(10)),
             ),
           ],
 
@@ -1544,13 +1546,13 @@ class _AddFoodState extends ConsumerState<AddFood> {
                       margin: const EdgeInsets.all(8.0),
                       child: Column(children: [
                         ImageSlider(
-                          images: availableDeals[index]
-                              .dealImgs
-                              .map((image) => File(image.path))
-                              .toList(),
-                          height: MediaQuery.sizeOf(context).height / 3,
-                          width: double.infinity,
-                        ),
+                            images: availableDeals[index]
+                                .dealImgs
+                                .map((image) => File(image.path))
+                                .toList(),
+                            height: MediaQuery.sizeOf(context).height / 3,
+                            width: double.infinity,
+                            radius: BorderRadius.circular(10)),
                         Padding(
                             padding: const EdgeInsets.all(12),
                             child: Column(children: [
@@ -1587,7 +1589,8 @@ class _AddFoodState extends ConsumerState<AddFood> {
               child: ImageSlider(
                   images: _menuImgs,
                   height: MediaQuery.sizeOf(context).height / 1.5,
-                  width: double.infinity),
+                  width: double.infinity,
+                  radius: BorderRadius.circular(10)),
             ),
           ],
 

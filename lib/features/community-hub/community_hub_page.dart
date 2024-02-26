@@ -7,11 +7,11 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/app_bar_provider.dart';
+import 'package:lakbay/features/community-hub/components/community_listing_card.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/events/widgets/event_card.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/listings/widgets/listing_card.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
@@ -73,9 +73,8 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
                                 itemCount: listings.length,
                                 itemBuilder: (context, index) {
                                   final listing = listings[index];
-                                  return ListingCard(
-                                    listing: listing,
-                                  );
+                                  return CommunityHubListingCard(
+                                      listing: listing);
                                 },
                               );
                             },
