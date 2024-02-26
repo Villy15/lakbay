@@ -48,8 +48,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   List<File>? _images = [];
   int departures = 0;
-  List<TextEditingController> _departureController = [];
-  List<TimeOfDay> _departureTime = [];
+  final List<TextEditingController> _departureController = [];
+  final List<TimeOfDay> _departureTime = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -1162,7 +1162,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                             });
                           }
                         });
-                      
                       },
                     ),
                   ),
@@ -1300,7 +1299,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               child: ImageSlider(
                   images: _images,
                   height: MediaQuery.sizeOf(context).height / 2.5,
-                  width: double.infinity),
+                  width: double.infinity,
+                  radius: BorderRadius.circular(10)),
             ),
           ],
 

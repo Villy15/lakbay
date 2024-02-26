@@ -962,11 +962,11 @@ class _Step2AccommodationState extends ConsumerState<Step2Accommodation> {
                 child: Column(
                   children: [
                     ImageSlider(
-                      images: images[index],
-                      height: MediaQuery.of(context).size.height /
-                          5, // Reduced height
-                      width: double.infinity,
-                    ),
+                        images: images[index],
+                        height: MediaQuery.of(context).size.height /
+                            5, // Reduced height
+                        width: double.infinity,
+                        radius: BorderRadius.circular(10)),
                     Padding(
                       padding:
                           const EdgeInsets.all(12.0), // Reduced overall padding
@@ -1569,10 +1569,10 @@ class _Step2FoodState extends ConsumerState<Step2Food> {
         const Text('Menu/s added:',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
         ImageSlider(
-          images: images.expand((x) => x).toList(),
-          height: MediaQuery.sizeOf(context).height / 1.3,
-          width: double.infinity,
-        )
+            images: images.expand((x) => x).toList(),
+            height: MediaQuery.sizeOf(context).height / 1.3,
+            width: double.infinity,
+            radius: BorderRadius.circular(10))
       ]
     ]);
   }
