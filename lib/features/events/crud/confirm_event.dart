@@ -242,7 +242,7 @@ class _ConfirmEventPageState extends ConsumerState<ConfirmEventPage> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 5),
             Text(
-                '${DateFormat('dd MMM').format(widget.event.startDate)} - ${DateFormat('dd MMM').format(widget.event.endDate)}',
+                '${DateFormat('dd MMM').format(widget.event.startDate!)} - ${DateFormat('dd MMM').format(widget.event.endDate!)}',
                 style: const TextStyle(
                   fontSize: 16,
                 )),

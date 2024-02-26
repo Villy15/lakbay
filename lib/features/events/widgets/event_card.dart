@@ -84,7 +84,7 @@ class EventCard extends ConsumerWidget {
                           const Icon(Icons.calendar_today),
                           const SizedBox(width: 8),
                           Text(
-                            "${DateFormat('d MMM yyyy').format(event.startDate)} - ${DateFormat('d MMM yyyy').format(event.endDate)}",
+                            "${DateFormat('d MMM yyyy').format(event.startDate!)} - ${DateFormat('d MMM yyyy').format(event.endDate!)}",
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,

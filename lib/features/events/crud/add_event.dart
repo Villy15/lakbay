@@ -5,14 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/events/events_controller.dart';
-import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/features/events/events_providers.dart';
 import 'package:lakbay/models/coop_model.dart';
 //import 'package:lakbay/features/events/events_repository.dart';
 import 'package:lakbay/models/event_model.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class AddEventPage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -49,6 +51,10 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
     _locationController.dispose();
     _cityController.dispose();
     _provinceController.dispose();
+    // Dispose start and end date
+    debugPrint('Disposing start and end date');
+    ref.read(eventStartDateProvider.notifier).clearStartDate();
+    ref.read(eventEndDateProvider.notifier).clearEndDate();
 
     super.dispose();
   }
@@ -57,9 +63,79 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
     ref.read(eventsControllerProvider.notifier).addEvent(event, context);
   }
 
+  void onTapDate() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.95,
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Select Date'),
+            ),
+            bottomNavigationBar: BottomAppBar(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  FilledButton(
+                    style: ButtonStyle(
+                      minimumSize:
+                          MaterialStateProperty.all<Size>(const Size(120, 45)),
+                    ),
+                    onPressed: () {
+                      ref
+                          .read(eventStartDateProvider.notifier)
+                          .setStartDate(startDate);
+
+                      ref
+                          .read(eventEndDateProvider.notifier)
+                          .setEndDate(endDate);
+
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SfDateRangePicker(
+                      selectionMode: DateRangePickerSelectionMode.range,
+                      onSelectionChanged:
+                          (DateRangePickerSelectionChangedArgs args) {
+                        startDate = args.value.startDate;
+
+                        endDate = args.value.endDate;
+                      },
+                      minDate: DateTime.now(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(eventsControllerProvider);
+    final startDate = ref.watch(eventStartDateProvider);
+    final endDate = ref.watch(eventEndDateProvider);
 
     return PopScope(
       canPop: false,
@@ -194,7 +270,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        datePicker(context),
+                        datePicker(context, startDate, endDate),
                       ],
                     ),
                   ),
@@ -259,7 +335,6 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                               },
                             ));
                   }
-                  context.pop();
                 },
                 child: const Text('Submit'),
               ),
@@ -270,64 +345,76 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
     );
   }
 
-  Widget datePicker(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Dates',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Start Date: ${DateFormat('dd MMM').format(startDate)}',
-              style: const TextStyle(fontSize: 16),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final DateTime? selectedStartDate = await _selectDate(
-                  context,
-                  startDate,
-                  DateTime.now(),
-                );
-                if (selectedStartDate != null) {
-                  setState(() {
-                    startDate = selectedStartDate;
-                  });
-                }
-              },
-              child: const Text('Select Start Date'),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'End Date: ${DateFormat('dd MMM').format(endDate)}',
-              style: const TextStyle(fontSize: 16),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final DateTime? selectedEndDate = await _selectDate(
-                  context,
-                  endDate,
-                  startDate,
-                );
-                if (selectedEndDate != null) {
-                  setState(() {
-                    endDate = selectedEndDate;
-                  });
-                }
-              },
-              child: const Text('Select End Date'),
-            ),
-          ],
-        ),
-      ],
+  Widget datePicker(
+      BuildContext context, DateTime? startDate, DateTime? endDate) {
+    return ListTile(
+      title: const Text('Date'),
+      leading: const Icon(Icons.calendar_today_outlined),
+      subtitle: Text(startDate == null || endDate == null
+          ? 'Select a date'
+          : '${DateFormat.yMMMMd().format(startDate)} - ${DateFormat.yMMMMd().format(endDate)}'),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () {
+        onTapDate();
+      },
     );
+    // return Column(
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   children: [
+    //     const Text(
+    //       'Dates',
+    //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    //     ),
+    //     Row(
+    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //       children: [
+    //         Text(
+    //           'Start Date: ${DateFormat('dd MMM').format(startDate)}',
+    //           style: const TextStyle(fontSize: 16),
+    //         ),
+    //         ElevatedButton(
+    //           onPressed: () async {
+    //             final DateTime? selectedStartDate = await _selectDate(
+    //               context,
+    //               startDate,
+    //               DateTime.now(),
+    //             );
+    //             if (selectedStartDate != null) {
+    //               setState(() {
+    //                 startDate = selectedStartDate;
+    //               });
+    //             }
+    //           },
+    //           child: const Text('Select Start Date'),
+    //         ),
+    //       ],
+    //     ),
+    //     Row(
+    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //       children: [
+    //         Text(
+    //           'End Date: ${DateFormat('dd MMM').format(endDate)}',
+    //           style: const TextStyle(fontSize: 16),
+    //         ),
+    //         ElevatedButton(
+    //           onPressed: () async {
+    //             final DateTime? selectedEndDate = await _selectDate(
+    //               context,
+    //               endDate,
+    //               startDate,
+    //             );
+    //             if (selectedEndDate != null) {
+    //               setState(() {
+    //                 endDate = selectedEndDate;
+    //               });
+    //             }
+    //           },
+    //           child: const Text('Select End Date'),
+    //         ),
+    //       ],
+    //     ),
+    //   ],
+    // );
   }
 
   Future<DateTime?> _selectDate(

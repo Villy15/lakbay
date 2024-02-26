@@ -63,6 +63,7 @@ class EventController extends StateNotifier<bool> {
       (eventUid) {
         state = false;
         showSnackBar(context, 'Event added successfully');
+        context.pop();
         _ref.read(navBarVisibilityProvider.notifier).show();
       },
     );
