@@ -660,6 +660,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           emergencyContactNo: emergencyContactNoController.text,
                           needsContributions: false,
                           tasks: listing.fixedTasks,
+                          cooperativeId: listing.cooperative.cooperativeId,
                         );
 
                         showDialog(
