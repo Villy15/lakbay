@@ -24,24 +24,21 @@ class BookingsAccomodationCustomer extends ConsumerStatefulWidget {
 class _BookingsAccomodationCustomerState
     extends ConsumerState<BookingsAccomodationCustomer> {
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
-  }
 
-  @override
-  Widget build(BuildContext context) {
     List<String?> imageUrls =
         widget.listing.images!.map((listingImage) => listingImage.url).toList();
     Map<String, Map<String, dynamic>> generalActions = {
       "listing": {
         "icon": Icons.location_on_outlined,
         "title": "View Listing",
-        "action": () => context.push(
-            "/market/${widget.listing.category.toLowerCase()}",
-            extra: widget.listing)
+        "action": () {
+          context.push("/market/${widget.listing.category.toLowerCase()}",
+              extra: widget.listing);
+        },
       },
       "message": {
         "icon": Icons.chat_outlined,
@@ -51,114 +48,6 @@ class _BookingsAccomodationCustomerState
     };
 
     Map<String, Map<String, dynamic>> reservationActions = {
-      "booking": {
-        "icon": Icons.cancel_outlined,
-        "title": "Cancel Booking",
-        "action": () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              Map<String, bool> reasons = {
-                'I don\'t want to go anymore': false,
-                'My travel plans changed': false,
-                'I have an emergency': false,
-                'Other': false,
-              };
-              String? selectedReason;
-              return StatefulBuilder(builder: (context, setDialogState) {
-                return Dialog.fullscreen(
-                  child: Scaffold(
-                    appBar: AppBar(
-                      leading: IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                    body: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: const Text(
-                            "Why do you need to cancel?",
-                            style: TextStyle(
-                                fontSize: 26, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.sizeOf(context).height / 20,
-                        ),
-                        Column(
-                          children: reasons.entries.map((entry) {
-                            final reasonKey = entry.key;
-                            return Container(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Column(
-                                children: [
-                                  ListTile(
-                                    title: Text(reasonKey),
-                                    trailing: Radio(
-                                      value: reasonKey,
-                                      groupValue: selectedReason,
-                                      onChanged: (newValue) {
-                                        setDialogState(() {
-                                          reasons.forEach((key, value) {
-                                            reasons[key] = key == newValue;
-                                          });
-                                          selectedReason = newValue;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Container(
-                                    height: 1,
-                                    width: double.infinity,
-                                    color: Colors.grey[300],
-                                  )
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                    bottomNavigationBar: PreferredSize(
-                      preferredSize: Size.fromHeight(
-                          MediaQuery.sizeOf(context).height /
-                              30), // Adjust the height as needed
-                      child: BottomAppBar(
-                        surfaceTintColor: Colors.transparent,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              child: ElevatedButton(
-                                onPressed:
-                                    selectedReason != null ? () {} : null,
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 12.0),
-                                ),
-                                child: const Text(
-                                  'Continue',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              });
-            },
-          );
-        }
-      },
       "receipt": {
         "icon": Icons.receipt_long_outlined,
         "title": "View receipt",
@@ -170,6 +59,13 @@ class _BookingsAccomodationCustomerState
                     listing: widget.listing, booking: widget.booking),
               );
             }))
+      },
+      "booking": {
+        "icon": Icons.cancel_outlined,
+        "title": "Cancel Booking",
+        "action": () {
+          cancelBookingProcess(context);
+        }
       },
     };
     return PopScope(
@@ -187,10 +83,37 @@ class _BookingsAccomodationCustomerState
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               context.pop();
-              ref.read(navBarVisibilityProvider.notifier).show();
             },
           ),
         ),
+        bottomNavigationBar: (widget.booking.paymentOption == "Downpayment")
+            ? BottomAppBar(
+                height: MediaQuery.sizeOf(context).height / 7.5,
+                surfaceTintColor: Colors.transparent,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Adjust the value as needed
+                          ),
+                        ),
+                        child: const Text(
+                          'Pay Balance',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : null,
         body: SingleChildScrollView(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -480,6 +403,258 @@ class _BookingsAccomodationCustomerState
           ],
         )),
       ),
+    );
+  }
+
+  Future<dynamic> cancelBookingProcess(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        Map<String, bool> reasons = {
+          'I don\'t want to go anymore': false,
+          'My travel plans changed': false,
+          'I have an emergency': false,
+          'Other': false,
+        };
+
+        Map<String, num> paymentDetails = {
+          'Original Reservation': widget.booking.amountPaid!,
+          'Your total refund': (widget.booking.amountPaid! -
+              (widget.booking.amountPaid! * widget.listing.cancellationRate!)),
+        };
+
+        String? selectedReason;
+        return StatefulBuilder(builder: (context, setDialogState) {
+          return Dialog.fullscreen(
+            child: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              bottomNavigationBar: PreferredSize(
+                preferredSize: Size.fromHeight(
+                    MediaQuery.sizeOf(context).height /
+                        30), // Adjust the height as needed
+                child: BottomAppBar(
+                  surfaceTintColor: Colors.transparent,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: ElevatedButton(
+                          onPressed: selectedReason != null
+                              ? () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog.fullscreen(
+                                            child: Scaffold(
+                                          appBar: AppBar(
+                                            leading: IconButton(
+                                              icon:
+                                                  const Icon(Icons.arrow_back),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ),
+                                          bottomNavigationBar: BottomAppBar(
+                                            surfaceTintColor:
+                                                Colors.transparent,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.8,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {},
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 12.0),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                8.0), // Adjust the value as needed
+                                                      ),
+                                                    ),
+                                                    child: const Text(
+                                                      'Continue',
+                                                      style: TextStyle(
+                                                          fontSize: 16),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          body: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 15),
+                                            width: double.infinity,
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    "Your Cancellation",
+                                                    style: TextStyle(
+                                                        fontSize: 22,
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                                  ),
+                                                  const Text(
+                                                    "Cancellation is effective immediately. The payment method you used to reserve this accommodation will be refunded in 5 - 7 business days.",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w300),
+                                                  ),
+                                                  SizedBox(
+                                                      height: MediaQuery.sizeOf(
+                                                                  context)
+                                                              .height /
+                                                          20),
+                                                  const Text(
+                                                    "Payment Details",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  ...paymentDetails.entries
+                                                      .map((entry) {
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 15.0),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                entry.key
+                                                                    .toString(),
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            14),
+                                                              ),
+                                                              Text(
+                                                                "₱${entry.value} PHP",
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    top: 15),
+                                                            height: 1,
+                                                            width:
+                                                                double.infinity,
+                                                            color: Colors
+                                                                .grey[200],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }),
+                                                ]),
+                                          ),
+                                        ));
+                                      });
+                                }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Adjust the value as needed
+                            ),
+                          ),
+                          child: const Text(
+                            'Confirm Cancellation',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              body: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: const Text(
+                      "Why do you need to cancel?",
+                      style:
+                          TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.sizeOf(context).height / 20,
+                  ),
+                  Column(
+                    children: reasons.entries.map((entry) {
+                      final reasonKey = entry.key;
+                      return Container(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              title: Text(reasonKey),
+                              trailing: Radio(
+                                value: reasonKey,
+                                groupValue: selectedReason,
+                                onChanged: (newValue) {
+                                  setDialogState(() {
+                                    reasons.forEach((key, value) {
+                                      reasons[key] = key == newValue;
+                                    });
+                                    selectedReason = newValue;
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Container(
+                              height: 1,
+                              width: double.infinity,
+                              color: Colors.grey[300],
+                            )
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+      },
     );
   }
 }
