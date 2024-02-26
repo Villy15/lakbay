@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
+import 'package:lakbay/features/common/widgets/image_slider.dart';
+import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -21,15 +24,50 @@ class BookingsAccomodationCustomer extends ConsumerStatefulWidget {
 class _BookingsAccomodationCustomerState
     extends ConsumerState<BookingsAccomodationCustomer> {
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
-  }
 
-  @override
-  Widget build(BuildContext context) {
+    List<String?> imageUrls =
+        widget.listing.images!.map((listingImage) => listingImage.url).toList();
+    Map<String, Map<String, dynamic>> generalActions = {
+      "listing": {
+        "icon": Icons.location_on_outlined,
+        "title": "View Listing",
+        "action": () {
+          context.push("/market/${widget.listing.category.toLowerCase()}",
+              extra: widget.listing);
+        },
+      },
+      "message": {
+        "icon": Icons.chat_outlined,
+        "title": "Message Host",
+        "action": () => context.push("/chat")
+      },
+    };
+
+    Map<String, Map<String, dynamic>> reservationActions = {
+      "receipt": {
+        "icon": Icons.receipt_long_outlined,
+        "title": "View receipt",
+        "action": () => showDialog(
+            context: context,
+            builder: ((context) {
+              return Dialog.fullscreen(
+                child: CustomerAccomodationReceipt(
+                    listing: widget.listing, booking: widget.booking),
+              );
+            }))
+      },
+      "booking": {
+        "icon": Icons.cancel_outlined,
+        "title": "Cancel Booking",
+        "action": () {
+          cancelBookingProcess(context);
+        }
+      },
+    };
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
@@ -45,97 +83,180 @@ class _BookingsAccomodationCustomerState
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               context.pop();
-              ref.read(navBarVisibilityProvider.notifier).show();
             },
           ),
         ),
+        bottomNavigationBar: (widget.booking.paymentOption == "Downpayment")
+            ? BottomAppBar(
+                height: MediaQuery.sizeOf(context).height / 7.5,
+                surfaceTintColor: Colors.transparent,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Adjust the value as needed
+                          ),
+                        ),
+                        child: const Text(
+                          'Pay Balance',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : null,
         body: SingleChildScrollView(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DisplayImage(
-              imageUrl: widget.listing.images!.first.url!,
-              height: 250,
-              width: double.infinity,
-              radius: BorderRadius.zero,
-            ),
+            ImageSlider(
+                images: imageUrls,
+                height: MediaQuery.sizeOf(context).height / 2,
+                width: double.infinity,
+                radius: BorderRadius.circular(0)),
 
             // Check in Checkout
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 20),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Check In'),
-                      Text(
-                        DateFormat.yMMMd().format(widget.booking.startDate!),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Check In',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                              DateFormat('E, MMM d')
+                                  .format(widget.booking.startDate!),
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w500)),
+                          // Checkin time
+                          Text(
+                            DateFormat.jm().format(widget.listing.checkIn!),
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w300),
+                          ),
+                        ],
                       ),
-                      // Checkin time
-                      Text(
-                        DateFormat.jm().format(widget.listing.checkIn!),
-                      ),
-                    ],
+                    ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Check Out'),
-                      Text(
-                        DateFormat.yMMMd().format(widget.booking.endDate!),
+                  Container(
+                    height: MediaQuery.sizeOf(context).height / 7.5,
+                    width: 1,
+                    color: Colors.grey, // Choose the color of the line
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Check Out',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                              DateFormat('E, MMM d')
+                                  .format(widget.booking.endDate!),
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w500)),
+                          // Checkout time
+                          Text(
+                            DateFormat.jm().format(widget.listing.checkOut!),
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w300),
+                          ),
+                        ],
                       ),
-                      // Checkout time
-                      Text(
-                        DateFormat.jm().format(widget.listing.checkOut!),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
-
-            // List Tile Message Host
-            ListTile(
-              leading: const Icon(Icons.message_outlined),
-              title: const Text('Message Host'),
-              onTap: () {
-                context.go('/chat');
-              },
+            ...generalActions.entries.map((entry) {
+              final generalAction = entry.value;
+              return Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(
+                      top: 8.0,
+                      left: 15,
+                      right: 15,
+                    ), // Adjust the padding as needed
+                    child: const Divider(
+                      color: Colors.grey,
+                      height: 1.0,
+                    ),
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      generalAction['icon'],
+                      size: 24,
+                    ),
+                    title: Text(generalAction['title']),
+                    onTap: generalAction["action"],
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16,
+                    ),
+                  ),
+                ],
+              );
+            }),
+            Container(
+              margin: const EdgeInsets.only(top: 15),
+              height: 10,
+              width: double.infinity,
+              color: Colors.grey[200],
             ),
+            // // Plan Trip Header
+            // const Padding(
+            //   padding: EdgeInsets.all(8.0),
+            //   child: Text(
+            //     'Plan Trip',
+            //     style: TextStyle(
+            //       fontSize: 20,
+            //       fontWeight: FontWeight.bold,
+            //     ),
+            //   ),
+            // ),
 
-            // List Tile Show Listing
-            ListTile(
-              leading: const Icon(Icons.location_on_outlined),
-              title: const Text('Show Listing'),
-              onTap: () {},
-            ),
-
-            // Plan Trip Header
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Plan Trip',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-
-            // Filled Button Add to a trip
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Go to your trip'),
-              ),
-            ),
+            // // Filled Button Add to a trip
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: ElevatedButton(
+            //     onPressed: () {},
+            //     child: const Text('Go to your trip'),
+            //   ),
+            // ),
 
             // Reservation Details Header
             const Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.only(
+                left: 15.0,
+                right: 15.0,
+                top: 20,
+              ),
               child: Text(
                 'Reservation Details',
                 style: TextStyle(
@@ -145,42 +266,68 @@ class _BookingsAccomodationCustomerState
               ),
             ),
 
-            // Reservation Details Num of Guests
+            // Cancellation Policy Text
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
+              padding: const EdgeInsets.only(
+                left: 15.0,
+                right: 15.0,
+                top: 10,
+                bottom: 15,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.people_alt_outlined),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Number of Guests: ${widget.booking.guests}',
-                    style: const TextStyle(
+                  const Text(
+                    'Cancellation Policy: ',
+                    style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
+                  if (widget.booking.paymentOption == "Downpayment")
+                    Text(
+                        'Cancellation before ${DateFormat('MMM d, HH:mm a').format(widget.booking.endDate!.subtract(const Duration(days: 5)))}'
+                        ' entitles you to a refund amount of ₱${widget.booking.amountPaid!}.\n'
+                        'Cancellation after stated date entitles you to a refund amount of ₱${widget.booking.amountPaid! - (widget.booking.amountPaid! * widget.listing.cancellationRate!)}.'),
+                  if (widget.booking.paymentOption == "Full Payment")
+                    Text(
+                        'Cancellation before ${DateFormat('MMM d, HH:mm a').format(widget.booking.endDate!.subtract(const Duration(days: 5)))}'
+                        ' entitles you to a refund amount of ₱${widget.booking.amountPaid! - (widget.booking.amountPaid! * widget.listing.downpaymentRate!)}.\n'
+                        'Cancellation after stated date entitles you to a refund amount of ₱${widget.booking.amountPaid! - (widget.booking.amountPaid! * widget.listing.cancellationRate!)}.'),
                 ],
               ),
             ),
 
-            // Cancellation Policy Text
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Cancellation Policy: ',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-            ),
-
-            // List Tile Refund Reuests
-            ListTile(
-              leading: const Icon(Icons.request_quote_outlined),
-              title: const Text('Request Refund'),
-              onTap: () {},
-            ),
+            ...reservationActions.entries.map((entry) {
+              final reservationAction = entry.value;
+              return Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(
+                      top: 8.0,
+                      left: 15,
+                      right: 15,
+                    ), // Adjust the padding as needed
+                    child: const Divider(
+                      color: Colors.grey,
+                      height: 1.0,
+                    ),
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      reservationAction['icon'],
+                      size: 24,
+                    ),
+                    title: Text(reservationAction['title']),
+                    onTap: reservationAction["action"],
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16,
+                    ),
+                  ),
+                ],
+              );
+            }),
 
             // Getting There Header
             const Padding(
@@ -256,6 +403,258 @@ class _BookingsAccomodationCustomerState
           ],
         )),
       ),
+    );
+  }
+
+  Future<dynamic> cancelBookingProcess(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        Map<String, bool> reasons = {
+          'I don\'t want to go anymore': false,
+          'My travel plans changed': false,
+          'I have an emergency': false,
+          'Other': false,
+        };
+
+        Map<String, num> paymentDetails = {
+          'Original Reservation': widget.booking.amountPaid!,
+          'Your total refund': (widget.booking.amountPaid! -
+              (widget.booking.amountPaid! * widget.listing.cancellationRate!)),
+        };
+
+        String? selectedReason;
+        return StatefulBuilder(builder: (context, setDialogState) {
+          return Dialog.fullscreen(
+            child: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              bottomNavigationBar: PreferredSize(
+                preferredSize: Size.fromHeight(
+                    MediaQuery.sizeOf(context).height /
+                        30), // Adjust the height as needed
+                child: BottomAppBar(
+                  surfaceTintColor: Colors.transparent,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: ElevatedButton(
+                          onPressed: selectedReason != null
+                              ? () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog.fullscreen(
+                                            child: Scaffold(
+                                          appBar: AppBar(
+                                            leading: IconButton(
+                                              icon:
+                                                  const Icon(Icons.arrow_back),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ),
+                                          bottomNavigationBar: BottomAppBar(
+                                            surfaceTintColor:
+                                                Colors.transparent,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.8,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {},
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 12.0),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                8.0), // Adjust the value as needed
+                                                      ),
+                                                    ),
+                                                    child: const Text(
+                                                      'Continue',
+                                                      style: TextStyle(
+                                                          fontSize: 16),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          body: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 15),
+                                            width: double.infinity,
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    "Your Cancellation",
+                                                    style: TextStyle(
+                                                        fontSize: 22,
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                                  ),
+                                                  const Text(
+                                                    "Cancellation is effective immediately. The payment method you used to reserve this accommodation will be refunded in 5 - 7 business days.",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w300),
+                                                  ),
+                                                  SizedBox(
+                                                      height: MediaQuery.sizeOf(
+                                                                  context)
+                                                              .height /
+                                                          20),
+                                                  const Text(
+                                                    "Payment Details",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  ...paymentDetails.entries
+                                                      .map((entry) {
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 15.0),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                entry.key
+                                                                    .toString(),
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            14),
+                                                              ),
+                                                              Text(
+                                                                "₱${entry.value} PHP",
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    top: 15),
+                                                            height: 1,
+                                                            width:
+                                                                double.infinity,
+                                                            color: Colors
+                                                                .grey[200],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }),
+                                                ]),
+                                          ),
+                                        ));
+                                      });
+                                }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Adjust the value as needed
+                            ),
+                          ),
+                          child: const Text(
+                            'Confirm Cancellation',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              body: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: const Text(
+                      "Why do you need to cancel?",
+                      style:
+                          TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.sizeOf(context).height / 20,
+                  ),
+                  Column(
+                    children: reasons.entries.map((entry) {
+                      final reasonKey = entry.key;
+                      return Container(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              title: Text(reasonKey),
+                              trailing: Radio(
+                                value: reasonKey,
+                                groupValue: selectedReason,
+                                onChanged: (newValue) {
+                                  setDialogState(() {
+                                    reasons.forEach((key, value) {
+                                      reasons[key] = key == newValue;
+                                    });
+                                    selectedReason = newValue;
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Container(
+                              height: 1,
+                              width: double.infinity,
+                              color: Colors.grey[300],
+                            )
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+      },
     );
   }
 }

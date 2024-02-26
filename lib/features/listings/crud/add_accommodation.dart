@@ -666,11 +666,11 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
               child: Column(
                 children: [
                   ImageSlider(
-                    images: roomImages[index],
-                    height: MediaQuery.of(context).size.height /
-                        5, // Reduced height
-                    width: double.infinity,
-                  ),
+                      images: roomImages[index],
+                      height: MediaQuery.of(context).size.height /
+                          5, // Reduced height
+                      width: double.infinity,
+                      radius: BorderRadius.circular(10)),
                   Padding(
                     padding:
                         const EdgeInsets.all(12.0), // Reduced overall padding
@@ -1621,7 +1621,8 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           ImageSlider(
               images: _images,
               height: MediaQuery.sizeOf(context).height / 4,
-              width: double.infinity),
+              width: double.infinity,
+              radius: BorderRadius.circular(10)),
           SizedBox(
             width: double.infinity,
             child: Column(

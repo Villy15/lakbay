@@ -41,9 +41,11 @@ class _RoomCardState extends ConsumerState<RoomCard> {
         .watch(getRoomByPropertiesProvider(RoomsParams(
             unavailableRoomUids: unavailableRoomUids, guests: guests!)))
         .when(
-            data: (List<AvailableRoom> rooms) {
-              if (rooms.isNotEmpty) {
-                return ListView.builder(
+          data: (List<AvailableRoom> rooms) {
+            if (rooms.isNotEmpty) {
+              return SizedBox(
+                width: double.infinity,
+                child: ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: rooms.length,
@@ -53,16 +55,16 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           .map((listingImage) => listingImage.url)
                           .toList();
                       final room = rooms[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16.0, right: 16, top: 8, bottom: 8),
+                      return SizedBox(
+                        width: MediaQuery.sizeOf(context).width / 2,
                         child: Card(
                             child: Column(
                           children: [
                             ImageSlider(
                                 images: imageUrls,
                                 height: MediaQuery.sizeOf(context).height / 4,
-                                width: MediaQuery.sizeOf(context).width / 2),
+                                width: MediaQuery.sizeOf(context).width / 2,
+                                radius: BorderRadius.circular(10)),
                             Padding(
                               padding: const EdgeInsets.only(
                                   left: 20.0,
@@ -190,11 +192,10 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                             );
                                           },
                                           error: ((error, stackTrace) =>
-                                              Scaffold(
-                                                  body: ErrorText(
-                                                      error: error.toString(),
-                                                      stackTrace: stackTrace
-                                                          .toString()))),
+                                              ErrorText(
+                                                  error: error.toString(),
+                                                  stackTrace:
+                                                      stackTrace.toString())),
                                           loading: () => const Loader()),
                                   Row(
                                     mainAxisAlignment:
@@ -339,24 +340,24 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           ],
                         )),
                       );
-                    }));
-              } else {
-                return Center(
-                  child: Column(
-                    children: [
-                      const Text("No Rooms Available"),
-                      Text(
-                          "(${DateFormat('MMMM dd').format(startDate)} - ${DateFormat('MMMM dd').format(endDate)})")
-                    ],
-                  ),
-                );
-              }
-            },
-            error: ((error, stackTrace) => Scaffold(
-                body: ErrorText(
-                    error: error.toString(),
-                    stackTrace: stackTrace.toString()))),
-            loading: () => const Loader());
+                    })),
+              );
+            } else {
+              return Center(
+                child: Column(
+                  children: [
+                    const Text("No Rooms Available"),
+                    Text(
+                        "(${DateFormat('MMMM dd').format(startDate)} - ${DateFormat('MMMM dd').format(endDate)})")
+                  ],
+                ),
+              );
+            }
+          },
+          error: ((error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString())),
+          loading: () => const Loader(),
+        );
   }
 
   void showSelectDate(BuildContext context, List<ListingBookings> bookings,

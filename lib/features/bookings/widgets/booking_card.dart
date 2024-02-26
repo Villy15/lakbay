@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -44,10 +45,11 @@ class _BookingCardState extends ConsumerState<BookingCard> {
               child: Column(
                 children: [
                   // Random Image
-                  ImageSlider(
-                      images: imageUrls,
+                  DisplayImage(
+                      imageUrl: widget.listing.images!.first.url,
                       height: MediaQuery.sizeOf(context).height / 3,
-                      width: double.infinity),
+                      width: double.infinity,
+                      radius: BorderRadius.circular(0)),
 
                   // Card Title
                   Padding(

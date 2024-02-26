@@ -81,8 +81,11 @@ class _CustomerTransportCheckoutState
               SizedBox(
                   height: 100,
                   width: 150,
-                  child:
-                      ImageSlider(images: imageUrls, height: 100, width: 150)),
+                  child: ImageSlider(
+                      images: imageUrls,
+                      height: 100,
+                      width: 150,
+                      radius: BorderRadius.circular(10))),
               Expanded(
                   child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
