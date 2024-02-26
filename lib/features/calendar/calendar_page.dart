@@ -18,7 +18,7 @@ class CalendarPage extends ConsumerStatefulWidget {
 
 class _CalendarPageState extends ConsumerState<CalendarPage> {
   late ValueNotifier<List<ListingBookings>> _selectedEvents;
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+  CalendarFormat _calendarFormat = CalendarFormat.week;
 
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;

@@ -14,6 +14,7 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/committee_params.dart';
 
 class AccommodationBookingsDetails extends ConsumerStatefulWidget {
@@ -38,6 +39,13 @@ class _AccommodationBookingsDetailsState
       child: Tab(
         // icon: Icon(Icons.location_pin),
         child: Text('Tasks'),
+      ),
+    ),
+    const SizedBox(
+      width: 100.0,
+      child: Tab(
+        // icon: Icon(Icons.location_pin),
+        child: Text('Details'),
       ),
     ),
     const SizedBox(
@@ -231,6 +239,255 @@ class _AccommodationBookingsDetailsState
           },
         );
       },
+    );
+  }
+
+  Widget showDetails(ListingBookings booking) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Customer Information
+            _displayHeader("Booking Details"),
+            const SizedBox(height: 10),
+            _displaySubHeader("Check In and Check Out"),
+            _displayCheckInCheckOut(booking),
+            _displayDivider(),
+            const SizedBox(height: 10),
+            _displaySubHeader("Customer Information"),
+            ref.watch(getUserDataProvider(booking.customerId)).maybeWhen(
+                  data: (user) {
+                    return _userInformation(user, booking);
+                  },
+                  orElse: () => const CircularProgressIndicator(),
+                ),
+            // No of Guests
+            const SizedBox(height: 10),
+            _displaySubHeader("No of Guests"),
+            Text(
+              'Guests: ${booking.guests}',
+            ),
+            _displayDivider(),
+            const SizedBox(height: 10),
+            _displaySubHeader("Payment Information"),
+            Text(
+              'Payment Option: ${booking.paymentOption}',
+            ),
+            Text(
+              'Total Amount: ${booking.amountPaid}',
+            ),
+            Text(
+              'Amount Due: ${booking.totalPrice}',
+            ),
+            _displayDivider(),
+            const SizedBox(height: 10),
+            _displayHeader("Additional Information"),
+            const SizedBox(height: 10),
+            // Government ID
+            _displayGovId(),
+            // Emergency Contact
+            const SizedBox(height: 10),
+            _displaySubHeader("Emergency Contact"),
+            ListTile(
+              onTap: () {},
+              leading: const Icon(Icons.phone_rounded),
+              title: Text(
+                booking.emergencyContactName ?? "No Emergency Contact",
+                style: const TextStyle(
+                  fontSize: 16, // Set your desired font size
+                  // Add other styling as needed
+                ),
+              ),
+              subtitle: Text(
+                booking.emergencyContactNo ?? "No Emergency Contact Number",
+                style: TextStyle(
+                  fontSize: 14, // Slightly smaller than the title
+                  color:
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+                  // You can add other styling as needed
+                ),
+              ),
+              // Arrow Trailing
+              trailing: const Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 20,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  ListTile _displayGovId() {
+    return ListTile(
+      onTap: () {},
+      leading: const Icon(Icons.card_membership_rounded),
+      title: const Text(
+        'Customer Government ID',
+        style: TextStyle(
+          fontSize: 16, // Set your desired font size
+          // Add other styling as needed
+        ),
+      ),
+      // Arrow Trailing
+      trailing: const Icon(
+        Icons.arrow_forward_ios_rounded,
+        size: 20,
+      ),
+    );
+  }
+
+  Divider _displayDivider() {
+    return Divider(
+      thickness: 1.0,
+      indent: 20,
+      endIndent: 20,
+      color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+    );
+  }
+
+  Widget _displayCheckInCheckOut(ListingBookings booking) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Starts
+              const Text(
+                'Starts',
+                style: TextStyle(
+                  fontSize: 14, // Set your desired font size
+                  fontWeight: FontWeight.bold,
+                  // Add other styling as needed
+                ),
+              ),
+              // Tue, Aug 29, 2024
+              Text(
+                DateFormat('E, MMM dd, yyyy').format(booking.startDate!),
+                style: const TextStyle(
+                  fontSize: 16, // Set your desired font size
+                  fontWeight: FontWeight.bold,
+                  // Add other styling as needed
+                ),
+              ),
+              // 9:00 AM
+              Text(
+                DateFormat('h:mm a').format(booking.startDate!),
+                style: const TextStyle(
+                  fontSize: 14, // Set your desired font size
+                  // Add other styling as needed
+                ),
+              ),
+            ],
+          ),
+          // Divider
+          const VerticalDivider(
+            thickness: 1.5,
+            indent: 20,
+            endIndent: 20,
+            color: Colors.black,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Starts
+              const Text(
+                'Ends',
+                style: TextStyle(
+                  fontSize: 14, // Set your desired font size
+                  fontWeight: FontWeight.bold,
+                  // Add other styling as needed
+                ),
+              ),
+              // Tue, Aug 29, 2024
+              Text(
+                DateFormat('E, MMM dd, yyyy').format(booking.endDate!),
+                style: const TextStyle(
+                  fontSize: 16, // Set your desired font size
+                  fontWeight: FontWeight.bold,
+                  // Add other styling as needed
+                ),
+              ),
+              // 9:00 AM
+              Text(
+                DateFormat('h:mm a').format(booking.endDate!),
+                style: const TextStyle(
+                  fontSize: 14, // Set your desired font size
+                  // Add other styling as needed
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  ListTile _userInformation(UserModel user, ListingBookings booking) {
+    return ListTile(
+      onTap: () {
+        // Show user profile
+      },
+      leading: CircleAvatar(
+        radius: 20.0,
+        backgroundImage: user.imageUrl != null && user.imageUrl != ''
+            ? NetworkImage(user.imageUrl!)
+            // Use placeholder image if user has no profile pic
+            : const AssetImage('lib/core/images/default_profile_pic.jpg')
+                as ImageProvider,
+      ),
+      // Contact owner
+      trailing: IconButton(
+        onPressed: () {
+          // Show snackbar with reviews
+          showSnackBar(context, 'Contact owner');
+        },
+        icon: const Icon(Icons.message_rounded),
+      ),
+      title: Text(
+        booking.customerName,
+        style: const TextStyle(
+          fontSize: 16, // Set your desired font size
+          // Add other styling as needed
+        ),
+      ),
+      subtitle: Text(
+        '1 month in lakbay',
+        style: TextStyle(
+          fontSize: 14, // Slightly smaller than the title
+          color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+          // You can add other styling as needed
+        ),
+      ),
+    );
+  }
+
+  Text _displayHeader(String header) {
+    return Text(
+      header,
+      style: const TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        // Add other styling as needed
+      ),
+    );
+  }
+
+  // display sub details
+  Text _displaySubHeader(String subHeader) {
+    return Text(
+      subHeader,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        // Add other styling as needed
+      ),
     );
   }
 
@@ -702,6 +959,7 @@ class _AccommodationBookingsDetailsState
       canPop: false,
       onPopInvoked: (bool didPop) {
         context.pop();
+        ref.read(navBarVisibilityProvider.notifier).show();
       },
       child: DefaultTabController(
           initialIndex: 0,
@@ -721,6 +979,7 @@ class _AccommodationBookingsDetailsState
                       return TabBarView(
                         children: [
                           showTasks(booking),
+                          showDetails(booking),
                           showExpenses(booking),
                         ],
                       );
