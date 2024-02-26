@@ -48,8 +48,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   List<File>? _images = [];
   int departures = 0;
-  List<TextEditingController> _departureController = [];
-  List<TimeOfDay> _departureTime = [];
+  final List<TextEditingController> _departureController = [];
+  final List<TimeOfDay> _departureTime = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -145,6 +145,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 endTime: TimeOfDay.fromDateTime(endDate),
                 destination: _destinationController.text,
                 pickupPoint: _pickupController.text,
+                // if departure times are empty, set to null
+                departureTimes: _departureTime.isEmpty ? null : _departureTime,
               );
 
               ListingModel listingModel = ListingModel(
@@ -763,7 +765,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   Widget addPolicies(BuildContext context) {
     List<String> notes = [
-      "Downpayment Rate: The necessary amount to be paid by a customer in order to book and reserve the service.",
       "Cancellation Rate: The amount that would not be refunded in the situation that a customer cancels their booking.",
       "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel and pay the full amount in the case for a downpayment. Otherwise their booking will be cancelled",
       "Customers booking passed the cancellation period would be required to pay the downpayment or full amount upon checkout."
@@ -772,26 +773,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
       children: [
         Row(
           children: [
-            Expanded(
-              child: TextFormField(
-                maxLines: 1,
-                keyboardType: TextInputType.number, // For numeric input
-                decoration: const InputDecoration(
-                    labelText:
-                        'Downpayment Rate (%)*', // Indicate it's a percentage
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    hintText: "e.g., 20",
-                    suffixText: "%"),
-                onTap: () {
-                  // Handle tap if needed, e.g., showing a dialog to select a percentage
-                },
-              ),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
+            
             Expanded(
               child: TextFormField(
                 maxLines: 1,
@@ -1072,6 +1054,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                     final TimeOfDay? time = await showTimePicker(
                       context: context,
                       initialTime: TimeOfDay.now(),
+                      initialEntryMode: TimePickerEntryMode.inputOnly,
                     );
                     if (time != null) {
                       setState(() {
@@ -1101,6 +1084,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                     final TimeOfDay? time = await showTimePicker(
                       context: context,
                       initialTime: TimeOfDay.now(),
+                      initialEntryMode: TimePickerEntryMode.inputOnly
                     );
                     if (time != null) {
                       setState(() {
@@ -1327,11 +1311,21 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             subtitle: Text(_descriptionController.text),
           ),
-          ListTile(
-            title: const Text('Price',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            subtitle: Text("₱${_feeController.text} / per day"),
-          ),
+          if (type == 'Public') ... [
+            ListTile(
+              title: const Text('Ticket Price',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              subtitle: Text("₱${_feeController.text} / per person"),
+            ),
+          ]
+          else ... [
+            ListTile(
+              title: const Text('Price',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              subtitle: Text("₱${_feeController.text}"),
+            ),
+          ],
+          
 
           const Divider(),
           ListTile(
@@ -1364,6 +1358,21 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             subtitle: Text(
                 '${DateFormat.jm().format(startDate)} - ${DateFormat.jm().format(endDate)}'),
           ),
+
+          // insert departure times if there are any
+          if (type == 'Public') ...[
+            const Divider(),
+            ListTile(
+              title: const Text('Departure Times',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(
+                    _departureTime.length,
+                    (index) => Text(_departureTime[index].format(context)),),
+              ),
+            ),
+          ],
         ]);
   }
 
