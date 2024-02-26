@@ -97,8 +97,8 @@ class PlanController extends StateNotifier<bool> {
       },
       (uid) {
         state = false;
-        context.pop();
-        context.pop();
+        // context.pop();
+        // context.pop();
         // context.pop();
       },
     );

@@ -194,6 +194,7 @@ class ListingController extends StateNotifier<bool> {
     final result = await _listingRepository.addBooking(listing.uid!, booking);
     final selectedDate = _ref.read(selectedDateProvider);
     final planUid = _ref.read(currentPlanIdProvider);
+    ListingBookings? updatedBooking;
     result.fold(
       (l) {
         // Handle the error here
@@ -203,24 +204,24 @@ class ListingController extends StateNotifier<bool> {
       },
       (bookingUid) async {
         state = false;
-        _ref.read(salesRepositoryProvider).addSale(SaleModel(
-              bookingId: booking.id!,
-              category: booking.category,
-              cooperativeId: listing.cooperative.cooperativeId,
-              cooperativeName: listing.cooperative.cooperativeName,
-              customerId: _ref.read(userProvider)!.uid,
-              customerName: _ref.read(userProvider)!.name,
-              listingId: listing.uid!,
-              listingName: listing.title,
-              listingPrice: booking.price,
-              price: booking.totalPrice!,
-              ownerId: listing.publisherId,
-              ownerName: listing.publisherName,
-              salePrice: booking.totalPrice!,
-              paymentOption: '',
-              tranasactionType: '',
-            ));
-        ListingBookings updatedBooking = booking.copyWith(id: bookingUid);
+        // _ref.read(salesRepositoryProvider).addSale(SaleModel(
+        //       bookingId: bookingUid,
+        //       category: booking.category,
+        //       cooperativeId: listing.cooperative.cooperativeId,
+        //       cooperativeName: listing.cooperative.cooperativeName,
+        //       customerId: _ref.read(userProvider)!.uid,
+        //       customerName: _ref.read(userProvider)!.name,
+        //       listingId: listing.uid!,
+        //       listingName: listing.title,
+        //       listingPrice: booking.price,
+        //       price: booking.totalPrice!,
+        //       ownerId: listing.publisherId,
+        //       ownerName: listing.publisherName,
+        //       salePrice: booking.totalPrice!,
+        //       paymentOption: '',
+        //       tranasactionType: '',
+        //     ));
+        updatedBooking = booking.copyWith(id: bookingUid);
 
         PlanActivity activity = PlanActivity(
           // Create a random key for the activity
@@ -238,6 +239,9 @@ class ListingController extends StateNotifier<bool> {
         _ref
             .read(plansControllerProvider.notifier)
             .addActivityToPlan(planUid!, activity, context);
+        context.pop();
+        context.pop();
+        context.pop();
         context.push('/market/${booking.category}/customer_receipt',
             extra: {'booking': updatedBooking, 'listing': listing});
       },
