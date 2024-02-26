@@ -30,8 +30,10 @@ mixin _$EventModel {
   String? get imageUrl => throw _privateConstructorUsedError;
   List<String> get members => throw _privateConstructorUsedError;
   List<String> get managers => throw _privateConstructorUsedError;
-  DateTime get startDate => throw _privateConstructorUsedError;
-  DateTime get endDate => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get startDate => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get endDate => throw _privateConstructorUsedError;
   EventCooperative get cooperative => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -57,8 +59,8 @@ abstract class $EventModelCopyWith<$Res> {
       String? imageUrl,
       List<String> members,
       List<String> managers,
-      DateTime startDate,
-      DateTime endDate,
+      @TimestampSerializer() DateTime? startDate,
+      @TimestampSerializer() DateTime? endDate,
       EventCooperative cooperative});
 
   $EventCooperativeCopyWith<$Res> get cooperative;
@@ -87,8 +89,8 @@ class _$EventModelCopyWithImpl<$Res, $Val extends EventModel>
     Object? imageUrl = freezed,
     Object? members = null,
     Object? managers = null,
-    Object? startDate = null,
-    Object? endDate = null,
+    Object? startDate = freezed,
+    Object? endDate = freezed,
     Object? cooperative = null,
   }) {
     return _then(_value.copyWith(
@@ -132,14 +134,14 @@ class _$EventModelCopyWithImpl<$Res, $Val extends EventModel>
           ? _value.managers
           : managers // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      startDate: null == startDate
+      startDate: freezed == startDate
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      endDate: null == endDate
+              as DateTime?,
+      endDate: freezed == endDate
           ? _value.endDate
           : endDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       cooperative: null == cooperative
           ? _value.cooperative
           : cooperative // ignore: cast_nullable_to_non_nullable
@@ -175,8 +177,8 @@ abstract class _$$EventModelImplCopyWith<$Res>
       String? imageUrl,
       List<String> members,
       List<String> managers,
-      DateTime startDate,
-      DateTime endDate,
+      @TimestampSerializer() DateTime? startDate,
+      @TimestampSerializer() DateTime? endDate,
       EventCooperative cooperative});
 
   @override
@@ -204,8 +206,8 @@ class __$$EventModelImplCopyWithImpl<$Res>
     Object? imageUrl = freezed,
     Object? members = null,
     Object? managers = null,
-    Object? startDate = null,
-    Object? endDate = null,
+    Object? startDate = freezed,
+    Object? endDate = freezed,
     Object? cooperative = null,
   }) {
     return _then(_$EventModelImpl(
@@ -249,14 +251,14 @@ class __$$EventModelImplCopyWithImpl<$Res>
           ? _value._managers
           : managers // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      startDate: null == startDate
+      startDate: freezed == startDate
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      endDate: null == endDate
+              as DateTime?,
+      endDate: freezed == endDate
           ? _value.endDate
           : endDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       cooperative: null == cooperative
           ? _value.cooperative
           : cooperative // ignore: cast_nullable_to_non_nullable
@@ -279,8 +281,8 @@ class _$EventModelImpl implements _EventModel {
       this.imageUrl,
       required final List<String> members,
       required final List<String> managers,
-      required this.startDate,
-      required this.endDate,
+      @TimestampSerializer() this.startDate,
+      @TimestampSerializer() this.endDate,
       required this.cooperative})
       : _members = members,
         _managers = managers;
@@ -321,9 +323,11 @@ class _$EventModelImpl implements _EventModel {
   }
 
   @override
-  final DateTime startDate;
+  @TimestampSerializer()
+  final DateTime? startDate;
   @override
-  final DateTime endDate;
+  @TimestampSerializer()
+  final DateTime? endDate;
   @override
   final EventCooperative cooperative;
 
@@ -402,8 +406,8 @@ abstract class _EventModel implements EventModel {
       final String? imageUrl,
       required final List<String> members,
       required final List<String> managers,
-      required final DateTime startDate,
-      required final DateTime endDate,
+      @TimestampSerializer() final DateTime? startDate,
+      @TimestampSerializer() final DateTime? endDate,
       required final EventCooperative cooperative}) = _$EventModelImpl;
 
   factory _EventModel.fromJson(Map<String, dynamic> json) =
@@ -430,9 +434,11 @@ abstract class _EventModel implements EventModel {
   @override
   List<String> get managers;
   @override
-  DateTime get startDate;
+  @TimestampSerializer()
+  DateTime? get startDate;
   @override
-  DateTime get endDate;
+  @TimestampSerializer()
+  DateTime? get endDate;
   @override
   EventCooperative get cooperative;
   @override

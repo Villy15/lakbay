@@ -15,6 +15,7 @@ class ListingBookings with _$ListingBookings {
     required String customerPhoneNo,
     required String category,
     required String email,
+    String? cooperativeId,
     String? emergencyContactName,
     String? emergencyContactNo,
     @TimestampSerializer() DateTime? endDate,

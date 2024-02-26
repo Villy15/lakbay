@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -199,8 +200,6 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
       {'name': 'Tour', 'icon': Icons.map_outlined},
       {'name': 'Food', 'icon': Icons.restaurant_outlined},
       {'name': 'Entertainment', 'icon': Icons.movie_creation_outlined},
-      // All the categories
-      {'name': 'All', 'icon': Icons.travel_explore_outlined},
     ];
 
     return GridView.builder(
@@ -217,42 +216,51 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
           onTap: () async {
             switch (category['name']) {
               case 'Accommodation':
-                final bookings = await ref.watch(
-                    getBookingsByPropertiesProvider((
-                  category['name'],
-                  ref.watch(planStartDateProvider)!
-                )).future);
+                final convertedStartDate =
+                    Timestamp.fromDate(ref.watch(planStartDateProvider)!);
+                final query = FirebaseFirestore.instance
+                    .collectionGroup(
+                        'bookings') // Perform collection group query for 'bookings'
+                    .where('category', isEqualTo: category["name"])
+                    .where('bookingStatus', isEqualTo: "Reserved")
+                    .where('startDate', isGreaterThan: convertedStartDate);
+                final bookings = await ref
+                    .watch(getBookingsByPropertiesProvider((query)).future);
                 if (context.mounted) {
-                  context.push(
-                      '/plan/add_activity/search_listing/accommodation',
-                      extra: {
-                        'bookings': bookings,
-                        'category': category["name"]
-                      });
+                  context.push('/plan/add_activity/search_listing', extra: {
+                    'bookings': bookings,
+                    'category': category["name"]
+                  });
                 }
                 break;
 
               case 'Food':
-                context.push('/plan/add_activity/search_listing/food');
+                context.push('/plan/add_activity/search_listing');
                 break;
 
               case 'Entertainment':
-                context.push('/plan/add_activity/search_listing/entertainment');
+                context.push('/plan/add_activity/search_listing');
 
                 break;
 
               case 'Transport':
-                context.push('/plan/add_activity/search_listing/transport');
+                final query = FirebaseFirestore.instance
+                    .collection(
+                        'listings') // Perform collection group query for 'bookings'
+                    .where('category', isEqualTo: category["name"]);
+                final listings = await ref
+                    .watch(getListingsByPropertiesProvider(query).future);
+                if (context.mounted) {
+                  context.push('/plan/add_activity/search_listing', extra: {
+                    'listings': listings,
+                    'category': category["name"]
+                  });
+                }
 
                 break;
 
               case 'Tour':
-                context.push('/plan/add_activity/search_listing/tour');
-
-                break;
-
-              case 'All':
-                context.push('/plan/add_activity/search_listing/all');
+                context.push('/plan/add_activity/search_listing');
 
                 break;
             }

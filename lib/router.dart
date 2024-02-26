@@ -207,15 +207,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   subRoutes: [
                     // Search Listing Page
                     buildSubRoute(
-                      'search_listing/:category',
+                      'search_listing',
                       (context, pathParameters, extra) {
                         final Map<String, dynamic> params =
                             extra as Map<String, dynamic>;
-                        final List<ListingBookings> bookings =
-                            params['bookings'] as List<ListingBookings>;
+                        final List<ListingBookings>? bookings =
+                            params['bookings'];
+                        final List<ListingModel>? listings = params['listings'];
                         final String category = params['category'] as String;
                         return PlanSearchListing(
                           bookings: bookings,
+                          listings: listings,
                           category: category,
                         );
                       },

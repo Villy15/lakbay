@@ -132,7 +132,7 @@ class _JoinEventPageState extends ConsumerState<JoinEventPage> {
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     Text(
-                        '${DateFormat('dd MMM').format(widget.event.startDate)} - ${DateFormat('dd MMM').format(widget.event.endDate)} (${widget.event.endDate.difference(widget.event.startDate).inDays} days)',
+                        '${DateFormat('dd MMM').format(widget.event.startDate!)} - ${DateFormat('dd MMM').format(widget.event.endDate!)} (${widget.event.endDate!.difference(widget.event.startDate!).inDays} days)',
                         style: const TextStyle(
                           fontSize: 16,
                         )),

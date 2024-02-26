@@ -88,7 +88,7 @@ class EventsPage extends ConsumerWidget {
                                             ),
                                             const SizedBox(height: 8),
                                             Text(
-                                              'From ${DateFormat('MMM dd').format(events[index].startDate)} to ${DateFormat('MMM dd').format(events[index].endDate)}',
+                                              'From ${DateFormat('MMM dd').format(events[index].startDate!)} to ${DateFormat('MMM dd').format(events[index].endDate!)}',
                                               style:
                                                   const TextStyle(fontSize: 16),
                                             ),

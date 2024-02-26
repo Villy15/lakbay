@@ -5,13 +5,15 @@ import 'package:intl/intl.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
 import 'package:lakbay/features/trips/plan/components/transport_card.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
+import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 class PlanSearchListing extends ConsumerStatefulWidget {
   final String category;
-  final List<ListingBookings> bookings;
+  final List<ListingBookings>? bookings;
+  final List<ListingModel>? listings;
   const PlanSearchListing(
-      {super.key, required this.category, required this.bookings});
+      {super.key, required this.category, this.bookings, this.listings});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -359,10 +361,11 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   Widget listingCardController(String category) {
     switch (category) {
       case "Accommodation":
-        return RoomCard(category: category, bookings: widget.bookings);
+        return RoomCard(category: category, bookings: widget.bookings!);
 
       case "Transport":
-        return TransportCard(category: category, bookings: widget.bookings);
+        return TransportCard(
+            category: category, transportListings: widget.listings!);
 
       case "Food":
         return const Text("works");

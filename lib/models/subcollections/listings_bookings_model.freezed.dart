@@ -26,6 +26,7 @@ mixin _$ListingBookings {
   String get customerPhoneNo => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
+  String? get cooperativeId => throw _privateConstructorUsedError;
   String? get emergencyContactName => throw _privateConstructorUsedError;
   String? get emergencyContactNo => throw _privateConstructorUsedError;
   @TimestampSerializer()
@@ -75,6 +76,7 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String customerPhoneNo,
       String category,
       String email,
+      String? cooperativeId,
       String? emergencyContactName,
       String? emergencyContactNo,
       @TimestampSerializer() DateTime? endDate,
@@ -120,6 +122,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? customerPhoneNo = null,
     Object? category = null,
     Object? email = null,
+    Object? cooperativeId = freezed,
     Object? emergencyContactName = freezed,
     Object? emergencyContactNo = freezed,
     Object? endDate = freezed,
@@ -170,6 +173,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
+      cooperativeId: freezed == cooperativeId
+          ? _value.cooperativeId
+          : cooperativeId // ignore: cast_nullable_to_non_nullable
+              as String?,
       emergencyContactName: freezed == emergencyContactName
           ? _value.emergencyContactName
           : emergencyContactName // ignore: cast_nullable_to_non_nullable
@@ -285,6 +292,7 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String customerPhoneNo,
       String category,
       String email,
+      String? cooperativeId,
       String? emergencyContactName,
       String? emergencyContactNo,
       @TimestampSerializer() DateTime? endDate,
@@ -328,6 +336,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? customerPhoneNo = null,
     Object? category = null,
     Object? email = null,
+    Object? cooperativeId = freezed,
     Object? emergencyContactName = freezed,
     Object? emergencyContactNo = freezed,
     Object? endDate = freezed,
@@ -378,6 +387,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
+      cooperativeId: freezed == cooperativeId
+          ? _value.cooperativeId
+          : cooperativeId // ignore: cast_nullable_to_non_nullable
+              as String?,
       emergencyContactName: freezed == emergencyContactName
           ? _value.emergencyContactName
           : emergencyContactName // ignore: cast_nullable_to_non_nullable
@@ -488,6 +501,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
       required this.customerPhoneNo,
       required this.category,
       required this.email,
+      this.cooperativeId,
       this.emergencyContactName,
       this.emergencyContactNo,
       @TimestampSerializer() this.endDate,
@@ -530,6 +544,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
   final String category;
   @override
   final String email;
+  @override
+  final String? cooperativeId;
   @override
   final String? emergencyContactName;
   @override
@@ -602,7 +618,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
   @override
   String toString() {
-    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, cooperativeId: $cooperativeId, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -621,6 +637,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
             (identical(other.category, category) ||
                 other.category == category) &&
             (identical(other.email, email) || other.email == email) &&
+            (identical(other.cooperativeId, cooperativeId) ||
+                other.cooperativeId == cooperativeId) &&
             (identical(other.emergencyContactName, emergencyContactName) ||
                 other.emergencyContactName == emergencyContactName) &&
             (identical(other.emergencyContactNo, emergencyContactNo) ||
@@ -671,6 +689,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
         customerPhoneNo,
         category,
         email,
+        cooperativeId,
         emergencyContactName,
         emergencyContactNo,
         endDate,
@@ -720,6 +739,7 @@ abstract class _ListingBookings implements ListingBookings {
       required final String customerPhoneNo,
       required final String category,
       required final String email,
+      final String? cooperativeId,
       final String? emergencyContactName,
       final String? emergencyContactNo,
       @TimestampSerializer() final DateTime? endDate,
@@ -760,6 +780,8 @@ abstract class _ListingBookings implements ListingBookings {
   String get category;
   @override
   String get email;
+  @override
+  String? get cooperativeId;
   @override
   String? get emergencyContactName;
   @override

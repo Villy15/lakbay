@@ -20,8 +20,10 @@ _$EventModelImpl _$$EventModelImplFromJson(Map<String, dynamic> json) =>
           (json['members'] as List<dynamic>).map((e) => e as String).toList(),
       managers:
           (json['managers'] as List<dynamic>).map((e) => e as String).toList(),
-      startDate: DateTime.parse(json['startDate'] as String),
-      endDate: DateTime.parse(json['endDate'] as String),
+      startDate:
+          const TimestampSerializer().fromJson(json['startDate'] as Timestamp?),
+      endDate:
+          const TimestampSerializer().fromJson(json['endDate'] as Timestamp?),
       cooperative: EventCooperative.fromJson(
           json['cooperative'] as Map<String, dynamic>),
     );
@@ -38,8 +40,8 @@ Map<String, dynamic> _$$EventModelImplToJson(_$EventModelImpl instance) =>
       'imageUrl': instance.imageUrl,
       'members': instance.members,
       'managers': instance.managers,
-      'startDate': instance.startDate.toIso8601String(),
-      'endDate': instance.endDate.toIso8601String(),
+      'startDate': const TimestampSerializer().toJson(instance.startDate),
+      'endDate': const TimestampSerializer().toJson(instance.endDate),
       'cooperative': instance.cooperative.toJson(),
     };
 

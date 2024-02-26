@@ -137,7 +137,7 @@ class _ReadEventPageState extends ConsumerState<ReadEventPage> {
                                 const Icon(Icons.calendar_today),
                                 const SizedBox(width: 8),
                                 Text(
-                                  "${DateFormat('d MMM').format(event.startDate)} - ${DateFormat('d MMM').format(event.endDate)}",
+                                  "${DateFormat('d MMM').format(event.startDate!)} - ${DateFormat('d MMM').format(event.endDate!)}",
                                   style: const TextStyle(
                                     fontSize: 16.0,
                                   ),

@@ -15,6 +15,7 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
       customerPhoneNo: json['customerPhoneNo'] as String,
       category: json['category'] as String,
       email: json['email'] as String,
+      cooperativeId: json['cooperativeId'] as String?,
       emergencyContactName: json['emergencyContactName'] as String?,
       emergencyContactNo: json['emergencyContactNo'] as String?,
       endDate:
@@ -59,6 +60,7 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'customerPhoneNo': instance.customerPhoneNo,
       'category': instance.category,
       'email': instance.email,
+      'cooperativeId': instance.cooperativeId,
       'emergencyContactName': instance.emergencyContactName,
       'emergencyContactNo': instance.emergencyContactNo,
       'endDate': const TimestampSerializer().toJson(instance.endDate),

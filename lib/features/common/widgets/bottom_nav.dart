@@ -31,9 +31,9 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         if (widget.user?.isCoopView ?? false) ...[
           // If user toggles coopview and user is manager
           const BottomNavigationBarItem(
-            icon: Icon(Icons.today_outlined),
-            activeIcon: Icon(Icons.today),
-            label: 'Today',
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Home',
           )
         ] else ...[
           const BottomNavigationBarItem(
