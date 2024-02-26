@@ -233,6 +233,21 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                       stackTrace: stack.toString(),
                     ),
                   ),
+
+              const SizedBox(height: 32),
+
+              const Text(
+                "Coop Activities",
+                // bold and large
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                "Announcements",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ],
           ),
         ),

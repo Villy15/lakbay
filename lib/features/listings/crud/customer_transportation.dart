@@ -36,7 +36,7 @@ class _CustomerTransportationState
   @override
   void initState() {
     super.initState();
-    
+
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
@@ -70,63 +70,66 @@ class _CustomerTransportationState
                     tabs: tabs,
                   ),
                 ),
-                body: TabBarView(
-                  children: [
-                    details(),
-                    // if the type is public, show the timeSlots
-                    if (widget.listing.type == 'Public') ...[timeSlots()]
+                body: TabBarView(children: [
+                  details(),
+                  // if the type is public, show the timeSlots
+                  if (widget.listing.type == 'Public') ...[timeSlots()]
                 ]))));
   }
 
   Widget timeSlots() {
     return ListView.builder(
-      shrinkWrap: true,
-      itemCount: widget.listing.availableTransport!.departureTimes!.length,
-      itemBuilder: ((context, index) {
-        // Get the departure time
-        TimeOfDay departureTime =
-            widget.listing.availableTransport!.departureTimes![index];
-        return Card(
-          elevation: 1.0,
-          margin: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 20, right: 10, top: 10, bottom: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Text(
-                        'Departure Time: ${departureTime.format(context)}',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+        shrinkWrap: true,
+        itemCount: widget.listing.availableTransport!.departureTimes!.length,
+        itemBuilder: ((context, index) {
+          // Get the departure time
+          TimeOfDay departureTime =
+              widget.listing.availableTransport!.departureTimes![index];
+          return Card(
+            elevation: 1.0,
+            margin: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 20, right: 10, top: 10, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Text(
+                          'Departure Time: ${departureTime.format(context)}',
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                    Center(
-                      child: Text(
+                      Center(
+                          child: Text(
                         'Guest Capacity: ${widget.listing.availableTransport!.guests}',
                         style: const TextStyle(fontSize: 16),
+                      )),
+                      const SizedBox(height: 10),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            showConfirmBooking2(
+                                widget.listing.availableTransport!,
+                                DateTime.now(),
+                                DateTime.now(),
+                                departureTime,
+                                departureTime,
+                                'Public');
+                          },
+                          child: const Text('Book Now'),
+                        ),
                       )
-                    ),
-                    const SizedBox(height: 10),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          showConfirmBooking2(widget.listing.availableTransport!, DateTime.now(), DateTime.now(), departureTime, departureTime, 'Public');
-                        },
-                        child: const Text('Book Now'),
-                      ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      })
-    );
+              ],
+            ),
+          );
+        }));
   }
 
   SingleChildScrollView details() {
@@ -258,7 +261,6 @@ class _CustomerTransportationState
               fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
             ),
           ),
-
         ),
         Padding(
           padding: const EdgeInsets.only(left: 32.0),
@@ -314,9 +316,9 @@ class _CustomerTransportationState
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.primary)),
-                if (widget.listing.type == 'Private') ...[
-                  
-                ] else ...[
+                if (widget.listing.type == 'Private')
+                  ...[]
+                else ...[
                   TextSpan(
                     text: " per person",
                     style: TextStyle(
@@ -401,204 +403,51 @@ class _CustomerTransportationState
             )
           ]),
 
-          if (widget.listing.type == 'Private') ... [
-           // Book now button
-           Container(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0, right: 8.0, bottom: 8.0),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height / 15,
-                width: MediaQuery.of(context).size.width / 2.3,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // show a prompt that will allow the user to check if it is a two way trip or not
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            ListTile(
-                              leading: const Icon(Icons.flight),
-                              title: const Text('One Way Trip'),
-                              onTap: () {
-                                // Continue with booking a one way trip
-                                Navigator.pop(context, 'One Way Trip');
-                              },
-                            ),
-                            ListTile(
-                              leading: const Icon(Icons.flight_takeoff),
-                              title: const Text('Two Way Trip'),
-                              onTap: () {
-                                // Continue with booking a two way trip
-                                Navigator.pop(context, 'Two Way Trip');
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    ).then((value) async {
-                      if (value == 'One Way Trip') {
-                        // Show date picker for one way trip
+          if (widget.listing.type == 'Private') ...[
+            // Book now button
+            Container(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(top: 8.0, right: 8.0, bottom: 8.0),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height / 15,
+                  width: MediaQuery.of(context).size.width / 2.3,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // show a prompt that will allow the user to check if it is a two way trip or not
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListTile(
+                                leading: const Icon(Icons.flight),
+                                title: const Text('One Way Trip'),
+                                onTap: () {
+                                  // Continue with booking a one way trip
+                                  Navigator.pop(context, 'One Way Trip');
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.flight_takeoff),
+                                title: const Text('Two Way Trip'),
+                                onTap: () {
+                                  // Continue with booking a two way trip
+                                  Navigator.pop(context, 'Two Way Trip');
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ).then((value) async {
+                        if (value == 'One Way Trip') {
+                          // Show date picker for one way trip
 
-                        final bookings = await ref.watch(
-                            getAllBookingsProvider(widget.listing.uid!).future);
-                        DateTime? endDate;
-                        DateTime initialDate = DateTime.now();
-                        TimeOfDay? firstBookedTime;
-                        TimeOfDay? endBookedTime;
-                        TimeOfDay? existingFirstTime;
-                        TimeOfDay? existingEndTime;
-                        DateTime? existingStartDate;
-                        DateTime? existingEndDate;
-                        List<ListingBookings> bookingsCopy =
-                            List.from(bookings);
-
-                        while (!widget.listing.availableTransport!
-                            .workingDays[initialDate.weekday - 1]) {
-                          initialDate =
-                              initialDate.add(const Duration(days: 1));
-                        }
-
-                        // ignore: use_build_context_synchronously
-                        DateTime? startDate = await showDatePicker(
-                            context: context,
-                            initialDate: initialDate,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2025),
-                            selectableDayPredicate: (DateTime day) {
-                              bool workingDays = widget
-                                  .listing
-                                  .availableTransport!
-                                  .workingDays[day.weekday - 1];
-
-                              // If the day is not a working day, disable it
-                              if (!workingDays) {
-                                return false;
-                              }
-
-                              // Enable all other days
-                              return true;
-                            });
-
-                        if (startDate != null) {
-                          // check if the user selected a date that is already booked
-                          while (firstBookedTime == null) {
-                            // ignore: use_build_context_synchronously
-                            firstBookedTime = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
-                              initialEntryMode: TimePickerEntryMode.inputOnly
-                            );
-
-                            if (firstBookedTime == null) {
-                              // User pressed cancel
-                              break;
-                            }
-
-                            TimeOfDay startWorkingHour =
-                                widget.listing.availableTransport!.startTime;
-                            TimeOfDay endWorkingHour =
-                                widget.listing.availableTransport!.endTime;
-
-                            if (firstBookedTime.hour < startWorkingHour.hour ||
-                                firstBookedTime.hour > endWorkingHour.hour) {
-                              // ignore: use_build_context_synchronously
-                              showSnackBar(
-                                  context,
-                                  // ignore: use_build_context_synchronously
-                                  'Please select a time between ${startWorkingHour.format(context)} and ${endWorkingHour.format(context)}');
-                              firstBookedTime = null; // Reset startTime
-                            }
-
-                            // check if the user's selected time is already booked
-                            for (ListingBookings booking in bookingsCopy) {
-                              existingFirstTime = booking.startTime;
-                              existingEndTime = booking.endTime;
-                              existingStartDate = booking.startDate;
-                              existingEndDate = booking.endDate;
-
-                              // compare startDate (the selected date) with the existing start date. do the same with the end date
-                              // check if it is a two way trip or not
-                              if (existingStartDate == existingEndDate) {
-                                if (existingStartDate != null) {
-                                  if (existingStartDate
-                                      .isAtSameMomentAs(startDate)) {
-                                    if (existingFirstTime != null &&
-                                        existingEndTime != null &&
-                                        firstBookedTime != null) {
-                                      if (firstBookedTime.hour >=
-                                              existingFirstTime.hour &&
-                                          firstBookedTime.hour <=
-                                              existingEndTime.hour) {
-                                        // ignore: use_build_context_synchronously
-                                        showSnackBar(context,
-                                            'This time is already booked. Please select another time.');
-                                        firstBookedTime = null;
-                                      }
-                                    }
-                                  }
-                                }
-                              } else {
-                                if (existingStartDate != null &&
-                                    existingEndDate != null) {
-                                  if (existingStartDate
-                                      .isAtSameMomentAs(startDate)) {
-                                    if (existingFirstTime != null &&
-                                        existingEndTime != null &&
-                                        firstBookedTime != null) {
-                                      if (firstBookedTime.hour >=
-                                              existingFirstTime.hour &&
-                                          firstBookedTime.hour <=
-                                              existingEndTime.hour) {
-                                        // ignore: use_build_context_synchronously
-                                        showSnackBar(context,
-                                            'This time is already booked. Please select another time.');
-                                        firstBookedTime = null;
-                                      }
-                                    }
-                                  } else if (existingEndDate
-                                      .isAtSameMomentAs(startDate)) {
-                                    if (existingFirstTime != null &&
-                                        existingEndTime != null &&
-                                        firstBookedTime != null) {
-                                      if (firstBookedTime.hour >=
-                                              existingFirstTime.hour &&
-                                          firstBookedTime.hour <=
-                                              existingEndTime.hour) {
-                                        // ignore: use_build_context_synchronously
-                                        showSnackBar(context,
-                                            'This time is already booked. Please select another time.');
-                                        firstBookedTime = null;
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-
-                            // show confirm booking, no need to show date picker for end date
-                            if (firstBookedTime != null) {
-                              showConfirmBooking(
-                                  widget.listing.availableTransport!,
-                                  startDate,
-                                  startDate,
-                                  firstBookedTime,
-                                  firstBookedTime,
-                                  value);
-                            }
-                          }
-                        }
-                      } else if (value == 'Two Way Trip') {
-                        // Show date picker for two way trip
-
-                        final bookings = await ref.watch(
-                            getAllBookingsProvider(widget.listing.uid!).future);
-                        debugPrint(
-                          'There exists such booking: $bookings',
-                        );
-                        if (context.mounted) {
+                          final bookings = await ref.watch(
+                              getAllBookingsProvider(widget.listing.uid!)
+                                  .future);
                           DateTime? endDate;
                           DateTime initialDate = DateTime.now();
                           TimeOfDay? firstBookedTime;
@@ -616,6 +465,7 @@ class _CustomerTransportationState
                                 initialDate.add(const Duration(days: 1));
                           }
 
+                          // ignore: use_build_context_synchronously
                           DateTime? startDate = await showDatePicker(
                               context: context,
                               initialDate: initialDate,
@@ -641,10 +491,10 @@ class _CustomerTransportationState
                             while (firstBookedTime == null) {
                               // ignore: use_build_context_synchronously
                               firstBookedTime = await showTimePicker(
-                                context: context,
-                                initialTime: TimeOfDay.now(),
-                                initialEntryMode: TimePickerEntryMode.inputOnly
-                              );
+                                  context: context,
+                                  initialTime: TimeOfDay.now(),
+                                  initialEntryMode:
+                                      TimePickerEntryMode.inputOnly);
 
                               if (firstBookedTime == null) {
                                 // User pressed cancel
@@ -667,203 +517,356 @@ class _CustomerTransportationState
                                 firstBookedTime = null; // Reset startTime
                               }
 
-                              // use existingFirstTime to check if the user's selected time is already booked
+                              // check if the user's selected time is already booked
                               for (ListingBookings booking in bookingsCopy) {
                                 existingFirstTime = booking.startTime;
                                 existingEndTime = booking.endTime;
                                 existingStartDate = booking.startDate;
                                 existingEndDate = booking.endDate;
 
-                                // compare startDate with existing startDate and endDate
-                                if (existingStartDate != null &&
-                                    existingEndDate != null) {
-                                  if (existingStartDate
-                                      .isAtSameMomentAs(startDate)) {
-                                    if (existingFirstTime != null &&
-                                        existingEndTime != null &&
-                                        firstBookedTime != null) {
-                                      if (firstBookedTime.hour >=
-                                              existingFirstTime.hour &&
-                                          firstBookedTime.hour <=
-                                              existingEndTime.hour) {
-                                        // ignore: use_build_context_synchronously
-                                        showSnackBar(context,
-                                            'This time is already booked. Please select another time.');
-                                        firstBookedTime = null;
+                                // compare startDate (the selected date) with the existing start date. do the same with the end date
+                                // check if it is a two way trip or not
+                                if (existingStartDate == existingEndDate) {
+                                  if (existingStartDate != null) {
+                                    if (existingStartDate
+                                        .isAtSameMomentAs(startDate)) {
+                                      if (existingFirstTime != null &&
+                                          existingEndTime != null &&
+                                          firstBookedTime != null) {
+                                        if (firstBookedTime.hour >=
+                                                existingFirstTime.hour &&
+                                            firstBookedTime.hour <=
+                                                existingEndTime.hour) {
+                                          // ignore: use_build_context_synchronously
+                                          showSnackBar(context,
+                                              'This time is already booked. Please select another time.');
+                                          firstBookedTime = null;
+                                        }
                                       }
                                     }
-                                  } else if (existingEndDate
-                                      .isAtSameMomentAs(startDate)) {
-                                    if (existingFirstTime != null &&
-                                        existingEndTime != null &&
-                                        firstBookedTime != null) {
-                                      if (firstBookedTime.hour >=
-                                              existingFirstTime.hour &&
-                                          firstBookedTime.hour <=
-                                              existingEndTime.hour) {
-                                        // ignore: use_build_context_synchronously
-                                        showSnackBar(context,
-                                            'This time is already booked. Please select another time.');
-                                        firstBookedTime = null;
+                                  }
+                                } else {
+                                  if (existingStartDate != null &&
+                                      existingEndDate != null) {
+                                    if (existingStartDate
+                                        .isAtSameMomentAs(startDate)) {
+                                      if (existingFirstTime != null &&
+                                          existingEndTime != null &&
+                                          firstBookedTime != null) {
+                                        if (firstBookedTime.hour >=
+                                                existingFirstTime.hour &&
+                                            firstBookedTime.hour <=
+                                                existingEndTime.hour) {
+                                          // ignore: use_build_context_synchronously
+                                          showSnackBar(context,
+                                              'This time is already booked. Please select another time.');
+                                          firstBookedTime = null;
+                                        }
+                                      }
+                                    } else if (existingEndDate
+                                        .isAtSameMomentAs(startDate)) {
+                                      if (existingFirstTime != null &&
+                                          existingEndTime != null &&
+                                          firstBookedTime != null) {
+                                        if (firstBookedTime.hour >=
+                                                existingFirstTime.hour &&
+                                            firstBookedTime.hour <=
+                                                existingEndTime.hour) {
+                                          // ignore: use_build_context_synchronously
+                                          showSnackBar(context,
+                                              'This time is already booked. Please select another time.');
+                                          firstBookedTime = null;
+                                        }
                                       }
                                     }
                                   }
                                 }
                               }
+
+                              // show confirm booking, no need to show date picker for end date
+                              if (firstBookedTime != null) {
+                                showConfirmBooking(
+                                    widget.listing.availableTransport!,
+                                    startDate,
+                                    startDate,
+                                    firstBookedTime,
+                                    firstBookedTime,
+                                    value);
+                              }
                             }
                           }
+                        } else if (value == 'Two Way Trip') {
+                          // Show date picker for two way trip
 
-                          if (startDate != null && firstBookedTime != null) {
-                            // ignore: use_build_context_synchronously
-                            endDate = await showDatePicker(
-                              context: context,
-                              initialDate: startDate,
-                              firstDate: startDate,
-                              lastDate: DateTime(2025),
-                              selectableDayPredicate: (DateTime day) {
-                                bool workingDays = widget
-                                    .listing
-                                    .availableTransport!
-                                    .workingDays[day.weekday - 1];
-                                final bookedDates =
-                                    getAllDatesFromBookings(bookings);
+                          final bookings = await ref.watch(
+                              getAllBookingsProvider(widget.listing.uid!)
+                                  .future);
+                          debugPrint(
+                            'There exists such booking: $bookings',
+                          );
+                          if (context.mounted) {
+                            DateTime? endDate;
+                            DateTime initialDate = DateTime.now();
+                            TimeOfDay? firstBookedTime;
+                            TimeOfDay? endBookedTime;
+                            TimeOfDay? existingFirstTime;
+                            TimeOfDay? existingEndTime;
+                            DateTime? existingStartDate;
+                            DateTime? existingEndDate;
+                            List<ListingBookings> bookingsCopy =
+                                List.from(bookings);
 
-                                // If the day is not a working day, disable it
-                                if (!workingDays) {
-                                  return false;
-                                }
+                            while (!widget.listing.availableTransport!
+                                .workingDays[initialDate.weekday - 1]) {
+                              initialDate =
+                                  initialDate.add(const Duration(days: 1));
+                            }
 
-                                // Enable all other days
-                                return true;
-                              },
-                            );
-                          }
-
-                          if (startDate != null &&
-                              endDate != null &&
-                              firstBookedTime != null) {
-                            while (endBookedTime == null) {
-                              // ignore: use_build_context_synchronously
-                              endBookedTime = await showTimePicker(
+                            DateTime? startDate = await showDatePicker(
                                 context: context,
-                                initialTime: TimeOfDay.now(),
-                                initialEntryMode: TimePickerEntryMode.inputOnly
-                              );
+                                initialDate: initialDate,
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2025),
+                                selectableDayPredicate: (DateTime day) {
+                                  bool workingDays = widget
+                                      .listing
+                                      .availableTransport!
+                                      .workingDays[day.weekday - 1];
 
-                              if (endBookedTime == null) {
-                                // User pressed cancel
-                                break;
-                              }
+                                  // If the day is not a working day, disable it
+                                  if (!workingDays) {
+                                    return false;
+                                  }
 
-                              TimeOfDay startWorkingHour =
-                                  widget.listing.availableTransport!.startTime;
-                              TimeOfDay endWorkingHour =
-                                  widget.listing.availableTransport!.endTime;
+                                  // Enable all other days
+                                  return true;
+                                });
 
-                              if (endBookedTime.hour < startWorkingHour.hour ||
-                                  endBookedTime.hour > endWorkingHour.hour) {
+                            if (startDate != null) {
+                              // check if the user selected a date that is already booked
+                              while (firstBookedTime == null) {
                                 // ignore: use_build_context_synchronously
-                                showSnackBar(
-                                    context,
-                                    // ignore: use_build_context_synchronously
-                                    'Please select a time between ${startWorkingHour.format(context)} and ${endWorkingHour.format(context)}');
-                                endBookedTime = null; // Reset startTime
-                              }
+                                firstBookedTime = await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now(),
+                                    initialEntryMode:
+                                        TimePickerEntryMode.inputOnly);
 
-                              for (ListingBookings booking in bookingsCopy) {
-                                // check if the user's selected time is already booked on that specific date
-                                existingFirstTime = booking.startTime;
-                                existingEndTime = booking.endTime;
-                                existingStartDate = booking.startDate;
-                                existingEndDate = booking.endDate;
+                                if (firstBookedTime == null) {
+                                  // User pressed cancel
+                                  break;
+                                }
 
-                                // compare the existingStartDate and existingEndDate with the selected endDate
-                                if (existingStartDate != null &&
-                                    existingEndDate != null) {
-                                  if (existingStartDate
-                                      .isAtSameMomentAs(endDate)) {
-                                    if (existingFirstTime != null &&
-                                        existingEndTime != null &&
-                                        endBookedTime != null) {
-                                      if (endBookedTime.hour >=
-                                              existingFirstTime.hour &&
-                                          endBookedTime.hour <=
-                                              existingEndTime.hour) {
-                                        // ignore: use_build_context_synchronously
-                                        showSnackBar(context,
-                                            'This time is already booked. Please select another time.');
-                                        endBookedTime = null;
+                                TimeOfDay startWorkingHour = widget
+                                    .listing.availableTransport!.startTime;
+                                TimeOfDay endWorkingHour =
+                                    widget.listing.availableTransport!.endTime;
+
+                                if (firstBookedTime.hour <
+                                        startWorkingHour.hour ||
+                                    firstBookedTime.hour >
+                                        endWorkingHour.hour) {
+                                  // ignore: use_build_context_synchronously
+                                  showSnackBar(
+                                      context,
+                                      // ignore: use_build_context_synchronously
+                                      'Please select a time between ${startWorkingHour.format(context)} and ${endWorkingHour.format(context)}');
+                                  firstBookedTime = null; // Reset startTime
+                                }
+
+                                // use existingFirstTime to check if the user's selected time is already booked
+                                for (ListingBookings booking in bookingsCopy) {
+                                  existingFirstTime = booking.startTime;
+                                  existingEndTime = booking.endTime;
+                                  existingStartDate = booking.startDate;
+                                  existingEndDate = booking.endDate;
+
+                                  // compare startDate with existing startDate and endDate
+                                  if (existingStartDate != null &&
+                                      existingEndDate != null) {
+                                    if (existingStartDate
+                                        .isAtSameMomentAs(startDate)) {
+                                      if (existingFirstTime != null &&
+                                          existingEndTime != null &&
+                                          firstBookedTime != null) {
+                                        if (firstBookedTime.hour >=
+                                                existingFirstTime.hour &&
+                                            firstBookedTime.hour <=
+                                                existingEndTime.hour) {
+                                          // ignore: use_build_context_synchronously
+                                          showSnackBar(context,
+                                              'This time is already booked. Please select another time.');
+                                          firstBookedTime = null;
+                                        }
                                       }
-                                    }
-                                  } else if (existingEndDate
-                                      .isAtSameMomentAs(endDate)) {
-                                    if (existingFirstTime != null &&
-                                        existingEndTime != null &&
-                                        endBookedTime != null) {
-                                      if (endBookedTime.hour >=
-                                              existingFirstTime.hour &&
-                                          endBookedTime.hour <=
-                                              existingEndTime.hour) {
-                                        // ignore: use_build_context_synchronously
-                                        showSnackBar(context,
-                                            'This time is already booked. Please select another time.');
-                                        endBookedTime = null;
+                                    } else if (existingEndDate
+                                        .isAtSameMomentAs(startDate)) {
+                                      if (existingFirstTime != null &&
+                                          existingEndTime != null &&
+                                          firstBookedTime != null) {
+                                        if (firstBookedTime.hour >=
+                                                existingFirstTime.hour &&
+                                            firstBookedTime.hour <=
+                                                existingEndTime.hour) {
+                                          // ignore: use_build_context_synchronously
+                                          showSnackBar(context,
+                                              'This time is already booked. Please select another time.');
+                                          firstBookedTime = null;
+                                        }
                                       }
                                     }
                                   }
                                 }
                               }
                             }
-                          }
 
-                          if (startDate != null &&
-                              endDate != null &&
-                              firstBookedTime != null &&
-                              endBookedTime != null) {
-                            showConfirmBooking(
-                                widget.listing.availableTransport!,
-                                startDate,
-                                endDate,
-                                firstBookedTime,
-                                endBookedTime,
-                                value);
+                            if (startDate != null && firstBookedTime != null) {
+                              // ignore: use_build_context_synchronously
+                              endDate = await showDatePicker(
+                                context: context,
+                                initialDate: startDate,
+                                firstDate: startDate,
+                                lastDate: DateTime(2025),
+                                selectableDayPredicate: (DateTime day) {
+                                  bool workingDays = widget
+                                      .listing
+                                      .availableTransport!
+                                      .workingDays[day.weekday - 1];
+                                  final bookedDates =
+                                      getAllDatesFromBookings(bookings);
+
+                                  // If the day is not a working day, disable it
+                                  if (!workingDays) {
+                                    return false;
+                                  }
+
+                                  // Enable all other days
+                                  return true;
+                                },
+                              );
+                            }
+
+                            if (startDate != null &&
+                                endDate != null &&
+                                firstBookedTime != null) {
+                              while (endBookedTime == null) {
+                                // ignore: use_build_context_synchronously
+                                endBookedTime = await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now(),
+                                    initialEntryMode:
+                                        TimePickerEntryMode.inputOnly);
+
+                                if (endBookedTime == null) {
+                                  // User pressed cancel
+                                  break;
+                                }
+
+                                TimeOfDay startWorkingHour = widget
+                                    .listing.availableTransport!.startTime;
+                                TimeOfDay endWorkingHour =
+                                    widget.listing.availableTransport!.endTime;
+
+                                if (endBookedTime.hour <
+                                        startWorkingHour.hour ||
+                                    endBookedTime.hour > endWorkingHour.hour) {
+                                  // ignore: use_build_context_synchronously
+                                  showSnackBar(
+                                      context,
+                                      // ignore: use_build_context_synchronously
+                                      'Please select a time between ${startWorkingHour.format(context)} and ${endWorkingHour.format(context)}');
+                                  endBookedTime = null; // Reset startTime
+                                }
+
+                                for (ListingBookings booking in bookingsCopy) {
+                                  // check if the user's selected time is already booked on that specific date
+                                  existingFirstTime = booking.startTime;
+                                  existingEndTime = booking.endTime;
+                                  existingStartDate = booking.startDate;
+                                  existingEndDate = booking.endDate;
+
+                                  // compare the existingStartDate and existingEndDate with the selected endDate
+                                  if (existingStartDate != null &&
+                                      existingEndDate != null) {
+                                    if (existingStartDate
+                                        .isAtSameMomentAs(endDate)) {
+                                      if (existingFirstTime != null &&
+                                          existingEndTime != null &&
+                                          endBookedTime != null) {
+                                        if (endBookedTime.hour >=
+                                                existingFirstTime.hour &&
+                                            endBookedTime.hour <=
+                                                existingEndTime.hour) {
+                                          // ignore: use_build_context_synchronously
+                                          showSnackBar(context,
+                                              'This time is already booked. Please select another time.');
+                                          endBookedTime = null;
+                                        }
+                                      }
+                                    } else if (existingEndDate
+                                        .isAtSameMomentAs(endDate)) {
+                                      if (existingFirstTime != null &&
+                                          existingEndTime != null &&
+                                          endBookedTime != null) {
+                                        if (endBookedTime.hour >=
+                                                existingFirstTime.hour &&
+                                            endBookedTime.hour <=
+                                                existingEndTime.hour) {
+                                          // ignore: use_build_context_synchronously
+                                          showSnackBar(context,
+                                              'This time is already booked. Please select another time.');
+                                          endBookedTime = null;
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+
+                            if (startDate != null &&
+                                endDate != null &&
+                                firstBookedTime != null &&
+                                endBookedTime != null) {
+                              showConfirmBooking(
+                                  widget.listing.availableTransport!,
+                                  startDate,
+                                  endDate,
+                                  firstBookedTime,
+                                  endBookedTime,
+                                  value);
+                            }
                           }
                         }
-                      }
-                    });
-                  },
-                  child: const Text(
-                    'Book now',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      });
+                    },
+                    child: const Text(
+                      'Book now',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
               ),
             ),
-          ), 
-          ]
-          else ... [
+          ] else ...[
             // book now button for public transport
-          Container(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 8.0),
-              child: FilledButton(
-                onPressed: () {
-                  
-                },
-                child: const Text('Add this to current trip')
-              )
-            )
-          )
+            Container(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 8.0, bottom: 8.0, right: 8.0),
+                    child: FilledButton(
+                        onPressed: () {},
+                        child: const Text('Add this to current trip'))))
           ]
-
-          
         ],
       ),
     ]));
   }
 
-  void showConfirmBookingPublic(AvailableTransport transport, DateTime startDate, TimeOfDay departureTime) {
+  void showConfirmBookingPublic(AvailableTransport transport,
+      DateTime startDate, TimeOfDay departureTime) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -871,7 +874,8 @@ class _CustomerTransportationState
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
-              title: Text('Confirm booking for $transport at ${departureTime.format(context)}?'),
+              title: Text(
+                  'Confirm booking for $transport at ${departureTime.format(context)}?'),
               onTap: () {
                 // continue with booking
                 Navigator.pop(context);
@@ -1170,16 +1174,23 @@ class _CustomerTransportationState
     return allDateTimeRanges;
   }
 
-  void showConfirmBooking2(AvailableTransport transport, DateTime startDate, DateTime endDate, TimeOfDay startTime, TimeOfDay endTime, String typeOfTrip) {
+  void showConfirmBooking2(
+      AvailableTransport transport,
+      DateTime startDate,
+      DateTime endDate,
+      TimeOfDay startTime,
+      TimeOfDay endTime,
+      String typeOfTrip) {
     showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        num guests = 0;
-        num luggage = 0;
-        final user = ref.read(userProvider);
+        context: context,
+        // barrierDismissible: false,
+        builder: (context) {
+          num guests = 0;
+          num luggage = 0;
+          final user = ref.read(userProvider);
 
-        TextEditingController phoneNoController = TextEditingController(text: user?.phoneNo);
+          TextEditingController phoneNoController =
+              TextEditingController(text: user?.phoneNo);
           TextEditingController emergencyContactNameController =
               TextEditingController();
           TextEditingController emergencyContactNoController =
@@ -1190,30 +1201,52 @@ class _CustomerTransportationState
           String formattedEndDate = DateFormat('MMMM dd, yyyy').format(endDate);
           if (typeOfTrip == 'One Way Trip') {
             return Dialog.fullscreen(
-              child: StatefulBuilder(
-                builder: (context, setState) {
-                  return confirmOneWay(formattedStartDate, formattedEndDate, transport, guests, luggage, phoneNoController, emergencyContactNameController, emergencyContactNoController, governmentId, startDate, endDate, startTime, endTime, typeOfTrip, user!);
-                }
-              )
-            );
-          }
-          else if (typeOfTrip == 'Two Way Trip') {
+                child: StatefulBuilder(builder: (context, setState) {
+              return confirmOneWay(
+                  formattedStartDate,
+                  formattedEndDate,
+                  transport,
+                  guests,
+                  luggage,
+                  phoneNoController,
+                  emergencyContactNameController,
+                  emergencyContactNoController,
+                  governmentId,
+                  startDate,
+                  endDate,
+                  startTime,
+                  endTime,
+                  typeOfTrip,
+                  user!);
+            }));
+          } else if (typeOfTrip == 'Two Way Trip') {
             return const Dialog.fullscreen();
-          }
-          else {
+          } else {
             return Dialog.fullscreen(
-              child: StatefulBuilder(
-                builder: (context, setState) {
-                  return confirmOneWay(formattedStartDate, formattedEndDate, transport, guests, luggage, phoneNoController, emergencyContactNameController, emergencyContactNoController, governmentId, startDate, endDate, startTime, endTime, typeOfTrip, user!);
-                }
-              )
-            );
+                child: StatefulBuilder(builder: (context, setState) {
+              return confirmOneWay(
+                  formattedStartDate,
+                  formattedEndDate,
+                  transport,
+                  guests,
+                  luggage,
+                  phoneNoController,
+                  emergencyContactNameController,
+                  emergencyContactNoController,
+                  governmentId,
+                  startDate,
+                  endDate,
+                  startTime,
+                  endTime,
+                  typeOfTrip,
+                  user!);
+            }));
           }
-      }
-    );
+        });
   }
 
-  SingleChildScrollView confirmOneWay(String formattedStartDate,
+  SingleChildScrollView confirmOneWay(
+      String formattedStartDate,
       String formattedEndDate,
       AvailableTransport transport,
       num guests,
@@ -1226,144 +1259,117 @@ class _CustomerTransportationState
       DateTime endDate,
       TimeOfDay startTime,
       TimeOfDay endTime,
-      String typeOfTrip, UserModel user) {
-        return SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.only(top:10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppBar(
-                  leading: IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      // q: is there any other way to close the dialog besides popping the context?
-                      // a: no, there isn't
-                      // q: but my goal is to pop only the dialog, but not the actual listing page
-                    }
-                  ),
-                  title: Text(
-                    formattedStartDate,
-                    style: const TextStyle(fontSize: 18)
-                  ),
-                  elevation: 0
+      String typeOfTrip,
+      UserModel user) {
+    return SingleChildScrollView(
+        child: Container(
+      margin: const EdgeInsets.only(top: 10),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        AppBar(
+            leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  context.pop();
+                  // q: is there any other way to close the dialog besides popping the context?
+                  // a: no, there isn't
+                  // q: but my goal is to pop only the dialog, but not the actual listing page
+                }),
+            title:
+                Text(formattedStartDate, style: const TextStyle(fontSize: 18)),
+            elevation: 0),
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(children: [
+              TextFormField(
+                  decoration: InputDecoration(
+                      labelText: 'Number of Guests (Max: ${transport.guests})',
+                      border: const OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: "1"),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    guests = int.tryParse(value) ?? 0;
+                  }),
+              const SizedBox(height: 10),
+              TextFormField(
+                  controller: phoneNoController,
+                  decoration: const InputDecoration(
+                      labelText: 'Phone Number',
+                      border: OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      prefixText: "+63 "),
+                  keyboardType: TextInputType.phone),
+              const SizedBox(height: 10),
+              TextFormField(
+                  controller: emergencyContactNameController,
+                  decoration: const InputDecoration(
+                      labelText: 'Emergency Contact Name',
+                      border: OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: "Lastname Firstname")),
+              const SizedBox(height: 10),
+              Column(children: [
+                CheckboxListTile(
+                  enabled: false,
+                  value: governmentId,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      governmentId = value ?? false;
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Number of Guests (Max: ${transport.guests})',
-                          border: const OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: "1"
-                        ),
-                        keyboardType: TextInputType.number,
-                        onChanged: (value) {
-                          guests = int.tryParse(value) ?? 0;
-                        }
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: phoneNoController,
-                        decoration: const InputDecoration(
-                          labelText: 'Phone Number',
-                          border: OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          prefixText: "+63 "
-                        ),
-                        keyboardType: TextInputType.phone
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: emergencyContactNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Emergency Contact Name',
-                          border: OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: "Lastname Firstname"
-                        )
-                      ),
-                      const SizedBox(height: 10),
-                      Column(
-                        children: [
-                          CheckboxListTile(
-                            enabled: false,
-                            value: governmentId, 
-                            onChanged: (bool? value) {
-                              setState(() {
-                                governmentId = value ?? false;
-                              });     
-                            },
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 16),
-                            child: Text(
-                              'Your Government ID is required as a means to protect cooperatives.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey
-                              )
-                            )
-                          )
-                        ]
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            ListingBookings booking = ListingBookings(
-                              listingId: widget.listing.uid!,
-                              listingTitle: widget.listing.title,
-                              customerName: ref.read(userProvider)!.name,
-                              bookingStatus: "",
-                              price: transport.price,
-                              category: "Transport",
-                              roomId: transport.listingName,
-                              roomUid: transport.uid,
-                              startDate: startDate,
-                              endDate: endDate,
-                              startTime: startTime,
-                              endTime: endTime,
-                              email: "",
-                              governmentId: "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
-                              guests: guests,
-                              customerPhoneNo: phoneNoController.text,
-                              customerId: ref.read(userProvider)!.uid,
-                              emergencyContactName: emergencyContactNameController.text,
-                              emergencyContactNo: emergencyContactNoController.text,
-                              needsContributions: false,
-                              tasks: widget.listing.fixedTasks
-                            );
-            
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog.fullscreen(
+                const Padding(
+                    padding: EdgeInsets.only(left: 16),
+                    child: Text(
+                        'Your Government ID is required as a means to protect cooperatives.',
+                        style: TextStyle(fontSize: 12, color: Colors.grey)))
+              ]),
+              SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        ListingBookings booking = ListingBookings(
+                            listingId: widget.listing.uid!,
+                            listingTitle: widget.listing.title,
+                            customerName: ref.read(userProvider)!.name,
+                            bookingStatus: "",
+                            price: transport.price,
+                            category: "Transport",
+                            roomId: transport.listingName,
+                            roomUid: transport.uid,
+                            startDate: startDate,
+                            endDate: endDate,
+                            startTime: startTime,
+                            endTime: endTime,
+                            email: "",
+                            governmentId:
+                                "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
+                            guests: guests,
+                            customerPhoneNo: phoneNoController.text,
+                            customerId: ref.read(userProvider)!.uid,
+                            emergencyContactName:
+                                emergencyContactNameController.text,
+                            emergencyContactNo:
+                                emergencyContactNoController.text,
+                            needsContributions: false,
+                            tasks: widget.listing.fixedTasks);
+
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog.fullscreen(
                                   child: CustomerTransportCheckout(
-                                    listing: widget.listing,
-                                    transport: transport,
-                                    booking: booking
-                                  )
-                                );
-                              }
-                            );
-                          },
-                          child: const Text('Proceed')
-                        )
-                      )
-                    ]
-                  )
-                )
-                
-              ]
-            ),
-          )
-        );
-      }
+                                      listing: widget.listing,
+                                      transport: transport,
+                                      booking: booking));
+                            });
+                      },
+                      child: const Text('Proceed')))
+            ]))
+      ]),
+    ));
+  }
 
   void showConfirmBooking(
       AvailableTransport transport,
@@ -1381,8 +1387,9 @@ class _CustomerTransportationState
           num guests = 0;
           num luggage = 0;
           final user = ref.read(userProvider);
-          
-          TextEditingController phoneNoController = TextEditingController(text: user?.phoneNo);
+
+          TextEditingController phoneNoController =
+              TextEditingController(text: user?.phoneNo);
           TextEditingController emergencyContactNameController =
               TextEditingController();
           TextEditingController emergencyContactNoController =
@@ -1408,7 +1415,8 @@ class _CustomerTransportationState
                 endDate,
                 startTime,
                 endTime,
-                typeOfTrip, user!);
+                typeOfTrip,
+                user!);
           } else {
             return twoWayTrip(
                 formattedStartDate,
@@ -1424,7 +1432,8 @@ class _CustomerTransportationState
                 endDate,
                 startTime,
                 endTime,
-                typeOfTrip, user!);
+                typeOfTrip,
+                user!);
           }
         });
   }
@@ -1443,7 +1452,8 @@ class _CustomerTransportationState
       DateTime endDate,
       TimeOfDay startTime,
       TimeOfDay endTime,
-      String typeOfTrip, UserModel user) {
+      String typeOfTrip,
+      UserModel user) {
     return DraggableScrollableSheet(
         initialChildSize: 0.75,
         expand: false,
@@ -1586,19 +1596,19 @@ class _CustomerTransportationState
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
-                                        tasks: [], 
-                                        customerId: user.uid, 
-                                        customerName: user.name, 
+                                        tasks: [],
+                                        customerId: user.uid,
+                                        customerName: user.name,
                                         bookingStatus: "Reserved");
                                     showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return Dialog.fullscreen(
-                                          child: CustomerTransportCheckout(
-                                            listing: widget.listing, transport: transport, booking: booking)
-                                        );
-                                      }
-                                    );
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog.fullscreen(
+                                              child: CustomerTransportCheckout(
+                                                  listing: widget.listing,
+                                                  transport: transport,
+                                                  booking: booking));
+                                        });
                                   },
                                   child: const Text('Proceed'),
                                 ))
@@ -1622,7 +1632,8 @@ class _CustomerTransportationState
       DateTime endDate,
       TimeOfDay startTime,
       TimeOfDay endTime,
-      String typeOfTrip, UserModel user) {
+      String typeOfTrip,
+      UserModel user) {
     return DraggableScrollableSheet(
         initialChildSize: 0.75,
         expand: false,
@@ -1690,12 +1701,11 @@ class _CustomerTransportationState
                             TextFormField(
                               controller: phoneNoController,
                               decoration: const InputDecoration(
-                                labelText: 'Phone Number',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                prefix: Text('+63')
-                              ),
+                                  labelText: 'Phone Number',
+                                  border: OutlineInputBorder(),
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  prefix: Text('+63')),
                               keyboardType: TextInputType.phone,
                             ),
                             const SizedBox(height: 10),
@@ -1743,7 +1753,6 @@ class _CustomerTransportationState
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    
                                     ListingBookings booking = ListingBookings(
                                         listingId: widget.listing.uid!,
                                         listingTitle: widget.listing.title,
@@ -1768,20 +1777,20 @@ class _CustomerTransportationState
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
-                                        tasks: [], 
-                                        customerId: user.uid, 
-                                        customerName: user.name, 
+                                        tasks: [],
+                                        customerId: user.uid,
+                                        customerName: user.name,
                                         bookingStatus: 'Reserved');
-                                    
+
                                     showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return Dialog.fullscreen(
-                                          child: CustomerTransportCheckout(
-                                            listing: widget.listing, transport: transport, booking: booking)
-                                        );
-                                      }
-                                    );
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog.fullscreen(
+                                              child: CustomerTransportCheckout(
+                                                  listing: widget.listing,
+                                                  transport: transport,
+                                                  booking: booking));
+                                        });
                                   },
                                   child: const Text('Proceed'),
                                 ))
@@ -1791,28 +1800,23 @@ class _CustomerTransportationState
         });
   }
 
-  void showSelectDate(BuildContext context, List<ListingBookings> bookings, int index) {
+  void showSelectDate(
+      BuildContext context, List<ListingBookings> bookings, int index) {
     DateTime startDate = DateTime.now();
     DateTime endDate = DateTime.now();
 
     showDialog(
-      context: context,
-      builder: (context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Select Date'),
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                Navigator.of(context).pop();
-              }
-            )
-          ),
-          body: const Dialog.fullscreen(
-            child: Column()
-          )
-        );
-      }
-    );
+        context: context,
+        builder: (context) {
+          return Scaffold(
+              appBar: AppBar(
+                  title: const Text('Select Date'),
+                  leading: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      })),
+              body: const Dialog.fullscreen(child: Column()));
+        });
   }
 }
