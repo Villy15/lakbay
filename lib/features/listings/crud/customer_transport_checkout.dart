@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
@@ -113,7 +114,7 @@ class _CustomerTransportCheckoutState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Your trip (${widget.booking.typeOfTrip})',
+                        'Your trip (${widget.listing.type})',
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -301,6 +302,7 @@ class _CustomerTransportCheckoutState
                     ref
                         .read(listingControllerProvider.notifier)
                         .addBooking(updatedBooking, widget.listing, context);
+                    context.pop();
                     // Navigator.pop(context);
                   },
                   child: Text('Confirm and Pay',

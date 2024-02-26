@@ -30,7 +30,6 @@ class _CustomerTransportationState
     extends ConsumerState<CustomerTransportation> {
   List<SizedBox> tabs = [
     const SizedBox(width: 100, child: Tab(child: Text('Details'))),
-    const SizedBox(width: 100, child: Tab(child: Text('Time Slots')))
   ];
 
   @override
@@ -73,61 +72,9 @@ class _CustomerTransportationState
                 body: TabBarView(
                   children: [
                     details(),
-                    // if the type is public, show the timeSlots
-                    if (widget.listing.type == 'Public') ...[timeSlots()]
                 ]))));
   }
 
-  Widget timeSlots() {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: widget.listing.availableTransport!.departureTimes!.length,
-      itemBuilder: ((context, index) {
-        // Get the departure time
-        TimeOfDay departureTime =
-            widget.listing.availableTransport!.departureTimes![index];
-        return Card(
-          elevation: 1.0,
-          margin: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 20, right: 10, top: 10, bottom: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Text(
-                        'Departure Time: ${departureTime.format(context)}',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Center(
-                      child: Text(
-                        'Guest Capacity: ${widget.listing.availableTransport!.guests}',
-                        style: const TextStyle(fontSize: 16),
-                      )
-                    ),
-                    const SizedBox(height: 10),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          showConfirmBooking2(widget.listing.availableTransport!, DateTime.now(), DateTime.now(), departureTime, departureTime, 'Public');
-                        },
-                        child: const Text('Book Now'),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      })
-    );
-  }
 
   SingleChildScrollView details() {
     return SingleChildScrollView(
@@ -843,220 +790,55 @@ class _CustomerTransportationState
           ]
           else ... [
             // book now button for public transport
-          Container(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 8.0),
-              child: FilledButton(
-                onPressed: () {
-                  
-                },
-                child: const Text('Add this to current trip')
+            Container(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 8.0),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height / 15,
+                  width: MediaQuery.of(context).size.width / 2.3,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // show the departure times for the public transport
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Departure Times'),
+                            content: SizedBox(
+                              height: MediaQuery.sizeOf(context).height / 2.7,
+                              width: MediaQuery.sizeOf(context).width / 1.5,
+                              child: Column(
+                                children: widget.listing.availableTransport!.departureTimes!
+                                    .map((time) => ListTile(
+                                      title: Text(time.format(context)),
+                                      subtitle: Text("Guest Capacity: ${widget.listing.availableTransport!.guests.toString()}"),
+                                      onTap: () {
+                                        // Continue with booking
+                                        Navigator.pop(context, time);
+                                      },
+                                    ))
+                                    .toList(),
+                              ),
+                            ),
+                          );
+                        },
+                      ).then((value) {
+                        // pass the selected departure time to the showConfirmBookingPublic function
+                        showConfirmBooking(widget.listing.availableTransport!, DateTime.now(), DateTime.now(), value, value, 'Public');                      
+                      },);
+                    },
+                    child: const Text('Book Now')
+                  )
+                )
               )
             )
-          )
           ]
 
           
         ],
       ),
     ]));
-  }
-
-  void showConfirmBookingPublic(AvailableTransport transport, DateTime startDate, TimeOfDay departureTime) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              title: Text('Confirm booking for $transport at ${departureTime.format(context)}?'),
-              onTap: () {
-                // continue with booking
-                Navigator.pop(context);
-                context.push(
-                  '/market/${widget.listing.category}/transport_checkout',
-                  extra: {
-                    'listing': widget.listing,
-                    'transport': transport,
-                    'startDate': startDate,
-                    'departureTime': departureTime,
-                  },
-                );
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget bookings() {
-    return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
-        data: (List<ListingBookings> bookings) {
-          // get personal information (name) from listing's userId via userProvider
-          return ListView.builder(
-              shrinkWrap: true,
-              itemCount: bookings.length,
-              itemBuilder: ((context, index) {
-                if (bookings[index].typeOfTrip == 'Two Way Trip') {
-                  String formattedStartDate =
-                      DateFormat('MMMM dd').format(bookings[index].startDate!);
-                  String formattedStartTime =
-                      bookings[index].startTime!.format(context);
-                  String formattedEndTime =
-                      bookings[index].endTime!.format(context);
-                  String formattedEndDate =
-                      DateFormat('MMMM dd').format(bookings[index].endDate!);
-
-                  debugPrint(
-                      'this is the formatted end date : $formattedEndDate');
-
-                  return Card(
-                      elevation: 1.0,
-                      margin: const EdgeInsets.all(8.0),
-                      child: Column(children: [
-                        Padding(
-                            padding: const EdgeInsets.only(
-                                left: 20, right: 10, top: 10, bottom: 10),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Center(
-                                      child: Text(
-                                    '${bookings[index].typeOfTrip}',
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                formattedStartDate,
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                "Departure Time: $formattedStartTime",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 20),
-                                              Text(
-                                                formattedEndDate,
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                "Departure Time: $formattedEndTime",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                            ])
-                                      ])
-                                ])),
-                        Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  context.push(
-                                    '/market/${bookings[index].category}/booking_details',
-                                    extra: {
-                                      'booking': bookings[index],
-                                      'listing': widget.listing
-                                    },
-                                  );
-                                },
-                                child: const Text('Booking Details')))
-                      ]));
-                } else {
-                  debugPrint(
-                      'this is the type of trip: ${bookings[index].typeOfTrip}');
-                  String formattedStartDate =
-                      DateFormat('MMMM dd').format(bookings[index].startDate!);
-                  String formattedStartTime =
-                      bookings[index].startTime!.format(context);
-
-                  return Card(
-                      elevation: 1.0,
-                      margin: const EdgeInsets.all(8.0),
-                      child: Column(children: [
-                        Padding(
-                            padding: const EdgeInsets.only(
-                                left: 20, right: 10, top: 10, bottom: 10),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Center(
-                                      child: Text(
-                                    '${bookings[index].typeOfTrip}',
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                formattedStartDate,
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                "Departure Time: $formattedStartTime",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 20),
-                                            ])
-                                      ])
-                                ])),
-                        Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  context.push(
-                                    '/market/${bookings[index].category}/booking_details',
-                                    extra: {
-                                      'booking': bookings[index],
-                                      'listing': widget.listing
-                                    },
-                                  );
-                                },
-                                child: const Text('Booking Details')))
-                      ]));
-                }
-              }));
-        },
-        error: ((error, stackTrace) => Scaffold(
-            body: ErrorText(
-                error: error.toString(), stackTrace: stackTrace.toString()))),
-        loading: () => const Scaffold(body: Loader()));
   }
 
   bool isOverlapping(
@@ -1170,7 +952,7 @@ class _CustomerTransportationState
     return allDateTimeRanges;
   }
 
-  void showConfirmBooking2(AvailableTransport transport, DateTime startDate, DateTime endDate, TimeOfDay startTime, TimeOfDay endTime, String typeOfTrip) {
+  void showConfirmBooking(AvailableTransport transport, DateTime startDate, DateTime endDate, TimeOfDay startTime, TimeOfDay endTime, String typeOfTrip) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -1198,7 +980,13 @@ class _CustomerTransportationState
             );
           }
           else if (typeOfTrip == 'Two Way Trip') {
-            return const Dialog.fullscreen();
+            return Dialog.fullscreen(
+              child: StatefulBuilder(
+                builder: ((context, setState) {
+                  return confirmTwoWay(formattedStartDate, formattedEndDate, transport, guests, luggage, phoneNoController, emergencyContactNameController, emergencyContactNoController, governmentId, startDate, endDate, startTime, endTime, typeOfTrip, user!);   
+                })
+              )
+            ); 
           }
           else {
             return Dialog.fullscreen(
@@ -1213,7 +1001,7 @@ class _CustomerTransportationState
     );
   }
 
-  SingleChildScrollView confirmOneWay(String formattedStartDate,
+  SingleChildScrollView confirmTwoWay(String formattedStartDate,
       String formattedEndDate,
       AvailableTransport transport,
       num guests,
@@ -1237,14 +1025,11 @@ class _CustomerTransportationState
                   leading: IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () {
-                      Navigator.of(context).pop();
-                      // q: is there any other way to close the dialog besides popping the context?
-                      // a: no, there isn't
-                      // q: but my goal is to pop only the dialog, but not the actual listing page
+                      context.pop();
                     }
                   ),
                   title: Text(
-                    formattedStartDate,
+                    '$formattedStartDate and $formattedEndDate',
                     style: const TextStyle(fontSize: 18)
                   ),
                   elevation: 0
@@ -1263,6 +1048,19 @@ class _CustomerTransportationState
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
                           guests = int.tryParse(value) ?? 0;
+                        }
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Number of Luggages (Max: ${transport.luggage})',
+                          border: const OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: "1"
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          luggage = int.tryParse(value) ?? 0;
                         }
                       ),
                       const SizedBox(height: 10),
@@ -1291,7 +1089,8 @@ class _CustomerTransportationState
                         children: [
                           CheckboxListTile(
                             enabled: false,
-                            value: governmentId, 
+                            value: governmentId,
+                            title: const Text("Government ID"), 
                             onChanged: (bool? value) {
                               setState(() {
                                 governmentId = value ?? false;
@@ -1365,72 +1164,7 @@ class _CustomerTransportationState
         );
       }
 
-  void showConfirmBooking(
-      AvailableTransport transport,
-      DateTime startDate,
-      DateTime endDate,
-      TimeOfDay startTime,
-      TimeOfDay endTime,
-      String typeOfTrip) {
-    showModalBottomSheet(
-        backgroundColor: Colors.white,
-        showDragHandle: true,
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) {
-          num guests = 0;
-          num luggage = 0;
-          final user = ref.read(userProvider);
-          
-          TextEditingController phoneNoController = TextEditingController(text: user?.phoneNo);
-          TextEditingController emergencyContactNameController =
-              TextEditingController();
-          TextEditingController emergencyContactNoController =
-              TextEditingController();
-          bool governmentId = true;
-          String formattedStartDate =
-              DateFormat('MMMM dd, yyyy').format(startDate);
-          String formattedEndDate = DateFormat('MMMM dd, yyyy').format(endDate);
-
-          if (typeOfTrip == 'One Way Trip') {
-            debugPrint('this is the end date: $endDate');
-            return oneWayTrip(
-                formattedStartDate,
-                formattedEndDate,
-                transport,
-                guests,
-                luggage,
-                phoneNoController,
-                emergencyContactNameController,
-                emergencyContactNoController,
-                governmentId,
-                startDate,
-                endDate,
-                startTime,
-                endTime,
-                typeOfTrip, user!);
-          } else {
-            return twoWayTrip(
-                formattedStartDate,
-                formattedEndDate,
-                transport,
-                guests,
-                luggage,
-                phoneNoController,
-                emergencyContactNameController,
-                emergencyContactNoController,
-                governmentId,
-                startDate,
-                endDate,
-                startTime,
-                endTime,
-                typeOfTrip, user!);
-          }
-        });
-  }
-
-  DraggableScrollableSheet oneWayTrip(
-      String formattedStartDate,
+  SingleChildScrollView confirmOneWay(String formattedStartDate,
       String formattedEndDate,
       AvailableTransport transport,
       num guests,
@@ -1444,375 +1178,154 @@ class _CustomerTransportationState
       TimeOfDay startTime,
       TimeOfDay endTime,
       String typeOfTrip, UserModel user) {
-    return DraggableScrollableSheet(
-        initialChildSize: 0.75,
-        expand: false,
-        builder: (context, scrollController) {
-          return StatefulBuilder(builder: (context, setState) {
-            return SingleChildScrollView(
-                controller: scrollController,
-                child: Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: DisplayText(
-                                  text: typeOfTrip,
-                                  lines: 1,
-                                  style: const TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            const SizedBox(height: 10),
-                            Center(
-                              child: DisplayText(
-                                  text: formattedStartDate,
-                                  lines: 1,
-                                  style: const TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 12,
-                                  )),
-                            ),
-                            SizedBox(
-                                height: MediaQuery.sizeOf(context).height / 20),
-                            TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Number of Guests',
-                                  border: const OutlineInputBorder(),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  hintText: transport.guests.toString(),
-                                ),
-                                keyboardType: TextInputType.number,
-                                onChanged: (value) {
-                                  guests = int.tryParse(value) ?? 0;
-                                }),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Number of Luggages',
-                                  border: const OutlineInputBorder(),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  hintText: transport.luggage.toString(),
-                                ),
-                                keyboardType: TextInputType.number,
-                                onChanged: (value) {
-                                  luggage = int.tryParse(value) ?? 0;
-                                }),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: phoneNoController,
-                              decoration: const InputDecoration(
-                                labelText: 'Phone Number',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                hintText: '+63',
-                              ),
-                              keyboardType: TextInputType.phone,
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                                controller: emergencyContactNameController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Emergency Contact Name',
-                                  border: OutlineInputBorder(),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  hintText: 'Lastname Firstname',
-                                )),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                                controller: emergencyContactNoController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Emergency Contact Number',
-                                  border: OutlineInputBorder(),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  hintText: '+63',
-                                ),
-                                keyboardType: TextInputType.phone),
-                            const SizedBox(height: 10),
-                            Column(children: [
-                              CheckboxListTile(
-                                  enabled: false,
-                                  title: const Text("Government ID"),
-                                  value: governmentId,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      governmentId = value ?? false;
-                                    });
-                                  },
-                                  controlAffinity:
-                                      ListTileControlAffinity.leading),
-                              const Padding(
-                                  padding: EdgeInsets.only(left: 16),
-                                  child: Text(
-                                      "Your Government ID is required as a means to protect cooperatives from fraud and to ensure the safety of all guests.",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey)))
-                            ]),
-                            SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    ListingBookings booking = ListingBookings(
-                                        listingId: widget.listing.uid!,
-                                        listingTitle: widget.listing.title,
-                                        price: transport.price,
-                                        roomId: widget.listing.title,
-                                        category: "Transport",
-                                        startDate: startDate,
-                                        endDate: endDate,
-                                        startTime: startTime,
-                                        endTime: endTime,
-                                        email: "",
-                                        governmentId:
-                                            "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
-                                        guests: guests,
-                                        luggage: luggage,
-                                        customerPhoneNo: phoneNoController.text,
-                                        emergencyContactName:
-                                            emergencyContactNameController.text,
-                                        emergencyContactNo:
-                                            emergencyContactNoController.text,
-                                        needsContributions: false,
-                                        totalPrice: transport.price * guests,
-                                        typeOfTrip: typeOfTrip,
-                                        expenses: [],
-                                        tasks: [], 
-                                        customerId: user.uid, 
-                                        customerName: user.name, 
-                                        bookingStatus: "Reserved");
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return Dialog.fullscreen(
-                                          child: CustomerTransportCheckout(
-                                            listing: widget.listing, transport: transport, booking: booking)
-                                        );
-                                      }
-                                    );
-                                  },
-                                  child: const Text('Proceed'),
-                                ))
-                          ],
-                        ))));
-          });
-        });
-  }
-
-  DraggableScrollableSheet twoWayTrip(
-      String formattedStartDate,
-      String formattedEndDate,
-      AvailableTransport transport,
-      num guests,
-      num luggage,
-      TextEditingController phoneNoController,
-      TextEditingController emergencyContactNameController,
-      TextEditingController emergencyContactNoController,
-      bool governmentId,
-      DateTime startDate,
-      DateTime endDate,
-      TimeOfDay startTime,
-      TimeOfDay endTime,
-      String typeOfTrip, UserModel user) {
-    return DraggableScrollableSheet(
-        initialChildSize: 0.75,
-        expand: false,
-        builder: (context, scrollController) {
-          return StatefulBuilder(builder: (context, setState) {
-            return SingleChildScrollView(
-                controller: scrollController,
-                child: Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: DisplayText(
-                                text: typeOfTrip,
-                                lines: 1,
-                                style: const TextStyle(
-                                    fontSize: 22, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('$formattedStartDate and ',
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontStyle: FontStyle.italic)),
-                                  const SizedBox(height: 4),
-                                  Text(formattedEndDate,
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontStyle: FontStyle.italic)),
-                                ]),
-                            SizedBox(
-                                height: MediaQuery.sizeOf(context).height / 20),
-                            TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Number of Guests',
-                                  border: const OutlineInputBorder(),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  hintText: transport.guests.toString(),
-                                ),
-                                keyboardType: TextInputType.number,
-                                onChanged: (value) {
-                                  guests = int.tryParse(value) ?? 0;
-                                }),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Number of Luggages',
-                                  border: const OutlineInputBorder(),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  hintText: transport.luggage.toString(),
-                                ),
-                                keyboardType: TextInputType.number,
-                                onChanged: (value) {
-                                  luggage = int.tryParse(value) ?? 0;
-                                }),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: phoneNoController,
-                              decoration: const InputDecoration(
-                                labelText: 'Phone Number',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                prefix: Text('+63')
-                              ),
-                              keyboardType: TextInputType.phone,
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                                controller: emergencyContactNameController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Emergency Contact Name',
-                                  border: OutlineInputBorder(),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  hintText: 'Lastname Firstname',
-                                )),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                                controller: emergencyContactNoController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Emergency Contact Number',
-                                  border: OutlineInputBorder(),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  hintText: '+63',
-                                ),
-                                keyboardType: TextInputType.phone),
-                            const SizedBox(height: 10),
-                            Column(children: [
-                              CheckboxListTile(
-                                  enabled: false,
-                                  title: const Text("Government ID"),
-                                  value: governmentId,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      governmentId = value ?? false;
-                                    });
-                                  },
-                                  controlAffinity:
-                                      ListTileControlAffinity.leading),
-                              const Padding(
-                                  padding: EdgeInsets.only(left: 16),
-                                  child: Text(
-                                      "Your Government ID is required as a means to protect cooperatives from fraud and to ensure the safety of all guests.",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey)))
-                            ]),
-                            SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    
-                                    ListingBookings booking = ListingBookings(
-                                        listingId: widget.listing.uid!,
-                                        listingTitle: widget.listing.title,
-                                        price: transport.price,
-                                        roomId: widget.listing.title,
-                                        category: "Transport",
-                                        startDate: startDate,
-                                        endDate: endDate,
-                                        startTime: startTime,
-                                        endTime: endTime,
-                                        email: "",
-                                        governmentId:
-                                            "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
-                                        guests: guests,
-                                        luggage: luggage,
-                                        customerPhoneNo: phoneNoController.text,
-                                        emergencyContactName:
-                                            emergencyContactNameController.text,
-                                        emergencyContactNo:
-                                            emergencyContactNoController.text,
-                                        needsContributions: false,
-                                        totalPrice: transport.price * guests,
-                                        typeOfTrip: typeOfTrip,
-                                        expenses: [],
-                                        tasks: [], 
-                                        customerId: user.uid, 
-                                        customerName: user.name, 
-                                        bookingStatus: 'Reserved');
-                                    
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return Dialog.fullscreen(
-                                          child: CustomerTransportCheckout(
-                                            listing: widget.listing, transport: transport, booking: booking)
-                                        );
-                                      }
-                                    );
-                                  },
-                                  child: const Text('Proceed'),
-                                ))
-                          ],
-                        ))));
-          });
-        });
-  }
-
-  void showSelectDate(BuildContext context, List<ListingBookings> bookings, int index) {
-    DateTime startDate = DateTime.now();
-    DateTime endDate = DateTime.now();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Select Date'),
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                Navigator.of(context).pop();
-              }
-            )
-          ),
-          body: const Dialog.fullscreen(
-            child: Column()
+        return SingleChildScrollView(
+          child: Container(
+            margin: const EdgeInsets.only(top:10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppBar(
+                  leading: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      context.pop();
+                    }
+                  ),
+                  title: Text(
+                    formattedStartDate,
+                    style: const TextStyle(fontSize: 18)
+                  ),
+                  elevation: 0
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Number of Guests (Max: ${transport.guests})',
+                          border: const OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: "1"
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          guests = int.tryParse(value) ?? 0;
+                        }
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Number of Luggages (Max: ${transport.luggage})',
+                          border: const OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: "1"
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          luggage = int.tryParse(value) ?? 0;
+                        }
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: phoneNoController,
+                        decoration: const InputDecoration(
+                          labelText: 'Phone Number',
+                          border: OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          prefixText: "+63 "
+                        ),
+                        keyboardType: TextInputType.phone
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: emergencyContactNameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Emergency Contact Name',
+                          border: OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: "Lastname Firstname"
+                        )
+                      ),
+                      const SizedBox(height: 10),
+                      Column(
+                        children: [
+                          CheckboxListTile(
+                            enabled: false,
+                            value: governmentId,
+                            title: const Text("Government ID"), 
+                            onChanged: (bool? value) {
+                              setState(() {
+                                governmentId = value ?? false;
+                              });     
+                            },
+                            controlAffinity: ListTileControlAffinity.leading,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 16),
+                            child: Text(
+                              'Your Government ID is required as a means to protect cooperatives.',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey
+                              )
+                            )
+                          )
+                        ]
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            ListingBookings booking = ListingBookings(
+                              listingId: widget.listing.uid!,
+                              listingTitle: widget.listing.title,
+                              customerName: ref.read(userProvider)!.name,
+                              bookingStatus: "",
+                              price: transport.price,
+                              category: "Transport",
+                              roomId: transport.listingName,
+                              roomUid: transport.uid,
+                              startDate: startDate,
+                              endDate: endDate,
+                              startTime: startTime,
+                              endTime: endTime,
+                              email: "",
+                              governmentId: "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
+                              guests: guests,
+                              customerPhoneNo: phoneNoController.text,
+                              customerId: ref.read(userProvider)!.uid,
+                              emergencyContactName: emergencyContactNameController.text,
+                              emergencyContactNo: emergencyContactNoController.text,
+                              needsContributions: false,
+                              tasks: widget.listing.fixedTasks
+                            );
+            
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog.fullscreen(
+                                  child: CustomerTransportCheckout(
+                                    listing: widget.listing,
+                                    transport: transport,
+                                    booking: booking
+                                  )
+                                );
+                              }
+                            );
+                          },
+                          child: const Text('Proceed')
+                        )
+                      )
+                    ]
+                  )
+                )
+                
+              ]
+            ),
           )
         );
       }
-    );
-  }
+
+  
 }
