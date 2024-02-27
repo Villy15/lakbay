@@ -388,8 +388,8 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                                   ? NetworkImage(data.imageUrl!)
                                   // Use placeholder image if user has no profile pic
                                   : const AssetImage(
-                                          'lib/core/images/default_profile_pic.jpg')
-                                      as ImageProvider,
+                                      'lib/core/images/default_profile_pic.jpg',
+                                    ) as ImageProvider,
                               backgroundColor: Colors.transparent,
                             ),
                             onTap: () => {},

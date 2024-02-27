@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,6 +36,13 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
     const SizedBox(
       width: 100.0,
       child: Tab(
+        // icon: Icon(Icons.meeting_room_outlined),
+        child: Text('Bookings'),
+      ),
+    ),
+    const SizedBox(
+      width: 100.0,
+      child: Tab(
         // icon: Icon(Icons.location_pin),
         child: Text('Destination'),
       ),
@@ -44,13 +52,6 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
       child: Tab(
         // icon: Icon(Icons.meeting_room_outlined),
         child: Text('Rooms'),
-      ),
-    ),
-    const SizedBox(
-      width: 100.0,
-      child: Tab(
-        // icon: Icon(Icons.meeting_room_outlined),
-        child: Text('Bookings'),
       ),
     ),
   ];
@@ -993,9 +994,9 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
             appBar: _appBar(widget.listing.title, context),
             body: TabBarView(
               children: [
+                bookings(),
                 isLoading ? const Loader() : destination(planUid),
                 rooms(),
-                bookings(),
               ],
             ),
           ),
