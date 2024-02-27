@@ -506,7 +506,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ListingBookingsImpl implements _ListingBookings {
+class _$ListingBookingsImpl extends _ListingBookings {
   _$ListingBookingsImpl(
       {this.amountPaid,
       required this.customerId,
@@ -541,7 +541,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
       @TimeOfDayConverter() this.startTime,
       @TimeOfDayConverter() this.endTime})
       : _expenses = expenses,
-        _tasks = tasks;
+        _tasks = tasks,
+        super._();
 
   factory _$ListingBookingsImpl.fromJson(Map<String, dynamic> json) =>
       _$$ListingBookingsImplFromJson(json);
@@ -750,7 +751,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
   }
 }
 
-abstract class _ListingBookings implements ListingBookings {
+abstract class _ListingBookings extends ListingBookings {
   factory _ListingBookings(
       {final num? amountPaid,
       required final String customerId,
@@ -784,6 +785,7 @@ abstract class _ListingBookings implements ListingBookings {
       final String? typeOfTrip,
       @TimeOfDayConverter() final TimeOfDay? startTime,
       @TimeOfDayConverter() final TimeOfDay? endTime}) = _$ListingBookingsImpl;
+  _ListingBookings._() : super._();
 
   factory _ListingBookings.fromJson(Map<String, dynamic> json) =
       _$ListingBookingsImpl.fromJson;
