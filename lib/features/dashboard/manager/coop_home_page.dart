@@ -5,10 +5,12 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/calendar/components/booking_card.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
+import 'package:lakbay/features/cooperatives/my_coop/components/announcement_card.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/tasks/tasks_controller.dart';
 import 'package:lakbay/features/tasks/widgets/today_task_card.dart';
+import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 
 class TodayPage extends ConsumerStatefulWidget {
   const TodayPage({super.key});
@@ -18,6 +20,23 @@ class TodayPage extends ConsumerStatefulWidget {
 }
 
 class _TodayPageState extends ConsumerState<TodayPage> {
+  late List<CoopAnnouncements> coopAnnouncements;
+
+  @override
+  void initState() {
+    super.initState();
+    coopAnnouncements = [
+      CoopAnnouncements(
+        title:
+            'Cooperative Partners with [Coop_Name] Cooperative for Sustainable Tourism',
+        description:
+            'We\'re excited to announce a partnership with [Coop_Name] to promote eco-conscious travel practices. Get access to training resources, best practices, and potential funding.',
+        timestamp: DateTime.now(),
+        category: 'Sustainability',
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
@@ -101,18 +120,20 @@ class _TodayPageState extends ConsumerState<TodayPage> {
               const SizedBox(height: 16),
 
               // Wide button to show Show All Bookings
-              Center(
+              Align(
+                  alignment: Alignment.centerLeft,
                   child: FilledButton(
-                onPressed: () {},
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.tour_outlined),
-                    SizedBox(width: 10),
-                    Text('Show All bookings'),
-                  ],
-                ),
-              )),
+                    onPressed: () {},
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.tour_outlined),
+                        SizedBox(width: 10),
+                        Text('Show All bookings'),
+                      ],
+                    ),
+                  )),
 
               const SizedBox(height: 32),
 
@@ -237,9 +258,25 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                 ),
               ),
               Text(
-                "Announcements",
+                "New Announcements",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
+
+              ListView.separated(
+                separatorBuilder: (context, index) => const Padding(
+                  padding: EdgeInsets.only(bottom: 16.0),
+                ),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: coopAnnouncements.length,
+                itemBuilder: (context, index) {
+                  final announcement = coopAnnouncements[index];
+
+                  return AnnouncementCard(
+                    announcement: announcement,
+                  );
+                },
+              )
             ],
           ),
         ),
