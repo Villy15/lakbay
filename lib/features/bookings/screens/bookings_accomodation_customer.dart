@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -56,9 +55,17 @@ class _BookingsAccomodationCustomerState
                     "icon": Icons.location_on_outlined,
                     "title": "View Listing",
                     "action": () {
-                      context.push(
-                          "/market/${widget.listing.category.toLowerCase()}",
-                          extra: widget.listing);
+                      context
+                          .push(
+                        "/market/${widget.listing.category.toLowerCase()}",
+                        extra: widget.listing,
+                      )
+                          .then(
+                        (value) {
+                          debugPrint("Popped");
+                          // ref.read(navBarVisibilityProvider.notifier).show();
+                        },
+                      );
                     },
                   },
                   "message": {
@@ -99,6 +106,7 @@ class _BookingsAccomodationCustomerState
                       icon: const Icon(Icons.arrow_back),
                       onPressed: () {
                         context.pop();
+                        // ref.read(navBarVisibilityProvider.notifier).show();
                       },
                     ),
                   ),

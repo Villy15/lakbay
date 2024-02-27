@@ -14,6 +14,7 @@ import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
+import 'package:lakbay/models/subcollections/coop_goals_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
 class MyCoopPage extends ConsumerStatefulWidget {
@@ -26,6 +27,7 @@ class MyCoopPage extends ConsumerStatefulWidget {
 
 class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   late List<CoopAnnouncements> coopAnnouncements;
+  late List<CoopGoals> coopGoals;
 
   @override
   void initState() {
@@ -66,6 +68,46 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
             'Congratulations to [Business Name] for their recognition at the [award name]! Their commitment to quality tourism strengthens our community.',
         timestamp: DateTime.now().subtract(const Duration(days: 5)),
         category: 'Member News',
+      ),
+    ];
+
+    coopGoals = [
+      CoopGoals(
+        title: 'Sustainable Tourism Certification',
+        description:
+            'We aim to have 100% of our members certified in sustainable tourism practices by the end of the year.',
+        targetDate: DateTime.now().add(const Duration(days: 365)),
+        category: 'Sustainability',
+        metrics: ['Number of members certified'],
+      ),
+
+      // New Goal Examples:
+
+      CoopGoals(
+        title: 'Local Food Promotion',
+        description:
+            'Increase the number of local food options in our member restaurants by 20% by the end of the year.',
+        targetDate: DateTime.now().add(const Duration(days: 365)),
+        category: 'Sustainability',
+        metrics: ['Number of new menu items'],
+      ),
+
+      CoopGoals(
+        title: 'Tourism Job Fair',
+        description:
+            'Host a job fair to connect local residents with tourism businesses in our community.',
+        targetDate: DateTime.now().add(const Duration(days: 90)),
+        category: 'Community',
+        metrics: ['Number of attendees', 'Number of businesses'],
+      ),
+
+      CoopGoals(
+        title: 'Local Artisan Market',
+        description:
+            'Organize a monthly market to showcase local crafts and products.',
+        targetDate: DateTime.now().add(const Duration(days: 30)),
+        category: 'Community',
+        metrics: ['Number of vendors', 'Number of attendees'],
       ),
     ];
   }
@@ -166,23 +208,9 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                     child: TabBarView(
                       children: [
                         // Announcements
-                        ListView.separated(
-                          separatorBuilder: (context, index) => const Padding(
-                            padding: EdgeInsets.only(bottom: 16.0),
-                          ),
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: coopAnnouncements.length,
-                          itemBuilder: (context, index) {
-                            final announcement = coopAnnouncements[index];
+                        _coopAnnouncements(),
 
-                            return AnnouncementCard(
-                              announcement: announcement,
-                            );
-                          },
-                        ),
-                        buildListViewEvents(
-                            ref.watch(getEventsByCoopIdProvider(coop.uid!))),
+                        _coopAnnouncements(),
 
                         buildListViewEvents(
                             ref.watch(getEventsByCoopIdProvider(coop.uid!))),
@@ -203,6 +231,24 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
             body: Loader(),
           ),
         );
+  }
+
+  ListView _coopAnnouncements() {
+    return ListView.separated(
+      separatorBuilder: (context, index) => const Padding(
+        padding: EdgeInsets.only(bottom: 16.0),
+      ),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: coopAnnouncements.length,
+      itemBuilder: (context, index) {
+        final announcement = coopAnnouncements[index];
+
+        return AnnouncementCard(
+          announcement: announcement,
+        );
+      },
+    );
   }
 
   // Build Events
