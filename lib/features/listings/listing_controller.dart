@@ -99,10 +99,9 @@ final getBookingTasksByBookingId = StreamProvider.autoDispose
 
 // getBookingTasksByMemberId
 final getBookingTasksByMemberId = StreamProvider.autoDispose
-    .family<List<BookingTask>, (String listingId, String memberId)>(
-        (ref, params) {
+    .family<List<BookingTask>, String>((ref, memberId) {
   final listingController = ref.watch(listingControllerProvider.notifier);
-  return listingController.getBookingTasksByMemberId(params.$1, params.$2);
+  return listingController.getBookingTasksByMemberId(memberId);
 });
 
 // getRoomByIdProvider
@@ -221,6 +220,9 @@ class ListingController extends StateNotifier<bool> {
       (bookingUid) async {
         state = false;
         booking.tasks?.forEach((element) {
+          if (booking.category == "Accommodation") {
+            element = element.copyWith(roomId: booking.roomId);
+          }
           _ref
               .read(listingControllerProvider.notifier)
               .addBookingTask(context, listing.uid!, element);
@@ -341,9 +343,8 @@ class ListingController extends StateNotifier<bool> {
   }
 
   // Read bookingTasks by memberId
-  Stream<List<BookingTask>> getBookingTasksByMemberId(
-      String listingId, String memberId) {
-    return _listingRepository.readBookingTasksByMemberId(listingId, memberId);
+  Stream<List<BookingTask>> getBookingTasksByMemberId(String memberId) {
+    return _listingRepository.readBookingTasksByMemberId(memberId);
   }
 
   // Read all listings

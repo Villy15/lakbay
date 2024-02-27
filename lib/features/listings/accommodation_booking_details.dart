@@ -921,6 +921,7 @@ class _AccommodationBookingsDetailsState
                           ElevatedButton(
                               onPressed: () {
                                 BookingTask bookingTask = BookingTask(
+                                    listingName: widget.listing.title,
                                     assignedIds: assignedIds,
                                     assignedNames: assignedNames,
                                     committee: committeeController.text,

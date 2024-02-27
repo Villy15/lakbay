@@ -1022,6 +1022,8 @@ BookingTask _$BookingTaskFromJson(Map<String, dynamic> json) {
 mixin _$BookingTask {
   String? get uid => throw _privateConstructorUsedError;
   String? get bookingId => throw _privateConstructorUsedError;
+  String get listingName => throw _privateConstructorUsedError;
+  String? get roomId => throw _privateConstructorUsedError;
   List<String> get assignedIds => throw _privateConstructorUsedError;
   List<String> get assignedNames => throw _privateConstructorUsedError;
   String get committee => throw _privateConstructorUsedError;
@@ -1045,6 +1047,8 @@ abstract class $BookingTaskCopyWith<$Res> {
   $Res call(
       {String? uid,
       String? bookingId,
+      String listingName,
+      String? roomId,
       List<String> assignedIds,
       List<String> assignedNames,
       String committee,
@@ -1069,6 +1073,8 @@ class _$BookingTaskCopyWithImpl<$Res, $Val extends BookingTask>
   $Res call({
     Object? uid = freezed,
     Object? bookingId = freezed,
+    Object? listingName = null,
+    Object? roomId = freezed,
     Object? assignedIds = null,
     Object? assignedNames = null,
     Object? committee = null,
@@ -1085,6 +1091,14 @@ class _$BookingTaskCopyWithImpl<$Res, $Val extends BookingTask>
       bookingId: freezed == bookingId
           ? _value.bookingId
           : bookingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingName: null == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String,
+      roomId: freezed == roomId
+          ? _value.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
               as String?,
       assignedIds: null == assignedIds
           ? _value.assignedIds
@@ -1129,6 +1143,8 @@ abstract class _$$BookingTaskImplCopyWith<$Res>
   $Res call(
       {String? uid,
       String? bookingId,
+      String listingName,
+      String? roomId,
       List<String> assignedIds,
       List<String> assignedNames,
       String committee,
@@ -1151,6 +1167,8 @@ class __$$BookingTaskImplCopyWithImpl<$Res>
   $Res call({
     Object? uid = freezed,
     Object? bookingId = freezed,
+    Object? listingName = null,
+    Object? roomId = freezed,
     Object? assignedIds = null,
     Object? assignedNames = null,
     Object? committee = null,
@@ -1167,6 +1185,14 @@ class __$$BookingTaskImplCopyWithImpl<$Res>
       bookingId: freezed == bookingId
           ? _value.bookingId
           : bookingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingName: null == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String,
+      roomId: freezed == roomId
+          ? _value.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
               as String?,
       assignedIds: null == assignedIds
           ? _value._assignedIds
@@ -1206,6 +1232,8 @@ class _$BookingTaskImpl implements _BookingTask {
   _$BookingTaskImpl(
       {this.uid,
       this.bookingId,
+      required this.listingName,
+      this.roomId,
       required final List<String> assignedIds,
       required final List<String> assignedNames,
       required this.committee,
@@ -1224,6 +1252,10 @@ class _$BookingTaskImpl implements _BookingTask {
   final String? uid;
   @override
   final String? bookingId;
+  @override
+  final String listingName;
+  @override
+  final String? roomId;
   final List<String> _assignedIds;
   @override
   List<String> get assignedIds {
@@ -1261,7 +1293,7 @@ class _$BookingTaskImpl implements _BookingTask {
 
   @override
   String toString() {
-    return 'BookingTask(uid: $uid, bookingId: $bookingId, assignedIds: $assignedIds, assignedNames: $assignedNames, committee: $committee, complete: $complete, openContribution: $openContribution, imageProof: $imageProof, name: $name)';
+    return 'BookingTask(uid: $uid, bookingId: $bookingId, listingName: $listingName, roomId: $roomId, assignedIds: $assignedIds, assignedNames: $assignedNames, committee: $committee, complete: $complete, openContribution: $openContribution, imageProof: $imageProof, name: $name)';
   }
 
   @override
@@ -1272,6 +1304,9 @@ class _$BookingTaskImpl implements _BookingTask {
             (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.bookingId, bookingId) ||
                 other.bookingId == bookingId) &&
+            (identical(other.listingName, listingName) ||
+                other.listingName == listingName) &&
+            (identical(other.roomId, roomId) || other.roomId == roomId) &&
             const DeepCollectionEquality()
                 .equals(other._assignedIds, _assignedIds) &&
             const DeepCollectionEquality()
@@ -1293,6 +1328,8 @@ class _$BookingTaskImpl implements _BookingTask {
       runtimeType,
       uid,
       bookingId,
+      listingName,
+      roomId,
       const DeepCollectionEquality().hash(_assignedIds),
       const DeepCollectionEquality().hash(_assignedNames),
       committee,
@@ -1319,6 +1356,8 @@ abstract class _BookingTask implements BookingTask {
   factory _BookingTask(
       {final String? uid,
       final String? bookingId,
+      required final String listingName,
+      final String? roomId,
       required final List<String> assignedIds,
       required final List<String> assignedNames,
       required final String committee,
@@ -1334,6 +1373,10 @@ abstract class _BookingTask implements BookingTask {
   String? get uid;
   @override
   String? get bookingId;
+  @override
+  String get listingName;
+  @override
+  String? get roomId;
   @override
   List<String> get assignedIds;
   @override

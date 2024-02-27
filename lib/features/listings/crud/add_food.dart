@@ -541,6 +541,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
               onPressed: () {
                 this.setState(() {
                   fixedTasks?.add(BookingTask(
+                      listingName: _titleController.text,
                       assignedIds: assignedIds,
                       assignedNames: assignedNames,
                       committee: committeeController.text,

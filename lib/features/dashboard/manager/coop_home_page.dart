@@ -9,6 +9,7 @@ import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/tasks/tasks_controller.dart';
 import 'package:lakbay/features/tasks/widgets/today_task_card.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 class TodayPage extends ConsumerStatefulWidget {
   const TodayPage({super.key});
@@ -154,7 +155,150 @@ class _TodayPageState extends ConsumerState<TodayPage> {
 
               Center(
                 child: FilledButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showModalBottomSheet<void>(
+                      showDragHandle: true,
+                      context: context,
+                      builder: (BuildContext context) {
+                        final user = ref.read(userProvider);
+                        return Consumer(builder: (context, ref, _) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: DraggableScrollableSheet(
+                              builder: (BuildContext context,
+                                  ScrollController scrollController) {
+                                return ref
+                                    .watch(getBookingTasksByMemberId(user!.uid))
+                                    .when(
+                                        data:
+                                            (List<BookingTask>? bookingTasks) {
+                                          Map<String, List<BookingTask>>?
+                                              bookingTasksSorted = {};
+                                          // // Build your list items here
+                                          if (bookingTasks != null) {
+                                            for (BookingTask task
+                                                in bookingTasks) {
+                                              if (bookingTasksSorted
+                                                  .containsKey(
+                                                      task.listingName)) {
+                                                bookingTasksSorted[
+                                                        task.listingName]!
+                                                    .add(task);
+                                              } else {
+                                                bookingTasksSorted[
+                                                    task.listingName] = [task];
+                                              }
+                                            }
+                                          }
+                                          return bookingTasks != null
+                                              ? SizedBox(
+                                                  width: double.infinity,
+                                                  child: Column(
+                                                    children: [
+                                                      ...bookingTasksSorted
+                                                          .entries
+                                                          .map((entry) {
+                                                        return ClipRRect(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                  .only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    20.0),
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    20.0),
+                                                          ),
+                                                          child: Column(
+                                                            children: [
+                                                              Container(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10),
+                                                                height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .height /
+                                                                    10,
+                                                                color: Colors
+                                                                    .grey[350],
+                                                                child: Text(
+                                                                  entry.key,
+                                                                  style: const TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          18,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400),
+                                                                ),
+                                                              ),
+                                                              ListView.builder(
+                                                                  physics:
+                                                                      const NeverScrollableScrollPhysics(),
+                                                                  shrinkWrap:
+                                                                      true,
+                                                                  itemBuilder:
+                                                                      (builder,
+                                                                          index) {
+                                                                    return ListTile(
+                                                                      title:
+                                                                          Text(
+                                                                        entry
+                                                                            .value[index]
+                                                                            .name,
+                                                                        style: const TextStyle(
+                                                                            color: Colors
+                                                                                .black,
+                                                                            fontSize:
+                                                                                18,
+                                                                            fontWeight:
+                                                                                FontWeight.w400),
+                                                                      ),
+                                                                      leading:
+                                                                          const Icon(
+                                                                              Icons.circle),
+                                                                    );
+                                                                  })
+                                                            ],
+                                                          ),
+                                                        );
+                                                      })
+                                                    ],
+                                                  ))
+                                              : const Center(
+                                                  child: Text(
+                                                  "No Tasks Assigned",
+                                                  style: TextStyle(
+                                                      fontSize: 22,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ));
+                                        },
+                                        error: (error, stackTrace) => ErrorText(
+                                              error: error.toString(),
+                                              stackTrace: '',
+                                            ),
+                                        loading: () =>
+                                            const CircularProgressIndicator());
+                              },
+                              initialChildSize:
+                                  0.5, // Initial size of the bottom sheet (0.5 means half the screen height)
+                              minChildSize:
+                                  0.25, // Minimum size of the bottom sheet
+                              maxChildSize:
+                                  0.9, // Maximum size of the bottom sheet
+                              expand:
+                                  true, // Whether the bottom sheet should be expandable
+                            ),
+                          );
+                        });
+                      },
+                    );
+                  },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

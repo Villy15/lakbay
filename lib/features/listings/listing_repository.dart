@@ -259,11 +259,10 @@ class ListingRepository {
   }
 
 // read bookingtask by user id
-  Stream<List<BookingTask>> readBookingTasksByMemberId(
-      String listingId, String userId) {
+  Stream<List<BookingTask>> readBookingTasksByMemberId(String userId) {
     Query query = FirebaseFirestore.instance.collectionGroup('bookingTasks');
     return query
-        .where('assignedId', arrayContains: userId)
+        .where('assignedIds', arrayContains: userId)
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {

@@ -70,6 +70,8 @@ class BookingTask with _$BookingTask {
   factory BookingTask({
     String? uid,
     String? bookingId,
+    required String listingName,
+    String? roomId,
     required List<String> assignedIds,
     required List<String> assignedNames,
     required String committee,

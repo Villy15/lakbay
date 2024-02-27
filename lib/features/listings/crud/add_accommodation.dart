@@ -1552,6 +1552,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
               onPressed: () {
                 this.setState(() {
                   fixedTasks?.add(BookingTask(
+                      listingName: _titleController.text,
                       assignedIds: assignedIds,
                       assignedNames: assignedNames,
                       committee: committeeController.text,

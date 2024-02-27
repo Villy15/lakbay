@@ -119,6 +119,8 @@ _$BookingTaskImpl _$$BookingTaskImplFromJson(Map<String, dynamic> json) =>
     _$BookingTaskImpl(
       uid: json['uid'] as String?,
       bookingId: json['bookingId'] as String?,
+      listingName: json['listingName'] as String,
+      roomId: json['roomId'] as String?,
       assignedIds: (json['assignedIds'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
@@ -138,6 +140,8 @@ Map<String, dynamic> _$$BookingTaskImplToJson(_$BookingTaskImpl instance) =>
     <String, dynamic>{
       'uid': instance.uid,
       'bookingId': instance.bookingId,
+      'listingName': instance.listingName,
+      'roomId': instance.roomId,
       'assignedIds': instance.assignedIds,
       'assignedNames': instance.assignedNames,
       'committee': instance.committee,
