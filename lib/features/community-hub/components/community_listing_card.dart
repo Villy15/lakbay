@@ -33,14 +33,7 @@ class CommunityHubListingCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
-      elevation: 1,
       borderOnForeground: true,
-      // Add a border to the card
-      surfaceTintColor: Theme.of(context).colorScheme.background,
-      // margin: const EdgeInsets.symmetric(
-      //   horizontal: 12.0,
-      //   vertical: 4.0,
-      // ),
       child: ListTile(
         onTap: () {
           onTap(context, ref);

@@ -182,15 +182,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                         itemBuilder: (context, index) {
                           final event = events[index];
                           return Card(
-                            elevation: 1,
                             borderOnForeground: true,
-                            // Add a border to the card
-                            surfaceTintColor:
-                                Theme.of(context).colorScheme.background,
-                            // margin: const EdgeInsets.symmetric(
-                            //   horizontal: 12.0,
-                            //   vertical: 4.0,
-                            // ),
                             child: ListTile(
                               onTap: () {},
                               title: Text(event.name),

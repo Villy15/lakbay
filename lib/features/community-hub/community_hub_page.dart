@@ -111,7 +111,10 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
               itemCount: events.length,
               itemBuilder: (context, index) {
                 final event = events[index];
-                return CommunityHubEventsCard(event: event);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: CommunityHubEventsCard(event: event),
+                );
               },
             );
           },
@@ -144,9 +147,12 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
                     .maybeWhen(
                       data: (List<ListingBookings> bookings) {
                         // Order the listings based on the number of bookings per listings
-                        return CommunityHubListingCard(
-                          listing: listing,
-                          bookings: bookings,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: CommunityHubListingCard(
+                            listing: listing,
+                            bookings: bookings,
+                          ),
                         );
                       },
                       orElse: () => const SizedBox.shrink(),

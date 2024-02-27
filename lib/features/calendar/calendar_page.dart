@@ -225,7 +225,8 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                 return ListView.separated(
                   itemCount: value.length,
                   separatorBuilder: (context, index) => const Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                   ),
                   itemBuilder: (context, index) {
                     final calendarEvent = value[index];
@@ -238,7 +239,8 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                           .when(
                             data: (listing) {
                               return Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: BookingCard(
                                   booking: booking,
                                   listing: listing,

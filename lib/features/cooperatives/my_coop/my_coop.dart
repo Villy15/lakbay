@@ -6,13 +6,14 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/features/cooperatives/my_coop/components/announcement_card.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/events/widgets/event_card.dart';
-import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/listing_card.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
 class MyCoopPage extends ConsumerStatefulWidget {
@@ -24,6 +25,51 @@ class MyCoopPage extends ConsumerStatefulWidget {
 }
 
 class _MyCoopPageState extends ConsumerState<MyCoopPage> {
+  late List<CoopAnnouncements> coopAnnouncements;
+
+  @override
+  void initState() {
+    super.initState();
+    coopAnnouncements = [
+      CoopAnnouncements(
+        title:
+            'Cooperative Partners with [Coop_Name] Cooperative for Sustainable Tourism',
+        description:
+            'We\'re excited to announce a partnership with [Coop_Name] to promote eco-conscious travel practices. Get access to training resources, best practices, and potential funding.',
+        timestamp: DateTime.now(),
+        category: 'Sustainability',
+      ),
+
+      // New Announcement Examples:
+
+      CoopAnnouncements(
+        title:
+            'Experience the Flavors of [Region]: Culinary Festival Announced!',
+        description:
+            'Join us for a celebration of local cuisine on [dates]. Sample food from our member restaurants, attend cooking demonstrations, and enjoy live music!',
+        timestamp: DateTime.now()
+            .subtract(const Duration(days: 3)), // Set to a few days ago
+        category: 'Event',
+      ),
+
+      CoopAnnouncements(
+        title: 'Grant Program for Tourism Businesses Now Open',
+        description:
+            'The [program name] is accepting applications to support [types of projects]. Find eligibility details and the application deadline on [website]. ',
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
+        category: 'Funding',
+      ),
+
+      CoopAnnouncements(
+        title: 'Member Spotlight: [Business Name] Wins Prestigious Award',
+        description:
+            'Congratulations to [Business Name] for their recognition at the [award name]! Their commitment to quality tourism strengthens our community.',
+        timestamp: DateTime.now().subtract(const Duration(days: 5)),
+        category: 'Member News',
+      ),
+    ];
+  }
+
   void viewMembers(BuildContext context, CooperativeModel coop) {
     context.pushNamed(
       'coop_members',
@@ -55,7 +101,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
 
   List<Widget> tabs = [
     const SizedBox(
-      width: 150.0,
+      width: 160.0,
       child: Tab(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -68,7 +114,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
       ),
     ),
     const SizedBox(
-      width: 170.0,
+      width: 150.0,
       child: Tab(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -106,30 +152,42 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
             return DefaultTabController(
               initialIndex: 0,
               length: tabs.length,
-              child: NestedScrollView(
-                headerSliverBuilder: (context, innerBoxIsScrolled) {
-                  return [
-                    sliverAppBar(coop),
-                    // sliverPaddingHeader(coop, user, context),
-                    sliverAppBarHeaderWithTabs(coop, user, context),
-                  ];
-                },
-                body: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: TabBarView(
-                    children: [
-                      // Events
-                      buildListViewListings(
-                          ref.watch(getListingsByCoopProvider(coop.uid!))),
-                      // Listings
-                      buildListViewEvents(
-                          ref.watch(getEventsByCoopIdProvider(coop.uid!))),
+              child: Scaffold(
+                body: NestedScrollView(
+                  headerSliverBuilder: (context, innerBoxIsScrolled) {
+                    return [
+                      sliverAppBar(coop),
+                      // sliverPaddingHeader(coop, user, context),
+                      sliverAppBarHeaderWithTabs(coop, user, context),
+                    ];
+                  },
+                  body: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: TabBarView(
+                      children: [
+                        // Announcements
+                        ListView.separated(
+                          separatorBuilder: (context, index) => const Padding(
+                            padding: EdgeInsets.only(bottom: 16.0),
+                          ),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: coopAnnouncements.length,
+                          itemBuilder: (context, index) {
+                            final announcement = coopAnnouncements[index];
 
-                      // Wiki
-                      // Listingsx
-                      buildListViewEvents(
-                          ref.watch(getEventsByCoopIdProvider(coop.uid!))),
-                    ],
+                            return AnnouncementCard(
+                              announcement: announcement,
+                            );
+                          },
+                        ),
+                        buildListViewEvents(
+                            ref.watch(getEventsByCoopIdProvider(coop.uid!))),
+
+                        buildListViewEvents(
+                            ref.watch(getEventsByCoopIdProvider(coop.uid!))),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -301,6 +359,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                     },
                     child: const Text('View Members'),
                   ),
+                  const SizedBox(width: 10),
                 ],
               ),
             ],
