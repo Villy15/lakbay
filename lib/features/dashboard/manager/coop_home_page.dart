@@ -120,20 +120,18 @@ class _TodayPageState extends ConsumerState<TodayPage> {
               const SizedBox(height: 16),
 
               // Wide button to show Show All Bookings
-              Align(
-                  alignment: Alignment.centerLeft,
+              Center(
                   child: FilledButton(
-                    onPressed: () {},
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.tour_outlined),
-                        SizedBox(width: 10),
-                        Text('Show All bookings'),
-                      ],
-                    ),
-                  )),
+                onPressed: () {},
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.tour_outlined),
+                    SizedBox(width: 10),
+                    Text('Show All bookings'),
+                  ],
+                ),
+              )),
 
               const SizedBox(height: 32),
 
