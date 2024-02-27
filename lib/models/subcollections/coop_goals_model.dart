@@ -14,6 +14,7 @@ class CoopGoals with _$CoopGoals {
     @TimestampSerializer() DateTime? targetDate,
     String? category,
     List<String>? metrics,
+    num? progress,
   }) = _CoopGoals;
 
   factory CoopGoals.fromJson(Map<String, dynamic> json) =>

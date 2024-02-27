@@ -16,6 +16,7 @@ _$CoopGoalsImpl _$$CoopGoalsImplFromJson(Map<String, dynamic> json) =>
       category: json['category'] as String?,
       metrics:
           (json['metrics'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      progress: json['progress'] as num?,
     );
 
 Map<String, dynamic> _$$CoopGoalsImplToJson(_$CoopGoalsImpl instance) =>
@@ -26,4 +27,5 @@ Map<String, dynamic> _$$CoopGoalsImplToJson(_$CoopGoalsImpl instance) =>
       'targetDate': const TimestampSerializer().toJson(instance.targetDate),
       'category': instance.category,
       'metrics': instance.metrics,
+      'progress': instance.progress,
     };

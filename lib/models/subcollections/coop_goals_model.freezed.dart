@@ -27,6 +27,7 @@ mixin _$CoopGoals {
   DateTime? get targetDate => throw _privateConstructorUsedError;
   String? get category => throw _privateConstructorUsedError;
   List<String>? get metrics => throw _privateConstructorUsedError;
+  num? get progress => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -45,7 +46,8 @@ abstract class $CoopGoalsCopyWith<$Res> {
       String? description,
       @TimestampSerializer() DateTime? targetDate,
       String? category,
-      List<String>? metrics});
+      List<String>? metrics,
+      num? progress});
 }
 
 /// @nodoc
@@ -67,6 +69,7 @@ class _$CoopGoalsCopyWithImpl<$Res, $Val extends CoopGoals>
     Object? targetDate = freezed,
     Object? category = freezed,
     Object? metrics = freezed,
+    Object? progress = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -93,6 +96,10 @@ class _$CoopGoalsCopyWithImpl<$Res, $Val extends CoopGoals>
           ? _value.metrics
           : metrics // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      progress: freezed == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as num?,
     ) as $Val);
   }
 }
@@ -111,7 +118,8 @@ abstract class _$$CoopGoalsImplCopyWith<$Res>
       String? description,
       @TimestampSerializer() DateTime? targetDate,
       String? category,
-      List<String>? metrics});
+      List<String>? metrics,
+      num? progress});
 }
 
 /// @nodoc
@@ -131,6 +139,7 @@ class __$$CoopGoalsImplCopyWithImpl<$Res>
     Object? targetDate = freezed,
     Object? category = freezed,
     Object? metrics = freezed,
+    Object? progress = freezed,
   }) {
     return _then(_$CoopGoalsImpl(
       uid: freezed == uid
@@ -157,6 +166,10 @@ class __$$CoopGoalsImplCopyWithImpl<$Res>
           ? _value._metrics
           : metrics // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      progress: freezed == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as num?,
     ));
   }
 }
@@ -170,7 +183,8 @@ class _$CoopGoalsImpl implements _CoopGoals {
       this.description,
       @TimestampSerializer() this.targetDate,
       this.category,
-      final List<String>? metrics})
+      final List<String>? metrics,
+      this.progress})
       : _metrics = metrics;
 
   factory _$CoopGoalsImpl.fromJson(Map<String, dynamic> json) =>
@@ -198,8 +212,11 @@ class _$CoopGoalsImpl implements _CoopGoals {
   }
 
   @override
+  final num? progress;
+
+  @override
   String toString() {
-    return 'CoopGoals(uid: $uid, title: $title, description: $description, targetDate: $targetDate, category: $category, metrics: $metrics)';
+    return 'CoopGoals(uid: $uid, title: $title, description: $description, targetDate: $targetDate, category: $category, metrics: $metrics, progress: $progress)';
   }
 
   @override
@@ -215,13 +232,22 @@ class _$CoopGoalsImpl implements _CoopGoals {
                 other.targetDate == targetDate) &&
             (identical(other.category, category) ||
                 other.category == category) &&
-            const DeepCollectionEquality().equals(other._metrics, _metrics));
+            const DeepCollectionEquality().equals(other._metrics, _metrics) &&
+            (identical(other.progress, progress) ||
+                other.progress == progress));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, uid, title, description,
-      targetDate, category, const DeepCollectionEquality().hash(_metrics));
+  int get hashCode => Object.hash(
+      runtimeType,
+      uid,
+      title,
+      description,
+      targetDate,
+      category,
+      const DeepCollectionEquality().hash(_metrics),
+      progress);
 
   @JsonKey(ignore: true)
   @override
@@ -244,7 +270,8 @@ abstract class _CoopGoals implements CoopGoals {
       final String? description,
       @TimestampSerializer() final DateTime? targetDate,
       final String? category,
-      final List<String>? metrics}) = _$CoopGoalsImpl;
+      final List<String>? metrics,
+      final num? progress}) = _$CoopGoalsImpl;
 
   factory _CoopGoals.fromJson(Map<String, dynamic> json) =
       _$CoopGoalsImpl.fromJson;
@@ -262,6 +289,8 @@ abstract class _CoopGoals implements CoopGoals {
   String? get category;
   @override
   List<String>? get metrics;
+  @override
+  num? get progress;
   @override
   @JsonKey(ignore: true)
   _$$CoopGoalsImplCopyWith<_$CoopGoalsImpl> get copyWith =>

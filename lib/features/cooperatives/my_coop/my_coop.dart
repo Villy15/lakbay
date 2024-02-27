@@ -7,6 +7,7 @@ import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/cooperatives/my_coop/components/announcement_card.dart';
+import 'package:lakbay/features/cooperatives/my_coop/components/goal_card.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/events/widgets/event_card.dart';
 import 'package:lakbay/features/listings/widgets/listing_card.dart';
@@ -73,41 +74,38 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
 
     coopGoals = [
       CoopGoals(
-        title: 'Sustainable Tourism Certification',
+        title: 'Increase Overall Bookings',
         description:
-            'We aim to have 100% of our members certified in sustainable tourism practices by the end of the year.',
+            'Achieve a 10% increase in bookings across all categories within the next year.',
         targetDate: DateTime.now().add(const Duration(days: 365)),
-        category: 'Sustainability',
-        metrics: ['Number of members certified'],
+        category: 'Economic Development',
+        metrics: ['% increase in overall bookings'], // Adjust metrics as needed
+        progress: 0.5, // Example progress
       ),
-
-      // New Goal Examples:
-
       CoopGoals(
-        title: 'Local Food Promotion',
+        title: 'Boost Shoulder-Season Tourism',
         description:
-            'Increase the number of local food options in our member restaurants by 20% by the end of the year.',
-        targetDate: DateTime.now().add(const Duration(days: 365)),
-        category: 'Sustainability',
-        metrics: ['Number of new menu items'],
+            'Increase bookings during Q4 by 15% through targeted promotions and packages.',
+        targetDate:
+            DateTime(2024, 6, 30), // Example target within shoulder season
+        category: 'Economic Development',
+        metrics: [
+          '% increase in shoulder-season bookings',
+          'Number of promotions'
+        ],
+        progress: 0.3, // Example progress
       ),
-
       CoopGoals(
-        title: 'Tourism Job Fair',
+        title: 'Promote Multi-Offering Packages',
         description:
-            'Host a job fair to connect local residents with tourism businesses in our community.',
-        targetDate: DateTime.now().add(const Duration(days: 90)),
-        category: 'Community',
-        metrics: ['Number of attendees', 'Number of businesses'],
-      ),
-
-      CoopGoals(
-        title: 'Local Artisan Market',
-        description:
-            'Organize a monthly market to showcase local crafts and products.',
-        targetDate: DateTime.now().add(const Duration(days: 30)),
-        category: 'Community',
-        metrics: ['Number of vendors', 'Number of attendees'],
+            'Develop and sell 5 new package deals that combine multiple cooperative offerings (e.g., lodging + tour + food experience), increasing average revenue per customer.',
+        targetDate: DateTime(2023, 12, 31),
+        category: 'Economic Development',
+        metrics: [
+          'Number of package deals created',
+          'Average revenue per customer'
+        ],
+        progress: 0.7, // Example progress
       ),
     ];
   }
@@ -210,7 +208,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                         // Announcements
                         _coopAnnouncements(),
 
-                        _coopAnnouncements(),
+                        _coopGoals(),
 
                         buildListViewEvents(
                             ref.watch(getEventsByCoopIdProvider(coop.uid!))),
@@ -231,6 +229,24 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
             body: Loader(),
           ),
         );
+  }
+
+  Widget _coopGoals() {
+    return ListView.separated(
+      separatorBuilder: (context, index) => const Padding(
+        padding: EdgeInsets.only(bottom: 16.0),
+      ),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: coopGoals.length,
+      itemBuilder: (context, index) {
+        final coopGoal = coopGoals[index];
+
+        return GoalCard(
+          goal: coopGoal,
+        );
+      },
+    );
   }
 
   ListView _coopAnnouncements() {
