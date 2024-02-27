@@ -170,23 +170,86 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                           )
                                         ),
                                         ElevatedButton(
-                                          onPressed: () {
+                                          onPressed: () async {
                                             if (listing.type  == 'Public') {
                                               showDialog(
                                                 context: context,
                                                 builder: (context) {
                                                   return AlertDialog(
-                                                    title: const Text('Departure Times'),
+                                                    title: const Text(
+                                                      'Select a Departure Time',
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight: FontWeight.bold
+                                                      )
+                                                    ),
                                                     content: SizedBox(
-                                                      height: MediaQuery.sizeOf(context).height / 2.7,
+                                                      height: MediaQuery.sizeOf(context).height / 3.5,
                                                       width: MediaQuery.sizeOf(context).width / 1.5,
                                                       child: Column(
                                                         children: transport.availableTransport!.departureTimes
                                                           !.map((time) => ListTile(
                                                             title: Text(time.format(context)),
-                                                            subtitle: Text('Guest Capacity: ${transport.availableTransport!.guests}'),
-                                                            onTap: () {
-                                                              Navigator.pop(context, time);
+                                                            onTap: () async {
+                                                              debugPrint(startDate.toString());
+                                                              final bookings = await ref.watch(
+                                                              getAllBookingsProvider(listing.uid!)
+                                                                  .future);
+                                                              // check if there are bookings on a certain departure time
+                                                              List<ListingBookings> bookingsCopy =
+                                                                List.from(bookings);
+                                                              Map<TimeOfDay?, num> deptTimeAndGuests = {};
+                                                              DateTime currentDate = DateTime.now();
+                                                              // format the currentDate
+                                                              String formattedCurrentDate = DateFormat('yyyy-MM-dd').format(currentDate);
+
+                                                              for (ListingBookings booking in bookingsCopy) {
+                                                                // only get the date and not the time from booking.startDate. trim it to only get the date
+                                                                DateTime bookingStartDate = DateTime(booking.startDate!.year, booking.startDate!.month, booking.startDate!.day);
+                                                                String formattedDate = DateFormat('yyyy-MM-dd').format(bookingStartDate);
+
+                                                                // check the formattedCurrentDate and the formattedDate if they are the same
+                                                                if (formattedCurrentDate == formattedDate) {
+                                                                  // remove duplicates of departure time, and get the total number of guests for each departure time
+                                                                  if (deptTimeAndGuests.containsKey(booking.startTime)) {
+                                                                    deptTimeAndGuests[booking.startTime] = deptTimeAndGuests[booking.startTime]! + booking.guests;
+                                                                  } else {
+                                                                    deptTimeAndGuests[booking.startTime] = booking.guests;
+                                                                  }
+                                                                  // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
+                                                                  
+                                                              }
+                                                              
+                                                            }
+                                                            // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
+                                                            if (deptTimeAndGuests[time] != null) {
+                                                              if (deptTimeAndGuests[time]! >= transport.availableTransport!.guests) {
+                                                                // show an alert dialog that the selected departure time is already full
+                                                                showDialog(
+                                                                  context: context,
+                                                                  builder: (context) {
+                                                                    return AlertDialog(
+                                                                      title: const Text('Departure Time is Full'),
+                                                                      content: Text('The time ${time.format(context)} has reached its capacity of ${deptTimeAndGuests[time]}.  Please select another time.'),
+                                                                      actions: [
+                                                                        TextButton(
+                                                                          onPressed: () {
+                                                                            Navigator.pop(context);
+                                                                          },
+                                                                          child: const Text('Close')
+                                                                        )
+                                                                      ]
+                                                                    );
+                                                                  }
+                                                                );
+                                                              } else {
+                                                                // show confirm booking
+                                                                showConfirmBooking(transport.availableTransport!, listing, currentDate, currentDate, time, time, 'Public');
+                                                              }
+                                                            } else {
+                                                              // show confirm booking
+                                                              showConfirmBooking(transport.availableTransport!, listing, currentDate, currentDate, time, time, 'Public');
+                                                            }
                                                             }
                                                           ))
                                                           .toList()
@@ -195,7 +258,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                   );
                                                 }
                                               ).then((time) {
-                                                showConfirmBooking(transport.availableTransport!, listing, DateTime.now(), DateTime.now(), time, time, 'Public');
+                                                DateTime? currentDate = DateTime.now();
+                                                showConfirmBooking(transport.availableTransport!, listing, currentDate, currentDate, time, time, 'Public');
                                               });
                                               //showConfirmBooking(transport, listing, DateTime.now(), DateTime.now(), , endTime, typeOfTrip);
                                             }
@@ -1078,7 +1142,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                               emergencyContactName: emergencyContactNameController.text,
                               emergencyContactNo: emergencyContactNoController.text,
                               needsContributions: false,
-                              tasks: listing.fixedTasks
+                              tasks: listing.fixedTasks,
+                              typeOfTrip: typeOfTrip
                             );
             
                             showDialog(
@@ -1243,7 +1308,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                               emergencyContactName: emergencyContactNameController.text,
                               emergencyContactNo: emergencyContactNoController.text,
                               needsContributions: false,
-                              tasks: listing.fixedTasks
+                              tasks: listing.fixedTasks,
+                              typeOfTrip: typeOfTrip
                             );
             
                             showDialog(

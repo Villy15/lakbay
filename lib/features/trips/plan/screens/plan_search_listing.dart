@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/trips/plan/components/food_card.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
 import 'package:lakbay/features/trips/plan/components/transport_card.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
@@ -368,7 +369,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
             category: category, transportListings: widget.listings!);
 
       case "Food":
-        return const Text("works");
+        return FoodCard(category: category, foodListings: widget.listings!);
 
       case "Tour":
         return const Text("works");

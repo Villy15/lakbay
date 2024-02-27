@@ -114,6 +114,8 @@ class _AddFoodState extends ConsumerState<AddFood> {
                     title: _titleController.text,
                     type: type,
                     fixedTasks: fixedTasks,
+                    price: _feeController.text == '' ? null : num.parse(_feeController.text)
+
                   );
                   listing = await processMenuImages(listing);
                   listing = await processDealImages(listing);
