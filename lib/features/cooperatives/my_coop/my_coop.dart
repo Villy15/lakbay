@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -8,7 +9,6 @@ import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/cooperatives/my_coop/components/announcement_card.dart';
 import 'package:lakbay/features/cooperatives/my_coop/components/goal_card.dart';
-import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/events/widgets/event_card.dart';
 import 'package:lakbay/features/listings/widgets/listing_card.dart';
 import 'package:lakbay/models/coop_model.dart';
@@ -16,6 +16,7 @@ import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 import 'package:lakbay/models/subcollections/coop_goals_model.dart';
+import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
 class MyCoopPage extends ConsumerStatefulWidget {
@@ -29,6 +30,7 @@ class MyCoopPage extends ConsumerStatefulWidget {
 class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   late List<CoopAnnouncements> coopAnnouncements;
   late List<CoopGoals> coopGoals;
+  late List<CoopVote> coopVotes;
 
   @override
   void initState() {
@@ -106,6 +108,21 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
           'Average revenue per customer'
         ],
         progress: 0.7, // Example progress
+      ),
+    ];
+
+    coopVotes = [
+      CoopVote(
+        position: 'Chairperson',
+        dueDate: DateTime.now().add(const Duration(days: 30)),
+      ),
+      CoopVote(
+        position: 'Sustainability Committee Head',
+        dueDate: DateTime.now().add(const Duration(days: 30)),
+      ),
+      CoopVote(
+        position: 'Marketing Committee Head',
+        dueDate: DateTime.now().add(const Duration(days: 30)),
       ),
     ];
   }
@@ -210,8 +227,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
 
                         _coopGoals(),
 
-                        buildListViewEvents(
-                            ref.watch(getEventsByCoopIdProvider(coop.uid!))),
+                        _coopVotes(),
                       ],
                     ),
                   ),
@@ -229,6 +245,44 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
             body: Loader(),
           ),
         );
+  }
+
+  Widget _coopVotes() {
+    return ListView.separated(
+      separatorBuilder: (context, index) => const Padding(
+        padding: EdgeInsets.only(bottom: 16.0),
+      ),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: coopVotes.length,
+      itemBuilder: (context, index) {
+        final vote = coopVotes[index];
+
+        return ListTile(
+          title: Text(
+            vote.position!,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          subtitle: Text(
+            'Due: ${DateFormat.yMMMd().format(vote.dueDate!)}',
+          ),
+          // Trailing FilledButton Vote
+          trailing: FilledButton(
+            onPressed: () {
+              // Vote
+            },
+            child: const Text('Vote'),
+          ),
+
+          onTap: () {
+            // Navigate to vote details
+          },
+        );
+      },
+    );
   }
 
   Widget _coopGoals() {
