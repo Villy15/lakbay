@@ -22,14 +22,7 @@ class BookingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 1,
       borderOnForeground: true,
-      // Add a border to the card
-      surfaceTintColor: Theme.of(context).colorScheme.background,
-      // margin: const EdgeInsets.symmetric(
-      //   horizontal: 12.0,
-      //   vertical: 4.0,
-      // ),
       child: ListTile(
         onTap: () {
           _onTap(context);

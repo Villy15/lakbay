@@ -57,8 +57,10 @@ class Pallete {
     ),
 
     cardTheme: const CardTheme(
-      elevation: 1,
-      surfaceTintColor: white,
+      elevation: 3,
+      surfaceTintColor: Colors.white,
+      shadowColor: black,
+      color: Colors.white,
     ),
   );
 
