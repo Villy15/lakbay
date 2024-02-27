@@ -45,8 +45,15 @@ class _CustomerTransportCheckoutState
     _startDate = widget.booking.startDate!;
     _endDate = widget.booking.endDate!;
     updatedBooking = widget.booking;
-    vatAmount = (widget.booking.price * _guestCount) * (vat - 1);
-    amountTotal = (widget.booking.price * _guestCount) + vatAmount;
+    if (widget.booking.typeOfTrip == 'Public') {
+      vatAmount = (widget.booking.price * _guestCount) * (vat - 1);
+      amountTotal = (widget.booking.price * _guestCount) + vatAmount;
+    }
+    else  {
+      vatAmount = widget.booking.price * (vat - 1);
+      amountTotal = widget.booking.price + vatAmount;
+    }
+    
   }
 
   @override
@@ -129,8 +136,7 @@ class _CustomerTransportCheckoutState
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (widget.booking.typeOfTrip ==
-                                      "One Way Trip") ...[
+                                  if (widget.booking.startDate == widget.booking.endDate) ... [ 
                                     const Text('Date',
                                         style: TextStyle(
                                             fontSize: 16,
@@ -138,9 +144,10 @@ class _CustomerTransportCheckoutState
                                     Text(DateFormat.yMMMd().format(_startDate)),
                                     Text(_formatTimeOfDay(
                                         widget.booking.startTime!))
-                                  ] else ...[
-                                    const Text('Dates',
-                                        style: TextStyle(
+                                  ]
+                                  else ...[
+                                    Text(widget.booking.typeOfTrip!,
+                                        style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold)),
                                     Text(
@@ -153,11 +160,20 @@ class _CustomerTransportCheckoutState
                                   ),
                                 ]),
                             TextButton(
-                                onPressed: () async {},
+                                onPressed: () async {
+                                  if (widget.booking.typeOfTrip == 'Public') {
+
+                                  }
+                                  else if (widget.booking.typeOfTrip == 'Private') {
+
+                                  }
+
+                                },
                                 child: const Text('Edit'))
                           ])
                     ]))));
   }
+  
 
   Widget _priceDetails(BuildContext context) {
     bool paymentMoreInfo = false;
@@ -180,6 +196,8 @@ class _CustomerTransportCheckoutState
                                 color: Theme.of(context).colorScheme.primary),
                             title: Text(_paymentOption)),
                         Column(children: [
+
+                          if (widget.booking.typeOfTrip == 'Public')
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -207,10 +225,22 @@ class _CustomerTransportCheckoutState
                             Container(
                               child: Column(children: [
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    if (widget.booking.typeOfTrip == 'Public') ... [
+                                      const Text('Original Price:',
+                                        style: TextStyle(fontSize: 12)),
+                                    Text('₱${(widget.booking.price * _guestCount).toStringAsFixed(2) }',
+                                        style: const TextStyle(fontSize: 16))
+                                    ]
+                                    
+                                  ]
+                                ),
+                                Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text('VAT (12%)',
+                                      const Text('VAT (12%):',
                                           style: TextStyle(fontSize: 12)),
                                       Text('₱${vatAmount.toStringAsFixed(2)}',
                                           style: const TextStyle(fontSize: 16))
@@ -305,7 +335,6 @@ class _CustomerTransportCheckoutState
                     ref
                         .read(listingControllerProvider.notifier)
                         .addBooking(updatedBooking, widget.listing, context);
-                    context.pop();
                     // Navigator.pop(context);
                   },
                   child: Text('Confirm and Pay',

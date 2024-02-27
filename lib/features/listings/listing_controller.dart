@@ -243,8 +243,8 @@ class ListingController extends StateNotifier<bool> {
             .read(plansControllerProvider.notifier)
             .addActivityToPlan(planUid!, activity, context);
         context.pop();
-        context.pop();
-        context.pop();
+        // context.pop();
+        // context.pop();
         context.push('/market/${booking.category}/customer_receipt',
             extra: {'booking': updatedBooking, 'listing': listing});
       },
