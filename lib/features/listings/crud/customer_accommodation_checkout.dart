@@ -100,16 +100,20 @@ class _CustomerAccomodationCheckoutState
               // Color
               onPressed: () {
                 String paymentOption;
+                String paymentStatus;
                 num totalPrice = (updatedBooking.price * _nights) * vat * 1;
 
                 if (_selectedPaymentOption.name == "downpayment") {
                   paymentOption = "Downpayment";
+                  paymentStatus = "Partially Paid";
                 } else {
                   paymentOption = "Full Payment";
+                  paymentStatus = "Fully Paid";
                 }
                 setState(() {
                   updatedBooking = updatedBooking.copyWith(
                       paymentOption: paymentOption,
+                      paymentStatus: paymentStatus,
                       totalPrice: num.parse(totalPrice.toStringAsFixed(2)),
                       amountPaid: num.parse(amountDue.toStringAsFixed(2)));
                 });

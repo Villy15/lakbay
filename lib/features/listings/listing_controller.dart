@@ -6,6 +6,7 @@ import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_repository.dart';
+import 'package:lakbay/features/sales/sales_controller.dart';
 import 'package:lakbay/features/sales/sales_repository.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
@@ -204,23 +205,25 @@ class ListingController extends StateNotifier<bool> {
       },
       (bookingUid) async {
         state = false;
-        // _ref.read(salesRepositoryProvider).addSale(SaleModel(
-        //       bookingId: bookingUid,
-        //       category: booking.category,
-        //       cooperativeId: listing.cooperative.cooperativeId,
-        //       cooperativeName: listing.cooperative.cooperativeName,
-        //       customerId: _ref.read(userProvider)!.uid,
-        //       customerName: _ref.read(userProvider)!.name,
-        //       listingId: listing.uid!,
-        //       listingName: listing.title,
-        //       listingPrice: booking.price,
-        //       price: booking.totalPrice!,
-        //       ownerId: listing.publisherId,
-        //       ownerName: listing.publisherName,
-        //       salePrice: booking.totalPrice!,
-        //       paymentOption: '',
-        //       tranasactionType: '',
-        //     ));
+        _ref.read(salesControllerProvider.notifier).addSale(
+            context,
+            SaleModel(
+              bookingId: bookingUid,
+              category: booking.category,
+              cooperativeId: listing.cooperative.cooperativeId,
+              cooperativeName: listing.cooperative.cooperativeName,
+              customerId: _ref.read(userProvider)!.uid,
+              customerName: _ref.read(userProvider)!.name,
+              listingId: listing.uid!,
+              listingName: listing.title,
+              listingPrice: booking.price,
+              amount: booking.totalPrice!,
+              ownerId: listing.publisherId,
+              ownerName: listing.publisherName,
+              saleAmount: booking.totalPrice!,
+              paymentOption: booking.paymentOption!,
+              tranasactionType: booking.paymentOption!,
+            ));
         updatedBooking = booking.copyWith(id: bookingUid);
 
         PlanActivity activity = PlanActivity(

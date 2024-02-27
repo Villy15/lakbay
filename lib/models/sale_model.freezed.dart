@@ -32,14 +32,12 @@ mixin _$SaleModel {
   num get listingPrice => throw _privateConstructorUsedError;
   String get paymentOption => throw _privateConstructorUsedError;
   String get tranasactionType => throw _privateConstructorUsedError;
-  num get price => throw _privateConstructorUsedError;
+  num get amount => throw _privateConstructorUsedError;
   String get ownerId => throw _privateConstructorUsedError;
   String get ownerName => throw _privateConstructorUsedError;
-  List<SaleModel>? get relatedTransactions =>
-      throw _privateConstructorUsedError;
   num? get guests => throw _privateConstructorUsedError;
   num? get profit => throw _privateConstructorUsedError;
-  num get salePrice => throw _privateConstructorUsedError;
+  num get saleAmount => throw _privateConstructorUsedError;
   String? get uid => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -66,13 +64,12 @@ abstract class $SaleModelCopyWith<$Res> {
       num listingPrice,
       String paymentOption,
       String tranasactionType,
-      num price,
+      num amount,
       String ownerId,
       String ownerName,
-      List<SaleModel>? relatedTransactions,
       num? guests,
       num? profit,
-      num salePrice,
+      num saleAmount,
       String? uid});
 }
 
@@ -101,13 +98,12 @@ class _$SaleModelCopyWithImpl<$Res, $Val extends SaleModel>
     Object? listingPrice = null,
     Object? paymentOption = null,
     Object? tranasactionType = null,
-    Object? price = null,
+    Object? amount = null,
     Object? ownerId = null,
     Object? ownerName = null,
-    Object? relatedTransactions = freezed,
     Object? guests = freezed,
     Object? profit = freezed,
-    Object? salePrice = null,
+    Object? saleAmount = null,
     Object? uid = freezed,
   }) {
     return _then(_value.copyWith(
@@ -159,9 +155,9 @@ class _$SaleModelCopyWithImpl<$Res, $Val extends SaleModel>
           ? _value.tranasactionType
           : tranasactionType // ignore: cast_nullable_to_non_nullable
               as String,
-      price: null == price
-          ? _value.price
-          : price // ignore: cast_nullable_to_non_nullable
+      amount: null == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
               as num,
       ownerId: null == ownerId
           ? _value.ownerId
@@ -171,10 +167,6 @@ class _$SaleModelCopyWithImpl<$Res, $Val extends SaleModel>
           ? _value.ownerName
           : ownerName // ignore: cast_nullable_to_non_nullable
               as String,
-      relatedTransactions: freezed == relatedTransactions
-          ? _value.relatedTransactions
-          : relatedTransactions // ignore: cast_nullable_to_non_nullable
-              as List<SaleModel>?,
       guests: freezed == guests
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
@@ -183,9 +175,9 @@ class _$SaleModelCopyWithImpl<$Res, $Val extends SaleModel>
           ? _value.profit
           : profit // ignore: cast_nullable_to_non_nullable
               as num?,
-      salePrice: null == salePrice
-          ? _value.salePrice
-          : salePrice // ignore: cast_nullable_to_non_nullable
+      saleAmount: null == saleAmount
+          ? _value.saleAmount
+          : saleAmount // ignore: cast_nullable_to_non_nullable
               as num,
       uid: freezed == uid
           ? _value.uid
@@ -216,13 +208,12 @@ abstract class _$$SaleModelImplCopyWith<$Res>
       num listingPrice,
       String paymentOption,
       String tranasactionType,
-      num price,
+      num amount,
       String ownerId,
       String ownerName,
-      List<SaleModel>? relatedTransactions,
       num? guests,
       num? profit,
-      num salePrice,
+      num saleAmount,
       String? uid});
 }
 
@@ -249,13 +240,12 @@ class __$$SaleModelImplCopyWithImpl<$Res>
     Object? listingPrice = null,
     Object? paymentOption = null,
     Object? tranasactionType = null,
-    Object? price = null,
+    Object? amount = null,
     Object? ownerId = null,
     Object? ownerName = null,
-    Object? relatedTransactions = freezed,
     Object? guests = freezed,
     Object? profit = freezed,
-    Object? salePrice = null,
+    Object? saleAmount = null,
     Object? uid = freezed,
   }) {
     return _then(_$SaleModelImpl(
@@ -307,9 +297,9 @@ class __$$SaleModelImplCopyWithImpl<$Res>
           ? _value.tranasactionType
           : tranasactionType // ignore: cast_nullable_to_non_nullable
               as String,
-      price: null == price
-          ? _value.price
-          : price // ignore: cast_nullable_to_non_nullable
+      amount: null == amount
+          ? _value.amount
+          : amount // ignore: cast_nullable_to_non_nullable
               as num,
       ownerId: null == ownerId
           ? _value.ownerId
@@ -319,10 +309,6 @@ class __$$SaleModelImplCopyWithImpl<$Res>
           ? _value.ownerName
           : ownerName // ignore: cast_nullable_to_non_nullable
               as String,
-      relatedTransactions: freezed == relatedTransactions
-          ? _value._relatedTransactions
-          : relatedTransactions // ignore: cast_nullable_to_non_nullable
-              as List<SaleModel>?,
       guests: freezed == guests
           ? _value.guests
           : guests // ignore: cast_nullable_to_non_nullable
@@ -331,9 +317,9 @@ class __$$SaleModelImplCopyWithImpl<$Res>
           ? _value.profit
           : profit // ignore: cast_nullable_to_non_nullable
               as num?,
-      salePrice: null == salePrice
-          ? _value.salePrice
-          : salePrice // ignore: cast_nullable_to_non_nullable
+      saleAmount: null == saleAmount
+          ? _value.saleAmount
+          : saleAmount // ignore: cast_nullable_to_non_nullable
               as num,
       uid: freezed == uid
           ? _value.uid
@@ -359,15 +345,13 @@ class _$SaleModelImpl implements _SaleModel {
       required this.listingPrice,
       required this.paymentOption,
       required this.tranasactionType,
-      required this.price,
+      required this.amount,
       required this.ownerId,
       required this.ownerName,
-      final List<SaleModel>? relatedTransactions,
       this.guests,
       this.profit,
-      required this.salePrice,
-      this.uid})
-      : _relatedTransactions = relatedTransactions;
+      required this.saleAmount,
+      this.uid});
 
   factory _$SaleModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$SaleModelImplFromJson(json);
@@ -397,34 +381,23 @@ class _$SaleModelImpl implements _SaleModel {
   @override
   final String tranasactionType;
   @override
-  final num price;
+  final num amount;
   @override
   final String ownerId;
   @override
   final String ownerName;
-  final List<SaleModel>? _relatedTransactions;
-  @override
-  List<SaleModel>? get relatedTransactions {
-    final value = _relatedTransactions;
-    if (value == null) return null;
-    if (_relatedTransactions is EqualUnmodifiableListView)
-      return _relatedTransactions;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
   @override
   final num? guests;
   @override
   final num? profit;
   @override
-  final num salePrice;
+  final num saleAmount;
   @override
   final String? uid;
 
   @override
   String toString() {
-    return 'SaleModel(bookingId: $bookingId, category: $category, cooperativeId: $cooperativeId, cooperativeName: $cooperativeName, customerId: $customerId, customerName: $customerName, expenses: $expenses, listingId: $listingId, listingName: $listingName, listingPrice: $listingPrice, paymentOption: $paymentOption, tranasactionType: $tranasactionType, price: $price, ownerId: $ownerId, ownerName: $ownerName, relatedTransactions: $relatedTransactions, guests: $guests, profit: $profit, salePrice: $salePrice, uid: $uid)';
+    return 'SaleModel(bookingId: $bookingId, category: $category, cooperativeId: $cooperativeId, cooperativeName: $cooperativeName, customerId: $customerId, customerName: $customerName, expenses: $expenses, listingId: $listingId, listingName: $listingName, listingPrice: $listingPrice, paymentOption: $paymentOption, tranasactionType: $tranasactionType, amount: $amount, ownerId: $ownerId, ownerName: $ownerName, guests: $guests, profit: $profit, saleAmount: $saleAmount, uid: $uid)';
   }
 
   @override
@@ -456,16 +429,14 @@ class _$SaleModelImpl implements _SaleModel {
                 other.paymentOption == paymentOption) &&
             (identical(other.tranasactionType, tranasactionType) ||
                 other.tranasactionType == tranasactionType) &&
-            (identical(other.price, price) || other.price == price) &&
+            (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.ownerName, ownerName) ||
                 other.ownerName == ownerName) &&
-            const DeepCollectionEquality()
-                .equals(other._relatedTransactions, _relatedTransactions) &&
             (identical(other.guests, guests) || other.guests == guests) &&
             (identical(other.profit, profit) || other.profit == profit) &&
-            (identical(other.salePrice, salePrice) ||
-                other.salePrice == salePrice) &&
+            (identical(other.saleAmount, saleAmount) ||
+                other.saleAmount == saleAmount) &&
             (identical(other.uid, uid) || other.uid == uid));
   }
 
@@ -485,13 +456,12 @@ class _$SaleModelImpl implements _SaleModel {
         listingPrice,
         paymentOption,
         tranasactionType,
-        price,
+        amount,
         ownerId,
         ownerName,
-        const DeepCollectionEquality().hash(_relatedTransactions),
         guests,
         profit,
-        salePrice,
+        saleAmount,
         uid
       ]);
 
@@ -523,13 +493,12 @@ abstract class _SaleModel implements SaleModel {
       required final num listingPrice,
       required final String paymentOption,
       required final String tranasactionType,
-      required final num price,
+      required final num amount,
       required final String ownerId,
       required final String ownerName,
-      final List<SaleModel>? relatedTransactions,
       final num? guests,
       final num? profit,
-      required final num salePrice,
+      required final num saleAmount,
       final String? uid}) = _$SaleModelImpl;
 
   factory _SaleModel.fromJson(Map<String, dynamic> json) =
@@ -560,19 +529,17 @@ abstract class _SaleModel implements SaleModel {
   @override
   String get tranasactionType;
   @override
-  num get price;
+  num get amount;
   @override
   String get ownerId;
   @override
   String get ownerName;
   @override
-  List<SaleModel>? get relatedTransactions;
-  @override
   num? get guests;
   @override
   num? get profit;
   @override
-  num get salePrice;
+  num get saleAmount;
   @override
   String? get uid;
   @override

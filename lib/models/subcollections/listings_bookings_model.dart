@@ -29,6 +29,7 @@ class ListingBookings with _$ListingBookings {
     String? id,
     required bool needsContributions,
     String? paymentOption,
+    String? paymentStatus,
     required num price,
     String? roomId,
     String? roomUid,

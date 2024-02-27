@@ -41,6 +41,7 @@ mixin _$ListingBookings {
   String? get id => throw _privateConstructorUsedError;
   bool get needsContributions => throw _privateConstructorUsedError;
   String? get paymentOption => throw _privateConstructorUsedError;
+  String? get paymentStatus => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
   String? get roomId => throw _privateConstructorUsedError;
   String? get roomUid => throw _privateConstructorUsedError;
@@ -90,6 +91,7 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String? id,
       bool needsContributions,
       String? paymentOption,
+      String? paymentStatus,
       num price,
       String? roomId,
       String? roomUid,
@@ -136,6 +138,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? id = freezed,
     Object? needsContributions = null,
     Object? paymentOption = freezed,
+    Object? paymentStatus = freezed,
     Object? price = null,
     Object? roomId = freezed,
     Object? roomUid = freezed,
@@ -229,6 +232,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.paymentOption
           : paymentOption // ignore: cast_nullable_to_non_nullable
               as String?,
+      paymentStatus: freezed == paymentStatus
+          ? _value.paymentStatus
+          : paymentStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -306,6 +313,7 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String? id,
       bool needsContributions,
       String? paymentOption,
+      String? paymentStatus,
       num price,
       String? roomId,
       String? roomUid,
@@ -350,6 +358,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? needsContributions = null,
     Object? paymentOption = freezed,
+    Object? paymentStatus = freezed,
     Object? price = null,
     Object? roomId = freezed,
     Object? roomUid = freezed,
@@ -443,6 +452,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.paymentOption
           : paymentOption // ignore: cast_nullable_to_non_nullable
               as String?,
+      paymentStatus: freezed == paymentStatus
+          ? _value.paymentStatus
+          : paymentStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -515,6 +528,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
       this.id,
       required this.needsContributions,
       this.paymentOption,
+      this.paymentStatus,
       required this.price,
       this.roomId,
       this.roomUid,
@@ -590,6 +604,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
   @override
   final String? paymentOption;
   @override
+  final String? paymentStatus;
+  @override
   final num price;
   @override
   final String? roomId;
@@ -618,7 +634,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
   @override
   String toString() {
-    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, cooperativeId: $cooperativeId, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, cooperativeId: $cooperativeId, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, paymentStatus: $paymentStatus, price: $price, roomId: $roomId, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -659,6 +675,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
                 other.needsContributions == needsContributions) &&
             (identical(other.paymentOption, paymentOption) ||
                 other.paymentOption == paymentOption) &&
+            (identical(other.paymentStatus, paymentStatus) ||
+                other.paymentStatus == paymentStatus) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.roomId, roomId) || other.roomId == roomId) &&
             (identical(other.roomUid, roomUid) || other.roomUid == roomUid) &&
@@ -703,6 +721,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
         id,
         needsContributions,
         paymentOption,
+        paymentStatus,
         price,
         roomId,
         roomUid,
@@ -753,6 +772,7 @@ abstract class _ListingBookings implements ListingBookings {
       final String? id,
       required final bool needsContributions,
       final String? paymentOption,
+      final String? paymentStatus,
       required final num price,
       final String? roomId,
       final String? roomUid,
@@ -809,6 +829,8 @@ abstract class _ListingBookings implements ListingBookings {
   bool get needsContributions;
   @override
   String? get paymentOption;
+  @override
+  String? get paymentStatus;
   @override
   num get price;
   @override
