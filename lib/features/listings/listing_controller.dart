@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_repository.dart';
+import 'package:lakbay/features/sales/sales_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
+import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/wrappers/rooms_params.dart';
 
@@ -67,9 +70,9 @@ final getAllBookingsByIdProvider = StreamProvider.autoDispose
 
 // getAllBookingsByCustomerIdProvider
 final getAllBookingsByCustomerIdProvider = StreamProvider.autoDispose
-    .family<List<ListingBookings>, String>((ref, listingId) {
+    .family<List<ListingBookings>, String>((ref, customerId) {
   final listingController = ref.watch(listingControllerProvider.notifier);
-  return listingController.getBookingsByCustomerId(listingId);
+  return listingController.getBookingsByCustomerId(customerId);
 });
 
 // getAllBookingsByProperties
@@ -191,6 +194,7 @@ class ListingController extends StateNotifier<bool> {
     final result = await _listingRepository.addBooking(listing.uid!, booking);
     final selectedDate = _ref.read(selectedDateProvider);
     final planUid = _ref.read(currentPlanIdProvider);
+    ListingBookings? updatedBooking;
     result.fold(
       (l) {
         // Handle the error here
@@ -200,26 +204,32 @@ class ListingController extends StateNotifier<bool> {
       },
       (bookingUid) async {
         state = false;
-        // _ref.read(salesRepositoryProvider).addSale(SaleModel(
-        //     bookingId: booking.id!,
-        //     category: booking.category,
-        //     cooperativeId: listing.cooperative.cooperativeId,
-        //     cooperativeName: listing.cooperative.cooperativeName,
-        //     customerId: _ref.read(userProvider)!.uid,
-        //     customerName: _ref.read(userProvider)!.name,
-        //     listingId: listing.uid!,
-        //     listingName: listing.title,
-        //     listingPrice: booking.price,
-        //     price: booking.totalPrice,
-        //     ownerId: listing.publisherId,
-        //     ownerName: listing.publisherName,
-        //     salePrice: booking.totalPrice));
-        ListingBookings updatedBooking = booking.copyWith(id: bookingUid);
+        _ref.read(salesControllerProvider.notifier).addSale(
+            context,
+            SaleModel(
+              bookingId: bookingUid,
+              category: booking.category,
+              cooperativeId: listing.cooperative.cooperativeId,
+              cooperativeName: listing.cooperative.cooperativeName,
+              customerId: _ref.read(userProvider)!.uid,
+              customerName: _ref.read(userProvider)!.name,
+              listingId: listing.uid!,
+              listingName: listing.title,
+              listingPrice: booking.price,
+              amount: booking.totalPrice!,
+              ownerId: listing.publisherId,
+              ownerName: listing.publisherName,
+              saleAmount: booking.totalPrice!,
+              paymentOption: booking.paymentOption!,
+              tranasactionType: booking.paymentOption!,
+            ));
+        updatedBooking = booking.copyWith(id: bookingUid);
 
         PlanActivity activity = PlanActivity(
           // Create a random key for the activity
           key: DateTime.now().millisecondsSinceEpoch.toString(),
           listingId: listing.uid,
+          bookingId: bookingUid,
           category: listing.category,
           dateTime: selectedDate,
           startTime: booking.startDate,
@@ -232,6 +242,9 @@ class ListingController extends StateNotifier<bool> {
         _ref
             .read(plansControllerProvider.notifier)
             .addActivityToPlan(planUid!, activity, context);
+        context.pop();
+        context.pop();
+        context.pop();
         context.push('/market/${booking.category}/customer_receipt',
             extra: {'booking': updatedBooking, 'listing': listing});
       },

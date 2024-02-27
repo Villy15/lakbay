@@ -5,6 +5,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/bookings/widgets/booking_card.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 

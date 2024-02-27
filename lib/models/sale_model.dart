@@ -16,12 +16,14 @@ class SaleModel with _$SaleModel {
     required String listingId,
     required String listingName,
     required num listingPrice,
-    required num price,
+    required String paymentOption,
+    required String tranasactionType,
+    required num amount,
     required String ownerId,
     required String ownerName,
     num? guests,
     num? profit,
-    required num salePrice,
+    required num saleAmount,
     String? uid,
   }) = _SaleModel;
 

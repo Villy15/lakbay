@@ -103,7 +103,6 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
                   }
 
                   return ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: bookings.length,
                     itemBuilder: (context, index) {
@@ -113,9 +112,12 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
                           .watch(getListingProvider(booking.listingId))
                           .when(
                             data: (listing) {
-                              return BookingCard(
-                                booking: booking,
-                                listing: listing,
+                              return Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: BookingCard(
+                                  booking: booking,
+                                  listing: listing,
+                                ),
                               );
                             },
                             error: (error, stackTrace) => ErrorText(
@@ -137,7 +139,8 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
   }
 
   Widget daysPlan(PlanModel plan) {
-    final thisDay = DateTime.now().add(Duration(days: _selectedDayIndex));
+    debugPrint("Plan: $plan");
+    final thisDay = plan.startDate!.add(Duration(days: _selectedDayIndex));
 // Filter and sort the activities list first
     var filteredAndSortedActivities = plan.activities!.where((activity) {
       if (activity.category == "Accommodation") {

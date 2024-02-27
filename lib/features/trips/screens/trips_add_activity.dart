@@ -216,14 +216,13 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
           onTap: () async {
             switch (category['name']) {
               case 'Accommodation':
-                final convertedStartDate =
-                    Timestamp.fromDate(ref.watch(planStartDateProvider)!);
+                final today = Timestamp.fromDate(DateTime.now());
                 final query = FirebaseFirestore.instance
                     .collectionGroup(
                         'bookings') // Perform collection group query for 'bookings'
                     .where('category', isEqualTo: category["name"])
                     .where('bookingStatus', isEqualTo: "Reserved")
-                    .where('startDate', isGreaterThan: convertedStartDate);
+                    .where('startDate', isGreaterThan: today);
                 final bookings = await ref
                     .watch(getBookingsByPropertiesProvider((query)).future);
                 if (context.mounted) {

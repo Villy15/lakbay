@@ -43,6 +43,7 @@ class PlanActivity with _$PlanActivity {
     String? key,
     @TimestampSerializer() DateTime? dateTime,
     String? listingId,
+    String? bookingId,
     String? category,
     String? title,
     String? description,
