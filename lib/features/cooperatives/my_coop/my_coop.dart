@@ -60,22 +60,23 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.travel_explore_outlined),
-            SizedBox(width: 4.0),
-            Text('Listings'),
-          ],
-        ),
-      ),
-    ),
-    const SizedBox(
-      width: 150.0,
-      child: Tab(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
             Icon(Icons.event_outlined),
             SizedBox(width: 4.0),
-            Text('Events'),
+            Text('Announcements'),
+          ],
+        ),
+      ),
+    ),
+    const SizedBox(
+      width: 170.0,
+      child: Tab(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Recommend a goals icon
+            Icon(Icons.emoji_events_outlined),
+            SizedBox(width: 4.0),
+            Text('Goals'),
           ],
         ),
       ),
@@ -86,9 +87,10 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.travel_explore_outlined),
+            // Recommend a election icon
+            Icon(Icons.how_to_vote_outlined),
             SizedBox(width: 4.0),
-            Text('Wiki'),
+            Text('Voting'),
           ],
         ),
       ),
@@ -193,7 +195,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   SliverAppBar sliverAppBarHeaderWithTabs(
       CooperativeModel coop, UserModel? user, BuildContext context) {
     return SliverAppBar(
-      expandedHeight: 250,
+      expandedHeight: 200,
       pinned: true,
       collapsedHeight: kToolbarHeight,
       floating: true,
@@ -260,15 +262,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                 ),
               ),
               const SizedBox(height: 5),
-              Text(
-                coop.description ?? '',
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 5),
+
               // Joined Date
               Row(
                 children: [
@@ -289,7 +283,6 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 5),
               Row(
                 children: [
                   Text(
