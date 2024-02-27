@@ -89,6 +89,22 @@ final getAllBookingsByCoopIdProvider = StreamProvider.autoDispose
   return listingController.getAllBookingsByCoopId(coopId);
 });
 
+// getBookingTasksByBookingId
+final getBookingTasksByBookingId = StreamProvider.autoDispose
+    .family<List<BookingTask>, (String listingId, String bookingId)>(
+        (ref, params) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getBookingTasksByBookingId(params.$1, params.$2);
+});
+
+// getBookingTasksByMemberId
+final getBookingTasksByMemberId = StreamProvider.autoDispose
+    .family<List<BookingTask>, (String listingId, String memberId)>(
+        (ref, params) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getBookingTasksByMemberId(params.$1, params.$2);
+});
+
 // getRoomByIdProvider
 final getAllRoomsByListingIdProvider = StreamProvider.autoDispose
     .family<List<AvailableRoom>, String>((ref, listingId) {
@@ -204,6 +220,11 @@ class ListingController extends StateNotifier<bool> {
       },
       (bookingUid) async {
         state = false;
+        booking.tasks?.forEach((element) {
+          _ref
+              .read(listingControllerProvider.notifier)
+              .addBookingTask(context, listing.uid!, element);
+        });
         _ref.read(salesControllerProvider.notifier).addSale(
             context,
             SaleModel(
@@ -280,10 +301,28 @@ class ListingController extends StateNotifier<bool> {
     });
   }
 
-  void updateTasks(BuildContext context, String listingId,
-      ListingBookings booking, String message) {
+  void addBookingTask(
+      BuildContext context, String listingId, BookingTask task) async {
     state = true;
-    _listingRepository.updateBooking(listingId, booking).then((result) {
+    final result = await _listingRepository.addBookingTask(listingId, task);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        context.pop;
+        showSnackBar(context, l.message);
+      },
+      (bookingUid) async {
+        state = false;
+      },
+    );
+  }
+
+  void updateBookingTask(BuildContext context, String listingId,
+      BookingTask bookingTask, String message) {
+    state = true;
+    _listingRepository.updateBookingTask(listingId, bookingTask).then((result) {
       state = false;
       result.fold(
         (l) => showSnackBar(context, l.message),
@@ -293,6 +332,18 @@ class ListingController extends StateNotifier<bool> {
         },
       );
     });
+  }
+
+  // Read bookingTasks by bookingId
+  Stream<List<BookingTask>> getBookingTasksByBookingId(
+      String listingId, String bookingId) {
+    return _listingRepository.readBookingTasksByBookingId(listingId, bookingId);
+  }
+
+  // Read bookingTasks by memberId
+  Stream<List<BookingTask>> getBookingTasksByMemberId(
+      String listingId, String memberId) {
+    return _listingRepository.readBookingTasksByMemberId(listingId, memberId);
   }
 
   // Read all listings

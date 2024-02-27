@@ -49,7 +49,7 @@ mixin _$ListingModel {
   String get publisherId => throw _privateConstructorUsedError;
   String get publisherName => throw _privateConstructorUsedError;
   num? get rating => throw _privateConstructorUsedError;
-  List<Task>? get fixedTasks => throw _privateConstructorUsedError;
+  List<BookingTask>? get fixedTasks => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get timestamp => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
@@ -101,7 +101,7 @@ abstract class $ListingModelCopyWith<$Res> {
       String publisherId,
       String publisherName,
       num? rating,
-      List<Task>? fixedTasks,
+      List<BookingTask>? fixedTasks,
       @TimestampSerializer() DateTime? timestamp,
       String title,
       String? type,
@@ -269,7 +269,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
       fixedTasks: freezed == fixedTasks
           ? _value.fixedTasks
           : fixedTasks // ignore: cast_nullable_to_non_nullable
-              as List<Task>?,
+              as List<BookingTask>?,
       timestamp: freezed == timestamp
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
@@ -365,7 +365,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       String publisherId,
       String publisherName,
       num? rating,
-      List<Task>? fixedTasks,
+      List<BookingTask>? fixedTasks,
       @TimestampSerializer() DateTime? timestamp,
       String title,
       String? type,
@@ -533,7 +533,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
       fixedTasks: freezed == fixedTasks
           ? _value._fixedTasks
           : fixedTasks // ignore: cast_nullable_to_non_nullable
-              as List<Task>?,
+              as List<BookingTask>?,
       timestamp: freezed == timestamp
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
@@ -603,7 +603,7 @@ class _$ListingModelImpl implements _ListingModel {
       required this.publisherId,
       required this.publisherName,
       this.rating,
-      final List<Task>? fixedTasks,
+      final List<BookingTask>? fixedTasks,
       @TimestampSerializer() this.timestamp,
       required this.title,
       this.type,
@@ -711,9 +711,9 @@ class _$ListingModelImpl implements _ListingModel {
   final String publisherName;
   @override
   final num? rating;
-  final List<Task>? _fixedTasks;
+  final List<BookingTask>? _fixedTasks;
   @override
-  List<Task>? get fixedTasks {
+  List<BookingTask>? get fixedTasks {
     final value = _fixedTasks;
     if (value == null) return null;
     if (_fixedTasks is EqualUnmodifiableListView) return _fixedTasks;
@@ -919,7 +919,7 @@ abstract class _ListingModel implements ListingModel {
       required final String publisherId,
       required final String publisherName,
       final num? rating,
-      final List<Task>? fixedTasks,
+      final List<BookingTask>? fixedTasks,
       @TimestampSerializer() final DateTime? timestamp,
       required final String title,
       final String? type,
@@ -988,7 +988,7 @@ abstract class _ListingModel implements ListingModel {
   @override
   num? get rating;
   @override
-  List<Task>? get fixedTasks;
+  List<BookingTask>? get fixedTasks;
   @override
   @TimestampSerializer()
   DateTime? get timestamp;

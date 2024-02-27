@@ -27,7 +27,6 @@ class _TodayTaskCardState extends ConsumerState<TodayTaskCard> {
   Widget build(BuildContext context) {
     return Card(
       clipBehavior: Clip.hardEdge,
-      elevation: 1,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),

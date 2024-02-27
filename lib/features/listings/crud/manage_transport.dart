@@ -27,17 +27,16 @@ class ManageTransportation extends ConsumerStatefulWidget {
       _ManageTransportationState();
 }
 
-class _ManageTransportationState
-    extends ConsumerState<ManageTransportation> {
+class _ManageTransportationState extends ConsumerState<ManageTransportation> {
   List<SizedBox> tabs = [
+    const SizedBox(width: 100, child: Tab(child: Text('Bookings'))),
     const SizedBox(width: 100, child: Tab(child: Text('Details'))),
-    const SizedBox(width: 100, child: Tab(child: Text('Bookings')))
   ];
 
   @override
   void initState() {
     super.initState();
-    
+
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
@@ -71,7 +70,12 @@ class _ManageTransportationState
                     tabs: tabs,
                   ),
                 ),
-                body: TabBarView(children: [details(), bookings()]))));
+                body: TabBarView(
+                  children: [
+                    bookings(),
+                    details(),
+                  ],
+                ))));
   }
 
   SingleChildScrollView details() {
@@ -192,76 +196,74 @@ class _ManageTransportationState
       const Divider(),
 
       ref
-                  .watch(getCooperativeProvider(
-                      widget.listing.cooperative.cooperativeId))
-                  .maybeWhen(
-                    data: (coop) {
-                      return ListTile(
-                        leading: SizedBox(
-                          height: 40,
-                          width: 40,
-                          child: DisplayImage(
-                              imageUrl: coop.imageUrl,
-                              height: 40,
-                              width: 40,
-                              radius: BorderRadius.circular(20)),
-                        ),
-                        // Contact owner
-                        trailing: IconButton(
-                          onPressed: () {
-                            // Show snackbar with reviews
-                            showSnackBar(context, 'Contact owner');
-                          },
-                          icon: const Icon(Icons.message_rounded),
-                        ),
-                        title: Text('Hosted by ${coop.name}',
-                            style: Theme.of(context).textTheme.labelLarge),
-                      );
-                    },
-                    orElse: () => const ListTile(
-                      leading: Icon(Icons.error),
-                      title: Text('Error'),
-                      subtitle: Text('Something went wrong'),
-                    ),
-                  ),
+          .watch(
+              getCooperativeProvider(widget.listing.cooperative.cooperativeId))
+          .maybeWhen(
+            data: (coop) {
+              return ListTile(
+                leading: SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: DisplayImage(
+                      imageUrl: coop.imageUrl,
+                      height: 40,
+                      width: 40,
+                      radius: BorderRadius.circular(20)),
+                ),
+                // Contact owner
+                trailing: IconButton(
+                  onPressed: () {
+                    // Show snackbar with reviews
+                    showSnackBar(context, 'Contact owner');
+                  },
+                  icon: const Icon(Icons.message_rounded),
+                ),
+                title: Text('Hosted by ${coop.name}',
+                    style: Theme.of(context).textTheme.labelLarge),
+              );
+            },
+            orElse: () => const ListTile(
+              leading: Icon(Icons.error),
+              title: Text('Error'),
+              subtitle: Text('Something went wrong'),
+            ),
+          ),
 
-              // this box is so that the edit listing doesn't cover any content
-              SizedBox(
-                height: MediaQuery.sizeOf(context).height / 35,
-              ),
+      // this box is so that the edit listing doesn't cover any content
+      SizedBox(
+        height: MediaQuery.sizeOf(context).height / 35,
+      ),
       const Divider(),
       Container(
-          margin: const EdgeInsets.only(bottom: 0, right: 0),
-          child: Align(
-            alignment: Alignment.bottomRight,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
-              child: FilledButton(
-                onPressed: () {
-                  // Handle button tap here
-                  // Perform action when 'Edit Listing' button is tapped
-                },
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all<Size>(
-                    const Size(double.infinity, 45),
-                  ),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    const RoundedRectangleBorder(
-                      borderRadius: BorderRadius
-                          .zero, // Zero out the border radius to make it flat at the bottom
-                    ),
+        margin: const EdgeInsets.only(bottom: 0, right: 0),
+        child: Align(
+          alignment: Alignment.bottomRight,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+            child: FilledButton(
+              onPressed: () {
+                // Handle button tap here
+                // Perform action when 'Edit Listing' button is tapped
+              },
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all<Size>(
+                  const Size(double.infinity, 45),
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  const RoundedRectangleBorder(
+                    borderRadius: BorderRadius
+                        .zero, // Zero out the border radius to make it flat at the bottom
                   ),
                 ),
-                child: const Text('Edit Listing'),
               ),
+              child: const Text('Edit Listing'),
             ),
           ),
         ),
-
-
+      ),
     ]));
   }
 
@@ -559,8 +561,9 @@ class _ManageTransportationState
           num guests = 0;
           num luggage = 0;
           final user = ref.read(userProvider);
-          
-          TextEditingController phoneNoController = TextEditingController(text: user?.phoneNo);
+
+          TextEditingController phoneNoController =
+              TextEditingController(text: user?.phoneNo);
           TextEditingController emergencyContactNameController =
               TextEditingController();
           TextEditingController emergencyContactNoController =
@@ -586,7 +589,8 @@ class _ManageTransportationState
                 endDate,
                 startTime,
                 endTime,
-                typeOfTrip, user!);
+                typeOfTrip,
+                user!);
           } else {
             return twoWayTrip(
                 formattedStartDate,
@@ -602,7 +606,8 @@ class _ManageTransportationState
                 endDate,
                 startTime,
                 endTime,
-                typeOfTrip, user!);
+                typeOfTrip,
+                user!);
           }
         });
   }
@@ -621,7 +626,8 @@ class _ManageTransportationState
       DateTime endDate,
       TimeOfDay startTime,
       TimeOfDay endTime,
-      String typeOfTrip, UserModel user) {
+      String typeOfTrip,
+      UserModel user) {
     return DraggableScrollableSheet(
         initialChildSize: 0.75,
         expand: false,
@@ -764,19 +770,19 @@ class _ManageTransportationState
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
-                                        tasks: [], 
-                                        customerId: user.uid, 
-                                        customerName: user.name, 
+                                        tasks: [],
+                                        customerId: user.uid,
+                                        customerName: user.name,
                                         bookingStatus: "Reserved");
                                     showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return Dialog.fullscreen(
-                                          child: CustomerTransportCheckout(
-                                            listing: widget.listing, transport: transport, booking: booking)
-                                        );
-                                      }
-                                    );
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog.fullscreen(
+                                              child: CustomerTransportCheckout(
+                                                  listing: widget.listing,
+                                                  transport: transport,
+                                                  booking: booking));
+                                        });
                                   },
                                   child: const Text('Proceed'),
                                 ))
@@ -800,7 +806,8 @@ class _ManageTransportationState
       DateTime endDate,
       TimeOfDay startTime,
       TimeOfDay endTime,
-      String typeOfTrip, UserModel user) {
+      String typeOfTrip,
+      UserModel user) {
     return DraggableScrollableSheet(
         initialChildSize: 0.75,
         expand: false,
@@ -868,12 +875,11 @@ class _ManageTransportationState
                             TextFormField(
                               controller: phoneNoController,
                               decoration: const InputDecoration(
-                                labelText: 'Phone Number',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                prefix: Text('+63')
-                              ),
+                                  labelText: 'Phone Number',
+                                  border: OutlineInputBorder(),
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  prefix: Text('+63')),
                               keyboardType: TextInputType.phone,
                             ),
                             const SizedBox(height: 10),
@@ -921,7 +927,6 @@ class _ManageTransportationState
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    
                                     ListingBookings booking = ListingBookings(
                                         listingId: widget.listing.uid!,
                                         listingTitle: widget.listing.title,
@@ -946,20 +951,20 @@ class _ManageTransportationState
                                         totalPrice: transport.price * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
-                                        tasks: [], 
-                                        customerId: user.uid, 
-                                        customerName: user.name, 
+                                        tasks: [],
+                                        customerId: user.uid,
+                                        customerName: user.name,
                                         bookingStatus: 'Reserved');
-                                    
+
                                     showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return Dialog.fullscreen(
-                                          child: CustomerTransportCheckout(
-                                            listing: widget.listing, transport: transport, booking: booking)
-                                        );
-                                      }
-                                    );
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog.fullscreen(
+                                              child: CustomerTransportCheckout(
+                                                  listing: widget.listing,
+                                                  transport: transport,
+                                                  booking: booking));
+                                        });
                                   },
                                   child: const Text('Proceed'),
                                 ))
@@ -969,28 +974,23 @@ class _ManageTransportationState
         });
   }
 
-  void showSelectDate(BuildContext context, List<ListingBookings> bookings, int index) {
+  void showSelectDate(
+      BuildContext context, List<ListingBookings> bookings, int index) {
     DateTime startDate = DateTime.now();
     DateTime endDate = DateTime.now();
 
     showDialog(
-      context: context,
-      builder: (context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Select Date'),
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                Navigator.of(context).pop();
-              }
-            )
-          ),
-          body: const Dialog.fullscreen(
-            child: Column()
-          )
-        );
-      }
-    );
+        context: context,
+        builder: (context) {
+          return Scaffold(
+              appBar: AppBar(
+                  title: const Text('Select Date'),
+                  leading: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      })),
+              body: const Dialog.fullscreen(child: Column()));
+        });
   }
 }

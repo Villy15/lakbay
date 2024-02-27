@@ -206,6 +206,72 @@ class ListingRepository {
     });
   }
 
+  CollectionReference bookingTasksCollection(String listingId) {
+    return _listings
+        .doc(listingId)
+        .collection(FirebaseConstants.bookingTasksSubCollection);
+  }
+
+  FutureEither<String> addBookingTask(
+      String listingId, BookingTask bookingTask) async {
+    try {
+      var doc = bookingTasksCollection(listingId).doc();
+
+      // Update the uid of the booking task
+      bookingTask = bookingTask.copyWith(uid: doc.id);
+
+      await doc.set(bookingTask.toJson());
+
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Update booking task
+  FutureVoid updateBookingTask(
+      String listingId, BookingTask bookingTask) async {
+    try {
+      return right(await bookingTasksCollection(listingId)
+          .doc(bookingTask.uid)
+          .update(bookingTask.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+// read bookingtask by bookingId
+  Stream<List<BookingTask>> readBookingTasksByBookingId(
+      String listingId, String bookingUid) {
+    Query query = FirebaseFirestore.instance.collectionGroup('bookingTasks');
+    return query
+        .where('bookingUid', isEqualTo: bookingUid)
+        .snapshots()
+        .map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return BookingTask.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+// read bookingtask by user id
+  Stream<List<BookingTask>> readBookingTasksByMemberId(
+      String listingId, String userId) {
+    Query query = FirebaseFirestore.instance.collectionGroup('bookingTasks');
+    return query
+        .where('assignedId', arrayContains: userId)
+        .snapshots()
+        .map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return BookingTask.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   CollectionReference roomsCollection(String listingId) {
     return _listings
         .doc(listingId)

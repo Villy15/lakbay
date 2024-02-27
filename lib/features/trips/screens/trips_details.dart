@@ -175,7 +175,10 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
                 (activity) => TimelineTile(
                   isActive: true,
                   title: TimelineCard(
-                      plan: plan, activity: activity, thisDay: thisDay),
+                    plan: plan,
+                    activity: activity,
+                    thisDay: thisDay,
+                  ),
                 ),
               ),
             ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/calendar/components/booking_card.dart';
 import 'package:lakbay/features/calendar/components/event_card.dart';
@@ -23,7 +24,7 @@ class CalendarPage extends ConsumerStatefulWidget {
 
 class _CalendarPageState extends ConsumerState<CalendarPage> {
   late ValueNotifier<List<CalendarEvent>> _selectedEvents;
-  CalendarFormat _calendarFormat = CalendarFormat.week;
+  CalendarFormat _calendarFormat = CalendarFormat.twoWeeks;
 
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -186,10 +187,46 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
             child: ValueListenableBuilder<List<CalendarEvent>>(
               valueListenable: _selectedEvents,
               builder: (context, value, _) {
+                if (value.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'lib/core/images/SleepingCatFromGlitch.svg',
+                          height: 100, // Adjust height as desired
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'No events Today!',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'It looks like a great day to rest, relax,',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                        const Text(
+                          'and enjoy the day!',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
                 return ListView.separated(
                   itemCount: value.length,
                   separatorBuilder: (context, index) => const Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                   ),
                   itemBuilder: (context, index) {
                     final calendarEvent = value[index];
@@ -202,7 +239,8 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                           .when(
                             data: (listing) {
                               return Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: BookingCard(
                                   booking: booking,
                                   listing: listing,

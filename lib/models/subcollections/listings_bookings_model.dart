@@ -22,7 +22,7 @@ class ListingBookings with _$ListingBookings {
     String? emergencyContactNo,
     @TimestampSerializer() DateTime? endDate,
     List<Expense>? expenses,
-    List<Task>? tasks,
+    List<BookingTask>? tasks,
     required String governmentId,
     required num guests,
     required String listingId,
@@ -66,17 +66,21 @@ class Expense with _$Expense {
 }
 
 @freezed
-class Task with _$Task {
-  factory Task({
-    required List<String> assigned,
+class BookingTask with _$BookingTask {
+  factory BookingTask({
+    String? uid,
+    String? bookingId,
+    required List<String> assignedIds,
+    required List<String> assignedNames,
     required String committee,
     required bool complete,
     required bool openContribution,
     List<TaskImages>? imageProof,
     required String name,
-  }) = _Task;
+  }) = _BookingTask;
 
-  factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
+  factory BookingTask.fromJson(Map<String, dynamic> json) =>
+      _$BookingTaskFromJson(json);
 }
 
 @freezed

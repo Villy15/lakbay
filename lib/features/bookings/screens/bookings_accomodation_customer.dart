@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -28,6 +27,14 @@ class BookingsAccomodationCustomer extends ConsumerStatefulWidget {
 class _BookingsAccomodationCustomerState
     extends ConsumerState<BookingsAccomodationCustomer> {
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      ref.read(navBarVisibilityProvider.notifier).hide();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
         canPop: false,
@@ -48,9 +55,17 @@ class _BookingsAccomodationCustomerState
                     "icon": Icons.location_on_outlined,
                     "title": "View Listing",
                     "action": () {
-                      context.push(
-                          "/market/${widget.listing.category.toLowerCase()}",
-                          extra: widget.listing);
+                      context
+                          .push(
+                        "/market/${widget.listing.category.toLowerCase()}",
+                        extra: widget.listing,
+                      )
+                          .then(
+                        (value) {
+                          debugPrint("Popped");
+                          // ref.read(navBarVisibilityProvider.notifier).show();
+                        },
+                      );
                     },
                   },
                   "message": {
@@ -91,6 +106,7 @@ class _BookingsAccomodationCustomerState
                       icon: const Icon(Icons.arrow_back),
                       onPressed: () {
                         context.pop();
+                        // ref.read(navBarVisibilityProvider.notifier).show();
                       },
                     ),
                   ),
@@ -107,212 +123,7 @@ class _BookingsAccomodationCustomerState
                                 width: MediaQuery.of(context).size.width * 0.8,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          final amountDue =
-                                              booking.totalPrice! -
-                                                  booking.amountPaid!;
-                                          Map<String, num> paymentDetails = {
-                                            'Amount Paid: ':
-                                                (0 - booking.amountPaid!),
-                                            'Total Amount: ':
-                                                booking.totalPrice!,
-                                            'Amount Due': amountDue,
-                                          };
-                                          return Dialog.fullscreen(
-                                              child: Scaffold(
-                                            appBar: AppBar(
-                                              leading: IconButton(
-                                                icon: const Icon(
-                                                    Icons.arrow_back),
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                            ),
-                                            bottomNavigationBar: PreferredSize(
-                                              preferredSize: Size.fromHeight(
-                                                  MediaQuery.sizeOf(context)
-                                                          .height /
-                                                      30), // Adjust the height as needed
-                                              child: BottomAppBar(
-                                                surfaceTintColor:
-                                                    Colors.transparent,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.8,
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          final updatedBooking =
-                                                              booking.copyWith(
-                                                                  amountPaid:
-                                                                      amountDue +
-                                                                          booking
-                                                                              .amountPaid!,
-                                                                  paymentStatus:
-                                                                      "Fully Paid");
-                                                          ref.read(salesControllerProvider.notifier).addSale(
-                                                              context,
-                                                              SaleModel(
-                                                                  bookingId: widget
-                                                                      .booking
-                                                                      .id!,
-                                                                  category: widget
-                                                                      .booking
-                                                                      .category,
-                                                                  cooperativeId: widget
-                                                                      .listing
-                                                                      .cooperative
-                                                                      .cooperativeId,
-                                                                  cooperativeName: widget
-                                                                      .listing
-                                                                      .cooperative
-                                                                      .cooperativeName,
-                                                                  customerId: widget
-                                                                      .booking
-                                                                      .customerId,
-                                                                  customerName: widget
-                                                                      .booking
-                                                                      .customerName,
-                                                                  listingId: widget
-                                                                      .listing
-                                                                      .uid!,
-                                                                  listingName: widget
-                                                                      .listing
-                                                                      .title,
-                                                                  listingPrice: widget
-                                                                      .booking
-                                                                      .price,
-                                                                  paymentOption: widget
-                                                                      .booking
-                                                                      .paymentOption!,
-                                                                  tranasactionType:
-                                                                      "Balance Payment",
-                                                                  amount: widget
-                                                                      .booking
-                                                                      .totalPrice!,
-                                                                  ownerId: widget.listing.publisherId,
-                                                                  ownerName: widget.listing.publisherName,
-                                                                  saleAmount: amountDue),
-                                                              booking: updatedBooking);
-                                                          showSnackBar(context,
-                                                              'Payment Received');
-                                                          context.pop();
-                                                        },
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical:
-                                                                      12.0),
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8.0), // Adjust the value as needed
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                          'Confirm Payment',
-                                                          style: TextStyle(
-                                                              fontSize: 16),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            body: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 15),
-                                              width: double.infinity,
-                                              child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const Text(
-                                                      "Your Payment",
-                                                      style: TextStyle(
-                                                          fontSize: 22,
-                                                          fontWeight:
-                                                              FontWeight.w500),
-                                                    ),
-                                                    SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height /
-                                                                20),
-                                                    const Text(
-                                                      "Payment Details",
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    ...paymentDetails.entries
-                                                        .map((entry) {
-                                                      return Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                top: 15.0),
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  entry.key
-                                                                      .toString(),
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          14),
-                                                                ),
-                                                                Text(
-                                                                  "₱${entry.value} PHP",
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Container(
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      top: 15),
-                                                              height: 1,
-                                                              width: double
-                                                                  .infinity,
-                                                              color: Colors
-                                                                  .grey[200],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      );
-                                                    }),
-                                                  ]),
-                                            ),
-                                          ));
-                                        });
+                                    payBalance(context, booking);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
@@ -343,7 +154,7 @@ class _BookingsAccomodationCustomerState
                               color: Colors.black.withOpacity(
                                   booking.bookingStatus == "Cancelled"
                                       ? 0.5
-                                      : 1.0),
+                                      : 0.0),
                             ),
                             child: ImageSlider(
                                 images: imageUrls,
@@ -664,6 +475,136 @@ class _BookingsAccomodationCustomerState
             ));
   }
 
+  Future<dynamic> payBalance(BuildContext context, ListingBookings booking) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          final amountDue = booking.totalPrice! - booking.amountPaid!;
+          Map<String, num> paymentDetails = {
+            'Amount Paid: ': (0 - booking.amountPaid!),
+            'Total Amount: ': booking.totalPrice!,
+            'Amount Due': amountDue,
+          };
+          return Dialog.fullscreen(
+              child: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            bottomNavigationBar: PreferredSize(
+              preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).height /
+                  30), // Adjust the height as needed
+              child: BottomAppBar(
+                surfaceTintColor: Colors.transparent,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: ElevatedButton(
+                        onPressed: () =>
+                            onTapPayBalance(context, booking, amountDue),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Adjust the value as needed
+                          ),
+                        ),
+                        child: const Text(
+                          'Confirm Payment',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            body: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              width: double.infinity,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Your Payment",
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(height: MediaQuery.sizeOf(context).height / 20),
+                    const Text(
+                      "Payment Details",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    ...paymentDetails.entries.map((entry) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 15.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  entry.key.toString(),
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                Text(
+                                  "₱${entry.value} PHP",
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 15),
+                              height: 1,
+                              width: double.infinity,
+                              color: Colors.grey[200],
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ]),
+            ),
+          ));
+        });
+  }
+
+  void onTapPayBalance(context, ListingBookings booking, num amountDue) {
+    final updatedBooking = booking.copyWith(
+        amountPaid: amountDue + booking.amountPaid!,
+        paymentStatus: "Fully Paid");
+    ref.read(salesControllerProvider.notifier).addSale(
+        context,
+        SaleModel(
+            bookingId: widget.booking.id!,
+            category: widget.booking.category,
+            cooperativeId: widget.listing.cooperative.cooperativeId,
+            cooperativeName: widget.listing.cooperative.cooperativeName,
+            customerId: widget.booking.customerId,
+            customerName: widget.booking.customerName,
+            listingId: widget.listing.uid!,
+            listingName: widget.listing.title,
+            listingPrice: widget.booking.price,
+            paymentOption: widget.booking.paymentOption!,
+            tranasactionType: "Balance Payment",
+            amount: widget.booking.totalPrice!,
+            ownerId: widget.listing.publisherId,
+            ownerName: widget.listing.publisherName,
+            saleAmount: amountDue),
+        booking: updatedBooking);
+    showSnackBar(context, 'Payment Received');
+    context.pop();
+  }
+
   Future<dynamic> cancelBookingProcess(
       BuildContext context, ListingBookings booking) {
     return showDialog(
@@ -735,22 +676,9 @@ class _BookingsAccomodationCustomerState
                                                           .width *
                                                       0.8,
                                                   child: ElevatedButton(
-                                                    onPressed: () {
-                                                      final updatedBooking =
-                                                          booking.copyWith(
-                                                              bookingStatus:
-                                                                  "Cancelled");
-                                                      ref
-                                                          .read(
-                                                              listingControllerProvider
-                                                                  .notifier)
-                                                          .updateBooking(
-                                                              context,
-                                                              updatedBooking
-                                                                  .listingId,
-                                                              updatedBooking,
-                                                              "");
-                                                    },
+                                                    onPressed: () =>
+                                                        onTapCancel(
+                                                            context, booking),
                                                     style: ElevatedButton
                                                         .styleFrom(
                                                       padding: const EdgeInsets
@@ -930,5 +858,31 @@ class _BookingsAccomodationCustomerState
         });
       },
     );
+  }
+
+  void onTapCancel(context, ListingBookings booking) {
+    final updatedBooking = booking.copyWith(bookingStatus: "Cancelled");
+    ref
+        .read(listingControllerProvider.notifier)
+        .updateBooking(context, updatedBooking.listingId, updatedBooking, "");
+    ref.read(salesControllerProvider.notifier).addSale(
+        context,
+        SaleModel(
+            bookingId: booking.id!,
+            category: booking.category,
+            cooperativeId: widget.listing.cooperative.cooperativeId,
+            cooperativeName: widget.listing.cooperative.cooperativeName,
+            customerId: booking.customerId,
+            customerName: booking.customerName,
+            listingId: booking.listingId,
+            listingName: booking.listingTitle,
+            listingPrice: booking.price,
+            paymentOption: booking.paymentOption!,
+            tranasactionType: "Cancellation",
+            amount: booking.totalPrice!,
+            ownerId: widget.listing.publisherId,
+            ownerName: widget.listing.publisherName,
+            saleAmount:
+                (-booking.amountPaid! * widget.listing.cancellationRate!)));
   }
 }

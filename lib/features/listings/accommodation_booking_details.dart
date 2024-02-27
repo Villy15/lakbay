@@ -531,7 +531,7 @@ class _AccommodationBookingsDetailsState
                                 ),
                               ),
                               Text(
-                                "Assigned: ${booking.tasks![taskIndex].assigned.join(", ")}",
+                                "Assigned: ${booking.tasks![taskIndex].assignedNames.join(", ")}",
                                 style: TextStyle(
                                   fontSize:
                                       14, // Slightly smaller than the title
@@ -582,21 +582,23 @@ class _AccommodationBookingsDetailsState
                                     TextButton(
                                       child: const Text('Confirm'),
                                       onPressed: () {
-                                        List<Task> tasks = booking.tasks!
+                                        List<BookingTask> bookingTasks = booking
+                                            .tasks!
                                             .toList(growable: true);
-                                        tasks[taskIndex] = booking
+                                        bookingTasks[taskIndex] = booking
                                             .tasks![taskIndex]
                                             .copyWith(openContribution: value!);
-                                        ListingBookings updatedBooking =
-                                            booking.copyWith(tasks: tasks);
+                                        ListingBookings updatedBooking = booking
+                                            .copyWith(tasks: bookingTasks);
                                         debugPrint("$updatedBooking");
+
                                         ref
                                             .read(listingControllerProvider
                                                 .notifier)
-                                            .updateTasks(
+                                            .updateBookingTask(
                                                 context,
                                                 widget.listing.uid!,
-                                                updatedBooking,
+                                                bookingTasks[taskIndex],
                                                 "Tasks Updated");
                                         context.pop();
                                       },
@@ -664,7 +666,9 @@ class _AccommodationBookingsDetailsState
           TextEditingController committeeController =
               TextEditingController(text: "Tourism");
           bool openContribution = false;
-          List<String> assignedMembers = [];
+          List<String> assignedIds = [];
+          List<String> assignedNames = [];
+          List<CooperativeMembers>? members;
           return Dialog.fullscreen(
             child: StatefulBuilder(builder: (context, setTaskState) {
               return Column(
@@ -743,17 +747,17 @@ class _AccommodationBookingsDetailsState
                                 readOnly: true,
                                 canRequestFocus: false,
                                 onTap: () async {
-                                  List<CooperativeMembers> members = await ref
-                                      .read(getAllMembersInCommitteeProvider(
+                                  members = await ref.read(
+                                      getAllMembersInCommitteeProvider(
                                           CommitteeParams(
                                     committeeName: committeeController.text,
                                     coopUid:
                                         ref.watch(userProvider)!.currentCoop!,
                                   )).future);
 
-                                  members = members
-                                      .where((member) => !assignedMembers
-                                          .contains(member.name))
+                                  members = members!
+                                      .where((member) =>
+                                          !assignedNames.contains(member.name))
                                       .toList();
                                   if (context.mounted) {
                                     return showModalBottomSheet(
@@ -779,12 +783,12 @@ class _AccommodationBookingsDetailsState
                                               ),
                                               Expanded(
                                                 child: ListView.builder(
-                                                  itemCount: members.length,
+                                                  itemCount: members!.length,
                                                   itemBuilder:
                                                       (context, membersIndex) {
                                                     return ListTile(
                                                       title: Text(
-                                                        members[membersIndex]
+                                                        members![membersIndex]
                                                             .name,
                                                         style: const TextStyle(
                                                             fontSize:
@@ -793,8 +797,13 @@ class _AccommodationBookingsDetailsState
                                                       onTap: () {
                                                         setTaskState(
                                                           () {
-                                                            assignedMembers.add(
-                                                                members[membersIndex]
+                                                            assignedIds.add(
+                                                                members![
+                                                                        membersIndex]
+                                                                    .uid!);
+                                                            assignedNames.add(
+                                                                members![
+                                                                        membersIndex]
                                                                     .name);
                                                           },
                                                         );
@@ -828,7 +837,7 @@ class _AccommodationBookingsDetailsState
                                       MediaQuery.sizeOf(context).height /
                                           8, // Space between cards vertically
                                 ),
-                                itemCount: assignedMembers
+                                itemCount: assignedNames
                                     .length, // Replace with the length of your data
                                 itemBuilder: (context, index) {
                                   return Container(
@@ -852,7 +861,7 @@ class _AccommodationBookingsDetailsState
                                               onPressed: () {
                                                 setTaskState(
                                                   () {
-                                                    assignedMembers
+                                                    assignedNames
                                                         .removeAt(index);
                                                   },
                                                 );
@@ -860,7 +869,7 @@ class _AccommodationBookingsDetailsState
                                             ),
                                             Expanded(
                                               child: Text(
-                                                assignedMembers[
+                                                assignedNames[
                                                     index], // Replace with the name from your data
                                                 style: const TextStyle(
                                                   fontSize:
@@ -911,28 +920,29 @@ class _AccommodationBookingsDetailsState
                           ),
                           ElevatedButton(
                               onPressed: () {
-                                Task task = Task(
-                                    assigned: assignedMembers,
+                                BookingTask bookingTask = BookingTask(
+                                    assignedIds: assignedIds,
+                                    assignedNames: assignedNames,
                                     committee: committeeController.text,
                                     complete: false,
                                     openContribution: openContribution,
                                     name: taskNameController.text);
 
-                                debugPrintJson("$task");
+                                debugPrintJson("$bookingTask");
                                 if (taskNameController.text.isNotEmpty) {
-                                  List<Task> tasks =
+                                  List<BookingTask> bookingTasks =
                                       booking.tasks?.toList(growable: true) ??
                                           [];
-                                  tasks.add(task);
+                                  bookingTasks.add(bookingTask);
                                   ListingBookings updatedBooking =
-                                      booking.copyWith(tasks: tasks);
+                                      booking.copyWith(tasks: bookingTasks);
                                   debugPrint("$updatedBooking");
                                   ref
                                       .read(listingControllerProvider.notifier)
-                                      .updateBooking(
+                                      .updateBookingTask(
                                           context,
                                           widget.listing.uid!,
-                                          updatedBooking,
+                                          bookingTask,
                                           "Tasks Updated");
                                 }
                                 taskNameController.dispose;

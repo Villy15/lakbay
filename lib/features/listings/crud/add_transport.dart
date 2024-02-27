@@ -44,7 +44,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   late DateTime startDate = DateTime.now();
   late DateTime endDate = DateTime.now();
   List<bool> workingDays = List.filled(7, false);
-  List<Task>? fixedTasks = [];
+  List<BookingTask>? fixedTasks = [];
 
   List<File>? _images = [];
   int departures = 0;
@@ -495,8 +495,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                             .height /
                                         20, // Space between cards vertically
                                   ),
-                                  itemCount:
-                                      fixedTasks![taskIndex].assigned.length,
+                                  itemCount: fixedTasks![taskIndex]
+                                      .assignedNames
+                                      .length,
                                   itemBuilder: (context, assignedIndex) {
                                     return Container(
                                         alignment: Alignment.centerLeft,
@@ -511,7 +512,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                           padding:
                                               const EdgeInsets.only(left: 10.0),
                                           child: Text(
-                                            fixedTasks![taskIndex].assigned[
+                                            fixedTasks![taskIndex]
+                                                    .assignedNames[
                                                 assignedIndex], // Replace with the name from your data
                                             style: const TextStyle(
                                               fontSize: 14, // Adjust text style
@@ -544,7 +546,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
     TextEditingController taskNameController = TextEditingController();
     TextEditingController committeeController =
         TextEditingController(text: "Tourism");
-    List<String> assignedMembers = [];
+    List<String> assignedIds = [];
+    List<String> assignedNames = [];
+    List<CooperativeMembers>? members;
     return StatefulBuilder(builder: (context, setState) {
       return Column(
         children: [
@@ -617,15 +621,15 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                       readOnly: true,
                       canRequestFocus: false,
                       onTap: () async {
-                        List<CooperativeMembers> members = await ref.read(
+                        members = await ref.read(
                             getAllMembersInCommitteeProvider(CommitteeParams(
                           committeeName: committeeController.text,
                           coopUid: ref.watch(userProvider)!.currentCoop!,
                         )).future);
 
-                        members = members
+                        members = members!
                             .where((member) =>
-                                !assignedMembers.contains(member.name))
+                                !assignedNames.contains(member.name))
                             .toList();
                         if (context.mounted) {
                           return showModalBottomSheet(
@@ -650,11 +654,11 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                     ),
                                     Expanded(
                                       child: ListView.builder(
-                                        itemCount: members.length,
+                                        itemCount: members!.length,
                                         itemBuilder: (context, index) {
                                           return ListTile(
                                             title: Text(
-                                              members[index].name,
+                                              members![index].name,
                                               style: const TextStyle(
                                                   fontSize:
                                                       16.0), // Adjust font size
@@ -662,8 +666,10 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                             onTap: () {
                                               setState(
                                                 () {
-                                                  assignedMembers
-                                                      .add(members[index].name);
+                                                  assignedIds.add(
+                                                      members![index].uid!);
+                                                  assignedNames.add(
+                                                      members![index].name);
                                                 },
                                               );
                                               context.pop();
@@ -695,7 +701,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                         mainAxisExtent: MediaQuery.sizeOf(context).height /
                             8, // Space between cards vertically
                       ),
-                      itemCount: assignedMembers
+                      itemCount: assignedNames
                           .length, // Replace with the length of your data
                       itemBuilder: (context, index) {
                         return Container(
@@ -718,14 +724,19 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                     onPressed: () {
                                       setState(
                                         () {
-                                          assignedMembers.removeAt(index);
+                                          assignedIds.remove(members![members!
+                                                  .indexWhere((element) =>
+                                                      element.name ==
+                                                      assignedNames[index])]
+                                              .uid!);
+                                          assignedNames.removeAt(index);
                                         },
                                       );
                                     },
                                   ),
                                   Expanded(
                                     child: Text(
-                                      assignedMembers[
+                                      assignedNames[
                                           index], // Replace with the name from your data
                                       style: const TextStyle(
                                         fontSize: 14, // Adjust text style
@@ -748,8 +759,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           ElevatedButton(
               onPressed: () {
                 this.setState(() {
-                  fixedTasks?.add(Task(
-                      assigned: assignedMembers,
+                  fixedTasks?.add(BookingTask(
+                      assignedIds: assignedIds,
+                      assignedNames: assignedNames,
                       committee: committeeController.text,
                       complete: false,
                       openContribution: false,
@@ -773,7 +785,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
       children: [
         Row(
           children: [
-            
             Expanded(
               child: TextFormField(
                 maxLines: 1,
@@ -1082,10 +1093,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               ElevatedButton(
                   onPressed: () async {
                     final TimeOfDay? time = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                      initialEntryMode: TimePickerEntryMode.inputOnly
-                    );
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                        initialEntryMode: TimePickerEntryMode.inputOnly);
                     if (time != null) {
                       setState(() {
                         endDate = DateTime(
@@ -1311,21 +1321,19 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             subtitle: Text(_descriptionController.text),
           ),
-          if (type == 'Public') ... [
+          if (type == 'Public') ...[
             ListTile(
               title: const Text('Ticket Price',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               subtitle: Text("₱${_feeController.text} / per person"),
             ),
-          ]
-          else ... [
+          ] else ...[
             ListTile(
               title: const Text('Price',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               subtitle: Text("₱${_feeController.text}"),
             ),
           ],
-          
 
           const Divider(),
           ListTile(
@@ -1368,8 +1376,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: List.generate(
-                    _departureTime.length,
-                    (index) => Text(_departureTime[index].format(context)),),
+                  _departureTime.length,
+                  (index) => Text(_departureTime[index].format(context)),
+                ),
               ),
             ),
           ],

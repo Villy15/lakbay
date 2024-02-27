@@ -47,7 +47,7 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       publisherName: json['publisherName'] as String,
       rating: json['rating'] as num?,
       fixedTasks: (json['fixedTasks'] as List<dynamic>?)
-          ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => BookingTask.fromJson(e as Map<String, dynamic>))
           .toList(),
       timestamp:
           const TimestampSerializer().fromJson(json['timestamp'] as Timestamp?),

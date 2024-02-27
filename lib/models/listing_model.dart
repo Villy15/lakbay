@@ -35,7 +35,7 @@ class ListingModel with _$ListingModel {
     required String publisherId,
     required String publisherName,
     num? rating,
-    List<Task>? fixedTasks,
+    List<BookingTask>? fixedTasks,
     @TimestampSerializer() DateTime? timestamp,
     required String title,
     String? type,

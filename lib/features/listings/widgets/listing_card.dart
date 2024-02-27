@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/models/listing_model.dart';
 
 class ListingCard extends ConsumerWidget {
@@ -8,7 +9,17 @@ class ListingCard extends ConsumerWidget {
   const ListingCard({super.key, required this.listing});
 
   void onTap(BuildContext context, WidgetRef ref) {
-    context.push('/market/${listing.category.toLowerCase()}', extra: listing);
+    context
+        .push(
+      '/market/${listing.category.toLowerCase()}',
+      extra: listing,
+    )
+        .then(
+      (value) {
+        debugPrint("Popped");
+        ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
   }
 
   @override

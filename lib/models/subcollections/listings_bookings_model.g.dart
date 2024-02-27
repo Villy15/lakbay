@@ -24,7 +24,7 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
           ?.map((e) => Expense.fromJson(e as Map<String, dynamic>))
           .toList(),
       tasks: (json['tasks'] as List<dynamic>?)
-          ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => BookingTask.fromJson(e as Map<String, dynamic>))
           .toList(),
       governmentId: json['governmentId'] as String,
       guests: json['guests'] as num,
@@ -115,9 +115,16 @@ Map<String, dynamic> _$$ExpenseImplToJson(_$ExpenseImpl instance) =>
       'name': instance.name,
     };
 
-_$TaskImpl _$$TaskImplFromJson(Map<String, dynamic> json) => _$TaskImpl(
-      assigned:
-          (json['assigned'] as List<dynamic>).map((e) => e as String).toList(),
+_$BookingTaskImpl _$$BookingTaskImplFromJson(Map<String, dynamic> json) =>
+    _$BookingTaskImpl(
+      uid: json['uid'] as String?,
+      bookingId: json['bookingId'] as String?,
+      assignedIds: (json['assignedIds'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      assignedNames: (json['assignedNames'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       committee: json['committee'] as String,
       complete: json['complete'] as bool,
       openContribution: json['openContribution'] as bool,
@@ -127,9 +134,12 @@ _$TaskImpl _$$TaskImplFromJson(Map<String, dynamic> json) => _$TaskImpl(
       name: json['name'] as String,
     );
 
-Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
+Map<String, dynamic> _$$BookingTaskImplToJson(_$BookingTaskImpl instance) =>
     <String, dynamic>{
-      'assigned': instance.assigned,
+      'uid': instance.uid,
+      'bookingId': instance.bookingId,
+      'assignedIds': instance.assignedIds,
+      'assignedNames': instance.assignedNames,
       'committee': instance.committee,
       'complete': instance.complete,
       'openContribution': instance.openContribution,
