@@ -16,6 +16,7 @@ import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
 class ListingsPage extends ConsumerStatefulWidget {
@@ -62,19 +63,50 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
                   context,
                 ),
                 body: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: TabBarView(
                     children: [
                       ref
                           .watch(getListingsByCoopProvider(widget.coopId))
                           .maybeWhen(
                             data: (List<ListingModel> listings) {
+                              // Sorting Logic
+                              listings.sort((a, b) {
+                                // Calculate the number of bookings for each listing
+                                final aBookings = ref
+                                        .watch(getAllBookingsProvider(a.uid!))
+                                        .asData
+                                        ?.value ??
+                                    [];
+                                final bBookings = ref
+                                        .watch(getAllBookingsProvider(b.uid!))
+                                        .asData
+                                        ?.value ??
+                                    [];
+
+                                // Compare the number of bookings (descending order)
+                                return bBookings.length
+                                    .compareTo(aBookings.length);
+                              });
+
                               return ListView.builder(
                                 itemCount: listings.length,
                                 itemBuilder: (context, index) {
                                   final listing = listings[index];
-                                  return CommunityHubListingCard(
-                                      listing: listing);
+
+                                  return ref
+                                      .watch(
+                                          getAllBookingsProvider(listing.uid!))
+                                      .maybeWhen(
+                                        data: (List<ListingBookings> bookings) {
+                                          // Order the listings based on the number of bookings per listings
+                                          return CommunityHubListingCard(
+                                            listing: listing,
+                                            bookings: bookings,
+                                          );
+                                        },
+                                        orElse: () => const SizedBox.shrink(),
+                                      );
                                 },
                               );
                             },

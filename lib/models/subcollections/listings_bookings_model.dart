@@ -8,6 +8,8 @@ part 'listings_bookings_model.g.dart';
 
 @freezed
 class ListingBookings with _$ListingBookings {
+  const ListingBookings._();
+
   factory ListingBookings({
     num? amountPaid,
     required String customerId,
@@ -45,6 +47,11 @@ class ListingBookings with _$ListingBookings {
 
   factory ListingBookings.fromJson(Map<String, dynamic> json) =>
       _$ListingBookingsFromJson(json);
+
+  // Get number of tasks that need contributions
+  int get tasksNeedContributions {
+    return tasks?.where((task) => task.openContribution).length ?? 0;
+  }
 }
 
 @freezed
