@@ -51,7 +51,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
   List<bool> workingDays = List.filled(7, false);
   num guests = 0;
   List<FoodService> availableDeals = [];
-  List<Task>? fixedTasks = [];
+  List<BookingTask>? fixedTasks = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -276,8 +276,9 @@ class _AddFoodState extends ConsumerState<AddFood> {
                                             .height /
                                         20, // Space between cards vertically
                                   ),
-                                  itemCount:
-                                      fixedTasks![taskIndex].assigned.length,
+                                  itemCount: fixedTasks![taskIndex]
+                                      .assignedNames
+                                      .length,
                                   itemBuilder: (context, assignedIndex) {
                                     return Container(
                                         alignment: Alignment.centerLeft,
@@ -292,7 +293,8 @@ class _AddFoodState extends ConsumerState<AddFood> {
                                           padding:
                                               const EdgeInsets.only(left: 10.0),
                                           child: Text(
-                                            fixedTasks![taskIndex].assigned[
+                                            fixedTasks![taskIndex]
+                                                    .assignedNames[
                                                 assignedIndex], // Replace with the name from your data
                                             style: const TextStyle(
                                               fontSize: 14, // Adjust text style
@@ -325,7 +327,9 @@ class _AddFoodState extends ConsumerState<AddFood> {
     TextEditingController taskNameController = TextEditingController();
     TextEditingController committeeController =
         TextEditingController(text: "Tourism");
-    List<String> assignedMembers = [];
+    List<String> assignedIds = [];
+    List<String> assignedNames = [];
+    List<CooperativeMembers>? members;
     return StatefulBuilder(builder: (context, setState) {
       return Column(
         children: [
@@ -398,15 +402,15 @@ class _AddFoodState extends ConsumerState<AddFood> {
                       readOnly: true,
                       canRequestFocus: false,
                       onTap: () async {
-                        List<CooperativeMembers> members = await ref.read(
+                        members = await ref.read(
                             getAllMembersInCommitteeProvider(CommitteeParams(
                           committeeName: committeeController.text,
                           coopUid: ref.watch(userProvider)!.currentCoop!,
                         )).future);
 
-                        members = members
+                        members = members!
                             .where((member) =>
-                                !assignedMembers.contains(member.name))
+                                !assignedNames.contains(member.name))
                             .toList();
                         if (context.mounted) {
                           return showModalBottomSheet(
@@ -431,11 +435,11 @@ class _AddFoodState extends ConsumerState<AddFood> {
                                     ),
                                     Expanded(
                                       child: ListView.builder(
-                                        itemCount: members.length,
+                                        itemCount: members!.length,
                                         itemBuilder: (context, index) {
                                           return ListTile(
                                             title: Text(
-                                              members[index].name,
+                                              members![index].name,
                                               style: const TextStyle(
                                                   fontSize:
                                                       16.0), // Adjust font size
@@ -443,8 +447,10 @@ class _AddFoodState extends ConsumerState<AddFood> {
                                             onTap: () {
                                               setState(
                                                 () {
-                                                  assignedMembers
-                                                      .add(members[index].name);
+                                                  assignedIds.add(
+                                                      members![index].uid!);
+                                                  assignedNames.add(
+                                                      members![index].name);
                                                 },
                                               );
                                               context.pop();
@@ -476,7 +482,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                         mainAxisExtent: MediaQuery.sizeOf(context).height /
                             8, // Space between cards vertically
                       ),
-                      itemCount: assignedMembers
+                      itemCount: assignedNames
                           .length, // Replace with the length of your data
                       itemBuilder: (context, index) {
                         return Container(
@@ -499,14 +505,19 @@ class _AddFoodState extends ConsumerState<AddFood> {
                                     onPressed: () {
                                       setState(
                                         () {
-                                          assignedMembers.removeAt(index);
+                                          assignedIds.remove(members![members!
+                                                  .indexWhere((element) =>
+                                                      element.name ==
+                                                      assignedNames[index])]
+                                              .uid!);
+                                          assignedNames.removeAt(index);
                                         },
                                       );
                                     },
                                   ),
                                   Expanded(
                                     child: Text(
-                                      assignedMembers[
+                                      assignedNames[
                                           index], // Replace with the name from your data
                                       style: const TextStyle(
                                         fontSize: 14, // Adjust text style
@@ -529,8 +540,9 @@ class _AddFoodState extends ConsumerState<AddFood> {
           ElevatedButton(
               onPressed: () {
                 this.setState(() {
-                  fixedTasks?.add(Task(
-                      assigned: assignedMembers,
+                  fixedTasks?.add(BookingTask(
+                      assignedIds: assignedIds,
+                      assignedNames: assignedNames,
                       committee: committeeController.text,
                       complete: false,
                       openContribution: false,

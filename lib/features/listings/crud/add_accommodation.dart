@@ -59,7 +59,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   TimeOfDay checkIn = TimeOfDay.now();
   TimeOfDay checkOut = TimeOfDay.now();
 
-  List<Task>? fixedTasks = [];
+  List<BookingTask>? fixedTasks = [];
 
   final TextEditingController _downpaymentRateController =
       TextEditingController();
@@ -551,6 +551,13 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
               context: context,
               initialTime: const TimeOfDay(hour: 11, minute: 30),
               initialEntryMode: TimePickerEntryMode.inputOnly,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: false),
+                  child: child!,
+                );
+              },
             );
 
             if (pickedTime != null) {
@@ -579,6 +586,13 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
               context: context,
               initialTime: const TimeOfDay(hour: 1, minute: 30),
               initialEntryMode: TimePickerEntryMode.inputOnly,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: false),
+                  child: child!,
+                );
+              },
             );
             if (pickedTime != null) {
               setState(() {
@@ -1272,8 +1286,9 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                                             .height /
                                         20, // Space between cards vertically
                                   ),
-                                  itemCount:
-                                      fixedTasks![taskIndex].assigned.length,
+                                  itemCount: fixedTasks![taskIndex]
+                                      .assignedNames
+                                      .length,
                                   itemBuilder: (context, assignedIndex) {
                                     return Container(
                                         alignment: Alignment.centerLeft,
@@ -1288,7 +1303,8 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                                           padding:
                                               const EdgeInsets.only(left: 10.0),
                                           child: Text(
-                                            fixedTasks![taskIndex].assigned[
+                                            fixedTasks![taskIndex]
+                                                    .assignedNames[
                                                 assignedIndex], // Replace with the name from your data
                                             style: const TextStyle(
                                               fontSize: 14, // Adjust text style
@@ -1321,7 +1337,10 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
     TextEditingController taskNameController = TextEditingController();
     TextEditingController committeeController =
         TextEditingController(text: "Tourism");
-    List<String> assignedMembers = [];
+    List<String> assignedIds = [];
+    List<String> assignedNames = [];
+    List<CooperativeMembers>? members;
+
     return StatefulBuilder(builder: (context, setState) {
       return Column(
         children: [
@@ -1394,15 +1413,15 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                       readOnly: true,
                       canRequestFocus: false,
                       onTap: () async {
-                        List<CooperativeMembers> members = await ref.read(
+                        members = await ref.read(
                             getAllMembersInCommitteeProvider(CommitteeParams(
                           committeeName: committeeController.text,
                           coopUid: ref.watch(userProvider)!.currentCoop!,
                         )).future);
 
-                        members = members
+                        members = members!
                             .where((member) =>
-                                !assignedMembers.contains(member.name))
+                                !assignedNames.contains(member.name))
                             .toList();
                         if (context.mounted) {
                           return showModalBottomSheet(
@@ -1427,11 +1446,11 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                                     ),
                                     Expanded(
                                       child: ListView.builder(
-                                        itemCount: members.length,
+                                        itemCount: members!.length,
                                         itemBuilder: (context, index) {
                                           return ListTile(
                                             title: Text(
-                                              members[index].name,
+                                              members![index].name,
                                               style: const TextStyle(
                                                   fontSize:
                                                       16.0), // Adjust font size
@@ -1439,8 +1458,10 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                                             onTap: () {
                                               setState(
                                                 () {
-                                                  assignedMembers
-                                                      .add(members[index].name);
+                                                  assignedIds.add(
+                                                      members![index].uid!);
+                                                  assignedNames.add(
+                                                      members![index].name);
                                                 },
                                               );
                                               context.pop();
@@ -1472,7 +1493,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                         mainAxisExtent: MediaQuery.sizeOf(context).height /
                             8, // Space between cards vertically
                       ),
-                      itemCount: assignedMembers
+                      itemCount: assignedNames
                           .length, // Replace with the length of your data
                       itemBuilder: (context, index) {
                         return Container(
@@ -1495,14 +1516,19 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                                     onPressed: () {
                                       setState(
                                         () {
-                                          assignedMembers.removeAt(index);
+                                          assignedIds.remove(members![members!
+                                                  .indexWhere((element) =>
+                                                      element.name ==
+                                                      assignedNames[index])]
+                                              .uid!);
+                                          assignedNames.removeAt(index);
                                         },
                                       );
                                     },
                                   ),
                                   Expanded(
                                     child: Text(
-                                      assignedMembers[
+                                      assignedNames[
                                           index], // Replace with the name from your data
                                       style: const TextStyle(
                                         fontSize: 14, // Adjust text style
@@ -1525,8 +1551,9 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           ElevatedButton(
               onPressed: () {
                 this.setState(() {
-                  fixedTasks?.add(Task(
-                      assigned: assignedMembers,
+                  fixedTasks?.add(BookingTask(
+                      assignedIds: assignedIds,
+                      assignedNames: assignedNames,
                       committee: committeeController.text,
                       complete: false,
                       openContribution: false,

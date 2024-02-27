@@ -28,6 +28,14 @@ class BookingsAccomodationCustomer extends ConsumerStatefulWidget {
 class _BookingsAccomodationCustomerState
     extends ConsumerState<BookingsAccomodationCustomer> {
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      ref.read(navBarVisibilityProvider.notifier).hide();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
         canPop: false,
