@@ -216,7 +216,8 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
           onTap: () async {
             switch (category['name']) {
               case 'Accommodation':
-                final today = Timestamp.fromDate(DateTime.now());
+                final planStartDate = ref.read(planStartDateProvider);
+                final today = Timestamp.fromDate(planStartDate!);
                 final query = FirebaseFirestore.instance
                     .collectionGroup(
                         'bookings') // Perform collection group query for 'bookings'
@@ -225,6 +226,7 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                     .where('startDate', isGreaterThan: today);
                 final bookings = await ref
                     .watch(getBookingsByPropertiesProvider((query)).future);
+                debugPrint("booking:s ${bookings.length}");
                 if (context.mounted) {
                   context.push('/plan/add_activity/search_listing', extra: {
                     'bookings': bookings,

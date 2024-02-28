@@ -139,7 +139,7 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
   }
 
   Widget daysPlan(PlanModel plan) {
-    debugPrint("Plan: $plan");
+    // debugPrint("Plan: $plan");
     final thisDay = plan.startDate!.add(Duration(days: _selectedDayIndex));
 // Filter and sort the activities list first
     var filteredAndSortedActivities = plan.activities!.where((activity) {
@@ -150,7 +150,7 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
       return activity.dateTime!.day == thisDay.day;
     }).toList(); // Convert to List for sorting
 
-    debugPrint("filteredList: $filteredAndSortedActivities");
+    // debugPrint("filteredList: $filteredAndSortedActivities");
 
     // Sort the list in-place
     filteredAndSortedActivities.sort((a, b) {

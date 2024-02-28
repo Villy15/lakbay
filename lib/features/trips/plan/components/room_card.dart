@@ -36,7 +36,6 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     final endDate = ref.read(planEndDateProvider);
     List<String> unavailableRoomUids =
         getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
-
     return ref
         .watch(getRoomByPropertiesProvider(RoomsParams(
             unavailableRoomUids: unavailableRoomUids, guests: guests!)))
@@ -171,6 +170,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                   onPressed: () {
                                                     showSelectDate(
                                                         context,
+                                                        startDate,
+                                                        endDate,
                                                         widget.bookings,
                                                         listing,
                                                         room);
@@ -360,10 +361,13 @@ class _RoomCardState extends ConsumerState<RoomCard> {
         );
   }
 
-  void showSelectDate(BuildContext context, List<ListingBookings> bookings,
-      ListingModel listing, AvailableRoom room) {
-    DateTime startDate = DateTime.now();
-    DateTime endDate = DateTime.now();
+  void showSelectDate(
+      BuildContext context,
+      DateTime startDate,
+      DateTime endDate,
+      List<ListingBookings> bookings,
+      ListingModel listing,
+      AvailableRoom room) {
     showDialog(
         context: context,
         builder: (context) {
@@ -394,7 +398,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                         minDate: DateTime.now(),
                         selectableDayPredicate: (DateTime day) {
                           //       // Check if the day is in the list of booked dates
-                          final bookedDates = getAllDatesFromBookings(bookings);
+                          final bookedDates =
+                              getAllDatesFromBookings(bookings, room);
                           for (DateTime bookedDate in bookedDates) {
                             if (day.year == bookedDate.year &&
                                 day.month == bookedDate.month &&
@@ -421,19 +426,22 @@ class _RoomCardState extends ConsumerState<RoomCard> {
         });
   }
 
-  List<DateTime> getAllDatesFromBookings(List<ListingBookings> bookings) {
+  List<DateTime> getAllDatesFromBookings(
+      List<ListingBookings> bookings, AvailableRoom room) {
     List<DateTime> allDates = [];
 
     for (ListingBookings booking in bookings) {
-      // Add start date
-      DateTime currentDate = booking.startDate!;
+      if (booking.roomUid! == room.uid) {
+        // Add start date
+        DateTime currentDate = booking.startDate!;
 
-      // Keep adding dates until you reach the end date
-      while (currentDate.isBefore(booking.endDate!) ||
-          currentDate.isAtSameMomentAs(booking.endDate!)) {
-        allDates.add(currentDate);
-        // Move to next day
-        currentDate = currentDate.add(const Duration(days: 1));
+        // Keep adding dates until you reach the end date
+        while (currentDate.isBefore(booking.endDate!) ||
+            currentDate.isAtSameMomentAs(booking.endDate!)) {
+          allDates.add(currentDate);
+          // Move to next day
+          currentDate = currentDate.add(const Duration(days: 1));
+        }
       }
     }
 
@@ -448,10 +456,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
 // Put all the dates booked under a certain room uid in map with its corresponding value being a list of all the dates
     for (ListingBookings booking in bookings) {
       DateTime currentDate = booking.startDate!;
-
-      if (_isDateInRange(currentDate, startDate, endDate)) {
-        while ((currentDate.isBefore(booking.endDate!) ||
-            currentDate.isAtSameMomentAs(booking.endDate!))) {
+      if (_isDateInRange(currentDate, startDate, endDate) == true) {
+        while ((currentDate.isBefore(endDate))) {
           if (rooms.containsKey(booking.roomUid)) {
             rooms[booking.roomUid!]!.add(currentDate);
           } else {
@@ -464,7 +470,9 @@ class _RoomCardState extends ConsumerState<RoomCard> {
         rooms[booking.roomUid!]!.sort();
       }
     }
+
 // for each room in the map, you check if there is a date overlap, trying to find if there is any availability that fits your desired plan dates
+
     rooms.forEach((roomUid, dateList) {
       if (isDateOverlap(startDate, endDate, dateList) == true) {
         unavailableRoomUids.add(roomUid);
@@ -476,40 +484,18 @@ class _RoomCardState extends ConsumerState<RoomCard> {
   bool isDateOverlap(
       DateTime startDate, DateTime endDate, List<DateTime> dateList) {
     // Loop through each date in the list
-
-    int remainingDays = 0;
-
-// for every date in the datelist of the room, you will compare it to your plan date range, if its within range, it means that date isn't allowed
-    for (DateTime element in dateList) {
-      DateTime date = startDate;
-      while (date.isBefore(endDate) || date.isAtSameMomentAs(endDate)) {
-        // Check if the current date is present in the date list
-        // Check if the current date is within the range
-        if (_isDateInRange(element, startDate, endDate) == false) {
-          return false; // Return false if date not in range
-        }
-
-        date = date.add(const Duration(days: 1));
+    for (DateTime date in dateList) {
+      // Check if the current date falls within the range
+      if (_isDateInRange(date, startDate, endDate) == false) {
+        return false;
       }
-      //this counts the amount of days compared against your plan, meaning that if remaining days is larger than the difference between now and your enddate, there is an available room for you
-      remainingDays = remainingDays + 1;
     }
-
-    if (remainingDays <= endDate.difference(DateTime.now()).inDays) {
-      return false;
-    } else {
-      return true;
-    }
+    return true;
   }
 
-  bool _isDateInRange(DateTime date, DateTime rangeStart, DateTime rangeEnd) {
-    if ((date.isAtSameMomentAs(rangeStart) || date.isAfter(rangeStart)) &&
-            (date.isAtSameMomentAs(rangeEnd)) ||
-        date.isBefore(rangeEnd.add(const Duration(days: 1)))) {
-      return true;
-    } else {
-      return false;
-    }
+  bool _isDateInRange(DateTime date, DateTime planStart, DateTime planEnd) {
+    return date.isAfter(planStart.subtract(const Duration(days: 1))) &&
+        date.isBefore(planEnd.add(const Duration(days: 1)));
   }
 
   void showConfirmBooking(AvailableRoom room, ListingModel listing,
