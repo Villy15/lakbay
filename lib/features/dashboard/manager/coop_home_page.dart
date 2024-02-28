@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/calendar/components/booking_card.dart';
 import 'package:lakbay/features/common/error.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/cooperatives/my_coop/components/announcement_card.dart';
 import 'package:lakbay/features/events/events_controller.dart';
@@ -175,6 +176,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
               Center(
                 child: FilledButton(
                   onPressed: () {
+                    ref.read(navBarVisibilityProvider.notifier).hide();
                     showModalBottomSheet<void>(
                       showDragHandle: true,
                       context: context,
@@ -241,47 +243,73 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                                                                         .size
                                                                         .height /
                                                                     10,
+                                                                width: double
+                                                                    .infinity,
                                                                 color: Colors
                                                                     .grey[350],
-                                                                child: Text(
-                                                                  entry.key,
-                                                                  style: const TextStyle(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontSize:
-                                                                          18,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400),
+                                                                child: Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .centerLeft,
+                                                                  child: Text(
+                                                                    entry.key,
+                                                                    style: const TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontSize:
+                                                                            20,
+                                                                        fontWeight:
+                                                                            FontWeight.w400),
+                                                                  ),
                                                                 ),
                                                               ),
-                                                              ListView.builder(
-                                                                  physics:
-                                                                      const NeverScrollableScrollPhysics(),
-                                                                  shrinkWrap:
-                                                                      true,
-                                                                  itemBuilder:
-                                                                      (builder,
-                                                                          index) {
-                                                                    return ListTile(
-                                                                      title:
-                                                                          Text(
-                                                                        entry
-                                                                            .value[index]
-                                                                            .name,
-                                                                        style: const TextStyle(
-                                                                            color: Colors
-                                                                                .black,
-                                                                            fontSize:
-                                                                                18,
-                                                                            fontWeight:
-                                                                                FontWeight.w400),
-                                                                      ),
-                                                                      leading:
-                                                                          const Icon(
-                                                                              Icons.circle),
-                                                                    );
-                                                                  })
+                                                              SizedBox(
+                                                                height: MediaQuery.sizeOf(
+                                                                            context)
+                                                                        .height /
+                                                                    7.5,
+                                                                child: ListView
+                                                                    .builder(
+                                                                        physics:
+                                                                            const NeverScrollableScrollPhysics(),
+                                                                        itemCount: entry
+                                                                            .value
+                                                                            .length,
+                                                                        itemBuilder:
+                                                                            (builder,
+                                                                                index) {
+                                                                          return Column(
+                                                                            children: [
+                                                                              ListTile(
+                                                                                title: Text(
+                                                                                  entry.value[index].name,
+                                                                                  style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w400),
+                                                                                ),
+                                                                                leading: entry.value[index].complete == false
+                                                                                    ? const CircleAvatar(
+                                                                                        backgroundColor: Colors.grey, // Make the background transparent
+                                                                                        radius: 12.5,
+                                                                                        child: Icon(
+                                                                                          Icons.circle,
+                                                                                          color: Colors.white,
+                                                                                          size: 25, // Set the icon color
+                                                                                        ),
+                                                                                      )
+                                                                                    : const Icon(
+                                                                                        Icons.check_circle_outline,
+                                                                                        color: Colors.green,
+                                                                                      ),
+                                                                              ),
+                                                                              Row(
+                                                                                children: [
+                                                                                  const Spacer(),
+                                                                                  IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt_outlined))
+                                                                                ],
+                                                                              )
+                                                                            ],
+                                                                          );
+                                                                        }),
+                                                              )
                                                             ],
                                                           ),
                                                         );
@@ -316,7 +344,8 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                           );
                         });
                       },
-                    );
+                    ).then((value) =>
+                        ref.read(navBarVisibilityProvider.notifier).show());
                   },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
