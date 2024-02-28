@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
@@ -28,6 +27,7 @@ class _CustomerTransportCheckoutState
   late num _guestCount;
   late DateTime _startDate;
   late DateTime _endDate;
+  // ignore: unused_field
   late num _maxGuestCount;
   late ListingBookings updatedBooking;
   final String _paymentOption = 'Full Payment';
@@ -48,12 +48,10 @@ class _CustomerTransportCheckoutState
     if (widget.booking.typeOfTrip == 'Public') {
       vatAmount = (widget.booking.price * _guestCount) * (vat - 1);
       amountTotal = (widget.booking.price * _guestCount) + vatAmount;
-    }
-    else  {
+    } else {
       vatAmount = widget.booking.price * (vat - 1);
       amountTotal = widget.booking.price + vatAmount;
     }
-    
   }
 
   @override
@@ -136,7 +134,8 @@ class _CustomerTransportCheckoutState
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (widget.booking.startDate == widget.booking.endDate) ... [ 
+                                  if (widget.booking.startDate ==
+                                      widget.booking.endDate) ...[
                                     const Text('Date',
                                         style: TextStyle(
                                             fontSize: 16,
@@ -144,8 +143,7 @@ class _CustomerTransportCheckoutState
                                     Text(DateFormat.yMMMd().format(_startDate)),
                                     Text(_formatTimeOfDay(
                                         widget.booking.startTime!))
-                                  ]
-                                  else ...[
+                                  ] else ...[
                                     Text(widget.booking.typeOfTrip!,
                                         style: const TextStyle(
                                             fontSize: 16,
@@ -162,18 +160,13 @@ class _CustomerTransportCheckoutState
                             TextButton(
                                 onPressed: () async {
                                   if (widget.booking.typeOfTrip == 'Public') {
-
-                                  }
-                                  else if (widget.booking.typeOfTrip == 'Private') {
-
-                                  }
-
+                                  } else if (widget.booking.typeOfTrip ==
+                                      'Private') {}
                                 },
                                 child: const Text('Edit'))
                           ])
                     ]))));
   }
-  
 
   Widget _priceDetails(BuildContext context) {
     bool paymentMoreInfo = false;
@@ -196,18 +189,18 @@ class _CustomerTransportCheckoutState
                                 color: Theme.of(context).colorScheme.primary),
                             title: Text(_paymentOption)),
                         Column(children: [
-
                           if (widget.booking.typeOfTrip == 'Public')
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                    '₱${widget.booking.price} x $_guestCount guests',
-                                    style: const TextStyle(fontSize: 16)),
-                                Text(
-                                    '₱${(widget.booking.price * _guestCount).toStringAsFixed(2)}',
-                                    style: const TextStyle(fontSize: 16))
-                              ]),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                      '₱${widget.booking.price} x $_guestCount guests',
+                                      style: const TextStyle(fontSize: 16)),
+                                  Text(
+                                      '₱${(widget.booking.price * _guestCount).toStringAsFixed(2)}',
+                                      style: const TextStyle(fontSize: 16))
+                                ]),
                           const SizedBox(height: 20),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -222,20 +215,23 @@ class _CustomerTransportCheckoutState
                                         fontWeight: FontWeight.bold))
                               ]),
                           if (paymentMoreInfo == true)
+                            // ignore: avoid_unnecessary_containers
                             Container(
                               child: Column(children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    if (widget.booking.typeOfTrip == 'Public') ... [
-                                      const Text('Original Price:',
-                                        style: TextStyle(fontSize: 12)),
-                                    Text('₱${(widget.booking.price * _guestCount).toStringAsFixed(2) }',
-                                        style: const TextStyle(fontSize: 16))
-                                    ]
-                                    
-                                  ]
-                                ),
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      if (widget.booking.typeOfTrip ==
+                                          'Public') ...[
+                                        const Text('Original Price:',
+                                            style: TextStyle(fontSize: 12)),
+                                        Text(
+                                            '₱${(widget.booking.price * _guestCount).toStringAsFixed(2)}',
+                                            style:
+                                                const TextStyle(fontSize: 16))
+                                      ]
+                                    ]),
                                 Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -344,6 +340,7 @@ class _CustomerTransportCheckoutState
             ])));
   }
 
+  // ignore: unused_element
   Widget _paymentMethod(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),

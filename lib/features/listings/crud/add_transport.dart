@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -1108,6 +1109,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                       });
                     }
                   },
+                  // ignore: unnecessary_null_comparison
                   child: Text(endDate == null
                       ? 'Select Time'
                       : DateFormat.jm().format(endDate))),

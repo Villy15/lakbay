@@ -417,6 +417,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
     // );
   }
 
+  // ignore: unused_element
   Future<DateTime?> _selectDate(
     BuildContext context,
     DateTime initialDate,

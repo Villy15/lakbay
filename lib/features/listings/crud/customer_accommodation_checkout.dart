@@ -1,7 +1,6 @@
 // import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
@@ -425,6 +424,7 @@ class _CustomerAccomodationCheckoutState
           ],
         ),
         if (paymentMoreInfo == true)
+          // ignore: avoid_unnecessary_containers
           Container(
             child: Column(children: [
               Row(
@@ -464,6 +464,7 @@ class _CustomerAccomodationCheckoutState
     });
   }
 
+  // ignore: unused_element
   Widget _paymentMethod(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
