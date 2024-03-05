@@ -524,15 +524,15 @@ class _TransportationBookingsDetailsState
                           'Destination: ${widget.listing.availableTransport!.destination}'),
                       const SizedBox(height: 10),
                       // show map widget
-                      Center(
-                        child: SizedBox(
-                          height: 150,
-                          width: double.infinity,
-                          child: MapWidget(
-                              address: widget
-                                  .listing.availableTransport!.destination),
-                        ),
-                      ),
+                      // Center(
+                      //   child: SizedBox(
+                      //     height: 150,
+                      //     width: double.infinity,
+                      //     child: MapWidget(
+                      //         address: widget
+                      //             .listing.availableTransport!.destination),
+                      //   ),
+                      // ),
                       const SizedBox(height: 10)
                     ],
                   ),
@@ -563,15 +563,15 @@ class _TransportationBookingsDetailsState
                           'Destination: ${widget.listing.availableTransport!.pickupPoint}'),
                       const SizedBox(height: 10),
                       // show map widget
-                      Center(
-                        child: SizedBox(
-                          height: 150,
-                          width: double.infinity,
-                          child: MapWidget(
-                              address: widget
-                                  .listing.availableTransport!.pickupPoint),
-                        ),
-                      ),
+                      // Center(
+                      //   child: SizedBox(
+                      //     height: 150,
+                      //     width: double.infinity,
+                      //     child: MapWidget(
+                      //         address: widget
+                      //             .listing.availableTransport!.pickupPoint),
+                      //   ),
+                      // ),
                       const SizedBox(height: 10)
                     ],
                   ),
@@ -612,15 +612,15 @@ class _TransportationBookingsDetailsState
                         'Destination: ${widget.listing.availableTransport!.destination}'),
                     const SizedBox(height: 10),
                     // show map widget
-                    Center(
-                      child: SizedBox(
-                        height: 150,
-                        width: double.infinity,
-                        child: MapWidget(
-                            address:
-                                widget.listing.availableTransport!.destination),
-                      ),
-                    ),
+                    // Center(
+                    //   child: SizedBox(
+                    //     height: 150,
+                    //     width: double.infinity,
+                    //     child: MapWidget(
+                    //         address:
+                    //             widget.listing.availableTransport!.destination),
+                    //   ),
+                    // ),
                     const SizedBox(height: 10)
                   ],
                 ),

@@ -203,8 +203,8 @@ _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
           .fromJson(json['startTime'] as Map<String, dynamic>),
       endTime: const TimeOfDayConverter()
           .fromJson(json['endTime'] as Map<String, dynamic>),
-      destination: json['destination'] as String,
-      pickupPoint: json['pickupPoint'] as String,
+      destination: json['destination'] as String?,
+      pickupPoint: json['pickupPoint'] as String?,
     );
 
 Map<String, dynamic> _$$AvailableTransportImplToJson(
