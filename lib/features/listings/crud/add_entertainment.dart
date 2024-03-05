@@ -6,10 +6,14 @@ import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lakbay/features/common/loader.dart';
+import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/coop_model.dart';
 
 class AddEntertainment extends ConsumerStatefulWidget {
@@ -33,7 +37,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   // initial values
   String type = 'Recreational/Rentals';
   num guests = 0;
-  List<File>? _listingImgs = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -45,118 +48,108 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   final TextEditingController _capacityController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
   final TextEditingController _guestInfoController = TextEditingController();
+  String mapAddress = "";
+   List<File>? _images;
+
   TimeOfDay _selectedOpeningHours = TimeOfDay.now();
   TimeOfDay _selectedClosingHours = TimeOfDay.now();
 
-// void submitAddListing() {
-//   if (_formKey.currentState!.validate()) {
-//     _formKey.currentState!.save();
 
-//     ref
-//         .read(storageRepositoryProvider)
-//         .storeFiles(
-//           path: 'listings/${widget.coop.name}',
-//           ids: _listingImgs!.map((image) => image.path.split('/').last).toList(),
-//           files: _listingImgs!,
-//         )
-//         .then((value) => value.fold(
-//               (failure) => debugPrint('Failed to upload images: $failure'),
-//               (imageUrls) async {
-//                 ListingCooperative cooperative = ListingCooperative(
-//                     cooperativeId: widget.coop.uid!,
-//                     cooperativeName: widget.coop.name);
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      ref.read(navBarVisibilityProvider.notifier).hide();
+    });
+  }
 
-//                 // Prepare data for ListingModel
-//                 ListingModel listing = ListingModel(
-//                   address: _addressController.text,
-//                   category: widget.category,
-//                   description: _descriptionController.text,
-//                   title: _titleController.text,
-//                   type: type,
-//                   city: "",
-//                   province: "",
-//                   images: _listingImgs!.map((image) {
-//                     final imagePath =
-//                         'listings/${widget.coop.name}/${image.path.split('/').last}';
-//                     return ListingImages(path: imagePath);
-//                   }).toList(),
-//                   cooperative: cooperative,
-//                   publisherId: ref.read(userProvider)!.uid,
-//                   publisherName: ref.read(userProvider)!.name,
-//                   price: num.parse(_priceController.text),
-//                   pax: int.parse(_capacityController.text),
-//                   numberOfUnits: int.parse(_unitsController.text),
-//                   duration: _durationController.text,
-//                   openingHours: _selectedOpeningHours,
-//                   closingHours: _selectedClosingHours,
-//                   guestInfo: _guestInfoController.text,
-//                 );
+  @override
+  void dispose() {
+    // Dispose of the controllers when the widget is disposed.
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _addressController.dispose();
 
-//                 // Additional processing if needed (e.g., processing room images)
-//                 listing = await processRoomImages(listing);
+    super.dispose();
+  }
 
-//                 // Update image URLs in the listing model
-//                 listing = listing.copyWith(
-//                   images: listing.images!.asMap().entries.map((entry) {
-//                     return entry.value.copyWith(url: imageUrls[entry.key]);
-//                   }).toList(),
-//                 );
+void submitAddListing() {
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
 
-//                 debugPrintJson(listing);
+    final imagePath = 'listings/${widget.coop.name}';
+    final ids = _images!.map((image) => image.path.split('/').last).toList();
+    debugPrint("line 83");
+    ref
+        .read(storageRepositoryProvider)
+        .storeFiles(
+          path: imagePath,
+          ids: ids,
+          files: _images!,
+        )
+        .then((value) => value.fold(
+              (failure) => debugPrint('Failed to upload images: $failure'),
+              (imageUrls) async {
+                debugPrint("line 94");
+                ListingCooperative cooperative = ListingCooperative(
+                    cooperativeId: widget.coop.uid!,
+                    cooperativeName: widget.coop.name);
+                debugPrint(cooperative.toString());
+                // Prepare data for ListingModel
+                ListingModel listing = ListingModel(
+                  address: _addressController.text,
+                  category: widget.category,
+                  description: _descriptionController.text,
+                  title: _titleController.text,
+                  type: type,
+                  city: "",
+                  province: "",
+                  images: _images?.map((image) {
+                    final imagePath =
+                        'listings/${widget.coop.name}/${image.path.split('/').last}';
+                    return ListingImages(path: imagePath);
+                  }).toList(),
+                  cooperative: cooperative,
+                  publisherId: ref.read(userProvider)!.uid,
+                  publisherName: ref.read(userProvider)!.name,
+                  price: num.parse(_priceController.text),
+                  pax: int.parse(_capacityController.text),
+                  numberOfUnits: int.parse(_unitsController.text),
+                  duration: num.parse(_durationController.text),
+                  openingHours: DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    DateTime.now().day,
+                    _selectedOpeningHours.hour,
+                    _selectedOpeningHours.minute,
+                  ),
+                  closingHours: DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    DateTime.now().day,
+                    _selectedClosingHours.hour,
+                    _selectedClosingHours.minute,
+                  ),
+                  guestInfo: _guestInfoController.text,
+                );
+                debugPrint(listing.toString());
+                //Update image URLs in the listing model
+                listing = listing.copyWith(
+                  images: listing.images!.asMap().entries.map((entry) {
+                    return entry.value.copyWith(url: imageUrls[entry.key]);
+                  }).toList(),
+                );
 
-//                 if (mounted) {
-//                   // Call the addListing method with the updated listing model
-//                   ref
-//                       .read(listingControllerProvider.notifier)
-//                       .addListing(listing, context);
-//                 }
-//               },
-//             ));
-//   }
-// }
-
-// Future<ListingModel> processImages(ListingModel listing) async {
-//   final imagePath = 'listings/${widget.coop.name}';
-//   final ids = listing.images!
-//       .map((image) => image.path.split('/').last)
-//       .toList();
-
-//   await ref
-//       .read(storageRepositoryProvider)
-//       .storeFiles(
-//         path: imagePath,
-//         ids: ids,
-//         files: listing.images!,
-//       )
-//       .then(
-//         (value) => value.fold(
-//           (failure) => debugPrint('Failed to upload images: $failure'),
-//           (imageUrls) {
-//             // Update the images in the listing model
-//             listing = listing.copyWith(
-//               images: listing.images!
-//                   .asMap()
-//                   .map((imageIndex, image) {
-//                     // Ensure we have a URL for each image
-//                     if (imageIndex < imageUrls.length) {
-//                       return MapEntry(
-//                           imageIndex,
-//                           image.copyWith(
-//                               url: imageUrls[imageIndex]));
-//                     }
-//                     return MapEntry(imageIndex, image);
-//                   })
-//                   .values
-//                   .toList(),
-//             );
-
-//             debugPrintJson(listing);
-//           },
-//         ),
-//       );
-
-//   return listing;
-// }
+                debugPrint(listing.toString());
+                if (mounted) {
+                  ref
+                      .read(listingControllerProvider.notifier)
+                      .addListing(listing, context);
+                }
+              },
+            ));
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -251,46 +244,48 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     }
   }
 
-  Widget addDetails(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 10),
-        TextFormField(
-          controller: _titleController,
-          decoration: const InputDecoration(
-            labelText: 'Listing Title*',
-            helperText: '*required',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Name of Listing",
-          ),
+Widget addDetails(BuildContext context) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const SizedBox(height: 10),
+      TextFormField(
+        controller: _titleController,
+        decoration: const InputDecoration(
+          labelText: 'Listing Title*',
+          helperText: '*required',
+          border: OutlineInputBorder(),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: "Name of Listing",
         ),
-        const SizedBox(height: 10),
-        TextFormField(
-          controller: _descriptionController,
-          maxLines: null,
-          decoration: const InputDecoration(
-            labelText: 'Description*',
-            helperText: '*required',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Description of Listing",
-          ),
+      ),
+      const SizedBox(height: 10),
+      TextFormField(
+        controller: _descriptionController,
+        maxLines: null,
+        decoration: const InputDecoration(
+          labelText: 'Description*',
+          helperText: '*required',
+          border: OutlineInputBorder(),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: "Description of Listing",
         ),
-        const SizedBox(height: 10),
-        TextFormField(
-          controller: _priceController,
-          maxLines: null,
-          decoration: const InputDecoration(
-            labelText: 'Price*',
-            helperText: '*required',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Price per person",
-          ),
+      ),
+      const SizedBox(height: 10),
+      TextFormField(
+        controller: _priceController,
+        maxLines: null,
+        decoration: const InputDecoration(
+          labelText: 'Price*',
+          helperText: '*required',
+          border: OutlineInputBorder(),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: "Price per person",
         ),
-        const SizedBox(height: 10),
+      ),
+      const SizedBox(height: 10),
+      // Conditionally render the TextFormField based on the selected type
+      if (type != 'Watching/Performances') ...[
         TextFormField(
           controller: _unitsController,
           maxLines: null,
@@ -302,69 +297,71 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             hintText: "Number of Units",
           ),
         ),
-        const SizedBox(height: 10),
-        TextFormField(
-          controller: _capacityController,
-          maxLines: null,
-          decoration: const InputDecoration(
-            labelText: 'Capacity*',
-            helperText: '*optional',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Capacity",
-          ),
-        ),
-        const SizedBox(height: 10),
-        TextFormField(
-          controller: _durationController,
-          maxLines: null,
-          decoration: const InputDecoration(
-            labelText: 'Duration*',
-            helperText: '*required',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Duration",
-          ),
-        ),
-        const SizedBox(height: 10),
-        ListTile(
-          title: const Text('Starting/Opening Hours*'),
-          subtitle: Text(
-            'Selected Time: ${_selectedOpeningHours.format(context)}',
-          ),
-          onTap: () async {
-            TimeOfDay? picked = await showTimePicker(
-              context: context,
-              initialTime: _selectedOpeningHours,
-            );
-            if (picked != _selectedOpeningHours) {
-              setState(() {
-                _selectedOpeningHours = picked!;
-              });
-            }
-          },
-        ),
-        const SizedBox(height: 10),
-        ListTile(
-          title: const Text('End/Closing Hours*'),
-          subtitle: Text(
-            'Selected Time: ${_selectedClosingHours.format(context)}',
-          ),
-          onTap: () async {
-            TimeOfDay? picked = await showTimePicker(
-              context: context,
-              initialTime: _selectedClosingHours,
-            );
-            if (picked != _selectedClosingHours) {
-              setState(() {
-                _selectedClosingHours = picked!;
-              });
-            }
-          },
-        ),
       ],
-    );
-  }
+      const SizedBox(height: 10),
+      TextFormField(
+        controller: _capacityController,
+        maxLines: null,
+        decoration: const InputDecoration(
+          labelText: 'Capacity*',
+          helperText: '*optional',
+          border: OutlineInputBorder(),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: "Capacity",
+        ),
+      ),
+      const SizedBox(height: 10),
+      TextFormField(
+        controller: _durationController,
+        maxLines: null,
+        decoration: const InputDecoration(
+          labelText: 'Duration*',
+          helperText: '*required',
+          border: OutlineInputBorder(),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: "Duration",
+        ),
+      ),
+      const SizedBox(height: 10),
+      ListTile(
+        title: const Text('Starting/Opening Hours*'),
+        subtitle: Text(
+          'Selected Time: ${_selectedOpeningHours.format(context)}',
+        ),
+        onTap: () async {
+          TimeOfDay? picked = await showTimePicker(
+            context: context,
+            initialTime: _selectedOpeningHours,
+          );
+          if (picked != _selectedOpeningHours) {
+            setState(() {
+              _selectedOpeningHours = picked!;
+            });
+          }
+        },
+      ),
+      const SizedBox(height: 10),
+      ListTile(
+        title: const Text('End/Closing Hours*'),
+        subtitle: Text(
+          'Selected Time: ${_selectedClosingHours.format(context)}',
+        ),
+        onTap: () async {
+          TimeOfDay? picked = await showTimePicker(
+            context: context,
+            initialTime: _selectedClosingHours,
+          );
+          if (picked != _selectedClosingHours) {
+            setState(() {
+              _selectedClosingHours = picked!;
+            });
+          }
+        },
+      ),
+    ],
+  );
+}
+
 
   Widget addLocation(BuildContext context) {
     return Column(children: [
@@ -383,7 +380,11 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           }),
       const SizedBox(height: 10),
       ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            mapAddress = _addressController.text;
+          });
+        },
         child: const Text('Update Map'),
       ),
 
@@ -392,39 +393,47 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       // Google Map
       SizedBox(
         height: 400,
-        child: MapWidget(address: _addressController.text),
+        child: MapWidget(address: mapAddress),
       )
     ]);
   }
 
   Widget addListingPhotos(BuildContext context) {
-    return Column(children: [
-      GestureDetector(
-          child: Row(children: [
-        Icon(Icons.image_outlined, color: Theme.of(context).iconTheme.color),
-        const SizedBox(width: 15),
-        Expanded(
-          child: ImagePickerFormField(
-            height: MediaQuery.sizeOf(context).height / 2.5,
-            width: MediaQuery.sizeOf(context).width,
-            context: context,
-            initialValue: _listingImgs,
-            onSaved: (List<File>? files) {
-              _listingImgs = files;
-            },
-            validator: (List<File>? files) {
-              if (files == null || files.isEmpty) {
-                return 'Please select some images';
-              }
-              return null;
-            },
-            onImagesSelected: (List<File> files) {
-              _listingImgs = files;
-            },
-          ),
+    return Column(
+      children: [
+        GestureDetector(
+          child: Row(
+            children: [
+              Icon(
+                Icons.image_outlined,
+                color: Theme.of(context).iconTheme.color
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: ImagePickerFormField(
+                  height: MediaQuery.sizeOf(context).height / 2.5,
+                  width: MediaQuery.sizeOf(context).width,
+                  context: context,
+                  initialValue: _images,
+                  onSaved: (List<File>? files) {
+                    _images = files;
+                  },
+                  validator: (List<File>? files) {
+                    if (files == null || files.isEmpty) {
+                      return 'Please select some images';
+                    }
+                    return null;
+                  },
+                  onImagesSelected: (List<File> files) {
+                    _images = files;
+                  },
+                ),
+              )
+            ]
+          )
         )
-      ]))
-    ]);
+      ]
+    );
   }
 
   Widget addGuestInfo(BuildContext context) {
@@ -451,7 +460,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          if (_listingImgs?.isNotEmpty == true) ...[
+          if (_images?.isNotEmpty == true) ...[
             const Padding(
               padding: EdgeInsets.only(top: 8.0, left: 12.0),
               child: DisplayText(
@@ -463,7 +472,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ImageSlider(
-                  images: _listingImgs,
+                  images: _images,
                   height: MediaQuery.sizeOf(context).height / 2.5,
                   width: double.infinity),
             ),
@@ -647,87 +656,69 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 
   BottomAppBar bottomAppBar() {
     return BottomAppBar(
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      if (activeStep == 0) ...[
-        TextButton(
-            onPressed: () {
-              context.pop();
-              // ref.read(navBarVisibilityProvider.notifier).show();
-            },
-            child: const Text('Cancel'))
-      ] else ...[
-        TextButton(
-            onPressed: () {
-              setState(() {
-                activeStep--;
-              });
-            },
-            child: const Text('Back'))
-      ],
-
-      // Next
-      if (activeStep != upperBound) ...[
-        ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-            ),
-            onPressed: () {
-              if (activeStep < upperBound) {
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          if (activeStep == 0) ... [
+            TextButton(
+              onPressed: () {
+                context.pop();
+                // ref.read(navBarVisibilityProvider.notifier).show();
+              },
+              child: const Text('Cancel')
+            )
+          ]
+          else ... [
+            TextButton(
+              onPressed: () {
                 setState(() {
-                  activeStep++;
+                  activeStep--;
                 });
-              }
-            },
-            child: Text(
-              'Next',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.inversePrimary,
+              },
+              child: const Text('Back')
+            )
+          ],
+          
+          // Next
+          if (activeStep != upperBound) ... [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
               ),
-            ))
-      ] else ...[
-        TextButton(
-            style: TextButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-            ),
-            onPressed: () {
-              // print(widget.coop.uid);
-              // AvailableTransport transport = AvailableTransport(
-              //   guests: guests,
-              //   luggage: luggage,
-              //   price: num.parse(_feeController.text),
-              //   available: true
-              // );
-              // ListingModel listingModel = ListingModel(
-              //   address: _addressController.text,
-              //       category: widget.category,
-              //       city: widget.coop.city,
-              //       cooperative: ListingCooperative(
-              //         cooperativeId: widget.coop.uid!,
-              //         cooperativeName: widget.coop.name
-              //       ),
-              //       description: _descriptionController.text,
-              //       province: widget.coop.province,
-              //       publisherId: "",
-              //       title: _titleController.text,
-              //       type: type,
-              //       images: _images?.map((e) => ListingImages(path: e.path)).toList(),
-              //       availableTransport: transport
-              // );
-              // print('this is the current transport $transport');
-              // ref
-              //     .read(saveListingProvider.notifier)
-              //     .saveListingProvider(listingModel);
-              // submitAddListing(listingModel);
-            },
-            child: Text(
-              'Submit',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.inversePrimary,
+              onPressed: () {
+                if (activeStep < upperBound) {
+                  setState(() {
+                    activeStep++;
+                  });
+                }
+              },
+              child: Text(
+                'Next',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                ),
+              )
+            )
+          ]
+          else ... [
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
               ),
-            ))
-      ]
-    ]));
+              onPressed: () {
+                submitAddListing();
+              },
+              child: Text(
+                'Submit',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                ),
+              )
+            )
+          ]
+        ]
+      )
+    );
   }
 }
 

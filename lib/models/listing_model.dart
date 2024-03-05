@@ -23,6 +23,7 @@ class ListingModel with _$ListingModel {
     required String description,
     num? downpaymentRate,
     num? duration,
+    String? guestInfo,
     List<ListingImages>? images,
     bool? isPublished,
     List<ListingCost>? listingCosts,

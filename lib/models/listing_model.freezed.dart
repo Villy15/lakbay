@@ -35,6 +35,7 @@ mixin _$ListingModel {
   String get description => throw _privateConstructorUsedError;
   num? get downpaymentRate => throw _privateConstructorUsedError;
   num? get duration => throw _privateConstructorUsedError;
+  String? get guestInfo => throw _privateConstructorUsedError;
   List<ListingImages>? get images => throw _privateConstructorUsedError;
   bool? get isPublished => throw _privateConstructorUsedError;
   List<ListingCost>? get listingCosts => throw _privateConstructorUsedError;
@@ -89,6 +90,7 @@ abstract class $ListingModelCopyWith<$Res> {
       String description,
       num? downpaymentRate,
       num? duration,
+      String? guestInfo,
       List<ListingImages>? images,
       bool? isPublished,
       List<ListingCost>? listingCosts,
@@ -142,6 +144,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? description = null,
     Object? downpaymentRate = freezed,
     Object? duration = freezed,
+    Object? guestInfo = freezed,
     Object? images = freezed,
     Object? isPublished = freezed,
     Object? listingCosts = freezed,
@@ -218,6 +221,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
               as num?,
+      guestInfo: freezed == guestInfo
+          ? _value.guestInfo
+          : guestInfo // ignore: cast_nullable_to_non_nullable
+              as String?,
       images: freezed == images
           ? _value.images
           : images // ignore: cast_nullable_to_non_nullable
@@ -353,6 +360,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       String description,
       num? downpaymentRate,
       num? duration,
+      String? guestInfo,
       List<ListingImages>? images,
       bool? isPublished,
       List<ListingCost>? listingCosts,
@@ -406,6 +414,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? description = null,
     Object? downpaymentRate = freezed,
     Object? duration = freezed,
+    Object? guestInfo = freezed,
     Object? images = freezed,
     Object? isPublished = freezed,
     Object? listingCosts = freezed,
@@ -482,6 +491,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
               as num?,
+      guestInfo: freezed == guestInfo
+          ? _value.guestInfo
+          : guestInfo // ignore: cast_nullable_to_non_nullable
+              as String?,
       images: freezed == images
           ? _value._images
           : images // ignore: cast_nullable_to_non_nullable
@@ -591,6 +604,7 @@ class _$ListingModelImpl implements _ListingModel {
       required this.description,
       this.downpaymentRate,
       this.duration,
+      this.guestInfo,
       final List<ListingImages>? images,
       this.isPublished,
       final List<ListingCost>? listingCosts,
@@ -669,6 +683,8 @@ class _$ListingModelImpl implements _ListingModel {
   final num? downpaymentRate;
   @override
   final num? duration;
+  @override
+  final String? guestInfo;
   final List<ListingImages>? _images;
   @override
   List<ListingImages>? get images {
@@ -768,7 +784,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, duration: $duration, guestInfo: $guestInfo, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
   }
 
   @override
@@ -799,6 +815,8 @@ class _$ListingModelImpl implements _ListingModel {
                 other.downpaymentRate == downpaymentRate) &&
             (identical(other.duration, duration) ||
                 other.duration == duration) &&
+            (identical(other.guestInfo, guestInfo) ||
+                other.guestInfo == guestInfo) &&
             const DeepCollectionEquality().equals(other._images, _images) &&
             (identical(other.isPublished, isPublished) ||
                 other.isPublished == isPublished) &&
@@ -854,6 +872,7 @@ class _$ListingModelImpl implements _ListingModel {
         description,
         downpaymentRate,
         duration,
+        guestInfo,
         const DeepCollectionEquality().hash(_images),
         isPublished,
         const DeepCollectionEquality().hash(_listingCosts),
@@ -907,6 +926,7 @@ abstract class _ListingModel implements ListingModel {
       required final String description,
       final num? downpaymentRate,
       final num? duration,
+      final String? guestInfo,
       final List<ListingImages>? images,
       final bool? isPublished,
       final List<ListingCost>? listingCosts,
@@ -961,6 +981,8 @@ abstract class _ListingModel implements ListingModel {
   num? get downpaymentRate;
   @override
   num? get duration;
+  @override
+  String? get guestInfo;
   @override
   List<ListingImages>? get images;
   @override
