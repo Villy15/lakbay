@@ -1886,8 +1886,8 @@ mixin _$AvailableTransport {
   TimeOfDay get startTime => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
   TimeOfDay get endTime => throw _privateConstructorUsedError;
-  String get destination => throw _privateConstructorUsedError;
-  String get pickupPoint => throw _privateConstructorUsedError;
+  String? get destination => throw _privateConstructorUsedError;
+  String? get pickupPoint => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1913,8 +1913,8 @@ abstract class $AvailableTransportCopyWith<$Res> {
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime,
-      String destination,
-      String pickupPoint});
+      String? destination,
+      String? pickupPoint});
 }
 
 /// @nodoc
@@ -1941,8 +1941,8 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
     Object? workingDays = null,
     Object? startTime = null,
     Object? endTime = null,
-    Object? destination = null,
-    Object? pickupPoint = null,
+    Object? destination = freezed,
+    Object? pickupPoint = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -1989,14 +1989,14 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay,
-      destination: null == destination
+      destination: freezed == destination
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
-              as String,
-      pickupPoint: null == pickupPoint
+              as String?,
+      pickupPoint: freezed == pickupPoint
           ? _value.pickupPoint
           : pickupPoint // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -2021,8 +2021,8 @@ abstract class _$$AvailableTransportImplCopyWith<$Res>
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime,
-      String destination,
-      String pickupPoint});
+      String? destination,
+      String? pickupPoint});
 }
 
 /// @nodoc
@@ -2047,8 +2047,8 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
     Object? workingDays = null,
     Object? startTime = null,
     Object? endTime = null,
-    Object? destination = null,
-    Object? pickupPoint = null,
+    Object? destination = freezed,
+    Object? pickupPoint = freezed,
   }) {
     return _then(_$AvailableTransportImpl(
       uid: freezed == uid
@@ -2095,14 +2095,14 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay,
-      destination: null == destination
+      destination: freezed == destination
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
-              as String,
-      pickupPoint: null == pickupPoint
+              as String?,
+      pickupPoint: freezed == pickupPoint
           ? _value.pickupPoint
           : pickupPoint // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -2122,8 +2122,8 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       required final List<bool> workingDays,
       @TimeOfDayConverter() required this.startTime,
       @TimeOfDayConverter() required this.endTime,
-      required this.destination,
-      required this.pickupPoint})
+      this.destination,
+      this.pickupPoint})
       : _departureTimes = departureTimes,
         _workingDays = workingDays;
 
@@ -2170,9 +2170,9 @@ class _$AvailableTransportImpl implements _AvailableTransport {
   @TimeOfDayConverter()
   final TimeOfDay endTime;
   @override
-  final String destination;
+  final String? destination;
   @override
-  final String pickupPoint;
+  final String? pickupPoint;
 
   @override
   String toString() {
@@ -2253,8 +2253,8 @@ abstract class _AvailableTransport implements AvailableTransport {
       required final List<bool> workingDays,
       @TimeOfDayConverter() required final TimeOfDay startTime,
       @TimeOfDayConverter() required final TimeOfDay endTime,
-      required final String destination,
-      required final String pickupPoint}) = _$AvailableTransportImpl;
+      final String? destination,
+      final String? pickupPoint}) = _$AvailableTransportImpl;
 
   factory _AvailableTransport.fromJson(Map<String, dynamic> json) =
       _$AvailableTransportImpl.fromJson;
@@ -2285,9 +2285,9 @@ abstract class _AvailableTransport implements AvailableTransport {
   @TimeOfDayConverter()
   TimeOfDay get endTime;
   @override
-  String get destination;
+  String? get destination;
   @override
-  String get pickupPoint;
+  String? get pickupPoint;
   @override
   @JsonKey(ignore: true)
   _$$AvailableTransportImplCopyWith<_$AvailableTransportImpl> get copyWith =>

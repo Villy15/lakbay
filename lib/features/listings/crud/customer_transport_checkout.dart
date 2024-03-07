@@ -142,8 +142,11 @@ class _CustomerTransportCheckoutState
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold)),
                                     Text(DateFormat.yMMMd().format(_startDate)),
-                                    Text(_formatTimeOfDay(
+                                    if (widget.booking.startTime != null) ... [
+                                      Text(_formatTimeOfDay(
                                         widget.booking.startTime!))
+                                    ]
+                                    
                                   ]
                                   else ...[
                                     Text(widget.booking.typeOfTrip!,
