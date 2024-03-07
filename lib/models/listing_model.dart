@@ -22,6 +22,7 @@ class ListingModel with _$ListingModel {
     required ListingCooperative cooperative,
     required String description,
     num? downpaymentRate,
+    num? fixedCancellationRate,
     num? duration,
     List<ListingImages>? images,
     bool? isPublished,

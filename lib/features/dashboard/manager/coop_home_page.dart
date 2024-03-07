@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/calendar/components/booking_card.dart';
@@ -92,7 +93,6 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                         ),
                         itemBuilder: (context, index) {
                           final booking = updatedBookings[index];
-
                           return ref
                               .watch(getListingProvider(booking.listingId))
                               .when(
@@ -149,206 +149,34 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                 "Tasks (Due This Week)",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              ref.watch(getTasksByUserIdProvider(user.uid)).when(
-                    data: (tasks) {
-                      if (tasks.isEmpty) {
-                        return const Text("No tasks found");
-                      }
-                      return ListView.builder(
-                        itemCount: tasks.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          final task = tasks[index];
-                          return TodayTaskCard(task: task);
-                        },
-                      );
-                    },
-                    loading: () => const SizedBox.shrink(),
-                    error: (error, stack) => ErrorText(
-                      error: error.toString(),
-                      stackTrace: stack.toString(),
-                    ),
-                  ),
+              // ref.watch(getTasksByUserIdProvider(user.uid)).when(
+              //       data: (tasks) {
+              //         if (tasks.isEmpty) {
+              //           return const Text("No tasks found");
+              //         }
+              //         return ListView.builder(
+              //           itemCount: tasks.length,
+              //           shrinkWrap: true,
+              //           physics: const NeverScrollableScrollPhysics(),
+              //           itemBuilder: (context, index) {
+              //             final task = tasks[index];
+              //             return TodayTaskCard(task: task);
+              //           },
+              //         );
+              //       },
+              //       loading: () => const SizedBox.shrink(),
+              //       error: (error, stack) => ErrorText(
+              //         error: error.toString(),
+              //         stackTrace: stack.toString(),
+              //       ),
+              //     ),
 
               const SizedBox(height: 16),
 
               Center(
                 child: FilledButton(
                   onPressed: () {
-                    ref.read(navBarVisibilityProvider.notifier).hide();
-                    showModalBottomSheet<void>(
-                      showDragHandle: true,
-                      context: context,
-                      builder: (BuildContext context) {
-                        final user = ref.read(userProvider);
-                        return Consumer(builder: (context, ref, _) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: DraggableScrollableSheet(
-                              builder: (BuildContext context,
-                                  ScrollController scrollController) {
-                                return ref
-                                    .watch(getBookingTasksByMemberId(user!.uid))
-                                    .when(
-                                        data:
-                                            (List<BookingTask>? bookingTasks) {
-                                          Map<String, List<BookingTask>>?
-                                              bookingTasksSorted = {};
-                                          // // Build your list items here
-                                          if (bookingTasks != null) {
-                                            for (BookingTask task
-                                                in bookingTasks) {
-                                              if (bookingTasksSorted
-                                                  .containsKey(
-                                                      task.listingName)) {
-                                                bookingTasksSorted[
-                                                        task.listingName]!
-                                                    .add(task);
-                                              } else {
-                                                bookingTasksSorted[
-                                                    task.listingName] = [task];
-                                              }
-                                            }
-                                          }
-                                          return bookingTasks != null
-                                              ? SizedBox(
-                                                  height: 600,
-                                                  width: double.infinity,
-                                                  child: Column(
-                                                    children: [
-                                                      ...bookingTasksSorted
-                                                          .entries
-                                                          .map((entry) {
-                                                        return ClipRRect(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    20.0),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    20.0),
-                                                          ),
-                                                          child: Column(
-                                                            children: [
-                                                              Container(
-                                                                padding: const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        10),
-                                                                height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height /
-                                                                    10,
-                                                                width: double
-                                                                    .infinity,
-                                                                color: Colors
-                                                                    .grey[350],
-                                                                child: Align(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerLeft,
-                                                                  child: Text(
-                                                                    entry.key,
-                                                                    style: const TextStyle(
-                                                                        color: Colors
-                                                                            .black,
-                                                                        fontSize:
-                                                                            20,
-                                                                        fontWeight:
-                                                                            FontWeight.w400),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                height: MediaQuery.sizeOf(
-                                                                            context)
-                                                                        .height /
-                                                                    7.5,
-                                                                child: ListView
-                                                                    .builder(
-                                                                        physics:
-                                                                            const NeverScrollableScrollPhysics(),
-                                                                        itemCount: entry
-                                                                            .value
-                                                                            .length,
-                                                                        itemBuilder:
-                                                                            (builder,
-                                                                                index) {
-                                                                          return Column(
-                                                                            children: [
-                                                                              ListTile(
-                                                                                title: Text(
-                                                                                  entry.value[index].name,
-                                                                                  style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w400),
-                                                                                ),
-                                                                                leading: entry.value[index].complete == false
-                                                                                    ? const CircleAvatar(
-                                                                                        backgroundColor: Colors.grey, // Make the background transparent
-                                                                                        radius: 12.5,
-                                                                                        child: Icon(
-                                                                                          Icons.circle,
-                                                                                          color: Colors.white,
-                                                                                          size: 25, // Set the icon color
-                                                                                        ),
-                                                                                      )
-                                                                                    : const Icon(
-                                                                                        Icons.check_circle_outline,
-                                                                                        color: Colors.green,
-                                                                                      ),
-                                                                              ),
-                                                                              Row(
-                                                                                children: [
-                                                                                  const Spacer(),
-                                                                                  InkWell(
-                                                                                    onTap: () {},
-                                                                                    child: const Icon(Icons.camera_alt_outlined),
-                                                                                  )
-                                                                                ],
-                                                                              ),
-                                                                            ],
-                                                                          );
-                                                                        }),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        );
-                                                      })
-                                                    ],
-                                                  ))
-                                              : const Center(
-                                                  child: Text(
-                                                  "No Tasks Assigned",
-                                                  style: TextStyle(
-                                                      fontSize: 22,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ));
-                                        },
-                                        error: (error, stackTrace) => ErrorText(
-                                              error: error.toString(),
-                                              stackTrace: '',
-                                            ),
-                                        loading: () =>
-                                            const CircularProgressIndicator());
-                              },
-                              initialChildSize:
-                                  0.5, // Initial size of the bottom sheet (0.5 means half the screen height)
-                              minChildSize:
-                                  0.25, // Minimum size of the bottom sheet
-                              maxChildSize:
-                                  0.9, // Maximum size of the bottom sheet
-                              expand:
-                                  true, // Whether the bottom sheet should be expandable
-                            ),
-                          );
-                        });
-                      },
-                    ).then((value) =>
+                    context.push('/today/tasks').then((value) =>
                         ref.read(navBarVisibilityProvider.notifier).show());
                   },
                   child: const Row(

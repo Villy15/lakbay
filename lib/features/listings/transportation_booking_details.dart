@@ -338,6 +338,8 @@ class _TransportationBookingsDetailsState
                     onPressed: () {
                       BookingTask bookingTask = BookingTask(
                           listingName: widget.listing.title,
+                          status: 'Incomplete',
+                          listingId: widget.listing.uid,
                           assignedIds: assignedIds,
                           assignedNames: assignedNames,
                           committee: committeeController.text,

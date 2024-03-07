@@ -120,6 +120,7 @@ _$BookingTaskImpl _$$BookingTaskImplFromJson(Map<String, dynamic> json) =>
       uid: json['uid'] as String?,
       bookingId: json['bookingId'] as String?,
       listingName: json['listingName'] as String,
+      listingId: json['listingId'] as String?,
       roomId: json['roomId'] as String?,
       assignedIds: (json['assignedIds'] as List<dynamic>)
           .map((e) => e as String)
@@ -129,6 +130,7 @@ _$BookingTaskImpl _$$BookingTaskImplFromJson(Map<String, dynamic> json) =>
           .toList(),
       committee: json['committee'] as String,
       complete: json['complete'] as bool,
+      status: json['status'] as String,
       openContribution: json['openContribution'] as bool,
       imageProof: (json['imageProof'] as List<dynamic>?)
           ?.map((e) => TaskImages.fromJson(e as Map<String, dynamic>))
@@ -141,11 +143,13 @@ Map<String, dynamic> _$$BookingTaskImplToJson(_$BookingTaskImpl instance) =>
       'uid': instance.uid,
       'bookingId': instance.bookingId,
       'listingName': instance.listingName,
+      'listingId': instance.listingId,
       'roomId': instance.roomId,
       'assignedIds': instance.assignedIds,
       'assignedNames': instance.assignedNames,
       'committee': instance.committee,
       'complete': instance.complete,
+      'status': instance.status,
       'openContribution': instance.openContribution,
       'imageProof': instance.imageProof?.map((e) => e.toJson()).toList(),
       'name': instance.name,

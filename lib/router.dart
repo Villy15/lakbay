@@ -29,6 +29,7 @@ import 'package:lakbay/features/cooperatives/my_coop/members/read_member.dart';
 import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
 import 'package:lakbay/features/dashboard/coop_dashboard.dart';
 import 'package:lakbay/features/dashboard/manager/coop_home_page.dart';
+import 'package:lakbay/features/dashboard/manager/coop_tasks_page.dart';
 import 'package:lakbay/features/events/crud/add_event.dart';
 import 'package:lakbay/features/events/crud/confirm_event.dart';
 import 'package:lakbay/features/events/crud/coop_read_event.dart';
@@ -484,7 +485,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               // * COOP VIEW
 
               // Today Page
-              buildMainRoute('/today', const TodayPage()),
+              buildMainRoute('/today', const TodayPage(), [
+                buildSubRoute(
+                  'tasks',
+                  (context, pathParameters, extra) {
+                    return const CoopTasksPage();
+                  },
+                  name: 'tasks',
+                ),
+              ]),
 
               // Calendar Page
               buildMainRoute('/calendar', const CalendarPage()),

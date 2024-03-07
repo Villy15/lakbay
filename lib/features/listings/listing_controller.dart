@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -221,7 +223,8 @@ class ListingController extends StateNotifier<bool> {
         state = false;
         booking.tasks?.forEach((element) {
           if (booking.category == "Accommodation") {
-            element = element.copyWith(roomId: booking.roomId);
+            element = element.copyWith(
+                roomId: booking.roomId, listingId: listing.uid);
           }
           _ref
               .read(listingControllerProvider.notifier)
