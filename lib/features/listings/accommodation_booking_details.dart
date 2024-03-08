@@ -8,6 +8,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
+import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
@@ -213,7 +214,6 @@ class _AccommodationBookingsDetailsState
                     // Add logic to handle the input data
                     String name = nameController.text;
                     num cost = num.parse(costController.text);
-                    debugPrint("${booking.expenses}");
                     if (nameController.text.isNotEmpty &&
                         costController.text.isNotEmpty) {
                       Expense expense = Expense(cost: cost, name: name);
@@ -501,17 +501,17 @@ class _AccommodationBookingsDetailsState
     return ref
         .watch(getBookingTasksByBookingId((booking.listingId, booking.id!)))
         .when(
-          data: (List<BookingTask> bookingTasks) {
-            return booking.tasks == null || booking.tasks!.isEmpty
+          data: (List<BookingTask>? bookingTasks) {
+            return bookingTasks == null || bookingTasks.isEmpty
                 ? SizedBox(
                     height: MediaQuery.of(context).size.height / 5,
                     child: const Center(child: Text("No Tasks Listed")),
                   )
                 : ListView.builder(
-                    itemCount: booking.tasks!.length,
+                    itemCount: bookingTasks.length,
                     itemBuilder: (context, taskIndex) {
                       String proofNote;
-                      if (booking.tasks![taskIndex].imageProof != null) {
+                      if (bookingTasks[taskIndex].imageProof != null) {
                         proofNote = "Proof Available";
                       } else {
                         proofNote = "No Proof Available";
@@ -520,49 +520,48 @@ class _AccommodationBookingsDetailsState
                         margin: const EdgeInsets.only(top: 15),
                         child: Column(
                           children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Checkbox(
-                                  value: booking.tasks![taskIndex].complete,
-                                  onChanged: null,
+                            ListTile(
+                              leading: bookingTasks[taskIndex].status ==
+                                      'Pending'
+                                  ? const Text('Pending')
+                                  : Checkbox(
+                                      value: bookingTasks[taskIndex].complete,
+                                      onChanged: null,
+                                    ),
+                              title: Text(
+                                bookingTasks[taskIndex].name,
+                                style: const TextStyle(
+                                  fontSize: 16, // Set your desired font size
+                                  // Add other styling as needed
                                 ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        booking.tasks![taskIndex].name,
-                                        style: const TextStyle(
-                                          fontSize:
-                                              16, // Set your desired font size
-                                          // Add other styling as needed
-                                        ),
-                                      ),
-                                      Text(
-                                        "Assigned: ${booking.tasks![taskIndex].assignedNames.join(", ")}",
-                                        style: TextStyle(
-                                          fontSize:
-                                              14, // Slightly smaller than the title
-                                          color: Colors.grey[
-                                              600], // Grey color for the subtitle
-                                          // You can add other styling as needed
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                              ),
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    showNotesDialog(
+                                        context, bookingTasks[taskIndex]);
+                                  },
+                                  icon: const Icon(Icons.comment_outlined)),
+                              subtitle: Text(
+                                "Assigned: ${bookingTasks[taskIndex].assignedNames.join(", ")}",
+                                style: TextStyle(
+                                  fontSize:
+                                      14, // Slightly smaller than the title
+                                  color: Colors
+                                      .grey[600], // Grey color for the subtitle
+                                  // You can add other styling as needed
                                 ),
-                              ],
+                              ),
+                              onTap: () {
+                                showMarkAsDoneDialog(
+                                    context, bookingTasks[taskIndex]);
+                              },
                             ),
                             Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Checkbox(
-                                      value: booking
-                                          .tasks![taskIndex].openContribution,
+                                      value: bookingTasks[taskIndex]
+                                          .openContribution,
                                       onChanged: (value) {
                                         String title = "";
                                         String note = "";
@@ -601,12 +600,12 @@ class _AccommodationBookingsDetailsState
                                                   child: const Text('Confirm'),
                                                   onPressed: () {
                                                     List<BookingTask>
-                                                        bookingTasks =
-                                                        booking.tasks!.toList(
+                                                        updatedBookingTasks =
+                                                        bookingTasks.toList(
                                                             growable: true);
-                                                    bookingTasks[taskIndex] =
-                                                        booking
-                                                            .tasks![taskIndex]
+                                                    updatedBookingTasks[
+                                                            taskIndex] =
+                                                        bookingTasks[taskIndex]
                                                             .copyWith(
                                                                 openContribution:
                                                                     value!);
@@ -614,7 +613,7 @@ class _AccommodationBookingsDetailsState
                                                         updatedBooking =
                                                         booking.copyWith(
                                                             tasks:
-                                                                bookingTasks);
+                                                                updatedBookingTasks);
                                                     debugPrint(
                                                         "$updatedBooking");
 
@@ -625,7 +624,7 @@ class _AccommodationBookingsDetailsState
                                                         .updateBookingTask(
                                                             context,
                                                             widget.listing.uid!,
-                                                            bookingTasks[
+                                                            updatedBookingTasks[
                                                                 taskIndex],
                                                             "Tasks Updated");
                                                     context.pop();
@@ -641,13 +640,33 @@ class _AccommodationBookingsDetailsState
                             SizedBox(
                               height: MediaQuery.sizeOf(context).height / 25,
                               width: MediaQuery.sizeOf(context).width / 2,
-                              child: ElevatedButton(
-                                onPressed:
-                                    booking.tasks![taskIndex].imageProof != null
-                                        ? () {
-                                            // Your function here when imageProof is not empty
-                                          }
-                                        : null,
+                              child: FilledButton(
+                                onPressed: bookingTasks[taskIndex].imageProof !=
+                                        null
+                                    ? () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                content: ImageSlider(
+                                                    images:
+                                                        bookingTasks[taskIndex]
+                                                            .imageProof!
+                                                            .map((image) =>
+                                                                image.url)
+                                                            .toList(),
+                                                    height: MediaQuery.sizeOf(
+                                                                context)
+                                                            .height /
+                                                        3,
+                                                    width: MediaQuery.sizeOf(
+                                                            context)
+                                                        .width,
+                                                    radius: BorderRadius.zero),
+                                              );
+                                            });
+                                      }
+                                    : null,
                                 style: ButtonStyle(
                                   elevation: MaterialStateProperty.all(
                                       1), // Removes the shadow/elevation
@@ -688,6 +707,46 @@ class _AccommodationBookingsDetailsState
           ),
           loading: () => const CircularProgressIndicator(),
         );
+  }
+
+  Future<dynamic> showMarkAsDoneDialog(
+      BuildContext context, BookingTask bookingTask) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(bookingTask.name),
+            titleTextStyle: const TextStyle(
+                fontSize: 22, fontWeight: FontWeight.w400, color: Colors.black),
+            actions: [
+              FilledButton(
+                onPressed: () {
+                  context.pop();
+                },
+                child: const Text('Back'),
+              ),
+              FilledButton(
+                onPressed: bookingTask.status == 'Pending'
+                    ? () {
+                        BookingTask updatedBookingTask = bookingTask.copyWith(
+                            complete: true, status: 'Completed');
+                        ref
+                            .read(listingControllerProvider.notifier)
+                            .updateBookingTask(
+                                context,
+                                updatedBookingTask.listingId!,
+                                updatedBookingTask,
+                                'Task updated successfully!');
+                        context.pop();
+                      }
+                    : null,
+                child: bookingTask.status == 'Pending'
+                    ? const Text('Mark as Done')
+                    : const Text('Pending'),
+              )
+            ],
+          );
+        });
   }
 
   Future<dynamic> showAddTaskForm(
@@ -967,15 +1026,12 @@ class _AccommodationBookingsDetailsState
                                     openContribution: openContribution,
                                     name: taskNameController.text);
 
-                                debugPrintJson("$bookingTask");
                                 if (taskNameController.text.isNotEmpty) {
                                   List<BookingTask> bookingTasks =
                                       booking.tasks?.toList(growable: true) ??
                                           [];
                                   bookingTasks.add(bookingTask);
-                                  ListingBookings updatedBooking =
-                                      booking.copyWith(tasks: bookingTasks);
-                                  debugPrint("$updatedBooking");
+
                                   ref
                                       .read(listingControllerProvider.notifier)
                                       .updateBookingTask(
@@ -1083,6 +1139,126 @@ class _AccommodationBookingsDetailsState
                 ),
                 loading: () => const CircularProgressIndicator(),
               )),
+    );
+  }
+
+  Future<dynamic> showNotesDialog(
+      BuildContext context, BookingTask bookingTask) {
+    List<BookingTaskMessage>? notes =
+        bookingTask.notes?.toList(growable: true) ?? [];
+    TextEditingController messageController = TextEditingController();
+    notes.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text(
+              'Notes',
+              style: TextStyle(fontWeight: FontWeight.w400),
+            ),
+            InkWell(
+                onTap: () {
+                  context.pop();
+                },
+                child: const Icon(
+                  Icons.close,
+                  size: 20,
+                ))
+          ]),
+          content: SizedBox(
+            height: MediaQuery.of(context).size.height /
+                1.5, // Set a fixed height for the ListView
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: notes.length,
+                    itemBuilder: (context, messageIndex) {
+                      final message = notes[messageIndex];
+                      return Container(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  message.senderName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                Text(DateFormat('MMM d HH:mm')
+                                    .format(message.timestamp)),
+                              ],
+                            ),
+                            Text(message.content),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actionsPadding:
+              const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          actions: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                    10.0), // Adjust the border radius as needed
+                color:
+                    Colors.white, // Set the background color of the input field
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: messageController,
+                      decoration: const InputDecoration(
+                        hintText: 'Type your message here...',
+                      ),
+                      maxLines: null, // Allow multiple lines
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      String content = messageController.text;
+                      messageController.clear();
+                      final user = ref.read(userProvider);
+                      BookingTaskMessage message = BookingTaskMessage(
+                          listingName: bookingTask.listingName,
+                          senderId: user!.uid,
+                          senderName: user.name,
+                          taskId: bookingTask.uid!,
+                          timestamp: DateTime.now(),
+                          content: content);
+                      notes.add(message);
+                      BookingTask updatedBookingTask =
+                          bookingTask.copyWith(notes: notes);
+
+                      ref
+                          .read(listingControllerProvider.notifier)
+                          .updateBookingTask(context, bookingTask.listingId!,
+                              updatedBookingTask, '');
+                    },
+                    child: Icon(
+                      Icons.send,
+                      color: Colors.deepOrange[400],
+                    ), // Set the color of the send icon
+                  ),
+                ],
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }

@@ -250,10 +250,11 @@ class ListingRepository {
       String listingId, String bookingUid) {
     Query query = FirebaseFirestore.instance.collectionGroup('bookingTasks');
     return query
-        .where('bookingUid', isEqualTo: bookingUid)
+        .where('bookingId', isEqualTo: bookingUid)
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
+        debugPrint('docData: ${doc.data()}');
         return BookingTask.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });

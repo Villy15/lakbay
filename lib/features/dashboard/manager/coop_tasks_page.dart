@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
@@ -77,9 +78,7 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                               children: [
                                 Container(
                                   padding: const EdgeInsets.only(
-                                      left: 20, right: 30),
-                                  height:
-                                      MediaQuery.of(context).size.height / 10,
+                                      top: 10, bottom: 10, left: 20, right: 30),
                                   width: double.infinity,
                                   color: Colors.grey[350],
                                   child: Align(
@@ -106,64 +105,69 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.sizeOf(context).height / 7.5,
-                                  child: ListView.builder(
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount: entry.value.length,
-                                      itemBuilder: (builder, index) {
-                                        return Column(
-                                          children: [
-                                            ListTile(
-                                                enabled: true,
-                                                title: Text(
-                                                  entry.value[index].name,
-                                                  style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w400),
-                                                ),
-                                                leading: entry.value[index]
-                                                            .status ==
-                                                        'Pending'
-                                                    ? const Text("Pending")
-                                                    : entry.value[index]
-                                                                .status ==
-                                                            'Complete'
-                                                        ? const Icon(
-                                                            Icons
-                                                                .check_circle_outline,
-                                                            color: Colors.green,
-                                                          )
-                                                        : entry.value[index]
-                                                                    .status ==
-                                                                'Incomplete'
-                                                            ? const CircleAvatar(
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .grey, // Make the background transparent
-                                                                radius: 12.5,
-                                                                child: Icon(
-                                                                  Icons.circle,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  size:
-                                                                      25, // Set the icon color
-                                                                ),
-                                                              )
-                                                            : null, // Handle other conditions if needed
-
-                                                onTap: () {
-                                                  showTaskDialog(context, entry,
-                                                      index, user);
-                                                }),
-                                          ],
-                                        );
-                                      }),
-                                )
+                                ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: entry.value.length,
+                                    itemBuilder: (builder, index) {
+                                      return Column(
+                                        children: [
+                                          ListTile(
+                                              enabled: true,
+                                              title: Text(
+                                                entry.value[index].name,
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.w400),
+                                              ),
+                                              leading: entry.value[index]
+                                                          .status ==
+                                                      'Pending'
+                                                  ? const Text("Pending")
+                                                  : entry.value[index].status ==
+                                                          'Completed'
+                                                      ? const Icon(
+                                                          Icons
+                                                              .check_circle_outline,
+                                                          color: Colors.green,
+                                                          size: 25,
+                                                        )
+                                                      : entry.value[index]
+                                                                  .status ==
+                                                              'Incomplete'
+                                                          ? const CircleAvatar(
+                                                              backgroundColor:
+                                                                  Colors
+                                                                      .grey, // Make the background transparent
+                                                              radius: 11,
+                                                              child: Icon(
+                                                                Icons.circle,
+                                                                color: Colors
+                                                                    .white,
+                                                                size:
+                                                                    22, // Set the icon color
+                                                              ),
+                                                            )
+                                                          : null, // Handle other conditions if needed
+                                              subtitle: Text(
+                                                  'Assigned: ${entry.value[index].assignedNames.join(', ')}'),
+                                              trailing: IconButton(
+                                                  onPressed: () {
+                                                    showNotesDialog(context,
+                                                        entry.value[index]);
+                                                  },
+                                                  icon: const Icon(
+                                                      Icons.comment_outlined)),
+                                              onTap: () {
+                                                showTaskDialog(context, entry,
+                                                    index, user);
+                                              }),
+                                        ],
+                                      );
+                                    })
                               ],
                             ),
                           );
@@ -184,12 +188,133 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
     );
   }
 
+  Future<dynamic> showNotesDialog(
+      BuildContext context, BookingTask bookingTask) {
+    List<BookingTaskMessage>? notes =
+        bookingTask.notes?.toList(growable: true) ?? [];
+    TextEditingController messageController = TextEditingController();
+    notes.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text(
+              'Notes',
+              style: TextStyle(fontWeight: FontWeight.w400),
+            ),
+            InkWell(
+                onTap: () {
+                  context.pop();
+                },
+                child: const Icon(
+                  Icons.close,
+                  size: 20,
+                ))
+          ]),
+          content: SizedBox(
+            height: MediaQuery.of(context).size.height /
+                1.5, // Set a fixed height for the ListView
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: notes.length,
+                    itemBuilder: (context, messageIndex) {
+                      final message = notes[messageIndex];
+                      return Container(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  message.senderName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                Text(DateFormat('MMM d HH:mm')
+                                    .format(message.timestamp)),
+                              ],
+                            ),
+                            Text(message.content),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actionsPadding:
+              const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          actions: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                    10.0), // Adjust the border radius as needed
+                color:
+                    Colors.white, // Set the background color of the input field
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: messageController,
+                      decoration: const InputDecoration(
+                        hintText: 'Type your message here...',
+                      ),
+                      maxLines: null, // Allow multiple lines
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      String content = messageController.text;
+                      messageController.clear();
+                      final user = ref.read(userProvider);
+                      BookingTaskMessage message = BookingTaskMessage(
+                          listingName: bookingTask.listingName,
+                          senderId: user!.uid,
+                          senderName: user.name,
+                          taskId: bookingTask.uid!,
+                          timestamp: DateTime.now(),
+                          content: content);
+                      notes.add(message);
+                      BookingTask updatedBookingTask =
+                          bookingTask.copyWith(notes: notes);
+
+                      ref
+                          .read(listingControllerProvider.notifier)
+                          .updateBookingTask(context, bookingTask.listingId!,
+                              updatedBookingTask, '');
+                    },
+                    child: Icon(
+                      Icons.send,
+                      color: Colors.deepOrange[400],
+                    ), // Set the color of the send icon
+                  ),
+                ],
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
   Future<dynamic> showTaskDialog(BuildContext context,
       MapEntry<String, List<BookingTask>> entry, int index, UserModel user) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        dynamic images = entry.value[index].imageProof;
+        List<File>? uploadImages = [];
+        List<TaskImages>? sliderImages = entry.value[index].imageProof;
         List<String> notes = [
           'Uploaded images can serve as proof of for task accomplishment.'
         ];
@@ -200,15 +325,15 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                 fontSize: 22, fontWeight: FontWeight.w400, color: Colors.black),
             content: Column(
               children: [
-                if (images == null)
+                if (sliderImages == null)
                   GestureDetector(
                     child: ImagePickerFormField(
                       height: MediaQuery.sizeOf(context).height / 3,
                       width: MediaQuery.sizeOf(context).width,
                       context: context,
-                      initialValue: images,
+                      initialValue: uploadImages,
                       onSaved: (List<File>? files) {
-                        images = files;
+                        uploadImages = files;
                       },
                       validator: (List<File>? files) {
                         if (files == null || files.isEmpty) {
@@ -217,13 +342,13 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                         return null;
                       },
                       onImagesSelected: (List<File> files) {
-                        images = files;
+                        uploadImages = files;
                       },
                     ),
                   )
                 else
                   ImageSlider(
-                      images: images.map((image) => image.url).toList(),
+                      images: sliderImages.map((image) => image.url).toList(),
                       height: MediaQuery.sizeOf(context).height / 3,
                       width: MediaQuery.sizeOf(context).width,
                       radius: BorderRadius.zero),
@@ -238,68 +363,69 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                 child: const Text('Back'),
               ),
               FilledButton(
-                onPressed: entry.value[index].status == 'Incomplete'
-                    ? () {
-                        CooperativesJoined currentCoop =
-                            user.cooperativesJoined!.firstWhere(
-                          (element) =>
-                              element.cooperativeId ==
-                              user.currentCoop, // Return null if no matching element is found
-                        );
-                        BookingTask bookingTask = entry.value[index].copyWith(
-                          imageProof: images!.map((image) {
-                            final imagePath =
-                                'listings/${currentCoop.cooperativeName}/${image.path.split('/').last}';
-                            return TaskImages(
-                              path: imagePath,
-                            );
-                          }).toList(),
-                        );
-                        final imagePath =
-                            'listings/${currentCoop.cooperativeName}';
-                        final ids = images!
-                            .map((image) => image.path.split('/').last)
-                            .toList();
-                        ref
-                            .read(storageRepositoryProvider)
-                            .storeFiles(
-                              path: imagePath,
-                              ids: ids,
-                              files: images!,
-                            )
-                            .then((value) => value.fold(
-                                  (failure) => debugPrint(
-                                      'Failed to upload images: $failure'),
-                                  (imageUrls) async {
-                                    bookingTask = bookingTask.copyWith(
-                                        imageProof: bookingTask.imageProof!
-                                            .asMap()
-                                            .entries
-                                            .map((entry) {
-                                          return entry.value.copyWith(
-                                              url: imageUrls[entry.key]);
-                                        }).toList(),
-                                        status: 'Pending');
-                                    debugPrint("$bookingTask");
-                                    if (mounted) {
-                                      ref
-                                          .read(listingControllerProvider
-                                              .notifier)
-                                          .updateBookingTask(
-                                              context,
-                                              bookingTask.listingId!,
-                                              bookingTask,
-                                              'Task updated successfully!');
-                                      context.pop();
-                                    }
-                                  },
-                                ));
-                      }
-                    : null,
-                child: entry.value[index].status == 'Incomplete'
-                    ? const Text('Mark as Done')
-                    : const Text('Pending'),
-              )
+                  onPressed: entry.value[index].status == 'Incomplete'
+                      ? () {
+                          CooperativesJoined currentCoop =
+                              user.cooperativesJoined!.firstWhere(
+                            (element) =>
+                                element.cooperativeId ==
+                                user.currentCoop, // Return null if no matching element is found
+                          );
+                          BookingTask bookingTask = entry.value[index].copyWith(
+                            imageProof: uploadImages!.map((image) {
+                              final imagePath =
+                                  'listings/${currentCoop.cooperativeName}/${image.path.split('/').last}';
+                              return TaskImages(
+                                path: imagePath,
+                              );
+                            }).toList(),
+                          );
+                          final imagePath =
+                              'listings/${currentCoop.cooperativeName}';
+                          final ids = uploadImages!
+                              .map((image) => image.path.split('/').last)
+                              .toList();
+                          ref
+                              .read(storageRepositoryProvider)
+                              .storeFiles(
+                                path: imagePath,
+                                ids: ids,
+                                files: uploadImages!,
+                              )
+                              .then((value) => value.fold(
+                                    (failure) => debugPrint(
+                                        'Failed to upload images: $failure'),
+                                    (imageUrls) async {
+                                      bookingTask = bookingTask.copyWith(
+                                          imageProof: bookingTask.imageProof!
+                                              .asMap()
+                                              .entries
+                                              .map((entry) {
+                                            return entry.value.copyWith(
+                                                url: imageUrls[entry.key]);
+                                          }).toList(),
+                                          status: 'Pending');
+                                      debugPrint("$bookingTask");
+                                      if (mounted) {
+                                        ref
+                                            .read(listingControllerProvider
+                                                .notifier)
+                                            .updateBookingTask(
+                                                context,
+                                                bookingTask.listingId!,
+                                                bookingTask,
+                                                'Task updated successfully!');
+                                        context.pop();
+                                      }
+                                    },
+                                  ));
+                        }
+                      : null,
+                  child: entry.value[index].status == 'Incomplete'
+                      ? const Text('Mark as Done')
+                      : entry.value[index].status == 'Completed'
+                          ? const Text('Completed')
+                          : const Text('Pending'))
             ],
           );
         });

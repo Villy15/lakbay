@@ -77,6 +77,7 @@ class BookingTask with _$BookingTask {
     required List<String> assignedNames,
     required String committee,
     required bool complete,
+    List<BookingTaskMessage>? notes,
     required String status,
     required bool openContribution,
     List<TaskImages>? imageProof,
@@ -85,6 +86,24 @@ class BookingTask with _$BookingTask {
 
   factory BookingTask.fromJson(Map<String, dynamic> json) =>
       _$BookingTaskFromJson(json);
+}
+
+@freezed
+class BookingTaskMessage with _$BookingTaskMessage {
+  factory BookingTaskMessage({
+    String? uid,
+    String? bookingId,
+    required String listingName,
+    String? listingId,
+    required String senderId,
+    required String senderName,
+    required String taskId,
+    @TimestampSerializer() required DateTime timestamp,
+    required String content,
+  }) = _BookingTaskMessage;
+
+  factory BookingTaskMessage.fromJson(Map<String, dynamic> json) =>
+      _$BookingTaskMessageFromJson(json);
 }
 
 @freezed

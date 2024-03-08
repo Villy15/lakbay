@@ -224,7 +224,10 @@ class ListingController extends StateNotifier<bool> {
         booking.tasks?.forEach((element) {
           if (booking.category == "Accommodation") {
             element = element.copyWith(
-                roomId: booking.roomId, listingId: listing.uid);
+              roomId: booking.roomId,
+              listingId: listing.uid,
+              bookingId: bookingUid,
+            );
           }
           _ref
               .read(listingControllerProvider.notifier)
