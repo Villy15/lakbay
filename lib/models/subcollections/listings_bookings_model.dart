@@ -30,15 +30,15 @@ class ListingBookings with _$ListingBookings {
     num? luggage,
     String? id,
     required bool needsContributions,
-    String? paymentOption,
-    String? paymentStatus,
+    String? paymentOption, //Downpayment, Full Payment
+    String? paymentStatus, //Partially Paid, Fully Paid, Cancelled
     required num price,
     String? roomId,
     String? roomUid,
     @TimestampSerializer() DateTime? selectedDate,
     String? selectedTime,
     @TimestampSerializer() DateTime? startDate,
-    required String bookingStatus,
+    required String bookingStatus, //[Reserved, Cancelled, Completed, Refunded
     num? totalPrice,
     String? typeOfTrip,
     @TimeOfDayConverter() TimeOfDay? startTime,
@@ -78,7 +78,7 @@ class BookingTask with _$BookingTask {
     required String committee,
     required bool complete,
     List<BookingTaskMessage>? notes,
-    required String status,
+    required String status, //Pending, Incomplete, Completed
     required bool openContribution,
     List<TaskImages>? imageProof,
     required String name,

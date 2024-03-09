@@ -556,87 +556,81 @@ class _AccommodationBookingsDetailsState
                                     context, bookingTasks[taskIndex]);
                               },
                             ),
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Checkbox(
-                                      value: bookingTasks[taskIndex]
-                                          .openContribution,
-                                      onChanged: (value) {
-                                        String title = "";
-                                        String note = "";
-                                        if (value == true) {
-                                          title =
-                                              "Activate \"Open for Contribution\"";
-                                          note =
-                                              "Activating \"Open for Contribution\" will make this task visible to other cooperative members, giving them the opportunity to help.";
-                                        } else {
-                                          title =
-                                              "Deactivate Open for Contribution";
-                                          note =
-                                              "Deactivating Open for Contribution will make this task private to the assigned members.";
-                                        }
-                                        showDialog<void>(
-                                          context: context,
-                                          barrierDismissible:
-                                              false, // User must tap button to close the dialog
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text(
-                                                title,
-                                                style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              content: Text(note),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                    child: const Text('Cancel'),
-                                                    onPressed: () {
-                                                      context.pop();
-                                                    }),
-                                                TextButton(
-                                                  child: const Text('Confirm'),
-                                                  onPressed: () {
-                                                    List<BookingTask>
-                                                        updatedBookingTasks =
-                                                        bookingTasks.toList(
-                                                            growable: true);
-                                                    updatedBookingTasks[
-                                                            taskIndex] =
-                                                        bookingTasks[taskIndex]
-                                                            .copyWith(
-                                                                openContribution:
-                                                                    value!);
-                                                    ListingBookings
-                                                        updatedBooking =
-                                                        booking.copyWith(
-                                                            tasks:
-                                                                updatedBookingTasks);
-                                                    debugPrint(
-                                                        "$updatedBooking");
+                            ListTile(
+                              leading: Checkbox(
+                                  value:
+                                      bookingTasks[taskIndex].openContribution,
+                                  onChanged: (value) {
+                                    String title = "";
+                                    String note = "";
+                                    if (value == true) {
+                                      title =
+                                          "Activate \"Open for Contribution\"";
+                                      note =
+                                          "Activating \"Open for Contribution\" will make this task visible to other cooperative members, giving them the opportunity to help.";
+                                    } else {
+                                      title =
+                                          "Deactivate Open for Contribution";
+                                      note =
+                                          "Deactivating Open for Contribution will make this task private to the assigned members.";
+                                    }
+                                    showDialog<void>(
+                                      context: context,
+                                      barrierDismissible:
+                                          false, // User must tap button to close the dialog
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                            title,
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          content: Text(note),
+                                          actions: <Widget>[
+                                            TextButton(
+                                                child: const Text('Cancel'),
+                                                onPressed: () {
+                                                  context.pop();
+                                                }),
+                                            TextButton(
+                                              child: const Text('Confirm'),
+                                              onPressed: () {
+                                                List<BookingTask>
+                                                    updatedBookingTasks =
+                                                    bookingTasks.toList(
+                                                        growable: true);
+                                                updatedBookingTasks[taskIndex] =
+                                                    bookingTasks[taskIndex]
+                                                        .copyWith(
+                                                            openContribution:
+                                                                value!);
+                                                ListingBookings updatedBooking =
+                                                    booking.copyWith(
+                                                        tasks:
+                                                            updatedBookingTasks);
+                                                debugPrint("$updatedBooking");
 
-                                                    ref
-                                                        .read(
-                                                            listingControllerProvider
-                                                                .notifier)
-                                                        .updateBookingTask(
-                                                            context,
-                                                            widget.listing.uid!,
-                                                            updatedBookingTasks[
-                                                                taskIndex],
-                                                            "Tasks Updated");
-                                                    context.pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
+                                                ref
+                                                    .read(
+                                                        listingControllerProvider
+                                                            .notifier)
+                                                    .updateBookingTask(
+                                                        context,
+                                                        widget.listing.uid!,
+                                                        updatedBookingTasks[
+                                                            taskIndex],
+                                                        "Tasks Updated");
+                                                context.pop();
+                                              },
+                                            ),
+                                          ],
                                         );
-                                      }),
-                                  const Text("Open for Contribution"),
-                                ]),
+                                      },
+                                    );
+                                  }),
+                              title: const Text("Open for Contribution"),
+                            ),
                             SizedBox(
                               height: MediaQuery.sizeOf(context).height / 25,
                               width: MediaQuery.sizeOf(context).width / 2,

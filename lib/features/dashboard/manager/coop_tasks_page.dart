@@ -10,13 +10,9 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
-import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/image_picker_form_field.dart';
-import 'package:lakbay/features/tasks/tasks_controller.dart';
-import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
-import 'package:lakbay/models/task_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
 class CoopTasksPage extends ConsumerStatefulWidget {

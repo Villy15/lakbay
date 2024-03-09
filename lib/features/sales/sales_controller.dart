@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/sales/sales_repository.dart';
@@ -11,6 +12,14 @@ import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 final getSalesProvider = StreamProvider<List<SaleModel>>((ref) {
   final salesController = ref.watch(salesControllerProvider.notifier);
   return salesController.getSales();
+});
+
+// get saleByBookingId
+final getSaleByBookingIdProvider =
+    StreamProvider.autoDispose.family<SaleModel, String>((ref, bookingId) {
+  final salesController = ref.watch(salesControllerProvider.notifier);
+  return salesController.getSaleByBookingId(
+      bookingId); // Assuming getBooking is the method to fetch a single booking
 });
 
 final salesControllerProvider =
@@ -58,8 +67,31 @@ class SalesController extends StateNotifier<bool> {
     );
   }
 
-  // Read all tasks
+  void updateSale(BuildContext context, SaleModel sale,
+      {ListingBookings? booking}) {
+    state = true;
+    _salesRepository.updateSale(sale).then((result) {
+      state = false;
+      result.fold(
+        (l) => showSnackBar(context, l.message),
+        (r) {
+          _ref
+              .read(listingControllerProvider.notifier)
+              .updateBooking(context, booking!.listingId, booking, "");
+          // context.pop();
+          // showSnackBar(context, '');
+        },
+      );
+    });
+  }
+
+  // Read all sales
   Stream<List<SaleModel>> getSales() {
     return _salesRepository.readSales();
+  }
+
+  // Read sale by bookingId
+  Stream<SaleModel> getSaleByBookingId(String bookingId) {
+    return _salesRepository.readSaleByBookingId(bookingId);
   }
 }

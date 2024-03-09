@@ -10,10 +10,7 @@ import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/cooperatives/my_coop/components/announcement_card.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/tasks/tasks_controller.dart';
-import 'package:lakbay/features/tasks/widgets/today_task_card.dart';
 import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
-import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 class TodayPage extends ConsumerStatefulWidget {
   const TodayPage({super.key});

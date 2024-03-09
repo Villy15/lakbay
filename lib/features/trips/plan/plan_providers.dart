@@ -113,8 +113,5 @@ final parentStateProvider = StateNotifierProvider((ref) => ParentState());
 class ParentState extends StateNotifier<bool> {
   ParentState() : super(false);
 
-  void executeFunction(BuildContext context) {
-    context.pop();
-    context.pop();
-  }
+  void executeFunction(BuildContext context) {}
 }

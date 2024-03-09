@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -250,7 +248,7 @@ class ListingController extends StateNotifier<bool> {
               ownerName: listing.publisherName,
               saleAmount: booking.totalPrice!,
               paymentOption: booking.paymentOption!,
-              tranasactionType: booking.paymentOption!,
+              transactionType: booking.paymentOption!,
             ));
         updatedBooking = booking.copyWith(id: bookingUid);
 
@@ -302,8 +300,9 @@ class ListingController extends StateNotifier<bool> {
       result.fold(
         (l) => showSnackBar(context, l.message),
         (r) {
-          context.pop();
-          showSnackBar(context, message);
+          if (message.isNotEmpty) {
+            showSnackBar(context, message);
+          }
         },
       );
     });
