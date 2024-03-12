@@ -11,6 +11,7 @@ _$CoopAnnouncementsImpl _$$CoopAnnouncementsImplFromJson(
     _$CoopAnnouncementsImpl(
       title: json['title'] as String,
       description: json['description'] as String,
+      coopId: json['coopId'] as String,
       timestamp:
           const TimestampSerializer().fromJson(json['timestamp'] as Timestamp?),
       uid: json['uid'] as String?,
@@ -23,6 +24,7 @@ Map<String, dynamic> _$$CoopAnnouncementsImplToJson(
     <String, dynamic>{
       'title': instance.title,
       'description': instance.description,
+      'coopId': instance.coopId,
       'timestamp': const TimestampSerializer().toJson(instance.timestamp),
       'uid': instance.uid,
       'imageUrl': instance.imageUrl,

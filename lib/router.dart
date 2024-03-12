@@ -546,7 +546,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                                 listing: listing, booking: booking);
 
                           case 'Food':
-                            return CustomerFoodReceipt(listing: listing, booking: booking);
+                            return CustomerFoodReceipt(
+                                listing: listing, booking: booking);
 
                           default:
                             return CustomerAccomodationReceipt(

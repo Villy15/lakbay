@@ -7,6 +7,7 @@ import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_repository.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -500,5 +501,27 @@ class CoopsController extends StateNotifier<bool> {
         // _ref.read(navBarVisibilityProvider.notifier).show();
       },
     );
+  }
+
+  // Add announcement
+  void addAnnouncement(String coopUid, CoopAnnouncements coopAnnouncement,
+      BuildContext context) {
+    state = true;
+    _coopsRepository.addAnnouncement(coopUid, coopAnnouncement).then((result) {
+      result.fold(
+        (l) {
+          // Handle the error here
+          state = false;
+          showSnackBar(context, l.message);
+        },
+        (r) {
+          // Handle the success here
+          state = false;
+          showSnackBar(context, 'Announcement added successfully');
+          context.pop();
+          _ref.read(navBarVisibilityProvider.notifier).show();
+        },
+      );
+    });
   }
 }
