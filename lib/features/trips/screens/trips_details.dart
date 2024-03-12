@@ -142,16 +142,26 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
   Widget daysPlan(PlanModel plan) {
     // debugPrint("Plan: $plan");
     final thisDay = plan.startDate!.add(Duration(days: _selectedDayIndex));
-    ref.read(daysPlanProvider.notifier).setDays(plan.endDate!.difference(plan.startDate!).inDays + 1);
+    ref
+        .read(daysPlanProvider.notifier)
+        .setDays(plan.endDate!.difference(plan.startDate!).inDays + 1);
     // q: what does the line of code above do?
     // a: it sets the days plan provider to the number of days in the plan
-    
+
     ref.read(daysPlanProvider.notifier).setCurrentDay(thisDay);
     // Filter and sort the activities list first
     var filteredAndSortedActivities = plan.activities!.where((activity) {
-      if (activity.category == "Accommodation") {
-        return (activity.startTime!.day == thisDay.day) ||
-            (activity.endTime!.day == thisDay.day);
+      // if (activity.category == "Accommodation") {
+      //   return (activity.startTime!.day == thisDay.day) ||
+      //       (activity.endTime!.day == thisDay.day);
+      // }
+      switch (activity.category) {
+        case 'Accommodation':
+          return (activity.startTime!.day == thisDay.day) ||
+              (activity.endTime!.day == thisDay.day);
+        case 'Transport':
+          return (activity.startTime!.day == thisDay.day) ||
+              (activity.endTime!.day == thisDay.day);
       }
       return activity.dateTime!.day == thisDay.day;
     }).toList(); // Convert to List for sorting

@@ -44,17 +44,7 @@ class TripCard extends ConsumerWidget {
                       ),
                     ),
                   ] else ...[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          20), // round the corners of the image
-                      child: const Image(
-                        // Image from root/lib/core/images/plans_stock.jpg
-                        image: AssetImage('lib/core/images/plans_stock.jpg'),
-                        width: double.infinity,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                    testMethod(),
                   ],
 
                   // Card Title
@@ -134,6 +124,20 @@ class TripCard extends ConsumerWidget {
                 ],
               )),
         ),
+      ),
+    );
+  }
+
+  ClipRRect testMethod() {
+    debugPrint('test');
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20), // round the corners of the image
+      child: const Image(
+        // Image from root/lib/core/images/plans_stock.jpg
+        image: AssetImage('lib/core/images/plans_stock.jpg'),
+        width: double.infinity,
+        height: 200,
+        fit: BoxFit.cover,
       ),
     );
   }

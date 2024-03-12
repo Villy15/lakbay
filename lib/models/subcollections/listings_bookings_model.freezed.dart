@@ -40,8 +40,10 @@ mixin _$ListingBookings {
   num? get luggage => throw _privateConstructorUsedError;
   String? get id => throw _privateConstructorUsedError;
   bool get needsContributions => throw _privateConstructorUsedError;
-  String? get paymentOption => throw _privateConstructorUsedError;
-  String? get paymentStatus => throw _privateConstructorUsedError;
+  String? get paymentOption =>
+      throw _privateConstructorUsedError; //Downpayment, Full Payment
+  String? get paymentStatus =>
+      throw _privateConstructorUsedError; //Partially Paid, Fully Paid, Cancelled
   num get price => throw _privateConstructorUsedError;
   String? get roomId => throw _privateConstructorUsedError;
   String? get roomUid => throw _privateConstructorUsedError;
@@ -50,7 +52,8 @@ mixin _$ListingBookings {
   String? get selectedTime => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get startDate => throw _privateConstructorUsedError;
-  String get bookingStatus => throw _privateConstructorUsedError;
+  String get bookingStatus =>
+      throw _privateConstructorUsedError; //[Reserved, Cancelled, Completed, Refunded
   num? get totalPrice => throw _privateConstructorUsedError;
   String? get typeOfTrip => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
@@ -604,8 +607,10 @@ class _$ListingBookingsImpl extends _ListingBookings {
   final bool needsContributions;
   @override
   final String? paymentOption;
+//Downpayment, Full Payment
   @override
   final String? paymentStatus;
+//Partially Paid, Fully Paid, Cancelled
   @override
   final num price;
   @override
@@ -622,6 +627,7 @@ class _$ListingBookingsImpl extends _ListingBookings {
   final DateTime? startDate;
   @override
   final String bookingStatus;
+//[Reserved, Cancelled, Completed, Refunded
   @override
   final num? totalPrice;
   @override
@@ -831,9 +837,9 @@ abstract class _ListingBookings extends ListingBookings {
   bool get needsContributions;
   @override
   String? get paymentOption;
-  @override
+  @override //Downpayment, Full Payment
   String? get paymentStatus;
-  @override
+  @override //Partially Paid, Fully Paid, Cancelled
   num get price;
   @override
   String? get roomId;
@@ -849,7 +855,7 @@ abstract class _ListingBookings extends ListingBookings {
   DateTime? get startDate;
   @override
   String get bookingStatus;
-  @override
+  @override //[Reserved, Cancelled, Completed, Refunded
   num? get totalPrice;
   @override
   String? get typeOfTrip;
@@ -1030,7 +1036,8 @@ mixin _$BookingTask {
   String get committee => throw _privateConstructorUsedError;
   bool get complete => throw _privateConstructorUsedError;
   List<BookingTaskMessage>? get notes => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
+  String get status =>
+      throw _privateConstructorUsedError; //Pending, Incomplete, Completed
   bool get openContribution => throw _privateConstructorUsedError;
   List<TaskImages>? get imageProof => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
@@ -1333,6 +1340,7 @@ class _$BookingTaskImpl implements _BookingTask {
 
   @override
   final String status;
+//Pending, Incomplete, Completed
   @override
   final bool openContribution;
   final List<TaskImages>? _imageProof;
@@ -1458,7 +1466,7 @@ abstract class _BookingTask implements BookingTask {
   List<BookingTaskMessage>? get notes;
   @override
   String get status;
-  @override
+  @override //Pending, Incomplete, Completed
   bool get openContribution;
   @override
   List<TaskImages>? get imageProof;
