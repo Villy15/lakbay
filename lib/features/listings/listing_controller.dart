@@ -104,6 +104,13 @@ final getBookingTasksByMemberId = StreamProvider.autoDispose
   return listingController.getBookingTasksByMemberId(memberId);
 });
 
+// getBookingTaskByTaskId
+final getBookingTaskByTaskId = StreamProvider.autoDispose
+    .family<BookingTask?, String>((ref, bookingTaskId) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getBookingTaskByTaskId(bookingTaskId);
+});
+
 // getRoomByIdProvider
 final getAllRoomsByListingIdProvider = StreamProvider.autoDispose
     .family<List<AvailableRoom>, String>((ref, listingId) {
@@ -221,7 +228,11 @@ class ListingController extends StateNotifier<bool> {
         state = false;
         booking.tasks?.forEach((element) {
           if (booking.category == "Accommodation") {
-            element = element.copyWith(roomId: booking.roomId);
+            element = element.copyWith(
+              roomId: booking.roomId,
+              listingId: listing.uid,
+              bookingId: bookingUid,
+            );
           }
           _ref
               .read(listingControllerProvider.notifier)
@@ -244,7 +255,7 @@ class ListingController extends StateNotifier<bool> {
               ownerName: listing.publisherName,
               saleAmount: booking.totalPrice!,
               paymentOption: booking.paymentOption!,
-              tranasactionType: booking.paymentOption!,
+              transactionType: booking.paymentOption!,
             ));
         updatedBooking = booking.copyWith(id: bookingUid);
 
@@ -296,8 +307,9 @@ class ListingController extends StateNotifier<bool> {
       result.fold(
         (l) => showSnackBar(context, l.message),
         (r) {
-          context.pop();
-          showSnackBar(context, message);
+          if (message.isNotEmpty) {
+            showSnackBar(context, message);
+          }
         },
       );
     });
@@ -345,6 +357,11 @@ class ListingController extends StateNotifier<bool> {
   // Read bookingTasks by memberId
   Stream<List<BookingTask>> getBookingTasksByMemberId(String memberId) {
     return _listingRepository.readBookingTasksByMemberId(memberId);
+  }
+
+  // Read bookingTasks by memberId
+  Stream<BookingTask?> getBookingTaskByTaskId(String bookingTaskId) {
+    return _listingRepository.readBookingTaskByTaskId(bookingTaskId);
   }
 
   // Read all listings

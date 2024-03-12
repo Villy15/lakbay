@@ -1023,11 +1023,14 @@ mixin _$BookingTask {
   String? get uid => throw _privateConstructorUsedError;
   String? get bookingId => throw _privateConstructorUsedError;
   String get listingName => throw _privateConstructorUsedError;
+  String? get listingId => throw _privateConstructorUsedError;
   String? get roomId => throw _privateConstructorUsedError;
   List<String> get assignedIds => throw _privateConstructorUsedError;
   List<String> get assignedNames => throw _privateConstructorUsedError;
   String get committee => throw _privateConstructorUsedError;
   bool get complete => throw _privateConstructorUsedError;
+  List<BookingTaskMessage>? get notes => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
   bool get openContribution => throw _privateConstructorUsedError;
   List<TaskImages>? get imageProof => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
@@ -1048,11 +1051,14 @@ abstract class $BookingTaskCopyWith<$Res> {
       {String? uid,
       String? bookingId,
       String listingName,
+      String? listingId,
       String? roomId,
       List<String> assignedIds,
       List<String> assignedNames,
       String committee,
       bool complete,
+      List<BookingTaskMessage>? notes,
+      String status,
       bool openContribution,
       List<TaskImages>? imageProof,
       String name});
@@ -1074,11 +1080,14 @@ class _$BookingTaskCopyWithImpl<$Res, $Val extends BookingTask>
     Object? uid = freezed,
     Object? bookingId = freezed,
     Object? listingName = null,
+    Object? listingId = freezed,
     Object? roomId = freezed,
     Object? assignedIds = null,
     Object? assignedNames = null,
     Object? committee = null,
     Object? complete = null,
+    Object? notes = freezed,
+    Object? status = null,
     Object? openContribution = null,
     Object? imageProof = freezed,
     Object? name = null,
@@ -1096,6 +1105,10 @@ class _$BookingTaskCopyWithImpl<$Res, $Val extends BookingTask>
           ? _value.listingName
           : listingName // ignore: cast_nullable_to_non_nullable
               as String,
+      listingId: freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
       roomId: freezed == roomId
           ? _value.roomId
           : roomId // ignore: cast_nullable_to_non_nullable
@@ -1116,6 +1129,14 @@ class _$BookingTaskCopyWithImpl<$Res, $Val extends BookingTask>
           ? _value.complete
           : complete // ignore: cast_nullable_to_non_nullable
               as bool,
+      notes: freezed == notes
+          ? _value.notes
+          : notes // ignore: cast_nullable_to_non_nullable
+              as List<BookingTaskMessage>?,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
       openContribution: null == openContribution
           ? _value.openContribution
           : openContribution // ignore: cast_nullable_to_non_nullable
@@ -1144,11 +1165,14 @@ abstract class _$$BookingTaskImplCopyWith<$Res>
       {String? uid,
       String? bookingId,
       String listingName,
+      String? listingId,
       String? roomId,
       List<String> assignedIds,
       List<String> assignedNames,
       String committee,
       bool complete,
+      List<BookingTaskMessage>? notes,
+      String status,
       bool openContribution,
       List<TaskImages>? imageProof,
       String name});
@@ -1168,11 +1192,14 @@ class __$$BookingTaskImplCopyWithImpl<$Res>
     Object? uid = freezed,
     Object? bookingId = freezed,
     Object? listingName = null,
+    Object? listingId = freezed,
     Object? roomId = freezed,
     Object? assignedIds = null,
     Object? assignedNames = null,
     Object? committee = null,
     Object? complete = null,
+    Object? notes = freezed,
+    Object? status = null,
     Object? openContribution = null,
     Object? imageProof = freezed,
     Object? name = null,
@@ -1190,6 +1217,10 @@ class __$$BookingTaskImplCopyWithImpl<$Res>
           ? _value.listingName
           : listingName // ignore: cast_nullable_to_non_nullable
               as String,
+      listingId: freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
       roomId: freezed == roomId
           ? _value.roomId
           : roomId // ignore: cast_nullable_to_non_nullable
@@ -1210,6 +1241,14 @@ class __$$BookingTaskImplCopyWithImpl<$Res>
           ? _value.complete
           : complete // ignore: cast_nullable_to_non_nullable
               as bool,
+      notes: freezed == notes
+          ? _value._notes
+          : notes // ignore: cast_nullable_to_non_nullable
+              as List<BookingTaskMessage>?,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
       openContribution: null == openContribution
           ? _value.openContribution
           : openContribution // ignore: cast_nullable_to_non_nullable
@@ -1233,16 +1272,20 @@ class _$BookingTaskImpl implements _BookingTask {
       {this.uid,
       this.bookingId,
       required this.listingName,
+      this.listingId,
       this.roomId,
       required final List<String> assignedIds,
       required final List<String> assignedNames,
       required this.committee,
       required this.complete,
+      final List<BookingTaskMessage>? notes,
+      required this.status,
       required this.openContribution,
       final List<TaskImages>? imageProof,
       required this.name})
       : _assignedIds = assignedIds,
         _assignedNames = assignedNames,
+        _notes = notes,
         _imageProof = imageProof;
 
   factory _$BookingTaskImpl.fromJson(Map<String, dynamic> json) =>
@@ -1254,6 +1297,8 @@ class _$BookingTaskImpl implements _BookingTask {
   final String? bookingId;
   @override
   final String listingName;
+  @override
+  final String? listingId;
   @override
   final String? roomId;
   final List<String> _assignedIds;
@@ -1276,6 +1321,18 @@ class _$BookingTaskImpl implements _BookingTask {
   final String committee;
   @override
   final bool complete;
+  final List<BookingTaskMessage>? _notes;
+  @override
+  List<BookingTaskMessage>? get notes {
+    final value = _notes;
+    if (value == null) return null;
+    if (_notes is EqualUnmodifiableListView) return _notes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  final String status;
   @override
   final bool openContribution;
   final List<TaskImages>? _imageProof;
@@ -1293,7 +1350,7 @@ class _$BookingTaskImpl implements _BookingTask {
 
   @override
   String toString() {
-    return 'BookingTask(uid: $uid, bookingId: $bookingId, listingName: $listingName, roomId: $roomId, assignedIds: $assignedIds, assignedNames: $assignedNames, committee: $committee, complete: $complete, openContribution: $openContribution, imageProof: $imageProof, name: $name)';
+    return 'BookingTask(uid: $uid, bookingId: $bookingId, listingName: $listingName, listingId: $listingId, roomId: $roomId, assignedIds: $assignedIds, assignedNames: $assignedNames, committee: $committee, complete: $complete, notes: $notes, status: $status, openContribution: $openContribution, imageProof: $imageProof, name: $name)';
   }
 
   @override
@@ -1306,6 +1363,8 @@ class _$BookingTaskImpl implements _BookingTask {
                 other.bookingId == bookingId) &&
             (identical(other.listingName, listingName) ||
                 other.listingName == listingName) &&
+            (identical(other.listingId, listingId) ||
+                other.listingId == listingId) &&
             (identical(other.roomId, roomId) || other.roomId == roomId) &&
             const DeepCollectionEquality()
                 .equals(other._assignedIds, _assignedIds) &&
@@ -1315,6 +1374,8 @@ class _$BookingTaskImpl implements _BookingTask {
                 other.committee == committee) &&
             (identical(other.complete, complete) ||
                 other.complete == complete) &&
+            const DeepCollectionEquality().equals(other._notes, _notes) &&
+            (identical(other.status, status) || other.status == status) &&
             (identical(other.openContribution, openContribution) ||
                 other.openContribution == openContribution) &&
             const DeepCollectionEquality()
@@ -1329,11 +1390,14 @@ class _$BookingTaskImpl implements _BookingTask {
       uid,
       bookingId,
       listingName,
+      listingId,
       roomId,
       const DeepCollectionEquality().hash(_assignedIds),
       const DeepCollectionEquality().hash(_assignedNames),
       committee,
       complete,
+      const DeepCollectionEquality().hash(_notes),
+      status,
       openContribution,
       const DeepCollectionEquality().hash(_imageProof),
       name);
@@ -1357,11 +1421,14 @@ abstract class _BookingTask implements BookingTask {
       {final String? uid,
       final String? bookingId,
       required final String listingName,
+      final String? listingId,
       final String? roomId,
       required final List<String> assignedIds,
       required final List<String> assignedNames,
       required final String committee,
       required final bool complete,
+      final List<BookingTaskMessage>? notes,
+      required final String status,
       required final bool openContribution,
       final List<TaskImages>? imageProof,
       required final String name}) = _$BookingTaskImpl;
@@ -1376,6 +1443,8 @@ abstract class _BookingTask implements BookingTask {
   @override
   String get listingName;
   @override
+  String? get listingId;
+  @override
   String? get roomId;
   @override
   List<String> get assignedIds;
@@ -1386,6 +1455,10 @@ abstract class _BookingTask implements BookingTask {
   @override
   bool get complete;
   @override
+  List<BookingTaskMessage>? get notes;
+  @override
+  String get status;
+  @override
   bool get openContribution;
   @override
   List<TaskImages>? get imageProof;
@@ -1394,6 +1467,317 @@ abstract class _BookingTask implements BookingTask {
   @override
   @JsonKey(ignore: true)
   _$$BookingTaskImplCopyWith<_$BookingTaskImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+BookingTaskMessage _$BookingTaskMessageFromJson(Map<String, dynamic> json) {
+  return _BookingTaskMessage.fromJson(json);
+}
+
+/// @nodoc
+mixin _$BookingTaskMessage {
+  String? get uid => throw _privateConstructorUsedError;
+  String? get bookingId => throw _privateConstructorUsedError;
+  String get listingName => throw _privateConstructorUsedError;
+  String? get listingId => throw _privateConstructorUsedError;
+  String get senderId => throw _privateConstructorUsedError;
+  String get senderName => throw _privateConstructorUsedError;
+  String get taskId => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime get timestamp => throw _privateConstructorUsedError;
+  String get content => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $BookingTaskMessageCopyWith<BookingTaskMessage> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BookingTaskMessageCopyWith<$Res> {
+  factory $BookingTaskMessageCopyWith(
+          BookingTaskMessage value, $Res Function(BookingTaskMessage) then) =
+      _$BookingTaskMessageCopyWithImpl<$Res, BookingTaskMessage>;
+  @useResult
+  $Res call(
+      {String? uid,
+      String? bookingId,
+      String listingName,
+      String? listingId,
+      String senderId,
+      String senderName,
+      String taskId,
+      @TimestampSerializer() DateTime timestamp,
+      String content});
+}
+
+/// @nodoc
+class _$BookingTaskMessageCopyWithImpl<$Res, $Val extends BookingTaskMessage>
+    implements $BookingTaskMessageCopyWith<$Res> {
+  _$BookingTaskMessageCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uid = freezed,
+    Object? bookingId = freezed,
+    Object? listingName = null,
+    Object? listingId = freezed,
+    Object? senderId = null,
+    Object? senderName = null,
+    Object? taskId = null,
+    Object? timestamp = null,
+    Object? content = null,
+  }) {
+    return _then(_value.copyWith(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      bookingId: freezed == bookingId
+          ? _value.bookingId
+          : bookingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingName: null == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String,
+      listingId: freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      senderId: null == senderId
+          ? _value.senderId
+          : senderId // ignore: cast_nullable_to_non_nullable
+              as String,
+      senderName: null == senderName
+          ? _value.senderName
+          : senderName // ignore: cast_nullable_to_non_nullable
+              as String,
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$BookingTaskMessageImplCopyWith<$Res>
+    implements $BookingTaskMessageCopyWith<$Res> {
+  factory _$$BookingTaskMessageImplCopyWith(_$BookingTaskMessageImpl value,
+          $Res Function(_$BookingTaskMessageImpl) then) =
+      __$$BookingTaskMessageImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? uid,
+      String? bookingId,
+      String listingName,
+      String? listingId,
+      String senderId,
+      String senderName,
+      String taskId,
+      @TimestampSerializer() DateTime timestamp,
+      String content});
+}
+
+/// @nodoc
+class __$$BookingTaskMessageImplCopyWithImpl<$Res>
+    extends _$BookingTaskMessageCopyWithImpl<$Res, _$BookingTaskMessageImpl>
+    implements _$$BookingTaskMessageImplCopyWith<$Res> {
+  __$$BookingTaskMessageImplCopyWithImpl(_$BookingTaskMessageImpl _value,
+      $Res Function(_$BookingTaskMessageImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uid = freezed,
+    Object? bookingId = freezed,
+    Object? listingName = null,
+    Object? listingId = freezed,
+    Object? senderId = null,
+    Object? senderName = null,
+    Object? taskId = null,
+    Object? timestamp = null,
+    Object? content = null,
+  }) {
+    return _then(_$BookingTaskMessageImpl(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      bookingId: freezed == bookingId
+          ? _value.bookingId
+          : bookingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingName: null == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String,
+      listingId: freezed == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      senderId: null == senderId
+          ? _value.senderId
+          : senderId // ignore: cast_nullable_to_non_nullable
+              as String,
+      senderName: null == senderName
+          ? _value.senderName
+          : senderName // ignore: cast_nullable_to_non_nullable
+              as String,
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$BookingTaskMessageImpl implements _BookingTaskMessage {
+  _$BookingTaskMessageImpl(
+      {this.uid,
+      this.bookingId,
+      required this.listingName,
+      this.listingId,
+      required this.senderId,
+      required this.senderName,
+      required this.taskId,
+      @TimestampSerializer() required this.timestamp,
+      required this.content});
+
+  factory _$BookingTaskMessageImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BookingTaskMessageImplFromJson(json);
+
+  @override
+  final String? uid;
+  @override
+  final String? bookingId;
+  @override
+  final String listingName;
+  @override
+  final String? listingId;
+  @override
+  final String senderId;
+  @override
+  final String senderName;
+  @override
+  final String taskId;
+  @override
+  @TimestampSerializer()
+  final DateTime timestamp;
+  @override
+  final String content;
+
+  @override
+  String toString() {
+    return 'BookingTaskMessage(uid: $uid, bookingId: $bookingId, listingName: $listingName, listingId: $listingId, senderId: $senderId, senderName: $senderName, taskId: $taskId, timestamp: $timestamp, content: $content)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BookingTaskMessageImpl &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.bookingId, bookingId) ||
+                other.bookingId == bookingId) &&
+            (identical(other.listingName, listingName) ||
+                other.listingName == listingName) &&
+            (identical(other.listingId, listingId) ||
+                other.listingId == listingId) &&
+            (identical(other.senderId, senderId) ||
+                other.senderId == senderId) &&
+            (identical(other.senderName, senderName) ||
+                other.senderName == senderName) &&
+            (identical(other.taskId, taskId) || other.taskId == taskId) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp) &&
+            (identical(other.content, content) || other.content == content));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, uid, bookingId, listingName,
+      listingId, senderId, senderName, taskId, timestamp, content);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BookingTaskMessageImplCopyWith<_$BookingTaskMessageImpl> get copyWith =>
+      __$$BookingTaskMessageImplCopyWithImpl<_$BookingTaskMessageImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BookingTaskMessageImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _BookingTaskMessage implements BookingTaskMessage {
+  factory _BookingTaskMessage(
+      {final String? uid,
+      final String? bookingId,
+      required final String listingName,
+      final String? listingId,
+      required final String senderId,
+      required final String senderName,
+      required final String taskId,
+      @TimestampSerializer() required final DateTime timestamp,
+      required final String content}) = _$BookingTaskMessageImpl;
+
+  factory _BookingTaskMessage.fromJson(Map<String, dynamic> json) =
+      _$BookingTaskMessageImpl.fromJson;
+
+  @override
+  String? get uid;
+  @override
+  String? get bookingId;
+  @override
+  String get listingName;
+  @override
+  String? get listingId;
+  @override
+  String get senderId;
+  @override
+  String get senderName;
+  @override
+  String get taskId;
+  @override
+  @TimestampSerializer()
+  DateTime get timestamp;
+  @override
+  String get content;
+  @override
+  @JsonKey(ignore: true)
+  _$$BookingTaskMessageImplCopyWith<_$BookingTaskMessageImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

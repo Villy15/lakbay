@@ -27,6 +27,7 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           json['cooperative'] as Map<String, dynamic>),
       description: json['description'] as String,
       downpaymentRate: json['downpaymentRate'] as num?,
+      fixedCancellationRate: json['fixedCancellationRate'] as num?,
       duration: json['duration'] as num?,
       images: (json['images'] as List<dynamic>?)
           ?.map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
@@ -86,6 +87,7 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'cooperative': instance.cooperative.toJson(),
       'description': instance.description,
       'downpaymentRate': instance.downpaymentRate,
+      'fixedCancellationRate': instance.fixedCancellationRate,
       'duration': instance.duration,
       'images': instance.images?.map((e) => e.toJson()).toList(),
       'isPublished': instance.isPublished,

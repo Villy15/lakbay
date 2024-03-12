@@ -765,6 +765,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 this.setState(() {
                   fixedTasks?.add(BookingTask(
                       listingName: _titleController.text,
+                      status: 'Incomplete',
                       assignedIds: assignedIds,
                       assignedNames: assignedNames,
                       committee: committeeController.text,

@@ -1553,6 +1553,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                 this.setState(() {
                   fixedTasks?.add(BookingTask(
                       listingName: _titleController.text,
+                      status: 'Incomplete',
                       assignedIds: assignedIds,
                       assignedNames: assignedNames,
                       committee: committeeController.text,

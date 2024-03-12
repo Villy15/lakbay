@@ -17,7 +17,7 @@ class SaleModel with _$SaleModel {
     required String listingName,
     required num listingPrice,
     required String paymentOption,
-    required String tranasactionType,
+    required String transactionType,
     required num amount,
     required String ownerId,
     required String ownerName,

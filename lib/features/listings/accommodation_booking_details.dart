@@ -6,9 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
-import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
+import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
@@ -214,7 +214,6 @@ class _AccommodationBookingsDetailsState
                     // Add logic to handle the input data
                     String name = nameController.text;
                     num cost = num.parse(costController.text);
-                    debugPrint("${booking.expenses}");
                     if (nameController.text.isNotEmpty &&
                         costController.text.isNotEmpty) {
                       Expense expense = Expense(cost: cost, name: name);
@@ -492,46 +491,58 @@ class _AccommodationBookingsDetailsState
   }
 
   Widget showTasks(ListingBookings booking) {
-    return booking.tasks == null || booking.tasks!.isEmpty
-        ? SizedBox(
-            height: MediaQuery.of(context).size.height / 5,
-            child: const Center(child: Text("No Tasks Listed")),
-          )
-        : ListView.builder(
-            itemCount: booking.tasks!.length,
-            itemBuilder: (context, taskIndex) {
-              String proofNote;
-              if (booking.tasks![taskIndex].imageProof != null) {
-                proofNote = "Proof Available";
-              } else {
-                proofNote = "No Proof Available";
-              }
-              return Container(
-                margin: const EdgeInsets.only(top: 15),
-                child: Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        Checkbox(
-                          value: booking.tasks![taskIndex].complete,
-                          onChanged: null,
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                booking.tasks![taskIndex].name,
+    final user = ref.read(userProvider);
+    CooperativesJoined coop = user!.cooperativesJoined!.firstWhere(
+      (element) =>
+          element.cooperativeId ==
+          user.currentCoop, // Return null if no matching element is found
+    );
+
+    return ref
+        .watch(getBookingTasksByBookingId((booking.listingId, booking.id!)))
+        .when(
+          data: (List<BookingTask>? bookingTasks) {
+            return bookingTasks == null || bookingTasks.isEmpty
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height / 5,
+                    child: const Center(child: Text("No Tasks Listed")),
+                  )
+                : ListView.builder(
+                    itemCount: bookingTasks.length,
+                    itemBuilder: (context, taskIndex) {
+                      String proofNote;
+                      if (bookingTasks[taskIndex].imageProof != null) {
+                        proofNote = "Proof Available";
+                      } else {
+                        proofNote = "No Proof Available";
+                      }
+                      return Container(
+                        margin: const EdgeInsets.only(top: 15),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: bookingTasks[taskIndex].status ==
+                                      'Pending'
+                                  ? const Text('Pending')
+                                  : Checkbox(
+                                      value: bookingTasks[taskIndex].complete,
+                                      onChanged: null,
+                                    ),
+                              title: Text(
+                                bookingTasks[taskIndex].name,
                                 style: const TextStyle(
                                   fontSize: 16, // Set your desired font size
                                   // Add other styling as needed
                                 ),
                               ),
-                              Text(
-                                "Assigned: ${booking.tasks![taskIndex].assignedNames.join(", ")}",
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    showNotesDialog(
+                                        context, bookingTasks[taskIndex]);
+                                  },
+                                  icon: const Icon(Icons.comment_outlined)),
+                              subtitle: Text(
+                                "Assigned: ${bookingTasks[taskIndex].assignedNames.join(", ")}",
                                 style: TextStyle(
                                   fontSize:
                                       14, // Slightly smaller than the title
@@ -539,119 +550,197 @@ class _AccommodationBookingsDetailsState
                                       .grey[600], // Grey color for the subtitle
                                   // You can add other styling as needed
                                 ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                      Checkbox(
-                          value: booking.tasks![taskIndex].openContribution,
-                          onChanged: (value) {
-                            String title = "";
-                            String note = "";
-                            if (value == true) {
-                              title = "Activate \"Open for Contribution\"";
-                              note =
-                                  "Activating \"Open for Contribution\" will make this task visible to other cooperative members, giving them the opportunity to help.";
-                            } else {
-                              title = "Deactivate Open for Contribution";
-                              note =
-                                  "Deactivating Open for Contribution will make this task private to the assigned members.";
-                            }
-                            showDialog<void>(
-                              context: context,
-                              barrierDismissible:
-                                  false, // User must tap button to close the dialog
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text(
-                                    title,
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  content: Text(note),
-                                  actions: <Widget>[
-                                    TextButton(
-                                        child: const Text('Cancel'),
-                                        onPressed: () {
-                                          context.pop();
-                                        }),
-                                    TextButton(
-                                      child: const Text('Confirm'),
-                                      onPressed: () {
-                                        List<BookingTask> bookingTasks = booking
-                                            .tasks!
-                                            .toList(growable: true);
-                                        bookingTasks[taskIndex] = booking
-                                            .tasks![taskIndex]
-                                            .copyWith(openContribution: value!);
-                                        ListingBookings updatedBooking = booking
-                                            .copyWith(tasks: bookingTasks);
-                                        debugPrint("$updatedBooking");
-
-                                        ref
-                                            .read(listingControllerProvider
-                                                .notifier)
-                                            .updateBookingTask(
-                                                context,
-                                                widget.listing.uid!,
-                                                bookingTasks[taskIndex],
-                                                "Tasks Updated");
-                                        context.pop();
-                                      },
-                                    ),
-                                  ],
-                                );
+                              ),
+                              onTap: () {
+                                showMarkAsDoneDialog(
+                                    context, bookingTasks[taskIndex]);
                               },
-                            );
-                          }),
-                      const Text("Open for Contribution"),
-                    ]),
-                    SizedBox(
-                      height: MediaQuery.sizeOf(context).height / 25,
-                      width: MediaQuery.sizeOf(context).width / 2,
-                      child: ElevatedButton(
-                        onPressed: booking.tasks![taskIndex].imageProof != null
-                            ? () {
-                                // Your function here when imageProof is not empty
-                              }
-                            : null,
-                        style: ButtonStyle(
-                          elevation: MaterialStateProperty.all(
-                              1), // Removes the shadow/elevation
-                          shape: MaterialStateProperty.all(
-                            const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(
-                                    20), // Adjust the radius as needed
-                                topRight: Radius.circular(
-                                    20), // Adjust the radius as needed
-                                bottomLeft:
-                                    Radius.zero, // Flat bottom left corner
-                                bottomRight:
-                                    Radius.zero, // Flat bottom right corner
+                            ),
+                            ListTile(
+                              leading: Checkbox(
+                                  value:
+                                      bookingTasks[taskIndex].openContribution,
+                                  onChanged: (value) {
+                                    String title = "";
+                                    String note = "";
+                                    if (value == true) {
+                                      title =
+                                          "Activate \"Open for Contribution\"";
+                                      note =
+                                          "Activating \"Open for Contribution\" will make this task visible to other cooperative members, giving them the opportunity to help.";
+                                    } else {
+                                      title =
+                                          "Deactivate Open for Contribution";
+                                      note =
+                                          "Deactivating Open for Contribution will make this task private to the assigned members.";
+                                    }
+                                    showDialog<void>(
+                                      context: context,
+                                      barrierDismissible:
+                                          false, // User must tap button to close the dialog
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                            title,
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          content: Text(note),
+                                          actions: <Widget>[
+                                            TextButton(
+                                                child: const Text('Cancel'),
+                                                onPressed: () {
+                                                  context.pop();
+                                                }),
+                                            TextButton(
+                                              child: const Text('Confirm'),
+                                              onPressed: () {
+                                                List<BookingTask>
+                                                    updatedBookingTasks =
+                                                    bookingTasks.toList(
+                                                        growable: true);
+                                                updatedBookingTasks[taskIndex] =
+                                                    bookingTasks[taskIndex]
+                                                        .copyWith(
+                                                            openContribution:
+                                                                value!);
+                                                ListingBookings updatedBooking =
+                                                    booking.copyWith(
+                                                        tasks:
+                                                            updatedBookingTasks);
+                                                debugPrint("$updatedBooking");
+
+                                                ref
+                                                    .read(
+                                                        listingControllerProvider
+                                                            .notifier)
+                                                    .updateBookingTask(
+                                                        context,
+                                                        widget.listing.uid!,
+                                                        updatedBookingTasks[
+                                                            taskIndex],
+                                                        "Tasks Updated");
+                                                context.pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }),
+                              title: const Text("Open for Contribution"),
+                            ),
+                            SizedBox(
+                              height: MediaQuery.sizeOf(context).height / 25,
+                              width: MediaQuery.sizeOf(context).width / 2,
+                              child: FilledButton(
+                                onPressed: bookingTasks[taskIndex].imageProof !=
+                                        null
+                                    ? () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                content: ImageSlider(
+                                                    images:
+                                                        bookingTasks[taskIndex]
+                                                            .imageProof!
+                                                            .map((image) =>
+                                                                image.url)
+                                                            .toList(),
+                                                    height: MediaQuery.sizeOf(
+                                                                context)
+                                                            .height /
+                                                        3,
+                                                    width: MediaQuery.sizeOf(
+                                                            context)
+                                                        .width,
+                                                    radius: BorderRadius.zero),
+                                              );
+                                            });
+                                      }
+                                    : null,
+                                style: ButtonStyle(
+                                  elevation: MaterialStateProperty.all(
+                                      1), // Removes the shadow/elevation
+                                  shape: MaterialStateProperty.all(
+                                    const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(
+                                            20), // Adjust the radius as needed
+                                        topRight: Radius.circular(
+                                            20), // Adjust the radius as needed
+                                        bottomLeft: Radius
+                                            .zero, // Flat bottom left corner
+                                        bottomRight: Radius
+                                            .zero, // Flat bottom right corner
+                                      ),
+                                    ),
+                                  ),
+                                  // Apply additional styling as needed
+                                ),
+                                child: Text(proofNote),
                               ),
                             ),
-                          ),
-                          // Apply additional styling as needed
+                            Divider(
+                              thickness: 1.5,
+                              indent: 20,
+                              endIndent: 20,
+                              color: Colors.grey[400],
+                            ),
+                          ],
                         ),
-                        child: Text(proofNote),
-                      ),
-                    ),
-                    Divider(
-                      thickness: 1.5,
-                      indent: 20,
-                      endIndent: 20,
-                      color: Colors.grey[400],
-                    ),
-                  ],
-                ),
-              );
-            },
+                      );
+                    },
+                  );
+          },
+          error: (error, stackTrace) => ErrorText(
+            error: error.toString(),
+            stackTrace: '',
+          ),
+          loading: () => const CircularProgressIndicator(),
+        );
+  }
+
+  Future<dynamic> showMarkAsDoneDialog(
+      BuildContext context, BookingTask bookingTask) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(bookingTask.name),
+            titleTextStyle: const TextStyle(
+                fontSize: 22, fontWeight: FontWeight.w400, color: Colors.black),
+            actions: [
+              FilledButton(
+                onPressed: () {
+                  context.pop();
+                },
+                child: const Text('Back'),
+              ),
+              FilledButton(
+                onPressed: bookingTask.status == 'Pending'
+                    ? () {
+                        BookingTask updatedBookingTask = bookingTask.copyWith(
+                            complete: true, status: 'Completed');
+                        ref
+                            .read(listingControllerProvider.notifier)
+                            .updateBookingTask(
+                                context,
+                                updatedBookingTask.listingId!,
+                                updatedBookingTask,
+                                'Task updated successfully!');
+                        context.pop();
+                      }
+                    : null,
+                child: bookingTask.status == 'Pending'
+                    ? const Text('Mark as Done')
+                    : const Text('Pending'),
+              )
+            ],
           );
+        });
   }
 
   Future<dynamic> showAddTaskForm(
@@ -922,6 +1011,8 @@ class _AccommodationBookingsDetailsState
                               onPressed: () {
                                 BookingTask bookingTask = BookingTask(
                                     listingName: widget.listing.title,
+                                    listingId: widget.listing.uid,
+                                    status: 'Incomplete',
                                     assignedIds: assignedIds,
                                     assignedNames: assignedNames,
                                     committee: committeeController.text,
@@ -929,15 +1020,12 @@ class _AccommodationBookingsDetailsState
                                     openContribution: openContribution,
                                     name: taskNameController.text);
 
-                                debugPrintJson("$bookingTask");
                                 if (taskNameController.text.isNotEmpty) {
                                   List<BookingTask> bookingTasks =
                                       booking.tasks?.toList(growable: true) ??
                                           [];
                                   bookingTasks.add(bookingTask);
-                                  ListingBookings updatedBooking =
-                                      booking.copyWith(tasks: bookingTasks);
-                                  debugPrint("$updatedBooking");
+
                                   ref
                                       .read(listingControllerProvider.notifier)
                                       .updateBookingTask(
@@ -1043,8 +1131,128 @@ class _AccommodationBookingsDetailsState
                   error: error.toString(),
                   stackTrace: '',
                 ),
-                loading: () => const Loader(),
+                loading: () => const CircularProgressIndicator(),
               )),
+    );
+  }
+
+  Future<dynamic> showNotesDialog(
+      BuildContext context, BookingTask bookingTask) {
+    List<BookingTaskMessage>? notes =
+        bookingTask.notes?.toList(growable: true) ?? [];
+    TextEditingController messageController = TextEditingController();
+    notes.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text(
+              'Notes',
+              style: TextStyle(fontWeight: FontWeight.w400),
+            ),
+            InkWell(
+                onTap: () {
+                  context.pop();
+                },
+                child: const Icon(
+                  Icons.close,
+                  size: 20,
+                ))
+          ]),
+          content: SizedBox(
+            height: MediaQuery.of(context).size.height /
+                1.5, // Set a fixed height for the ListView
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: notes.length,
+                    itemBuilder: (context, messageIndex) {
+                      final message = notes[messageIndex];
+                      return Container(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  message.senderName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                Text(DateFormat('MMM d HH:mm')
+                                    .format(message.timestamp)),
+                              ],
+                            ),
+                            Text(message.content),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actionsPadding:
+              const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          actions: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                    10.0), // Adjust the border radius as needed
+                color:
+                    Colors.white, // Set the background color of the input field
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: messageController,
+                      decoration: const InputDecoration(
+                        hintText: 'Type your message here...',
+                      ),
+                      maxLines: null, // Allow multiple lines
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      String content = messageController.text;
+                      messageController.clear();
+                      final user = ref.read(userProvider);
+                      BookingTaskMessage message = BookingTaskMessage(
+                          listingName: bookingTask.listingName,
+                          senderId: user!.uid,
+                          senderName: user.name,
+                          taskId: bookingTask.uid!,
+                          timestamp: DateTime.now(),
+                          content: content);
+                      notes.add(message);
+                      BookingTask updatedBookingTask =
+                          bookingTask.copyWith(notes: notes);
+
+                      ref
+                          .read(listingControllerProvider.notifier)
+                          .updateBookingTask(context, bookingTask.listingId!,
+                              updatedBookingTask, '');
+                    },
+                    child: Icon(
+                      Icons.send,
+                      color: Colors.deepOrange[400],
+                    ), // Set the color of the send icon
+                  ),
+                ],
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }

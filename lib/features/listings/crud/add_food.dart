@@ -95,28 +95,28 @@ class _AddFoodState extends ConsumerState<AddFood> {
                       cooperativeId: widget.coop.uid!,
                       cooperativeName: widget.coop.name);
                   ListingModel listing = ListingModel(
-                    availableDeals: availableDeals,
-                    address: _addressController.text,
-                    category: widget.category,
-                    city: "",
-                    images: _images!.map((image) {
-                      final imagePath =
-                          'listings/${widget.coop.name}/${image.path.split('/').last}';
-                      return ListingImages(
-                        path: imagePath,
-                      );
-                    }).toList(),
-                    cooperative: cooperative,
-                    description: _descriptionController.text,
-                    province: "",
-                    publisherId: ref.read(userProvider)!.uid,
-                    publisherName: ref.read(userProvider)!.name,
-                    title: _titleController.text,
-                    type: type,
-                    fixedTasks: fixedTasks,
-                    price: _feeController.text == '' ? null : num.parse(_feeController.text)
-
-                  );
+                      availableDeals: availableDeals,
+                      address: _addressController.text,
+                      category: widget.category,
+                      city: "",
+                      images: _images!.map((image) {
+                        final imagePath =
+                            'listings/${widget.coop.name}/${image.path.split('/').last}';
+                        return ListingImages(
+                          path: imagePath,
+                        );
+                      }).toList(),
+                      cooperative: cooperative,
+                      description: _descriptionController.text,
+                      province: "",
+                      publisherId: ref.read(userProvider)!.uid,
+                      publisherName: ref.read(userProvider)!.name,
+                      title: _titleController.text,
+                      type: type,
+                      fixedTasks: fixedTasks,
+                      price: _feeController.text == ''
+                          ? null
+                          : num.parse(_feeController.text));
                   listing = await processMenuImages(listing);
                   listing = await processDealImages(listing);
                   listing = listing.copyWith(
@@ -544,6 +544,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                 this.setState(() {
                   fixedTasks?.add(BookingTask(
                       listingName: _titleController.text,
+                      status: 'Incomplete',
                       assignedIds: assignedIds,
                       assignedNames: assignedNames,
                       committee: committeeController.text,

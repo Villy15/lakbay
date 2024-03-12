@@ -34,6 +34,17 @@ class SalesRepository {
     }
   }
 
+  // Update
+  FutureVoid updateSale(SaleModel sale) async {
+    try {
+      return right(await _sales.doc(sale.uid!).update(sale.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   // Real all sales
   Stream<List<SaleModel>> readSales() {
     return _sales.snapshots().map((snapshot) {
@@ -52,6 +63,17 @@ class SalesRepository {
       return snapshot.docs.map((doc) {
         return SaleModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
+    });
+  }
+
+  // Read sale by bookingId
+  Stream<SaleModel> readSaleByBookingId(String bookingId) {
+    return _sales
+        .where('bookingId', isEqualTo: bookingId)
+        .snapshots()
+        .map((snapshot) {
+      return SaleModel.fromJson(
+          snapshot.docs.first.data() as Map<String, dynamic>);
     });
   }
 
