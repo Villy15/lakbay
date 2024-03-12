@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
-class CustomerTransportReceipt extends StatelessWidget {
+class CustomerFoodReceipt extends StatelessWidget {
   final ListingModel listing;
   final ListingBookings booking;
-  const CustomerTransportReceipt(
-    {super.key, required this.listing, required this.booking}
-  );
 
+  const CustomerFoodReceipt(
+      {super.key, required this.listing, required this.booking});
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.only(top: MediaQuery.sizeOf(context).height / 10),
+          margin: EdgeInsets.only(
+            top: MediaQuery.sizeOf(context).height / 10
+          ),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -74,53 +76,6 @@ class CustomerTransportReceipt extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Trip: '),
-                  Text('${booking.typeOfTrip}')
-                ]
-              ),
-              if (booking.typeOfTrip == 'Public') ... [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Booked Date: '),
-                    Text(_formatDatetime(booking.startDate!))
-                  ]
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Departure Time: '),
-                    Text(_formatTimeOfDay(booking.startTime!))
-                  ]
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Pickup Point: '),
-                    Text('${listing.availableTransport?.pickupPoint}')
-                  ]
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Destination: '),
-                    Text('${listing.availableTransport?.destination}')
-                  ]
-                ),
-              ]
-              else ... [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Booked First Date: '),
-                    Text(_formatDatetime(booking.startDate!))
-                  ]
-                ),
-              ],
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
                   const Text('Guests: '),
                   Text('${booking.guests}')
                 ]
@@ -138,8 +93,8 @@ class CustomerTransportReceipt extends StatelessWidget {
                 const Text("Customer No.:"),
                 Text(" ${booking.customerPhoneNo}"),
               ],
-            ),
-            Row(
+              ),
+              Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text("Emergency Contact Name:"),
@@ -191,17 +146,5 @@ class CustomerTransportReceipt extends StatelessWidget {
         )
       )
     );
-  }
-
-  String _formatTimeOfDay(TimeOfDay time) {
-    final now = DateTime.now();
-    final dt = DateTime(now.year, now.month, now.day, time.hour, time.minute);
-    final format = DateFormat.jm();  //"6:00 AM"
-    return format.format(dt);
-  }
-
-  String _formatDatetime(DateTime dateTime) {
-    final format = DateFormat('yyyy-MM-dd'); // Format the date as "yyyy-MM-dd"
-    return format.format(dateTime);
   }
 }

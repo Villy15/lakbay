@@ -144,8 +144,11 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 workingDays: workingDays,
                 startTime: TimeOfDay.fromDateTime(startDate),
                 endTime: TimeOfDay.fromDateTime(endDate),
-                destination: _destinationController.text,
-                pickupPoint: _pickupController.text,
+                // if destination is empty, set to null
+                destination: _destinationController.text.isEmpty
+                    ? null
+                    : _destinationController.text,
+                pickupPoint: _pickupController.text.isEmpty ? null : _pickupController.text,
                 // if departure times are empty, set to null
                 departureTimes: _departureTime.isEmpty ? null : _departureTime,
               );
@@ -1178,9 +1181,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               },
               child: const Text('Add Departure Time')),
         ),
-        const SizedBox(height: 15)
-      ],
-      const Text('Pickup Point',
+        const SizedBox(height: 15),
+        const Text('Pickup Point',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
       const Padding(
         padding: EdgeInsets.only(left: 8.0),
@@ -1241,6 +1243,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           child: const Text('Update Map'),
         ),
       )
+      ],
+      
     ]);
   }
 

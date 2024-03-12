@@ -214,6 +214,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                                           }
                                           return bookingTasks != null
                                               ? SizedBox(
+                                                  height: 600,
                                                   width: double.infinity,
                                                   child: Column(
                                                     children: [
@@ -303,9 +304,12 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                                                                               Row(
                                                                                 children: [
                                                                                   const Spacer(),
-                                                                                  IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt_outlined))
+                                                                                  InkWell(
+                                                                                    onTap: () {},
+                                                                                    child: const Icon(Icons.camera_alt_outlined),
+                                                                                  )
                                                                                 ],
-                                                                              )
+                                                                              ),
                                                                             ],
                                                                           );
                                                                         }),

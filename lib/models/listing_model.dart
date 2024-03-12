@@ -118,8 +118,8 @@ class AvailableTransport with _$AvailableTransport {
     required List<bool> workingDays,
     @TimeOfDayConverter() required TimeOfDay startTime,
     @TimeOfDayConverter() required TimeOfDay endTime,
-    required String destination,
-    required String pickupPoint,
+    String? destination,
+    String? pickupPoint,
   }) = _AvailableTransport;
 
   factory AvailableTransport.fromJson(Map<String, dynamic> json) =>

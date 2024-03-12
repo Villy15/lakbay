@@ -50,6 +50,7 @@ import 'package:lakbay/features/listings/crud/category_page_controller.dart';
 import 'package:lakbay/features/listings/crud/choose_category.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_entertainment.dart';
+import 'package:lakbay/features/listings/crud/customer_food_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/transportation_booking_details.dart';
 import 'package:lakbay/features/market/market_page.dart';
@@ -534,6 +535,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           case 'Transport':
                             return CustomerTransportReceipt(
                                 listing: listing, booking: booking);
+
+                          case 'Food':
+                            return CustomerFoodReceipt(listing: listing, booking: booking);
 
                           default:
                             return CustomerAccomodationReceipt(
