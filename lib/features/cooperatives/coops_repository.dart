@@ -298,4 +298,13 @@ class CoopsRepository {
       return left(Failure(e.toString()));
     }
   }
+
+  // Read all announcements of a cooperative
+  Stream<List<CoopAnnouncements>> readAnnouncements(String coopId) {
+    return announcements(coopId).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return CoopAnnouncements.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
 }

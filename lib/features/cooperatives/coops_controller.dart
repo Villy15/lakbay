@@ -79,6 +79,13 @@ final getAllPrivilegesProvider = StreamProvider.autoDispose
   return coopsController.getAllPrivileges(coopUid);
 });
 
+// Get all announcements provider
+final getAllAnnouncementsProvider = StreamProvider.autoDispose
+    .family<List<CoopAnnouncements>, String>((ref, coopUid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getAllAnnouncements(coopUid);
+});
+
 class CoopsController extends StateNotifier<bool> {
   final CoopsRepository _coopsRepository;
   final Ref _ref;
@@ -523,5 +530,10 @@ class CoopsController extends StateNotifier<bool> {
         },
       );
     });
+  }
+
+  // Read all aannounecements of a cooperative
+  Stream<List<CoopAnnouncements>> getAllAnnouncements(String coopUid) {
+    return _coopsRepository.readAnnouncements(coopUid);
   }
 }

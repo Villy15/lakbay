@@ -36,42 +36,42 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   void initState() {
     super.initState();
     coopAnnouncements = [
-      CoopAnnouncements(
-        title:
-            'Cooperative Partners with [Coop_Name] Cooperative for Sustainable Tourism',
-        description:
-            'We\'re excited to announce a partnership with [Coop_Name] to promote eco-conscious travel practices. Get access to training resources, best practices, and potential funding.',
-        timestamp: DateTime.now(),
-        category: 'Sustainability',
-      ),
+      // CoopAnnouncements(
+      //   title:
+      //       'Cooperative Partners with [Coop_Name] Cooperative for Sustainable Tourism',
+      //   description:
+      //       'We\'re excited to announce a partnership with [Coop_Name] to promote eco-conscious travel practices. Get access to training resources, best practices, and potential funding.',
+      //   timestamp: DateTime.now(),
+      //   category: 'Sustainability',
+      // ),
 
-      // New Announcement Examples:
+      // // New Announcement Examples:
 
-      CoopAnnouncements(
-        title:
-            'Experience the Flavors of [Region]: Culinary Festival Announced!',
-        description:
-            'Join us for a celebration of local cuisine on [dates]. Sample food from our member restaurants, attend cooking demonstrations, and enjoy live music!',
-        timestamp: DateTime.now()
-            .subtract(const Duration(days: 3)), // Set to a few days ago
-        category: 'Event',
-      ),
+      // CoopAnnouncements(
+      //   title:
+      //       'Experience the Flavors of [Region]: Culinary Festival Announced!',
+      //   description:
+      //       'Join us for a celebration of local cuisine on [dates]. Sample food from our member restaurants, attend cooking demonstrations, and enjoy live music!',
+      //   timestamp: DateTime.now()
+      //       .subtract(const Duration(days: 3)), // Set to a few days ago
+      //   category: 'Event',
+      // ),
 
-      CoopAnnouncements(
-        title: 'Grant Program for Tourism Businesses Now Open',
-        description:
-            'The [program name] is accepting applications to support [types of projects]. Find eligibility details and the application deadline on [website]. ',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-        category: 'Funding',
-      ),
+      // CoopAnnouncements(
+      //   title: 'Grant Program for Tourism Businesses Now Open',
+      //   description:
+      //       'The [program name] is accepting applications to support [types of projects]. Find eligibility details and the application deadline on [website]. ',
+      //   timestamp: DateTime.now().subtract(const Duration(days: 1)),
+      //   category: 'Funding',
+      // ),
 
-      CoopAnnouncements(
-        title: 'Member Spotlight: [Business Name] Wins Prestigious Award',
-        description:
-            'Congratulations to [Business Name] for their recognition at the [award name]! Their commitment to quality tourism strengthens our community.',
-        timestamp: DateTime.now().subtract(const Duration(days: 5)),
-        category: 'Member News',
-      ),
+      // CoopAnnouncements(
+      //   title: 'Member Spotlight: [Business Name] Wins Prestigious Award',
+      //   description:
+      //       'Congratulations to [Business Name] for their recognition at the [award name]! Their commitment to quality tourism strengthens our community.',
+      //   timestamp: DateTime.now().subtract(const Duration(days: 5)),
+      //   category: 'Member News',
+      // ),
     ];
 
     coopGoals = [
@@ -303,22 +303,26 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
     );
   }
 
-  ListView _coopAnnouncements() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => const Padding(
-        padding: EdgeInsets.only(bottom: 16.0),
-      ),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: coopAnnouncements.length,
-      itemBuilder: (context, index) {
-        final announcement = coopAnnouncements[index];
+  Widget _coopAnnouncements() {
+    return ref.watch(getAllAnnouncementsProvider(widget.coopId)).when(
+          data: (coopAnnouncements) {
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: coopAnnouncements.length,
+              itemBuilder: (context, index) {
+                final announcement = coopAnnouncements[index];
 
-        return AnnouncementCard(
-          announcement: announcement,
+                return AnnouncementCard(
+                  announcement: announcement,
+                );
+              },
+            );
+          },
+          error: (error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString()),
+          loading: () => const Loader(),
         );
-      },
-    );
   }
 
   // Build Events
