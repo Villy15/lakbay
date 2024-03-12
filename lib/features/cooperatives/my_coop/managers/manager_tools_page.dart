@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
-import 'package:lakbay/features/cooperatives/my_coop/managers/add_announcement.dart';
+import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
 import 'package:lakbay/models/coop_model.dart';
 
 class ManagerToolsPage extends ConsumerWidget {

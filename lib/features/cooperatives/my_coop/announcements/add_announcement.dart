@@ -71,7 +71,7 @@ class _AddAnnouncementState extends ConsumerState<AddAnnouncement> {
         appBar: AppBar(
           title: const Text('Add Announcement'),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.close),
             onPressed: () {
               ref.read(navBarVisibilityProvider.notifier).show();
               context.pop(widget.parentContext);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 
@@ -10,6 +11,13 @@ class AnnouncementCard extends StatelessWidget {
 
   final CoopAnnouncements announcement;
 
+  void readAnnouncement(BuildContext context) {
+    context.pushNamed(
+      'read_announcement',
+      extra: announcement,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -17,7 +25,9 @@ class AnnouncementCard extends StatelessWidget {
       // color: Theme.of(context).colorScheme.background,
       child: InkWell(
         // Make the entire card tappable
-        onTap: () => {},
+        onTap: () => {
+          readAnnouncement(context),
+        },
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
