@@ -19,6 +19,7 @@ import 'package:lakbay/features/cooperatives/crud/edit_coop.dart';
 import 'package:lakbay/features/cooperatives/crud/read_coop.dart';
 import 'package:lakbay/features/cooperatives/join_coop.dart';
 import 'package:lakbay/features/cooperatives/leave_coop.dart';
+import 'package:lakbay/features/cooperatives/my_coop/announcements/read_announcement.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/add_committee_members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/join_coop_code.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_committees_page.dart';
@@ -79,6 +80,7 @@ import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
+import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/task_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -546,7 +548,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                                 listing: listing, booking: booking);
 
                           case 'Food':
-                            return CustomerFoodReceipt(listing: listing, booking: booking);
+                            return CustomerFoodReceipt(
+                                listing: listing, booking: booking);
 
                           default:
                             return CustomerAccomodationReceipt(
@@ -730,6 +733,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 return CoopReadEventPage(eventId: pathParameters['eventId']!);
               }),
 
+              // Read Announcement from my coop
+              buildSubRoute(
+                '/my_coop/announcement',
+                (context, pathParameters, extra) {
+                  CoopAnnouncements announcement = extra as CoopAnnouncements;
+
+                  return ReadAnnouncement(announcement: announcement);
+                },
+                name: 'read_announcement',
+              ),
               // Add tasks for event
               buildSubRoute(
                 '/my_coop/event/task/functions/add',

@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/calendar/components/booking_card.dart';
 import 'package:lakbay/features/common/error.dart';
+import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/cooperatives/my_coop/components/announcement_card.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
@@ -26,14 +28,14 @@ class _TodayPageState extends ConsumerState<TodayPage> {
   void initState() {
     super.initState();
     coopAnnouncements = [
-      CoopAnnouncements(
-        title:
-            'Cooperative Partners with [Coop_Name] Cooperative for Sustainable Tourism',
-        description:
-            'We\'re excited to announce a partnership with [Coop_Name] to promote eco-conscious travel practices. Get access to training resources, best practices, and potential funding.',
-        timestamp: DateTime.now(),
-        category: 'Sustainability',
-      ),
+      // CoopAnnouncements(
+      //   title:
+      //       'Cooperative Partners with [Coop_Name] Cooperative for Sustainable Tourism',
+      //   description:
+      //       'We\'re excited to announce a partnership with [Coop_Name] to promote eco-conscious travel practices. Get access to training resources, best practices, and potential funding.',
+      //   timestamp: DateTime.now(),
+      //   category: 'Sustainability',
+      // ),
     ];
   }
 
@@ -262,21 +264,26 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
 
-              ListView.separated(
-                separatorBuilder: (context, index) => const Padding(
-                  padding: EdgeInsets.only(bottom: 16.0),
-                ),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: coopAnnouncements.length,
-                itemBuilder: (context, index) {
-                  final announcement = coopAnnouncements[index];
+              ref.watch(getAllAnnouncementsProvider(user.currentCoop!)).when(
+                    data: (coopAnnouncements) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: coopAnnouncements.length,
+                        itemBuilder: (context, index) {
+                          final announcement = coopAnnouncements[index];
 
-                  return AnnouncementCard(
-                    announcement: announcement,
-                  );
-                },
-              )
+                          return AnnouncementCard(
+                            announcement: announcement,
+                          );
+                        },
+                      );
+                    },
+                    error: (error, stackTrace) => ErrorText(
+                        error: error.toString(),
+                        stackTrace: stackTrace.toString()),
+                    loading: () => const Loader(),
+                  )
             ],
           ),
         ),

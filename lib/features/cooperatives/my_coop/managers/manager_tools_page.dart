@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
 import 'package:lakbay/models/coop_model.dart';
 
 class ManagerToolsPage extends ConsumerWidget {
@@ -45,8 +46,33 @@ class ManagerToolsPage extends ConsumerWidget {
     );
   }
 
+  void addAnnouncement(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return AddAnnouncement(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // List Tile Map Cooperative Activities
+    Map<String, Function> listTileMapCoopActivities = {
+      // Add Announcement
+      'Add Announcement': () => ListTile(
+            leading: const Icon(Icons.announcement),
+            title: const Text('Add Announcement'),
+            onTap: () => addAnnouncement(context, coop),
+          ),
+    };
+
+    // List Tile Map Cooperative Details
     Map<String, Function> listTileMapCoopDetails = {
       'Edit Cooperative': () => ListTile(
             leading: const Icon(Icons.edit),
@@ -147,91 +173,122 @@ class ManagerToolsPage extends ConsumerWidget {
               }),
     };
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Manager Tools')),
-      body: Scrollbar(
-        // Always show scrollbar
-        thumbVisibility: true,
-        child: SingleChildScrollView(
-          // Show scroll bar only when needed
-          scrollDirection: Axis.vertical,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Cooperative Details
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Cooperative Details',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+    return PopScope(
+      // onPopInvoked: (bool didPop) {
+      //   context.pop();
+      //   ref.read(navBarVisibilityProvider.notifier).show();
+      // },
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Manager Tools')),
+        body: Scrollbar(
+          // Always show scrollbar
+          thumbVisibility: true,
+          child: SingleChildScrollView(
+            // Show scroll bar only when needed
+            scrollDirection: Axis.vertical,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Cooperative Activities
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Cooperative Activities',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: listTileMapCoopDetails.length,
-                  itemBuilder: (context, index) {
-                    final key = listTileMapCoopDetails.keys.elementAt(index);
-                    final listTile = listTileMapCoopDetails[key]!();
-                    return listTile;
-                  },
-                  separatorBuilder: (context, index) => const Divider(),
-                ),
 
-                // Manage Committees
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Manage Committees',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: listTileMapCoopActivities.length,
+                    itemBuilder: (context, index) {
+                      final key =
+                          listTileMapCoopActivities.keys.elementAt(index);
+                      final listTile = listTileMapCoopActivities[key]!();
+                      return listTile;
+                    },
+                    separatorBuilder: (context, index) => const Divider(),
+                  ),
+
+                  // Cooperative Details
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Cooperative Details',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: listTileMapCoopDetails.length,
+                    itemBuilder: (context, index) {
+                      final key = listTileMapCoopDetails.keys.elementAt(index);
+                      final listTile = listTileMapCoopDetails[key]!();
+                      return listTile;
+                    },
+                    separatorBuilder: (context, index) => const Divider(),
+                  ),
 
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: listTileMapManageCommittees.length,
-                  itemBuilder: (context, index) {
-                    final key =
-                        listTileMapManageCommittees.keys.elementAt(index);
-                    final listTile = listTileMapManageCommittees[key]!();
-                    return listTile;
-                  },
-                  separatorBuilder: (context, index) => const Divider(),
-                ),
-
-                // Manage Board
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Manage Board',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  // Manage Committees
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Manage Committees',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
 
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: listTileMapManageBoard.length,
-                  itemBuilder: (context, index) {
-                    final key = listTileMapManageBoard.keys.elementAt(index);
-                    final listTile = listTileMapManageBoard[key]!();
-                    return listTile;
-                  },
-                  separatorBuilder: (context, index) => const Divider(),
-                ),
-              ],
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: listTileMapManageCommittees.length,
+                    itemBuilder: (context, index) {
+                      final key =
+                          listTileMapManageCommittees.keys.elementAt(index);
+                      final listTile = listTileMapManageCommittees[key]!();
+                      return listTile;
+                    },
+                    separatorBuilder: (context, index) => const Divider(),
+                  ),
+
+                  // Manage Board
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Manage Board',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: listTileMapManageBoard.length,
+                    itemBuilder: (context, index) {
+                      final key = listTileMapManageBoard.keys.elementAt(index);
+                      final listTile = listTileMapManageBoard[key]!();
+                      return listTile;
+                    },
+                    separatorBuilder: (context, index) => const Divider(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

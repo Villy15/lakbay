@@ -7,6 +7,7 @@ import 'package:lakbay/core/failure.dart';
 import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/typdef.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
 
@@ -83,6 +84,13 @@ class CoopsRepository {
     return _communities
         .doc(coopId)
         .collection(FirebaseConstants.privilegesSubCollection);
+  }
+
+  // Announcements Subcollection
+  CollectionReference announcements(String coopId) {
+    return _communities
+        .doc(coopId)
+        .collection(FirebaseConstants.announcementsSubCollection);
   }
 
   // Add a member in members subcollection
@@ -265,5 +273,38 @@ class CoopsRepository {
     } catch (e) {
       return left(Failure(e.toString()));
     }
+  }
+
+  // ANNOUNCEMENTS
+
+  // Add an announcement in announcements subcollection
+  FutureEither<String> addAnnouncement(
+      String coopId, CoopAnnouncements coopAnnouncement) async {
+    try {
+      // Generate a new document ID
+      var doc = announcements(coopId).doc();
+
+      // Update the uid of the cooperative
+      coopAnnouncement = coopAnnouncement.copyWith(uid: doc.id);
+
+      // Add the cooperative to the database
+      await doc.set(coopAnnouncement.toJson());
+
+      // Return the uid of the newly added cooperative
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Read all announcements of a cooperative
+  Stream<List<CoopAnnouncements>> readAnnouncements(String coopId) {
+    return announcements(coopId).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return CoopAnnouncements.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
   }
 }
