@@ -185,11 +185,10 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
   }
 
   Future<dynamic> showNotesDialog(
-      BuildContext context, BookingTask bookingTask) {
-    List<BookingTaskMessage>? notes =
-        bookingTask.notes?.toList(growable: true) ?? [];
+      BuildContext context, BookingTask bookingTask) async {
+    // final notes = ref.watch(getBookingTasksByBookingId((bookingTask.listingId!, bookingTask.bookingId!)).future);
+    //     bookingTask.notes?.toList(growable: true) ?? [];
     TextEditingController messageController = TextEditingController();
-    notes.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
     return showDialog(
       context: context,
@@ -215,34 +214,57 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                 1.5, // Set a fixed height for the ListView
             child: Column(
               children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: notes.length,
-                    itemBuilder: (context, messageIndex) {
-                      final message = notes[messageIndex];
-                      return Container(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  message.senderName,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                Text(DateFormat('MMM d HH:mm')
-                                    .format(message.timestamp)),
-                              ],
-                            ),
-                            Text(message.content),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                Consumer(
+                  builder:
+                      (BuildContext context, WidgetRef ref, Widget? child) {
+                    return Expanded(
+                        child: ref
+                            .watch(getBookingTaskByTaskId(bookingTask.uid!))
+                            .when(
+                              data: (BookingTask? bookingTask) {
+                                List<BookingTaskMessage>? notes =
+                                    bookingTask?.notes;
+                                notes?.sort((a, b) =>
+                                    a.timestamp.compareTo(b.timestamp));
+
+                                return ListView.builder(
+                                  itemCount: notes!.length,
+                                  itemBuilder: (context, messageIndex) {
+                                    final message = notes[messageIndex];
+                                    return Container(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                message.senderName,
+                                                style: const TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                              Text(DateFormat('MMM d HH:mm')
+                                                  .format(message.timestamp)),
+                                            ],
+                                          ),
+                                          Text(message.content),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              error: (error, stackTrace) => ErrorText(
+                                error: error.toString(),
+                                stackTrace: '',
+                              ),
+                              loading: () => const CircularProgressIndicator(),
+                            ));
+                  },
                 ),
               ],
             ),
@@ -281,7 +303,9 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                           taskId: bookingTask.uid!,
                           timestamp: DateTime.now(),
                           content: content);
-                      notes.add(message);
+                      List<BookingTaskMessage>? notes = bookingTask.notes;
+                      notes?.add(message);
+
                       BookingTask updatedBookingTask =
                           bookingTask.copyWith(notes: notes);
 

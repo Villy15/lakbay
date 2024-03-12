@@ -106,7 +106,9 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                     .colorScheme
                                                     .onSurface),
                                           ),
-                                          if (widget.transportListings![index].type == 'Public') ... [
+                                          if (widget.transportListings![index]
+                                                  .type ==
+                                              'Public') ...[
                                             TextSpan(
                                               text: " per trip",
                                               style: TextStyle(
@@ -120,8 +122,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                       .colorScheme
                                                       .onSurface),
                                             ),
-                                          ]
-                                          else ... [
+                                          ] else ...[
                                             TextSpan(
                                               text: " rental",
                                               style: TextStyle(
@@ -136,7 +137,6 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                       .onSurface),
                                             ),
                                           ]
-                                          
                                         ],
                                       ),
                                     ),
@@ -147,306 +147,314 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                             SizedBox(
                               height: MediaQuery.sizeOf(context).height / 30,
                             ),
-                            ref
-                                .watch(getListingProvider(transport.uid!))
-                                .when(
-                                  data: (ListingModel listing) {
-                                    return Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            ref.watch(getListingProvider(transport.uid!)).when(
+                                data: (ListingModel listing) {
+                                  return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       children: [
                                         ElevatedButton(
-                                          onPressed: () {
-                                            context.push('/market/${widget.category}',
-                                              extra:listing
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 25,
-                                              vertical: 5
-                                            )
-                                          ),
-                                          child: const Text(
-                                            'View Listing',
-                                            style: TextStyle(fontSize: 14)
-                                          )
-                                        ),
+                                            onPressed: () {
+                                              context.push(
+                                                  '/market/${widget.category}',
+                                                  extra: listing);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 25,
+                                                        vertical: 5)),
+                                            child: const Text('View Listing',
+                                                style:
+                                                    TextStyle(fontSize: 14))),
                                         ElevatedButton(
-                                          onPressed: () async {
-                                            if (listing.type  == 'Public') {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: const Text(
-                                                      'Select a Departure Time',
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight: FontWeight.bold
-                                                      )
-                                                    ),
-                                                    content: SizedBox(
-                                                      height: MediaQuery.sizeOf(context).height / 3.5,
-                                                      width: MediaQuery.sizeOf(context).width / 1.5,
-                                                      child: Column(
-                                                        children: transport.availableTransport!.departureTimes
-                                                          !.map((time) => ListTile(
-                                                            title: Text(time.format(context)),
-                                                            onTap: () async {
-                                                              debugPrint(startDate.toString());
-                                                              final bookings = await ref.watch(
-                                                              getAllBookingsProvider(listing.uid!)
-                                                                  .future);
-                                                              // check if there are bookings on a certain departure time
-                                                              List<ListingBookings> bookingsCopy =
-                                                                List.from(bookings);
-                                                              Map<TimeOfDay?, num> deptTimeAndGuests = {};
-                                                              // format the currentDate
-                                                              String formattedCurrentDate = DateFormat('yyyy-MM-dd').format(daysPlan.currentDay!);
-
-                                                              for (ListingBookings booking in bookingsCopy) {
-                                                                // only get the date and not the time from booking.startDate. trim it to only get the date
-                                                                DateTime bookingStartDate = DateTime(booking.startDate!.year, booking.startDate!.month, booking.startDate!.day);
-                                                                String formattedDate = DateFormat('yyyy-MM-dd').format(bookingStartDate);
-
-                                                                // check the formattedCurrentDate and the formattedDate if they are the same
-                                                                if (formattedCurrentDate == formattedDate) {
-                                                                  // remove duplicates of departure time, and get the total number of guests for each departure time
-                                                                  if (deptTimeAndGuests.containsKey(booking.startTime)) {
-                                                                    deptTimeAndGuests[booking.startTime] = deptTimeAndGuests[booking.startTime]! + booking.guests;
-                                                                  } else {
-                                                                    deptTimeAndGuests[booking.startTime] = booking.guests;
-                                                                  }
-                                                                  // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
-                                                                  
-                                                              }
-                                                              
-                                                            }
-                                                            // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
-                                                            if (deptTimeAndGuests[time] != null) {
-                                                              if (deptTimeAndGuests[time]! >= transport.availableTransport!.guests) {
-                                                                // show an alert dialog that the selected departure time is already full
-                                                                showDialog(
-                                                                  context: context,
-                                                                  builder: (context) {
-                                                                    return AlertDialog(
-                                                                      title: const Text('Departure Time is Full'),
-                                                                      content: Text('The time ${time.format(context)} has reached its capacity of ${deptTimeAndGuests[time]}.  Please select another time.'),
-                                                                      actions: [
-                                                                        TextButton(
-                                                                          onPressed: () {
-                                                                            Navigator.pop(context);
-                                                                          },
-                                                                          child: const Text('Close')
-                                                                        )
-                                                                      ]
-                                                                    );
-                                                                  }
-                                                                );
-                                                              } else {
-                                                                // show confirm booking
-                                                                showConfirmBooking(transport.availableTransport!, listing, daysPlan.currentDay!, daysPlan.currentDay!, time, time, 'Public');
-                                                              }
-                                                            } else {
-                                                              // show confirm booking
-                                                              showConfirmBooking(transport.availableTransport!, listing, daysPlan.currentDay!, daysPlan.currentDay!, time, time, 'Public');
-                                                            }
-                                                            }
-                                                          ))
-                                                          .toList()
-                                                      )
-                                                    )
-                                                  );
-                                                }
-                                              ).then((time) {
-                                                showConfirmBooking(transport.availableTransport!, listing, daysPlan.currentDay!, daysPlan.currentDay!, time, time, 'Public');
-                                              });
-                                              //showConfirmBooking(transport, listing, DateTime.now(), DateTime.now(), , endTime, typeOfTrip);
-                                            }
-                                            else if (listing.type == 'Private') {
-                                              // check if the selected date is available
-                                              final bookings = await ref.watch(
-                                                getAllBookingsProvider(listing.uid!)
-                                                  .future);
-                                              
-                                              List<ListingBookings> bookingsCopy =
-                                                List.from(bookings);
-
-                                              bool flag = false;
-                                              
-                                              for (ListingBookings bookings in bookingsCopy) {
-                                                // check if the listing id is already booked
-                                                if (bookings.listingId == listing.uid) {
-                                                  // check if the current date is already booked
-                                                  if (bookings.startDate!.isAtSameMomentAs(daysPlan.currentDay!)) {
-                                                    flag = true; 
-                                                  }
-                                                }
-                                              }
-                                              if (flag) {
+                                            onPressed: () async {
+                                              if (listing.type == 'Public') {
                                                 showDialog(
                                                     context: context,
                                                     builder: (context) {
-                                                      return SizedBox(
-                                                        height: MediaQuery.sizeOf(context).height / 3.5,
-                                                        width: double.infinity,
-                                                        child: const AlertDialog(
-                                                          title: Text('Booking Unavailable'),
-                                                          content: Text('Someone has rented the vehicle already. Please select another day from your plan or rent a new vehicle.'),
-                                                        ),
+                                                      return AlertDialog(
+                                                        title: const Text(
+                                                            'Select a Departure Time',
+                                                            style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
+                                                        content: SizedBox(
+                                                            height:
+                                                                MediaQuery.sizeOf(context)
+                                                                        .height /
+                                                                    3.5,
+                                                            width:
+                                                                MediaQuery.sizeOf(context)
+                                                                        .width /
+                                                                    1.5,
+                                                            child: Column(
+                                                                children: transport
+                                                                    .availableTransport!
+                                                                    .departureTimes!
+                                                                    .map((time) =>
+                                                                        ListTile(
+                                                                            title:
+                                                                                Text(time.format(context)),
+                                                                            onTap: () async {
+                                                                              debugPrint(startDate.toString());
+                                                                              final bookings = await ref.watch(getAllBookingsProvider(listing.uid!).future);
+                                                                              // check if there are bookings on a certain departure time
+                                                                              List<ListingBookings> bookingsCopy = bookings;
+                                                                              Map<TimeOfDay?, num> deptTimeAndGuests = {};
+                                                                              // format the currentDate
+                                                                              String formattedCurrentDate = DateFormat('yyyy-MM-dd').format(daysPlan.currentDay!);
+
+                                                                              for (ListingBookings booking in bookingsCopy) {
+                                                                                // only get the date and not the time from booking.startDate. trim it to only get the date
+                                                                                DateTime bookingStartDate = DateTime(booking.startDate!.year, booking.startDate!.month, booking.startDate!.day);
+                                                                                String formattedDate = DateFormat('yyyy-MM-dd').format(bookingStartDate);
+
+                                                                                // check the formattedCurrentDate and the formattedDate if they are the same
+                                                                                if (formattedCurrentDate == formattedDate) {
+                                                                                  // remove duplicates of departure time, and get the total number of guests for each departure time
+                                                                                  if (deptTimeAndGuests.containsKey(booking.startTime)) {
+                                                                                    deptTimeAndGuests[booking.startTime] = deptTimeAndGuests[booking.startTime]! + booking.guests;
+                                                                                  } else {
+                                                                                    deptTimeAndGuests[booking.startTime] = booking.guests;
+                                                                                  }
+                                                                                  // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
+                                                                                }
+                                                                              }
+                                                                              // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
+                                                                              if (deptTimeAndGuests[time] != null) {
+                                                                                if (deptTimeAndGuests[time]! >= transport.availableTransport!.guests) {
+                                                                                  // show an alert dialog that the selected departure time is already full
+                                                                                  showDialog(
+                                                                                      context: context,
+                                                                                      builder: (context) {
+                                                                                        return AlertDialog(title: const Text('Departure Time is Full'), content: Text('The time ${time.format(context)} has reached its capacity of ${deptTimeAndGuests[time]}.  Please select another time.'), actions: [
+                                                                                          TextButton(
+                                                                                              onPressed: () {
+                                                                                                Navigator.pop(context);
+                                                                                              },
+                                                                                              child: const Text('Close'))
+                                                                                        ]);
+                                                                                      });
+                                                                                } else {
+                                                                                  // show confirm booking
+                                                                                  showConfirmBooking(transport.availableTransport!, listing, daysPlan.currentDay!, daysPlan.currentDay!, time, time, 'Public');
+                                                                                }
+                                                                              } else {
+                                                                                // show confirm booking
+                                                                                showConfirmBooking(transport.availableTransport!, listing, daysPlan.currentDay!, daysPlan.currentDay!, time, time, 'Public');
+                                                                              }
+                                                                            }))
+                                                                    .toList())),
+                                                        actions: [
+                                                          FilledButton(
+                                                              onPressed: () {
+                                                                context.pop();
+                                                              },
+                                                              child: const Text(
+                                                                  "Back"))
+                                                        ],
                                                       );
+                                                    }).then((time) {
+                                                  showConfirmBooking(
+                                                      transport
+                                                          .availableTransport!,
+                                                      listing,
+                                                      daysPlan.currentDay!,
+                                                      daysPlan.currentDay!,
+                                                      time,
+                                                      time,
+                                                      'Public');
+                                                });
+                                                //showConfirmBooking(transport, listing, DateTime.now(), DateTime.now(), , endTime, typeOfTrip);
+                                              } else if (listing.type ==
+                                                  'Private') {
+                                                // check if the selected date is available
+                                                final bookings =
+                                                    await ref.watch(
+                                                        getAllBookingsProvider(
+                                                                listing.uid!)
+                                                            .future);
+
+                                                List<ListingBookings>
+                                                    bookingsCopy =
+                                                    List.from(bookings);
+
+                                                bool flag = false;
+
+                                                for (ListingBookings bookings
+                                                    in bookingsCopy) {
+                                                  // check if the listing id is already booked
+                                                  if (bookings.listingId ==
+                                                      listing.uid) {
+                                                    // check if the current date is already booked
+                                                    if (bookings.startDate!
+                                                        .isAtSameMomentAs(
+                                                            daysPlan
+                                                                .currentDay!)) {
+                                                      flag = true;
                                                     }
-                                                  );
+                                                  }
+                                                }
+                                                if (flag) {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return SizedBox(
+                                                          height:
+                                                              MediaQuery.sizeOf(
+                                                                          context)
+                                                                      .height /
+                                                                  3.5,
+                                                          width:
+                                                              double.infinity,
+                                                          child:
+                                                              const AlertDialog(
+                                                            title: Text(
+                                                                'Booking Unavailable'),
+                                                            content: Text(
+                                                                'Someone has rented the vehicle already. Please select another day from your plan or rent a new vehicle.'),
+                                                          ),
+                                                        );
+                                                      });
+                                                } else {
+                                                  showConfirmBooking(
+                                                      transport
+                                                          .availableTransport!,
+                                                      listing,
+                                                      daysPlan.currentDay!,
+                                                      daysPlan.currentDay!,
+                                                      null,
+                                                      null,
+                                                      'Private');
+                                                  debugPrint(
+                                                      'no other bookings are here.');
+                                                }
                                               }
-                                              else {
-                                                showConfirmBooking(transport.availableTransport!, listing, daysPlan.currentDay!, daysPlan.currentDay!, null, null, 'Private');
-                                                debugPrint('no other bookings are here.');
-                                              }
-                                            }
-
-
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 25,
-                                              vertical: 5
-                                            )
-                                          ),
-                                          child: const Text(
-                                            'Book Now',
-                                            style: TextStyle(fontSize: 14)
-                                          )
-                                        )
-                                      ]
-                                    );
-                                  },
-                                  error: ((error, stackTrace) =>
-                                              ErrorText(
-                                                  error: error.toString(),
-                                                  stackTrace:
-                                                      stackTrace.toString())),
-                                          loading: () => const Loader()),
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 25,
+                                                        vertical: 5)),
+                                            child: const Text('Book Now',
+                                                style: TextStyle(fontSize: 14)))
+                                      ]);
+                                },
+                                error: ((error, stackTrace) => ErrorText(
+                                    error: error.toString(),
+                                    stackTrace: stackTrace.toString())),
+                                loading: () => const Loader()),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.car_rental),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        widget.category,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                      child: Row(children: [
+                                    const Icon(Icons.car_rental),
+                                    const SizedBox(width: 5),
+                                    Text(widget.category,
                                         style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold
-                                        )
-                                      )
-                                    ]
-                                  )
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: const Text(
-                                                      "Transport Details"),
-                                                  content: SizedBox(
-                                                    height: MediaQuery.sizeOf(
-                                                                context)
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold))
+                                  ])),
+                                  TextButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  "Transport Details"),
+                                              content: SizedBox(
+                                                height:
+                                                    MediaQuery.sizeOf(context)
                                                             .height /
                                                         4,
-                                                    width: MediaQuery.sizeOf(
-                                                                context)
+                                                width:
+                                                    MediaQuery.sizeOf(context)
                                                             .width /
                                                         1.5,
-                                                    child: Column(
+                                                child: Column(
+                                                  children: [
+                                                    Row(
                                                       children: [
-                                                        Row(
-                                                          children: [
-                                                            const Icon(
-                                                                Icons
-                                                                    .people_alt_outlined,
-                                                                size: 30),
-                                                            Text(
-                                                              "Guests: ${transport.availableTransport!.guests}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          18),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            const Icon(
-                                                                Icons
-                                                                    .luggage,
-                                                                size: 30),
-                                                            Text(
-                                                              "Luggages: ${transport.availableTransport!.luggage}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          18),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 10,
+                                                        const Icon(
+                                                            Icons
+                                                                .people_alt_outlined,
+                                                            size: 30),
+                                                        Text(
+                                                          "Guests: ${transport.availableTransport!.guests}",
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 18),
                                                         ),
                                                       ],
                                                     ),
-                                                  ),
-                                                  actions: [
-                                                    TextButton(
-                                                      child:
-                                                          const Text("Close"),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
+                                                    const SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        const Icon(
+                                                            Icons.luggage,
+                                                            size: 30),
+                                                        Text(
+                                                          "Luggages: ${transport.availableTransport!.luggage}",
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 18),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 10,
                                                     ),
                                                   ],
-                                                );
-                                              },
-                                            );
-
-                                  },
-                                  child: RichText(
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: "Transport Details",
-                                                  style: TextStyle(
-                                                      // color: Colors.grey,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurface
-                                                          .withOpacity(0.5),
-                                                      fontStyle: FontStyle
-                                                          .italic // Underline for emphasis
-                                                      ),
                                                 ),
-                                                const WidgetSpan(
-                                                  child: Icon(
-                                                    Icons
-                                                        .keyboard_arrow_down, // Arrow pointing down icon
-                                                    size:
-                                                        16.0, // Adjust the size to fit your design
-                                                    color: Colors.grey,
-                                                  ),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: const Text("Close"),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
                                                 ),
                                               ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: "Transport Details",
+                                              style: TextStyle(
+                                                  // color: Colors.grey,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface
+                                                      .withOpacity(0.5),
+                                                  fontStyle: FontStyle
+                                                      .italic // Underline for emphasis
+                                                  ),
                                             ),
-                                          )
-                                )
-                              ]
-                            )
+                                            const WidgetSpan(
+                                              child: Icon(
+                                                Icons
+                                                    .keyboard_arrow_down, // Arrow pointing down icon
+                                                size:
+                                                    16.0, // Adjust the size to fit your design
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ))
+                                ])
                           ],
                         ),
                       )
@@ -467,7 +475,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
     }
   }
 
-   bool isOverlapping(
+  bool isOverlapping(
       ListingBookings newBooking, ListingBookings existingBooking) {
     DateTime newStart = DateTime(
         newBooking.startDate!.year,
@@ -578,7 +586,14 @@ class _TransportCardState extends ConsumerState<TransportCard> {
     return allDateTimeRanges;
   }
 
-  void showConfirmBooking(AvailableTransport transport, ListingModel listing, DateTime startDate, DateTime endDate, TimeOfDay? startTime, TimeOfDay? endTime, String typeOfTrip) {
+  void showConfirmBooking(
+      AvailableTransport transport,
+      ListingModel listing,
+      DateTime startDate,
+      DateTime endDate,
+      TimeOfDay? startTime,
+      TimeOfDay? endTime,
+      String typeOfTrip) {
     showDialog(
         context: context,
         // barrierDismissible: false,
@@ -597,29 +612,31 @@ class _TransportCardState extends ConsumerState<TransportCard> {
           String formattedStartDate =
               DateFormat('MMMM dd, yyyy').format(startDate);
           String formattedEndDate = DateFormat('MMMM dd, yyyy').format(endDate);
-            return Dialog.fullscreen(
-                child: StatefulBuilder(builder: (context, setState) {
-              return confirmOneWay(
-                  formattedStartDate,
-                  formattedEndDate,
-                  transport,
-                  guests,
-                  luggage,
-                  phoneNoController,
-                  emergencyContactNameController,
-                  emergencyContactNoController,
-                  governmentId,
-                  startDate,
-                  endDate,
-                  startTime,
-                  endTime,
-                  typeOfTrip,
-                  user!, listing);
-            }));
+          return Dialog.fullscreen(
+              child: StatefulBuilder(builder: (context, setState) {
+            return confirmOneWay(
+                formattedStartDate,
+                formattedEndDate,
+                transport,
+                guests,
+                luggage,
+                phoneNoController,
+                emergencyContactNameController,
+                emergencyContactNoController,
+                governmentId,
+                startDate,
+                endDate,
+                startTime,
+                endTime,
+                typeOfTrip,
+                user!,
+                listing);
+          }));
         });
   }
 
-  SingleChildScrollView confirmOneWay(String formattedStartDate,
+  SingleChildScrollView confirmOneWay(
+      String formattedStartDate,
       String formattedEndDate,
       AvailableTransport transport,
       num guests,
@@ -632,166 +649,136 @@ class _TransportCardState extends ConsumerState<TransportCard> {
       DateTime endDate,
       TimeOfDay? startTime,
       TimeOfDay? endTime,
-      String typeOfTrip, UserModel user,
+      String typeOfTrip,
+      UserModel user,
       ListingModel listing) {
-        return SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.only(top:10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppBar(
-                  leading: IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      context.pop();
-                    }
-                  ),
-                  title: Text(
-                    formattedStartDate,
-                    style: const TextStyle(fontSize: 18)
-                  ),
-                  elevation: 0
+    return SingleChildScrollView(
+        child: Container(
+      margin: const EdgeInsets.only(top: 10),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        AppBar(
+            leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  context.pop();
+                }),
+            title:
+                Text(formattedStartDate, style: const TextStyle(fontSize: 18)),
+            elevation: 0),
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(children: [
+              TextFormField(
+                  decoration: InputDecoration(
+                      labelText: 'Number of Guests (Max: ${transport.guests})',
+                      border: const OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: "1"),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    guests = int.tryParse(value) ?? 0;
+                  }),
+              const SizedBox(height: 10),
+              TextFormField(
+                  decoration: InputDecoration(
+                      labelText:
+                          'Number of Luggages (Max: ${transport.luggage})',
+                      border: const OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: "1"),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    luggage = int.tryParse(value) ?? 0;
+                  }),
+              const SizedBox(height: 10),
+              TextFormField(
+                  controller: phoneNoController,
+                  decoration: const InputDecoration(
+                      labelText: 'Phone Number',
+                      border: OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      prefixText: "+63 "),
+                  keyboardType: TextInputType.phone),
+              const SizedBox(height: 10),
+              TextFormField(
+                  controller: emergencyContactNameController,
+                  decoration: const InputDecoration(
+                      labelText: 'Emergency Contact Name',
+                      border: OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: "Lastname Firstname")),
+              const SizedBox(height: 10),
+              TextFormField(
+                  controller: emergencyContactNoController,
+                  decoration: const InputDecoration(
+                      labelText: 'Emergency Contact No.',
+                      border: OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      prefixText: '+63 '),
+                  keyboardType: TextInputType.phone),
+              Column(children: [
+                CheckboxListTile(
+                  enabled: false,
+                  value: governmentId,
+                  title: const Text("Government ID"),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      governmentId = value ?? false;
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Number of Guests (Max: ${transport.guests})',
-                          border: const OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: "1"
-                        ),
-                        keyboardType: TextInputType.number,
-                        onChanged: (value) {
-                          guests = int.tryParse(value) ?? 0;
-                        }
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Number of Luggages (Max: ${transport.luggage})',
-                          border: const OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: "1"
-                        ),
-                        keyboardType: TextInputType.number,
-                        onChanged: (value) {
-                          luggage = int.tryParse(value) ?? 0;
-                        }
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: phoneNoController,
-                        decoration: const InputDecoration(
-                          labelText: 'Phone Number',
-                          border: OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          prefixText: "+63 "
-                        ),
-                        keyboardType: TextInputType.phone
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: emergencyContactNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Emergency Contact Name',
-                          border: OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: "Lastname Firstname"
-                        )
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: emergencyContactNoController,
-                        decoration: const InputDecoration(
-                          labelText: 'Emergency Contact No.',
-                          border: OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          prefixText: '+63 '
-                        ),
-                        keyboardType: TextInputType.phone
-                      ),
-                      Column(
-                        children: [
-                          CheckboxListTile(
-                            enabled: false,
-                            value: governmentId,
-                            title: const Text("Government ID"), 
-                            onChanged: (bool? value) {
-                              setState(() {
-                                governmentId = value ?? false;
-                              });     
-                            },
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 16),
-                            child: Text(
-                              'Your Government ID is required as a means to protect cooperatives.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey
-                              )
-                            )
-                          )
-                        ]
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            context.pop();
-                            ListingBookings booking = ListingBookings(
-                              listingId: listing.uid!,
-                              listingTitle: listing.title,
-                              customerName: ref.read(userProvider)!.name,
-                              bookingStatus: "",
-                              price: transport.price,
-                              category: "Transport",
-                              roomId: transport.listingName,
-                              roomUid: transport.uid,
-                              startDate: startDate,
-                              endDate: endDate,
-                              startTime: startTime,
-                              endTime: endTime,
-                              email: "",
-                              governmentId: "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
-                              guests: guests,
-                              customerPhoneNo: phoneNoController.text,
-                              customerId: ref.read(userProvider)!.uid,
-                              emergencyContactName: emergencyContactNameController.text,
-                              emergencyContactNo: emergencyContactNoController.text,
-                              needsContributions: false,
-                              tasks: listing.fixedTasks,
-                              typeOfTrip: typeOfTrip
-                            );
-            
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog.fullscreen(
+                const Padding(
+                    padding: EdgeInsets.only(left: 16),
+                    child: Text(
+                        'Your Government ID is required as a means to protect cooperatives.',
+                        style: TextStyle(fontSize: 12, color: Colors.grey)))
+              ]),
+              SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        context.pop();
+                        ListingBookings booking = ListingBookings(
+                            listingId: listing.uid!,
+                            listingTitle: listing.title,
+                            customerName: ref.read(userProvider)!.name,
+                            bookingStatus: "",
+                            price: transport.price,
+                            category: "Transport",
+                            roomId: transport.listingName,
+                            roomUid: transport.uid,
+                            startDate: startDate,
+                            endDate: endDate,
+                            startTime: startTime,
+                            endTime: endTime,
+                            email: "",
+                            governmentId:
+                                "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
+                            guests: guests,
+                            customerPhoneNo: phoneNoController.text,
+                            customerId: ref.read(userProvider)!.uid,
+                            emergencyContactName:
+                                emergencyContactNameController.text,
+                            emergencyContactNo:
+                                emergencyContactNoController.text,
+                            needsContributions: false,
+                            tasks: listing.fixedTasks,
+                            typeOfTrip: typeOfTrip);
+
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog.fullscreen(
                                   child: CustomerTransportCheckout(
-                                    listing: listing,
-                                    transport: transport,
-                                    booking: booking
-                                  )
-                                );
-                              }
-                            );
-                          },
-                          child: const Text('Proceed')
-                        )
-                      )
-                    ]
-                  )
-                )
-                
-              ]
-            ),
-          )
-        );
-      }
+                                      listing: listing,
+                                      transport: transport,
+                                      booking: booking));
+                            });
+                      },
+                      child: const Text('Proceed')))
+            ]))
+      ]),
+    ));
+  }
 }
