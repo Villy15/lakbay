@@ -187,7 +187,6 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
   Future<dynamic> showNotesDialog(
       BuildContext context, BookingTask bookingTask) async {
     // final notes = ref.watch(getBookingTasksByBookingId((bookingTask.listingId!, bookingTask.bookingId!)).future);
-    //     bookingTask.notes?.toList(growable: true) ?? [];
     TextEditingController messageController = TextEditingController();
 
     return showDialog(
@@ -223,7 +222,8 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                             .when(
                               data: (BookingTask? bookingTask) {
                                 List<BookingTaskMessage>? notes =
-                                    bookingTask?.notes;
+                                    bookingTask?.notes?.toList(growable: true);
+
                                 notes?.sort((a, b) =>
                                     a.timestamp.compareTo(b.timestamp));
 
@@ -303,11 +303,15 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                           taskId: bookingTask.uid!,
                           timestamp: DateTime.now(),
                           content: content);
-                      List<BookingTaskMessage>? notes = bookingTask.notes;
-                      notes?.add(message);
+                      List<BookingTaskMessage>? updatedNotes =
+                          bookingTask.notes?.toList(growable: true);
+
+                      updatedNotes?.add(message);
+
+                      debugPrint("$updatedNotes");
 
                       BookingTask updatedBookingTask =
-                          bookingTask.copyWith(notes: notes);
+                          bookingTask.copyWith(notes: updatedNotes);
 
                       ref
                           .read(listingControllerProvider.notifier)
