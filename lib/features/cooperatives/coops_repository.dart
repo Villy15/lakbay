@@ -11,6 +11,7 @@ import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 import 'package:lakbay/models/subcollections/coop_goals_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
+import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 
 final coopsRepositoryProvider = Provider((ref) {
   return CoopsRepository(firestore: ref.watch(firestoreProvider));
@@ -99,6 +100,13 @@ class CoopsRepository {
     return _communities
         .doc(coopId)
         .collection(FirebaseConstants.goalsSubCollection);
+  }
+
+  // Votes Subcollection
+  CollectionReference votes(String coopId) {
+    return _communities
+        .doc(coopId)
+        .collection(FirebaseConstants.votesSubCollection);
   }
 
   // Add a member in members subcollection
@@ -346,6 +354,39 @@ class CoopsRepository {
     return goals(coopId).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return CoopGoals.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  // Add a vote in votes subcollection
+  FutureEither<String> addVote(String coopId, CoopVote coopVote) async {
+    try {
+      // Generate a new document ID
+      var doc = _communities
+          .doc(coopId)
+          .collection(FirebaseConstants.votesSubCollection)
+          .doc();
+
+      // Update the uid of the cooperative
+      coopVote = coopVote.copyWith(uid: doc.id);
+
+      // Add the cooperative to the database
+      await doc.set(coopVote.toJson());
+
+      // Return the uid of the newly added cooperative
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Read all votes of a cooperative
+  Stream<List<CoopVote>> readVotes(String coopId) {
+    return votes(coopId).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return CoopVote.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }

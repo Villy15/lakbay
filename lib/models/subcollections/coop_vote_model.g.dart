@@ -9,6 +9,7 @@ part of 'coop_vote_model.dart';
 _$CoopVoteImpl _$$CoopVoteImplFromJson(Map<String, dynamic> json) =>
     _$CoopVoteImpl(
       uid: json['uid'] as String?,
+      coopId: json['coopId'] as String?,
       position: json['position'] as String?,
       dueDate:
           const TimestampSerializer().fromJson(json['dueDate'] as Timestamp?),
@@ -17,6 +18,7 @@ _$CoopVoteImpl _$$CoopVoteImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$CoopVoteImplToJson(_$CoopVoteImpl instance) =>
     <String, dynamic>{
       'uid': instance.uid,
+      'coopId': instance.coopId,
       'position': instance.position,
       'dueDate': const TimestampSerializer().toJson(instance.dueDate),
     };

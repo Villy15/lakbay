@@ -11,6 +11,7 @@ import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 import 'package:lakbay/models/subcollections/coop_goals_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
+import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/committee_params.dart';
 
@@ -92,6 +93,13 @@ final getAllGoalsProvider =
     StreamProvider.autoDispose.family<List<CoopGoals>, String>((ref, coopUid) {
   final coopsController = ref.watch(coopsControllerProvider.notifier);
   return coopsController.getAllGoals(coopUid);
+});
+
+// Get all votes provider
+final getAllVotesProvider =
+    StreamProvider.autoDispose.family<List<CoopVote>, String>((ref, coopUid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getAllVotes(coopUid);
 });
 
 class CoopsController extends StateNotifier<bool> {
@@ -569,5 +577,31 @@ class CoopsController extends StateNotifier<bool> {
   // Read all goals of a cooperative
   Stream<List<CoopGoals>> getAllGoals(String coopUid) {
     return _coopsRepository.readGoals(coopUid);
+  }
+
+  // Add Vote
+  void addVote(String coopUid, CoopVote coopVote, BuildContext context) {
+    state = true;
+    _coopsRepository.addVote(coopUid, coopVote).then((result) {
+      result.fold(
+        (l) {
+          // Handle the error here
+          state = false;
+          showSnackBar(context, l.message);
+        },
+        (r) {
+          // Handle the success here
+          state = false;
+          showSnackBar(context, 'Vote added successfully');
+          context.pop();
+          _ref.read(navBarVisibilityProvider.notifier).show();
+        },
+      );
+    });
+  }
+
+  // Read all votes of a cooperative
+  Stream<List<CoopVote>> getAllVotes(String coopUid) {
+    return _coopsRepository.readVotes(coopUid);
   }
 }

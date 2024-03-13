@@ -21,6 +21,7 @@ CoopVote _$CoopVoteFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$CoopVote {
   String? get uid => throw _privateConstructorUsedError;
+  String? get coopId => throw _privateConstructorUsedError;
   String? get position => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get dueDate => throw _privateConstructorUsedError;
@@ -38,6 +39,7 @@ abstract class $CoopVoteCopyWith<$Res> {
   @useResult
   $Res call(
       {String? uid,
+      String? coopId,
       String? position,
       @TimestampSerializer() DateTime? dueDate});
 }
@@ -56,6 +58,7 @@ class _$CoopVoteCopyWithImpl<$Res, $Val extends CoopVote>
   @override
   $Res call({
     Object? uid = freezed,
+    Object? coopId = freezed,
     Object? position = freezed,
     Object? dueDate = freezed,
   }) {
@@ -63,6 +66,10 @@ class _$CoopVoteCopyWithImpl<$Res, $Val extends CoopVote>
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      coopId: freezed == coopId
+          ? _value.coopId
+          : coopId // ignore: cast_nullable_to_non_nullable
               as String?,
       position: freezed == position
           ? _value.position
@@ -86,6 +93,7 @@ abstract class _$$CoopVoteImplCopyWith<$Res>
   @useResult
   $Res call(
       {String? uid,
+      String? coopId,
       String? position,
       @TimestampSerializer() DateTime? dueDate});
 }
@@ -102,6 +110,7 @@ class __$$CoopVoteImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? uid = freezed,
+    Object? coopId = freezed,
     Object? position = freezed,
     Object? dueDate = freezed,
   }) {
@@ -109,6 +118,10 @@ class __$$CoopVoteImplCopyWithImpl<$Res>
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      coopId: freezed == coopId
+          ? _value.coopId
+          : coopId // ignore: cast_nullable_to_non_nullable
               as String?,
       position: freezed == position
           ? _value.position
@@ -126,13 +139,18 @@ class __$$CoopVoteImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CoopVoteImpl implements _CoopVote {
   _$CoopVoteImpl(
-      {this.uid, this.position, @TimestampSerializer() this.dueDate});
+      {this.uid,
+      this.coopId,
+      this.position,
+      @TimestampSerializer() this.dueDate});
 
   factory _$CoopVoteImpl.fromJson(Map<String, dynamic> json) =>
       _$$CoopVoteImplFromJson(json);
 
   @override
   final String? uid;
+  @override
+  final String? coopId;
   @override
   final String? position;
   @override
@@ -141,7 +159,7 @@ class _$CoopVoteImpl implements _CoopVote {
 
   @override
   String toString() {
-    return 'CoopVote(uid: $uid, position: $position, dueDate: $dueDate)';
+    return 'CoopVote(uid: $uid, coopId: $coopId, position: $position, dueDate: $dueDate)';
   }
 
   @override
@@ -150,6 +168,7 @@ class _$CoopVoteImpl implements _CoopVote {
         (other.runtimeType == runtimeType &&
             other is _$CoopVoteImpl &&
             (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.coopId, coopId) || other.coopId == coopId) &&
             (identical(other.position, position) ||
                 other.position == position) &&
             (identical(other.dueDate, dueDate) || other.dueDate == dueDate));
@@ -157,7 +176,7 @@ class _$CoopVoteImpl implements _CoopVote {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, uid, position, dueDate);
+  int get hashCode => Object.hash(runtimeType, uid, coopId, position, dueDate);
 
   @JsonKey(ignore: true)
   @override
@@ -176,6 +195,7 @@ class _$CoopVoteImpl implements _CoopVote {
 abstract class _CoopVote implements CoopVote {
   factory _CoopVote(
       {final String? uid,
+      final String? coopId,
       final String? position,
       @TimestampSerializer() final DateTime? dueDate}) = _$CoopVoteImpl;
 
@@ -184,6 +204,8 @@ abstract class _CoopVote implements CoopVote {
 
   @override
   String? get uid;
+  @override
+  String? get coopId;
   @override
   String? get position;
   @override

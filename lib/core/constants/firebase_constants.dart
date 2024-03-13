@@ -15,6 +15,7 @@ class FirebaseConstants {
   static const privilegesSubCollection = 'privileges';
   static const announcementsSubCollection = 'announcements';
   static const goalsSubCollection = 'goals';
+  static const votesSubCollection = 'votes';
 
   //Listings Subcollections
   static const bookingsSubCollection = 'bookings';

@@ -9,6 +9,7 @@ part 'coop_vote_model.g.dart';
 class CoopVote with _$CoopVote {
   factory CoopVote({
     String? uid,
+    String? coopId,
     String? position,
     @TimestampSerializer() DateTime? dueDate,
   }) = _CoopVote;
