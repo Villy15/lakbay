@@ -286,21 +286,25 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   }
 
   Widget _coopGoals() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => const Padding(
-        padding: EdgeInsets.only(bottom: 16.0),
-      ),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: coopGoals.length,
-      itemBuilder: (context, index) {
-        final coopGoal = coopGoals[index];
+    return ref.watch(getAllGoalsProvider(widget.coopId)).when(
+          data: (data) {
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                final goal = data[index];
 
-        return GoalCard(
-          goal: coopGoal,
+                return GoalCard(
+                  goal: goal,
+                );
+              },
+            );
+          },
+          error: (error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString()),
+          loading: () => const Loader(),
         );
-      },
-    );
   }
 
   Widget _coopAnnouncements() {

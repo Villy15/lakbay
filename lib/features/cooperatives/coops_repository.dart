@@ -8,6 +8,7 @@ import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/typdef.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
+import 'package:lakbay/models/subcollections/coop_goals_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
 
@@ -91,6 +92,13 @@ class CoopsRepository {
     return _communities
         .doc(coopId)
         .collection(FirebaseConstants.announcementsSubCollection);
+  }
+
+  // Goals Subcollection
+  CollectionReference goals(String coopId) {
+    return _communities
+        .doc(coopId)
+        .collection(FirebaseConstants.goalsSubCollection);
   }
 
   // Add a member in members subcollection
@@ -304,6 +312,40 @@ class CoopsRepository {
     return announcements(coopId).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return CoopAnnouncements.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  // GOALS
+  // Add a goal in goals subcollection
+  FutureEither<String> addGoal(String coopId, CoopGoals coopGoal) async {
+    try {
+      // Generate a new document ID
+      var doc = _communities
+          .doc(coopId)
+          .collection(FirebaseConstants.goalsSubCollection)
+          .doc();
+
+      // Update the uid of the cooperative
+      coopGoal = coopGoal.copyWith(uid: doc.id);
+
+      // Add the cooperative to the database
+      await doc.set(coopGoal.toJson());
+
+      // Return the uid of the newly added cooperative
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Read all goals of a cooperative
+  Stream<List<CoopGoals>> readGoals(String coopId) {
+    return goals(coopId).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return CoopGoals.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
