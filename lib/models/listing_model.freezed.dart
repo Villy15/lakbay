@@ -44,6 +44,8 @@ mixin _$ListingModel {
   DateTime? get openingHours => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get closingHours => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay? get travelDuration => throw _privateConstructorUsedError;
   num? get pax => throw _privateConstructorUsedError;
   num? get price => throw _privateConstructorUsedError;
   String get province => throw _privateConstructorUsedError;
@@ -97,6 +99,7 @@ abstract class $ListingModelCopyWith<$Res> {
       num? numberOfUnits,
       @TimestampSerializer() DateTime? openingHours,
       @TimestampSerializer() DateTime? closingHours,
+      @TimeOfDayConverter() TimeOfDay? travelDuration,
       num? pax,
       num? price,
       String province,
@@ -151,6 +154,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? numberOfUnits = freezed,
     Object? openingHours = freezed,
     Object? closingHours = freezed,
+    Object? travelDuration = freezed,
     Object? pax = freezed,
     Object? price = freezed,
     Object? province = null,
@@ -249,6 +253,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.closingHours
           : closingHours // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      travelDuration: freezed == travelDuration
+          ? _value.travelDuration
+          : travelDuration // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay?,
       pax: freezed == pax
           ? _value.pax
           : pax // ignore: cast_nullable_to_non_nullable
@@ -367,6 +375,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       num? numberOfUnits,
       @TimestampSerializer() DateTime? openingHours,
       @TimestampSerializer() DateTime? closingHours,
+      @TimeOfDayConverter() TimeOfDay? travelDuration,
       num? pax,
       num? price,
       String province,
@@ -421,6 +430,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? numberOfUnits = freezed,
     Object? openingHours = freezed,
     Object? closingHours = freezed,
+    Object? travelDuration = freezed,
     Object? pax = freezed,
     Object? price = freezed,
     Object? province = null,
@@ -519,6 +529,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.closingHours
           : closingHours // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      travelDuration: freezed == travelDuration
+          ? _value.travelDuration
+          : travelDuration // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay?,
       pax: freezed == pax
           ? _value.pax
           : pax // ignore: cast_nullable_to_non_nullable
@@ -611,6 +625,7 @@ class _$ListingModelImpl implements _ListingModel {
       this.numberOfUnits,
       @TimestampSerializer() this.openingHours,
       @TimestampSerializer() this.closingHours,
+      @TimeOfDayConverter() this.travelDuration,
       this.pax,
       this.price,
       required this.province,
@@ -716,6 +731,9 @@ class _$ListingModelImpl implements _ListingModel {
   @TimestampSerializer()
   final DateTime? closingHours;
   @override
+  @TimeOfDayConverter()
+  final TimeOfDay? travelDuration;
+  @override
   final num? pax;
   @override
   final num? price;
@@ -784,7 +802,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, travelDuration: $travelDuration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
   }
 
   @override
@@ -828,6 +846,8 @@ class _$ListingModelImpl implements _ListingModel {
                 other.openingHours == openingHours) &&
             (identical(other.closingHours, closingHours) ||
                 other.closingHours == closingHours) &&
+            (identical(other.travelDuration, travelDuration) ||
+                other.travelDuration == travelDuration) &&
             (identical(other.pax, pax) || other.pax == pax) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.province, province) ||
@@ -879,6 +899,7 @@ class _$ListingModelImpl implements _ListingModel {
         numberOfUnits,
         openingHours,
         closingHours,
+        travelDuration,
         pax,
         price,
         province,
@@ -933,6 +954,7 @@ abstract class _ListingModel implements ListingModel {
       final num? numberOfUnits,
       @TimestampSerializer() final DateTime? openingHours,
       @TimestampSerializer() final DateTime? closingHours,
+      @TimeOfDayConverter() final TimeOfDay? travelDuration,
       final num? pax,
       final num? price,
       required final String province,
@@ -997,6 +1019,9 @@ abstract class _ListingModel implements ListingModel {
   @override
   @TimestampSerializer()
   DateTime? get closingHours;
+  @override
+  @TimeOfDayConverter()
+  TimeOfDay? get travelDuration;
   @override
   num? get pax;
   @override

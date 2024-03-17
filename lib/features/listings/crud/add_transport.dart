@@ -15,6 +15,7 @@ import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/listing_provider.dart';
+import 'package:lakbay/features/tasks/widgets/today_task_card.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
@@ -42,8 +43,13 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   String type = 'Public';
   num guests = 0;
   num luggage = 0;
-  late DateTime startDate = DateTime.now();
-  late DateTime endDate = DateTime.now();
+  TimeOfDay startDate = TimeOfDay.now();
+  TimeOfDay endDate = TimeOfDay.now();
+  TimeOfDay travelDuration = const TimeOfDay(hour: 1, minute: 15);
+  final TextEditingController startDateController = TextEditingController();
+  final TextEditingController endDateController = TextEditingController();
+  final TextEditingController travelDurationController =
+      TextEditingController();
   List<bool> workingDays = List.filled(7, false);
   List<BookingTask>? fixedTasks = [];
 
@@ -142,13 +148,15 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 price: num.parse(_feeController.text),
                 available: true,
                 workingDays: workingDays,
-                startTime: TimeOfDay.fromDateTime(startDate),
-                endTime: TimeOfDay.fromDateTime(endDate),
+                startTime: startDate,
+                endTime: endDate,
                 // if destination is empty, set to null
                 destination: _destinationController.text.isEmpty
                     ? null
                     : _destinationController.text,
-                pickupPoint: _pickupController.text.isEmpty ? null : _pickupController.text,
+                pickupPoint: _pickupController.text.isEmpty
+                    ? null
+                    : _pickupController.text,
                 // if departure times are empty, set to null
                 departureTimes: _departureTime.isEmpty ? null : _departureTime,
               );
@@ -160,6 +168,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                   cooperative: ListingCooperative(
                       cooperativeId: widget.coop.uid!,
                       cooperativeName: widget.coop.name),
+                  travelDuration: travelDuration,
                   description: _descriptionController.text,
                   province: widget.coop.province,
                   publisherId: ref.read(userProvider)!.uid,
@@ -1054,76 +1063,128 @@ class _AddTransportState extends ConsumerState<AddTransport> {
       ),
       const SizedBox(height: 10),
       // indicate the working hours of the listing
-      const Text('Working Hours',
+      const Text('Operating Hours',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-      const Text('Please select your working hours...',
+      const Text('Please select your operating hours...',
           style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
       const SizedBox(height: 10),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // start time
-          Column(
-            children: [
-              const Text('Start Time'),
-              ElevatedButton(
-                  onPressed: () async {
-                    final TimeOfDay? time = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                      initialEntryMode: TimePickerEntryMode.inputOnly,
-                    );
-                    if (time != null) {
-                      setState(() {
-                        startDate = DateTime(
-                            DateTime.now().year,
-                            DateTime.now().month,
-                            DateTime.now().day,
-                            time.hour,
-                            time.minute);
-                      });
-                    }
-                  },
-                  // ignore: unnecessary_null_comparison
-                  child: Text(startDate == null
-                      ? 'Select Time'
-                      : DateFormat.jm().format(startDate))),
-            ],
-          ),
+      TextFormField(
+        controller: startDateController,
+        maxLines: 1,
+        decoration: const InputDecoration(
+          labelText: 'Start Time*',
+          helperText: '*required',
+          border: OutlineInputBorder(),
+          floatingLabelBehavior:
+              FloatingLabelBehavior.always, // Keep the label always visible
+          hintText: "8:30",
+        ),
+        readOnly: true,
+        onTap: () async {
+          final TimeOfDay? pickedTime = await showTimePicker(
+            context: context,
+            initialTime: const TimeOfDay(hour: 8, minute: 30),
+            initialEntryMode: TimePickerEntryMode.inputOnly,
+            builder: (BuildContext context, Widget? child) {
+              return MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(alwaysUse24HourFormat: false),
+                child: child!,
+              );
+            },
+          );
 
-          // end time
-          Column(
-            children: [
-              const Text('End Time'),
-              const SizedBox(height: 5),
-              ElevatedButton(
-                  onPressed: () async {
-                    final TimeOfDay? time = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                        initialEntryMode: TimePickerEntryMode.inputOnly);
-                    if (time != null) {
-                      setState(() {
-                        endDate = DateTime(
-                            DateTime.now().year,
-                            DateTime.now().month,
-                            DateTime.now().day,
-                            time.hour,
-                            time.minute);
-                      });
-                    }
-                  },
-                  // ignore: unnecessary_null_comparison
-                  child: Text(endDate == null
-                      ? 'Select Time'
-                      : DateFormat.jm().format(endDate))),
-            ],
-          ),
-        ],
+          if (pickedTime != null) {
+            setState(() {
+              startDateController.text = pickedTime.format(context);
+              startDate = pickedTime;
+            });
+          }
+        },
+      ),
+      // start time
+      const SizedBox(
+        height: 10,
+      ),
+      // end time
+      TextFormField(
+        controller: endDateController,
+        maxLines: 1,
+        decoration: const InputDecoration(
+          labelText: 'End Time*',
+          helperText: '*required',
+          border: OutlineInputBorder(),
+          floatingLabelBehavior:
+              FloatingLabelBehavior.always, // Keep the label always visible
+          hintText: "5:30",
+        ),
+        readOnly: true,
+        onTap: () async {
+          final TimeOfDay? pickedTime = await showTimePicker(
+            context: context,
+            initialTime: const TimeOfDay(hour: 5, minute: 30),
+            initialEntryMode: TimePickerEntryMode.inputOnly,
+            builder: (BuildContext context, Widget? child) {
+              return MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(alwaysUse24HourFormat: false),
+                child: child!,
+              );
+            },
+          );
+
+          if (pickedTime != null) {
+            setState(() {
+              endDateController.text = pickedTime.format(context);
+              endDate = pickedTime;
+            });
+          }
+        },
       ),
       const SizedBox(height: 30),
       // check if the type is public
       if (type == 'Public') ...[
+        const Text('Travel Duration',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text('Please input the expected travel duration....',
+            style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: travelDurationController,
+          maxLines: 1,
+          decoration: const InputDecoration(
+            labelText: 'Duration*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "1:15",
+          ),
+          readOnly: true,
+          onTap: () async {
+            final TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: travelDuration,
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: true),
+                  child: child!,
+                );
+              },
+            );
+
+            if (pickedTime != null) {
+              setState(() {
+                travelDurationController.text =
+                    "${pickedTime.hour}:${pickedTime.minute}";
+                travelDuration = pickedTime;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 10),
         const Text('Departure Time',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const Text('Please select your departure time...',
@@ -1143,16 +1204,17 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                     padding: const EdgeInsets.only(top: 16.0),
                     child: TextFormField(
                       controller: _departureController[index],
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           labelText: 'Departure Time',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: "6:10 PM"),
+                          hintText:
+                              "${startDate.hour}:${startDate.minute} ${startDate.period.name.toUpperCase()}"),
                       readOnly: true,
                       onTap: () async {
                         showTimePicker(
                           context: context,
-                          initialTime: TimeOfDay.now(),
+                          initialTime: startDate,
                           initialEntryMode: TimePickerEntryMode.inputOnly,
                         ).then((time) {
                           if (time != null) {
@@ -1184,68 +1246,67 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         ),
         const SizedBox(height: 15),
         const Text('Pickup Point',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-      const Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Text('Add your pickup point for the listing...',
-            style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-      ),
-      const SizedBox(height: 10),
-      TextFormField(
-        controller: _pickupController,
-        decoration: const InputDecoration(
-            labelText: 'Destination*',
-            helperText: '*required',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Eastwood City"),
-      ),
-      // Google Map
-      const SizedBox(height: 15),
-      SizedBox(
-        height: 400,
-        child: MapWidget(address: _pickupController.text),
-      ),
-      const SizedBox(height: 10),
-      Center(
-        child: ElevatedButton(
-          onPressed: () {},
-          child: const Text('Update Map'),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Padding(
+          padding: EdgeInsets.only(left: 8.0),
+          child: Text('Add your pickup point for the listing...',
+              style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
         ),
-      ),
-      const SizedBox(height: 30),
-      const Text('Destination',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-      const Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Text('Add your preferred destination for the listing...',
-            style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-      ),
-      const SizedBox(height: 10),
-      TextFormField(
-        controller: _destinationController,
-        decoration: const InputDecoration(
-            labelText: 'Destination*',
-            helperText: '*required',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Eastwood City"),
-      ),
-      // Google Map
-      const SizedBox(height: 15),
-      SizedBox(
-        height: 400,
-        child: MapWidget(address: _destinationController.text),
-      ),
-      const SizedBox(height: 10),
-      Center(
-        child: ElevatedButton(
-          onPressed: () {},
-          child: const Text('Update Map'),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _pickupController,
+          decoration: const InputDecoration(
+              labelText: 'Destination*',
+              helperText: '*required',
+              border: OutlineInputBorder(),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              hintText: "Eastwood City"),
         ),
-      )
+        // Google Map
+        const SizedBox(height: 15),
+        SizedBox(
+          height: 400,
+          child: MapWidget(address: _pickupController.text),
+        ),
+        const SizedBox(height: 10),
+        Center(
+          child: ElevatedButton(
+            onPressed: () {},
+            child: const Text('Update Map'),
+          ),
+        ),
+        const SizedBox(height: 30),
+        const Text('Destination',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Padding(
+          padding: EdgeInsets.only(left: 8.0),
+          child: Text('Add your preferred destination for the listing...',
+              style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _destinationController,
+          decoration: const InputDecoration(
+              labelText: 'Destination*',
+              helperText: '*required',
+              border: OutlineInputBorder(),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              hintText: "Eastwood City"),
+        ),
+        // Google Map
+        const SizedBox(height: 15),
+        SizedBox(
+          height: 400,
+          child: MapWidget(address: _destinationController.text),
+        ),
+        const SizedBox(height: 10),
+        Center(
+          child: ElevatedButton(
+            onPressed: () {},
+            child: const Text('Update Map'),
+          ),
+        )
       ],
-      
     ]);
   }
 
@@ -1369,10 +1430,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           ),
           // add working hours
           ListTile(
-            title: const Text('Working Hours',
+            title: const Text('Operating Hours',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            subtitle: Text(
-                '${DateFormat.jm().format(startDate)} - ${DateFormat.jm().format(endDate)}'),
+            subtitle: Text('$startDate - $endDate'),
           ),
 
           // insert departure times if there are any

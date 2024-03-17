@@ -162,9 +162,7 @@ class CustomerAccomodationReceipt extends ConsumerWidget {
               width: double.infinity,
               child: ElevatedButton(
                   onPressed: () {
-                    ref
-                        .read(parentStateProvider.notifier)
-                        .executeFunction(context);
+                    ref.read(parentStateProvider.notifier).setState(true);
                     context.pop();
                   },
                   child: const Text("Close")),

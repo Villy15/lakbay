@@ -30,6 +30,7 @@ class ListingModel with _$ListingModel {
     num? numberOfUnits,
     @TimestampSerializer() DateTime? openingHours,
     @TimestampSerializer() DateTime? closingHours,
+    @TimeOfDayConverter() TimeOfDay? travelDuration,
     num? pax,
     num? price,
     required String province,

@@ -108,10 +108,14 @@ class CurrentPlanGuests extends StateNotifier<num?> {
 }
 
 // Create a StateNotifierProvider for the ParentState
-final parentStateProvider = StateNotifierProvider((ref) => ParentState());
+final parentStateProvider = StateNotifierProvider<ParentState, bool>(
+  (ref) => ParentState(),
+);
 
 class ParentState extends StateNotifier<bool> {
   ParentState() : super(false);
 
-  void executeFunction(BuildContext context) {}
+  void setState(bool parentState) {
+    state = parentState;
+  }
 }
