@@ -735,7 +735,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
               // Read Announcement from my coop
               buildSubRoute(
-                '/my_coop/announcement',
+                '/my_coop/announcement/read',
                 (context, pathParameters, extra) {
                   CoopAnnouncements announcement = extra as CoopAnnouncements;
 
