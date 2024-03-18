@@ -257,29 +257,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
               itemBuilder: (context, index) {
                 final vote = data[index];
 
-                return ListTile(
-                  title: Text(
-                    vote.position!,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'Due: ${DateFormat.yMMMd().format(vote.dueDate!)}',
-                  ),
-                  // Trailing FilledButton Vote
-                  trailing: FilledButton(
-                    onPressed: () {
-                      // Vote
-                    },
-                    child: const Text('Vote'),
-                  ),
-
-                  // onTap: () {
-                  //   // Navigate to vote details
-                  // },
-                );
+                return ListVote(vote: vote);
               },
             );
           },
@@ -709,6 +687,51 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
       actionsIconTheme: const IconThemeData(
         opacity: 0.5,
       ),
+    );
+  }
+}
+
+class ListVote extends StatelessWidget {
+  const ListVote({
+    super.key,
+    required this.vote,
+  });
+
+  final CoopVote vote;
+
+  void readVote(BuildContext context) {
+    context.pushNamed(
+      'read_vote',
+      extra: vote,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        vote.position!,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      subtitle: Text(
+        'Due: ${DateFormat.yMMMd().format(vote.dueDate!)}',
+      ),
+      // Trailing FilledButton Vote
+      trailing: FilledButton(
+        onPressed: () {
+          readVote(context);
+          // Vote
+        },
+        child: const Text('Vote'),
+      ),
+
+      onTap: () {
+        readVote(context);
+        // Navigate to vote details
+      },
     );
   }
 }

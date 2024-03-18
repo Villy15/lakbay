@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:lakbay/core/constants/firebase_constants.dart';
@@ -389,5 +390,26 @@ class CoopsRepository {
         return CoopVote.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
+  }
+
+  // Read a vote in votes subcollection
+  Stream<CoopVote> readVote(String coopId, String uid) {
+    debugPrint('Reading vote: $uid');
+    debugPrint('CoopId: $coopId');
+    return votes(coopId).doc(uid).snapshots().map((snapshot) {
+      return CoopVote.fromJson(snapshot.data() as Map<String, dynamic>);
+    });
+  }
+
+  // Update vote
+  FutureVoid updateVote(String coopId, CoopVote coopVote) async {
+    try {
+      return right(
+          await votes(coopId).doc(coopVote.uid).update(coopVote.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 }

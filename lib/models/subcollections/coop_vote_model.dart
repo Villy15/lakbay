@@ -7,6 +7,8 @@ part 'coop_vote_model.g.dart';
 
 @freezed
 class CoopVote with _$CoopVote {
+  const CoopVote._();
+
   factory CoopVote({
     String? uid,
     String? coopId,
@@ -17,6 +19,21 @@ class CoopVote with _$CoopVote {
 
   factory CoopVote.fromJson(Map<String, dynamic> json) =>
       _$CoopVoteFromJson(json);
+
+  // CHECK IF your id is in one of the voters list of the candidate
+  bool isVoted(String id) {
+    return candidates!.any((candidate) => candidate.voters!.contains(id));
+  }
+
+  // Check what candidate the user voted for
+  String? votedFor(String id) {
+    for (var candidate in candidates!) {
+      if (candidate.voters!.contains(id)) {
+        return candidate.uid;
+      }
+    }
+    return null;
+  }
 }
 
 // Candidate

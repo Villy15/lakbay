@@ -150,14 +150,15 @@ class __$$CoopVoteImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$CoopVoteImpl implements _CoopVote {
+class _$CoopVoteImpl extends _CoopVote {
   _$CoopVoteImpl(
       {this.uid,
       this.coopId,
       this.position,
       final List<CoopVoteCandidate>? candidates,
       @TimestampSerializer() this.dueDate})
-      : _candidates = candidates;
+      : _candidates = candidates,
+        super._();
 
   factory _$CoopVoteImpl.fromJson(Map<String, dynamic> json) =>
       _$$CoopVoteImplFromJson(json);
@@ -220,13 +221,14 @@ class _$CoopVoteImpl implements _CoopVote {
   }
 }
 
-abstract class _CoopVote implements CoopVote {
+abstract class _CoopVote extends CoopVote {
   factory _CoopVote(
       {final String? uid,
       final String? coopId,
       final String? position,
       final List<CoopVoteCandidate>? candidates,
       @TimestampSerializer() final DateTime? dueDate}) = _$CoopVoteImpl;
+  _CoopVote._() : super._();
 
   factory _CoopVote.fromJson(Map<String, dynamic> json) =
       _$CoopVoteImpl.fromJson;
