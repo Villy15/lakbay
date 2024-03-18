@@ -11,9 +11,23 @@ class CoopVote with _$CoopVote {
     String? uid,
     String? coopId,
     String? position,
+    List<CoopVoteCandidate>? candidates,
     @TimestampSerializer() DateTime? dueDate,
   }) = _CoopVote;
 
   factory CoopVote.fromJson(Map<String, dynamic> json) =>
       _$CoopVoteFromJson(json);
+}
+
+// Candidate
+
+@freezed
+class CoopVoteCandidate with _$CoopVoteCandidate {
+  factory CoopVoteCandidate({
+    String? uid,
+    List<String>? voters,
+  }) = _CoopVoteCandidate;
+
+  factory CoopVoteCandidate.fromJson(Map<String, dynamic> json) =>
+      _$CoopVoteCandidateFromJson(json);
 }

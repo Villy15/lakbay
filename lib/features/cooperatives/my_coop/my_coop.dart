@@ -276,9 +276,9 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                     child: const Text('Vote'),
                   ),
 
-                  onTap: () {
-                    // Navigate to vote details
-                  },
+                  // onTap: () {
+                  //   // Navigate to vote details
+                  // },
                 );
               },
             );
