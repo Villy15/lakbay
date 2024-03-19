@@ -63,7 +63,6 @@ mixin _$ListingModel {
       throw _privateConstructorUsedError;
   List<EntertainmentService>? get availableEntertainment =>
       throw _privateConstructorUsedError;
-  String? get typeOfTrip => throw _privateConstructorUsedError;
   String? get uid => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -114,7 +113,6 @@ abstract class $ListingModelCopyWith<$Res> {
       List<ListingImages>? menuImgs,
       AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
-      String? typeOfTrip,
       String? uid});
 
   $ListingCooperativeCopyWith<$Res> get cooperative;
@@ -169,7 +167,6 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? menuImgs = freezed,
     Object? availableTransport = freezed,
     Object? availableEntertainment = freezed,
-    Object? typeOfTrip = freezed,
     Object? uid = freezed,
   }) {
     return _then(_value.copyWith(
@@ -313,10 +310,6 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.availableEntertainment
           : availableEntertainment // ignore: cast_nullable_to_non_nullable
               as List<EntertainmentService>?,
-      typeOfTrip: freezed == typeOfTrip
-          ? _value.typeOfTrip
-          : typeOfTrip // ignore: cast_nullable_to_non_nullable
-              as String?,
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -390,7 +383,6 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       List<ListingImages>? menuImgs,
       AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
-      String? typeOfTrip,
       String? uid});
 
   @override
@@ -445,7 +437,6 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? menuImgs = freezed,
     Object? availableTransport = freezed,
     Object? availableEntertainment = freezed,
-    Object? typeOfTrip = freezed,
     Object? uid = freezed,
   }) {
     return _then(_$ListingModelImpl(
@@ -589,10 +580,6 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value._availableEntertainment
           : availableEntertainment // ignore: cast_nullable_to_non_nullable
               as List<EntertainmentService>?,
-      typeOfTrip: freezed == typeOfTrip
-          ? _value.typeOfTrip
-          : typeOfTrip // ignore: cast_nullable_to_non_nullable
-              as String?,
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -640,7 +627,6 @@ class _$ListingModelImpl implements _ListingModel {
       final List<ListingImages>? menuImgs,
       this.availableTransport,
       final List<EntertainmentService>? availableEntertainment,
-      this.typeOfTrip,
       this.uid})
       : _availableDates = availableDates,
         _availableRooms = availableRooms,
@@ -796,13 +782,11 @@ class _$ListingModelImpl implements _ListingModel {
   }
 
   @override
-  final String? typeOfTrip;
-  @override
   final String? uid;
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, travelDuration: $travelDuration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, travelDuration: $travelDuration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, uid: $uid)';
   }
 
   @override
@@ -870,8 +854,6 @@ class _$ListingModelImpl implements _ListingModel {
                 other.availableTransport == availableTransport) &&
             const DeepCollectionEquality().equals(
                 other._availableEntertainment, _availableEntertainment) &&
-            (identical(other.typeOfTrip, typeOfTrip) ||
-                other.typeOfTrip == typeOfTrip) &&
             (identical(other.uid, uid) || other.uid == uid));
   }
 
@@ -914,7 +896,6 @@ class _$ListingModelImpl implements _ListingModel {
         const DeepCollectionEquality().hash(_menuImgs),
         availableTransport,
         const DeepCollectionEquality().hash(_availableEntertainment),
-        typeOfTrip,
         uid
       ]);
 
@@ -969,7 +950,6 @@ abstract class _ListingModel implements ListingModel {
       final List<ListingImages>? menuImgs,
       final AvailableTransport? availableTransport,
       final List<EntertainmentService>? availableEntertainment,
-      final String? typeOfTrip,
       final String? uid}) = _$ListingModelImpl;
 
   factory _ListingModel.fromJson(Map<String, dynamic> json) =
@@ -1051,8 +1031,6 @@ abstract class _ListingModel implements ListingModel {
   AvailableTransport? get availableTransport;
   @override
   List<EntertainmentService>? get availableEntertainment;
-  @override
-  String? get typeOfTrip;
   @override
   String? get uid;
   @override

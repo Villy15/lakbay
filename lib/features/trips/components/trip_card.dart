@@ -56,7 +56,6 @@ class TripCard extends ConsumerWidget {
                       ),
                     ),
                   ],
-
                   // Card Title
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),

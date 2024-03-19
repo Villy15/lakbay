@@ -69,7 +69,6 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       availableEntertainment: (json['availableEntertainment'] as List<dynamic>?)
           ?.map((e) => EntertainmentService.fromJson(e as Map<String, dynamic>))
           .toList(),
-      typeOfTrip: json['typeOfTrip'] as String?,
       uid: json['uid'] as String?,
     );
 
@@ -115,7 +114,6 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'availableTransport': instance.availableTransport?.toJson(),
       'availableEntertainment':
           instance.availableEntertainment?.map((e) => e.toJson()).toList(),
-      'typeOfTrip': instance.typeOfTrip,
       'uid': instance.uid,
     };
 

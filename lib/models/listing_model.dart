@@ -40,12 +40,11 @@ class ListingModel with _$ListingModel {
     List<BookingTask>? fixedTasks,
     @TimestampSerializer() DateTime? timestamp,
     required String title,
-    String? type,
+    String? type, //[Private, Public]
     List<FoodService>? availableDeals,
     List<ListingImages>? menuImgs,
     AvailableTransport? availableTransport,
     List<EntertainmentService>? availableEntertainment,
-    String? typeOfTrip,
     String? uid,
   }) = _ListingModel;
 

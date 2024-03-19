@@ -57,10 +57,10 @@ class _CustomerTransportationState
                   title: widget.listing.title.length > 20
                       ? Text('${widget.listing.title.substring(0, 20)}...',
                           style: const TextStyle(
-                              fontSize: 32.0, fontWeight: FontWeight.bold))
+                              fontSize: 25.0, fontWeight: FontWeight.bold))
                       : Text(widget.listing.title,
                           style: const TextStyle(
-                              fontSize: 32.0, fontWeight: FontWeight.bold)),
+                              fontSize: 25.0, fontWeight: FontWeight.bold)),
                   bottom: TabBar(
                     tabAlignment: TabAlignment.center,
                     labelPadding: EdgeInsets.zero,

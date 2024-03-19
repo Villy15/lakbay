@@ -7,6 +7,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
 import 'package:lakbay/features/bookings/bookings_page.dart';
 import 'package:lakbay/features/bookings/screens/bookings_accomodation_customer.dart';
+import 'package:lakbay/features/bookings/screens/bookings_transport_customer.dart';
 import 'package:lakbay/features/calendar/calendar_page.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/fade_through.dart';
@@ -319,7 +320,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           );
 
                         case 'Transport':
-                          return TransportationBookingsDetails(
+                          return BookingsTransportCustomer(
                             booking: booking,
                             listing: listing,
                           );
