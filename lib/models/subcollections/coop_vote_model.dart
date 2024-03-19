@@ -34,6 +34,32 @@ class CoopVote with _$CoopVote {
     }
     return null;
   }
+
+  // Check how many votes a candidate has
+  int votes(String id) {
+    return candidates!
+        .firstWhere((candidate) => candidate.uid == id)
+        .voters!
+        .length;
+  }
+
+  // Check the total number of votes
+  int totalVotes() {
+    return candidates!
+        .map((candidate) => candidate.voters!.length)
+        .reduce((value, element) => value + element);
+  }
+
+  // Check the percentage of votes a candidate has
+  double percentage(String id) {
+    int total = totalVotes();
+    // Check votes of candidate and if equals to 0 return 0
+    if (votes(id) == 0) {
+      return 0;
+    }
+
+    return total == 0 ? 0 : (votes(id) / total) * 100;
+  }
 }
 
 // Candidate

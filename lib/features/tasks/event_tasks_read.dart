@@ -334,7 +334,6 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
       children: [
         LinearProgressIndicator(
           borderRadius: BorderRadius.circular(10),
-          minHeight: 5,
           value: progress,
           backgroundColor:
               Theme.of(context).colorScheme.primary.withOpacity(0.2),

@@ -25,6 +25,127 @@ class _ReadVoteState extends ConsumerState<ReadVote> {
     });
   }
 
+  void viewResults() {
+    // show bottom sheet with results
+    showModalBottomSheet(
+      backgroundColor: Colors.white,
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        // Return the list of names with the number of votes
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 16.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(Icons.bar_chart),
+                        SizedBox(width: 8),
+                        Text('Results', style: TextStyle(fontSize: 24)),
+                      ],
+                    ),
+                    // Close button
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+              ),
+              // Divider
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                  itemCount: widget.vote.candidates!.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    final candidate = widget.vote.candidates![index];
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ref
+                                  .watch(getUserDataProvider(candidate.uid!))
+                                  .when(
+                                    data: (user) {
+                                      return Text(
+                                        user.name,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      );
+                                    },
+                                    loading: () =>
+                                        const CircularProgressIndicator(),
+                                    error: (error, stack) =>
+                                        const Text('Error'),
+                                  ),
+
+                              // Total Percentage
+                              Text(
+                                '${widget.vote.percentage(candidate.uid!)}%',
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground
+                                        .withOpacity(0.6)),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          LinearProgressIndicator(
+                            borderRadius: BorderRadius.circular(10),
+                            minHeight: 5,
+                            value: widget.vote.percentage(candidate.uid!),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.2),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).colorScheme.primary),
+                          ),
+
+                          // Number of votes
+                          const SizedBox(height: 8),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '${widget.vote.votes(candidate.uid!)} votes',
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground
+                                      .withOpacity(0.6)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -51,6 +172,22 @@ class _ReadVoteState extends ConsumerState<ReadVote> {
               const SizedBox(height: 16),
 
               _candidates(),
+
+              // View Results
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () => viewResults(),
+                    child: const Text('View Results'),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -155,7 +292,7 @@ class _ReadVoteState extends ConsumerState<ReadVote> {
                     ),
                   ] else if (hasVoted && votedFor != candidate.uid) ...[
                     // Change vote
-                    FilledButton(
+                    ElevatedButton(
                       onPressed: () {
                         // Cast vote
                         changeVote(
