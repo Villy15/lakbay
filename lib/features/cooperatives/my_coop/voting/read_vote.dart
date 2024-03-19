@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
@@ -28,7 +30,6 @@ class _ReadVoteState extends ConsumerState<ReadVote> {
   void viewResults() {
     // show bottom sheet with results
     showModalBottomSheet(
-      backgroundColor: Colors.white,
       context: context,
       isScrollControlled: true,
       builder: (context) {
@@ -148,6 +149,9 @@ class _ReadVoteState extends ConsumerState<ReadVote> {
 
   @override
   Widget build(BuildContext context) {
+    final members =
+        ref.watch(getAllMembersProvider(widget.vote.coopId!)).asData?.value;
+
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
@@ -161,7 +165,7 @@ class _ReadVoteState extends ConsumerState<ReadVote> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              _header(),
+              _header(members),
               // _category(),
               const SizedBox(height: 8),
               _title(),
@@ -449,7 +453,7 @@ class _ReadVoteState extends ConsumerState<ReadVote> {
     );
   }
 
-  Padding _header() {
+  Padding _header(List<CooperativeMembers>? members) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Row(
@@ -469,7 +473,8 @@ class _ReadVoteState extends ConsumerState<ReadVote> {
           ),
           OutlinedButton(
             onPressed: () {
-              // eventManagerTools(context, event);
+              // managerTools
+              voteManagerTools(members);
             },
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
@@ -485,4 +490,179 @@ class _ReadVoteState extends ConsumerState<ReadVote> {
       ),
     );
   }
+
+  // void check who does not vote yet
+  //TODO implement consumer to this
+  void showMembersNotVoting(List<CooperativeMembers>? members) {
+    // Get the list of members who have not voted
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        // Return the list of names with the number of votes
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 16.0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.bar_chart),
+                          SizedBox(width: 8),
+                          Text('Check Members vote status',
+                              style: TextStyle(fontSize: 18)),
+                        ],
+                      ),
+                      // Close button
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                ),
+                // Divider
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                    itemCount: members!.length,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final member = members[index];
+
+                      return ref
+                          .watch(getUserDataProvider(member.uid!))
+                          .maybeWhen(
+                            data: (user) {
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  radius: 20.0,
+                                  backgroundImage: user.profilePic != ''
+                                      ? NetworkImage(user.profilePic)
+                                      : null,
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground,
+                                  child: user.profilePic == ''
+                                      ? Text(
+                                          user.name[0].toUpperCase(),
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .background,
+                                          ),
+                                        )
+                                      : null,
+                                ),
+                                title: Text(user.name),
+                                trailing:
+                                    hasVoted(member.uid!).toString() == 'true'
+                                        ? const Icon(Icons.check,
+                                            color: Colors.green)
+                                        : const Icon(Icons.close,
+                                            color: Colors.red),
+                              );
+                            },
+                            orElse: () => const SizedBox(
+                                height: 50, child: CircularProgressIndicator()),
+                          );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Check if a user has voted or the uid is in the list of voters
+  bool hasVoted(String uid) {
+    return widget.vote.isVoted(uid);
+  }
+
+  Future<dynamic> voteManagerTools(List<CooperativeMembers>? members) =>
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 16.0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.bar_chart),
+                          SizedBox(width: 8),
+                          Text('Manager Tools', style: TextStyle(fontSize: 24)),
+                        ],
+                      ),
+                      // Close button
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                // Check who does not vote yet
+                ListTile(
+                  leading: const Icon(Icons.person),
+                  title: const Text('Check members vote status'),
+                  onTap: () {
+                    showMembersNotVoting(members);
+                  },
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Divider(),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.edit),
+                  title: const Text('Edit Vote'),
+                  onTap: () {
+                    showSnackBar(context, 'Edit Vote Not yet implemented');
+                  },
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Divider(),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.delete),
+                  title: const Text('Delete Vote'),
+                  onTap: () {
+                    showSnackBar(context, 'Edit Vote Not yet implemented');
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
 }
