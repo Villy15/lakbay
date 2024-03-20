@@ -143,7 +143,11 @@ class _CustomerTransportCheckoutState
                                     Text(DateFormat.yMMMd().format(_startDate)),
                                     if (widget.booking.startTime != null) ... [
                                       Text(_formatTimeOfDay(
-                                        widget.booking.startTime!))
+                                        widget.booking.startTime!)),
+                                      
+                                      // compute thet travel time to startTime
+                                      Text(_formatTimeOfDay(widget.booking.endTime!))
+
                                     ]
                                     
                                   ]

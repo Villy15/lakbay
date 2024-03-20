@@ -226,6 +226,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                                               if (deptTimeAndGuests[time] != null) {
                                                                                 if (deptTimeAndGuests[time]! >= transport.availableTransport!.guests) {
                                                                                   // show an alert dialog that the selected departure time is already full
+                                                                                  // ignore: use_build_context_synchronously
                                                                                   showDialog(
                                                                                       context: context,
                                                                                       builder: (context) {
@@ -738,6 +739,65 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                   child: ElevatedButton(
                       onPressed: () {
                         context.pop();
+                        debugPrint('this is the type of trip: $typeOfTrip');
+                        if (typeOfTrip == 'Public') {
+                          String? travelTime = transport.travelTime;
+
+                          List<String> travelTimeValues =
+                              travelTime!.split(' ');
+                          // check if the travel time has the word "hours" and "hour" in it
+                          bool hasHours = travelTimeValues.contains('hours');
+                          bool hasHour = travelTimeValues.contains('hour');
+
+                          if (hasHours || hasHour) {
+                            // remove the words "hours" and "minutes" from the list
+                            travelTimeValues.remove('hours');
+                            travelTimeValues.remove('hour');
+                            travelTimeValues.remove('mins');
+                            debugPrint('this is now the new travel time values: $travelTimeValues');
+                            // convert the hours and minutes to minutes
+                            int? hours = int.tryParse(travelTimeValues[0]);
+                            int minutes =
+                                int.tryParse(travelTimeValues[1]) ?? 0;
+                            debugPrint('minutes: $minutes');
+                            int totalTravelTime = (hours! * 60) + minutes;
+                            // convert the start time to minutes
+                            int startMinutes =
+                                (startTime!.hour * 60) + startTime.minute;
+                            // add the total travel time to the start time
+                            int endMinutes = startMinutes + totalTravelTime;
+                            // convert the end minutes to hours and minutes
+                            int endHours = endMinutes ~/ 60;
+                            int endMins = endMinutes % 60;
+                            // get the end time
+                            TimeOfDay calculatedEndTime =
+                                TimeOfDay(hour: endHours, minute: endMins);
+                            // replace the end time with the calculated end time
+                            endTime = calculatedEndTime;
+                            debugPrint(
+                                'this is the calculated time: $calculatedEndTime');
+                            debugPrint('this is the end time: $endTime');
+                          }
+                          else {
+                            debugPrint('this is the travel time: $travelTimeValues');
+                            // remove the words "mins" and "min"
+                            travelTimeValues.remove('mins');
+                            travelTimeValues.remove('min');
+                            // convert the start time to minutes
+                            int startMinutes =
+                                (startTime!.hour * 60) + startTime.minute;
+                            // add the total travel time to the start time
+                            int endMinutes = startMinutes + int.tryParse(travelTimeValues[0])!;
+                            // convert the end minutes to hours and minutes
+                            int endHours = endMinutes ~/ 60;
+                            int endMins = endMinutes % 60;
+                            // get the end time
+                            TimeOfDay calculatedEndTime =
+                                TimeOfDay(hour: endHours, minute: endMins);
+                            // replace the end time with the calculated end time
+                            endTime = calculatedEndTime;
+                          }
+                        }
                         ListingBookings booking = ListingBookings(
                             listingId: listing.uid!,
                             listingTitle: listing.title,

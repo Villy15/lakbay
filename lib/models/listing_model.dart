@@ -120,6 +120,7 @@ class AvailableTransport with _$AvailableTransport {
     @TimeOfDayConverter() required TimeOfDay startTime,
     @TimeOfDayConverter() required TimeOfDay endTime,
     String? destination,
+    String? travelTime,
     String? pickupPoint,
   }) = _AvailableTransport;
 

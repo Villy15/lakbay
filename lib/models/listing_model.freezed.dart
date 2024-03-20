@@ -1887,6 +1887,7 @@ mixin _$AvailableTransport {
   @TimeOfDayConverter()
   TimeOfDay get endTime => throw _privateConstructorUsedError;
   String? get destination => throw _privateConstructorUsedError;
+  String? get travelTime => throw _privateConstructorUsedError;
   String? get pickupPoint => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1914,6 +1915,7 @@ abstract class $AvailableTransportCopyWith<$Res> {
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime,
       String? destination,
+      String? travelTime,
       String? pickupPoint});
 }
 
@@ -1942,6 +1944,7 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
     Object? startTime = null,
     Object? endTime = null,
     Object? destination = freezed,
+    Object? travelTime = freezed,
     Object? pickupPoint = freezed,
   }) {
     return _then(_value.copyWith(
@@ -1993,6 +1996,10 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
               as String?,
+      travelTime: freezed == travelTime
+          ? _value.travelTime
+          : travelTime // ignore: cast_nullable_to_non_nullable
+              as String?,
       pickupPoint: freezed == pickupPoint
           ? _value.pickupPoint
           : pickupPoint // ignore: cast_nullable_to_non_nullable
@@ -2022,6 +2029,7 @@ abstract class _$$AvailableTransportImplCopyWith<$Res>
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime,
       String? destination,
+      String? travelTime,
       String? pickupPoint});
 }
 
@@ -2048,6 +2056,7 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
     Object? startTime = null,
     Object? endTime = null,
     Object? destination = freezed,
+    Object? travelTime = freezed,
     Object? pickupPoint = freezed,
   }) {
     return _then(_$AvailableTransportImpl(
@@ -2099,6 +2108,10 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
               as String?,
+      travelTime: freezed == travelTime
+          ? _value.travelTime
+          : travelTime // ignore: cast_nullable_to_non_nullable
+              as String?,
       pickupPoint: freezed == pickupPoint
           ? _value.pickupPoint
           : pickupPoint // ignore: cast_nullable_to_non_nullable
@@ -2123,6 +2136,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       @TimeOfDayConverter() required this.startTime,
       @TimeOfDayConverter() required this.endTime,
       this.destination,
+      this.travelTime,
       this.pickupPoint})
       : _departureTimes = departureTimes,
         _workingDays = workingDays;
@@ -2172,11 +2186,13 @@ class _$AvailableTransportImpl implements _AvailableTransport {
   @override
   final String? destination;
   @override
+  final String? travelTime;
+  @override
   final String? pickupPoint;
 
   @override
   String toString() {
-    return 'AvailableTransport(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, guests: $guests, departureTimes: $departureTimes, price: $price, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, destination: $destination, pickupPoint: $pickupPoint)';
+    return 'AvailableTransport(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, guests: $guests, departureTimes: $departureTimes, price: $price, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, destination: $destination, travelTime: $travelTime, pickupPoint: $pickupPoint)';
   }
 
   @override
@@ -2203,6 +2219,8 @@ class _$AvailableTransportImpl implements _AvailableTransport {
             (identical(other.endTime, endTime) || other.endTime == endTime) &&
             (identical(other.destination, destination) ||
                 other.destination == destination) &&
+            (identical(other.travelTime, travelTime) ||
+                other.travelTime == travelTime) &&
             (identical(other.pickupPoint, pickupPoint) ||
                 other.pickupPoint == pickupPoint));
   }
@@ -2223,6 +2241,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       startTime,
       endTime,
       destination,
+      travelTime,
       pickupPoint);
 
   @JsonKey(ignore: true)
@@ -2254,6 +2273,7 @@ abstract class _AvailableTransport implements AvailableTransport {
       @TimeOfDayConverter() required final TimeOfDay startTime,
       @TimeOfDayConverter() required final TimeOfDay endTime,
       final String? destination,
+      final String? travelTime,
       final String? pickupPoint}) = _$AvailableTransportImpl;
 
   factory _AvailableTransport.fromJson(Map<String, dynamic> json) =
@@ -2286,6 +2306,8 @@ abstract class _AvailableTransport implements AvailableTransport {
   TimeOfDay get endTime;
   @override
   String? get destination;
+  @override
+  String? get travelTime;
   @override
   String? get pickupPoint;
   @override

@@ -45,110 +45,93 @@ class FoodCardState extends ConsumerState<FoodCard> {
                     .foodListings![index].images!
                     .map((listingImage) => listingImage.url)
                     .toList();
-            final food = widget.foodListings![index];
-            return SizedBox(
-              width: MediaQuery.sizeOf(context).width / 2,
-              child: Card(
-                child: Column(
-                  children: [
-                    ImageSlider(
-                      images: imageUrls,
-                      height: MediaQuery.sizeOf(context).height / 4,
-                      width: MediaQuery.sizeOf(context).width / 2,
-                      radius: BorderRadius.circular(10)
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 20.0,
-                        right: 10,
-                        top: 10,
-                        bottom: 10
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    food.title,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold
-                                    )
-                                  ),
-                                  Text(
-                                    food.title,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500
-                                    )
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    'No reservation fee indicated.',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontStyle: FontStyle.italic
-                                    )
-                                  )
-                                ]
-                              )
-                            ]
-                          ),
-                          SizedBox(height: MediaQuery.sizeOf(context).height / 30),
-                          ref
-                              .watch(getListingProvider(food.uid!))
-                              .when(
-                                data: (ListingModel listing) {
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                final food = widget.foodListings![index];
+                return SizedBox(
+                    width: MediaQuery.sizeOf(context).width / 2,
+                    child: Card(
+                        child: Column(children: [
+                      ImageSlider(
+                          images: imageUrls,
+                          height: MediaQuery.sizeOf(context).height / 4,
+                          width: MediaQuery.sizeOf(context).width / 2,
+                          radius: BorderRadius.circular(10)),
+                      Padding(
+                          padding: const EdgeInsets.only(
+                              left: 20.0, right: 10, top: 10, bottom: 10),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          context.push('/market/${widget.category}',
-                                          extra: listing);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 25,
-                                            vertical: 5
-                                          )
-                                        ),
-                                        child: const Text(
-                                          'View Listing',
-                                          style: TextStyle(fontSize: 14)
-                                        )
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          showConfirmBooking(food.availableDeals!.first, listing, daysPlan.currentDay!);
-                                        },
-                                        child: const Text('Book Now')
-                                      )
-                                    ]
-                                  );
-                                },
-                                error: (((error, stackTrace) => ErrorText(
-                                  error: error.toString(), stackTrace: stackTrace.toString()))
-                              ),
-                              loading: () => const Loader())
-                        ]
-                      )
-                    ),
-                  ]
-                )
-              )
-            );
-          }) 
-        )
-      );
-    }
-    else {
+                                      Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(food.title,
+                                                style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            Text(food.title,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500)),
+                                            const SizedBox(height: 10),
+                                            const Text(
+                                                'No reservation fee indicated.',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontStyle:
+                                                        FontStyle.italic))
+                                          ])
+                                    ]),
+                                SizedBox(
+                                    height:
+                                        MediaQuery.sizeOf(context).height / 30),
+                                ref.watch(getListingProvider(food.uid!)).when(
+                                    data: (ListingModel listing) {
+                                      return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  context.push(
+                                                      '/market/${widget.category}',
+                                                      extra: listing);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 25,
+                                                        vertical: 5)),
+                                                child: const Text(
+                                                    'View Listing',
+                                                    style: TextStyle(
+                                                        fontSize: 14))),
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  showConfirmBooking(
+                                                      food.availableDeals!
+                                                          .first,
+                                                      listing,
+                                                      daysPlan.currentDay!);
+                                                },
+                                                child: const Text('Book Now'))
+                                          ]);
+                                    },
+                                    error: (((error, stackTrace) => ErrorText(
+                                        error: error.toString(),
+                                        stackTrace: stackTrace.toString()))),
+                                    loading: () => const Loader())
+                              ])),
+                    ])));
+              })));
+    } else {
       return Center(
           child: Column(children: [
         const Text('No Food Listings Available'),
@@ -158,165 +141,250 @@ class FoodCardState extends ConsumerState<FoodCard> {
     }
   }
 
-  void showConfirmBooking(FoodService food, ListingModel listing, DateTime bookedDate) {
+  void showConfirmBooking(
+      FoodService food, ListingModel listing, DateTime bookedDate) {
     showDialog(
-      context: context,
-      builder: (context) {
-        num guests = 0;
-        final user = ref.read(userProvider);
+        context: context,
+        builder: (context) {
+          num guests = 0;
+          final user = ref.read(userProvider);
 
-        TextEditingController phoneNoController = TextEditingController(text: user?.phoneNo);
-        TextEditingController emergencyContactNameController = TextEditingController();
-        TextEditingController emergencyContactNoController = TextEditingController();
-        bool governmentId = true;
-        String formattedDate = DateFormat('MMMM dd, yyyy').format(bookedDate);
+          TextEditingController phoneNoController =
+              TextEditingController(text: user?.phoneNo);
+          TextEditingController timeController =
+              TextEditingController(text: '11:00 AM');
+          bool governmentId = true;
+          String formattedDate = DateFormat('MMMM dd, yyyy').format(bookedDate);
 
-        return Dialog.fullscreen(
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return SingleChildScrollView(
+          return Dialog.fullscreen(
+              child: StatefulBuilder(builder: (context, setState) {
+            return SingleChildScrollView(
                 child: Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppBar(
-                        leading: IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            context.pop();
-                          }
-                        ),
-                        title: Text(
-                          formattedDate,
-                          style: const TextStyle(fontSize: 18)
-                        ),
-                        elevation: 0
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Number of Guests (Max: ${food.guests})',
-                                border: const OutlineInputBorder(),
-                                floatingLabelBehavior: FloatingLabelBehavior.always,
-                                hintText: '1'
-                              ),
-                              keyboardType: TextInputType.number,
-                              onChanged: (value) {
-                                guests = int.tryParse(value) ?? 0;
-                              }
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: phoneNoController,
-                              decoration: const InputDecoration(
-                                labelText: 'Phone Number',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior: FloatingLabelBehavior.always
-                              ),
-                              keyboardType: TextInputType.phone
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: emergencyContactNameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Emergency Contact Name',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior: FloatingLabelBehavior.always
-                              ),
-                              keyboardType: TextInputType.name
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: emergencyContactNoController,
-                              decoration: const InputDecoration(
-                                labelText: 'Emergency Contact Number',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior: FloatingLabelBehavior.always
-                              ),
-                              keyboardType: TextInputType.phone
-                            ),
-                            Column(
-                              children: [
-                                CheckboxListTile(
-                                  enabled: false,
-                                  value: governmentId,
-                                  title: const Text('Government ID'),
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      governmentId = value ?? false;
+                    margin: const EdgeInsets.only(top: 10),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppBar(
+                              leading: IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () {
+                                    context.pop();
+                                  }),
+                              title: Text(formattedDate,
+                                  style: const TextStyle(fontSize: 18)),
+                              elevation: 0),
+                          Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(children: [
+                                TextFormField(
+                                    decoration: const InputDecoration(
+                                        labelText: 'Number of Guests',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: '12'),
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (value) {
+                                      guests = int.tryParse(value) ?? 0;
+                                    }),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                    controller: phoneNoController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Phone Number',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always),
+                                    keyboardType: TextInputType.phone),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                  controller: timeController,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Time of Arrival',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always),
+                                  onTap: () async {
+                                    showTimePicker(
+                                            context: context,
+                                            initialEntryMode:
+                                                TimePickerEntryMode.inputOnly,
+                                            initialTime: TimeOfDay.now())
+                                        .then((time) {
+                                      if (time != null) {
+                                        // check if time is within the open hours / working time
+                                        if (listing.availableDeals!.first
+                                                    .startTime !=
+                                                null &&
+                                            listing.availableDeals!.first
+                                                    .endTime !=
+                                                null) {
+                                          // compare time to the open hours
+                                          debugPrint(
+                                              'Opening Hour: ${listing.availableDeals!.first.startTime}');
+                                          debugPrint(
+                                              'Closing Hour: ${listing.availableDeals!.first.endTime}');
+
+                                          debugPrint(
+                                              "User's chosen time: $time");
+                                          // compare the hours and minutes of the time to start time and end time
+                                          if (time.hour <
+                                                  listing.availableDeals!.first
+                                                      .startTime!.hour ||
+                                              time.hour >
+                                                  listing.availableDeals!.first
+                                                      .endTime!.hour) {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                        'Invalid Time'),
+                                                    content: const Text(
+                                                        'The time you have chosen is not within the working hours of the listing.'),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            context.pop();
+                                                          },
+                                                          child:
+                                                              const Text('OK'))
+                                                    ],
+                                                  );
+                                                });
+                                            return;
+                                          } else if (time.hour ==
+                                                  listing.availableDeals!.first
+                                                      .startTime!.hour &&
+                                              time.minute <
+                                                  listing.availableDeals!.first
+                                                      .startTime!.minute) {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                        'Invalid Time'),
+                                                    content: const Text(
+                                                        'The time you have chosen is not within the working hours of the listing.'),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            context.pop();
+                                                          },
+                                                          child:
+                                                              const Text('OK'))
+                                                    ],
+                                                  );
+                                                });
+                                            return;
+                                          } else if (time.hour ==
+                                                  listing.availableDeals!.first
+                                                      .endTime!.hour &&
+                                              time.minute >
+                                                  listing.availableDeals!.first
+                                                      .endTime!.minute) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text('Invalid Time'),
+                                                  content: const Text(
+                                                      'The time you have chosen is not within the working hours of the listing.'),
+                                                  actions: [
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          context.pop();
+                                                        },
+                                                        child: const Text('OK'))
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                            return;
+                                          }
+                                        } 
+                                          setState(() {
+                                            // set the time to the textfield
+                                            timeController.text =
+                                                time.format(context);
+
+                                            // set bookedDate's time to the chosen time
+                                            bookedDate = DateTime(
+                                                bookedDate.year,
+                                                bookedDate.month,
+                                                bookedDate.day,
+                                                time.hour,
+                                                time.minute);
+                                          });
+                                      }
                                     });
                                   },
-                                  controlAffinity: ListTileControlAffinity.leading
+                                  readOnly: true,
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 16),
-                                  child: Text(
-                                    'Your government ID is required as a means to protect cooperatives.',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontStyle: FontStyle.italic
-                                    )
-                                  )
-                                )
-                              ]
-                            ),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  context.pop();
-                                  ListingBookings booking = ListingBookings(
-                                    listingId: listing.uid!,
-                                    listingTitle: listing.title,
-                                    customerName: ref.read(userProvider)!.name,
-                                    bookingStatus: "Reserved",
-                                    price: food.price,
-                                    category: 'Food',
-                                    startDate: bookedDate,
-                                    endDate: bookedDate,
-                                    email: "",
-                                    governmentId: "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
-                                    guests: guests,
-                                    customerPhoneNo: phoneNoController.text,
-                                    customerId: ref.read(userProvider)!.uid,
-                                    emergencyContactName: emergencyContactNameController.text,
-                                    emergencyContactNo: emergencyContactNoController.text,
-                                    needsContributions: false,
-                                    tasks: listing.fixedTasks,
-                                  );
+                                Column(children: [
+                                  CheckboxListTile(
+                                      enabled: false,
+                                      value: governmentId,
+                                      title: const Text('Government ID'),
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          governmentId = value ?? false;
+                                        });
+                                      },
+                                      controlAffinity:
+                                          ListTileControlAffinity.leading),
+                                  const Padding(
+                                      padding: EdgeInsets.only(left: 16),
+                                      child: Text(
+                                          'Your government ID is required as a means to protect cooperatives.',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontStyle: FontStyle.italic)))
+                                ]),
+                                SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          context.pop();
+                                          ListingBookings booking =
+                                              ListingBookings(
+                                            listingId: listing.uid!,
+                                            listingTitle: listing.title,
+                                            customerName:
+                                                ref.read(userProvider)!.name,
+                                            bookingStatus: "Reserved",
+                                            price: food.price,
+                                            category: 'Food',
+                                            startDate: bookedDate,
+                                            endDate: bookedDate,
+                                            email: "",
+                                            governmentId:
+                                                "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
+                                            guests: guests,
+                                            customerPhoneNo:
+                                                phoneNoController.text,
+                                            customerId:
+                                                ref.read(userProvider)!.uid,
+                                            needsContributions: false,
+                                            tasks: listing.fixedTasks,
+                                          );
 
-
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return Dialog.fullscreen(
-                                        child: CustomerFoodCheckout(
-                                          listing: listing,
-                                          foodService: food,
-                                          booking: booking
-                                        )
-                                      );
-                                    }
-                                  );
-                                },
-                                child: const Text('Proceed')
-                              )
-                            )
-                          ]
-                        )
-                      )
-                    ]
-                  )
-                )
-              );
-            }
-          )
-        );
-      }
-    );
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return Dialog.fullscreen(
+                                                    child: CustomerFoodCheckout(
+                                                        listing: listing,
+                                                        foodService: food,
+                                                        booking: booking));
+                                              });
+                                        },
+                                        child: const Text('Proceed')))
+                              ]))
+                        ])));
+          }));
+        });
   }
 }

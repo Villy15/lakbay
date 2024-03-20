@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
@@ -100,7 +101,7 @@ class _BookingsTransportCustomerState
                                       color: Colors.black.withOpacity(
                                           booking.bookingStatus == "Cancelled"
                                               ? 0.5
-                                              : 1.0)),
+                                              : 0.0)),
                                   child: ImageSlider(
                                       images: imageUrls,
                                       height:
@@ -140,16 +141,206 @@ class _BookingsTransportCustomerState
                                                           fontWeight:
                                                               FontWeight.bold)),
                                                   const SizedBox(height: 5),
-                                                  Text(
-                                                      widget
-                                                          .listing.typeOfTrip!,
-                                                      style: const TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w500))
+                                                  // put the date here
+                                                  Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Icon(
+                                                            Icons
+                                                                .calendar_today,
+                                                            size: 20),
+                                                        const SizedBox(
+                                                            width: 5),
+                                                        Text(
+                                                            // format the date that does not include the time
+                                                            "Booked Date: ${DateFormat('MMMM d, yyyy').format(widget.booking.startDate!)}",
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        16))
+                                                      ]),
+                                                  const SizedBox(height: 10),
+                                                  if (widget
+                                                          .booking.typeOfTrip ==
+                                                      'Public')
+                                                    Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          const Icon(
+                                                              Icons
+                                                                  .schedule_outlined,
+                                                              size: 20),
+                                                          const SizedBox(
+                                                              width: 5),
+                                                          Text(
+                                                              // format the startTime
+                                                              "Departure Time: ${widget.booking.startTime!.format(context)}",
+                                                              style:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          16))
+                                                        ]),
                                                 ])),
                                       )
-                                    ]))
+                                    ])),
+                            ...generalActions.entries.map((entry) {
+                              final generalAction = entry.value;
+                              return Column(children: [
+                                Container(
+                                    padding: const EdgeInsets.only(
+                                        top: 8.0, left: 15.0, right: 15.0),
+                                    child: const Divider(
+                                        color: Colors.grey, height: 1.0)),
+                                ListTile(
+                                    leading:
+                                        Icon(generalAction["icon"], size: 24),
+                                    title: Text(generalAction["title"],
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                        )),
+                                    onTap: generalAction["action"],
+                                    trailing: const Icon(
+                                        Icons.arrow_forward_ios_rounded))
+                              ]);
+                            }),
+                            Container(
+                                margin: const EdgeInsets.only(top: 15),
+                                height: 10,
+                                width: double.infinity,
+                                color: Colors.grey[200]),
+
+                            // reservation details
+                            const Padding(
+                                padding: EdgeInsets.only(
+                                    left: 15, right: 15, top: 20),
+                                child: Text('Reservation Details',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold))),
+
+                            if (booking.bookingStatus != 'Cancelled' &&
+                                booking.bookingStatus != 'Completed')
+                              Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 15, right: 15, top: 10, bottom: 15),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text('Cancellation Policy: ',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500)),
+                                        if (booking.paymentOption ==
+                                            'Full Payment')
+                                          Text('Cancell')
+                                      ])),
+
+                            ...reservationActions.entries.map((entry) {
+                              final reservationAction = entry.value;
+                              if (booking.bookingStatus == 'Cancelled' &&
+                                      entry.key == 'booking' ||
+                                  booking.bookingStatus == 'Completed' &&
+                                      entry.key == 'booking') {
+                                return Container();
+                              } else {
+                                return Column(
+                                  children: [
+                                    Container(
+                                        padding: const EdgeInsets.only(
+                                            top: 8.0, left: 15.0, right: 15.0),
+                                        child: const Divider(
+                                            color: Colors.grey, height: 1.0)),
+                                    ListTile(
+                                        leading: Icon(reservationAction["icon"],
+                                            size: 24),
+                                        title: Text(reservationAction["title"],
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                            )),
+                                        onTap: reservationAction["action"],
+                                        trailing: const Icon(
+                                            Icons.arrow_forward_ios_rounded))
+                                  ]
+                                );
+                              }
+                            }),
+
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                    left: 15, right: 15, top: 20),
+                              child: Text(
+                                'Getting There',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
+                                )
+                              )
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.location_on_outlined),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    '${widget.listing.city}, ${widget.listing.province}',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                left: 15, right: 15, top: 20
+                              ),
+                              child: Text(
+                                "Hosted By",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
+                                )
+                              )
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.people_alt_outlined),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    widget.listing.cooperative.cooperativeName,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal
+                                    )
+                                  )
+                                ]
+                              )
+                            ),
+
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                left: 15, right: 15, top: 20
+                              ),
+                              child: Text(
+                                "Payment Information",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
+                                )
+                              )
+                            ),
                           ])));
                 },
                 error: (error, stackTrace) =>
