@@ -81,6 +81,35 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
                               (user.currentCoop!, widget.eventId)))
                           .when(
                             data: (tasks) {
+                              if (tasks.isEmpty) {
+                                return const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'No Tasks Yet',
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    // Let's create a new trip header
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'Create a new tasks for your event for members to participate in!',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 20),
+                                    // createNewTrip(),
+                                  ],
+                                );
+                              }
                               return ListView.builder(
                                 itemCount: tasks.length,
                                 itemBuilder: (context, index) {
@@ -210,7 +239,7 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
               const Icon(Icons.calendar_today),
               const SizedBox(width: 8),
               Text(
-                "${DateFormat('d MMM').format(event.startDate)} - ${DateFormat('d MMM').format(event.endDate)}",
+                "${DateFormat('d MMM').format(event.startDate!)} - ${DateFormat('d MMM').format(event.endDate!)}",
                 style: const TextStyle(
                   fontSize: 16.0,
                 ),

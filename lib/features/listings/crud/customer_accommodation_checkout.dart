@@ -1,6 +1,7 @@
 // import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
@@ -99,16 +100,20 @@ class _CustomerAccomodationCheckoutState
               // Color
               onPressed: () {
                 String paymentOption;
+                String paymentStatus;
                 num totalPrice = (updatedBooking.price * _nights) * vat * 1;
 
                 if (_selectedPaymentOption.name == "downpayment") {
                   paymentOption = "Downpayment";
+                  paymentStatus = "Partially Paid";
                 } else {
                   paymentOption = "Full Payment";
+                  paymentStatus = "Fully Paid";
                 }
                 setState(() {
                   updatedBooking = updatedBooking.copyWith(
                       paymentOption: paymentOption,
+                      paymentStatus: paymentStatus,
                       totalPrice: num.parse(totalPrice.toStringAsFixed(2)),
                       amountPaid: num.parse(amountDue.toStringAsFixed(2)));
                 });
@@ -198,10 +203,10 @@ class _CustomerAccomodationCheckoutState
               height: 100.0, // Define height
               width: 150.0, // and width
               child: ImageSlider(
-                images: imageUrls,
-                height: 100,
-                width: 150,
-              ), // Your ImageSlider widget
+                  images: imageUrls,
+                  height: 100,
+                  width: 150,
+                  radius: BorderRadius.circular(10)), // Your ImageSlider widget
             ),
             Expanded(
               child: Padding(

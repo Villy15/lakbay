@@ -156,7 +156,9 @@ class _TransportationBookingsDetailsState
           TextEditingController committeeController =
               TextEditingController(text: "Tourism");
           bool openContribution = false;
-          List<String> assignedMembers = [];
+          List<String> assignedIds = [];
+          List<String> assignedNames = [];
+          List<CooperativeMembers>? members;
           return Dialog.fullscreen(
             child: StatefulBuilder(builder: (context, setState) {
               return Column(children: [
@@ -211,8 +213,8 @@ class _TransportationBookingsDetailsState
                               readOnly: true,
                               canRequestFocus: false,
                               onTap: () async {
-                                List<CooperativeMembers> members = await ref
-                                    .read(getAllMembersInCommitteeProvider(
+                                members = await ref.read(
+                                    getAllMembersInCommitteeProvider(
                                             CommitteeParams(
                                                 coopUid: ref
                                                     .watch(userProvider)!
@@ -220,9 +222,9 @@ class _TransportationBookingsDetailsState
                                                 committeeName:
                                                     committeeController.text))
                                         .future);
-                                members = members
+                                members = members!
                                     .where((member) =>
-                                        !assignedMembers.contains(member.name))
+                                        !assignedNames.contains(member.name))
                                     .toList();
                                 if (context.mounted) {
                                   return showModalBottomSheet(
@@ -246,14 +248,14 @@ class _TransportationBookingsDetailsState
                                                 Expanded(
                                                     child: ListView.builder(
                                                         itemCount:
-                                                            members.length,
+                                                            members!.length,
                                                         itemBuilder:
                                                             (BuildContext
                                                                     context,
                                                                 index) {
                                                           return ListTile(
                                                             title: Text(
-                                                                members[index]
+                                                                members![index]
                                                                     .name,
                                                                 style:
                                                                     const TextStyle(
@@ -261,8 +263,12 @@ class _TransportationBookingsDetailsState
                                                                             16)),
                                                             onTap: () {
                                                               setState(() {
-                                                                assignedMembers
-                                                                    .add(members[
+                                                                assignedIds.add(
+                                                                    members![
+                                                                            index]
+                                                                        .uid!);
+                                                                assignedNames.add(
+                                                                    members![
                                                                             index]
                                                                         .name);
                                                               });
@@ -287,7 +293,7 @@ class _TransportationBookingsDetailsState
                         crossAxisSpacing: 1.5,
                         mainAxisSpacing: 1.5,
                         mainAxisExtent: MediaQuery.sizeOf(context).height / 8),
-                    itemCount: assignedMembers.length,
+                    itemCount: assignedNames.length,
                     itemBuilder: (context, index) {
                       return Container(
                           decoration: BoxDecoration(
@@ -301,11 +307,11 @@ class _TransportationBookingsDetailsState
                                         color: Colors.black, size: 16),
                                     onPressed: () {
                                       setState(() {
-                                        assignedMembers.removeAt(index);
+                                        assignedNames.removeAt(index);
                                       });
                                     }),
                                 Expanded(
-                                    child: Text(assignedMembers[index],
+                                    child: Text(assignedNames[index],
                                         style: const TextStyle(
                                             fontSize: 14,
                                             overflow: TextOverflow.ellipsis)))
@@ -330,19 +336,21 @@ class _TransportationBookingsDetailsState
                 SizedBox(height: MediaQuery.sizeOf(context).height / 20),
                 ElevatedButton(
                     onPressed: () {
-                      Task task = Task(
-                          assigned: assignedMembers,
+                      BookingTask bookingTask = BookingTask(
+                          listingName: widget.listing.title,
+                          assignedIds: assignedIds,
+                          assignedNames: assignedNames,
                           committee: committeeController.text,
                           complete: false,
                           openContribution: openContribution,
                           name: nameOfTaskController.text);
 
                       if (nameOfTaskController.text.isNotEmpty) {
-                        List<Task> tasks =
+                        List<BookingTask> bookingTasks =
                             booking.tasks?.toList(growable: true) ?? [];
-                        tasks.add(task);
+                        bookingTasks.add(bookingTask);
                         ListingBookings updatedBooking =
-                            booking.copyWith(tasks: tasks);
+                            booking.copyWith(tasks: bookingTasks);
                         ref
                             .read(listingControllerProvider.notifier)
                             .updateBooking(context, widget.listing.uid!,
@@ -660,7 +668,7 @@ class _TransportationBookingsDetailsState
                                   fontSize: 16, // Set your desired font size
                                 )),
                             Text(
-                                "Assigned: ${booking.tasks![index].assigned.join(",")}",
+                                "Assigned: ${booking.tasks![index].assignedNames.join(",")}",
                                 style: TextStyle(
                                     fontSize: 14, color: Colors.grey[600]))
                           ]))
@@ -705,19 +713,21 @@ class _TransportationBookingsDetailsState
                                     TextButton(
                                       child: const Text('Confirm'),
                                       onPressed: () {
-                                        List<Task> tasks = booking.tasks!
+                                        List<BookingTask> bookingTasks = booking
+                                            .tasks!
                                             .toList(growable: true);
-                                        tasks[index] = tasks[index]
-                                            .copyWith(openContribution: value!);
-                                        ListingBookings updatedBooking =
-                                            booking.copyWith(tasks: tasks);
+                                        bookingTasks[index] =
+                                            bookingTasks[index].copyWith(
+                                                openContribution: value!);
+                                        ListingBookings updatedBooking = booking
+                                            .copyWith(tasks: bookingTasks);
                                         ref
                                             .read(listingControllerProvider
                                                 .notifier)
-                                            .updateTasks(
+                                            .updateBookingTask(
                                                 context,
                                                 widget.listing.uid!,
-                                                booking,
+                                                bookingTasks[index],
                                                 "Task/s updated!");
                                         context.pop();
                                       },
@@ -731,19 +741,20 @@ class _TransportationBookingsDetailsState
   }
 
   Expanded tasks() {
-    List<Task> tasks = widget.booking.tasks?.toList(growable: true) ?? [];
+    List<BookingTask> bookingTasks =
+        widget.booking.tasks?.toList(growable: true) ?? [];
     return Expanded(
-        child: tasks.isEmpty
+        child: bookingTasks.isEmpty
             ? SizedBox(
                 height: MediaQuery.of(context).size.height / 5,
                 child: const Center(child: Text("No Tasks Listed")),
               )
             : ListView.builder(
-                itemCount: tasks.length,
+                itemCount: bookingTasks.length,
                 itemBuilder: (context, index) {
                   return ListTile(
                     title: Text(
-                      tasks[index].name,
+                      bookingTasks[index].name,
                       style: const TextStyle(
                         fontSize: 14, // Set your desired font size
                         // Add other styling as needed
@@ -757,7 +768,7 @@ class _TransportationBookingsDetailsState
                           icon: const Icon(Icons.delete),
                           onPressed: () {
                             setState(() {
-                              tasks.removeAt(index);
+                              bookingTasks.removeAt(index);
                             });
                           },
                         ),

@@ -23,6 +23,7 @@ class ListingModel with _$ListingModel {
     required String description,
     num? downpaymentRate,
     num? duration,
+    String? durationUnit,
     String? guestInfo,
     List<ListingImages>? images,
     bool? isPublished,
@@ -32,11 +33,12 @@ class ListingModel with _$ListingModel {
     @TimestampSerializer() DateTime? closingHours,
     num? pax,
     num? price,
+    List<bool>? workingDays,
     required String province,
     required String publisherId,
     required String publisherName,
     num? rating,
-    List<Task>? fixedTasks,
+    List<BookingTask>? fixedTasks,
     @TimestampSerializer() DateTime? timestamp,
     required String title,
     String? type,
@@ -113,6 +115,7 @@ class AvailableTransport with _$AvailableTransport {
     String? listingName,
     required bool available,
     required num guests,
+    @TimeOfDayConverter() List<TimeOfDay>? departureTimes,
     required num price,
     required num luggage,
     required List<bool> workingDays,
@@ -162,6 +165,7 @@ class EntertainmentService with _$EntertainmentService {
 class AvailableDate with _$AvailableDate {
   factory AvailableDate({
     required bool available,
+    //@TimestampSerializer() required DateTime date,
     required List<AvailableTime> availableTimes,
   }) = _AvailableDate;
 

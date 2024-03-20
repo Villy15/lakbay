@@ -1,13 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_repository.dart';
+import 'package:lakbay/features/sales/sales_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
+import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/wrappers/rooms_params.dart';
 
@@ -30,6 +34,14 @@ final getListingProvider =
     StreamProvider.autoDispose.family<ListingModel, String>((ref, uid) {
   final listingController = ref.watch(listingControllerProvider.notifier);
   return listingController.getListing(uid);
+});
+
+// getListingByPropertiesProvider
+final getListingsByPropertiesProvider =
+    StreamProvider.autoDispose.family<List<ListingModel>, Query>((ref, query) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+
+  return listingController.getListingsByProperties(query);
 });
 
 // getAllBookingsProvider
@@ -58,17 +70,38 @@ final getAllBookingsByIdProvider = StreamProvider.autoDispose
 
 // getAllBookingsByCustomerIdProvider
 final getAllBookingsByCustomerIdProvider = StreamProvider.autoDispose
-    .family<List<ListingBookings>, String>((ref, listingId) {
+    .family<List<ListingBookings>, String>((ref, customerId) {
   final listingController = ref.watch(listingControllerProvider.notifier);
-  return listingController.getBookingsByCustomerId(listingId);
+  return listingController.getBookingsByCustomerId(customerId);
 });
 
 // getAllBookingsByProperties
 final getBookingsByPropertiesProvider = StreamProvider.autoDispose
-    .family<List<ListingBookings>, (String category, DateTime startDate)>(
+    .family<List<ListingBookings>, Query>((ref, query) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getBookingsByProperties(query);
+});
+
+// getAllBookingsByCoopId
+final getAllBookingsByCoopIdProvider = StreamProvider.autoDispose
+    .family<List<ListingBookings>, String>((ref, coopId) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getAllBookingsByCoopId(coopId);
+});
+
+// getBookingTasksByBookingId
+final getBookingTasksByBookingId = StreamProvider.autoDispose
+    .family<List<BookingTask>, (String listingId, String bookingId)>(
         (ref, params) {
   final listingController = ref.watch(listingControllerProvider.notifier);
-  return listingController.getBookingsByProperties(params.$1, params.$2);
+  return listingController.getBookingTasksByBookingId(params.$1, params.$2);
+});
+
+// getBookingTasksByMemberId
+final getBookingTasksByMemberId = StreamProvider.autoDispose
+    .family<List<BookingTask>, String>((ref, memberId) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getBookingTasksByMemberId(memberId);
 });
 
 // getRoomByIdProvider
@@ -98,10 +131,10 @@ final getRoomByPropertiesProvider = StreamProvider.autoDispose
 
 // getRoomByPropertiesProvider
 final getTransportByPropertiesProvider = StreamProvider.autoDispose
-    .family<List<AvailableTransport>, ({num? guests})>((ref, params) {
+    .family<List<AvailableTransport>, Query>((ref, query) {
   final listingController = ref.watch(listingControllerProvider.notifier);
 
-  return listingController.getTransportByProperties(guests: params.guests);
+  return listingController.getTransportByProperties(query);
 });
 
 // getRoomByPropertiesProvider
@@ -134,7 +167,7 @@ class ListingController extends StateNotifier<bool> {
     ListingModel listing,
     BuildContext context, {
     List<AvailableRoom>? rooms,
-    List<AvailableTransport>? transport,
+    AvailableTransport? transport,
     List<EntertainmentService>? entertainment,
   }) async {
     state = true;
@@ -150,17 +183,21 @@ class ListingController extends StateNotifier<bool> {
         rooms?.forEach((room) async {
           await _listingRepository.addRoom(listingUid, listing, room);
         });
-        transport?.forEach((transport) async {
+        debugPrint("transport: $transport");
+        if (transport != null) {
           await _listingRepository.addTransport(listingUid, listing, transport);
-        });
+        }
+
         entertainment?.forEach((entertainment) async {
           await _listingRepository.addEntertainment(
               listingUid, listing, entertainment);
         });
         state = false;
-        context.pop();
-        context.pop();
-        showSnackBar(context, 'Listing added successfully');
+        if (context.mounted) {
+          context.pop();
+          context.pop();
+          showSnackBar(context, 'Listing added successfully');
+        }
         _ref.read(navBarVisibilityProvider.notifier).show();
       },
     );
@@ -172,6 +209,7 @@ class ListingController extends StateNotifier<bool> {
     final result = await _listingRepository.addBooking(listing.uid!, booking);
     final selectedDate = _ref.read(selectedDateProvider);
     final planUid = _ref.read(currentPlanIdProvider);
+    ListingBookings? updatedBooking;
     result.fold(
       (l) {
         // Handle the error here
@@ -181,28 +219,44 @@ class ListingController extends StateNotifier<bool> {
       },
       (bookingUid) async {
         state = false;
-        // _ref.read(salesRepositoryProvider).addSale(SaleModel(
-        //     bookingId: booking.id!,
-        //     category: booking.category,
-        //     cooperativeId: listing.cooperative.cooperativeId,
-        //     cooperativeName: listing.cooperative.cooperativeName,
-        //     customerId: _ref.read(userProvider)!.uid,
-        //     customerName: _ref.read(userProvider)!.name,
-        //     listingId: listing.uid!,
-        //     listingName: listing.title,
-        //     listingPrice: booking.price,
-        //     price: booking.totalPrice,
-        //     ownerId: listing.publisherId,
-        //     ownerName: listing.publisherName,
-        //     salePrice: booking.totalPrice));
-        ListingBookings updatedBooking = booking.copyWith(id: bookingUid);
+        booking.tasks?.forEach((element) {
+          if (booking.category == "Accommodation") {
+            element = element.copyWith(roomId: booking.roomId);
+          }
+          _ref
+              .read(listingControllerProvider.notifier)
+              .addBookingTask(context, listing.uid!, element);
+        });
+        _ref.read(salesControllerProvider.notifier).addSale(
+            context,
+            SaleModel(
+              bookingId: bookingUid,
+              category: booking.category,
+              cooperativeId: listing.cooperative.cooperativeId,
+              cooperativeName: listing.cooperative.cooperativeName,
+              customerId: _ref.read(userProvider)!.uid,
+              customerName: _ref.read(userProvider)!.name,
+              listingId: listing.uid!,
+              listingName: listing.title,
+              listingPrice: booking.price,
+              amount: booking.totalPrice!,
+              ownerId: listing.publisherId,
+              ownerName: listing.publisherName,
+              saleAmount: booking.totalPrice!,
+              paymentOption: booking.paymentOption!,
+              tranasactionType: booking.paymentOption!,
+            ));
+        updatedBooking = booking.copyWith(id: bookingUid);
 
         PlanActivity activity = PlanActivity(
           // Create a random key for the activity
           key: DateTime.now().millisecondsSinceEpoch.toString(),
           listingId: listing.uid,
+          bookingId: bookingUid,
           category: listing.category,
           dateTime: selectedDate,
+          startTime: booking.startDate,
+          endTime: booking.endDate,
           title: listing.title,
           imageUrl: listing.images!.first.url,
           description: listing.description,
@@ -211,6 +265,9 @@ class ListingController extends StateNotifier<bool> {
         _ref
             .read(plansControllerProvider.notifier)
             .addActivityToPlan(planUid!, activity, context);
+        context.pop();
+        // context.pop();
+        // context.pop();
         context.push('/market/${booking.category}/customer_receipt',
             extra: {'booking': updatedBooking, 'listing': listing});
       },
@@ -246,10 +303,28 @@ class ListingController extends StateNotifier<bool> {
     });
   }
 
-  void updateTasks(BuildContext context, String listingId,
-      ListingBookings booking, String message) {
+  void addBookingTask(
+      BuildContext context, String listingId, BookingTask task) async {
     state = true;
-    _listingRepository.updateBooking(listingId, booking).then((result) {
+    final result = await _listingRepository.addBookingTask(listingId, task);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        context.pop;
+        showSnackBar(context, l.message);
+      },
+      (bookingUid) async {
+        state = false;
+      },
+    );
+  }
+
+  void updateBookingTask(BuildContext context, String listingId,
+      BookingTask bookingTask, String message) {
+    state = true;
+    _listingRepository.updateBookingTask(listingId, bookingTask).then((result) {
       state = false;
       result.fold(
         (l) => showSnackBar(context, l.message),
@@ -259,6 +334,17 @@ class ListingController extends StateNotifier<bool> {
         },
       );
     });
+  }
+
+  // Read bookingTasks by bookingId
+  Stream<List<BookingTask>> getBookingTasksByBookingId(
+      String listingId, String bookingId) {
+    return _listingRepository.readBookingTasksByBookingId(listingId, bookingId);
+  }
+
+  // Read bookingTasks by memberId
+  Stream<List<BookingTask>> getBookingTasksByMemberId(String memberId) {
+    return _listingRepository.readBookingTasksByMemberId(memberId);
   }
 
   // Read all listings
@@ -276,9 +362,19 @@ class ListingController extends StateNotifier<bool> {
     return _listingRepository.readListing(uid);
   }
 
+  // Read room by customer properties
+  Stream<List<ListingModel>> getListingsByProperties(Query query) {
+    return _listingRepository.readListingsByProperties(query);
+  }
+
   // Read a listing
   Stream<List<ListingBookings>> getAllBookings(String listingId) {
     return _listingRepository.readBookings(listingId);
+  }
+
+  // Read all bookings by cooperativeId
+  Stream<List<ListingBookings>> getAllBookingsByCoopId(String coopId) {
+    return _listingRepository.readBookingsByCoopId(coopId);
   }
 
   // Read all bookings by roomId
@@ -298,9 +394,32 @@ class ListingController extends StateNotifier<bool> {
   }
 
   // Read booking by date conflicts
-  Stream<List<ListingBookings>> getBookingsByProperties(
-      String category, DateTime startDate) {
-    return _listingRepository.readBookingsByProperties(category, startDate);
+  Stream<List<ListingBookings>> getBookingsByProperties(Query query) {
+    return _listingRepository.readBookingsByProperties(query);
+  }
+
+  // Add Room
+  void addRoom(
+      BuildContext context, ListingModel listing, AvailableRoom room) async {
+    state = true;
+    final result =
+        await _listingRepository.addRoom(listing.uid!, listing, room);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (roomUid) async {
+        state = false;
+        if (context.mounted) {
+          context.pop();
+          showSnackBar(context, 'Room added successfully');
+        }
+        // _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
   }
 
   // Read room by roomId
@@ -320,8 +439,8 @@ class ListingController extends StateNotifier<bool> {
   }
 
   // Read transport by customer properties
-  Stream<List<AvailableTransport>> getTransportByProperties({num? guests}) {
-    return _listingRepository.readTransportByProperties(guests: guests);
+  Stream<List<AvailableTransport>> getTransportByProperties(Query query) {
+    return _listingRepository.readTransportByProperties(query);
   }
 
   // Read entertainment by customer properties
@@ -330,3 +449,5 @@ class ListingController extends StateNotifier<bool> {
     return _listingRepository.readEntertainmentByProperties(guests: guests);
   }
 }
+
+

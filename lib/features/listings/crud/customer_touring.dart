@@ -104,6 +104,15 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                     ),
                   ),
 
+                  DisplayText(
+                    text: widget.listing.duration as String,
+                    lines: 1,
+                    style: TextStyle(
+                      fontSize:
+                          Theme.of(context).textTheme.labelLarge?.fontSize,
+                    ),
+                  ),
+
                   const Divider(),
                   DisplayText(
                     text: 'Description',

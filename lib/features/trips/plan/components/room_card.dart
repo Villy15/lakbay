@@ -34,29 +34,17 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     final guests = ref.read(currentPlanGuestsProvider);
     final startDate = ref.read(planStartDateProvider);
     final endDate = ref.read(planEndDateProvider);
-    List<String> unavailableRoomUids = getUnavailableRoomUids(widget.bookings);
-
-    return SizedBox(
-      height: 600,
-      width: double.infinity,
-      child: ref
-          .watch(getRoomByPropertiesProvider(RoomsParams(
-              unavailableRoomUids: unavailableRoomUids, guests: guests!)))
-          .when(
-              data: (List<AvailableRoom> rooms) {
-                if (rooms.isNotEmpty) {
-                } else {
-                  return Center(
-                    child: Column(
-                      children: [
-                        const Text("No Rooms Available"),
-                        Text(
-                            "(${DateFormat('MMMM dd').format(startDate!)} - ${DateFormat('MMMM dd').format(endDate!)})")
-                      ],
-                    ),
-                  );
-                }
-                return ListView.builder(
+    List<String> unavailableRoomUids =
+        getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
+    return ref
+        .watch(getRoomByPropertiesProvider(RoomsParams(
+            unavailableRoomUids: unavailableRoomUids, guests: guests!)))
+        .when(
+          data: (List<AvailableRoom> rooms) {
+            if (rooms.isNotEmpty) {
+              return SizedBox(
+                width: double.infinity,
+                child: ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: rooms.length,
@@ -67,7 +55,6 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           .toList();
                       final room = rooms[index];
                       return SizedBox(
-                        height: MediaQuery.sizeOf(context).height / 1.5,
                         width: MediaQuery.sizeOf(context).width / 2,
                         child: Card(
                             child: Column(
@@ -75,7 +62,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                             ImageSlider(
                                 images: imageUrls,
                                 height: MediaQuery.sizeOf(context).height / 4,
-                                width: MediaQuery.sizeOf(context).width / 2),
+                                width: MediaQuery.sizeOf(context).width / 2,
+                                radius: BorderRadius.circular(10)),
                             Padding(
                               padding: const EdgeInsets.only(
                                   left: 20.0,
@@ -182,6 +170,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                   onPressed: () {
                                                     showSelectDate(
                                                         context,
+                                                        startDate,
+                                                        endDate,
                                                         widget.bookings,
                                                         listing,
                                                         room);
@@ -203,13 +193,11 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                             );
                                           },
                                           error: ((error, stackTrace) =>
-                                              Scaffold(
-                                                  body: ErrorText(
-                                                      error: error.toString(),
-                                                      stackTrace: stackTrace
-                                                          .toString()))),
-                                          loading: () =>
-                                              const Scaffold(body: Loader())),
+                                              ErrorText(
+                                                  error: error.toString(),
+                                                  stackTrace:
+                                                      stackTrace.toString())),
+                                          loading: () => const Loader()),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -353,20 +341,33 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           ],
                         )),
                       );
-                    }));
-              },
-              error: ((error, stackTrace) => Scaffold(
-                  body: ErrorText(
-                      error: error.toString(),
-                      stackTrace: stackTrace.toString()))),
-              loading: () => const Scaffold(body: Loader())),
-    );
+                    })),
+              );
+            } else {
+              return Center(
+                child: Column(
+                  children: [
+                    const Text("No Rooms Available"),
+                    Text(
+                        "(${DateFormat('MMMM dd').format(startDate)} - ${DateFormat('MMMM dd').format(endDate)})")
+                  ],
+                ),
+              );
+            }
+          },
+          error: ((error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString())),
+          loading: () => const Loader(),
+        );
   }
 
-  void showSelectDate(BuildContext context, List<ListingBookings> bookings,
-      ListingModel listing, AvailableRoom room) {
-    DateTime startDate = DateTime.now();
-    DateTime endDate = DateTime.now();
+  void showSelectDate(
+      BuildContext context,
+      DateTime startDate,
+      DateTime endDate,
+      List<ListingBookings> bookings,
+      ListingModel listing,
+      AvailableRoom room) {
     showDialog(
         context: context,
         builder: (context) {
@@ -397,7 +398,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                         minDate: DateTime.now(),
                         selectableDayPredicate: (DateTime day) {
                           //       // Check if the day is in the list of booked dates
-                          final bookedDates = getAllDatesFromBookings(bookings);
+                          final bookedDates =
+                              getAllDatesFromBookings(bookings, room);
                           for (DateTime bookedDate in bookedDates) {
                             if (day.year == bookedDate.year &&
                                 day.month == bookedDate.month &&
@@ -424,52 +426,76 @@ class _RoomCardState extends ConsumerState<RoomCard> {
         });
   }
 
-  bool isDateInRange(DateTime planStartDate, DateTime planEndDate,
-      List<DateTime> bookedDates) {
-    for (DateTime date in bookedDates) {
-      if (date.isAfter(planStartDate) && date.isBefore(planEndDate)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  List<DateTime> getAllDatesFromBookings(List<ListingBookings> bookings) {
+  List<DateTime> getAllDatesFromBookings(
+      List<ListingBookings> bookings, AvailableRoom room) {
     List<DateTime> allDates = [];
 
     for (ListingBookings booking in bookings) {
-      // Add start date
-      DateTime currentDate = booking.startDate!;
+      if (booking.roomUid! == room.uid) {
+        // Add start date
+        DateTime currentDate = booking.startDate!;
 
-      // Keep adding dates until you reach the end date
-      while (currentDate.isBefore(booking.endDate!) ||
-          currentDate.isAtSameMomentAs(booking.endDate!)) {
-        allDates.add(currentDate);
-        // Move to next day
-        currentDate = currentDate.add(const Duration(days: 1));
+        // Keep adding dates until you reach the end date
+        while (currentDate.isBefore(booking.endDate!) ||
+            currentDate.isAtSameMomentAs(booking.endDate!)) {
+          allDates.add(currentDate);
+          // Move to next day
+          currentDate = currentDate.add(const Duration(days: 1));
+        }
       }
     }
 
     return allDates;
   }
 
-  List<String> getUnavailableRoomUids(List<ListingBookings> bookings) {
+  List<String> getUnavailableRoomUids(
+      List<ListingBookings> bookings, DateTime startDate, DateTime endDate) {
     List<String> unavailableRoomUids = [];
+    Map<String, List<DateTime>> rooms = {};
 
+// Put all the dates booked under a certain room uid in map with its corresponding value being a list of all the dates
     for (ListingBookings booking in bookings) {
-      // Add start date
-      DateTime currentDate = ref.read(planStartDateProvider) as DateTime;
-
-      // Keep adding dates until you reach the end date
-      if (currentDate.isBefore(booking.endDate!) ||
-          currentDate.isAtSameMomentAs(booking.endDate!)) {
-        unavailableRoomUids.add(booking.roomUid!);
-        // Move to next day
-        currentDate = currentDate.add(const Duration(days: 1));
+      DateTime currentDate = booking.startDate!;
+      if (_isDateInRange(currentDate, startDate, endDate) == true) {
+        while ((currentDate.isBefore(endDate))) {
+          if (rooms.containsKey(booking.roomUid)) {
+            rooms[booking.roomUid!]!.add(currentDate);
+          } else {
+            rooms[booking.roomUid!] = [currentDate];
+          }
+          // Move to the next day
+          currentDate = currentDate.add(const Duration(days: 1));
+        }
+        // Sort the list of dates for the room UID
+        rooms[booking.roomUid!]!.sort();
       }
     }
-    debugPrint("getUnavailableRoomUids $unavailableRoomUids");
+
+// for each room in the map, you check if there is a date overlap, trying to find if there is any availability that fits your desired plan dates
+
+    rooms.forEach((roomUid, dateList) {
+      if (isDateOverlap(startDate, endDate, dateList) == true) {
+        unavailableRoomUids.add(roomUid);
+      }
+    });
     return unavailableRoomUids;
+  }
+
+  bool isDateOverlap(
+      DateTime startDate, DateTime endDate, List<DateTime> dateList) {
+    // Loop through each date in the list
+    for (DateTime date in dateList) {
+      // Check if the current date falls within the range
+      if (_isDateInRange(date, startDate, endDate) == false) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _isDateInRange(DateTime date, DateTime planStart, DateTime planEnd) {
+    return date.isAfter(planStart.subtract(const Duration(days: 1))) &&
+        date.isBefore(planEnd.add(const Duration(days: 1)));
   }
 
   void showConfirmBooking(AvailableRoom room, ListingModel listing,
@@ -620,6 +646,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           emergencyContactNo: emergencyContactNoController.text,
                           needsContributions: false,
                           tasks: listing.fixedTasks,
+                          cooperativeId: listing.cooperative.cooperativeId,
                         );
 
                         showDialog(

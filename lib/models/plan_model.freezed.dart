@@ -405,6 +405,7 @@ mixin _$PlanActivity {
   @TimestampSerializer()
   DateTime? get dateTime => throw _privateConstructorUsedError;
   String? get listingId => throw _privateConstructorUsedError;
+  String? get bookingId => throw _privateConstructorUsedError;
   String? get category => throw _privateConstructorUsedError;
   String? get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
@@ -430,6 +431,7 @@ abstract class $PlanActivityCopyWith<$Res> {
       {String? key,
       @TimestampSerializer() DateTime? dateTime,
       String? listingId,
+      String? bookingId,
       String? category,
       String? title,
       String? description,
@@ -454,6 +456,7 @@ class _$PlanActivityCopyWithImpl<$Res, $Val extends PlanActivity>
     Object? key = freezed,
     Object? dateTime = freezed,
     Object? listingId = freezed,
+    Object? bookingId = freezed,
     Object? category = freezed,
     Object? title = freezed,
     Object? description = freezed,
@@ -473,6 +476,10 @@ class _$PlanActivityCopyWithImpl<$Res, $Val extends PlanActivity>
       listingId: freezed == listingId
           ? _value.listingId
           : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      bookingId: freezed == bookingId
+          ? _value.bookingId
+          : bookingId // ignore: cast_nullable_to_non_nullable
               as String?,
       category: freezed == category
           ? _value.category
@@ -514,6 +521,7 @@ abstract class _$$PlanActivityImplCopyWith<$Res>
       {String? key,
       @TimestampSerializer() DateTime? dateTime,
       String? listingId,
+      String? bookingId,
       String? category,
       String? title,
       String? description,
@@ -536,6 +544,7 @@ class __$$PlanActivityImplCopyWithImpl<$Res>
     Object? key = freezed,
     Object? dateTime = freezed,
     Object? listingId = freezed,
+    Object? bookingId = freezed,
     Object? category = freezed,
     Object? title = freezed,
     Object? description = freezed,
@@ -555,6 +564,10 @@ class __$$PlanActivityImplCopyWithImpl<$Res>
       listingId: freezed == listingId
           ? _value.listingId
           : listingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      bookingId: freezed == bookingId
+          ? _value.bookingId
+          : bookingId // ignore: cast_nullable_to_non_nullable
               as String?,
       category: freezed == category
           ? _value.category
@@ -591,6 +604,7 @@ class _$PlanActivityImpl implements _PlanActivity {
       {this.key,
       @TimestampSerializer() this.dateTime,
       this.listingId,
+      this.bookingId,
       this.category,
       this.title,
       this.description,
@@ -609,6 +623,8 @@ class _$PlanActivityImpl implements _PlanActivity {
   @override
   final String? listingId;
   @override
+  final String? bookingId;
+  @override
   final String? category;
   @override
   final String? title;
@@ -625,7 +641,7 @@ class _$PlanActivityImpl implements _PlanActivity {
 
   @override
   String toString() {
-    return 'PlanActivity(key: $key, dateTime: $dateTime, listingId: $listingId, category: $category, title: $title, description: $description, imageUrl: $imageUrl, startTime: $startTime, endTime: $endTime)';
+    return 'PlanActivity(key: $key, dateTime: $dateTime, listingId: $listingId, bookingId: $bookingId, category: $category, title: $title, description: $description, imageUrl: $imageUrl, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -638,6 +654,8 @@ class _$PlanActivityImpl implements _PlanActivity {
                 other.dateTime == dateTime) &&
             (identical(other.listingId, listingId) ||
                 other.listingId == listingId) &&
+            (identical(other.bookingId, bookingId) ||
+                other.bookingId == bookingId) &&
             (identical(other.category, category) ||
                 other.category == category) &&
             (identical(other.title, title) || other.title == title) &&
@@ -653,7 +671,7 @@ class _$PlanActivityImpl implements _PlanActivity {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, key, dateTime, listingId,
-      category, title, description, imageUrl, startTime, endTime);
+      bookingId, category, title, description, imageUrl, startTime, endTime);
 
   @JsonKey(ignore: true)
   @override
@@ -674,6 +692,7 @@ abstract class _PlanActivity implements PlanActivity {
       {final String? key,
       @TimestampSerializer() final DateTime? dateTime,
       final String? listingId,
+      final String? bookingId,
       final String? category,
       final String? title,
       final String? description,
@@ -691,6 +710,8 @@ abstract class _PlanActivity implements PlanActivity {
   DateTime? get dateTime;
   @override
   String? get listingId;
+  @override
+  String? get bookingId;
   @override
   String? get category;
   @override

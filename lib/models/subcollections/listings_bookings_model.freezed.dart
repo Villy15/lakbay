@@ -26,12 +26,13 @@ mixin _$ListingBookings {
   String get customerPhoneNo => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
+  String? get cooperativeId => throw _privateConstructorUsedError;
   String? get emergencyContactName => throw _privateConstructorUsedError;
   String? get emergencyContactNo => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get endDate => throw _privateConstructorUsedError;
   List<Expense>? get expenses => throw _privateConstructorUsedError;
-  List<Task>? get tasks => throw _privateConstructorUsedError;
+  List<BookingTask>? get tasks => throw _privateConstructorUsedError;
   String get governmentId => throw _privateConstructorUsedError;
   num get guests => throw _privateConstructorUsedError;
   String get listingId => throw _privateConstructorUsedError;
@@ -40,6 +41,7 @@ mixin _$ListingBookings {
   String? get id => throw _privateConstructorUsedError;
   bool get needsContributions => throw _privateConstructorUsedError;
   String? get paymentOption => throw _privateConstructorUsedError;
+  String? get paymentStatus => throw _privateConstructorUsedError;
   num get price => throw _privateConstructorUsedError;
   String? get roomId => throw _privateConstructorUsedError;
   String? get roomUid => throw _privateConstructorUsedError;
@@ -75,11 +77,12 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String customerPhoneNo,
       String category,
       String email,
+      String? cooperativeId,
       String? emergencyContactName,
       String? emergencyContactNo,
       @TimestampSerializer() DateTime? endDate,
       List<Expense>? expenses,
-      List<Task>? tasks,
+      List<BookingTask>? tasks,
       String governmentId,
       num guests,
       String listingId,
@@ -88,6 +91,7 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String? id,
       bool needsContributions,
       String? paymentOption,
+      String? paymentStatus,
       num price,
       String? roomId,
       String? roomUid,
@@ -120,6 +124,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? customerPhoneNo = null,
     Object? category = null,
     Object? email = null,
+    Object? cooperativeId = freezed,
     Object? emergencyContactName = freezed,
     Object? emergencyContactNo = freezed,
     Object? endDate = freezed,
@@ -133,6 +138,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? id = freezed,
     Object? needsContributions = null,
     Object? paymentOption = freezed,
+    Object? paymentStatus = freezed,
     Object? price = null,
     Object? roomId = freezed,
     Object? roomUid = freezed,
@@ -170,6 +176,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
+      cooperativeId: freezed == cooperativeId
+          ? _value.cooperativeId
+          : cooperativeId // ignore: cast_nullable_to_non_nullable
+              as String?,
       emergencyContactName: freezed == emergencyContactName
           ? _value.emergencyContactName
           : emergencyContactName // ignore: cast_nullable_to_non_nullable
@@ -189,7 +199,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
       tasks: freezed == tasks
           ? _value.tasks
           : tasks // ignore: cast_nullable_to_non_nullable
-              as List<Task>?,
+              as List<BookingTask>?,
       governmentId: null == governmentId
           ? _value.governmentId
           : governmentId // ignore: cast_nullable_to_non_nullable
@@ -221,6 +231,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
       paymentOption: freezed == paymentOption
           ? _value.paymentOption
           : paymentOption // ignore: cast_nullable_to_non_nullable
+              as String?,
+      paymentStatus: freezed == paymentStatus
+          ? _value.paymentStatus
+          : paymentStatus // ignore: cast_nullable_to_non_nullable
               as String?,
       price: null == price
           ? _value.price
@@ -285,11 +299,12 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String customerPhoneNo,
       String category,
       String email,
+      String? cooperativeId,
       String? emergencyContactName,
       String? emergencyContactNo,
       @TimestampSerializer() DateTime? endDate,
       List<Expense>? expenses,
-      List<Task>? tasks,
+      List<BookingTask>? tasks,
       String governmentId,
       num guests,
       String listingId,
@@ -298,6 +313,7 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String? id,
       bool needsContributions,
       String? paymentOption,
+      String? paymentStatus,
       num price,
       String? roomId,
       String? roomUid,
@@ -328,6 +344,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? customerPhoneNo = null,
     Object? category = null,
     Object? email = null,
+    Object? cooperativeId = freezed,
     Object? emergencyContactName = freezed,
     Object? emergencyContactNo = freezed,
     Object? endDate = freezed,
@@ -341,6 +358,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? needsContributions = null,
     Object? paymentOption = freezed,
+    Object? paymentStatus = freezed,
     Object? price = null,
     Object? roomId = freezed,
     Object? roomUid = freezed,
@@ -378,6 +396,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
+      cooperativeId: freezed == cooperativeId
+          ? _value.cooperativeId
+          : cooperativeId // ignore: cast_nullable_to_non_nullable
+              as String?,
       emergencyContactName: freezed == emergencyContactName
           ? _value.emergencyContactName
           : emergencyContactName // ignore: cast_nullable_to_non_nullable
@@ -397,7 +419,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
       tasks: freezed == tasks
           ? _value._tasks
           : tasks // ignore: cast_nullable_to_non_nullable
-              as List<Task>?,
+              as List<BookingTask>?,
       governmentId: null == governmentId
           ? _value.governmentId
           : governmentId // ignore: cast_nullable_to_non_nullable
@@ -429,6 +451,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
       paymentOption: freezed == paymentOption
           ? _value.paymentOption
           : paymentOption // ignore: cast_nullable_to_non_nullable
+              as String?,
+      paymentStatus: freezed == paymentStatus
+          ? _value.paymentStatus
+          : paymentStatus // ignore: cast_nullable_to_non_nullable
               as String?,
       price: null == price
           ? _value.price
@@ -480,7 +506,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ListingBookingsImpl implements _ListingBookings {
+class _$ListingBookingsImpl extends _ListingBookings {
   _$ListingBookingsImpl(
       {this.amountPaid,
       required this.customerId,
@@ -488,11 +514,12 @@ class _$ListingBookingsImpl implements _ListingBookings {
       required this.customerPhoneNo,
       required this.category,
       required this.email,
+      this.cooperativeId,
       this.emergencyContactName,
       this.emergencyContactNo,
       @TimestampSerializer() this.endDate,
       final List<Expense>? expenses,
-      final List<Task>? tasks,
+      final List<BookingTask>? tasks,
       required this.governmentId,
       required this.guests,
       required this.listingId,
@@ -501,6 +528,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
       this.id,
       required this.needsContributions,
       this.paymentOption,
+      this.paymentStatus,
       required this.price,
       this.roomId,
       this.roomUid,
@@ -513,7 +541,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
       @TimeOfDayConverter() this.startTime,
       @TimeOfDayConverter() this.endTime})
       : _expenses = expenses,
-        _tasks = tasks;
+        _tasks = tasks,
+        super._();
 
   factory _$ListingBookingsImpl.fromJson(Map<String, dynamic> json) =>
       _$$ListingBookingsImplFromJson(json);
@@ -531,6 +560,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
   @override
   final String email;
   @override
+  final String? cooperativeId;
+  @override
   final String? emergencyContactName;
   @override
   final String? emergencyContactNo;
@@ -547,9 +578,9 @@ class _$ListingBookingsImpl implements _ListingBookings {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<Task>? _tasks;
+  final List<BookingTask>? _tasks;
   @override
-  List<Task>? get tasks {
+  List<BookingTask>? get tasks {
     final value = _tasks;
     if (value == null) return null;
     if (_tasks is EqualUnmodifiableListView) return _tasks;
@@ -573,6 +604,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
   final bool needsContributions;
   @override
   final String? paymentOption;
+  @override
+  final String? paymentStatus;
   @override
   final num price;
   @override
@@ -602,7 +635,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
 
   @override
   String toString() {
-    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, price: $price, roomId: $roomId, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, cooperativeId: $cooperativeId, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, paymentStatus: $paymentStatus, price: $price, roomId: $roomId, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -621,6 +654,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
             (identical(other.category, category) ||
                 other.category == category) &&
             (identical(other.email, email) || other.email == email) &&
+            (identical(other.cooperativeId, cooperativeId) ||
+                other.cooperativeId == cooperativeId) &&
             (identical(other.emergencyContactName, emergencyContactName) ||
                 other.emergencyContactName == emergencyContactName) &&
             (identical(other.emergencyContactNo, emergencyContactNo) ||
@@ -641,6 +676,8 @@ class _$ListingBookingsImpl implements _ListingBookings {
                 other.needsContributions == needsContributions) &&
             (identical(other.paymentOption, paymentOption) ||
                 other.paymentOption == paymentOption) &&
+            (identical(other.paymentStatus, paymentStatus) ||
+                other.paymentStatus == paymentStatus) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.roomId, roomId) || other.roomId == roomId) &&
             (identical(other.roomUid, roomUid) || other.roomUid == roomUid) &&
@@ -671,6 +708,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
         customerPhoneNo,
         category,
         email,
+        cooperativeId,
         emergencyContactName,
         emergencyContactNo,
         endDate,
@@ -684,6 +722,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
         id,
         needsContributions,
         paymentOption,
+        paymentStatus,
         price,
         roomId,
         roomUid,
@@ -712,7 +751,7 @@ class _$ListingBookingsImpl implements _ListingBookings {
   }
 }
 
-abstract class _ListingBookings implements ListingBookings {
+abstract class _ListingBookings extends ListingBookings {
   factory _ListingBookings(
       {final num? amountPaid,
       required final String customerId,
@@ -720,11 +759,12 @@ abstract class _ListingBookings implements ListingBookings {
       required final String customerPhoneNo,
       required final String category,
       required final String email,
+      final String? cooperativeId,
       final String? emergencyContactName,
       final String? emergencyContactNo,
       @TimestampSerializer() final DateTime? endDate,
       final List<Expense>? expenses,
-      final List<Task>? tasks,
+      final List<BookingTask>? tasks,
       required final String governmentId,
       required final num guests,
       required final String listingId,
@@ -733,6 +773,7 @@ abstract class _ListingBookings implements ListingBookings {
       final String? id,
       required final bool needsContributions,
       final String? paymentOption,
+      final String? paymentStatus,
       required final num price,
       final String? roomId,
       final String? roomUid,
@@ -744,6 +785,7 @@ abstract class _ListingBookings implements ListingBookings {
       final String? typeOfTrip,
       @TimeOfDayConverter() final TimeOfDay? startTime,
       @TimeOfDayConverter() final TimeOfDay? endTime}) = _$ListingBookingsImpl;
+  _ListingBookings._() : super._();
 
   factory _ListingBookings.fromJson(Map<String, dynamic> json) =
       _$ListingBookingsImpl.fromJson;
@@ -761,6 +803,8 @@ abstract class _ListingBookings implements ListingBookings {
   @override
   String get email;
   @override
+  String? get cooperativeId;
+  @override
   String? get emergencyContactName;
   @override
   String? get emergencyContactNo;
@@ -770,7 +814,7 @@ abstract class _ListingBookings implements ListingBookings {
   @override
   List<Expense>? get expenses;
   @override
-  List<Task>? get tasks;
+  List<BookingTask>? get tasks;
   @override
   String get governmentId;
   @override
@@ -787,6 +831,8 @@ abstract class _ListingBookings implements ListingBookings {
   bool get needsContributions;
   @override
   String? get paymentOption;
+  @override
+  String? get paymentStatus;
   @override
   num get price;
   @override
@@ -968,13 +1014,18 @@ abstract class _Expense implements Expense {
       throw _privateConstructorUsedError;
 }
 
-Task _$TaskFromJson(Map<String, dynamic> json) {
-  return _Task.fromJson(json);
+BookingTask _$BookingTaskFromJson(Map<String, dynamic> json) {
+  return _BookingTask.fromJson(json);
 }
 
 /// @nodoc
-mixin _$Task {
-  List<String> get assigned => throw _privateConstructorUsedError;
+mixin _$BookingTask {
+  String? get uid => throw _privateConstructorUsedError;
+  String? get bookingId => throw _privateConstructorUsedError;
+  String get listingName => throw _privateConstructorUsedError;
+  String? get roomId => throw _privateConstructorUsedError;
+  List<String> get assignedIds => throw _privateConstructorUsedError;
+  List<String> get assignedNames => throw _privateConstructorUsedError;
   String get committee => throw _privateConstructorUsedError;
   bool get complete => throw _privateConstructorUsedError;
   bool get openContribution => throw _privateConstructorUsedError;
@@ -983,16 +1034,23 @@ mixin _$Task {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $TaskCopyWith<Task> get copyWith => throw _privateConstructorUsedError;
+  $BookingTaskCopyWith<BookingTask> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $TaskCopyWith<$Res> {
-  factory $TaskCopyWith(Task value, $Res Function(Task) then) =
-      _$TaskCopyWithImpl<$Res, Task>;
+abstract class $BookingTaskCopyWith<$Res> {
+  factory $BookingTaskCopyWith(
+          BookingTask value, $Res Function(BookingTask) then) =
+      _$BookingTaskCopyWithImpl<$Res, BookingTask>;
   @useResult
   $Res call(
-      {List<String> assigned,
+      {String? uid,
+      String? bookingId,
+      String listingName,
+      String? roomId,
+      List<String> assignedIds,
+      List<String> assignedNames,
       String committee,
       bool complete,
       bool openContribution,
@@ -1001,9 +1059,9 @@ abstract class $TaskCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$TaskCopyWithImpl<$Res, $Val extends Task>
-    implements $TaskCopyWith<$Res> {
-  _$TaskCopyWithImpl(this._value, this._then);
+class _$BookingTaskCopyWithImpl<$Res, $Val extends BookingTask>
+    implements $BookingTaskCopyWith<$Res> {
+  _$BookingTaskCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -1013,7 +1071,12 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? assigned = null,
+    Object? uid = freezed,
+    Object? bookingId = freezed,
+    Object? listingName = null,
+    Object? roomId = freezed,
+    Object? assignedIds = null,
+    Object? assignedNames = null,
     Object? committee = null,
     Object? complete = null,
     Object? openContribution = null,
@@ -1021,9 +1084,29 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
     Object? name = null,
   }) {
     return _then(_value.copyWith(
-      assigned: null == assigned
-          ? _value.assigned
-          : assigned // ignore: cast_nullable_to_non_nullable
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      bookingId: freezed == bookingId
+          ? _value.bookingId
+          : bookingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingName: null == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String,
+      roomId: freezed == roomId
+          ? _value.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      assignedIds: null == assignedIds
+          ? _value.assignedIds
+          : assignedIds // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      assignedNames: null == assignedNames
+          ? _value.assignedNames
+          : assignedNames // ignore: cast_nullable_to_non_nullable
               as List<String>,
       committee: null == committee
           ? _value.committee
@@ -1050,14 +1133,20 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
 }
 
 /// @nodoc
-abstract class _$$TaskImplCopyWith<$Res> implements $TaskCopyWith<$Res> {
-  factory _$$TaskImplCopyWith(
-          _$TaskImpl value, $Res Function(_$TaskImpl) then) =
-      __$$TaskImplCopyWithImpl<$Res>;
+abstract class _$$BookingTaskImplCopyWith<$Res>
+    implements $BookingTaskCopyWith<$Res> {
+  factory _$$BookingTaskImplCopyWith(
+          _$BookingTaskImpl value, $Res Function(_$BookingTaskImpl) then) =
+      __$$BookingTaskImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {List<String> assigned,
+      {String? uid,
+      String? bookingId,
+      String listingName,
+      String? roomId,
+      List<String> assignedIds,
+      List<String> assignedNames,
       String committee,
       bool complete,
       bool openContribution,
@@ -1066,26 +1155,52 @@ abstract class _$$TaskImplCopyWith<$Res> implements $TaskCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$TaskImplCopyWithImpl<$Res>
-    extends _$TaskCopyWithImpl<$Res, _$TaskImpl>
-    implements _$$TaskImplCopyWith<$Res> {
-  __$$TaskImplCopyWithImpl(_$TaskImpl _value, $Res Function(_$TaskImpl) _then)
+class __$$BookingTaskImplCopyWithImpl<$Res>
+    extends _$BookingTaskCopyWithImpl<$Res, _$BookingTaskImpl>
+    implements _$$BookingTaskImplCopyWith<$Res> {
+  __$$BookingTaskImplCopyWithImpl(
+      _$BookingTaskImpl _value, $Res Function(_$BookingTaskImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? assigned = null,
+    Object? uid = freezed,
+    Object? bookingId = freezed,
+    Object? listingName = null,
+    Object? roomId = freezed,
+    Object? assignedIds = null,
+    Object? assignedNames = null,
     Object? committee = null,
     Object? complete = null,
     Object? openContribution = null,
     Object? imageProof = freezed,
     Object? name = null,
   }) {
-    return _then(_$TaskImpl(
-      assigned: null == assigned
-          ? _value._assigned
-          : assigned // ignore: cast_nullable_to_non_nullable
+    return _then(_$BookingTaskImpl(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      bookingId: freezed == bookingId
+          ? _value.bookingId
+          : bookingId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      listingName: null == listingName
+          ? _value.listingName
+          : listingName // ignore: cast_nullable_to_non_nullable
+              as String,
+      roomId: freezed == roomId
+          ? _value.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      assignedIds: null == assignedIds
+          ? _value._assignedIds
+          : assignedIds // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      assignedNames: null == assignedNames
+          ? _value._assignedNames
+          : assignedNames // ignore: cast_nullable_to_non_nullable
               as List<String>,
       committee: null == committee
           ? _value.committee
@@ -1113,26 +1228,48 @@ class __$$TaskImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$TaskImpl implements _Task {
-  _$TaskImpl(
-      {required final List<String> assigned,
+class _$BookingTaskImpl implements _BookingTask {
+  _$BookingTaskImpl(
+      {this.uid,
+      this.bookingId,
+      required this.listingName,
+      this.roomId,
+      required final List<String> assignedIds,
+      required final List<String> assignedNames,
       required this.committee,
       required this.complete,
       required this.openContribution,
       final List<TaskImages>? imageProof,
       required this.name})
-      : _assigned = assigned,
+      : _assignedIds = assignedIds,
+        _assignedNames = assignedNames,
         _imageProof = imageProof;
 
-  factory _$TaskImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TaskImplFromJson(json);
+  factory _$BookingTaskImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BookingTaskImplFromJson(json);
 
-  final List<String> _assigned;
   @override
-  List<String> get assigned {
-    if (_assigned is EqualUnmodifiableListView) return _assigned;
+  final String? uid;
+  @override
+  final String? bookingId;
+  @override
+  final String listingName;
+  @override
+  final String? roomId;
+  final List<String> _assignedIds;
+  @override
+  List<String> get assignedIds {
+    if (_assignedIds is EqualUnmodifiableListView) return _assignedIds;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_assigned);
+    return EqualUnmodifiableListView(_assignedIds);
+  }
+
+  final List<String> _assignedNames;
+  @override
+  List<String> get assignedNames {
+    if (_assignedNames is EqualUnmodifiableListView) return _assignedNames;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_assignedNames);
   }
 
   @override
@@ -1156,15 +1293,24 @@ class _$TaskImpl implements _Task {
 
   @override
   String toString() {
-    return 'Task(assigned: $assigned, committee: $committee, complete: $complete, openContribution: $openContribution, imageProof: $imageProof, name: $name)';
+    return 'BookingTask(uid: $uid, bookingId: $bookingId, listingName: $listingName, roomId: $roomId, assignedIds: $assignedIds, assignedNames: $assignedNames, committee: $committee, complete: $complete, openContribution: $openContribution, imageProof: $imageProof, name: $name)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$TaskImpl &&
-            const DeepCollectionEquality().equals(other._assigned, _assigned) &&
+            other is _$BookingTaskImpl &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.bookingId, bookingId) ||
+                other.bookingId == bookingId) &&
+            (identical(other.listingName, listingName) ||
+                other.listingName == listingName) &&
+            (identical(other.roomId, roomId) || other.roomId == roomId) &&
+            const DeepCollectionEquality()
+                .equals(other._assignedIds, _assignedIds) &&
+            const DeepCollectionEquality()
+                .equals(other._assignedNames, _assignedNames) &&
             (identical(other.committee, committee) ||
                 other.committee == committee) &&
             (identical(other.complete, complete) ||
@@ -1180,7 +1326,12 @@ class _$TaskImpl implements _Task {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(_assigned),
+      uid,
+      bookingId,
+      listingName,
+      roomId,
+      const DeepCollectionEquality().hash(_assignedIds),
+      const DeepCollectionEquality().hash(_assignedNames),
       committee,
       complete,
       openContribution,
@@ -1190,30 +1341,46 @@ class _$TaskImpl implements _Task {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$TaskImplCopyWith<_$TaskImpl> get copyWith =>
-      __$$TaskImplCopyWithImpl<_$TaskImpl>(this, _$identity);
+  _$$BookingTaskImplCopyWith<_$BookingTaskImpl> get copyWith =>
+      __$$BookingTaskImplCopyWithImpl<_$BookingTaskImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$TaskImplToJson(
+    return _$$BookingTaskImplToJson(
       this,
     );
   }
 }
 
-abstract class _Task implements Task {
-  factory _Task(
-      {required final List<String> assigned,
+abstract class _BookingTask implements BookingTask {
+  factory _BookingTask(
+      {final String? uid,
+      final String? bookingId,
+      required final String listingName,
+      final String? roomId,
+      required final List<String> assignedIds,
+      required final List<String> assignedNames,
       required final String committee,
       required final bool complete,
       required final bool openContribution,
       final List<TaskImages>? imageProof,
-      required final String name}) = _$TaskImpl;
+      required final String name}) = _$BookingTaskImpl;
 
-  factory _Task.fromJson(Map<String, dynamic> json) = _$TaskImpl.fromJson;
+  factory _BookingTask.fromJson(Map<String, dynamic> json) =
+      _$BookingTaskImpl.fromJson;
 
   @override
-  List<String> get assigned;
+  String? get uid;
+  @override
+  String? get bookingId;
+  @override
+  String get listingName;
+  @override
+  String? get roomId;
+  @override
+  List<String> get assignedIds;
+  @override
+  List<String> get assignedNames;
   @override
   String get committee;
   @override
@@ -1226,7 +1393,7 @@ abstract class _Task implements Task {
   String get name;
   @override
   @JsonKey(ignore: true)
-  _$$TaskImplCopyWith<_$TaskImpl> get copyWith =>
+  _$$BookingTaskImplCopyWith<_$BookingTaskImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

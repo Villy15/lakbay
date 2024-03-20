@@ -7,7 +7,6 @@ import 'package:lakbay/core/constants/firebase_constants.dart';
 import 'package:lakbay/core/failure.dart';
 import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/typdef.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -39,7 +38,6 @@ class ListingRepository {
 
   // Update
   FutureVoid updateListing(ListingModel listing) async {
-    debugPrintJson(listing);
     try {
       return right(await _listings.doc(listing.uid!).update(listing.toJson()));
     } on FirebaseException catch (e) {
@@ -74,6 +72,15 @@ class ListingRepository {
   Stream<ListingModel> readListing(String uid) {
     return _listings.doc(uid).snapshots().map((snapshot) {
       return ListingModel.fromJson(snapshot.data() as Map<String, dynamic>);
+    });
+  }
+
+  // Read room by properties
+  Stream<List<ListingModel>> readListingsByProperties(Query query) {
+    return query.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return ListingModel.fromJson(doc.data()! as Map<String, dynamic>);
+      }).toList();
     });
   }
 
@@ -147,6 +154,21 @@ class ListingRepository {
     });
   }
 
+  // Read all bookings by cooperativeId
+  Stream<List<ListingBookings>> readBookingsByCoopId(String coopId) {
+    return FirebaseFirestore.instance
+        .collectionGroup(
+            'bookings') // Perform collection group query for 'bookings'
+        .where('cooperativeId', isEqualTo: coopId) // Filter by cooperativeId
+        .snapshots()
+        .map((querySnapshot) {
+      // Convert each document snapshot to a ListingBookings object
+      return querySnapshot.docs.map((doc) {
+        return ListingBookings.fromJson(doc.data());
+      }).toList();
+    });
+  }
+
   // Read a bookings with certain RoomId in subcollection
   Stream<List<ListingBookings>> readBookingsByRoomId(
       String listingId, String roomId) {
@@ -176,20 +198,76 @@ class ListingRepository {
   }
 
   // Read bookings by category and only gets bookings where the endDate is less than my startDate
-  Stream<List<ListingBookings>> readBookingsByProperties(
-      String category, DateTime startDate) {
-    final convertedStartDate = Timestamp.fromDate(startDate);
-
-    return FirebaseFirestore.instance
-        .collectionGroup(
-            'bookings') // Perform collection group query for 'bookings'
-        .where('category', isEqualTo: category)
-        .where('startDate', isGreaterThan: convertedStartDate)
-        .snapshots()
-        .map((querySnapshot) {
+  Stream<List<ListingBookings>> readBookingsByProperties(Query query) {
+    return query.snapshots().map((querySnapshot) {
       // Convert each document snapshot to a ListingBookings object
       return querySnapshot.docs.map((doc) {
-        return ListingBookings.fromJson(doc.data());
+        return ListingBookings.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  CollectionReference bookingTasksCollection(String listingId) {
+    return _listings
+        .doc(listingId)
+        .collection(FirebaseConstants.bookingTasksSubCollection);
+  }
+
+  FutureEither<String> addBookingTask(
+      String listingId, BookingTask bookingTask) async {
+    try {
+      var doc = bookingTasksCollection(listingId).doc();
+
+      // Update the uid of the booking task
+      bookingTask = bookingTask.copyWith(uid: doc.id);
+
+      await doc.set(bookingTask.toJson());
+
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Update booking task
+  FutureVoid updateBookingTask(
+      String listingId, BookingTask bookingTask) async {
+    try {
+      return right(await bookingTasksCollection(listingId)
+          .doc(bookingTask.uid)
+          .update(bookingTask.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+// read bookingtask by bookingId
+  Stream<List<BookingTask>> readBookingTasksByBookingId(
+      String listingId, String bookingUid) {
+    Query query = FirebaseFirestore.instance.collectionGroup('bookingTasks');
+    return query
+        .where('bookingUid', isEqualTo: bookingUid)
+        .snapshots()
+        .map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return BookingTask.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+// read bookingtask by user id
+  Stream<List<BookingTask>> readBookingTasksByMemberId(String userId) {
+    Query query = FirebaseFirestore.instance.collectionGroup('bookingTasks');
+    return query
+        .where('assignedIds', arrayContains: userId)
+        .snapshots()
+        .map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return BookingTask.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -209,7 +287,7 @@ class ListingRepository {
 
       // Update the uid of the room
       room = room.copyWith(
-          uid: doc.id, listingId: listing.uid, listingName: listing.title);
+          uid: doc.id, listingId: listingId, listingName: listing.title);
 
       // Add the cooperative to the database
       await doc.set(room.toJson());
@@ -225,7 +303,6 @@ class ListingRepository {
 
   // Update Room
   FutureVoid updateRoom(AvailableRoom room) async {
-    debugPrintJson(room);
     try {
       return right(await roomsCollection(room.listingId!)
           .doc(room.uid!)
@@ -256,8 +333,7 @@ class ListingRepository {
   // Read room by properties
   Stream<List<AvailableRoom>> readRoomByProperties(
       List<String> unavailableRoomIds, num guests) {
-    Query query =
-        FirebaseFirestore.instance.collectionGroup('accommodationRooms');
+    Query query = FirebaseFirestore.instance.collectionGroup('availableRooms');
 
     if (unavailableRoomIds.isNotEmpty) {
       query = query.where('uid', whereNotIn: unavailableRoomIds);
@@ -284,7 +360,7 @@ class ListingRepository {
 
       // Update the uid of the transport
       transport = transport.copyWith(
-          uid: doc.id, listingId: listing.uid, listingName: listing.title);
+          uid: doc.id, listingId: listingId, listingName: listing.title);
 
       // Add the cooperative to the database
       await doc.set(transport.toJson());
@@ -300,7 +376,6 @@ class ListingRepository {
 
 // Update transport
   FutureVoid updateTransport(AvailableTransport transport) async {
-    debugPrintJson(transport);
     try {
       return right(await transportCollection(transport.listingId!)
           .doc(transport.uid!)
@@ -324,14 +399,10 @@ class ListingRepository {
   }
 
 // Read room by properties
-  Stream<List<AvailableTransport>> readTransportByProperties({num? guests}) {
-    return FirebaseFirestore.instance
-        .collectionGroup('transport')
-        .where('guests', isEqualTo: guests)
-        .snapshots()
-        .map((querySnapshot) {
+  Stream<List<AvailableTransport>> readTransportByProperties(Query query) {
+    return query.snapshots().map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
-        return AvailableTransport.fromJson(doc.data());
+        return AvailableTransport.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
@@ -367,7 +438,6 @@ class ListingRepository {
 
 // Update entertainment
   FutureVoid updateEntertainment(EntertainmentService entertainment) async {
-    debugPrintJson(entertainment);
     try {
       return right(await entertainmentCollection(entertainment.listingId!)
           .doc(entertainment.uid!)

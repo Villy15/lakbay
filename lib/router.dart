@@ -12,6 +12,7 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/fade_through.dart';
 import 'package:lakbay/features/common/layout.dart';
 import 'package:lakbay/features/common/shared_axis.dart';
+import 'package:lakbay/features/community-hub/community_hub_page.dart';
 import 'package:lakbay/features/cooperatives/coops_page.dart';
 import 'package:lakbay/features/cooperatives/crud/add_coop.dart';
 import 'package:lakbay/features/cooperatives/crud/edit_coop.dart';
@@ -27,7 +28,7 @@ import 'package:lakbay/features/cooperatives/my_coop/members/members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/members/read_member.dart';
 import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
 import 'package:lakbay/features/dashboard/coop_dashboard.dart';
-import 'package:lakbay/features/dashboard/manager/dashboard_page.dart';
+import 'package:lakbay/features/dashboard/manager/coop_home_page.dart';
 import 'package:lakbay/features/events/crud/add_event.dart';
 import 'package:lakbay/features/events/crud/confirm_event.dart';
 import 'package:lakbay/features/events/crud/coop_read_event.dart';
@@ -48,9 +49,10 @@ import 'package:lakbay/features/listings/crud/add_transport.dart';
 import 'package:lakbay/features/listings/crud/category_page_controller.dart';
 import 'package:lakbay/features/listings/crud/choose_category.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
-import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_entertainment.dart';
-import 'package:lakbay/features/listings/listings_page.dart';
+import 'package:lakbay/features/listings/crud/customer_touring.dart';
+import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
+//import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/listings/transportation_booking_details.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
@@ -207,15 +209,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   subRoutes: [
                     // Search Listing Page
                     buildSubRoute(
-                      'search_listing/:category',
+                      'search_listing',
                       (context, pathParameters, extra) {
                         final Map<String, dynamic> params =
                             extra as Map<String, dynamic>;
-                        final List<ListingBookings> bookings =
-                            params['bookings'] as List<ListingBookings>;
+                        final List<ListingBookings>? bookings =
+                            params['bookings'];
+                        final List<ListingModel>? listings = params['listings'];
                         final String category = params['category'] as String;
                         return PlanSearchListing(
                           bookings: bookings,
+                          listings: listings,
                           category: category,
                         );
                       },
@@ -321,14 +325,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         //   return CustomerFood(
                         //     listing: listing,
                         //   );
-                         case 'Entertainment':
-                           return CustomerEntertainment(
+                        case 'Entertainment':
+                          return CustomerEntertainment(
+                            listing: listing,
+                          );
+                         case 'Tour':
+                           return CustomerTouring(
                              listing: listing,
                            );
-                        // case 'Touring':
-                        //   return SelectedTouringPage(
-                        //     listing: listing,
-                        //   );
                         default:
                           return AccommodationBookingsDetails(
                             booking: booking,
@@ -570,10 +574,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             //   return CustomerEntertainment(
                             //     listing: listing,
                             //   );
-                            // case 'touring':
-                            //   return SelectedTouringPage(
-                            //     listing: listing,
-                            //   );
+                            case 'tour':
+                              return CustomerTouring(
+                                listing: listing,
+                              );
                             default:
                               return AccommodationBookingsDetails(
                                 booking: booking,
@@ -643,7 +647,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     (context, pathParameters, extra) {
                       CooperativeModel coop = extra as CooperativeModel;
 
-                      return AddTour(coop: coop);
+                      return AddTour(
+                          coop: coop, category: 'Tour');
                     },
                     name: 'add_tour',
                   ),

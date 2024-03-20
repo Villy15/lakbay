@@ -45,9 +45,9 @@ class _EditEventPageState extends ConsumerState<EditEventPage> {
     _nameController.text = widget.event.name;
     _descriptionController.text = widget.event.description ?? '';
     _startDateController.text =
-        DateFormat('yyyy-MM-dd').format(widget.event.startDate);
+        DateFormat('yyyy-MM-dd').format(widget.event.startDate!);
     _endDateController.text =
-        DateFormat('yyyy-MM-dd').format(widget.event.endDate);
+        DateFormat('yyyy-MM-dd').format(widget.event.endDate!);
     _locationController.text = widget.event.address;
     _cityController.text = widget.event.city;
     _provinceController.text = widget.event.province;

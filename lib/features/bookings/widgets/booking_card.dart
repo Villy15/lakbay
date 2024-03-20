@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
+import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -19,11 +21,18 @@ class _BookingCardState extends ConsumerState<BookingCard> {
     context.push(
       '/bookings/booking_details',
       extra: {'booking': widget.booking, 'listing': widget.listing},
+    ).then(
+      (value) {
+        debugPrint("Popped");
+        ref.read(navBarVisibilityProvider.notifier).show();
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    List<String?> imageUrls =
+        widget.listing.images!.map((listingImage) => listingImage.url).toList();
     return Center(
       child: Card(
         clipBehavior: Clip.hardEdge,
@@ -41,16 +50,11 @@ class _BookingCardState extends ConsumerState<BookingCard> {
               child: Column(
                 children: [
                   // Random Image
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        20), // round the corners of the image
-                    child: Image(
-                      image: NetworkImage(widget.listing.images!.first.url!),
+                  DisplayImage(
+                      imageUrl: widget.listing.images!.first.url,
+                      height: MediaQuery.sizeOf(context).height / 3,
                       width: double.infinity,
-                      height: 200,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                      radius: BorderRadius.circular(0)),
 
                   // Card Title
                   Padding(

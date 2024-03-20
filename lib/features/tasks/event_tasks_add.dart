@@ -195,13 +195,13 @@ class _AddEventTaskState extends ConsumerState<AddEventTask> {
   Future<dynamic> addMembersBottomSheet(BuildContext context,
       String committeeName, List<CooperativeMembers> members) {
     return showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         builder: (context) {
           return StatefulBuilder(
             // Use StatefulBuilder here
             builder: (BuildContext context, StateSetter setStateModal) {
               return SizedBox(
-                height: MediaQuery.of(context).size.height * 0.5,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

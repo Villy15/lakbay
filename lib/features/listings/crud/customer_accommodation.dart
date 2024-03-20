@@ -304,6 +304,8 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                           emergencyContactNo: emergencyContactNoController.text,
                           needsContributions: false,
                           tasks: widget.listing.fixedTasks,
+                          cooperativeId:
+                              widget.listing.cooperative.cooperativeId,
                         );
 
                         showDialog(
@@ -487,11 +489,11 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                   child: Column(
                     children: [
                       ImageSlider(
-                        images: imageUrls,
-                        height: MediaQuery.of(context).size.height /
-                            3.5, // Reduced height
-                        width: double.infinity,
-                      ),
+                          images: imageUrls,
+                          height: MediaQuery.of(context).size.height /
+                              3.5, // Reduced height
+                          width: double.infinity,
+                          radius: BorderRadius.circular(10)),
                       Padding(
                         padding: const EdgeInsets.only(
                             left: 20.0,
@@ -725,7 +727,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
         canPop: false,
         onPopInvoked: (bool didPop) {
           context.pop();
-          ref.read(navBarVisibilityProvider.notifier).show();
+          // ref.read(navBarVisibilityProvider.notifier).show();
         },
         child: DefaultTabController(
           initialIndex: 0,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
+import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
@@ -15,6 +16,7 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class AddEntertainment extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -32,11 +34,12 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 
   // stepper
   int activeStep = 0;
-  int upperBound = 6;
+  int upperBound = 5;
 
   // initial values
-  String type = 'Recreational/Rentals';
+  String type = 'Activities';
   num guests = 0;
+  List<bool> workingDays = List.filled(7, false);
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -50,7 +53,8 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   final TextEditingController _guestInfoController = TextEditingController();
   String mapAddress = "";
    List<File>? _images;
-
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now().add(const Duration(days: 1));
   TimeOfDay _selectedOpeningHours = TimeOfDay.now();
   TimeOfDay _selectedClosingHours = TimeOfDay.now();
 
@@ -71,6 +75,74 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     _addressController.dispose();
 
     super.dispose();
+  }
+
+void onTapDate() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.95,
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Select Date'),
+            ),
+            bottomNavigationBar: BottomAppBar(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  FilledButton(
+                    style: ButtonStyle(
+                      minimumSize:
+                          MaterialStateProperty.all<Size>(const Size(120, 45)),
+                    ),
+                    onPressed: () {
+                      ref
+                          .read(listingStartDate.notifier)
+                          .setStartDate(startDate);
+
+                      ref
+                          .read(listingEndDate.notifier)
+                          .setEndDate(endDate);
+
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SfDateRangePicker(
+                      selectionMode: DateRangePickerSelectionMode.range,
+                      onSelectionChanged:
+                          (DateRangePickerSelectionChangedArgs args) {
+                        startDate = args.value.startDate;
+
+                        endDate = args.value.endDate;
+                      },
+                      minDate: DateTime.now(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
 void submitAddListing() {
@@ -101,6 +173,7 @@ void submitAddListing() {
                   category: widget.category,
                   description: _descriptionController.text,
                   title: _titleController.text,
+                  workingDays: workingDays, 
                   type: type,
                   city: "",
                   province: "",
@@ -176,6 +249,35 @@ void submitAddListing() {
                             ]))))));
   }
 
+      Widget datePicker(
+      BuildContext context, DateTime? startDate, DateTime? endDate) {
+    return ListTile(
+      title: const Text('Available Dates'),
+      leading: const Icon(Icons.calendar_today_outlined),
+      subtitle: Text(startDate == null || endDate == null
+          ? 'Select a date'
+          : '${DateFormat.yMMMMd().format(startDate)} - ${DateFormat.yMMMMd().format(endDate)}'),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () {
+        onTapDate();
+      },
+    );
+  }
+
+  Future<DateTime?> _selectDate(
+    BuildContext context,
+    DateTime initialDate,
+    DateTime firstDate,
+  ) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: DateTime(2101),
+    );
+    return picked;
+  }
+
   Column steppers(BuildContext context) {
     return Column(
       children: [
@@ -187,10 +289,6 @@ void submitAddListing() {
           icons: [
             Icon(
               Icons.type_specimen_outlined,
-              color: Theme.of(context).colorScheme.background,
-            ),
-            Icon(
-              Icons.details_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
@@ -207,6 +305,10 @@ void submitAddListing() {
             ),
             Icon(
               Icons.question_mark_outlined,
+              color: Theme.of(context).colorScheme.background,
+            ),
+            Icon(
+              Icons.summarize_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
           ],
@@ -284,8 +386,7 @@ Widget addDetails(BuildContext context) {
         ),
       ),
       const SizedBox(height: 10),
-      // Conditionally render the TextFormField based on the selected type
-      if (type != 'Watching/Performances') ...[
+      if (type == 'Rentals' ) ...[
         TextFormField(
           controller: _unitsController,
           maxLines: null,
@@ -358,10 +459,55 @@ Widget addDetails(BuildContext context) {
           }
         },
       ),
+      const SizedBox(height: 10),
+      if (type == 'Watching/Performances' ) ...[
+      datePicker(context, startDate, endDate)
+      ],
+      if (type != 'Watching/Performances') ...[
+      const SizedBox(height: 10),
+      const SizedBox(height: 10),
+      const Text('Working Days', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      const Text('Please select your working days...', style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+      Column(
+        children: List<Widget>.generate(7, (int index) {
+          return CheckboxListTile(
+            title: Text(
+              getDay(index),
+              style: const TextStyle(fontSize: 16),
+            ),
+            value: workingDays[index],
+            onChanged: (bool? value) {
+              setState(() {
+                workingDays[index] = value!;
+              });
+            },
+          );
+        }),
+      ),
+      const SizedBox(height: 10),
+      ],
     ],
   );
 }
 
+  String getDay(int index) {
+    switch (index) {
+      case 0:
+        return 'Monday';
+      case 1:
+        return 'Tuesday';
+      case 2:
+        return 'Wednesday';
+      case 3:
+        return 'Thursday';
+      case 4:
+        return 'Friday';
+      case 5:
+        return 'Saturday';
+      default:
+        return 'Sunday';
+    }
+  }
 
   Widget addLocation(BuildContext context) {
     return Column(children: [
@@ -474,7 +620,8 @@ Widget addDetails(BuildContext context) {
               child: ImageSlider(
                   images: _images,
                   height: MediaQuery.sizeOf(context).height / 2.5,
-                  width: double.infinity),
+                  width: double.infinity,
+                  radius: BorderRadius.circular(10)),
             ),
           ],
 
@@ -502,7 +649,17 @@ Widget addDetails(BuildContext context) {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             subtitle: Text(_descriptionController.text),
           ),
-
+          ListTile(
+            title: const Text('Working Days',
+                style: TextStyle(fontSize: 20)),
+            subtitle: Text(workingDays
+                .asMap()
+                .entries
+                .where((element) => element.value)
+                .map((e) => getDay(e.key))
+                .toList()
+                .join(', ')),
+          ),
           const Divider(),
           ListTile(
             title: const Text('Price',
@@ -550,8 +707,9 @@ Widget addDetails(BuildContext context) {
 
   Widget chooseType(BuildContext context) {
     List<Map<String, dynamic>> types = [
-      {'name': 'Recreational/Rentals', 'icon': Icons.directions_bike},
-      {'name': 'Watching/Performances', 'icon': Icons.music_note},
+      {'name': 'Rentals', 'icon': Icons.sailing},
+      {'name': 'Watching/Performances', 'icon': Icons.theater_comedy},
+      {'name': 'Activities', 'icon': Icons.directions_walk},
     ];
 
     return Column(
@@ -825,3 +983,39 @@ class ImagePickerFormField extends FormField<List<File>> {
           },
         );
 }
+
+final listingStartDate =
+    StateNotifierProvider<ListingStartDateNotifier, DateTime?>(
+  (ref) => ListingStartDateNotifier(),
+);
+
+class ListingStartDateNotifier extends StateNotifier<DateTime?> {
+  ListingStartDateNotifier() : super(null);
+
+  void setStartDate(DateTime startDate) {
+    state = startDate;
+  }
+
+  void clearStartDate() {
+    state = null;
+  }
+}
+
+final listingEndDate =
+    StateNotifierProvider<ListingEndDateNotifier, DateTime?>(
+  (ref) => ListingEndDateNotifier(),
+);
+
+class ListingEndDateNotifier extends StateNotifier<DateTime?> {
+  ListingEndDateNotifier() : super(null);
+
+  void setEndDate(DateTime endDate) {
+    state = endDate;
+  }
+
+  void clearEndDate() {
+    state = null;
+  }
+}
+
+

@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/trips/plan/components/food_card.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
+import 'package:lakbay/features/trips/plan/components/transport_card.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
+import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 class PlanSearchListing extends ConsumerStatefulWidget {
   final String category;
-  final List<ListingBookings> bookings;
+  final List<ListingBookings>? bookings;
+  final List<ListingModel>? listings;
   const PlanSearchListing(
-      {super.key, required this.category, required this.bookings});
+      {super.key, required this.category, this.bookings, this.listings});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -139,14 +143,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                         ),
                       ],
                     ),
-                    // Change Location
-                    // FilledButton(
-                    //   onPressed: () {
-                    //     // Change Location
-                    //     onTapLocation();
-                    //   },
-                    //   child: const Text('Change Location'),
-                    // ),
                   ],
                 ),
               ),
@@ -311,7 +307,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Filter',
+                                  'Select Category',
                                   style: TextStyle(
                                     fontSize: 24.0,
                                     fontWeight: FontWeight.bold,
@@ -337,15 +333,22 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                             // List of checkbox tiles of each category
                             // List of checkbox tiles of each category
                             ...filters.keys.map((category) {
-                              return CheckboxListTile(
-                                value: filters[category],
-                                onChanged: (value) {
-                                  setState(() {
-                                    filters[category] = value!;
-                                    updateFilterOptions(category, value);
+                              return InkWell(
+                                onTap: () {
+                                  this.setState(() {
+                                    selectedCategory = category;
+                                    context.pop();
                                   });
                                 },
-                                title: Text(category),
+                                child: SizedBox(
+                                    height:
+                                        MediaQuery.sizeOf(context).height / 10,
+                                    child: Text(
+                                      category,
+                                      style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w400),
+                                    )),
                               );
                             }),
                           ],
@@ -359,13 +362,14 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   Widget listingCardController(String category) {
     switch (category) {
       case "Accommodation":
-        return RoomCard(category: category, bookings: widget.bookings);
+        return RoomCard(category: category, bookings: widget.bookings!);
 
       case "Transport":
-        return const Text("works");
+        return TransportCard(
+            category: category, transportListings: widget.listings!);
 
       case "Food":
-        return const Text("works");
+        return FoodCard(category: category, foodListings: widget.listings!);
 
       case "Tour":
         return const Text("works");

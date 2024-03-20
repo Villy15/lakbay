@@ -8,6 +8,8 @@ part 'listings_bookings_model.g.dart';
 
 @freezed
 class ListingBookings with _$ListingBookings {
+  const ListingBookings._();
+
   factory ListingBookings({
     num? amountPaid,
     required String customerId,
@@ -15,11 +17,12 @@ class ListingBookings with _$ListingBookings {
     required String customerPhoneNo,
     required String category,
     required String email,
+    String? cooperativeId,
     String? emergencyContactName,
     String? emergencyContactNo,
     @TimestampSerializer() DateTime? endDate,
     List<Expense>? expenses,
-    List<Task>? tasks,
+    List<BookingTask>? tasks,
     required String governmentId,
     required num guests,
     required String listingId,
@@ -28,6 +31,7 @@ class ListingBookings with _$ListingBookings {
     String? id,
     required bool needsContributions,
     String? paymentOption,
+    String? paymentStatus,
     required num price,
     String? roomId,
     String? roomUid,
@@ -43,6 +47,11 @@ class ListingBookings with _$ListingBookings {
 
   factory ListingBookings.fromJson(Map<String, dynamic> json) =>
       _$ListingBookingsFromJson(json);
+
+  // Get number of tasks that need contributions
+  int get tasksNeedContributions {
+    return tasks?.where((task) => task.openContribution).length ?? 0;
+  }
 }
 
 @freezed
@@ -57,17 +66,23 @@ class Expense with _$Expense {
 }
 
 @freezed
-class Task with _$Task {
-  factory Task({
-    required List<String> assigned,
+class BookingTask with _$BookingTask {
+  factory BookingTask({
+    String? uid,
+    String? bookingId,
+    required String listingName,
+    String? roomId,
+    required List<String> assignedIds,
+    required List<String> assignedNames,
     required String committee,
     required bool complete,
     required bool openContribution,
     List<TaskImages>? imageProof,
     required String name,
-  }) = _Task;
+  }) = _BookingTask;
 
-  factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
+  factory BookingTask.fromJson(Map<String, dynamic> json) =>
+      _$BookingTaskFromJson(json);
 }
 
 @freezed
