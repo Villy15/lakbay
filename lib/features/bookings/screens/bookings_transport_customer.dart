@@ -10,7 +10,9 @@ import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -646,10 +648,17 @@ class _BookingsTransportCustomerState
     SaleModel updatedSale = sale.copyWith(
         transactionType: "Cancellation",
         saleAmount: booking.amountPaid! * widget.listing.cancellationRate!);
+    final trip = await ref.read(getPlanByUidProvider(booking.tripUid).future);
+    PlanModel updatedTrip = trip.copyWith(
+      activities: trip.activities
+          ?.where((activity) => activity.bookingId != booking.id)
+          .toList(),
+    );
+
     if (context.mounted) {
-      ref
-          .read(salesControllerProvider.notifier)
-          .updateSale(context, updatedSale, booking: updatedBooking);
+      ref.read(salesControllerProvider.notifier).updateSale(
+          context, updatedSale,
+          booking: updatedBooking, trip: updatedTrip);
     }
   }
 }

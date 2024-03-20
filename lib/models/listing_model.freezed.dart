@@ -56,7 +56,7 @@ mixin _$ListingModel {
   @TimestampSerializer()
   DateTime? get timestamp => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  String? get type => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError; //[Private, Public]
   List<FoodService>? get availableDeals => throw _privateConstructorUsedError;
   List<ListingImages>? get menuImgs => throw _privateConstructorUsedError;
   AvailableTransport? get availableTransport =>
@@ -748,7 +748,9 @@ class _$ListingModelImpl implements _ListingModel {
   final String title;
   @override
   final String? type;
+//[Private, Public]
   final List<FoodService>? _availableDeals;
+//[Private, Public]
   @override
   List<FoodService>? get availableDeals {
     final value = _availableDeals;
@@ -1023,7 +1025,7 @@ abstract class _ListingModel implements ListingModel {
   String get title;
   @override
   String? get type;
-  @override
+  @override //[Private, Public]
   List<FoodService>? get availableDeals;
   @override
   List<ListingImages>? get menuImgs;

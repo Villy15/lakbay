@@ -45,6 +45,8 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
           const TimestampSerializer().fromJson(json['startDate'] as Timestamp?),
       bookingStatus: json['bookingStatus'] as String,
       totalPrice: json['totalPrice'] as num?,
+      tripUid: json['tripUid'] as String,
+      tripName: json['tripName'] as String,
       typeOfTrip: json['typeOfTrip'] as String?,
       startTime: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
           json['startTime'], const TimeOfDayConverter().fromJson),
@@ -84,6 +86,8 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'startDate': const TimestampSerializer().toJson(instance.startDate),
       'bookingStatus': instance.bookingStatus,
       'totalPrice': instance.totalPrice,
+      'tripUid': instance.tripUid,
+      'tripName': instance.tripName,
       'typeOfTrip': instance.typeOfTrip,
       'startTime': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
           instance.startTime, const TimeOfDayConverter().toJson),

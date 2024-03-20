@@ -25,8 +25,7 @@ class _BookingCardState extends ConsumerState<BookingCard> {
       extra: {'booking': widget.booking, 'listing': widget.listing},
     ).then(
       (value) {
-        debugPrint("Popped");
-        ref.read(navBarVisibilityProvider.notifier).show();
+        ref.read(navBarVisibilityProvider.notifier).hide();
       },
     );
   }

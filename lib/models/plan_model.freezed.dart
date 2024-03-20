@@ -26,7 +26,7 @@ mixin _$PlanModel {
   DateTime? get startDate => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get endDate => throw _privateConstructorUsedError;
-  String? get planStatus =>
+  String? get tripStatus =>
       throw _privateConstructorUsedError; //[Active, Cancelled, Completed]
   List<PlanActivity>? get activities => throw _privateConstructorUsedError;
   List<String>? get memories => throw _privateConstructorUsedError;
@@ -52,7 +52,7 @@ abstract class $PlanModelCopyWith<$Res> {
       String location,
       @TimestampSerializer() DateTime? startDate,
       @TimestampSerializer() DateTime? endDate,
-      String? planStatus,
+      String? tripStatus,
       List<PlanActivity>? activities,
       List<String>? memories,
       String name,
@@ -79,7 +79,7 @@ class _$PlanModelCopyWithImpl<$Res, $Val extends PlanModel>
     Object? location = null,
     Object? startDate = freezed,
     Object? endDate = freezed,
-    Object? planStatus = freezed,
+    Object? tripStatus = freezed,
     Object? activities = freezed,
     Object? memories = freezed,
     Object? name = null,
@@ -105,9 +105,9 @@ class _$PlanModelCopyWithImpl<$Res, $Val extends PlanModel>
           ? _value.endDate
           : endDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      planStatus: freezed == planStatus
-          ? _value.planStatus
-          : planStatus // ignore: cast_nullable_to_non_nullable
+      tripStatus: freezed == tripStatus
+          ? _value.tripStatus
+          : tripStatus // ignore: cast_nullable_to_non_nullable
               as String?,
       activities: freezed == activities
           ? _value.activities
@@ -154,7 +154,7 @@ abstract class _$$PlanModelImplCopyWith<$Res>
       String location,
       @TimestampSerializer() DateTime? startDate,
       @TimestampSerializer() DateTime? endDate,
-      String? planStatus,
+      String? tripStatus,
       List<PlanActivity>? activities,
       List<String>? memories,
       String name,
@@ -179,7 +179,7 @@ class __$$PlanModelImplCopyWithImpl<$Res>
     Object? location = null,
     Object? startDate = freezed,
     Object? endDate = freezed,
-    Object? planStatus = freezed,
+    Object? tripStatus = freezed,
     Object? activities = freezed,
     Object? memories = freezed,
     Object? name = null,
@@ -205,9 +205,9 @@ class __$$PlanModelImplCopyWithImpl<$Res>
           ? _value.endDate
           : endDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      planStatus: freezed == planStatus
-          ? _value.planStatus
-          : planStatus // ignore: cast_nullable_to_non_nullable
+      tripStatus: freezed == tripStatus
+          ? _value.tripStatus
+          : tripStatus // ignore: cast_nullable_to_non_nullable
               as String?,
       activities: freezed == activities
           ? _value._activities
@@ -249,7 +249,7 @@ class _$PlanModelImpl extends _PlanModel {
       required this.location,
       @TimestampSerializer() this.startDate,
       @TimestampSerializer() this.endDate,
-      this.planStatus,
+      this.tripStatus,
       final List<PlanActivity>? activities,
       final List<String>? memories,
       required this.name,
@@ -275,7 +275,7 @@ class _$PlanModelImpl extends _PlanModel {
   @TimestampSerializer()
   final DateTime? endDate;
   @override
-  final String? planStatus;
+  final String? tripStatus;
 //[Active, Cancelled, Completed]
   final List<PlanActivity>? _activities;
 //[Active, Cancelled, Completed]
@@ -311,7 +311,7 @@ class _$PlanModelImpl extends _PlanModel {
 
   @override
   String toString() {
-    return 'PlanModel(uid: $uid, location: $location, startDate: $startDate, endDate: $endDate, planStatus: $planStatus, activities: $activities, memories: $memories, name: $name, budget: $budget, guests: $guests, imageUrl: $imageUrl, userId: $userId)';
+    return 'PlanModel(uid: $uid, location: $location, startDate: $startDate, endDate: $endDate, tripStatus: $tripStatus, activities: $activities, memories: $memories, name: $name, budget: $budget, guests: $guests, imageUrl: $imageUrl, userId: $userId)';
   }
 
   @override
@@ -325,8 +325,8 @@ class _$PlanModelImpl extends _PlanModel {
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate) &&
             (identical(other.endDate, endDate) || other.endDate == endDate) &&
-            (identical(other.planStatus, planStatus) ||
-                other.planStatus == planStatus) &&
+            (identical(other.tripStatus, tripStatus) ||
+                other.tripStatus == tripStatus) &&
             const DeepCollectionEquality()
                 .equals(other._activities, _activities) &&
             const DeepCollectionEquality().equals(other._memories, _memories) &&
@@ -346,7 +346,7 @@ class _$PlanModelImpl extends _PlanModel {
       location,
       startDate,
       endDate,
-      planStatus,
+      tripStatus,
       const DeepCollectionEquality().hash(_activities),
       const DeepCollectionEquality().hash(_memories),
       name,
@@ -375,7 +375,7 @@ abstract class _PlanModel extends PlanModel {
       required final String location,
       @TimestampSerializer() final DateTime? startDate,
       @TimestampSerializer() final DateTime? endDate,
-      final String? planStatus,
+      final String? tripStatus,
       final List<PlanActivity>? activities,
       final List<String>? memories,
       required final String name,
@@ -399,7 +399,7 @@ abstract class _PlanModel extends PlanModel {
   @TimestampSerializer()
   DateTime? get endDate;
   @override
-  String? get planStatus;
+  String? get tripStatus;
   @override //[Active, Cancelled, Completed]
   List<PlanActivity>? get activities;
   @override

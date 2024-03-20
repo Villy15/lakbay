@@ -14,7 +14,7 @@ _$PlanModelImpl _$$PlanModelImplFromJson(Map<String, dynamic> json) =>
           const TimestampSerializer().fromJson(json['startDate'] as Timestamp?),
       endDate:
           const TimestampSerializer().fromJson(json['endDate'] as Timestamp?),
-      planStatus: json['planStatus'] as String?,
+      tripStatus: json['tripStatus'] as String?,
       activities: (json['activities'] as List<dynamic>?)
           ?.map((e) => PlanActivity.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -34,7 +34,7 @@ Map<String, dynamic> _$$PlanModelImplToJson(_$PlanModelImpl instance) =>
       'location': instance.location,
       'startDate': const TimestampSerializer().toJson(instance.startDate),
       'endDate': const TimestampSerializer().toJson(instance.endDate),
-      'planStatus': instance.planStatus,
+      'tripStatus': instance.tripStatus,
       'activities': instance.activities?.map((e) => e.toJson()).toList(),
       'memories': instance.memories,
       'name': instance.name,

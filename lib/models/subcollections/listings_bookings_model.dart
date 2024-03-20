@@ -40,6 +40,8 @@ class ListingBookings with _$ListingBookings {
     @TimestampSerializer() DateTime? startDate,
     required String bookingStatus, //[Reserved, Cancelled, Completed, Refunded
     num? totalPrice,
+    required String tripUid,
+    required String tripName,
     String? typeOfTrip,
     @TimeOfDayConverter() TimeOfDay? startTime,
     @TimeOfDayConverter() TimeOfDay? endTime,

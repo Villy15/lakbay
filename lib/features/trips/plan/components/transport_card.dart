@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/days_provider.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
-import 'package:lakbay/features/common/error.dart';
-import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_checkout.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
@@ -795,13 +793,14 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                   width: double.infinity,
                   child: ElevatedButton(
                       onPressed: () {
-                        context.pop();
-
+                        final currentTrip = ref.read(currentTripProvider);
                         ListingBookings booking = ListingBookings(
+                            tripUid: currentTrip!.uid!,
+                            tripName: currentTrip.name,
                             listingId: listing.uid!,
                             listingTitle: listing.title,
-                            customerName: ref.read(userProvider)!.name,
-                            bookingStatus: "",
+                            customerName: user.name,
+                            bookingStatus: "Reserved",
                             price: transport.price,
                             category: "Transport",
                             startDate: DateTime(
@@ -826,7 +825,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                 "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
                             guests: guests,
                             customerPhoneNo: phoneNoController.text,
-                            customerId: ref.read(userProvider)!.uid,
+                            customerId: user.uid,
                             emergencyContactName:
                                 emergencyContactNameController.text,
                             emergencyContactNo:
@@ -843,7 +842,10 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                       listing: listing,
                                       transport: transport,
                                       booking: booking));
-                            }).then((value) => context.pop());
+                            }).then((value) {
+                          context.pop();
+                          context.pop();
+                        });
                       },
                       child: const Text('Proceed')))
             ]))

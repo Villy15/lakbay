@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
 
 class TripCard extends ConsumerWidget {
@@ -10,6 +11,7 @@ class TripCard extends ConsumerWidget {
 
   void onTap(BuildContext context, WidgetRef ref) {
     // context.push('/market/${listing.category}', extra: listing);
+    ref.read(currentTripProvider.notifier).setPlan(plan);
     context.push('/trips/details/${plan.uid}');
   }
 

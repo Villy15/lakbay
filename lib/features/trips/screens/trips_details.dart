@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -80,7 +81,11 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
 
   Scaffold buildScaffold(BuildContext context, PlanModel plan) {
     final user = ref.read(userProvider);
-
+    Query query = FirebaseFirestore.instance
+        .collectionGroup(
+            'bookings') // Perform collection group query for 'bookings'
+        .where('customerId', isEqualTo: user!.uid)
+        .where('bookingStatus', isEqualTo: "Reserved");
     return Scaffold(
       appBar: _appBar(context, plan),
       body: TabBarView(
@@ -90,7 +95,7 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
           // TripsDaysPlan(),
 
           // Reservations
-          ref.watch(getAllBookingsByCustomerIdProvider(user!.uid)).when(
+          ref.watch(getBookingsByPropertiesProvider(query)).when(
                 data: (bookings) {
                   if (bookings.isEmpty) {
                     return const Padding(

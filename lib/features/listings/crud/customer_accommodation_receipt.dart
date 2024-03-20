@@ -49,6 +49,13 @@ class CustomerAccomodationReceipt extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const Text("Trip Name:"),
+                Text(booking.tripName),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 const Text("Payment Option:"),
                 Text(" ${booking.paymentOption}"),
               ],

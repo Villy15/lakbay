@@ -45,110 +45,93 @@ class FoodCardState extends ConsumerState<FoodCard> {
                     .foodListings![index].images!
                     .map((listingImage) => listingImage.url)
                     .toList();
-            final food = widget.foodListings![index];
-            return SizedBox(
-              width: MediaQuery.sizeOf(context).width / 2,
-              child: Card(
-                child: Column(
-                  children: [
-                    ImageSlider(
-                      images: imageUrls,
-                      height: MediaQuery.sizeOf(context).height / 4,
-                      width: MediaQuery.sizeOf(context).width / 2,
-                      radius: BorderRadius.circular(10)
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 20.0,
-                        right: 10,
-                        top: 10,
-                        bottom: 10
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    food.title,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold
-                                    )
-                                  ),
-                                  Text(
-                                    food.title,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500
-                                    )
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    'No reservation fee indicated.',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontStyle: FontStyle.italic
-                                    )
-                                  )
-                                ]
-                              )
-                            ]
-                          ),
-                          SizedBox(height: MediaQuery.sizeOf(context).height / 30),
-                          ref
-                              .watch(getListingProvider(food.uid!))
-                              .when(
-                                data: (ListingModel listing) {
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                final food = widget.foodListings![index];
+                return SizedBox(
+                    width: MediaQuery.sizeOf(context).width / 2,
+                    child: Card(
+                        child: Column(children: [
+                      ImageSlider(
+                          images: imageUrls,
+                          height: MediaQuery.sizeOf(context).height / 4,
+                          width: MediaQuery.sizeOf(context).width / 2,
+                          radius: BorderRadius.circular(10)),
+                      Padding(
+                          padding: const EdgeInsets.only(
+                              left: 20.0, right: 10, top: 10, bottom: 10),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          context.push('/market/${widget.category}',
-                                          extra: listing);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 25,
-                                            vertical: 5
-                                          )
-                                        ),
-                                        child: const Text(
-                                          'View Listing',
-                                          style: TextStyle(fontSize: 14)
-                                        )
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          showConfirmBooking(food.availableDeals!.first, listing, daysPlan.currentDay!);
-                                        },
-                                        child: const Text('Book Now')
-                                      )
-                                    ]
-                                  );
-                                },
-                                error: (((error, stackTrace) => ErrorText(
-                                  error: error.toString(), stackTrace: stackTrace.toString()))
-                              ),
-                              loading: () => const Loader())
-                        ]
-                      )
-                    ),
-                  ]
-                )
-              )
-            );
-          }) 
-        )
-      );
-    }
-    else {
+                                      Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(food.title,
+                                                style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            Text(food.title,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500)),
+                                            const SizedBox(height: 10),
+                                            const Text(
+                                                'No reservation fee indicated.',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontStyle:
+                                                        FontStyle.italic))
+                                          ])
+                                    ]),
+                                SizedBox(
+                                    height:
+                                        MediaQuery.sizeOf(context).height / 30),
+                                ref.watch(getListingProvider(food.uid!)).when(
+                                    data: (ListingModel listing) {
+                                      return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  context.push(
+                                                      '/market/${widget.category}',
+                                                      extra: listing);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 25,
+                                                        vertical: 5)),
+                                                child: const Text(
+                                                    'View Listing',
+                                                    style: TextStyle(
+                                                        fontSize: 14))),
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  showConfirmBooking(
+                                                      food.availableDeals!
+                                                          .first,
+                                                      listing,
+                                                      daysPlan.currentDay!);
+                                                },
+                                                child: const Text('Book Now'))
+                                          ]);
+                                    },
+                                    error: (((error, stackTrace) => ErrorText(
+                                        error: error.toString(),
+                                        stackTrace: stackTrace.toString()))),
+                                    loading: () => const Loader())
+                              ])),
+                    ])));
+              })));
+    } else {
       return Center(
           child: Column(children: [
         const Text('No Food Listings Available'),
@@ -158,165 +141,155 @@ class FoodCardState extends ConsumerState<FoodCard> {
     }
   }
 
-  void showConfirmBooking(FoodService food, ListingModel listing, DateTime bookedDate) {
+  void showConfirmBooking(
+      FoodService food, ListingModel listing, DateTime bookedDate) {
     showDialog(
-      context: context,
-      builder: (context) {
-        num guests = 0;
-        final user = ref.read(userProvider);
+        context: context,
+        builder: (context) {
+          num guests = 0;
+          final user = ref.read(userProvider);
 
-        TextEditingController phoneNoController = TextEditingController(text: user?.phoneNo);
-        TextEditingController emergencyContactNameController = TextEditingController();
-        TextEditingController emergencyContactNoController = TextEditingController();
-        bool governmentId = true;
-        String formattedDate = DateFormat('MMMM dd, yyyy').format(bookedDate);
+          TextEditingController phoneNoController =
+              TextEditingController(text: user?.phoneNo);
+          TextEditingController emergencyContactNameController =
+              TextEditingController();
+          TextEditingController emergencyContactNoController =
+              TextEditingController();
+          bool governmentId = true;
+          String formattedDate = DateFormat('MMMM dd, yyyy').format(bookedDate);
 
-        return Dialog.fullscreen(
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return SingleChildScrollView(
+          return Dialog.fullscreen(
+              child: StatefulBuilder(builder: (context, setState) {
+            return SingleChildScrollView(
                 child: Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppBar(
-                        leading: IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            context.pop();
-                          }
-                        ),
-                        title: Text(
-                          formattedDate,
-                          style: const TextStyle(fontSize: 18)
-                        ),
-                        elevation: 0
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Number of Guests (Max: ${food.guests})',
-                                border: const OutlineInputBorder(),
-                                floatingLabelBehavior: FloatingLabelBehavior.always,
-                                hintText: '1'
-                              ),
-                              keyboardType: TextInputType.number,
-                              onChanged: (value) {
-                                guests = int.tryParse(value) ?? 0;
-                              }
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: phoneNoController,
-                              decoration: const InputDecoration(
-                                labelText: 'Phone Number',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior: FloatingLabelBehavior.always
-                              ),
-                              keyboardType: TextInputType.phone
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: emergencyContactNameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Emergency Contact Name',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior: FloatingLabelBehavior.always
-                              ),
-                              keyboardType: TextInputType.name
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: emergencyContactNoController,
-                              decoration: const InputDecoration(
-                                labelText: 'Emergency Contact Number',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior: FloatingLabelBehavior.always
-                              ),
-                              keyboardType: TextInputType.phone
-                            ),
-                            Column(
-                              children: [
-                                CheckboxListTile(
-                                  enabled: false,
-                                  value: governmentId,
-                                  title: const Text('Government ID'),
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      governmentId = value ?? false;
-                                    });
-                                  },
-                                  controlAffinity: ListTileControlAffinity.leading
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 16),
-                                  child: Text(
-                                    'Your government ID is required as a means to protect cooperatives.',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontStyle: FontStyle.italic
-                                    )
-                                  )
-                                )
-                              ]
-                            ),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  context.pop();
-                                  ListingBookings booking = ListingBookings(
-                                    listingId: listing.uid!,
-                                    listingTitle: listing.title,
-                                    customerName: ref.read(userProvider)!.name,
-                                    bookingStatus: "Reserved",
-                                    price: food.price,
-                                    category: 'Food',
-                                    startDate: bookedDate,
-                                    endDate: bookedDate,
-                                    email: "",
-                                    governmentId: "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
-                                    guests: guests,
-                                    customerPhoneNo: phoneNoController.text,
-                                    customerId: ref.read(userProvider)!.uid,
-                                    emergencyContactName: emergencyContactNameController.text,
-                                    emergencyContactNo: emergencyContactNoController.text,
-                                    needsContributions: false,
-                                    tasks: listing.fixedTasks,
-                                  );
+                    margin: const EdgeInsets.only(top: 10),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppBar(
+                              leading: IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () {
+                                    context.pop();
+                                  }),
+                              title: Text(formattedDate,
+                                  style: const TextStyle(fontSize: 18)),
+                              elevation: 0),
+                          Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(children: [
+                                TextFormField(
+                                    decoration: InputDecoration(
+                                        labelText:
+                                            'Number of Guests (Max: ${food.guests})',
+                                        border: const OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: '1'),
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (value) {
+                                      guests = int.tryParse(value) ?? 0;
+                                    }),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                    controller: phoneNoController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Phone Number',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always),
+                                    keyboardType: TextInputType.phone),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                    controller: emergencyContactNameController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Emergency Contact Name',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always),
+                                    keyboardType: TextInputType.name),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                    controller: emergencyContactNoController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Emergency Contact Number',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always),
+                                    keyboardType: TextInputType.phone),
+                                Column(children: [
+                                  CheckboxListTile(
+                                      enabled: false,
+                                      value: governmentId,
+                                      title: const Text('Government ID'),
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          governmentId = value ?? false;
+                                        });
+                                      },
+                                      controlAffinity:
+                                          ListTileControlAffinity.leading),
+                                  const Padding(
+                                      padding: EdgeInsets.only(left: 16),
+                                      child: Text(
+                                          'Your government ID is required as a means to protect cooperatives.',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontStyle: FontStyle.italic)))
+                                ]),
+                                SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          final currentTrip =
+                                              ref.read(currentTripProvider);
 
+                                          ListingBookings booking =
+                                              ListingBookings(
+                                            tripUid: currentTrip!.uid!,
+                                            tripName: currentTrip.name,
+                                            listingId: listing.uid!,
+                                            listingTitle: listing.title,
+                                            customerName:
+                                                ref.read(userProvider)!.name,
+                                            bookingStatus: "Reserved",
+                                            price: food.price,
+                                            category: 'Food',
+                                            startDate: bookedDate,
+                                            endDate: bookedDate,
+                                            email: "",
+                                            governmentId:
+                                                "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
+                                            guests: guests,
+                                            customerPhoneNo:
+                                                phoneNoController.text,
+                                            customerId:
+                                                ref.read(userProvider)!.uid,
+                                            emergencyContactName:
+                                                emergencyContactNameController
+                                                    .text,
+                                            emergencyContactNo:
+                                                emergencyContactNoController
+                                                    .text,
+                                            needsContributions: false,
+                                            tasks: listing.fixedTasks,
+                                          );
 
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return Dialog.fullscreen(
-                                        child: CustomerFoodCheckout(
-                                          listing: listing,
-                                          foodService: food,
-                                          booking: booking
-                                        )
-                                      );
-                                    }
-                                  );
-                                },
-                                child: const Text('Proceed')
-                              )
-                            )
-                          ]
-                        )
-                      )
-                    ]
-                  )
-                )
-              );
-            }
-          )
-        );
-      }
-    );
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return Dialog.fullscreen(
+                                                    child: CustomerFoodCheckout(
+                                                        listing: listing,
+                                                        foodService: food,
+                                                        booking: booking));
+                                              });
+                                        },
+                                        child: const Text('Proceed')))
+                              ]))
+                        ])));
+          }));
+        });
   }
 }

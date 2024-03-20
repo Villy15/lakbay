@@ -282,7 +282,11 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                         endDate = endDate.copyWith(
                             hour: widget.listing.checkOut!.hour,
                             minute: widget.listing.checkOut!.minute);
+                        final currentTrip = ref.read(currentTripProvider);
+
                         ListingBookings booking = ListingBookings(
+                          tripUid: currentTrip!.uid!,
+                          tripName: currentTrip.name,
                           listingId: widget.listing.uid!,
                           listingTitle: widget.listing.title,
                           customerName: ref.read(userProvider)!.name,

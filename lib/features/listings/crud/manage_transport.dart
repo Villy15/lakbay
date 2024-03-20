@@ -16,6 +16,7 @@ import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_checkout.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -747,8 +748,12 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    final currentTrip =
+                                        ref.read(currentTripProvider);
+
                                     ListingBookings booking = ListingBookings(
+                                        tripUid: currentTrip!.uid!,
+                                        tripName: currentTrip.name,
                                         listingId: widget.listing.uid!,
                                         listingTitle: widget.listing.title,
                                         price: transport.price,
@@ -784,7 +789,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                                   listing: widget.listing,
                                                   transport: transport,
                                                   booking: booking));
-                                        });
+                                        }).then((value) => context.pop());
                                   },
                                   child: const Text('Proceed'),
                                 ))
@@ -929,7 +934,12 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () {
+                                    final currentTrip =
+                                        ref.read(currentTripProvider);
+
                                     ListingBookings booking = ListingBookings(
+                                        tripUid: currentTrip!.uid!,
+                                        tripName: currentTrip.name,
                                         listingId: widget.listing.uid!,
                                         listingTitle: widget.listing.title,
                                         price: transport.price,
@@ -966,7 +976,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                                   listing: widget.listing,
                                                   transport: transport,
                                                   booking: booking));
-                                        });
+                                        }).then((value) => context.pop());
                                   },
                                   child: const Text('Proceed'),
                                 ))

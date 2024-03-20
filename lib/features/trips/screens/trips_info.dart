@@ -72,7 +72,8 @@ class _TripsInfoState extends ConsumerState<TripsInfo> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    padding:
+                        const EdgeInsets.only(left: 12.0, right: 12.0, top: 15),
                     child: Text(
                       widget.plan.name,
                       style: const TextStyle(
@@ -82,7 +83,8 @@ class _TripsInfoState extends ConsumerState<TripsInfo> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    padding: const EdgeInsets.only(
+                        left: 12.0, right: 12.0, bottom: 15),
                     child: Text(
                       "${DateFormat('d MMM').format(widget.plan.startDate!)} - ${DateFormat('d MMM').format(widget.plan.endDate!)}",
                       style: const TextStyle(
@@ -97,41 +99,51 @@ class _TripsInfoState extends ConsumerState<TripsInfo> {
               alignment: Alignment.center,
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 25,
-                          ),
-                        ),
-                        child: const Text('Delete Trip'),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.sizeOf(context).width / 40,
-                      ),
-                      OutlinedButton(
-                        onPressed: () => onEditTrip(),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 25,
+                  SizedBox(
+                    width: MediaQuery.sizeOf(context).width / 1.2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25,
+                              ),
+                            ),
+                            child: const Text('Delete Trip'),
                           ),
                         ),
-                        child: const Text('Edit Trip'),
-                      ),
-                    ],
+                        SizedBox(
+                          width: MediaQuery.sizeOf(context).width / 40,
+                        ),
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => onEditTrip(),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25,
+                              ),
+                            ),
+                            child: const Text('Edit Trip'),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  FilledButton(
-                    onPressed: () {},
-                    child: const Text('Complete Trip'),
+                  SizedBox(
+                    width: MediaQuery.sizeOf(context).width / 1.2,
+                    child: FilledButton(
+                      onPressed: () {},
+                      child: const Text('Complete Trip'),
+                    ),
                   ),
                 ],
               ),
