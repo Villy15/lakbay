@@ -102,6 +102,13 @@ final getAllVotesProvider =
   return coopsController.getAllVotes(coopUid);
 });
 
+// Get a vote provider
+final getVoteProvider =
+    StreamProvider.autoDispose.family<CoopVote, String>((ref, voteUid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getVote(ref.read(userProvider)!.currentCoop!, voteUid);
+});
+
 class CoopsController extends StateNotifier<bool> {
   final CoopsRepository _coopsRepository;
   final Ref _ref;
@@ -603,5 +610,31 @@ class CoopsController extends StateNotifier<bool> {
   // Read all votes of a cooperative
   Stream<List<CoopVote>> getAllVotes(String coopUid) {
     return _coopsRepository.readVotes(coopUid);
+  }
+
+  // Read a vote
+  Stream<CoopVote> getVote(String coopUid, String voteUid) {
+    return _coopsRepository.readVote(coopUid, voteUid);
+  }
+
+  // Edit Vote
+  void editVote(String coopUid, CoopVote coopVote, BuildContext context) {
+    state = true;
+    debugPrint('CoopVote: ${coopVote.toString()}');
+    _coopsRepository.updateVote(coopUid, coopVote).then((result) {
+      result.fold(
+        (l) {
+          // Handle the error here
+          state = false;
+          showSnackBar(context, l.message);
+        },
+        (r) {
+          // Handle the success here
+          state = false;
+          showSnackBar(context, 'Voted successfully');
+          context.pop();
+        },
+      );
+    });
   }
 }

@@ -29,6 +29,7 @@ import 'package:lakbay/features/cooperatives/my_coop/managers/manager_tools_page
 import 'package:lakbay/features/cooperatives/my_coop/members/members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/members/read_member.dart';
 import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
+import 'package:lakbay/features/cooperatives/my_coop/voting/read_vote.dart';
 import 'package:lakbay/features/dashboard/coop_dashboard.dart';
 import 'package:lakbay/features/dashboard/manager/coop_home_page.dart';
 import 'package:lakbay/features/dashboard/manager/coop_tasks_page.dart';
@@ -82,6 +83,7 @@ import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
+import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/task_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -743,6 +745,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   return ReadAnnouncement(announcement: announcement);
                 },
                 name: 'read_announcement',
+              ),
+
+              // Read vote from my coop
+              buildSubRoute(
+                '/my_coop/vote/read',
+                (context, pathParameters, extra) {
+                  CoopVote vote = extra as CoopVote;
+                  return ReadVote(
+                    vote: vote,
+                  );
+                },
+                name: 'read_vote',
               ),
               // Add tasks for event
               buildSubRoute(
