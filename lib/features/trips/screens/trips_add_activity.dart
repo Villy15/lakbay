@@ -250,14 +250,8 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                 break;
 
               case 'Entertainment':
-                context.push('/plan/add_activity/search_listing');
-
-                break;
-
-              case 'Transport':
                 final query = FirebaseFirestore.instance
-                    .collection(
-                        'listings') // Perform collection group query for 'bookings'
+                    .collection("listings")
                     .where('category', isEqualTo: category["name"]);
                 final listings = await ref
                     .watch(getListingsByPropertiesProvider(query).future);
@@ -267,7 +261,20 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                     'category': category["name"]
                   });
                 }
+                break;
 
+              case 'Transport':
+                final query = FirebaseFirestore.instance
+                    .collection('listings')
+                    .where('category', isEqualTo: category["name"]);
+                final listings = await ref
+                    .watch(getListingsByPropertiesProvider(query).future);
+                if (context.mounted) {
+                  context.push('/plan/add_activity/search_listing', extra: {
+                    'listings': listings,
+                    'category': category["name"]
+                  });
+                }
                 break;
 
               case 'Tour':

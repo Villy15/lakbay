@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -15,7 +14,6 @@ import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/listing_provider.dart';
-import 'package:lakbay/features/tasks/widgets/today_task_card.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
@@ -168,7 +166,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                   cooperative: ListingCooperative(
                       cooperativeId: widget.coop.uid!,
                       cooperativeName: widget.coop.name),
-                  travelDuration: travelDuration,
+                  duration: travelDuration,
                   description: _descriptionController.text,
                   province: widget.coop.province,
                   publisherId: ref.read(userProvider)!.uid,

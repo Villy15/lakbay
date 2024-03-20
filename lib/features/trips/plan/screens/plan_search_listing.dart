@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/days_provider.dart';
+import 'package:lakbay/features/trips/plan/components/entertainment_card.dart';
 import 'package:lakbay/features/trips/plan/components/food_card.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
 import 'package:lakbay/features/trips/plan/components/transport_card.dart';
@@ -390,7 +391,8 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         return const Text("works");
 
       case "Entertainment":
-        return const Text("works");
+        return EntertainmentCard(
+            category: category, entertainmentListings: widget.listings!);
 
       default:
         return const Text("An Error Occurred!");
