@@ -348,8 +348,11 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                     child: ElevatedButton(
                                         onPressed: () {
                                           context.pop();
+                                          final currentTrip = ref.read(currentTripProvider);
                                           ListingBookings booking =
                                               ListingBookings(
+                                            tripUid: currentTrip!.uid!,
+                                            tripName: currentTrip.name,
                                             listingId: listing.uid!,
                                             listingTitle: listing.title,
                                             customerName:

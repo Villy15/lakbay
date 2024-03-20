@@ -23,7 +23,8 @@ class ListingModel with _$ListingModel {
     required String description,
     num? downpaymentRate,
     num? fixedCancellationRate,
-    num? duration,
+    @TimeOfDayConverter()
+    TimeOfDay? duration, //[Travel Duration, Entertainment Duration]
     List<ListingImages>? images,
     bool? isPublished,
     List<ListingCost>? listingCosts,

@@ -35,7 +35,9 @@ mixin _$ListingModel {
   String get description => throw _privateConstructorUsedError;
   num? get downpaymentRate => throw _privateConstructorUsedError;
   num? get fixedCancellationRate => throw _privateConstructorUsedError;
-  num? get duration => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay? get duration =>
+      throw _privateConstructorUsedError; //[Travel Duration, Entertainment Duration]
   List<ListingImages>? get images => throw _privateConstructorUsedError;
   bool? get isPublished => throw _privateConstructorUsedError;
   List<ListingCost>? get listingCosts => throw _privateConstructorUsedError;
@@ -91,7 +93,7 @@ abstract class $ListingModelCopyWith<$Res> {
       String description,
       num? downpaymentRate,
       num? fixedCancellationRate,
-      num? duration,
+      @TimeOfDayConverter() TimeOfDay? duration,
       List<ListingImages>? images,
       bool? isPublished,
       List<ListingCost>? listingCosts,
@@ -225,7 +227,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
       duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as num?,
+              as TimeOfDay?,
       images: freezed == images
           ? _value.images
           : images // ignore: cast_nullable_to_non_nullable
@@ -361,7 +363,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       String description,
       num? downpaymentRate,
       num? fixedCancellationRate,
-      num? duration,
+      @TimeOfDayConverter() TimeOfDay? duration,
       List<ListingImages>? images,
       bool? isPublished,
       List<ListingCost>? listingCosts,
@@ -495,7 +497,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
       duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as num?,
+              as TimeOfDay?,
       images: freezed == images
           ? _value._images
           : images // ignore: cast_nullable_to_non_nullable
@@ -605,7 +607,7 @@ class _$ListingModelImpl implements _ListingModel {
       required this.description,
       this.downpaymentRate,
       this.fixedCancellationRate,
-      this.duration,
+      @TimeOfDayConverter() this.duration,
       final List<ListingImages>? images,
       this.isPublished,
       final List<ListingCost>? listingCosts,
@@ -685,8 +687,11 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   final num? fixedCancellationRate;
   @override
-  final num? duration;
+  @TimeOfDayConverter()
+  final TimeOfDay? duration;
+//[Travel Duration, Entertainment Duration]
   final List<ListingImages>? _images;
+//[Travel Duration, Entertainment Duration]
   @override
   List<ListingImages>? get images {
     final value = _images;
@@ -930,7 +935,7 @@ abstract class _ListingModel implements ListingModel {
       required final String description,
       final num? downpaymentRate,
       final num? fixedCancellationRate,
-      final num? duration,
+      @TimeOfDayConverter() final TimeOfDay? duration,
       final List<ListingImages>? images,
       final bool? isPublished,
       final List<ListingCost>? listingCosts,
@@ -986,8 +991,9 @@ abstract class _ListingModel implements ListingModel {
   @override
   num? get fixedCancellationRate;
   @override
-  num? get duration;
-  @override
+  @TimeOfDayConverter()
+  TimeOfDay? get duration;
+  @override //[Travel Duration, Entertainment Duration]
   List<ListingImages>? get images;
   @override
   bool? get isPublished;
