@@ -49,6 +49,13 @@ class CustomerAccomodationReceipt extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const Text("Trip Name:"),
+                Text(booking.tripName),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 const Text("Payment Option:"),
                 Text(" ${booking.paymentOption}"),
               ],
@@ -162,9 +169,7 @@ class CustomerAccomodationReceipt extends ConsumerWidget {
               width: double.infinity,
               child: ElevatedButton(
                   onPressed: () {
-                    ref
-                        .read(parentStateProvider.notifier)
-                        .executeFunction(context);
+                    ref.read(parentStateProvider.notifier).setState(true);
                     context.pop();
                   },
                   child: const Text("Close")),

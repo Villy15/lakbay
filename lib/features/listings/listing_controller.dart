@@ -190,10 +190,10 @@ class ListingController extends StateNotifier<bool> {
         rooms?.forEach((room) async {
           await _listingRepository.addRoom(listingUid, listing, room);
         });
-        debugPrint("transport: $transport");
-        if (transport != null) {
-          await _listingRepository.addTransport(listingUid, listing, transport);
-        }
+        // use code below incase transport will need availableTransport
+        // if (transport != null) {
+        //   await _listingRepository.addTransport(listingUid, listing, transport);
+        // }
 
         entertainment?.forEach((entertainment) async {
           await _listingRepository.addEntertainment(

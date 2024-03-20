@@ -23,6 +23,7 @@ mixin _$CoopGoals {
   String? get uid => throw _privateConstructorUsedError;
   String? get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  String? get coopId => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get targetDate => throw _privateConstructorUsedError;
   String? get category => throw _privateConstructorUsedError;
@@ -44,6 +45,7 @@ abstract class $CoopGoalsCopyWith<$Res> {
       {String? uid,
       String? title,
       String? description,
+      String? coopId,
       @TimestampSerializer() DateTime? targetDate,
       String? category,
       List<String>? metrics,
@@ -66,6 +68,7 @@ class _$CoopGoalsCopyWithImpl<$Res, $Val extends CoopGoals>
     Object? uid = freezed,
     Object? title = freezed,
     Object? description = freezed,
+    Object? coopId = freezed,
     Object? targetDate = freezed,
     Object? category = freezed,
     Object? metrics = freezed,
@@ -83,6 +86,10 @@ class _$CoopGoalsCopyWithImpl<$Res, $Val extends CoopGoals>
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      coopId: freezed == coopId
+          ? _value.coopId
+          : coopId // ignore: cast_nullable_to_non_nullable
               as String?,
       targetDate: freezed == targetDate
           ? _value.targetDate
@@ -116,6 +123,7 @@ abstract class _$$CoopGoalsImplCopyWith<$Res>
       {String? uid,
       String? title,
       String? description,
+      String? coopId,
       @TimestampSerializer() DateTime? targetDate,
       String? category,
       List<String>? metrics,
@@ -136,6 +144,7 @@ class __$$CoopGoalsImplCopyWithImpl<$Res>
     Object? uid = freezed,
     Object? title = freezed,
     Object? description = freezed,
+    Object? coopId = freezed,
     Object? targetDate = freezed,
     Object? category = freezed,
     Object? metrics = freezed,
@@ -153,6 +162,10 @@ class __$$CoopGoalsImplCopyWithImpl<$Res>
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      coopId: freezed == coopId
+          ? _value.coopId
+          : coopId // ignore: cast_nullable_to_non_nullable
               as String?,
       targetDate: freezed == targetDate
           ? _value.targetDate
@@ -181,6 +194,7 @@ class _$CoopGoalsImpl implements _CoopGoals {
       {this.uid,
       this.title,
       this.description,
+      this.coopId,
       @TimestampSerializer() this.targetDate,
       this.category,
       final List<String>? metrics,
@@ -196,6 +210,8 @@ class _$CoopGoalsImpl implements _CoopGoals {
   final String? title;
   @override
   final String? description;
+  @override
+  final String? coopId;
   @override
   @TimestampSerializer()
   final DateTime? targetDate;
@@ -216,7 +232,7 @@ class _$CoopGoalsImpl implements _CoopGoals {
 
   @override
   String toString() {
-    return 'CoopGoals(uid: $uid, title: $title, description: $description, targetDate: $targetDate, category: $category, metrics: $metrics, progress: $progress)';
+    return 'CoopGoals(uid: $uid, title: $title, description: $description, coopId: $coopId, targetDate: $targetDate, category: $category, metrics: $metrics, progress: $progress)';
   }
 
   @override
@@ -228,6 +244,7 @@ class _$CoopGoalsImpl implements _CoopGoals {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.coopId, coopId) || other.coopId == coopId) &&
             (identical(other.targetDate, targetDate) ||
                 other.targetDate == targetDate) &&
             (identical(other.category, category) ||
@@ -244,6 +261,7 @@ class _$CoopGoalsImpl implements _CoopGoals {
       uid,
       title,
       description,
+      coopId,
       targetDate,
       category,
       const DeepCollectionEquality().hash(_metrics),
@@ -268,6 +286,7 @@ abstract class _CoopGoals implements CoopGoals {
       {final String? uid,
       final String? title,
       final String? description,
+      final String? coopId,
       @TimestampSerializer() final DateTime? targetDate,
       final String? category,
       final List<String>? metrics,
@@ -282,6 +301,8 @@ abstract class _CoopGoals implements CoopGoals {
   String? get title;
   @override
   String? get description;
+  @override
+  String? get coopId;
   @override
   @TimestampSerializer()
   DateTime? get targetDate;

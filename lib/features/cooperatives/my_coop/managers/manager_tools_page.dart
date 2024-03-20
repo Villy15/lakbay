@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
+import 'package:lakbay/features/cooperatives/my_coop/goals/add_goal.dart';
+import 'package:lakbay/features/cooperatives/my_coop/voting/add_vote.dart';
 import 'package:lakbay/models/coop_model.dart';
 
 class ManagerToolsPage extends ConsumerWidget {
@@ -60,6 +62,34 @@ class ManagerToolsPage extends ConsumerWidget {
     );
   }
 
+  void addGoal(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return AddGoal(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
+  }
+
+  void addVote(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return AddVote(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // List Tile Map Cooperative Activities
@@ -69,6 +99,28 @@ class ManagerToolsPage extends ConsumerWidget {
             leading: const Icon(Icons.announcement),
             title: const Text('Add Announcement'),
             onTap: () => addAnnouncement(context, coop),
+          ),
+
+      // Add Goal
+      'Add Goal': () => ListTile(
+            leading: const Icon(Icons.add_task),
+            title: const Text('Add Goal'),
+            onTap: () => addGoal(
+              context,
+              coop,
+            ),
+          ),
+
+      // Add Election Vote
+      'Add Election Vote': () => ListTile(
+            leading: const Icon(Icons.how_to_vote),
+            title: const Text('Add Election Vote'),
+            onTap: () => {
+              addVote(
+                context,
+                coop,
+              )
+            },
           ),
     };
 

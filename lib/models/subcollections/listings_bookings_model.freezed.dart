@@ -55,6 +55,8 @@ mixin _$ListingBookings {
   String get bookingStatus =>
       throw _privateConstructorUsedError; //[Reserved, Cancelled, Completed, Refunded
   num? get totalPrice => throw _privateConstructorUsedError;
+  String get tripUid => throw _privateConstructorUsedError;
+  String get tripName => throw _privateConstructorUsedError;
   String? get typeOfTrip => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
   TimeOfDay? get startTime => throw _privateConstructorUsedError;
@@ -103,6 +105,8 @@ abstract class $ListingBookingsCopyWith<$Res> {
       @TimestampSerializer() DateTime? startDate,
       String bookingStatus,
       num? totalPrice,
+      String tripUid,
+      String tripName,
       String? typeOfTrip,
       @TimeOfDayConverter() TimeOfDay? startTime,
       @TimeOfDayConverter() TimeOfDay? endTime});
@@ -150,6 +154,8 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? startDate = freezed,
     Object? bookingStatus = null,
     Object? totalPrice = freezed,
+    Object? tripUid = null,
+    Object? tripName = null,
     Object? typeOfTrip = freezed,
     Object? startTime = freezed,
     Object? endTime = freezed,
@@ -271,6 +277,14 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
               as num?,
+      tripUid: null == tripUid
+          ? _value.tripUid
+          : tripUid // ignore: cast_nullable_to_non_nullable
+              as String,
+      tripName: null == tripName
+          ? _value.tripName
+          : tripName // ignore: cast_nullable_to_non_nullable
+              as String,
       typeOfTrip: freezed == typeOfTrip
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
@@ -325,6 +339,8 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       @TimestampSerializer() DateTime? startDate,
       String bookingStatus,
       num? totalPrice,
+      String tripUid,
+      String tripName,
       String? typeOfTrip,
       @TimeOfDayConverter() TimeOfDay? startTime,
       @TimeOfDayConverter() TimeOfDay? endTime});
@@ -370,6 +386,8 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? startDate = freezed,
     Object? bookingStatus = null,
     Object? totalPrice = freezed,
+    Object? tripUid = null,
+    Object? tripName = null,
     Object? typeOfTrip = freezed,
     Object? startTime = freezed,
     Object? endTime = freezed,
@@ -491,6 +509,14 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.totalPrice
           : totalPrice // ignore: cast_nullable_to_non_nullable
               as num?,
+      tripUid: null == tripUid
+          ? _value.tripUid
+          : tripUid // ignore: cast_nullable_to_non_nullable
+              as String,
+      tripName: null == tripName
+          ? _value.tripName
+          : tripName // ignore: cast_nullable_to_non_nullable
+              as String,
       typeOfTrip: freezed == typeOfTrip
           ? _value.typeOfTrip
           : typeOfTrip // ignore: cast_nullable_to_non_nullable
@@ -540,6 +566,8 @@ class _$ListingBookingsImpl extends _ListingBookings {
       @TimestampSerializer() this.startDate,
       required this.bookingStatus,
       this.totalPrice,
+      required this.tripUid,
+      required this.tripName,
       this.typeOfTrip,
       @TimeOfDayConverter() this.startTime,
       @TimeOfDayConverter() this.endTime})
@@ -631,6 +659,10 @@ class _$ListingBookingsImpl extends _ListingBookings {
   @override
   final num? totalPrice;
   @override
+  final String tripUid;
+  @override
+  final String tripName;
+  @override
   final String? typeOfTrip;
   @override
   @TimeOfDayConverter()
@@ -641,7 +673,7 @@ class _$ListingBookingsImpl extends _ListingBookings {
 
   @override
   String toString() {
-    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, cooperativeId: $cooperativeId, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, paymentStatus: $paymentStatus, price: $price, roomId: $roomId, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, cooperativeId: $cooperativeId, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, paymentStatus: $paymentStatus, price: $price, roomId: $roomId, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, tripUid: $tripUid, tripName: $tripName, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -697,6 +729,9 @@ class _$ListingBookingsImpl extends _ListingBookings {
                 other.bookingStatus == bookingStatus) &&
             (identical(other.totalPrice, totalPrice) ||
                 other.totalPrice == totalPrice) &&
+            (identical(other.tripUid, tripUid) || other.tripUid == tripUid) &&
+            (identical(other.tripName, tripName) ||
+                other.tripName == tripName) &&
             (identical(other.typeOfTrip, typeOfTrip) ||
                 other.typeOfTrip == typeOfTrip) &&
             (identical(other.startTime, startTime) ||
@@ -737,6 +772,8 @@ class _$ListingBookingsImpl extends _ListingBookings {
         startDate,
         bookingStatus,
         totalPrice,
+        tripUid,
+        tripName,
         typeOfTrip,
         startTime,
         endTime
@@ -788,6 +825,8 @@ abstract class _ListingBookings extends ListingBookings {
       @TimestampSerializer() final DateTime? startDate,
       required final String bookingStatus,
       final num? totalPrice,
+      required final String tripUid,
+      required final String tripName,
       final String? typeOfTrip,
       @TimeOfDayConverter() final TimeOfDay? startTime,
       @TimeOfDayConverter() final TimeOfDay? endTime}) = _$ListingBookingsImpl;
@@ -857,6 +896,10 @@ abstract class _ListingBookings extends ListingBookings {
   String get bookingStatus;
   @override //[Reserved, Cancelled, Completed, Refunded
   num? get totalPrice;
+  @override
+  String get tripUid;
+  @override
+  String get tripName;
   @override
   String? get typeOfTrip;
   @override

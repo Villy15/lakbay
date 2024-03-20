@@ -11,6 +11,7 @@ class CoopGoals with _$CoopGoals {
     String? uid,
     String? title,
     String? description,
+    String? coopId,
     @TimestampSerializer() DateTime? targetDate,
     String? category,
     List<String>? metrics,

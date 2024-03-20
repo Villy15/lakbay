@@ -13,6 +13,7 @@ import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_checkout.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -57,10 +58,10 @@ class _CustomerTransportationState
                   title: widget.listing.title.length > 20
                       ? Text('${widget.listing.title.substring(0, 20)}...',
                           style: const TextStyle(
-                              fontSize: 32.0, fontWeight: FontWeight.bold))
+                              fontSize: 25.0, fontWeight: FontWeight.bold))
                       : Text(widget.listing.title,
                           style: const TextStyle(
-                              fontSize: 32.0, fontWeight: FontWeight.bold)),
+                              fontSize: 25.0, fontWeight: FontWeight.bold)),
                   bottom: TabBar(
                     tabAlignment: TabAlignment.center,
                     labelPadding: EdgeInsets.zero,
@@ -1148,7 +1149,11 @@ class _CustomerTransportationState
                   width: double.infinity,
                   child: ElevatedButton(
                       onPressed: () {
+                        final currentTrip = ref.read(currentTripProvider);
+
                         ListingBookings booking = ListingBookings(
+                            tripUid: currentTrip!.uid!,
+                            tripName: currentTrip.name,
                             listingId: widget.listing.uid!,
                             listingTitle: widget.listing.title,
                             customerName: ref.read(userProvider)!.name,
@@ -1286,7 +1291,11 @@ class _CustomerTransportationState
                   width: double.infinity,
                   child: ElevatedButton(
                       onPressed: () {
+                        final currentTrip = ref.read(currentTripProvider);
+
                         ListingBookings booking = ListingBookings(
+                            tripUid: currentTrip!.uid!,
+                            tripName: currentTrip.name,
                             listingId: widget.listing.uid!,
                             listingTitle: widget.listing.title,
                             customerName: ref.read(userProvider)!.name,

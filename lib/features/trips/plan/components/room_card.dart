@@ -632,7 +632,11 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                         endDate = endDate.copyWith(
                             hour: listing.checkOut!.hour,
                             minute: listing.checkOut!.minute);
+                        final currentTrip = ref.read(currentTripProvider);
+
                         ListingBookings booking = ListingBookings(
+                          tripUid: currentTrip!.uid!,
+                          tripName: currentTrip.name,
                           listingId: listing.uid!,
                           listingTitle: listing.title,
                           customerName: ref.read(userProvider)!.name,

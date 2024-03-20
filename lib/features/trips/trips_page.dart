@@ -7,6 +7,7 @@ import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/trips/components/trip_card.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
 
 class TripsPage extends ConsumerStatefulWidget {
@@ -23,9 +24,10 @@ class _TripsPageState extends ConsumerState<TripsPage> {
     );
   }
 
-  void onTap(BuildContext context, WidgetRef ref, String planId) {
+  void onTap(BuildContext context, WidgetRef ref, PlanModel plan) {
     // context.push('/market/${listing.category}', extra: listing);
-    context.push('/trips/details/$planId');
+    ref.read(currentTripProvider.notifier).setPlan(plan);
+    context.push('/trips/details/${plan.uid}');
   }
 
   @override
@@ -221,7 +223,7 @@ class _TripsPageState extends ConsumerState<TripsPage> {
               ),
               child: InkWell(
                 splashColor: Colors.orange.withAlpha(30),
-                onTap: () => onTap(context, ref, plan.uid!),
+                onTap: () => onTap(context, ref, plan),
                 child: SizedBox(
                     width: double.infinity,
                     // height: 290,

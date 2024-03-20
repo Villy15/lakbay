@@ -8,8 +8,10 @@ import 'package:lakbay/features/cooperatives/coops_repository.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
+import 'package:lakbay/models/subcollections/coop_goals_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
+import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/committee_params.dart';
 
@@ -84,6 +86,27 @@ final getAllAnnouncementsProvider = StreamProvider.autoDispose
     .family<List<CoopAnnouncements>, String>((ref, coopUid) {
   final coopsController = ref.watch(coopsControllerProvider.notifier);
   return coopsController.getAllAnnouncements(coopUid);
+});
+
+// Get all goals provider
+final getAllGoalsProvider =
+    StreamProvider.autoDispose.family<List<CoopGoals>, String>((ref, coopUid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getAllGoals(coopUid);
+});
+
+// Get all votes provider
+final getAllVotesProvider =
+    StreamProvider.autoDispose.family<List<CoopVote>, String>((ref, coopUid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getAllVotes(coopUid);
+});
+
+// Get a vote provider
+final getVoteProvider =
+    StreamProvider.autoDispose.family<CoopVote, String>((ref, voteUid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getVote(ref.read(userProvider)!.currentCoop!, voteUid);
 });
 
 class CoopsController extends StateNotifier<bool> {
@@ -535,5 +558,83 @@ class CoopsController extends StateNotifier<bool> {
   // Read all aannounecements of a cooperative
   Stream<List<CoopAnnouncements>> getAllAnnouncements(String coopUid) {
     return _coopsRepository.readAnnouncements(coopUid);
+  }
+
+  // Add Goal
+  void addGoal(String coopUid, CoopGoals coopGoal, BuildContext context) {
+    state = true;
+    _coopsRepository.addGoal(coopUid, coopGoal).then((result) {
+      result.fold(
+        (l) {
+          // Handle the error here
+          state = false;
+          showSnackBar(context, l.message);
+        },
+        (r) {
+          // Handle the success here
+          state = false;
+          showSnackBar(context, 'Goal added successfully');
+          context.pop();
+          _ref.read(navBarVisibilityProvider.notifier).show();
+        },
+      );
+    });
+  }
+
+  // Read all goals of a cooperative
+  Stream<List<CoopGoals>> getAllGoals(String coopUid) {
+    return _coopsRepository.readGoals(coopUid);
+  }
+
+  // Add Vote
+  void addVote(String coopUid, CoopVote coopVote, BuildContext context) {
+    state = true;
+    _coopsRepository.addVote(coopUid, coopVote).then((result) {
+      result.fold(
+        (l) {
+          // Handle the error here
+          state = false;
+          showSnackBar(context, l.message);
+        },
+        (r) {
+          // Handle the success here
+          state = false;
+          showSnackBar(context, 'Vote added successfully');
+          context.pop();
+          _ref.read(navBarVisibilityProvider.notifier).show();
+        },
+      );
+    });
+  }
+
+  // Read all votes of a cooperative
+  Stream<List<CoopVote>> getAllVotes(String coopUid) {
+    return _coopsRepository.readVotes(coopUid);
+  }
+
+  // Read a vote
+  Stream<CoopVote> getVote(String coopUid, String voteUid) {
+    return _coopsRepository.readVote(coopUid, voteUid);
+  }
+
+  // Edit Vote
+  void editVote(String coopUid, CoopVote coopVote, BuildContext context) {
+    state = true;
+    debugPrint('CoopVote: ${coopVote.toString()}');
+    _coopsRepository.updateVote(coopUid, coopVote).then((result) {
+      result.fold(
+        (l) {
+          // Handle the error here
+          state = false;
+          showSnackBar(context, l.message);
+        },
+        (r) {
+          // Handle the success here
+          state = false;
+          showSnackBar(context, 'Voted successfully');
+          context.pop();
+        },
+      );
+    });
   }
 }

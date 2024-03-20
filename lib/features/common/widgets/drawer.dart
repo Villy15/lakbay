@@ -270,14 +270,16 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
 
                   // Wiki Page
 
-                  ListTile(
-                    title: const Text('Wiki'),
-                    leading: const Icon(Icons.book_outlined),
-                    onTap: () => {
-                      context.pop(),
-                      context.push('/wiki'),
-                    },
-                  )
+                  widget.user!.isCoopView ?? false
+                      ? ListTile(
+                          title: const Text('Wiki'),
+                          leading: const Icon(Icons.book_outlined),
+                          onTap: () => {
+                            context.pop(),
+                            context.push('/wiki'),
+                          },
+                        )
+                      : const SizedBox.shrink(),
                 ],
               ),
               Column(

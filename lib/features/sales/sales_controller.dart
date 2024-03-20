@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/sales/sales_repository.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
+import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -67,16 +69,24 @@ class SalesController extends StateNotifier<bool> {
   }
 
   void updateSale(BuildContext context, SaleModel sale,
-      {ListingBookings? booking}) {
+      {ListingBookings? booking, PlanModel? trip}) {
     state = true;
     _salesRepository.updateSale(sale).then((result) {
       state = false;
       result.fold(
         (l) => showSnackBar(context, l.message),
         (r) {
-          _ref
-              .read(listingControllerProvider.notifier)
-              .updateBooking(context, booking!.listingId, booking, "");
+          booking != null
+              ? _ref
+                  .read(listingControllerProvider.notifier)
+                  .updateBooking(context, booking.listingId, booking, "")
+              : null;
+          trip != null
+              ? _ref
+                  .read(plansControllerProvider.notifier)
+                  .updatePlan(trip, context)
+              : null;
+
           // context.pop();
           // showSnackBar(context, '');
         },

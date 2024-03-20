@@ -5,6 +5,19 @@ import 'package:lakbay/models/plan_model.dart';
 
 // TEST Without DBASE
 // List of Plan Model State Notifier Provider
+final currentTripProvider =
+    StateNotifierProvider<CurrentTripProvider, PlanModel?>(
+  (ref) => CurrentTripProvider(),
+);
+
+class CurrentTripProvider extends StateNotifier<PlanModel?> {
+  CurrentTripProvider() : super(null);
+
+  void setPlan(PlanModel plan) {
+    state = plan;
+  }
+}
+
 final planModelProvider =
     StateNotifierProvider<PlanModelProvider, List<PlanModel>>(
   (ref) => PlanModelProvider(),
@@ -108,10 +121,14 @@ class CurrentPlanGuests extends StateNotifier<num?> {
 }
 
 // Create a StateNotifierProvider for the ParentState
-final parentStateProvider = StateNotifierProvider((ref) => ParentState());
+final parentStateProvider = StateNotifierProvider<ParentState, bool>(
+  (ref) => ParentState(),
+);
 
 class ParentState extends StateNotifier<bool> {
   ParentState() : super(false);
 
-  void executeFunction(BuildContext context) {}
+  void setState(bool parentState) {
+    state = parentState;
+  }
 }

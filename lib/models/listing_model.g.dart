@@ -41,6 +41,8 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           .fromJson(json['openingHours'] as Timestamp?),
       closingHours: const TimestampSerializer()
           .fromJson(json['closingHours'] as Timestamp?),
+      travelDuration: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
+          json['travelDuration'], const TimeOfDayConverter().fromJson),
       pax: json['pax'] as num?,
       price: json['price'] as num?,
       province: json['province'] as String,
@@ -67,7 +69,6 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       availableEntertainment: (json['availableEntertainment'] as List<dynamic>?)
           ?.map((e) => EntertainmentService.fromJson(e as Map<String, dynamic>))
           .toList(),
-      typeOfTrip: json['typeOfTrip'] as String?,
       uid: json['uid'] as String?,
     );
 
@@ -95,6 +96,8 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'numberOfUnits': instance.numberOfUnits,
       'openingHours': const TimestampSerializer().toJson(instance.openingHours),
       'closingHours': const TimestampSerializer().toJson(instance.closingHours),
+      'travelDuration': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
+          instance.travelDuration, const TimeOfDayConverter().toJson),
       'pax': instance.pax,
       'price': instance.price,
       'province': instance.province,
@@ -111,9 +114,20 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'availableTransport': instance.availableTransport?.toJson(),
       'availableEntertainment':
           instance.availableEntertainment?.map((e) => e.toJson()).toList(),
-      'typeOfTrip': instance.typeOfTrip,
       'uid': instance.uid,
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);
 
 _$ListingCooperativeImpl _$$ListingCooperativeImplFromJson(
         Map<String, dynamic> json) =>

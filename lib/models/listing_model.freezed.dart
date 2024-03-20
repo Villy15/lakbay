@@ -44,6 +44,8 @@ mixin _$ListingModel {
   DateTime? get openingHours => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get closingHours => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay? get travelDuration => throw _privateConstructorUsedError;
   num? get pax => throw _privateConstructorUsedError;
   num? get price => throw _privateConstructorUsedError;
   String get province => throw _privateConstructorUsedError;
@@ -54,14 +56,13 @@ mixin _$ListingModel {
   @TimestampSerializer()
   DateTime? get timestamp => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  String? get type => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError; //[Private, Public]
   List<FoodService>? get availableDeals => throw _privateConstructorUsedError;
   List<ListingImages>? get menuImgs => throw _privateConstructorUsedError;
   AvailableTransport? get availableTransport =>
       throw _privateConstructorUsedError;
   List<EntertainmentService>? get availableEntertainment =>
       throw _privateConstructorUsedError;
-  String? get typeOfTrip => throw _privateConstructorUsedError;
   String? get uid => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -97,6 +98,7 @@ abstract class $ListingModelCopyWith<$Res> {
       num? numberOfUnits,
       @TimestampSerializer() DateTime? openingHours,
       @TimestampSerializer() DateTime? closingHours,
+      @TimeOfDayConverter() TimeOfDay? travelDuration,
       num? pax,
       num? price,
       String province,
@@ -111,7 +113,6 @@ abstract class $ListingModelCopyWith<$Res> {
       List<ListingImages>? menuImgs,
       AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
-      String? typeOfTrip,
       String? uid});
 
   $ListingCooperativeCopyWith<$Res> get cooperative;
@@ -151,6 +152,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? numberOfUnits = freezed,
     Object? openingHours = freezed,
     Object? closingHours = freezed,
+    Object? travelDuration = freezed,
     Object? pax = freezed,
     Object? price = freezed,
     Object? province = null,
@@ -165,7 +167,6 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? menuImgs = freezed,
     Object? availableTransport = freezed,
     Object? availableEntertainment = freezed,
-    Object? typeOfTrip = freezed,
     Object? uid = freezed,
   }) {
     return _then(_value.copyWith(
@@ -249,6 +250,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.closingHours
           : closingHours // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      travelDuration: freezed == travelDuration
+          ? _value.travelDuration
+          : travelDuration // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay?,
       pax: freezed == pax
           ? _value.pax
           : pax // ignore: cast_nullable_to_non_nullable
@@ -305,10 +310,6 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.availableEntertainment
           : availableEntertainment // ignore: cast_nullable_to_non_nullable
               as List<EntertainmentService>?,
-      typeOfTrip: freezed == typeOfTrip
-          ? _value.typeOfTrip
-          : typeOfTrip // ignore: cast_nullable_to_non_nullable
-              as String?,
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -367,6 +368,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       num? numberOfUnits,
       @TimestampSerializer() DateTime? openingHours,
       @TimestampSerializer() DateTime? closingHours,
+      @TimeOfDayConverter() TimeOfDay? travelDuration,
       num? pax,
       num? price,
       String province,
@@ -381,7 +383,6 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       List<ListingImages>? menuImgs,
       AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
-      String? typeOfTrip,
       String? uid});
 
   @override
@@ -421,6 +422,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? numberOfUnits = freezed,
     Object? openingHours = freezed,
     Object? closingHours = freezed,
+    Object? travelDuration = freezed,
     Object? pax = freezed,
     Object? price = freezed,
     Object? province = null,
@@ -435,7 +437,6 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? menuImgs = freezed,
     Object? availableTransport = freezed,
     Object? availableEntertainment = freezed,
-    Object? typeOfTrip = freezed,
     Object? uid = freezed,
   }) {
     return _then(_$ListingModelImpl(
@@ -519,6 +520,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.closingHours
           : closingHours // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      travelDuration: freezed == travelDuration
+          ? _value.travelDuration
+          : travelDuration // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay?,
       pax: freezed == pax
           ? _value.pax
           : pax // ignore: cast_nullable_to_non_nullable
@@ -575,10 +580,6 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value._availableEntertainment
           : availableEntertainment // ignore: cast_nullable_to_non_nullable
               as List<EntertainmentService>?,
-      typeOfTrip: freezed == typeOfTrip
-          ? _value.typeOfTrip
-          : typeOfTrip // ignore: cast_nullable_to_non_nullable
-              as String?,
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -611,6 +612,7 @@ class _$ListingModelImpl implements _ListingModel {
       this.numberOfUnits,
       @TimestampSerializer() this.openingHours,
       @TimestampSerializer() this.closingHours,
+      @TimeOfDayConverter() this.travelDuration,
       this.pax,
       this.price,
       required this.province,
@@ -625,7 +627,6 @@ class _$ListingModelImpl implements _ListingModel {
       final List<ListingImages>? menuImgs,
       this.availableTransport,
       final List<EntertainmentService>? availableEntertainment,
-      this.typeOfTrip,
       this.uid})
       : _availableDates = availableDates,
         _availableRooms = availableRooms,
@@ -716,6 +717,9 @@ class _$ListingModelImpl implements _ListingModel {
   @TimestampSerializer()
   final DateTime? closingHours;
   @override
+  @TimeOfDayConverter()
+  final TimeOfDay? travelDuration;
+  @override
   final num? pax;
   @override
   final num? price;
@@ -744,7 +748,9 @@ class _$ListingModelImpl implements _ListingModel {
   final String title;
   @override
   final String? type;
+//[Private, Public]
   final List<FoodService>? _availableDeals;
+//[Private, Public]
   @override
   List<FoodService>? get availableDeals {
     final value = _availableDeals;
@@ -778,13 +784,11 @@ class _$ListingModelImpl implements _ListingModel {
   }
 
   @override
-  final String? typeOfTrip;
-  @override
   final String? uid;
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, travelDuration: $travelDuration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, uid: $uid)';
   }
 
   @override
@@ -828,6 +832,8 @@ class _$ListingModelImpl implements _ListingModel {
                 other.openingHours == openingHours) &&
             (identical(other.closingHours, closingHours) ||
                 other.closingHours == closingHours) &&
+            (identical(other.travelDuration, travelDuration) ||
+                other.travelDuration == travelDuration) &&
             (identical(other.pax, pax) || other.pax == pax) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.province, province) ||
@@ -850,8 +856,6 @@ class _$ListingModelImpl implements _ListingModel {
                 other.availableTransport == availableTransport) &&
             const DeepCollectionEquality().equals(
                 other._availableEntertainment, _availableEntertainment) &&
-            (identical(other.typeOfTrip, typeOfTrip) ||
-                other.typeOfTrip == typeOfTrip) &&
             (identical(other.uid, uid) || other.uid == uid));
   }
 
@@ -879,6 +883,7 @@ class _$ListingModelImpl implements _ListingModel {
         numberOfUnits,
         openingHours,
         closingHours,
+        travelDuration,
         pax,
         price,
         province,
@@ -893,7 +898,6 @@ class _$ListingModelImpl implements _ListingModel {
         const DeepCollectionEquality().hash(_menuImgs),
         availableTransport,
         const DeepCollectionEquality().hash(_availableEntertainment),
-        typeOfTrip,
         uid
       ]);
 
@@ -933,6 +937,7 @@ abstract class _ListingModel implements ListingModel {
       final num? numberOfUnits,
       @TimestampSerializer() final DateTime? openingHours,
       @TimestampSerializer() final DateTime? closingHours,
+      @TimeOfDayConverter() final TimeOfDay? travelDuration,
       final num? pax,
       final num? price,
       required final String province,
@@ -947,7 +952,6 @@ abstract class _ListingModel implements ListingModel {
       final List<ListingImages>? menuImgs,
       final AvailableTransport? availableTransport,
       final List<EntertainmentService>? availableEntertainment,
-      final String? typeOfTrip,
       final String? uid}) = _$ListingModelImpl;
 
   factory _ListingModel.fromJson(Map<String, dynamic> json) =
@@ -998,6 +1002,9 @@ abstract class _ListingModel implements ListingModel {
   @TimestampSerializer()
   DateTime? get closingHours;
   @override
+  @TimeOfDayConverter()
+  TimeOfDay? get travelDuration;
+  @override
   num? get pax;
   @override
   num? get price;
@@ -1018,7 +1025,7 @@ abstract class _ListingModel implements ListingModel {
   String get title;
   @override
   String? get type;
-  @override
+  @override //[Private, Public]
   List<FoodService>? get availableDeals;
   @override
   List<ListingImages>? get menuImgs;
@@ -1026,8 +1033,6 @@ abstract class _ListingModel implements ListingModel {
   AvailableTransport? get availableTransport;
   @override
   List<EntertainmentService>? get availableEntertainment;
-  @override
-  String? get typeOfTrip;
   @override
   String? get uid;
   @override

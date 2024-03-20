@@ -248,59 +248,45 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   }
 
   Widget _coopVotes() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => const Padding(
-        padding: EdgeInsets.only(bottom: 16.0),
-      ),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: coopVotes.length,
-      itemBuilder: (context, index) {
-        final vote = coopVotes[index];
+    return ref.watch(getAllVotesProvider(widget.coopId)).when(
+          data: (data) {
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                final vote = data[index];
 
-        return ListTile(
-          title: Text(
-            vote.position!,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          subtitle: Text(
-            'Due: ${DateFormat.yMMMd().format(vote.dueDate!)}',
-          ),
-          // Trailing FilledButton Vote
-          trailing: FilledButton(
-            onPressed: () {
-              // Vote
-            },
-            child: const Text('Vote'),
-          ),
-
-          onTap: () {
-            // Navigate to vote details
+                return ListVote(vote: vote);
+              },
+            );
           },
+          error: (error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString()),
+          loading: () => const Loader(),
         );
-      },
-    );
   }
 
   Widget _coopGoals() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => const Padding(
-        padding: EdgeInsets.only(bottom: 16.0),
-      ),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: coopGoals.length,
-      itemBuilder: (context, index) {
-        final coopGoal = coopGoals[index];
+    return ref.watch(getAllGoalsProvider(widget.coopId)).when(
+          data: (data) {
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                final goal = data[index];
 
-        return GoalCard(
-          goal: coopGoal,
+                return GoalCard(
+                  goal: goal,
+                );
+              },
+            );
+          },
+          error: (error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString()),
+          loading: () => const Loader(),
         );
-      },
-    );
   }
 
   Widget _coopAnnouncements() {
@@ -701,6 +687,51 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
       actionsIconTheme: const IconThemeData(
         opacity: 0.5,
       ),
+    );
+  }
+}
+
+class ListVote extends StatelessWidget {
+  const ListVote({
+    super.key,
+    required this.vote,
+  });
+
+  final CoopVote vote;
+
+  void readVote(BuildContext context) {
+    context.pushNamed(
+      'read_vote',
+      extra: vote,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        vote.position!,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      subtitle: Text(
+        'Due: ${DateFormat.yMMMd().format(vote.dueDate!)}',
+      ),
+      // Trailing FilledButton Vote
+      trailing: FilledButton(
+        onPressed: () {
+          readVote(context);
+          // Vote
+        },
+        child: const Text('Vote'),
+      ),
+
+      onTap: () {
+        readVote(context);
+        // Navigate to vote details
+      },
     );
   }
 }

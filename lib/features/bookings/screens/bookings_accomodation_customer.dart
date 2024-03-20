@@ -9,7 +9,9 @@ import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -36,6 +38,7 @@ class _BookingsAccomodationCustomerState
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('File Name: bookings_accommodation_customer.dart');
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
@@ -62,7 +65,6 @@ class _BookingsAccomodationCustomerState
                       )
                           .then(
                         (value) {
-                          debugPrint("Popped");
                           // ref.read(navBarVisibilityProvider.notifier).show();
                         },
                       );
@@ -182,37 +184,35 @@ class _BookingsAccomodationCustomerState
                       child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Stack(
-                        children: [
-                          Container(
+                      Stack(children: [
+                        Container(
                             foregroundDecoration: BoxDecoration(
-                              color: Colors.black.withOpacity(
-                                  booking.bookingStatus == "Cancelled"
-                                      ? 0.5
-                                      : 0.0),
-                            ),
+                                color: Colors.black.withOpacity(
+                                    booking.bookingStatus == "Cancelled"
+                                        ? 0.5
+                                        : 0.0)),
                             child: ImageSlider(
                                 images: imageUrls,
                                 height: MediaQuery.sizeOf(context).height / 2,
                                 width: double.infinity,
-                                radius: BorderRadius.circular(0)),
+                                radius: BorderRadius.circular(0))),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 70.0, left: 30),
+                          child: Row(
+                            children: [
+                              Flexible(
+                                  child: Text(
+                                      booking.bookingStatus == 'Cancelled'
+                                          ? "Your Booking Has Been Cancelled"
+                                          : '',
+                                      style: const TextStyle(
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white))),
+                            ],
                           ),
-                          if (booking.bookingStatus == "Cancelled")
-                            Positioned.fill(
-                              top: MediaQuery.sizeOf(context).height / 7.5,
-                              left: MediaQuery.sizeOf(context).width / 15,
-                              child: const Flexible(
-                                child: Text(
-                                  "Your Booking Has Been Cancelled",
-                                  style: TextStyle(
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                ),
-                              ),
-                            )
-                        ],
-                      ),
+                        )
+                      ]),
                       // Check in Checkout
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -709,143 +709,8 @@ class _BookingsAccomodationCustomerState
                         child: ElevatedButton(
                           onPressed: selectedReason != null
                               ? () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return Dialog.fullscreen(
-                                            child: Scaffold(
-                                          appBar: AppBar(
-                                            leading: IconButton(
-                                              icon:
-                                                  const Icon(Icons.arrow_back),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                          ),
-                                          bottomNavigationBar: BottomAppBar(
-                                            surfaceTintColor:
-                                                Colors.transparent,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.8,
-                                                  child: ElevatedButton(
-                                                    onPressed: () =>
-                                                        onTapCancel(
-                                                            context, booking),
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 12.0),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                8.0), // Adjust the value as needed
-                                                      ),
-                                                    ),
-                                                    child: const Text(
-                                                      'Continue',
-                                                      style: TextStyle(
-                                                          fontSize: 16),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          body: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 15),
-                                            width: double.infinity,
-                                            child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    "Your Cancellation",
-                                                    style: TextStyle(
-                                                        fontSize: 22,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  ),
-                                                  const Text(
-                                                    "Cancellation is effective immediately. The payment method you used to reserve this accommodation will be refunded in 5 - 7 business days.",
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w300),
-                                                  ),
-                                                  SizedBox(
-                                                      height: MediaQuery.sizeOf(
-                                                                  context)
-                                                              .height /
-                                                          20),
-                                                  const Text(
-                                                    "Payment Details",
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  ...paymentDetails.entries
-                                                      .map((entry) {
-                                                    return Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 15.0),
-                                                      child: Column(
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Text(
-                                                                entry.key
-                                                                    .toString(),
-                                                                style:
-                                                                    const TextStyle(
-                                                                        fontSize:
-                                                                            14),
-                                                              ),
-                                                              Text(
-                                                                "₱${entry.value.toStringAsFixed(2)} PHP",
-                                                                style: const TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Container(
-                                                            margin:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    top: 15),
-                                                            height: 1,
-                                                            width:
-                                                                double.infinity,
-                                                            color: Colors
-                                                                .grey[200],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  }),
-                                                ]),
-                                          ),
-                                        ));
-                                      }).then((value) => context.pop());
+                                  cancellationPaymentDetails(
+                                      context, booking, paymentDetails);
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(
@@ -920,7 +785,110 @@ class _BookingsAccomodationCustomerState
     );
   }
 
-  void onTapCancel(context, ListingBookings booking) async {
+  Future<dynamic> cancellationPaymentDetails(BuildContext context,
+      ListingBookings booking, Map<String, num> paymentDetails) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog.fullscreen(
+              child: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            bottomNavigationBar: BottomAppBar(
+              surfaceTintColor: Colors.transparent,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    child: ElevatedButton(
+                      onPressed: () =>
+                          onTapCancel(context, booking).then((value) {
+                        context.pop();
+                        context.pop();
+                      }),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              8.0), // Adjust the value as needed
+                        ),
+                      ),
+                      child: const Text(
+                        'Continue',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            body: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              width: double.infinity,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Your Cancellation",
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                    ),
+                    const Text(
+                      "Cancellation is effective immediately. The payment method you used to reserve this accommodation will be refunded in 5 - 7 business days.",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
+                    ),
+                    SizedBox(height: MediaQuery.sizeOf(context).height / 20),
+                    const Text(
+                      "Payment Details",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    ...paymentDetails.entries.map((entry) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 15.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  entry.key.toString(),
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                Text(
+                                  "₱${entry.value.toStringAsFixed(2)} PHP",
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 15),
+                              height: 1,
+                              width: double.infinity,
+                              color: Colors.grey[200],
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ]),
+            ),
+          ));
+        });
+  }
+
+  Future<dynamic> onTapCancel(
+      BuildContext context, ListingBookings booking) async {
     final updatedBooking = booking.copyWith(
         amountPaid: booking.amountPaid! * widget.listing.cancellationRate!,
         bookingStatus: "Cancelled",
@@ -929,8 +897,16 @@ class _BookingsAccomodationCustomerState
     SaleModel updatedSale = sale.copyWith(
         transactionType: "Cancellation",
         saleAmount: booking.amountPaid! * widget.listing.cancellationRate!);
-    ref
-        .read(salesControllerProvider.notifier)
-        .updateSale(context, updatedSale, booking: updatedBooking);
+    final trip = await ref.read(getPlanByUidProvider(booking.tripUid).future);
+    PlanModel updatedTrip = trip.copyWith(
+      activities: trip.activities
+          ?.where((activity) => activity.bookingId != booking.id)
+          .toList(),
+    );
+    if (context.mounted) {
+      ref.read(salesControllerProvider.notifier).updateSale(
+          context, updatedSale,
+          booking: updatedBooking, trip: updatedTrip);
+    }
   }
 }

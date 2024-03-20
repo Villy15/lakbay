@@ -56,7 +56,7 @@ class _TransportationBookingsDetailsState
         canPop: false,
         onPopInvoked: (bool didPop) {
           context.pop();
-          ref.read(navBarVisibilityProvider.notifier).show();
+          // ref.read(navBarVisibilityProvider.notifier).show();
         },
         child: DefaultTabController(
             initialIndex: 0,
