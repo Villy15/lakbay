@@ -152,7 +152,9 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                   key: _formKey,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
                     child: Column(
                       children: [
                         GestureDetector(
@@ -417,6 +419,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
     // );
   }
 
+  // ignore: unused_element
   Future<DateTime?> _selectDate(
     BuildContext context,
     DateTime initialDate,

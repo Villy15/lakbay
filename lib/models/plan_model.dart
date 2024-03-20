@@ -14,6 +14,7 @@ class PlanModel with _$PlanModel {
     required String location,
     @TimestampSerializer() DateTime? startDate,
     @TimestampSerializer() DateTime? endDate,
+    String? tripStatus, //[Active, Cancelled, Completed]
     List<PlanActivity>? activities,
     List<String>? memories,
     required String name,

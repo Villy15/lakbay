@@ -70,7 +70,6 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
             ));
 
             // End loop after adding 1 member for testing
-            break;
           }
         }
       }

@@ -31,7 +31,7 @@ mixin _$SaleModel {
   String get listingName => throw _privateConstructorUsedError;
   num get listingPrice => throw _privateConstructorUsedError;
   String get paymentOption => throw _privateConstructorUsedError;
-  String get tranasactionType => throw _privateConstructorUsedError;
+  String get transactionType => throw _privateConstructorUsedError;
   num get amount => throw _privateConstructorUsedError;
   String get ownerId => throw _privateConstructorUsedError;
   String get ownerName => throw _privateConstructorUsedError;
@@ -63,7 +63,7 @@ abstract class $SaleModelCopyWith<$Res> {
       String listingName,
       num listingPrice,
       String paymentOption,
-      String tranasactionType,
+      String transactionType,
       num amount,
       String ownerId,
       String ownerName,
@@ -97,7 +97,7 @@ class _$SaleModelCopyWithImpl<$Res, $Val extends SaleModel>
     Object? listingName = null,
     Object? listingPrice = null,
     Object? paymentOption = null,
-    Object? tranasactionType = null,
+    Object? transactionType = null,
     Object? amount = null,
     Object? ownerId = null,
     Object? ownerName = null,
@@ -151,9 +151,9 @@ class _$SaleModelCopyWithImpl<$Res, $Val extends SaleModel>
           ? _value.paymentOption
           : paymentOption // ignore: cast_nullable_to_non_nullable
               as String,
-      tranasactionType: null == tranasactionType
-          ? _value.tranasactionType
-          : tranasactionType // ignore: cast_nullable_to_non_nullable
+      transactionType: null == transactionType
+          ? _value.transactionType
+          : transactionType // ignore: cast_nullable_to_non_nullable
               as String,
       amount: null == amount
           ? _value.amount
@@ -207,7 +207,7 @@ abstract class _$$SaleModelImplCopyWith<$Res>
       String listingName,
       num listingPrice,
       String paymentOption,
-      String tranasactionType,
+      String transactionType,
       num amount,
       String ownerId,
       String ownerName,
@@ -239,7 +239,7 @@ class __$$SaleModelImplCopyWithImpl<$Res>
     Object? listingName = null,
     Object? listingPrice = null,
     Object? paymentOption = null,
-    Object? tranasactionType = null,
+    Object? transactionType = null,
     Object? amount = null,
     Object? ownerId = null,
     Object? ownerName = null,
@@ -293,9 +293,9 @@ class __$$SaleModelImplCopyWithImpl<$Res>
           ? _value.paymentOption
           : paymentOption // ignore: cast_nullable_to_non_nullable
               as String,
-      tranasactionType: null == tranasactionType
-          ? _value.tranasactionType
-          : tranasactionType // ignore: cast_nullable_to_non_nullable
+      transactionType: null == transactionType
+          ? _value.transactionType
+          : transactionType // ignore: cast_nullable_to_non_nullable
               as String,
       amount: null == amount
           ? _value.amount
@@ -344,7 +344,7 @@ class _$SaleModelImpl implements _SaleModel {
       required this.listingName,
       required this.listingPrice,
       required this.paymentOption,
-      required this.tranasactionType,
+      required this.transactionType,
       required this.amount,
       required this.ownerId,
       required this.ownerName,
@@ -379,7 +379,7 @@ class _$SaleModelImpl implements _SaleModel {
   @override
   final String paymentOption;
   @override
-  final String tranasactionType;
+  final String transactionType;
   @override
   final num amount;
   @override
@@ -397,7 +397,7 @@ class _$SaleModelImpl implements _SaleModel {
 
   @override
   String toString() {
-    return 'SaleModel(bookingId: $bookingId, category: $category, cooperativeId: $cooperativeId, cooperativeName: $cooperativeName, customerId: $customerId, customerName: $customerName, expenses: $expenses, listingId: $listingId, listingName: $listingName, listingPrice: $listingPrice, paymentOption: $paymentOption, tranasactionType: $tranasactionType, amount: $amount, ownerId: $ownerId, ownerName: $ownerName, guests: $guests, profit: $profit, saleAmount: $saleAmount, uid: $uid)';
+    return 'SaleModel(bookingId: $bookingId, category: $category, cooperativeId: $cooperativeId, cooperativeName: $cooperativeName, customerId: $customerId, customerName: $customerName, expenses: $expenses, listingId: $listingId, listingName: $listingName, listingPrice: $listingPrice, paymentOption: $paymentOption, transactionType: $transactionType, amount: $amount, ownerId: $ownerId, ownerName: $ownerName, guests: $guests, profit: $profit, saleAmount: $saleAmount, uid: $uid)';
   }
 
   @override
@@ -427,8 +427,8 @@ class _$SaleModelImpl implements _SaleModel {
                 other.listingPrice == listingPrice) &&
             (identical(other.paymentOption, paymentOption) ||
                 other.paymentOption == paymentOption) &&
-            (identical(other.tranasactionType, tranasactionType) ||
-                other.tranasactionType == tranasactionType) &&
+            (identical(other.transactionType, transactionType) ||
+                other.transactionType == transactionType) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.ownerName, ownerName) ||
@@ -455,7 +455,7 @@ class _$SaleModelImpl implements _SaleModel {
         listingName,
         listingPrice,
         paymentOption,
-        tranasactionType,
+        transactionType,
         amount,
         ownerId,
         ownerName,
@@ -492,7 +492,7 @@ abstract class _SaleModel implements SaleModel {
       required final String listingName,
       required final num listingPrice,
       required final String paymentOption,
-      required final String tranasactionType,
+      required final String transactionType,
       required final num amount,
       required final String ownerId,
       required final String ownerName,
@@ -527,7 +527,7 @@ abstract class _SaleModel implements SaleModel {
   @override
   String get paymentOption;
   @override
-  String get tranasactionType;
+  String get transactionType;
   @override
   num get amount;
   @override

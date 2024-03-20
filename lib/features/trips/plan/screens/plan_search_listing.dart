@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/providers/days_provider.dart';
 import 'package:lakbay/features/trips/plan/components/food_card.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
 import 'package:lakbay/features/trips/plan/components/transport_card.dart';
@@ -77,6 +78,14 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     final planLocation = ref.watch(planLocationProvider);
     final planStartDate = ref.watch(planStartDateProvider);
     final planEndDate = ref.watch(planEndDateProvider);
+    final daysPlan = ref.read(daysPlanProvider);
+    final formattedCurrentDate =
+        DateFormat.MMMMd().format(daysPlan.currentDay!);
+
+    if (ref.watch(parentStateProvider) == true) {
+      context.pop();
+      context.pop();
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -95,12 +104,18 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
               children: [
                 Text(planLocation ?? 'Location',
                     style: Theme.of(context).textTheme.bodyMedium),
-                Text(
-                  planStartDate == null || planEndDate == null
-                      ? 'Select a date'
-                      : '${DateFormat.yMMMMd().format(planStartDate)} - ${DateFormat.yMMMMd().format(planEndDate)}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+                if (widget.category == 'Accommodation')
+                  Text(
+                    planStartDate == null || planEndDate == null
+                        ? 'Select a date'
+                        : '${DateFormat.yMMMMd().format(planStartDate)} - ${DateFormat.yMMMMd().format(planEndDate)}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                if (widget.category == "Transport")
+                  Text(
+                    formattedCurrentDate,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
               ],
             ),
             InkWell(

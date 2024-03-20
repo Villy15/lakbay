@@ -433,7 +433,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     for (ListingBookings booking in bookings) {
       if (booking.roomUid! == room.uid) {
         // Add start date
-        DateTime currentDate = booking.startDate!;
+        DateTime currentDate = booking.startDate!.add(const Duration(days: 1));
 
         // Keep adding dates until you reach the end date
         while (currentDate.isBefore(booking.endDate!) ||
@@ -456,8 +456,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
 // Put all the dates booked under a certain room uid in map with its corresponding value being a list of all the dates
     for (ListingBookings booking in bookings) {
       DateTime currentDate = booking.startDate!;
-      if (_isDateInRange(currentDate, startDate, endDate) == true) {
-        while ((currentDate.isBefore(endDate))) {
+      if (_isDateInRange(currentDate, startDate, booking.endDate!) == true) {
+        while ((currentDate.isBefore(booking.endDate!))) {
           if (rooms.containsKey(booking.roomUid)) {
             rooms[booking.roomUid!]!.add(currentDate);
           } else {
@@ -485,12 +485,20 @@ class _RoomCardState extends ConsumerState<RoomCard> {
       DateTime startDate, DateTime endDate, List<DateTime> dateList) {
     // Loop through each date in the list
     for (DateTime date in dateList) {
+      debugPrint('dateList: $dateList');
+      debugPrint('startDate: $startDate');
+      debugPrint('endDate: $endDate');
       // Check if the current date falls within the range
       if (_isDateInRange(date, startDate, endDate) == false) {
         return false;
       }
     }
-    return true;
+    if (dateList.first.difference(startDate).inDays >= 1 ||
+        endDate.difference(dateList.last).inDays >= 1) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   bool _isDateInRange(DateTime date, DateTime planStart, DateTime planEnd) {
@@ -624,7 +632,11 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                         endDate = endDate.copyWith(
                             hour: listing.checkOut!.hour,
                             minute: listing.checkOut!.minute);
+                        final currentTrip = ref.read(currentTripProvider);
+
                         ListingBookings booking = ListingBookings(
+                          tripUid: currentTrip!.uid!,
+                          tripName: currentTrip.name,
                           listingId: listing.uid!,
                           listingTitle: listing.title,
                           customerName: ref.read(userProvider)!.name,
@@ -657,7 +669,10 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                       listing: listing,
                                       room: room,
                                       booking: booking));
-                            });
+                            }).then((value) {
+                          context.pop();
+                          context.pop();
+                        });
 
                         // ref
                         //     .read(listingControllerProvider.notifier)

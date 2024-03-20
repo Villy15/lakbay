@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, unused_local_variable
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -56,7 +56,7 @@ class _TransportationBookingsDetailsState
         canPop: false,
         onPopInvoked: (bool didPop) {
           context.pop();
-          ref.read(navBarVisibilityProvider.notifier).show();
+          // ref.read(navBarVisibilityProvider.notifier).show();
         },
         child: DefaultTabController(
             initialIndex: 0,
@@ -338,6 +338,8 @@ class _TransportationBookingsDetailsState
                     onPressed: () {
                       BookingTask bookingTask = BookingTask(
                           listingName: widget.listing.title,
+                          status: 'Incomplete',
+                          listingId: widget.listing.uid,
                           assignedIds: assignedIds,
                           assignedNames: assignedNames,
                           committee: committeeController.text,
@@ -524,15 +526,15 @@ class _TransportationBookingsDetailsState
                           'Destination: ${widget.listing.availableTransport!.destination}'),
                       const SizedBox(height: 10),
                       // show map widget
-                      Center(
-                        child: SizedBox(
-                          height: 150,
-                          width: double.infinity,
-                          child: MapWidget(
-                              address: widget
-                                  .listing.availableTransport!.destination),
-                        ),
-                      ),
+                      // Center(
+                      //   child: SizedBox(
+                      //     height: 150,
+                      //     width: double.infinity,
+                      //     child: MapWidget(
+                      //         address: widget
+                      //             .listing.availableTransport!.destination),
+                      //   ),
+                      // ),
                       const SizedBox(height: 10)
                     ],
                   ),
@@ -563,15 +565,15 @@ class _TransportationBookingsDetailsState
                           'Destination: ${widget.listing.availableTransport!.pickupPoint}'),
                       const SizedBox(height: 10),
                       // show map widget
-                      Center(
-                        child: SizedBox(
-                          height: 150,
-                          width: double.infinity,
-                          child: MapWidget(
-                              address: widget
-                                  .listing.availableTransport!.pickupPoint),
-                        ),
-                      ),
+                      // Center(
+                      //   child: SizedBox(
+                      //     height: 150,
+                      //     width: double.infinity,
+                      //     child: MapWidget(
+                      //         address: widget
+                      //             .listing.availableTransport!.pickupPoint),
+                      //   ),
+                      // ),
                       const SizedBox(height: 10)
                     ],
                   ),
@@ -612,15 +614,15 @@ class _TransportationBookingsDetailsState
                         'Destination: ${widget.listing.availableTransport!.destination}'),
                     const SizedBox(height: 10),
                     // show map widget
-                    Center(
-                      child: SizedBox(
-                        height: 150,
-                        width: double.infinity,
-                        child: MapWidget(
-                            address:
-                                widget.listing.availableTransport!.destination),
-                      ),
-                    ),
+                    // Center(
+                    //   child: SizedBox(
+                    //     height: 150,
+                    //     width: double.infinity,
+                    //     child: MapWidget(
+                    //         address:
+                    //             widget.listing.availableTransport!.destination),
+                    //   ),
+                    // ),
                     const SizedBox(height: 10)
                   ],
                 ),

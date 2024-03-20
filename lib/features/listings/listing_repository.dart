@@ -250,10 +250,11 @@ class ListingRepository {
       String listingId, String bookingUid) {
     Query query = FirebaseFirestore.instance.collectionGroup('bookingTasks');
     return query
-        .where('bookingUid', isEqualTo: bookingUid)
+        .where('bookingId', isEqualTo: bookingUid)
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
+        debugPrint('docData: ${doc.data()}');
         return BookingTask.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
@@ -269,6 +270,21 @@ class ListingRepository {
       return querySnapshot.docs.map((doc) {
         return BookingTask.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
+    });
+  }
+
+// read bookingtask by user id
+  Stream<BookingTask?> readBookingTaskByTaskId(String bookingTaskId) {
+    Query query = FirebaseFirestore.instance.collectionGroup('bookingTasks');
+    return query
+        .where('uid', isEqualTo: bookingTaskId)
+        .snapshots()
+        .map((querySnapshot) {
+      final doc = querySnapshot.docs.firstOrNull; // Get the first document
+
+      return doc != null
+          ? BookingTask.fromJson(doc.data() as Map<String, dynamic>)
+          : null;
     });
   }
 

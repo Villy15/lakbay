@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
 
 class TripCard extends ConsumerWidget {
@@ -10,6 +11,7 @@ class TripCard extends ConsumerWidget {
 
   void onTap(BuildContext context, WidgetRef ref) {
     // context.push('/market/${listing.category}', extra: listing);
+    ref.read(currentTripProvider.notifier).setPlan(plan);
     context.push('/trips/details/${plan.uid}');
   }
 
@@ -49,14 +51,13 @@ class TripCard extends ConsumerWidget {
                           20), // round the corners of the image
                       child: const Image(
                         // Image from root/lib/core/images/plans_stock.jpg
-                        image: AssetImage('lib/core/images/plans_stock.jpg'),
+                        image: AssetImage('lib/core/images/plans_stock.png'),
                         width: double.infinity,
                         height: 200,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ],
-
                   // Card Title
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),

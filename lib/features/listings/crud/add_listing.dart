@@ -101,9 +101,11 @@ class _AddListingState extends ConsumerState<AddListing> {
                     }).toList(),
                   );
                   debugPrintJson(listing);
-                  ref
-                      .read(listingControllerProvider.notifier)
-                      .addListing(listing, context);
+                  if (context.mounted) {
+                    ref
+                        .read(listingControllerProvider.notifier)
+                        .addListing(listing, context);
+                  }
                 },
               ));
 

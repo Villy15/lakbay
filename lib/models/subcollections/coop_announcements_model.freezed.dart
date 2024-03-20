@@ -22,6 +22,7 @@ CoopAnnouncements _$CoopAnnouncementsFromJson(Map<String, dynamic> json) {
 mixin _$CoopAnnouncements {
   String get title => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
+  String get coopId => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get timestamp => throw _privateConstructorUsedError;
   String? get uid => throw _privateConstructorUsedError;
@@ -43,6 +44,7 @@ abstract class $CoopAnnouncementsCopyWith<$Res> {
   $Res call(
       {String title,
       String description,
+      String coopId,
       @TimestampSerializer() DateTime? timestamp,
       String? uid,
       String? imageUrl,
@@ -64,6 +66,7 @@ class _$CoopAnnouncementsCopyWithImpl<$Res, $Val extends CoopAnnouncements>
   $Res call({
     Object? title = null,
     Object? description = null,
+    Object? coopId = null,
     Object? timestamp = freezed,
     Object? uid = freezed,
     Object? imageUrl = freezed,
@@ -77,6 +80,10 @@ class _$CoopAnnouncementsCopyWithImpl<$Res, $Val extends CoopAnnouncements>
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      coopId: null == coopId
+          ? _value.coopId
+          : coopId // ignore: cast_nullable_to_non_nullable
               as String,
       timestamp: freezed == timestamp
           ? _value.timestamp
@@ -109,6 +116,7 @@ abstract class _$$CoopAnnouncementsImplCopyWith<$Res>
   $Res call(
       {String title,
       String description,
+      String coopId,
       @TimestampSerializer() DateTime? timestamp,
       String? uid,
       String? imageUrl,
@@ -128,6 +136,7 @@ class __$$CoopAnnouncementsImplCopyWithImpl<$Res>
   $Res call({
     Object? title = null,
     Object? description = null,
+    Object? coopId = null,
     Object? timestamp = freezed,
     Object? uid = freezed,
     Object? imageUrl = freezed,
@@ -141,6 +150,10 @@ class __$$CoopAnnouncementsImplCopyWithImpl<$Res>
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      coopId: null == coopId
+          ? _value.coopId
+          : coopId // ignore: cast_nullable_to_non_nullable
               as String,
       timestamp: freezed == timestamp
           ? _value.timestamp
@@ -168,6 +181,7 @@ class _$CoopAnnouncementsImpl implements _CoopAnnouncements {
   _$CoopAnnouncementsImpl(
       {required this.title,
       required this.description,
+      required this.coopId,
       @TimestampSerializer() this.timestamp,
       this.uid,
       this.imageUrl,
@@ -181,6 +195,8 @@ class _$CoopAnnouncementsImpl implements _CoopAnnouncements {
   @override
   final String description;
   @override
+  final String coopId;
+  @override
   @TimestampSerializer()
   final DateTime? timestamp;
   @override
@@ -192,7 +208,7 @@ class _$CoopAnnouncementsImpl implements _CoopAnnouncements {
 
   @override
   String toString() {
-    return 'CoopAnnouncements(title: $title, description: $description, timestamp: $timestamp, uid: $uid, imageUrl: $imageUrl, category: $category)';
+    return 'CoopAnnouncements(title: $title, description: $description, coopId: $coopId, timestamp: $timestamp, uid: $uid, imageUrl: $imageUrl, category: $category)';
   }
 
   @override
@@ -203,6 +219,7 @@ class _$CoopAnnouncementsImpl implements _CoopAnnouncements {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.coopId, coopId) || other.coopId == coopId) &&
             (identical(other.timestamp, timestamp) ||
                 other.timestamp == timestamp) &&
             (identical(other.uid, uid) || other.uid == uid) &&
@@ -214,8 +231,8 @@ class _$CoopAnnouncementsImpl implements _CoopAnnouncements {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, title, description, timestamp, uid, imageUrl, category);
+  int get hashCode => Object.hash(runtimeType, title, description, coopId,
+      timestamp, uid, imageUrl, category);
 
   @JsonKey(ignore: true)
   @override
@@ -236,6 +253,7 @@ abstract class _CoopAnnouncements implements CoopAnnouncements {
   factory _CoopAnnouncements(
       {required final String title,
       required final String description,
+      required final String coopId,
       @TimestampSerializer() final DateTime? timestamp,
       final String? uid,
       final String? imageUrl,
@@ -248,6 +266,8 @@ abstract class _CoopAnnouncements implements CoopAnnouncements {
   String get title;
   @override
   String get description;
+  @override
+  String get coopId;
   @override
   @TimestampSerializer()
   DateTime? get timestamp;

@@ -264,12 +264,36 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                DateFormat('hh:mm a').format(widget.activity.startTime!),
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Row(
+                children: [
+                  Text(
+                    DateFormat('hh:mm a').format(widget.activity.startTime!),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (widget.activity.category == 'Transport')
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                              height: MediaQuery.sizeOf(context).height / 40,
+                              child: Image.asset(
+                                  'lib/core/images/right-arrow.png')),
+                          Text(
+                            DateFormat('hh:mm a')
+                                .format(widget.activity.endTime!),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                ],
               ),
             ),
           ),
@@ -346,6 +370,20 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
 
   Card _buildCard(
       BuildContext context, ListingBookings booking, ListingModel listing) {
+    Map<String, Map<String, String>> cardProperties = {
+      'Accommodation': {
+        'start': 'Check In',
+        'startValue': DateFormat('hh:mm a').format(booking.startDate!),
+        'end': 'Check Out',
+        'endValue': DateFormat('hh:mm a').format(booking.endDate!),
+      },
+      'Transport': {
+        'start': 'Pick Up',
+        'startValue': listing.availableTransport?.pickupPoint ?? '',
+        'end': 'Drop Off',
+        'endValue': listing.availableTransport?.destination ?? '',
+      }
+    };
     return Card(
       clipBehavior: Clip.hardEdge,
       elevation: 1,
@@ -404,19 +442,19 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                     ],
                     const SizedBox(height: 8),
                     // Check in and check out time lables
-                    if (widget.activity.category == "Accommodation" &&
-                        widget.thisDay.day == widget.activity.startTime!.day)
+                    if (widget.thisDay.day == widget.activity.startTime!.day)
                       Row(
                         children: [
                           Text(
-                            'Check In:     ',
+                            '${cardProperties[widget.activity.category]!['start']}:     ',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 12,
                             ),
                           ),
                           Text(
-                            DateFormat('hh:mm a').format(booking.startDate!),
+                            cardProperties[widget.activity.category]![
+                                'startValue']!,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 12,
@@ -425,19 +463,19 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                         ],
                       ),
                     const SizedBox(height: 4),
-                    if (widget.activity.category == "Accommodation" &&
-                        widget.thisDay.day == widget.activity.endTime!.day)
+                    if (widget.thisDay.day == widget.activity.endTime!.day)
                       Row(
                         children: [
                           Text(
-                            'Check Out:  ',
+                            '${cardProperties[widget.activity.category]!['end']}:     ',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 12,
                             ),
                           ),
                           Text(
-                            DateFormat('hh:mm a').format(booking.endDate!),
+                            cardProperties[widget.activity.category]![
+                                'endValue']!,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 12,
@@ -446,17 +484,17 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                         ],
                       ),
 
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        getDuration(
-                            widget.activity.startTime, widget.activity.endTime),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
+                    // Align(
+                    //   alignment: Alignment.centerRight,
+                    //   child: Text(
+                    //     getDuration(
+                    //         widget.activity.startTime, widget.activity.endTime),
+                    //     style: TextStyle(
+                    //       color: Theme.of(context).colorScheme.primary,
+                    //       fontSize: 12,
+                    //     ),
+                    //   ),
+                    // ),
                     // TextButton(
                     //   onPressed: () => onTap(),
                     //   child: const Text('Check In Details'),

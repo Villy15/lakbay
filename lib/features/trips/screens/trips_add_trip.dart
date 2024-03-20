@@ -47,6 +47,7 @@ class _TripsAddTripState extends ConsumerState<TripsAddTrip> {
       final endDate = ref.read(planEndDateProvider);
 
       var plan = PlanModel(
+        tripStatus: "Active",
         location: location!,
         name: _nameController.text,
         budget: num.parse(_budgetController.text),

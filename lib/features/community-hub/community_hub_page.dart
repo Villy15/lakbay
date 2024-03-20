@@ -67,28 +67,16 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
                   child: TabBarView(
                     children: [
                       _listings(),
-
                       _events(),
-
-                      // ref.watch(getEventsByCoopProvider(widget.coopId)).maybeWhen(
-                      //   data: (List<ListingModel> listings) {
-                      //     return ListView.builder(
-                      //       itemCount: listings.length,
-                      //       itemBuilder: (context, index) {
-                      //         final listing = listings[index];
-                      //         return ListingCard(
-                      //           listing: listing,
-                      //         );
-                      //       },
-                      //     );
-                      //   },
-                      //   orElse: () => const SizedBox.shrink(),
-                      // ),
                     ],
                   ),
                 ),
-                floatingActionButton:
-                    buildAddListingButton(member, privilege, context, coop),
+                floatingActionButton: buildAddListingButton(
+                  member,
+                  privilege,
+                  context,
+                  coop,
+                ),
               ),
             );
           },

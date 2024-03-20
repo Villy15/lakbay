@@ -36,42 +36,42 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   void initState() {
     super.initState();
     coopAnnouncements = [
-      CoopAnnouncements(
-        title:
-            'Cooperative Partners with [Coop_Name] Cooperative for Sustainable Tourism',
-        description:
-            'We\'re excited to announce a partnership with [Coop_Name] to promote eco-conscious travel practices. Get access to training resources, best practices, and potential funding.',
-        timestamp: DateTime.now(),
-        category: 'Sustainability',
-      ),
+      // CoopAnnouncements(
+      //   title:
+      //       'Cooperative Partners with [Coop_Name] Cooperative for Sustainable Tourism',
+      //   description:
+      //       'We\'re excited to announce a partnership with [Coop_Name] to promote eco-conscious travel practices. Get access to training resources, best practices, and potential funding.',
+      //   timestamp: DateTime.now(),
+      //   category: 'Sustainability',
+      // ),
 
-      // New Announcement Examples:
+      // // New Announcement Examples:
 
-      CoopAnnouncements(
-        title:
-            'Experience the Flavors of [Region]: Culinary Festival Announced!',
-        description:
-            'Join us for a celebration of local cuisine on [dates]. Sample food from our member restaurants, attend cooking demonstrations, and enjoy live music!',
-        timestamp: DateTime.now()
-            .subtract(const Duration(days: 3)), // Set to a few days ago
-        category: 'Event',
-      ),
+      // CoopAnnouncements(
+      //   title:
+      //       'Experience the Flavors of [Region]: Culinary Festival Announced!',
+      //   description:
+      //       'Join us for a celebration of local cuisine on [dates]. Sample food from our member restaurants, attend cooking demonstrations, and enjoy live music!',
+      //   timestamp: DateTime.now()
+      //       .subtract(const Duration(days: 3)), // Set to a few days ago
+      //   category: 'Event',
+      // ),
 
-      CoopAnnouncements(
-        title: 'Grant Program for Tourism Businesses Now Open',
-        description:
-            'The [program name] is accepting applications to support [types of projects]. Find eligibility details and the application deadline on [website]. ',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-        category: 'Funding',
-      ),
+      // CoopAnnouncements(
+      //   title: 'Grant Program for Tourism Businesses Now Open',
+      //   description:
+      //       'The [program name] is accepting applications to support [types of projects]. Find eligibility details and the application deadline on [website]. ',
+      //   timestamp: DateTime.now().subtract(const Duration(days: 1)),
+      //   category: 'Funding',
+      // ),
 
-      CoopAnnouncements(
-        title: 'Member Spotlight: [Business Name] Wins Prestigious Award',
-        description:
-            'Congratulations to [Business Name] for their recognition at the [award name]! Their commitment to quality tourism strengthens our community.',
-        timestamp: DateTime.now().subtract(const Duration(days: 5)),
-        category: 'Member News',
-      ),
+      // CoopAnnouncements(
+      //   title: 'Member Spotlight: [Business Name] Wins Prestigious Award',
+      //   description:
+      //       'Congratulations to [Business Name] for their recognition at the [award name]! Their commitment to quality tourism strengthens our community.',
+      //   timestamp: DateTime.now().subtract(const Duration(days: 5)),
+      //   category: 'Member News',
+      // ),
     ];
 
     coopGoals = [
@@ -248,77 +248,67 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   }
 
   Widget _coopVotes() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => const Padding(
-        padding: EdgeInsets.only(bottom: 16.0),
-      ),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: coopVotes.length,
-      itemBuilder: (context, index) {
-        final vote = coopVotes[index];
+    return ref.watch(getAllVotesProvider(widget.coopId)).when(
+          data: (data) {
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                final vote = data[index];
 
-        return ListTile(
-          title: Text(
-            vote.position!,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          subtitle: Text(
-            'Due: ${DateFormat.yMMMd().format(vote.dueDate!)}',
-          ),
-          // Trailing FilledButton Vote
-          trailing: FilledButton(
-            onPressed: () {
-              // Vote
-            },
-            child: const Text('Vote'),
-          ),
-
-          onTap: () {
-            // Navigate to vote details
+                return ListVote(vote: vote);
+              },
+            );
           },
+          error: (error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString()),
+          loading: () => const Loader(),
         );
-      },
-    );
   }
 
   Widget _coopGoals() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => const Padding(
-        padding: EdgeInsets.only(bottom: 16.0),
-      ),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: coopGoals.length,
-      itemBuilder: (context, index) {
-        final coopGoal = coopGoals[index];
+    return ref.watch(getAllGoalsProvider(widget.coopId)).when(
+          data: (data) {
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                final goal = data[index];
 
-        return GoalCard(
-          goal: coopGoal,
+                return GoalCard(
+                  goal: goal,
+                );
+              },
+            );
+          },
+          error: (error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString()),
+          loading: () => const Loader(),
         );
-      },
-    );
   }
 
-  ListView _coopAnnouncements() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => const Padding(
-        padding: EdgeInsets.only(bottom: 16.0),
-      ),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: coopAnnouncements.length,
-      itemBuilder: (context, index) {
-        final announcement = coopAnnouncements[index];
+  Widget _coopAnnouncements() {
+    return ref.watch(getAllAnnouncementsProvider(widget.coopId)).when(
+          data: (coopAnnouncements) {
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: coopAnnouncements.length,
+              itemBuilder: (context, index) {
+                final announcement = coopAnnouncements[index];
 
-        return AnnouncementCard(
-          announcement: announcement,
+                return AnnouncementCard(
+                  announcement: announcement,
+                );
+              },
+            );
+          },
+          error: (error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString()),
+          loading: () => const Loader(),
         );
-      },
-    );
   }
 
   // Build Events
@@ -697,6 +687,51 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
       actionsIconTheme: const IconThemeData(
         opacity: 0.5,
       ),
+    );
+  }
+}
+
+class ListVote extends StatelessWidget {
+  const ListVote({
+    super.key,
+    required this.vote,
+  });
+
+  final CoopVote vote;
+
+  void readVote(BuildContext context) {
+    context.pushNamed(
+      'read_vote',
+      extra: vote,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        vote.position!,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      subtitle: Text(
+        'Due: ${DateFormat.yMMMd().format(vote.dueDate!)}',
+      ),
+      // Trailing FilledButton Vote
+      trailing: FilledButton(
+        onPressed: () {
+          readVote(context);
+          // Vote
+        },
+        child: const Text('Vote'),
+      ),
+
+      onTap: () {
+        readVote(context);
+        // Navigate to vote details
+      },
     );
   }
 }

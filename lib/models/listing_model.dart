@@ -22,6 +22,7 @@ class ListingModel with _$ListingModel {
     required ListingCooperative cooperative,
     required String description,
     num? downpaymentRate,
+    num? fixedCancellationRate,
     num? duration,
     String? durationUnit,
     String? guestInfo,
@@ -31,6 +32,7 @@ class ListingModel with _$ListingModel {
     num? numberOfUnits,
     @TimestampSerializer() DateTime? openingHours,
     @TimestampSerializer() DateTime? closingHours,
+    @TimeOfDayConverter() TimeOfDay? travelDuration,
     num? pax,
     num? price,
     List<bool>? workingDays,
@@ -41,12 +43,11 @@ class ListingModel with _$ListingModel {
     List<BookingTask>? fixedTasks,
     @TimestampSerializer() DateTime? timestamp,
     required String title,
-    String? type,
+    String? type, //[Private, Public]
     List<FoodService>? availableDeals,
     List<ListingImages>? menuImgs,
     AvailableTransport? availableTransport,
     List<EntertainmentService>? availableEntertainment,
-    String? typeOfTrip,
     String? uid,
   }) = _ListingModel;
 
@@ -121,8 +122,8 @@ class AvailableTransport with _$AvailableTransport {
     required List<bool> workingDays,
     @TimeOfDayConverter() required TimeOfDay startTime,
     @TimeOfDayConverter() required TimeOfDay endTime,
-    required String destination,
-    required String pickupPoint,
+    String? destination,
+    String? pickupPoint,
   }) = _AvailableTransport;
 
   factory AvailableTransport.fromJson(Map<String, dynamic> json) =>

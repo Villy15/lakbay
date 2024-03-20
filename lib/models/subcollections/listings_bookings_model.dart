@@ -30,16 +30,18 @@ class ListingBookings with _$ListingBookings {
     num? luggage,
     String? id,
     required bool needsContributions,
-    String? paymentOption,
-    String? paymentStatus,
+    String? paymentOption, //Downpayment, Full Payment
+    String? paymentStatus, //Partially Paid, Fully Paid, Cancelled
     required num price,
     String? roomId,
     String? roomUid,
     @TimestampSerializer() DateTime? selectedDate,
     String? selectedTime,
     @TimestampSerializer() DateTime? startDate,
-    required String bookingStatus,
+    required String bookingStatus, //[Reserved, Cancelled, Completed, Refunded
     num? totalPrice,
+    required String tripUid,
+    required String tripName,
     String? typeOfTrip,
     @TimeOfDayConverter() TimeOfDay? startTime,
     @TimeOfDayConverter() TimeOfDay? endTime,
@@ -71,11 +73,14 @@ class BookingTask with _$BookingTask {
     String? uid,
     String? bookingId,
     required String listingName,
+    String? listingId,
     String? roomId,
     required List<String> assignedIds,
     required List<String> assignedNames,
     required String committee,
     required bool complete,
+    List<BookingTaskMessage>? notes,
+    required String status, //Pending, Incomplete, Completed
     required bool openContribution,
     List<TaskImages>? imageProof,
     required String name,
@@ -83,6 +88,24 @@ class BookingTask with _$BookingTask {
 
   factory BookingTask.fromJson(Map<String, dynamic> json) =>
       _$BookingTaskFromJson(json);
+}
+
+@freezed
+class BookingTaskMessage with _$BookingTaskMessage {
+  factory BookingTaskMessage({
+    String? uid,
+    String? bookingId,
+    required String listingName,
+    String? listingId,
+    required String senderId,
+    required String senderName,
+    required String taskId,
+    @TimestampSerializer() required DateTime timestamp,
+    required String content,
+  }) = _BookingTaskMessage;
+
+  factory BookingTaskMessage.fromJson(Map<String, dynamic> json) =>
+      _$BookingTaskMessageFromJson(json);
 }
 
 @freezed

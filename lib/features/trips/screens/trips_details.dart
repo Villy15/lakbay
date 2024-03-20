@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/providers/days_provider.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/bookings/widgets/booking_card.dart';
 import 'package:lakbay/features/common/error.dart';
@@ -50,6 +52,8 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
     ref.read(planEndDateProvider.notifier).setEndDate(plan.endDate!);
     ref.read(currentPlanIdProvider.notifier).setCurrentPlanId(plan.uid!);
     ref.read(currentPlanGuestsProvider.notifier).setCurrentGuests(plan.guests);
+    ref.read(parentStateProvider.notifier).setState(false);
+
     context.push('/trips/add_activity', extra: plan);
   }
 
@@ -77,7 +81,11 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
 
   Scaffold buildScaffold(BuildContext context, PlanModel plan) {
     final user = ref.read(userProvider);
-
+    Query query = FirebaseFirestore.instance
+        .collectionGroup(
+            'bookings') // Perform collection group query for 'bookings'
+        .where('customerId', isEqualTo: user!.uid)
+        .where('bookingStatus', isEqualTo: "Reserved");
     return Scaffold(
       appBar: _appBar(context, plan),
       body: TabBarView(
@@ -87,7 +95,7 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
           // TripsDaysPlan(),
 
           // Reservations
-          ref.watch(getAllBookingsByCustomerIdProvider(user!.uid)).when(
+          ref.watch(getBookingsByPropertiesProvider(query)).when(
                 data: (bookings) {
                   if (bookings.isEmpty) {
                     return const Padding(
@@ -141,11 +149,26 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
   Widget daysPlan(PlanModel plan) {
     // debugPrint("Plan: $plan");
     final thisDay = plan.startDate!.add(Duration(days: _selectedDayIndex));
-// Filter and sort the activities list first
+    ref
+        .read(daysPlanProvider.notifier)
+        .setDays(plan.endDate!.difference(plan.startDate!).inDays + 1);
+    // q: what does the line of code above do?
+    // a: it sets the days plan provider to the number of days in the plan
+
+    ref.read(daysPlanProvider.notifier).setCurrentDay(thisDay);
+    // Filter and sort the activities list first
     var filteredAndSortedActivities = plan.activities!.where((activity) {
-      if (activity.category == "Accommodation") {
-        return (activity.startTime!.day == thisDay.day) ||
-            (activity.endTime!.day == thisDay.day);
+      // if (activity.category == "Accommodation") {
+      //   return (activity.startTime!.day == thisDay.day) ||
+      //       (activity.endTime!.day == thisDay.day);
+      // }
+      switch (activity.category) {
+        case 'Accommodation':
+          return (activity.startTime!.day == thisDay.day) ||
+              (activity.endTime!.day == thisDay.day);
+        case 'Transport':
+          return (activity.startTime!.day == thisDay.day) ||
+              (activity.endTime!.day == thisDay.day);
       }
       return activity.dateTime!.day == thisDay.day;
     }).toList(); // Convert to List for sorting
@@ -161,6 +184,8 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
       if (aStartTime == null) return 1;
       if (bStartTime == null) return -1;
       // If both have a startTime, compare them
+      debugPrint('This is the start time: $aStartTime');
+      debugPrint('This is the other start time: $bStartTime');
       return aStartTime.compareTo(bStartTime);
     });
 

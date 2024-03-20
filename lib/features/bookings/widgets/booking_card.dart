@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,8 +25,7 @@ class _BookingCardState extends ConsumerState<BookingCard> {
       extra: {'booking': widget.booking, 'listing': widget.listing},
     ).then(
       (value) {
-        debugPrint("Popped");
-        ref.read(navBarVisibilityProvider.notifier).show();
+        ref.read(navBarVisibilityProvider.notifier).hide();
       },
     );
   }

@@ -10,6 +10,7 @@ class CoopAnnouncements with _$CoopAnnouncements {
   factory CoopAnnouncements({
     required String title,
     required String description,
+    required String coopId,
     @TimestampSerializer() DateTime? timestamp,
     String? uid,
     String? imageUrl,

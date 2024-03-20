@@ -45,6 +45,8 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
           const TimestampSerializer().fromJson(json['startDate'] as Timestamp?),
       bookingStatus: json['bookingStatus'] as String,
       totalPrice: json['totalPrice'] as num?,
+      tripUid: json['tripUid'] as String,
+      tripName: json['tripName'] as String,
       typeOfTrip: json['typeOfTrip'] as String?,
       startTime: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
           json['startTime'], const TimeOfDayConverter().fromJson),
@@ -84,6 +86,8 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'startDate': const TimestampSerializer().toJson(instance.startDate),
       'bookingStatus': instance.bookingStatus,
       'totalPrice': instance.totalPrice,
+      'tripUid': instance.tripUid,
+      'tripName': instance.tripName,
       'typeOfTrip': instance.typeOfTrip,
       'startTime': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
           instance.startTime, const TimeOfDayConverter().toJson),
@@ -120,6 +124,7 @@ _$BookingTaskImpl _$$BookingTaskImplFromJson(Map<String, dynamic> json) =>
       uid: json['uid'] as String?,
       bookingId: json['bookingId'] as String?,
       listingName: json['listingName'] as String,
+      listingId: json['listingId'] as String?,
       roomId: json['roomId'] as String?,
       assignedIds: (json['assignedIds'] as List<dynamic>)
           .map((e) => e as String)
@@ -129,6 +134,10 @@ _$BookingTaskImpl _$$BookingTaskImplFromJson(Map<String, dynamic> json) =>
           .toList(),
       committee: json['committee'] as String,
       complete: json['complete'] as bool,
+      notes: (json['notes'] as List<dynamic>?)
+          ?.map((e) => BookingTaskMessage.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      status: json['status'] as String,
       openContribution: json['openContribution'] as bool,
       imageProof: (json['imageProof'] as List<dynamic>?)
           ?.map((e) => TaskImages.fromJson(e as Map<String, dynamic>))
@@ -141,14 +150,45 @@ Map<String, dynamic> _$$BookingTaskImplToJson(_$BookingTaskImpl instance) =>
       'uid': instance.uid,
       'bookingId': instance.bookingId,
       'listingName': instance.listingName,
+      'listingId': instance.listingId,
       'roomId': instance.roomId,
       'assignedIds': instance.assignedIds,
       'assignedNames': instance.assignedNames,
       'committee': instance.committee,
       'complete': instance.complete,
+      'notes': instance.notes?.map((e) => e.toJson()).toList(),
+      'status': instance.status,
       'openContribution': instance.openContribution,
       'imageProof': instance.imageProof?.map((e) => e.toJson()).toList(),
       'name': instance.name,
+    };
+
+_$BookingTaskMessageImpl _$$BookingTaskMessageImplFromJson(
+        Map<String, dynamic> json) =>
+    _$BookingTaskMessageImpl(
+      uid: json['uid'] as String?,
+      bookingId: json['bookingId'] as String?,
+      listingName: json['listingName'] as String,
+      listingId: json['listingId'] as String?,
+      senderId: json['senderId'] as String,
+      senderName: json['senderName'] as String,
+      taskId: json['taskId'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      content: json['content'] as String,
+    );
+
+Map<String, dynamic> _$$BookingTaskMessageImplToJson(
+        _$BookingTaskMessageImpl instance) =>
+    <String, dynamic>{
+      'uid': instance.uid,
+      'bookingId': instance.bookingId,
+      'listingName': instance.listingName,
+      'listingId': instance.listingId,
+      'senderId': instance.senderId,
+      'senderName': instance.senderName,
+      'taskId': instance.taskId,
+      'timestamp': instance.timestamp.toIso8601String(),
+      'content': instance.content,
     };
 
 _$TaskImagesImpl _$$TaskImagesImplFromJson(Map<String, dynamic> json) =>

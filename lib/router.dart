@@ -7,6 +7,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
 import 'package:lakbay/features/bookings/bookings_page.dart';
 import 'package:lakbay/features/bookings/screens/bookings_accomodation_customer.dart';
+import 'package:lakbay/features/bookings/screens/bookings_transport_customer.dart';
 import 'package:lakbay/features/calendar/calendar_page.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/fade_through.dart';
@@ -19,6 +20,7 @@ import 'package:lakbay/features/cooperatives/crud/edit_coop.dart';
 import 'package:lakbay/features/cooperatives/crud/read_coop.dart';
 import 'package:lakbay/features/cooperatives/join_coop.dart';
 import 'package:lakbay/features/cooperatives/leave_coop.dart';
+import 'package:lakbay/features/cooperatives/my_coop/announcements/read_announcement.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/add_committee_members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/join_coop_code.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_committees_page.dart';
@@ -27,8 +29,10 @@ import 'package:lakbay/features/cooperatives/my_coop/managers/manager_tools_page
 import 'package:lakbay/features/cooperatives/my_coop/members/members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/members/read_member.dart';
 import 'package:lakbay/features/cooperatives/my_coop/my_coop.dart';
+import 'package:lakbay/features/cooperatives/my_coop/voting/read_vote.dart';
 import 'package:lakbay/features/dashboard/coop_dashboard.dart';
 import 'package:lakbay/features/dashboard/manager/coop_home_page.dart';
+import 'package:lakbay/features/dashboard/manager/coop_tasks_page.dart';
 import 'package:lakbay/features/events/crud/add_event.dart';
 import 'package:lakbay/features/events/crud/confirm_event.dart';
 import 'package:lakbay/features/events/crud/coop_read_event.dart';
@@ -50,6 +54,7 @@ import 'package:lakbay/features/listings/crud/category_page_controller.dart';
 import 'package:lakbay/features/listings/crud/choose_category.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_entertainment.dart';
+import 'package:lakbay/features/listings/crud/customer_food_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_touring.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 //import 'package:lakbay/features/listings/listings_page.dart';
@@ -60,7 +65,7 @@ import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/tasks/event_tasks_edit.dart';
 import 'package:lakbay/features/tasks/event_tasks_read.dart';
-import 'package:lakbay/features/trips/plan/plan_page.dart';
+import 'package:lakbay/features/trips/plan/explore_page.dart';
 import 'package:lakbay/features/trips/plan/screens/plan_add_activity.dart';
 import 'package:lakbay/features/trips/plan/screens/plan_search_listing.dart';
 import 'package:lakbay/features/trips/plan/screens/plan_select_date.dart';
@@ -79,6 +84,8 @@ import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
+import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
+import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/task_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -317,7 +324,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           );
 
                         case 'Transport':
-                          return TransportationBookingsDetails(
+                          return BookingsTransportCustomer(
                             booking: booking,
                             listing: listing,
                           );
@@ -486,7 +493,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               // * COOP VIEW
 
               // Today Page
-              buildMainRoute('/today', const TodayPage()),
+              buildMainRoute('/today', const TodayPage(), [
+                buildSubRoute(
+                  'tasks',
+                  (context, pathParameters, extra) {
+                    return const CoopTasksPage();
+                  },
+                  name: 'tasks',
+                ),
+              ]),
 
               // Calendar Page
               buildMainRoute('/calendar', const CalendarPage()),
@@ -535,6 +550,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
                           case 'Transport':
                             return CustomerTransportReceipt(
+                                listing: listing, booking: booking);
+
+                          case 'Food':
+                            return CustomerFoodReceipt(
                                 listing: listing, booking: booking);
 
                           default:
@@ -720,6 +739,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 return CoopReadEventPage(eventId: pathParameters['eventId']!);
               }),
 
+              // Read Announcement from my coop
+              buildSubRoute(
+                '/my_coop/announcement/read',
+                (context, pathParameters, extra) {
+                  CoopAnnouncements announcement = extra as CoopAnnouncements;
+
+                  return ReadAnnouncement(announcement: announcement);
+                },
+                name: 'read_announcement',
+              ),
+
+              // Read vote from my coop
+              buildSubRoute(
+                '/my_coop/vote/read',
+                (context, pathParameters, extra) {
+                  CoopVote vote = extra as CoopVote;
+                  return ReadVote(
+                    vote: vote,
+                  );
+                },
+                name: 'read_vote',
+              ),
               // Add tasks for event
               buildSubRoute(
                 '/my_coop/event/task/functions/add',

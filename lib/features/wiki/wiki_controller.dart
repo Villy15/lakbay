@@ -53,7 +53,7 @@ class WikiController extends StateNotifier<bool> {
         state = false;
         showSnackBar(context, 'Wiki added successfully');
         _ref.read(navBarVisibilityProvider.notifier).show();
-        context.go('/wiki');
+        context.pop();
       },
     );
   }
@@ -70,6 +70,56 @@ class WikiController extends StateNotifier<bool> {
       (success) {
         state = false;
         showSnackBar(context, 'Wiki updated successfully');
+      },
+    );
+  }
+
+  // Update the votes of the wiki
+  void updateVotes(String uid, int votes, BuildContext context) async {
+    state = true;
+    final result = await _wikiRepository.updateVotes(uid, votes);
+
+    result.fold(
+      (failure) {
+        state = false;
+        showSnackBar(context, failure.message);
+      },
+      (success) {
+        state = false;
+      },
+    );
+  }
+
+  void updateVoteComments(WikiModel wiki, BuildContext context) async {
+    state = true;
+    final result = await _wikiRepository.updateCommentsVote(wiki);
+
+    result.fold(
+      (failure) {
+        state = false;
+        showSnackBar(context, failure.message);
+      },
+      (success) {
+        state = false;
+      },
+    );
+  }
+
+  // Add a comment to the wiki
+  void addComment(
+      String uid, WikiComments comment, BuildContext context) async {
+    state = true;
+    final result = await _wikiRepository.addComment(uid, comment);
+
+    result.fold(
+      (failure) {
+        state = false;
+        showSnackBar(context, failure.message);
+      },
+      (success) {
+        state = false;
+        context.pop();
+        showSnackBar(context, 'Comment added successfully');
       },
     );
   }

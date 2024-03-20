@@ -34,6 +34,7 @@ mixin _$ListingModel {
   ListingCooperative get cooperative => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   num? get downpaymentRate => throw _privateConstructorUsedError;
+  num? get fixedCancellationRate => throw _privateConstructorUsedError;
   num? get duration => throw _privateConstructorUsedError;
   String? get durationUnit => throw _privateConstructorUsedError;
   String? get guestInfo => throw _privateConstructorUsedError;
@@ -45,6 +46,8 @@ mixin _$ListingModel {
   DateTime? get openingHours => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get closingHours => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay? get travelDuration => throw _privateConstructorUsedError;
   num? get pax => throw _privateConstructorUsedError;
   num? get price => throw _privateConstructorUsedError;
   List<bool>? get workingDays => throw _privateConstructorUsedError;
@@ -56,14 +59,13 @@ mixin _$ListingModel {
   @TimestampSerializer()
   DateTime? get timestamp => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  String? get type => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError; //[Private, Public]
   List<FoodService>? get availableDeals => throw _privateConstructorUsedError;
   List<ListingImages>? get menuImgs => throw _privateConstructorUsedError;
   AvailableTransport? get availableTransport =>
       throw _privateConstructorUsedError;
   List<EntertainmentService>? get availableEntertainment =>
       throw _privateConstructorUsedError;
-  String? get typeOfTrip => throw _privateConstructorUsedError;
   String? get uid => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -91,6 +93,7 @@ abstract class $ListingModelCopyWith<$Res> {
       ListingCooperative cooperative,
       String description,
       num? downpaymentRate,
+      num? fixedCancellationRate,
       num? duration,
       String? durationUnit,
       String? guestInfo,
@@ -100,6 +103,7 @@ abstract class $ListingModelCopyWith<$Res> {
       num? numberOfUnits,
       @TimestampSerializer() DateTime? openingHours,
       @TimestampSerializer() DateTime? closingHours,
+      @TimeOfDayConverter() TimeOfDay? travelDuration,
       num? pax,
       num? price,
       List<bool>? workingDays,
@@ -115,7 +119,6 @@ abstract class $ListingModelCopyWith<$Res> {
       List<ListingImages>? menuImgs,
       AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
-      String? typeOfTrip,
       String? uid});
 
   $ListingCooperativeCopyWith<$Res> get cooperative;
@@ -147,6 +150,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? cooperative = null,
     Object? description = null,
     Object? downpaymentRate = freezed,
+    Object? fixedCancellationRate = freezed,
     Object? duration = freezed,
     Object? durationUnit = freezed,
     Object? guestInfo = freezed,
@@ -156,6 +160,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? numberOfUnits = freezed,
     Object? openingHours = freezed,
     Object? closingHours = freezed,
+    Object? travelDuration = freezed,
     Object? pax = freezed,
     Object? price = freezed,
     Object? workingDays = freezed,
@@ -171,7 +176,6 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? menuImgs = freezed,
     Object? availableTransport = freezed,
     Object? availableEntertainment = freezed,
-    Object? typeOfTrip = freezed,
     Object? uid = freezed,
   }) {
     return _then(_value.copyWith(
@@ -223,6 +227,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.downpaymentRate
           : downpaymentRate // ignore: cast_nullable_to_non_nullable
               as num?,
+      fixedCancellationRate: freezed == fixedCancellationRate
+          ? _value.fixedCancellationRate
+          : fixedCancellationRate // ignore: cast_nullable_to_non_nullable
+              as num?,
       duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
@@ -259,6 +267,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.closingHours
           : closingHours // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      travelDuration: freezed == travelDuration
+          ? _value.travelDuration
+          : travelDuration // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay?,
       pax: freezed == pax
           ? _value.pax
           : pax // ignore: cast_nullable_to_non_nullable
@@ -319,10 +331,6 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.availableEntertainment
           : availableEntertainment // ignore: cast_nullable_to_non_nullable
               as List<EntertainmentService>?,
-      typeOfTrip: freezed == typeOfTrip
-          ? _value.typeOfTrip
-          : typeOfTrip // ignore: cast_nullable_to_non_nullable
-              as String?,
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -373,6 +381,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       ListingCooperative cooperative,
       String description,
       num? downpaymentRate,
+      num? fixedCancellationRate,
       num? duration,
       String? durationUnit,
       String? guestInfo,
@@ -382,6 +391,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       num? numberOfUnits,
       @TimestampSerializer() DateTime? openingHours,
       @TimestampSerializer() DateTime? closingHours,
+      @TimeOfDayConverter() TimeOfDay? travelDuration,
       num? pax,
       num? price,
       List<bool>? workingDays,
@@ -397,7 +407,6 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       List<ListingImages>? menuImgs,
       AvailableTransport? availableTransport,
       List<EntertainmentService>? availableEntertainment,
-      String? typeOfTrip,
       String? uid});
 
   @override
@@ -429,6 +438,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? cooperative = null,
     Object? description = null,
     Object? downpaymentRate = freezed,
+    Object? fixedCancellationRate = freezed,
     Object? duration = freezed,
     Object? durationUnit = freezed,
     Object? guestInfo = freezed,
@@ -438,6 +448,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? numberOfUnits = freezed,
     Object? openingHours = freezed,
     Object? closingHours = freezed,
+    Object? travelDuration = freezed,
     Object? pax = freezed,
     Object? price = freezed,
     Object? workingDays = freezed,
@@ -453,7 +464,6 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? menuImgs = freezed,
     Object? availableTransport = freezed,
     Object? availableEntertainment = freezed,
-    Object? typeOfTrip = freezed,
     Object? uid = freezed,
   }) {
     return _then(_$ListingModelImpl(
@@ -505,6 +515,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.downpaymentRate
           : downpaymentRate // ignore: cast_nullable_to_non_nullable
               as num?,
+      fixedCancellationRate: freezed == fixedCancellationRate
+          ? _value.fixedCancellationRate
+          : fixedCancellationRate // ignore: cast_nullable_to_non_nullable
+              as num?,
       duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
@@ -541,6 +555,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.closingHours
           : closingHours // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      travelDuration: freezed == travelDuration
+          ? _value.travelDuration
+          : travelDuration // ignore: cast_nullable_to_non_nullable
+              as TimeOfDay?,
       pax: freezed == pax
           ? _value.pax
           : pax // ignore: cast_nullable_to_non_nullable
@@ -601,10 +619,6 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value._availableEntertainment
           : availableEntertainment // ignore: cast_nullable_to_non_nullable
               as List<EntertainmentService>?,
-      typeOfTrip: freezed == typeOfTrip
-          ? _value.typeOfTrip
-          : typeOfTrip // ignore: cast_nullable_to_non_nullable
-              as String?,
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -629,6 +643,7 @@ class _$ListingModelImpl implements _ListingModel {
       required this.cooperative,
       required this.description,
       this.downpaymentRate,
+      this.fixedCancellationRate,
       this.duration,
       this.durationUnit,
       this.guestInfo,
@@ -638,6 +653,7 @@ class _$ListingModelImpl implements _ListingModel {
       this.numberOfUnits,
       @TimestampSerializer() this.openingHours,
       @TimestampSerializer() this.closingHours,
+      @TimeOfDayConverter() this.travelDuration,
       this.pax,
       this.price,
       final List<bool>? workingDays,
@@ -653,7 +669,6 @@ class _$ListingModelImpl implements _ListingModel {
       final List<ListingImages>? menuImgs,
       this.availableTransport,
       final List<EntertainmentService>? availableEntertainment,
-      this.typeOfTrip,
       this.uid})
       : _availableDates = availableDates,
         _availableRooms = availableRooms,
@@ -711,6 +726,8 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   final num? downpaymentRate;
   @override
+  final num? fixedCancellationRate;
+  @override
   final num? duration;
   @override
   final String? durationUnit;
@@ -746,6 +763,9 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   @TimestampSerializer()
   final DateTime? closingHours;
+  @override
+  @TimeOfDayConverter()
+  final TimeOfDay? travelDuration;
   @override
   final num? pax;
   @override
@@ -785,7 +805,9 @@ class _$ListingModelImpl implements _ListingModel {
   final String title;
   @override
   final String? type;
+//[Private, Public]
   final List<FoodService>? _availableDeals;
+//[Private, Public]
   @override
   List<FoodService>? get availableDeals {
     final value = _availableDeals;
@@ -819,13 +841,11 @@ class _$ListingModelImpl implements _ListingModel {
   }
 
   @override
-  final String? typeOfTrip;
-  @override
   final String? uid;
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, duration: $duration, durationUnit: $durationUnit, guestInfo: $guestInfo, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, pax: $pax, price: $price, workingDays: $workingDays, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, typeOfTrip: $typeOfTrip, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, travelDuration: $travelDuration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, uid: $uid)';
   }
 
   @override
@@ -854,6 +874,8 @@ class _$ListingModelImpl implements _ListingModel {
                 other.description == description) &&
             (identical(other.downpaymentRate, downpaymentRate) ||
                 other.downpaymentRate == downpaymentRate) &&
+            (identical(other.fixedCancellationRate, fixedCancellationRate) ||
+                other.fixedCancellationRate == fixedCancellationRate) &&
             (identical(other.duration, duration) ||
                 other.duration == duration) &&
             (identical(other.durationUnit, durationUnit) ||
@@ -871,6 +893,8 @@ class _$ListingModelImpl implements _ListingModel {
                 other.openingHours == openingHours) &&
             (identical(other.closingHours, closingHours) ||
                 other.closingHours == closingHours) &&
+            (identical(other.travelDuration, travelDuration) ||
+                other.travelDuration == travelDuration) &&
             (identical(other.pax, pax) || other.pax == pax) &&
             (identical(other.price, price) || other.price == price) &&
             const DeepCollectionEquality()
@@ -895,8 +919,6 @@ class _$ListingModelImpl implements _ListingModel {
                 other.availableTransport == availableTransport) &&
             const DeepCollectionEquality().equals(
                 other._availableEntertainment, _availableEntertainment) &&
-            (identical(other.typeOfTrip, typeOfTrip) ||
-                other.typeOfTrip == typeOfTrip) &&
             (identical(other.uid, uid) || other.uid == uid));
   }
 
@@ -916,6 +938,7 @@ class _$ListingModelImpl implements _ListingModel {
         cooperative,
         description,
         downpaymentRate,
+        fixedCancellationRate,
         duration,
         durationUnit,
         guestInfo,
@@ -925,6 +948,7 @@ class _$ListingModelImpl implements _ListingModel {
         numberOfUnits,
         openingHours,
         closingHours,
+        travelDuration,
         pax,
         price,
         const DeepCollectionEquality().hash(_workingDays),
@@ -940,7 +964,6 @@ class _$ListingModelImpl implements _ListingModel {
         const DeepCollectionEquality().hash(_menuImgs),
         availableTransport,
         const DeepCollectionEquality().hash(_availableEntertainment),
-        typeOfTrip,
         uid
       ]);
 
@@ -972,6 +995,7 @@ abstract class _ListingModel implements ListingModel {
       required final ListingCooperative cooperative,
       required final String description,
       final num? downpaymentRate,
+      final num? fixedCancellationRate,
       final num? duration,
       final String? durationUnit,
       final String? guestInfo,
@@ -981,6 +1005,7 @@ abstract class _ListingModel implements ListingModel {
       final num? numberOfUnits,
       @TimestampSerializer() final DateTime? openingHours,
       @TimestampSerializer() final DateTime? closingHours,
+      @TimeOfDayConverter() final TimeOfDay? travelDuration,
       final num? pax,
       final num? price,
       final List<bool>? workingDays,
@@ -996,7 +1021,6 @@ abstract class _ListingModel implements ListingModel {
       final List<ListingImages>? menuImgs,
       final AvailableTransport? availableTransport,
       final List<EntertainmentService>? availableEntertainment,
-      final String? typeOfTrip,
       final String? uid}) = _$ListingModelImpl;
 
   factory _ListingModel.fromJson(Map<String, dynamic> json) =
@@ -1029,6 +1053,8 @@ abstract class _ListingModel implements ListingModel {
   @override
   num? get downpaymentRate;
   @override
+  num? get fixedCancellationRate;
+  @override
   num? get duration;
   @override
   String? get durationUnit;
@@ -1048,6 +1074,9 @@ abstract class _ListingModel implements ListingModel {
   @override
   @TimestampSerializer()
   DateTime? get closingHours;
+  @override
+  @TimeOfDayConverter()
+  TimeOfDay? get travelDuration;
   @override
   num? get pax;
   @override
@@ -1071,7 +1100,7 @@ abstract class _ListingModel implements ListingModel {
   String get title;
   @override
   String? get type;
-  @override
+  @override //[Private, Public]
   List<FoodService>? get availableDeals;
   @override
   List<ListingImages>? get menuImgs;
@@ -1079,8 +1108,6 @@ abstract class _ListingModel implements ListingModel {
   AvailableTransport? get availableTransport;
   @override
   List<EntertainmentService>? get availableEntertainment;
-  @override
-  String? get typeOfTrip;
   @override
   String? get uid;
   @override
@@ -1939,8 +1966,8 @@ mixin _$AvailableTransport {
   TimeOfDay get startTime => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
   TimeOfDay get endTime => throw _privateConstructorUsedError;
-  String get destination => throw _privateConstructorUsedError;
-  String get pickupPoint => throw _privateConstructorUsedError;
+  String? get destination => throw _privateConstructorUsedError;
+  String? get pickupPoint => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1966,8 +1993,8 @@ abstract class $AvailableTransportCopyWith<$Res> {
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime,
-      String destination,
-      String pickupPoint});
+      String? destination,
+      String? pickupPoint});
 }
 
 /// @nodoc
@@ -1994,8 +2021,8 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
     Object? workingDays = null,
     Object? startTime = null,
     Object? endTime = null,
-    Object? destination = null,
-    Object? pickupPoint = null,
+    Object? destination = freezed,
+    Object? pickupPoint = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -2042,14 +2069,14 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay,
-      destination: null == destination
+      destination: freezed == destination
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
-              as String,
-      pickupPoint: null == pickupPoint
+              as String?,
+      pickupPoint: freezed == pickupPoint
           ? _value.pickupPoint
           : pickupPoint // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -2074,8 +2101,8 @@ abstract class _$$AvailableTransportImplCopyWith<$Res>
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime,
-      String destination,
-      String pickupPoint});
+      String? destination,
+      String? pickupPoint});
 }
 
 /// @nodoc
@@ -2100,8 +2127,8 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
     Object? workingDays = null,
     Object? startTime = null,
     Object? endTime = null,
-    Object? destination = null,
-    Object? pickupPoint = null,
+    Object? destination = freezed,
+    Object? pickupPoint = freezed,
   }) {
     return _then(_$AvailableTransportImpl(
       uid: freezed == uid
@@ -2148,14 +2175,14 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay,
-      destination: null == destination
+      destination: freezed == destination
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
-              as String,
-      pickupPoint: null == pickupPoint
+              as String?,
+      pickupPoint: freezed == pickupPoint
           ? _value.pickupPoint
           : pickupPoint // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -2175,8 +2202,8 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       required final List<bool> workingDays,
       @TimeOfDayConverter() required this.startTime,
       @TimeOfDayConverter() required this.endTime,
-      required this.destination,
-      required this.pickupPoint})
+      this.destination,
+      this.pickupPoint})
       : _departureTimes = departureTimes,
         _workingDays = workingDays;
 
@@ -2223,9 +2250,9 @@ class _$AvailableTransportImpl implements _AvailableTransport {
   @TimeOfDayConverter()
   final TimeOfDay endTime;
   @override
-  final String destination;
+  final String? destination;
   @override
-  final String pickupPoint;
+  final String? pickupPoint;
 
   @override
   String toString() {
@@ -2306,8 +2333,8 @@ abstract class _AvailableTransport implements AvailableTransport {
       required final List<bool> workingDays,
       @TimeOfDayConverter() required final TimeOfDay startTime,
       @TimeOfDayConverter() required final TimeOfDay endTime,
-      required final String destination,
-      required final String pickupPoint}) = _$AvailableTransportImpl;
+      final String? destination,
+      final String? pickupPoint}) = _$AvailableTransportImpl;
 
   factory _AvailableTransport.fromJson(Map<String, dynamic> json) =
       _$AvailableTransportImpl.fromJson;
@@ -2338,9 +2365,9 @@ abstract class _AvailableTransport implements AvailableTransport {
   @TimeOfDayConverter()
   TimeOfDay get endTime;
   @override
-  String get destination;
+  String? get destination;
   @override
-  String get pickupPoint;
+  String? get pickupPoint;
   @override
   @JsonKey(ignore: true)
   _$$AvailableTransportImplCopyWith<_$AvailableTransportImpl> get copyWith =>
