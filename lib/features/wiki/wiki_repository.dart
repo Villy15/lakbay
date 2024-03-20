@@ -55,6 +55,40 @@ class WikiRepository {
     }
   }
 
+  // Update the votes of the wiki
+  FutureVoid updateVotes(String uid, int votes) async {
+    try {
+      return right(await _wikis.doc(uid).update({'votes': votes}));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureVoid updateCommentsVote(WikiModel wiki) async {
+    try {
+      return right(await _wikis.doc(wiki.uid).update(wiki.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Add a comment to the wiki
+  FutureVoid addComment(String uid, WikiComments comment) async {
+    try {
+      return right(await _wikis.doc(uid).update({
+        'comments': FieldValue.arrayUnion([comment.toJson()])
+      }));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   CollectionReference get _wikis =>
       _firestore.collection(FirebaseConstants.wikisCollection);
 }
