@@ -1,14 +1,13 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-//import 'package:intl/intl.dart';
-import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
-import 'package:lakbay/models/wiki_model.dart';
 import 'package:lakbay/features/wiki/wiki_controller.dart';
+import 'package:lakbay/models/wiki_model.dart';
 
 class EditWikiPage extends ConsumerStatefulWidget {
   final WikiModel wiki;
@@ -34,8 +33,8 @@ class _EditWikiPageState extends ConsumerState<EditWikiPage> {
     });
 
     // Set initial values
-    _nameController.text = widget.wiki.name;
-    _descriptionController.text = widget.wiki.description ?? '';
+    // _nameController.text = widget.wiki.name;
+    // _descriptionController.text = widget.wiki.description ?? '';
   }
 
   @override
@@ -84,32 +83,32 @@ class _EditWikiPageState extends ConsumerState<EditWikiPage> {
                     final imagePath =
                         'wikis/${_nameController.text}/${_image?.path.split('/').last ?? ''}';
 
-                    // Process data.
-                    var updatedWiki = widget.wiki.copyWith(
-                      name: _nameController.text,
-                      description: _descriptionController.text,
-                      imagePath: imagePath,
-                    );
+                    // // Process data.
+                    // var updatedWiki = widget.wiki.copyWith(
+                    //   name: _nameController.text,
+                    //   description: _descriptionController.text,
+                    //   imagePath: imagePath,
+                    // );
 
-                    // Upload image to Firebase Storage
-                    ref
-                        .read(storageRepositoryProvider)
-                        .storeFile(
-                          path: 'wikis/${_nameController.text}',
-                          id: _image?.path.split('/').last ?? '',
-                          file: _image,
-                        )
-                        .then((value) => value.fold(
-                              (failure) => debugPrint(
-                                'Failed to upload image: $failure',
-                              ),
-                              (imageUrl) {
-                                updatedWiki =
-                                    updatedWiki.copyWith(imageUrl: imageUrl);
-                                // Edit wiki
-                                updateWiki(updatedWiki);
-                              },
-                            ));
+                    // // Upload image to Firebase Storage
+                    // ref
+                    //     .read(storageRepositoryProvider)
+                    //     .storeFile(
+                    //       path: 'wikis/${_nameController.text}',
+                    //       id: _image?.path.split('/').last ?? '',
+                    //       file: _image,
+                    //     )
+                    //     .then((value) => value.fold(
+                    //           (failure) => debugPrint(
+                    //             'Failed to upload image: $failure',
+                    //           ),
+                    //           (imageUrl) {
+                    //             updatedWiki =
+                    //                 updatedWiki.copyWith(imageUrl: imageUrl);
+                    //             // Edit wiki
+                    //             updateWiki(updatedWiki);
+                    //           },
+                    //         ));
                   }
                 },
                 child: const Text('Submit'),
@@ -133,8 +132,8 @@ class _EditWikiPageState extends ConsumerState<EditWikiPage> {
                         GestureDetector(
                           onTap: () async {
                             final picker = ImagePicker();
-                            final pickedFile =
-                                await picker.pickImage(source: ImageSource.gallery);
+                            final pickedFile = await picker.pickImage(
+                                source: ImageSource.gallery);
 
                             if (pickedFile != null) {
                               setState(() {
