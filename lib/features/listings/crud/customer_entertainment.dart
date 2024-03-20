@@ -15,7 +15,7 @@ class CustomerEntertainment extends ConsumerStatefulWidget {
 }
 
 class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
-  int numberOfPersons = 1; 
+  int numberOfPersons = 1;
 
   @override
   void initState() {
@@ -88,8 +88,7 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
                   text:
                       "Location: ${widget.listing.province}, ${widget.listing.city}",
                   lines: 4,
-                  style: const TextStyle(
-                      fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
 
@@ -100,8 +99,7 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
                   text:
                       "Number of guests per booking: ${widget.listing.pax ?? 1}",
                   lines: 1,
-                  style: const TextStyle(
-                      fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
 
@@ -113,8 +111,7 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
                   text: 'Description',
                   lines: 1,
                   style: TextStyle(
-                    fontSize:
-                        Theme.of(context).textTheme.titleMedium?.fontSize,
+                    fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -125,8 +122,7 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
                 child: DisplayText(
                   text: widget.listing.description,
                   lines: 4,
-                  style: const TextStyle(
-                       fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
 
@@ -158,11 +154,9 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
                         ),
                         Row(
                           children: [
-                            Text(
-                                "₱${widget.listing.price.toString()}",
+                            Text("₱${widget.listing.price.toString()}",
                                 style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold)),
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ],
@@ -181,12 +175,15 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
                     // Define opening and closing hours
                     final int openingHour = widget.listing.openingHours!.hour;
                     final int closingHour = widget.listing.closingHours!.hour;
-                    final int intervalDurationInMinutes = widget.listing.duration!.toInt(); 
+                    final int intervalDurationInMinutes =
+                        widget.listing.duration!.hour.toInt();
 
                     // Calculate available times
                     List<Widget> availableTimes = [];
                     for (int hour = openingHour; hour < closingHour; hour++) {
-                      for (int minute = 0; minute < 60; minute += intervalDurationInMinutes) {
+                      for (int minute = 0;
+                          minute < 60;
+                          minute += intervalDurationInMinutes) {
                         String time =
                             '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
                         availableTimes.add(
@@ -197,81 +194,97 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
                               ElevatedButton(
                                 onPressed: () {
                                   showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    // Calculate total price
-                                    num totalPrice = numberOfPersons * widget.listing.price!.toInt();
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      // Calculate total price
+                                      num totalPrice = numberOfPersons *
+                                          widget.listing.price!.toInt();
 
-                                    return AlertDialog(
-                                      title: Column(
-                                        children: [
-                                          Text("Selected Time: $time", style: const TextStyle(fontSize: 14),), // Display the selected time
-                                          const Text("Number of Persons", style: TextStyle(fontSize: 14),),
-                                        ],
-                                      ),
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              IconButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    if (numberOfPersons > 1) {
-                                                      numberOfPersons--;
-                                                    }
-                                                  });
-                                                },
-                                                icon: const Icon(Icons.remove),
-                                              ),
-                                              Text(
-                                                numberOfPersons.toString(),
-                                                style: const TextStyle(fontSize: 20),
-                                              ),
-                                              IconButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    numberOfPersons++;
-                                                  });
-                                                },
-                                                icon: const Icon(Icons.add),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10), // Add space below the buttons
-                                          Text(
-                                            'Total Price: ₱$totalPrice', // Display total price
-                                            style: const TextStyle(fontSize: 18),
-                                          ),
-                                        ],
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("Cancel"),
+                                      return AlertDialog(
+                                        title: Column(
+                                          children: [
+                                            Text(
+                                              "Selected Time: $time",
+                                              style:
+                                                  const TextStyle(fontSize: 14),
+                                            ), // Display the selected time
+                                            const Text(
+                                              "Number of Persons",
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                          ],
                                         ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("Confirm"),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                IconButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      if (numberOfPersons > 1) {
+                                                        numberOfPersons--;
+                                                      }
+                                                    });
+                                                  },
+                                                  icon:
+                                                      const Icon(Icons.remove),
+                                                ),
+                                                Text(
+                                                  numberOfPersons.toString(),
+                                                  style: const TextStyle(
+                                                      fontSize: 20),
+                                                ),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      numberOfPersons++;
+                                                    });
+                                                  },
+                                                  icon: const Icon(Icons.add),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(
+                                                height:
+                                                    10), // Add space below the buttons
+                                            Text(
+                                              'Total Price: ₱$totalPrice', // Display total price
+                                              style:
+                                                  const TextStyle(fontSize: 18),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    );
-                                  },
-                                );
-
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("Cancel"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("Confirm"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  fixedSize: const Size(100, 36), // Adjust the width and height as needed
+                                  fixedSize: const Size(100,
+                                      36), // Adjust the width and height as needed
                                 ),
                                 child: Text(time),
                               ),
-                              const SizedBox(width: 50), // Add space between button and text
+                              const SizedBox(
+                                  width:
+                                      50), // Add space between button and text
                               Text(
                                 'Slots : ${widget.listing.numberOfUnits}',
                                 style: const TextStyle(fontSize: 12),

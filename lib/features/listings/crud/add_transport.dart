@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -177,7 +176,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                   cooperative: ListingCooperative(
                       cooperativeId: widget.coop.uid!,
                       cooperativeName: widget.coop.name),
-                  travelDuration: travelDuration,
+                  duration: travelDuration,
                   description: _descriptionController.text,
                   province: widget.coop.province,
                   publisherId: ref.read(userProvider)!.uid,

@@ -12,6 +12,9 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       availableDates: (json['availableDates'] as List<dynamic>?)
           ?.map((e) => AvailableDate.fromJson(e as Map<String, dynamic>))
           .toList(),
+      availableTimes: (json['availableTimes'] as List<dynamic>?)
+          ?.map((e) => AvailableTime.fromJson(e as Map<String, dynamic>))
+          .toList(),
       availableRooms: (json['availableRooms'] as List<dynamic>?)
           ?.map((e) => AvailableRoom.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -42,19 +45,23 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           .fromJson(json['openingHours'] as Timestamp?),
       closingHours: const TimestampSerializer()
           .fromJson(json['closingHours'] as Timestamp?),
-      travelDuration: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
-          json['travelDuration'], const TimeOfDayConverter().fromJson),
+      duration: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
+          json['duration'], const TimeOfDayConverter().fromJson),
       pax: json['pax'] as num?,
       price: json['price'] as num?,
       province: json['province'] as String,
       publisherId: json['publisherId'] as String,
       publisherName: json['publisherName'] as String,
+      guestInfo: json['guestInfo'] as String?,
       rating: json['rating'] as num?,
       fixedTasks: (json['fixedTasks'] as List<dynamic>?)
           ?.map((e) => BookingTask.fromJson(e as Map<String, dynamic>))
           .toList(),
       timestamp:
           const TimestampSerializer().fromJson(json['timestamp'] as Timestamp?),
+      workingDays: (json['workingDays'] as List<dynamic>?)
+          ?.map((e) => e as bool)
+          .toList(),
       title: json['title'] as String,
       type: json['type'] as String?,
       availableDeals: (json['availableDeals'] as List<dynamic>?)
@@ -67,9 +74,6 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           ? null
           : AvailableTransport.fromJson(
               json['availableTransport'] as Map<String, dynamic>),
-      availableEntertainment: (json['availableEntertainment'] as List<dynamic>?)
-          ?.map((e) => EntertainmentService.fromJson(e as Map<String, dynamic>))
-          .toList(),
       uid: json['uid'] as String?,
     );
 
@@ -78,6 +82,8 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'address': instance.address,
       'availableDates':
           instance.availableDates?.map((e) => e.toJson()).toList(),
+      'availableTimes':
+          instance.availableTimes?.map((e) => e.toJson()).toList(),
       'availableRooms':
           instance.availableRooms?.map((e) => e.toJson()).toList(),
       'category': instance.category,
@@ -90,32 +96,30 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'description': instance.description,
       'downpaymentRate': instance.downpaymentRate,
       'fixedCancellationRate': instance.fixedCancellationRate,
-      'duration': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
-          instance.duration, const TimeOfDayConverter().toJson),
       'images': instance.images?.map((e) => e.toJson()).toList(),
       'isPublished': instance.isPublished,
       'listingCosts': instance.listingCosts?.map((e) => e.toJson()).toList(),
       'numberOfUnits': instance.numberOfUnits,
       'openingHours': const TimestampSerializer().toJson(instance.openingHours),
       'closingHours': const TimestampSerializer().toJson(instance.closingHours),
-      'travelDuration': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
-          instance.travelDuration, const TimeOfDayConverter().toJson),
+      'duration': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
+          instance.duration, const TimeOfDayConverter().toJson),
       'pax': instance.pax,
       'price': instance.price,
       'province': instance.province,
       'publisherId': instance.publisherId,
       'publisherName': instance.publisherName,
+      'guestInfo': instance.guestInfo,
       'rating': instance.rating,
       'fixedTasks': instance.fixedTasks?.map((e) => e.toJson()).toList(),
       'timestamp': const TimestampSerializer().toJson(instance.timestamp),
+      'workingDays': instance.workingDays,
       'title': instance.title,
       'type': instance.type,
       'availableDeals':
           instance.availableDeals?.map((e) => e.toJson()).toList(),
       'menuImgs': instance.menuImgs?.map((e) => e.toJson()).toList(),
       'availableTransport': instance.availableTransport?.toJson(),
-      'availableEntertainment':
-          instance.availableEntertainment?.map((e) => e.toJson()).toList(),
       'uid': instance.uid,
     };
 
@@ -310,6 +314,7 @@ Map<String, dynamic> _$$EntertainmentServiceImplToJson(
 _$AvailableDateImpl _$$AvailableDateImplFromJson(Map<String, dynamic> json) =>
     _$AvailableDateImpl(
       available: json['available'] as bool,
+      date: DateTime.parse(json['date'] as String),
       availableTimes: (json['availableTimes'] as List<dynamic>)
           .map((e) => AvailableTime.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -318,6 +323,7 @@ _$AvailableDateImpl _$$AvailableDateImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$AvailableDateImplToJson(_$AvailableDateImpl instance) =>
     <String, dynamic>{
       'available': instance.available,
+      'date': instance.date.toIso8601String(),
       'availableTimes': instance.availableTimes.map((e) => e.toJson()).toList(),
     };
 

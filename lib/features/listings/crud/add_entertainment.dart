@@ -4,13 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
+import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lakbay/features/common/loader.dart';
+import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class AddEntertainment extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -28,14 +34,16 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 
   // stepper
   int activeStep = 0;
-  int upperBound = 6;
+  int upperBound = 5;
 
   // initial values
-  String type = 'Recreational/Rentals';
+  String type = 'Activities';
   num guests = 0;
-  List<File>? _listingImgs = [];
+  List<bool> workingDays = List.filled(7, false);
+  TimeOfDay duration = const TimeOfDay(hour: 1, minute: 15);
 
   // controllers
+  final TextEditingController durationController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _addressController =
@@ -45,118 +53,173 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   final TextEditingController _capacityController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
   final TextEditingController _guestInfoController = TextEditingController();
+  String mapAddress = "";
+  List<File>? _images;
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now().add(const Duration(days: 1));
   TimeOfDay _selectedOpeningHours = TimeOfDay.now();
   TimeOfDay _selectedClosingHours = TimeOfDay.now();
 
-// void submitAddListing() {
-//   if (_formKey.currentState!.validate()) {
-//     _formKey.currentState!.save();
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      ref.read(navBarVisibilityProvider.notifier).hide();
+    });
+  }
 
-//     ref
-//         .read(storageRepositoryProvider)
-//         .storeFiles(
-//           path: 'listings/${widget.coop.name}',
-//           ids: _listingImgs!.map((image) => image.path.split('/').last).toList(),
-//           files: _listingImgs!,
-//         )
-//         .then((value) => value.fold(
-//               (failure) => debugPrint('Failed to upload images: $failure'),
-//               (imageUrls) async {
-//                 ListingCooperative cooperative = ListingCooperative(
-//                     cooperativeId: widget.coop.uid!,
-//                     cooperativeName: widget.coop.name);
+  @override
+  void dispose() {
+    // Dispose of the controllers when the widget is disposed.
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _addressController.dispose();
 
-//                 // Prepare data for ListingModel
-//                 ListingModel listing = ListingModel(
-//                   address: _addressController.text,
-//                   category: widget.category,
-//                   description: _descriptionController.text,
-//                   title: _titleController.text,
-//                   type: type,
-//                   city: "",
-//                   province: "",
-//                   images: _listingImgs!.map((image) {
-//                     final imagePath =
-//                         'listings/${widget.coop.name}/${image.path.split('/').last}';
-//                     return ListingImages(path: imagePath);
-//                   }).toList(),
-//                   cooperative: cooperative,
-//                   publisherId: ref.read(userProvider)!.uid,
-//                   publisherName: ref.read(userProvider)!.name,
-//                   price: num.parse(_priceController.text),
-//                   pax: int.parse(_capacityController.text),
-//                   numberOfUnits: int.parse(_unitsController.text),
-//                   duration: _durationController.text,
-//                   openingHours: _selectedOpeningHours,
-//                   closingHours: _selectedClosingHours,
-//                   guestInfo: _guestInfoController.text,
-//                 );
+    super.dispose();
+  }
 
-//                 // Additional processing if needed (e.g., processing room images)
-//                 listing = await processRoomImages(listing);
+  void onTapDate() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.95,
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Select Date'),
+            ),
+            bottomNavigationBar: BottomAppBar(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  FilledButton(
+                    style: ButtonStyle(
+                      minimumSize:
+                          MaterialStateProperty.all<Size>(const Size(120, 45)),
+                    ),
+                    onPressed: () {
+                      ref
+                          .read(listingStartDate.notifier)
+                          .setStartDate(startDate);
 
-//                 // Update image URLs in the listing model
-//                 listing = listing.copyWith(
-//                   images: listing.images!.asMap().entries.map((entry) {
-//                     return entry.value.copyWith(url: imageUrls[entry.key]);
-//                   }).toList(),
-//                 );
+                      ref.read(listingEndDate.notifier).setEndDate(endDate);
 
-//                 debugPrintJson(listing);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SfDateRangePicker(
+                      selectionMode: DateRangePickerSelectionMode.range,
+                      onSelectionChanged:
+                          (DateRangePickerSelectionChangedArgs args) {
+                        startDate = args.value.startDate;
 
-//                 if (mounted) {
-//                   // Call the addListing method with the updated listing model
-//                   ref
-//                       .read(listingControllerProvider.notifier)
-//                       .addListing(listing, context);
-//                 }
-//               },
-//             ));
-//   }
-// }
+                        endDate = args.value.endDate;
+                      },
+                      minDate: DateTime.now(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
-// Future<ListingModel> processImages(ListingModel listing) async {
-//   final imagePath = 'listings/${widget.coop.name}';
-//   final ids = listing.images!
-//       .map((image) => image.path.split('/').last)
-//       .toList();
+  void submitAddListing() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
-//   await ref
-//       .read(storageRepositoryProvider)
-//       .storeFiles(
-//         path: imagePath,
-//         ids: ids,
-//         files: listing.images!,
-//       )
-//       .then(
-//         (value) => value.fold(
-//           (failure) => debugPrint('Failed to upload images: $failure'),
-//           (imageUrls) {
-//             // Update the images in the listing model
-//             listing = listing.copyWith(
-//               images: listing.images!
-//                   .asMap()
-//                   .map((imageIndex, image) {
-//                     // Ensure we have a URL for each image
-//                     if (imageIndex < imageUrls.length) {
-//                       return MapEntry(
-//                           imageIndex,
-//                           image.copyWith(
-//                               url: imageUrls[imageIndex]));
-//                     }
-//                     return MapEntry(imageIndex, image);
-//                   })
-//                   .values
-//                   .toList(),
-//             );
+      final imagePath = 'listings/${widget.coop.name}';
+      final ids = _images!.map((image) => image.path.split('/').last).toList();
+      ref
+          .read(storageRepositoryProvider)
+          .storeFiles(
+            path: imagePath,
+            ids: ids,
+            files: _images!,
+          )
+          .then((value) => value.fold(
+                (failure) => debugPrint('Failed to upload images: $failure'),
+                (imageUrls) async {
+                  ListingCooperative cooperative = ListingCooperative(
+                      cooperativeId: widget.coop.uid!,
+                      cooperativeName: widget.coop.name);
+                  debugPrint(cooperative.toString());
+                  // Prepare data for ListingModel
+                  ListingModel listing = ListingModel(
+                    address: _addressController.text,
+                    category: widget.category,
+                    description: _descriptionController.text,
+                    title: _titleController.text,
+                    workingDays: workingDays,
+                    type: type,
+                    city: "",
+                    province: "",
+                    images: _images?.map((image) {
+                      final imagePath =
+                          'listings/${widget.coop.name}/${image.path.split('/').last}';
+                      return ListingImages(path: imagePath);
+                    }).toList(),
+                    cooperative: cooperative,
+                    publisherId: ref.read(userProvider)!.uid,
+                    publisherName: ref.read(userProvider)!.name,
+                    price: num.parse(_priceController.text),
+                    pax: int.parse(_capacityController.text),
+                    numberOfUnits: int.parse(_unitsController.text),
+                    duration: duration,
+                    openingHours: DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      _selectedOpeningHours.hour,
+                      _selectedOpeningHours.minute,
+                    ),
+                    closingHours: DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      _selectedClosingHours.hour,
+                      _selectedClosingHours.minute,
+                    ),
+                    guestInfo: _guestInfoController.text,
+                  );
+                  debugPrint(listing.toString());
+                  //Update image URLs in the listing model
+                  listing = listing.copyWith(
+                    images: listing.images!.asMap().entries.map((entry) {
+                      return entry.value.copyWith(url: imageUrls[entry.key]);
+                    }).toList(),
+                  );
 
-//             debugPrintJson(listing);
-//           },
-//         ),
-//       );
-
-//   return listing;
-// }
+                  debugPrint(listing.toString());
+                  if (mounted) {
+                    ref
+                        .read(listingControllerProvider.notifier)
+                        .addListing(listing, context);
+                  }
+                },
+              ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -183,6 +246,35 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                             ]))))));
   }
 
+  Widget datePicker(
+      BuildContext context, DateTime? startDate, DateTime? endDate) {
+    return ListTile(
+      title: const Text('Available Dates'),
+      leading: const Icon(Icons.calendar_today_outlined),
+      subtitle: Text(startDate == null || endDate == null
+          ? 'Select a date'
+          : '${DateFormat.yMMMMd().format(startDate)} - ${DateFormat.yMMMMd().format(endDate)}'),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () {
+        onTapDate();
+      },
+    );
+  }
+
+  Future<DateTime?> _selectDate(
+    BuildContext context,
+    DateTime initialDate,
+    DateTime firstDate,
+  ) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: DateTime(2101),
+    );
+    return picked;
+  }
+
   Column steppers(BuildContext context) {
     return Column(
       children: [
@@ -194,10 +286,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           icons: [
             Icon(
               Icons.type_specimen_outlined,
-              color: Theme.of(context).colorScheme.background,
-            ),
-            Icon(
-              Icons.details_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
@@ -214,6 +302,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             ),
             Icon(
               Icons.question_mark_outlined,
+              color: Theme.of(context).colorScheme.background,
+            ),
+            Icon(
+              Icons.summarize_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
           ],
@@ -291,17 +383,19 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           ),
         ),
         const SizedBox(height: 10),
-        TextFormField(
-          controller: _unitsController,
-          maxLines: null,
-          decoration: const InputDecoration(
-            labelText: 'Number of Units*',
-            helperText: '*optional',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Number of Units",
+        if (type == 'Rentals') ...[
+          TextFormField(
+            controller: _unitsController,
+            maxLines: null,
+            decoration: const InputDecoration(
+              labelText: 'Number of Units*',
+              helperText: '*optional',
+              border: OutlineInputBorder(),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              hintText: "Number of Units",
+            ),
           ),
-        ),
+        ],
         const SizedBox(height: 10),
         TextFormField(
           controller: _capacityController,
@@ -315,16 +409,41 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           ),
         ),
         const SizedBox(height: 10),
+        const SizedBox(height: 10),
         TextFormField(
-          controller: _durationController,
-          maxLines: null,
+          controller: durationController,
+          maxLines: 1,
           decoration: const InputDecoration(
             labelText: 'Duration*',
             helperText: '*required',
             border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Duration",
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "1:15",
           ),
+          readOnly: true,
+          onTap: () async {
+            final TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: duration,
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: true),
+                  child: child!,
+                );
+              },
+            );
+
+            if (pickedTime != null) {
+              setState(() {
+                durationController.text =
+                    "${pickedTime.hour}:${pickedTime.minute}";
+                duration = pickedTime;
+              });
+            }
+          },
         ),
         const SizedBox(height: 10),
         ListTile(
@@ -362,8 +481,56 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             }
           },
         ),
+        const SizedBox(height: 10),
+        if (type == 'Watching/Performances') ...[
+          datePicker(context, startDate, endDate)
+        ],
+        if (type != 'Watching/Performances') ...[
+          const SizedBox(height: 10),
+          const SizedBox(height: 10),
+          const Text('Working Days',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text('Please select your working days...',
+              style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+          Column(
+            children: List<Widget>.generate(7, (int index) {
+              return CheckboxListTile(
+                title: Text(
+                  getDay(index),
+                  style: const TextStyle(fontSize: 16),
+                ),
+                value: workingDays[index],
+                onChanged: (bool? value) {
+                  setState(() {
+                    workingDays[index] = value!;
+                  });
+                },
+              );
+            }),
+          ),
+          const SizedBox(height: 10),
+        ],
       ],
     );
+  }
+
+  String getDay(int index) {
+    switch (index) {
+      case 0:
+        return 'Monday';
+      case 1:
+        return 'Tuesday';
+      case 2:
+        return 'Wednesday';
+      case 3:
+        return 'Thursday';
+      case 4:
+        return 'Friday';
+      case 5:
+        return 'Saturday';
+      default:
+        return 'Sunday';
+    }
   }
 
   Widget addLocation(BuildContext context) {
@@ -383,7 +550,11 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           }),
       const SizedBox(height: 10),
       ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            mapAddress = _addressController.text;
+          });
+        },
         child: const Text('Update Map'),
       ),
 
@@ -392,7 +563,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       // Google Map
       SizedBox(
         height: 400,
-        child: MapWidget(address: _addressController.text),
+        child: MapWidget(address: mapAddress),
       )
     ]);
   }
@@ -408,9 +579,9 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             height: MediaQuery.sizeOf(context).height / 2.5,
             width: MediaQuery.sizeOf(context).width,
             context: context,
-            initialValue: _listingImgs,
+            initialValue: _images,
             onSaved: (List<File>? files) {
-              _listingImgs = files;
+              _images = files;
             },
             validator: (List<File>? files) {
               if (files == null || files.isEmpty) {
@@ -419,7 +590,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               return null;
             },
             onImagesSelected: (List<File> files) {
-              _listingImgs = files;
+              _images = files;
             },
           ),
         )
@@ -451,7 +622,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          if (_listingImgs?.isNotEmpty == true) ...[
+          if (_images?.isNotEmpty == true) ...[
             const Padding(
               padding: EdgeInsets.only(top: 8.0, left: 12.0),
               child: DisplayText(
@@ -463,7 +634,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ImageSlider(
-                  images: _listingImgs,
+                  images: _images,
                   height: MediaQuery.sizeOf(context).height / 2.5,
                   width: double.infinity,
                   radius: BorderRadius.circular(10)),
@@ -494,7 +665,16 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             subtitle: Text(_descriptionController.text),
           ),
-
+          ListTile(
+            title: const Text('Working Days', style: TextStyle(fontSize: 20)),
+            subtitle: Text(workingDays
+                .asMap()
+                .entries
+                .where((element) => element.value)
+                .map((e) => getDay(e.key))
+                .toList()
+                .join(', ')),
+          ),
           const Divider(),
           ListTile(
             title: const Text('Price',
@@ -542,8 +722,9 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 
   Widget chooseType(BuildContext context) {
     List<Map<String, dynamic>> types = [
-      {'name': 'Recreational/Rentals', 'icon': Icons.directions_bike},
-      {'name': 'Watching/Performances', 'icon': Icons.music_note},
+      {'name': 'Rentals', 'icon': Icons.sailing},
+      {'name': 'Watching/Performances', 'icon': Icons.theater_comedy},
+      {'name': 'Activities', 'icon': Icons.directions_walk},
     ];
 
     return Column(
@@ -692,34 +873,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              // print(widget.coop.uid);
-              // AvailableTransport transport = AvailableTransport(
-              //   guests: guests,
-              //   luggage: luggage,
-              //   price: num.parse(_feeController.text),
-              //   available: true
-              // );
-              // ListingModel listingModel = ListingModel(
-              //   address: _addressController.text,
-              //       category: widget.category,
-              //       city: widget.coop.city,
-              //       cooperative: ListingCooperative(
-              //         cooperativeId: widget.coop.uid!,
-              //         cooperativeName: widget.coop.name
-              //       ),
-              //       description: _descriptionController.text,
-              //       province: widget.coop.province,
-              //       publisherId: "",
-              //       title: _titleController.text,
-              //       type: type,
-              //       images: _images?.map((e) => ListingImages(path: e.path)).toList(),
-              //       availableTransport: transport
-              // );
-              // print('this is the current transport $transport');
-              // ref
-              //     .read(saveListingProvider.notifier)
-              //     .saveListingProvider(listingModel);
-              // submitAddListing(listingModel);
+              submitAddListing();
             },
             child: Text(
               'Submit',
@@ -834,4 +988,37 @@ class ImagePickerFormField extends FormField<List<File>> {
             );
           },
         );
+}
+
+final listingStartDate =
+    StateNotifierProvider<ListingStartDateNotifier, DateTime?>(
+  (ref) => ListingStartDateNotifier(),
+);
+
+class ListingStartDateNotifier extends StateNotifier<DateTime?> {
+  ListingStartDateNotifier() : super(null);
+
+  void setStartDate(DateTime startDate) {
+    state = startDate;
+  }
+
+  void clearStartDate() {
+    state = null;
+  }
+}
+
+final listingEndDate = StateNotifierProvider<ListingEndDateNotifier, DateTime?>(
+  (ref) => ListingEndDateNotifier(),
+);
+
+class ListingEndDateNotifier extends StateNotifier<DateTime?> {
+  ListingEndDateNotifier() : super(null);
+
+  void setEndDate(DateTime endDate) {
+    state = endDate;
+  }
+
+  void clearEndDate() {
+    state = null;
+  }
 }

@@ -816,8 +816,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                     departureTime.hour,
                                     departureTime.minute)
                                 .add(Duration(
-                                    hours: listing.travelDuration!.hour,
-                                    minutes: listing.travelDuration!.minute)),
+                                    hours: listing.duration!.hour,
+                                    minutes: listing.duration!.minute)),
                             startTime: departureTime,
                             endTime: departureTime,
                             email: "",

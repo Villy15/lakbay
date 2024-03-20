@@ -12,6 +12,7 @@ class ListingModel with _$ListingModel {
   factory ListingModel({
     required String address,
     List<AvailableDate>? availableDates,
+    List<AvailableTime>? availableTimes,
     List<AvailableRoom>? availableRooms,
     required String category,
     num? cancellationRate,
@@ -23,29 +24,29 @@ class ListingModel with _$ListingModel {
     required String description,
     num? downpaymentRate,
     num? fixedCancellationRate,
-    @TimeOfDayConverter()
-    TimeOfDay? duration, //[Travel Duration, Entertainment Duration]
     List<ListingImages>? images,
     bool? isPublished,
     List<ListingCost>? listingCosts,
     num? numberOfUnits,
     @TimestampSerializer() DateTime? openingHours,
     @TimestampSerializer() DateTime? closingHours,
-    @TimeOfDayConverter() TimeOfDay? travelDuration,
+    @TimeOfDayConverter()
+    TimeOfDay? duration, //[Travel Duration, Entertainment Duration]
     num? pax,
     num? price,
     required String province,
     required String publisherId,
     required String publisherName,
+    String? guestInfo,
     num? rating,
     List<BookingTask>? fixedTasks,
     @TimestampSerializer() DateTime? timestamp,
+    List<bool>? workingDays,
     required String title,
-    String? type, //[Private, Public]
+    String? type, //[Private, Public, Rental, Performance, Activity]
     List<FoodService>? availableDeals,
     List<ListingImages>? menuImgs,
     AvailableTransport? availableTransport,
-    List<EntertainmentService>? availableEntertainment,
     String? uid,
   }) = _ListingModel;
 
@@ -165,6 +166,7 @@ class EntertainmentService with _$EntertainmentService {
 class AvailableDate with _$AvailableDate {
   factory AvailableDate({
     required bool available,
+    @TimestampSerializer() required DateTime date,
     required List<AvailableTime> availableTimes,
   }) = _AvailableDate;
 

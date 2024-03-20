@@ -22,6 +22,7 @@ ListingModel _$ListingModelFromJson(Map<String, dynamic> json) {
 mixin _$ListingModel {
   String get address => throw _privateConstructorUsedError;
   List<AvailableDate>? get availableDates => throw _privateConstructorUsedError;
+  List<AvailableTime>? get availableTimes => throw _privateConstructorUsedError;
   List<AvailableRoom>? get availableRooms => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
   num? get cancellationRate => throw _privateConstructorUsedError;
@@ -47,23 +48,25 @@ mixin _$ListingModel {
   @TimestampSerializer()
   DateTime? get closingHours => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
-  TimeOfDay? get travelDuration => throw _privateConstructorUsedError;
+  TimeOfDay? get duration =>
+      throw _privateConstructorUsedError; //[Travel Duration, Entertainment Duration]
   num? get pax => throw _privateConstructorUsedError;
   num? get price => throw _privateConstructorUsedError;
   String get province => throw _privateConstructorUsedError;
   String get publisherId => throw _privateConstructorUsedError;
   String get publisherName => throw _privateConstructorUsedError;
+  String? get guestInfo => throw _privateConstructorUsedError;
   num? get rating => throw _privateConstructorUsedError;
   List<BookingTask>? get fixedTasks => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get timestamp => throw _privateConstructorUsedError;
+  List<bool>? get workingDays => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  String? get type => throw _privateConstructorUsedError; //[Private, Public]
+  String? get type =>
+      throw _privateConstructorUsedError; //[Private, Public, Rental, Performance, Activity]
   List<FoodService>? get availableDeals => throw _privateConstructorUsedError;
   List<ListingImages>? get menuImgs => throw _privateConstructorUsedError;
   AvailableTransport? get availableTransport =>
-      throw _privateConstructorUsedError;
-  List<EntertainmentService>? get availableEntertainment =>
       throw _privateConstructorUsedError;
   String? get uid => throw _privateConstructorUsedError;
 
@@ -82,6 +85,7 @@ abstract class $ListingModelCopyWith<$Res> {
   $Res call(
       {String address,
       List<AvailableDate>? availableDates,
+      List<AvailableTime>? availableTimes,
       List<AvailableRoom>? availableRooms,
       String category,
       num? cancellationRate,
@@ -93,28 +97,28 @@ abstract class $ListingModelCopyWith<$Res> {
       String description,
       num? downpaymentRate,
       num? fixedCancellationRate,
-      @TimeOfDayConverter() TimeOfDay? duration,
       List<ListingImages>? images,
       bool? isPublished,
       List<ListingCost>? listingCosts,
       num? numberOfUnits,
       @TimestampSerializer() DateTime? openingHours,
       @TimestampSerializer() DateTime? closingHours,
-      @TimeOfDayConverter() TimeOfDay? travelDuration,
+      @TimeOfDayConverter() TimeOfDay? duration,
       num? pax,
       num? price,
       String province,
       String publisherId,
       String publisherName,
+      String? guestInfo,
       num? rating,
       List<BookingTask>? fixedTasks,
       @TimestampSerializer() DateTime? timestamp,
+      List<bool>? workingDays,
       String title,
       String? type,
       List<FoodService>? availableDeals,
       List<ListingImages>? menuImgs,
       AvailableTransport? availableTransport,
-      List<EntertainmentService>? availableEntertainment,
       String? uid});
 
   $ListingCooperativeCopyWith<$Res> get cooperative;
@@ -136,6 +140,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
   $Res call({
     Object? address = null,
     Object? availableDates = freezed,
+    Object? availableTimes = freezed,
     Object? availableRooms = freezed,
     Object? category = null,
     Object? cancellationRate = freezed,
@@ -147,28 +152,28 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? description = null,
     Object? downpaymentRate = freezed,
     Object? fixedCancellationRate = freezed,
-    Object? duration = freezed,
     Object? images = freezed,
     Object? isPublished = freezed,
     Object? listingCosts = freezed,
     Object? numberOfUnits = freezed,
     Object? openingHours = freezed,
     Object? closingHours = freezed,
-    Object? travelDuration = freezed,
+    Object? duration = freezed,
     Object? pax = freezed,
     Object? price = freezed,
     Object? province = null,
     Object? publisherId = null,
     Object? publisherName = null,
+    Object? guestInfo = freezed,
     Object? rating = freezed,
     Object? fixedTasks = freezed,
     Object? timestamp = freezed,
+    Object? workingDays = freezed,
     Object? title = null,
     Object? type = freezed,
     Object? availableDeals = freezed,
     Object? menuImgs = freezed,
     Object? availableTransport = freezed,
-    Object? availableEntertainment = freezed,
     Object? uid = freezed,
   }) {
     return _then(_value.copyWith(
@@ -180,6 +185,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.availableDates
           : availableDates // ignore: cast_nullable_to_non_nullable
               as List<AvailableDate>?,
+      availableTimes: freezed == availableTimes
+          ? _value.availableTimes
+          : availableTimes // ignore: cast_nullable_to_non_nullable
+              as List<AvailableTime>?,
       availableRooms: freezed == availableRooms
           ? _value.availableRooms
           : availableRooms // ignore: cast_nullable_to_non_nullable
@@ -224,10 +233,6 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.fixedCancellationRate
           : fixedCancellationRate // ignore: cast_nullable_to_non_nullable
               as num?,
-      duration: freezed == duration
-          ? _value.duration
-          : duration // ignore: cast_nullable_to_non_nullable
-              as TimeOfDay?,
       images: freezed == images
           ? _value.images
           : images // ignore: cast_nullable_to_non_nullable
@@ -252,9 +257,9 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.closingHours
           : closingHours // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      travelDuration: freezed == travelDuration
-          ? _value.travelDuration
-          : travelDuration // ignore: cast_nullable_to_non_nullable
+      duration: freezed == duration
+          ? _value.duration
+          : duration // ignore: cast_nullable_to_non_nullable
               as TimeOfDay?,
       pax: freezed == pax
           ? _value.pax
@@ -276,6 +281,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.publisherName
           : publisherName // ignore: cast_nullable_to_non_nullable
               as String,
+      guestInfo: freezed == guestInfo
+          ? _value.guestInfo
+          : guestInfo // ignore: cast_nullable_to_non_nullable
+              as String?,
       rating: freezed == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
@@ -288,6 +297,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      workingDays: freezed == workingDays
+          ? _value.workingDays
+          : workingDays // ignore: cast_nullable_to_non_nullable
+              as List<bool>?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -308,10 +321,6 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.availableTransport
           : availableTransport // ignore: cast_nullable_to_non_nullable
               as AvailableTransport?,
-      availableEntertainment: freezed == availableEntertainment
-          ? _value.availableEntertainment
-          : availableEntertainment // ignore: cast_nullable_to_non_nullable
-              as List<EntertainmentService>?,
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -352,6 +361,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
   $Res call(
       {String address,
       List<AvailableDate>? availableDates,
+      List<AvailableTime>? availableTimes,
       List<AvailableRoom>? availableRooms,
       String category,
       num? cancellationRate,
@@ -363,28 +373,28 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       String description,
       num? downpaymentRate,
       num? fixedCancellationRate,
-      @TimeOfDayConverter() TimeOfDay? duration,
       List<ListingImages>? images,
       bool? isPublished,
       List<ListingCost>? listingCosts,
       num? numberOfUnits,
       @TimestampSerializer() DateTime? openingHours,
       @TimestampSerializer() DateTime? closingHours,
-      @TimeOfDayConverter() TimeOfDay? travelDuration,
+      @TimeOfDayConverter() TimeOfDay? duration,
       num? pax,
       num? price,
       String province,
       String publisherId,
       String publisherName,
+      String? guestInfo,
       num? rating,
       List<BookingTask>? fixedTasks,
       @TimestampSerializer() DateTime? timestamp,
+      List<bool>? workingDays,
       String title,
       String? type,
       List<FoodService>? availableDeals,
       List<ListingImages>? menuImgs,
       AvailableTransport? availableTransport,
-      List<EntertainmentService>? availableEntertainment,
       String? uid});
 
   @override
@@ -406,6 +416,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
   $Res call({
     Object? address = null,
     Object? availableDates = freezed,
+    Object? availableTimes = freezed,
     Object? availableRooms = freezed,
     Object? category = null,
     Object? cancellationRate = freezed,
@@ -417,28 +428,28 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? description = null,
     Object? downpaymentRate = freezed,
     Object? fixedCancellationRate = freezed,
-    Object? duration = freezed,
     Object? images = freezed,
     Object? isPublished = freezed,
     Object? listingCosts = freezed,
     Object? numberOfUnits = freezed,
     Object? openingHours = freezed,
     Object? closingHours = freezed,
-    Object? travelDuration = freezed,
+    Object? duration = freezed,
     Object? pax = freezed,
     Object? price = freezed,
     Object? province = null,
     Object? publisherId = null,
     Object? publisherName = null,
+    Object? guestInfo = freezed,
     Object? rating = freezed,
     Object? fixedTasks = freezed,
     Object? timestamp = freezed,
+    Object? workingDays = freezed,
     Object? title = null,
     Object? type = freezed,
     Object? availableDeals = freezed,
     Object? menuImgs = freezed,
     Object? availableTransport = freezed,
-    Object? availableEntertainment = freezed,
     Object? uid = freezed,
   }) {
     return _then(_$ListingModelImpl(
@@ -450,6 +461,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value._availableDates
           : availableDates // ignore: cast_nullable_to_non_nullable
               as List<AvailableDate>?,
+      availableTimes: freezed == availableTimes
+          ? _value._availableTimes
+          : availableTimes // ignore: cast_nullable_to_non_nullable
+              as List<AvailableTime>?,
       availableRooms: freezed == availableRooms
           ? _value._availableRooms
           : availableRooms // ignore: cast_nullable_to_non_nullable
@@ -494,10 +509,6 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.fixedCancellationRate
           : fixedCancellationRate // ignore: cast_nullable_to_non_nullable
               as num?,
-      duration: freezed == duration
-          ? _value.duration
-          : duration // ignore: cast_nullable_to_non_nullable
-              as TimeOfDay?,
       images: freezed == images
           ? _value._images
           : images // ignore: cast_nullable_to_non_nullable
@@ -522,9 +533,9 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.closingHours
           : closingHours // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      travelDuration: freezed == travelDuration
-          ? _value.travelDuration
-          : travelDuration // ignore: cast_nullable_to_non_nullable
+      duration: freezed == duration
+          ? _value.duration
+          : duration // ignore: cast_nullable_to_non_nullable
               as TimeOfDay?,
       pax: freezed == pax
           ? _value.pax
@@ -546,6 +557,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.publisherName
           : publisherName // ignore: cast_nullable_to_non_nullable
               as String,
+      guestInfo: freezed == guestInfo
+          ? _value.guestInfo
+          : guestInfo // ignore: cast_nullable_to_non_nullable
+              as String?,
       rating: freezed == rating
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
@@ -558,6 +573,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      workingDays: freezed == workingDays
+          ? _value._workingDays
+          : workingDays // ignore: cast_nullable_to_non_nullable
+              as List<bool>?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -578,10 +597,6 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.availableTransport
           : availableTransport // ignore: cast_nullable_to_non_nullable
               as AvailableTransport?,
-      availableEntertainment: freezed == availableEntertainment
-          ? _value._availableEntertainment
-          : availableEntertainment // ignore: cast_nullable_to_non_nullable
-              as List<EntertainmentService>?,
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -596,6 +611,7 @@ class _$ListingModelImpl implements _ListingModel {
   _$ListingModelImpl(
       {required this.address,
       final List<AvailableDate>? availableDates,
+      final List<AvailableTime>? availableTimes,
       final List<AvailableRoom>? availableRooms,
       required this.category,
       this.cancellationRate,
@@ -607,37 +623,38 @@ class _$ListingModelImpl implements _ListingModel {
       required this.description,
       this.downpaymentRate,
       this.fixedCancellationRate,
-      @TimeOfDayConverter() this.duration,
       final List<ListingImages>? images,
       this.isPublished,
       final List<ListingCost>? listingCosts,
       this.numberOfUnits,
       @TimestampSerializer() this.openingHours,
       @TimestampSerializer() this.closingHours,
-      @TimeOfDayConverter() this.travelDuration,
+      @TimeOfDayConverter() this.duration,
       this.pax,
       this.price,
       required this.province,
       required this.publisherId,
       required this.publisherName,
+      this.guestInfo,
       this.rating,
       final List<BookingTask>? fixedTasks,
       @TimestampSerializer() this.timestamp,
+      final List<bool>? workingDays,
       required this.title,
       this.type,
       final List<FoodService>? availableDeals,
       final List<ListingImages>? menuImgs,
       this.availableTransport,
-      final List<EntertainmentService>? availableEntertainment,
       this.uid})
       : _availableDates = availableDates,
+        _availableTimes = availableTimes,
         _availableRooms = availableRooms,
         _images = images,
         _listingCosts = listingCosts,
         _fixedTasks = fixedTasks,
+        _workingDays = workingDays,
         _availableDeals = availableDeals,
-        _menuImgs = menuImgs,
-        _availableEntertainment = availableEntertainment;
+        _menuImgs = menuImgs;
 
   factory _$ListingModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ListingModelImplFromJson(json);
@@ -650,6 +667,16 @@ class _$ListingModelImpl implements _ListingModel {
     final value = _availableDates;
     if (value == null) return null;
     if (_availableDates is EqualUnmodifiableListView) return _availableDates;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<AvailableTime>? _availableTimes;
+  @override
+  List<AvailableTime>? get availableTimes {
+    final value = _availableTimes;
+    if (value == null) return null;
+    if (_availableTimes is EqualUnmodifiableListView) return _availableTimes;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -723,7 +750,8 @@ class _$ListingModelImpl implements _ListingModel {
   final DateTime? closingHours;
   @override
   @TimeOfDayConverter()
-  final TimeOfDay? travelDuration;
+  final TimeOfDay? duration;
+//[Travel Duration, Entertainment Duration]
   @override
   final num? pax;
   @override
@@ -734,6 +762,8 @@ class _$ListingModelImpl implements _ListingModel {
   final String publisherId;
   @override
   final String publisherName;
+  @override
+  final String? guestInfo;
   @override
   final num? rating;
   final List<BookingTask>? _fixedTasks;
@@ -749,13 +779,23 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   @TimestampSerializer()
   final DateTime? timestamp;
+  final List<bool>? _workingDays;
+  @override
+  List<bool>? get workingDays {
+    final value = _workingDays;
+    if (value == null) return null;
+    if (_workingDays is EqualUnmodifiableListView) return _workingDays;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final String title;
   @override
   final String? type;
-//[Private, Public]
+//[Private, Public, Rental, Performance, Activity]
   final List<FoodService>? _availableDeals;
-//[Private, Public]
+//[Private, Public, Rental, Performance, Activity]
   @override
   List<FoodService>? get availableDeals {
     final value = _availableDeals;
@@ -777,23 +817,12 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   final AvailableTransport? availableTransport;
-  final List<EntertainmentService>? _availableEntertainment;
-  @override
-  List<EntertainmentService>? get availableEntertainment {
-    final value = _availableEntertainment;
-    if (value == null) return null;
-    if (_availableEntertainment is EqualUnmodifiableListView)
-      return _availableEntertainment;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
   @override
   final String? uid;
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, duration: $duration, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, travelDuration: $travelDuration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableEntertainment: $availableEntertainment, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableTimes: $availableTimes, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, duration: $duration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, guestInfo: $guestInfo, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, workingDays: $workingDays, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, uid: $uid)';
   }
 
   @override
@@ -804,6 +833,8 @@ class _$ListingModelImpl implements _ListingModel {
             (identical(other.address, address) || other.address == address) &&
             const DeepCollectionEquality()
                 .equals(other._availableDates, _availableDates) &&
+            const DeepCollectionEquality()
+                .equals(other._availableTimes, _availableTimes) &&
             const DeepCollectionEquality()
                 .equals(other._availableRooms, _availableRooms) &&
             (identical(other.category, category) ||
@@ -824,8 +855,6 @@ class _$ListingModelImpl implements _ListingModel {
                 other.downpaymentRate == downpaymentRate) &&
             (identical(other.fixedCancellationRate, fixedCancellationRate) ||
                 other.fixedCancellationRate == fixedCancellationRate) &&
-            (identical(other.duration, duration) ||
-                other.duration == duration) &&
             const DeepCollectionEquality().equals(other._images, _images) &&
             (identical(other.isPublished, isPublished) ||
                 other.isPublished == isPublished) &&
@@ -837,8 +866,8 @@ class _$ListingModelImpl implements _ListingModel {
                 other.openingHours == openingHours) &&
             (identical(other.closingHours, closingHours) ||
                 other.closingHours == closingHours) &&
-            (identical(other.travelDuration, travelDuration) ||
-                other.travelDuration == travelDuration) &&
+            (identical(other.duration, duration) ||
+                other.duration == duration) &&
             (identical(other.pax, pax) || other.pax == pax) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.province, province) ||
@@ -847,11 +876,15 @@ class _$ListingModelImpl implements _ListingModel {
                 other.publisherId == publisherId) &&
             (identical(other.publisherName, publisherName) ||
                 other.publisherName == publisherName) &&
+            (identical(other.guestInfo, guestInfo) ||
+                other.guestInfo == guestInfo) &&
             (identical(other.rating, rating) || other.rating == rating) &&
             const DeepCollectionEquality()
                 .equals(other._fixedTasks, _fixedTasks) &&
             (identical(other.timestamp, timestamp) ||
                 other.timestamp == timestamp) &&
+            const DeepCollectionEquality()
+                .equals(other._workingDays, _workingDays) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.type, type) || other.type == type) &&
             const DeepCollectionEquality()
@@ -859,8 +892,6 @@ class _$ListingModelImpl implements _ListingModel {
             const DeepCollectionEquality().equals(other._menuImgs, _menuImgs) &&
             (identical(other.availableTransport, availableTransport) ||
                 other.availableTransport == availableTransport) &&
-            const DeepCollectionEquality().equals(
-                other._availableEntertainment, _availableEntertainment) &&
             (identical(other.uid, uid) || other.uid == uid));
   }
 
@@ -870,6 +901,7 @@ class _$ListingModelImpl implements _ListingModel {
         runtimeType,
         address,
         const DeepCollectionEquality().hash(_availableDates),
+        const DeepCollectionEquality().hash(_availableTimes),
         const DeepCollectionEquality().hash(_availableRooms),
         category,
         cancellationRate,
@@ -881,28 +913,28 @@ class _$ListingModelImpl implements _ListingModel {
         description,
         downpaymentRate,
         fixedCancellationRate,
-        duration,
         const DeepCollectionEquality().hash(_images),
         isPublished,
         const DeepCollectionEquality().hash(_listingCosts),
         numberOfUnits,
         openingHours,
         closingHours,
-        travelDuration,
+        duration,
         pax,
         price,
         province,
         publisherId,
         publisherName,
+        guestInfo,
         rating,
         const DeepCollectionEquality().hash(_fixedTasks),
         timestamp,
+        const DeepCollectionEquality().hash(_workingDays),
         title,
         type,
         const DeepCollectionEquality().hash(_availableDeals),
         const DeepCollectionEquality().hash(_menuImgs),
         availableTransport,
-        const DeepCollectionEquality().hash(_availableEntertainment),
         uid
       ]);
 
@@ -924,6 +956,7 @@ abstract class _ListingModel implements ListingModel {
   factory _ListingModel(
       {required final String address,
       final List<AvailableDate>? availableDates,
+      final List<AvailableTime>? availableTimes,
       final List<AvailableRoom>? availableRooms,
       required final String category,
       final num? cancellationRate,
@@ -935,28 +968,28 @@ abstract class _ListingModel implements ListingModel {
       required final String description,
       final num? downpaymentRate,
       final num? fixedCancellationRate,
-      @TimeOfDayConverter() final TimeOfDay? duration,
       final List<ListingImages>? images,
       final bool? isPublished,
       final List<ListingCost>? listingCosts,
       final num? numberOfUnits,
       @TimestampSerializer() final DateTime? openingHours,
       @TimestampSerializer() final DateTime? closingHours,
-      @TimeOfDayConverter() final TimeOfDay? travelDuration,
+      @TimeOfDayConverter() final TimeOfDay? duration,
       final num? pax,
       final num? price,
       required final String province,
       required final String publisherId,
       required final String publisherName,
+      final String? guestInfo,
       final num? rating,
       final List<BookingTask>? fixedTasks,
       @TimestampSerializer() final DateTime? timestamp,
+      final List<bool>? workingDays,
       required final String title,
       final String? type,
       final List<FoodService>? availableDeals,
       final List<ListingImages>? menuImgs,
       final AvailableTransport? availableTransport,
-      final List<EntertainmentService>? availableEntertainment,
       final String? uid}) = _$ListingModelImpl;
 
   factory _ListingModel.fromJson(Map<String, dynamic> json) =
@@ -966,6 +999,8 @@ abstract class _ListingModel implements ListingModel {
   String get address;
   @override
   List<AvailableDate>? get availableDates;
+  @override
+  List<AvailableTime>? get availableTimes;
   @override
   List<AvailableRoom>? get availableRooms;
   @override
@@ -991,9 +1026,6 @@ abstract class _ListingModel implements ListingModel {
   @override
   num? get fixedCancellationRate;
   @override
-  @TimeOfDayConverter()
-  TimeOfDay? get duration;
-  @override //[Travel Duration, Entertainment Duration]
   List<ListingImages>? get images;
   @override
   bool? get isPublished;
@@ -1009,8 +1041,8 @@ abstract class _ListingModel implements ListingModel {
   DateTime? get closingHours;
   @override
   @TimeOfDayConverter()
-  TimeOfDay? get travelDuration;
-  @override
+  TimeOfDay? get duration;
+  @override //[Travel Duration, Entertainment Duration]
   num? get pax;
   @override
   num? get price;
@@ -1021,6 +1053,8 @@ abstract class _ListingModel implements ListingModel {
   @override
   String get publisherName;
   @override
+  String? get guestInfo;
+  @override
   num? get rating;
   @override
   List<BookingTask>? get fixedTasks;
@@ -1028,17 +1062,17 @@ abstract class _ListingModel implements ListingModel {
   @TimestampSerializer()
   DateTime? get timestamp;
   @override
+  List<bool>? get workingDays;
+  @override
   String get title;
   @override
   String? get type;
-  @override //[Private, Public]
+  @override //[Private, Public, Rental, Performance, Activity]
   List<FoodService>? get availableDeals;
   @override
   List<ListingImages>? get menuImgs;
   @override
   AvailableTransport? get availableTransport;
-  @override
-  List<EntertainmentService>? get availableEntertainment;
   @override
   String? get uid;
   @override
@@ -2971,6 +3005,8 @@ AvailableDate _$AvailableDateFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AvailableDate {
   bool get available => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime get date => throw _privateConstructorUsedError;
   List<AvailableTime> get availableTimes => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -2985,7 +3021,10 @@ abstract class $AvailableDateCopyWith<$Res> {
           AvailableDate value, $Res Function(AvailableDate) then) =
       _$AvailableDateCopyWithImpl<$Res, AvailableDate>;
   @useResult
-  $Res call({bool available, List<AvailableTime> availableTimes});
+  $Res call(
+      {bool available,
+      @TimestampSerializer() DateTime date,
+      List<AvailableTime> availableTimes});
 }
 
 /// @nodoc
@@ -3002,6 +3041,7 @@ class _$AvailableDateCopyWithImpl<$Res, $Val extends AvailableDate>
   @override
   $Res call({
     Object? available = null,
+    Object? date = null,
     Object? availableTimes = null,
   }) {
     return _then(_value.copyWith(
@@ -3009,6 +3049,10 @@ class _$AvailableDateCopyWithImpl<$Res, $Val extends AvailableDate>
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
               as bool,
+      date: null == date
+          ? _value.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       availableTimes: null == availableTimes
           ? _value.availableTimes
           : availableTimes // ignore: cast_nullable_to_non_nullable
@@ -3025,7 +3069,10 @@ abstract class _$$AvailableDateImplCopyWith<$Res>
       __$$AvailableDateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool available, List<AvailableTime> availableTimes});
+  $Res call(
+      {bool available,
+      @TimestampSerializer() DateTime date,
+      List<AvailableTime> availableTimes});
 }
 
 /// @nodoc
@@ -3040,6 +3087,7 @@ class __$$AvailableDateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? available = null,
+    Object? date = null,
     Object? availableTimes = null,
   }) {
     return _then(_$AvailableDateImpl(
@@ -3047,6 +3095,10 @@ class __$$AvailableDateImplCopyWithImpl<$Res>
           ? _value.available
           : available // ignore: cast_nullable_to_non_nullable
               as bool,
+      date: null == date
+          ? _value.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       availableTimes: null == availableTimes
           ? _value._availableTimes
           : availableTimes // ignore: cast_nullable_to_non_nullable
@@ -3060,6 +3112,7 @@ class __$$AvailableDateImplCopyWithImpl<$Res>
 class _$AvailableDateImpl implements _AvailableDate {
   _$AvailableDateImpl(
       {required this.available,
+      @TimestampSerializer() required this.date,
       required final List<AvailableTime> availableTimes})
       : _availableTimes = availableTimes;
 
@@ -3068,6 +3121,9 @@ class _$AvailableDateImpl implements _AvailableDate {
 
   @override
   final bool available;
+  @override
+  @TimestampSerializer()
+  final DateTime date;
   final List<AvailableTime> _availableTimes;
   @override
   List<AvailableTime> get availableTimes {
@@ -3078,7 +3134,7 @@ class _$AvailableDateImpl implements _AvailableDate {
 
   @override
   String toString() {
-    return 'AvailableDate(available: $available, availableTimes: $availableTimes)';
+    return 'AvailableDate(available: $available, date: $date, availableTimes: $availableTimes)';
   }
 
   @override
@@ -3088,13 +3144,14 @@ class _$AvailableDateImpl implements _AvailableDate {
             other is _$AvailableDateImpl &&
             (identical(other.available, available) ||
                 other.available == available) &&
+            (identical(other.date, date) || other.date == date) &&
             const DeepCollectionEquality()
                 .equals(other._availableTimes, _availableTimes));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, available,
+  int get hashCode => Object.hash(runtimeType, available, date,
       const DeepCollectionEquality().hash(_availableTimes));
 
   @JsonKey(ignore: true)
@@ -3114,6 +3171,7 @@ class _$AvailableDateImpl implements _AvailableDate {
 abstract class _AvailableDate implements AvailableDate {
   factory _AvailableDate(
       {required final bool available,
+      @TimestampSerializer() required final DateTime date,
       required final List<AvailableTime> availableTimes}) = _$AvailableDateImpl;
 
   factory _AvailableDate.fromJson(Map<String, dynamic> json) =
@@ -3121,6 +3179,9 @@ abstract class _AvailableDate implements AvailableDate {
 
   @override
   bool get available;
+  @override
+  @TimestampSerializer()
+  DateTime get date;
   @override
   List<AvailableTime> get availableTimes;
   @override
