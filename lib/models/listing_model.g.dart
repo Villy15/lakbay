@@ -328,7 +328,8 @@ _$AvailableTimeImpl _$$AvailableTimeImplFromJson(Map<String, dynamic> json) =>
       available: json['available'] as bool,
       currentPax: json['currentPax'] as num,
       maxPax: json['maxPax'] as num,
-      time: DateTime.parse(json['time'] as String),
+      time: const TimeOfDayConverter()
+          .fromJson(json['time'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$AvailableTimeImplToJson(_$AvailableTimeImpl instance) =>
@@ -336,5 +337,5 @@ Map<String, dynamic> _$$AvailableTimeImplToJson(_$AvailableTimeImpl instance) =>
       'available': instance.available,
       'currentPax': instance.currentPax,
       'maxPax': instance.maxPax,
-      'time': instance.time.toIso8601String(),
+      'time': const TimeOfDayConverter().toJson(instance.time),
     };

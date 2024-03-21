@@ -43,7 +43,8 @@ class ListingModel with _$ListingModel {
     @TimestampSerializer() DateTime? timestamp,
     List<bool>? workingDays,
     required String title,
-    String? type, //[Private, Public, Rental, Performance, Activity]
+    String?
+        type, //[Private, Public, Rentals, Watching/Performances, Activities]
     List<FoodService>? availableDeals,
     List<ListingImages>? menuImgs,
     AvailableTransport? availableTransport,
@@ -179,7 +180,7 @@ class AvailableTime with _$AvailableTime {
     required bool available,
     required num currentPax,
     required num maxPax,
-    @TimestampSerializer() required DateTime time,
+    @TimeOfDayConverter() required TimeOfDay time,
   }) = _AvailableTime;
 
   factory AvailableTime.fromJson(Map<String, dynamic> json) =>

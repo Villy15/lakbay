@@ -24,6 +24,7 @@ class _LayoutState extends ConsumerState<Layout> {
     return Scaffold(
       key: scaffoldKey,
       body: widget.child,
+      resizeToAvoidBottomInset: false,
       endDrawer: CustomDrawer(user: user),
       bottomNavigationBar: appBarVisibility ? BottomNavBar(user: user) : null,
     );

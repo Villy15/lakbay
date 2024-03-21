@@ -60,7 +60,7 @@ mixin _$ListingModel {
   List<bool>? get workingDays => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String? get type =>
-      throw _privateConstructorUsedError; //[Private, Public, Rental, Performance, Activity]
+      throw _privateConstructorUsedError; //[Private, Public, Rentals, Watching/Performances, Activities]
   List<FoodService>? get availableDeals => throw _privateConstructorUsedError;
   List<ListingImages>? get menuImgs => throw _privateConstructorUsedError;
   AvailableTransport? get availableTransport =>
@@ -785,9 +785,9 @@ class _$ListingModelImpl implements _ListingModel {
   final String title;
   @override
   final String? type;
-//[Private, Public, Rental, Performance, Activity]
+//[Private, Public, Rentals, Watching/Performances, Activities]
   final List<FoodService>? _availableDeals;
-//[Private, Public, Rental, Performance, Activity]
+//[Private, Public, Rentals, Watching/Performances, Activities]
   @override
   List<FoodService>? get availableDeals {
     final value = _availableDeals;
@@ -1059,7 +1059,7 @@ abstract class _ListingModel implements ListingModel {
   String get title;
   @override
   String? get type;
-  @override //[Private, Public, Rental, Performance, Activity]
+  @override //[Private, Public, Rentals, Watching/Performances, Activities]
   List<FoodService>? get availableDeals;
   @override
   List<ListingImages>? get menuImgs;
@@ -3169,8 +3169,8 @@ mixin _$AvailableTime {
   bool get available => throw _privateConstructorUsedError;
   num get currentPax => throw _privateConstructorUsedError;
   num get maxPax => throw _privateConstructorUsedError;
-  @TimestampSerializer()
-  DateTime get time => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay get time => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -3188,7 +3188,7 @@ abstract class $AvailableTimeCopyWith<$Res> {
       {bool available,
       num currentPax,
       num maxPax,
-      @TimestampSerializer() DateTime time});
+      @TimeOfDayConverter() TimeOfDay time});
 }
 
 /// @nodoc
@@ -3225,7 +3225,7 @@ class _$AvailableTimeCopyWithImpl<$Res, $Val extends AvailableTime>
       time: null == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as TimeOfDay,
     ) as $Val);
   }
 }
@@ -3242,7 +3242,7 @@ abstract class _$$AvailableTimeImplCopyWith<$Res>
       {bool available,
       num currentPax,
       num maxPax,
-      @TimestampSerializer() DateTime time});
+      @TimeOfDayConverter() TimeOfDay time});
 }
 
 /// @nodoc
@@ -3277,7 +3277,7 @@ class __$$AvailableTimeImplCopyWithImpl<$Res>
       time: null == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as TimeOfDay,
     ));
   }
 }
@@ -3289,7 +3289,7 @@ class _$AvailableTimeImpl implements _AvailableTime {
       {required this.available,
       required this.currentPax,
       required this.maxPax,
-      @TimestampSerializer() required this.time});
+      @TimeOfDayConverter() required this.time});
 
   factory _$AvailableTimeImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvailableTimeImplFromJson(json);
@@ -3301,8 +3301,8 @@ class _$AvailableTimeImpl implements _AvailableTime {
   @override
   final num maxPax;
   @override
-  @TimestampSerializer()
-  final DateTime time;
+  @TimeOfDayConverter()
+  final TimeOfDay time;
 
   @override
   String toString() {
@@ -3346,7 +3346,7 @@ abstract class _AvailableTime implements AvailableTime {
           {required final bool available,
           required final num currentPax,
           required final num maxPax,
-          @TimestampSerializer() required final DateTime time}) =
+          @TimeOfDayConverter() required final TimeOfDay time}) =
       _$AvailableTimeImpl;
 
   factory _AvailableTime.fromJson(Map<String, dynamic> json) =
@@ -3359,8 +3359,8 @@ abstract class _AvailableTime implements AvailableTime {
   @override
   num get maxPax;
   @override
-  @TimestampSerializer()
-  DateTime get time;
+  @TimeOfDayConverter()
+  TimeOfDay get time;
   @override
   @JsonKey(ignore: true)
   _$$AvailableTimeImplCopyWith<_$AvailableTimeImpl> get copyWith =>

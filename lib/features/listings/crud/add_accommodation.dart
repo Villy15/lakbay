@@ -56,8 +56,8 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   List<List<File>> roomImages = [];
   List<AvailableRoom> availableRooms = [];
 
-  TimeOfDay checkIn = TimeOfDay.now();
-  TimeOfDay checkOut = TimeOfDay.now();
+  TimeOfDay checkIn = const TimeOfDay(hour: 11, minute: 30);
+  TimeOfDay checkOut = const TimeOfDay(hour: 14, minute: 30);
 
   List<BookingTask>? fixedTasks = [];
 
@@ -549,7 +549,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           onTap: () async {
             final TimeOfDay? pickedTime = await showTimePicker(
               context: context,
-              initialTime: const TimeOfDay(hour: 11, minute: 30),
+              initialTime: checkIn,
               initialEntryMode: TimePickerEntryMode.inputOnly,
               builder: (BuildContext context, Widget? child) {
                 return MediaQuery(
@@ -578,13 +578,13 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
             border: OutlineInputBorder(),
             floatingLabelBehavior:
                 FloatingLabelBehavior.always, // Keep the label always visible
-            hintText: "1:30",
+            hintText: "2:30",
           ),
           readOnly: true,
           onTap: () async {
             final TimeOfDay? pickedTime = await showTimePicker(
               context: context,
-              initialTime: const TimeOfDay(hour: 1, minute: 30),
+              initialTime: checkOut,
               initialEntryMode: TimePickerEntryMode.inputOnly,
               builder: (BuildContext context, Widget? child) {
                 return MediaQuery(
