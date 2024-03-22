@@ -382,6 +382,12 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
         'startValue': listing.availableTransport?.pickupPoint ?? '',
         'end': 'Drop Off',
         'endValue': listing.availableTransport?.destination ?? '',
+      },
+      'Entertainment': {
+        'start': 'Start',
+        'startValue': DateFormat('hh:mm a').format(booking.startDate!),
+        'end': 'End',
+        'endValue': DateFormat('hh:mm a').format(booking.endDate!),
       }
     };
     return Card(
