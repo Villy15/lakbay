@@ -105,7 +105,7 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                   ),
 
                   DisplayText(
-                    text: widget.listing.duration as String,
+                    text: widget.listing.duration!.hour.toString(),
                     lines: 1,
                     style: TextStyle(
                       fontSize:

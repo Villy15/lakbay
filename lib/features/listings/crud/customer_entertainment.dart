@@ -15,7 +15,7 @@ class CustomerEntertainment extends ConsumerStatefulWidget {
 }
 
 class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
-  int numberOfPersons = 1; 
+  int numberOfPersons = 1;
 
   @override
   void initState() {
@@ -113,8 +113,7 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
                   text: 'Description',
                   lines: 1,
                   style: TextStyle(
-                    fontSize:
-                        Theme.of(context).textTheme.titleMedium?.fontSize,
+                    fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -158,11 +157,9 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
                         ),
                         Row(
                           children: [
-                            Text(
-                                "₱${widget.listing.price.toString()}",
+                            Text("₱${widget.listing.price.toString()}",
                                 style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold)),
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ],
@@ -181,7 +178,8 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
                     // Define opening and closing hours
                     final int openingHour = widget.listing.openingHours!.hour;
                     final int closingHour = widget.listing.closingHours!.hour;
-                    final int intervalDurationInMinutes = widget.listing.duration!.toInt(); 
+                    final int intervalDurationInMinutes =
+                        widget.listing.duration!.hour.toInt();
 
 List<Widget> availableTimes = [];
 for (int hour = openingHour; hour < closingHour; hour++) {

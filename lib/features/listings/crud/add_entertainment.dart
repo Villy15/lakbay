@@ -14,6 +14,7 @@ import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/listings/widgets/image_picker_form_field.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -37,11 +38,13 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   int upperBound = 5;
 
   // initial values
-  String type = 'Activities';
+  String type = 'Rentals';
   num guests = 0;
   List<bool> workingDays = List.filled(7, false);
+  TimeOfDay duration = const TimeOfDay(hour: 1, minute: 15);
 
   // controllers
+  final TextEditingController durationController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _addressController =
@@ -51,13 +54,17 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   final TextEditingController _capacityController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
   final TextEditingController _guestInfoController = TextEditingController();
+  final TextEditingController _selectedOpeningHoursController =
+      TextEditingController();
+  final TextEditingController _selectedClosingHoursController =
+      TextEditingController();
+
   String mapAddress = "";
-   List<File>? _images;
+  List<File>? _images;
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 1));
-  TimeOfDay _selectedOpeningHours = TimeOfDay.now();
-  TimeOfDay _selectedClosingHours = TimeOfDay.now();
-
+  TimeOfDay _selectedOpeningHours = const TimeOfDay(hour: 8, minute: 30);
+  TimeOfDay _selectedClosingHours = const TimeOfDay(hour: 17, minute: 0);
 
   @override
   void initState() {
@@ -77,7 +84,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     super.dispose();
   }
 
-void onTapDate() {
+  void onTapDate() {
     showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -109,9 +116,7 @@ void onTapDate() {
                           .read(listingStartDate.notifier)
                           .setStartDate(startDate);
 
-                      ref
-                          .read(listingEndDate.notifier)
-                          .setEndDate(endDate);
+                      ref.read(listingEndDate.notifier).setEndDate(endDate);
 
                       Navigator.pop(context);
                     },
@@ -145,84 +150,82 @@ void onTapDate() {
     );
   }
 
-void submitAddListing() {
-  if (_formKey.currentState!.validate()) {
-    _formKey.currentState!.save();
+  void submitAddListing() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
-    final imagePath = 'listings/${widget.coop.name}';
-    final ids = _images!.map((image) => image.path.split('/').last).toList();
-    debugPrint("line 83");
-    ref
-        .read(storageRepositoryProvider)
-        .storeFiles(
-          path: imagePath,
-          ids: ids,
-          files: _images!,
-        )
-        .then((value) => value.fold(
-              (failure) => debugPrint('Failed to upload images: $failure'),
-              (imageUrls) async {
-                debugPrint("line 94");
-                ListingCooperative cooperative = ListingCooperative(
-                    cooperativeId: widget.coop.uid!,
-                    cooperativeName: widget.coop.name);
-                debugPrint(cooperative.toString());
-                // Prepare data for ListingModel
-                ListingModel listing = ListingModel(
-                  address: _addressController.text,
-                  category: widget.category,
-                  description: _descriptionController.text,
-                  title: _titleController.text,
-                  workingDays: workingDays, 
-                  type: type,
-                  city: "",
-                  province: "",
-                  images: _images?.map((image) {
-                    final imagePath =
-                        'listings/${widget.coop.name}/${image.path.split('/').last}';
-                    return ListingImages(path: imagePath);
-                  }).toList(),
-                  cooperative: cooperative,
-                  publisherId: ref.read(userProvider)!.uid,
-                  publisherName: ref.read(userProvider)!.name,
-                  price: num.parse(_priceController.text),
-                  pax: int.parse(_capacityController.text),
-                  numberOfUnits: int.parse(_unitsController.text),
-                  duration: num.parse(_durationController.text),
-                  openingHours: DateTime(
-                    DateTime.now().year,
-                    DateTime.now().month,
-                    DateTime.now().day,
-                    _selectedOpeningHours.hour,
-                    _selectedOpeningHours.minute,
-                  ),
-                  closingHours: DateTime(
-                    DateTime.now().year,
-                    DateTime.now().month,
-                    DateTime.now().day,
-                    _selectedClosingHours.hour,
-                    _selectedClosingHours.minute,
-                  ),
-                  guestInfo: _guestInfoController.text,
-                );
-                debugPrint(listing.toString());
-                //Update image URLs in the listing model
-                listing = listing.copyWith(
-                  images: listing.images!.asMap().entries.map((entry) {
-                    return entry.value.copyWith(url: imageUrls[entry.key]);
-                  }).toList(),
-                );
+      final imagePath = 'listings/${widget.coop.name}';
+      final ids = _images!.map((image) => image.path.split('/').last).toList();
+      ref
+          .read(storageRepositoryProvider)
+          .storeFiles(
+            path: imagePath,
+            ids: ids,
+            files: _images!,
+          )
+          .then((value) => value.fold(
+                (failure) => debugPrint('Failed to upload images: $failure'),
+                (imageUrls) async {
+                  ListingCooperative cooperative = ListingCooperative(
+                      cooperativeId: widget.coop.uid!,
+                      cooperativeName: widget.coop.name);
+                  debugPrint(cooperative.toString());
+                  // Prepare data for ListingModel
+                  ListingModel listing = ListingModel(
+                    address: _addressController.text,
+                    category: widget.category,
+                    description: _descriptionController.text,
+                    title: _titleController.text,
+                    workingDays: workingDays,
+                    type: type,
+                    city: "",
+                    province: "",
+                    images: _images?.map((image) {
+                      final imagePath =
+                          'listings/${widget.coop.name}/${image.path.split('/').last}';
+                      return ListingImages(path: imagePath);
+                    }).toList(),
+                    cooperative: cooperative,
+                    publisherId: ref.read(userProvider)!.uid,
+                    publisherName: ref.read(userProvider)!.name,
+                    price: num.parse(_priceController.text),
+                    pax: int.parse(_capacityController.text),
+                    numberOfUnits: int.parse(_unitsController.text),
+                    duration: duration,
+                    openingHours: DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      _selectedOpeningHours.hour,
+                      _selectedOpeningHours.minute,
+                    ),
+                    closingHours: DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      _selectedClosingHours.hour,
+                      _selectedClosingHours.minute,
+                    ),
+                    guestInfo: _guestInfoController.text,
+                  );
+                  debugPrint(listing.toString());
+                  //Update image URLs in the listing model
+                  listing = listing.copyWith(
+                    images: listing.images!.asMap().entries.map((entry) {
+                      return entry.value.copyWith(url: imageUrls[entry.key]);
+                    }).toList(),
+                  );
 
-                debugPrint(listing.toString());
-                if (mounted) {
-                  ref
-                      .read(listingControllerProvider.notifier)
-                      .addListing(listing, context);
-                }
-              },
-            ));
+                  debugPrint(listing.toString());
+                  if (mounted) {
+                    ref
+                        .read(listingControllerProvider.notifier)
+                        .addListing(listing, context);
+                  }
+                },
+              ));
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +252,7 @@ void submitAddListing() {
                             ]))))));
   }
 
-      Widget datePicker(
+  Widget datePicker(
       BuildContext context, DateTime? startDate, DateTime? endDate) {
     return ListTile(
       title: const Text('Available Dates'),
@@ -332,13 +335,22 @@ void submitAddListing() {
   Widget stepForm(BuildContext context) {
     switch (activeStep) {
       case 1:
-        return addDetails(context);
+        switch (type) {
+          case 'Rentals':
+            return addRentalDetails(context);
+          case 'Watching/Performances':
+            return addWatchingPerformancesDetails(context);
+          case 'Activities':
+            return addActivitiesDetails(context);
+          default:
+            return addRentalDetails(context);
+        }
       case 2:
         return addLocation(context);
       case 3:
         return addListingPhotos(context);
       case 4:
-        return addGuestInfo(context);
+        return calculateAvailability(context);
       case 5:
         return reviewListing(context);
       default:
@@ -346,149 +358,525 @@ void submitAddListing() {
     }
   }
 
-Widget addDetails(BuildContext context) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const SizedBox(height: 10),
-      TextFormField(
-        controller: _titleController,
-        decoration: const InputDecoration(
-          labelText: 'Listing Title*',
-          helperText: '*required',
-          border: OutlineInputBorder(),
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: "Name of Listing",
-        ),
-      ),
-      const SizedBox(height: 10),
-      TextFormField(
-        controller: _descriptionController,
-        maxLines: null,
-        decoration: const InputDecoration(
-          labelText: 'Description*',
-          helperText: '*required',
-          border: OutlineInputBorder(),
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: "Description of Listing",
-        ),
-      ),
-      const SizedBox(height: 10),
-      TextFormField(
-        controller: _priceController,
-        maxLines: null,
-        decoration: const InputDecoration(
-          labelText: 'Price*',
-          helperText: '*required',
-          border: OutlineInputBorder(),
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: "Price per person",
-        ),
-      ),
-      const SizedBox(height: 10),
-      if (type == 'Rentals' ) ...[
+  Widget addRentalDetails(BuildContext context) {
+    List<String> notes = [
+      "Duration is the rental duration for every booking.",
+      "Number of units refers to the total amount of units available for rent.",
+      "Capacity refers to the maximum number of persons that can be accommodated per unit.",
+      "Start Time and End Time is similar to your working hours. This information can later be used to calculate availability of units in intervals using your provided duration",
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
         TextFormField(
-          controller: _unitsController,
+          controller: _titleController,
+          decoration: const InputDecoration(
+            labelText: 'Listing Title*',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Banana Boating",
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _descriptionController,
           maxLines: null,
           decoration: const InputDecoration(
-            labelText: 'Number of Units*',
+            labelText: 'Description*',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Go on a banana boat ride...",
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(children: [
+          Expanded(
+            child: TextFormField(
+              controller: _priceController,
+              maxLines: null,
+              decoration: const InputDecoration(
+                labelText: 'Price*',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                hintText: "250",
+                prefix: Text('₱'),
+                suffix: Text(
+                  'per person',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextFormField(
+              controller: durationController,
+              maxLines: 1,
+              decoration: const InputDecoration(
+                labelText: 'Duration*',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "1:15",
+                suffix: Text(
+                  'hr:mins',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                ),
+              ),
+              readOnly: true,
+              onTap: () async {
+                final TimeOfDay? pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: duration,
+                  initialEntryMode: TimePickerEntryMode.inputOnly,
+                  builder: (BuildContext context, Widget? child) {
+                    return MediaQuery(
+                      data: MediaQuery.of(context)
+                          .copyWith(alwaysUse24HourFormat: true),
+                      child: child!,
+                    );
+                  },
+                );
+
+                if (pickedTime != null) {
+                  setState(() {
+                    durationController.text =
+                        "${pickedTime.hour}:${pickedTime.minute}";
+                    duration = pickedTime;
+                  });
+                }
+              },
+            ),
+          ),
+        ]),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _unitsController,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  labelText: 'Number of Units*',
+                  border: OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  hintText: "2",
+                  suffix: Text(
+                    'units',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            Expanded(
+              child: TextFormField(
+                controller: _capacityController,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  labelText: 'Capacity*',
+                  border: OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  hintText: "10",
+                  suffix: Text(
+                    'person/s',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(children: [
+          Expanded(
+            child: TextFormField(
+              controller: _selectedOpeningHoursController,
+              maxLines: 1,
+              decoration: const InputDecoration(
+                labelText: 'Start Time*',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "8:30 AM",
+              ),
+              readOnly: true,
+              onTap: () async {
+                final TimeOfDay? pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: _selectedOpeningHours,
+                  initialEntryMode: TimePickerEntryMode.inputOnly,
+                  builder: (BuildContext context, Widget? child) {
+                    return MediaQuery(
+                      data: MediaQuery.of(context)
+                          .copyWith(alwaysUse24HourFormat: false),
+                      child: child!,
+                    );
+                  },
+                );
+
+                if (pickedTime != null) {
+                  setState(() {
+                    _selectedOpeningHoursController.text =
+                        pickedTime.format(context);
+                    _selectedOpeningHours = pickedTime;
+                  });
+                }
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextFormField(
+              controller: _selectedClosingHoursController,
+              maxLines: 1,
+              decoration: const InputDecoration(
+                labelText: 'End Time*',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "5:30 PM",
+              ),
+              readOnly: true,
+              onTap: () async {
+                final TimeOfDay? pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: _selectedClosingHours,
+                  initialEntryMode: TimePickerEntryMode.inputOnly,
+                  builder: (BuildContext context, Widget? child) {
+                    return MediaQuery(
+                      data: MediaQuery.of(context)
+                          .copyWith(alwaysUse24HourFormat: false),
+                      child: child!,
+                    );
+                  },
+                );
+                if (pickedTime != null) {
+                  setState(() {
+                    _selectedClosingHoursController.text =
+                        pickedTime.format(context);
+                    _selectedClosingHours = pickedTime;
+                  });
+                }
+              },
+            ),
+          ),
+        ]),
+        const SizedBox(height: 10),
+        addNotes(
+          notes,
+        ),
+      ],
+    );
+  }
+
+  Widget addWatchingPerformancesDetails(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _titleController,
+          decoration: const InputDecoration(
+            labelText: 'Listing Title*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Name of Listing",
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _descriptionController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Description*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Description of Listing",
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _priceController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Price*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Price per person",
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _capacityController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Capacity*',
             helperText: '*optional',
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Number of Units",
+            hintText: "Capacity",
           ),
         ),
-      ],
-      const SizedBox(height: 10),
-      TextFormField(
-        controller: _capacityController,
-        maxLines: null,
-        decoration: const InputDecoration(
-          labelText: 'Capacity*',
-          helperText: '*optional',
-          border: OutlineInputBorder(),
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: "Capacity",
-        ),
-      ),
-      const SizedBox(height: 10),
-      TextFormField(
-        controller: _durationController,
-        maxLines: null,
-        decoration: const InputDecoration(
-          labelText: 'Duration*',
-          helperText: '*required',
-          border: OutlineInputBorder(),
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: "Duration",
-        ),
-      ),
-      const SizedBox(height: 10),
-      ListTile(
-        title: const Text('Starting/Opening Hours*'),
-        subtitle: Text(
-          'Selected Time: ${_selectedOpeningHours.format(context)}',
-        ),
-        onTap: () async {
-          TimeOfDay? picked = await showTimePicker(
-            context: context,
-            initialTime: _selectedOpeningHours,
-          );
-          if (picked != _selectedOpeningHours) {
-            setState(() {
-              _selectedOpeningHours = picked!;
-            });
-          }
-        },
-      ),
-      const SizedBox(height: 10),
-      ListTile(
-        title: const Text('End/Closing Hours*'),
-        subtitle: Text(
-          'Selected Time: ${_selectedClosingHours.format(context)}',
-        ),
-        onTap: () async {
-          TimeOfDay? picked = await showTimePicker(
-            context: context,
-            initialTime: _selectedClosingHours,
-          );
-          if (picked != _selectedClosingHours) {
-            setState(() {
-              _selectedClosingHours = picked!;
-            });
-          }
-        },
-      ),
-      const SizedBox(height: 10),
-      if (type == 'Watching/Performances' ) ...[
-      datePicker(context, startDate, endDate)
-      ],
-      if (type != 'Watching/Performances') ...[
-      const SizedBox(height: 10),
-      const SizedBox(height: 10),
-      const Text('Working Days', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-      const Text('Please select your working days...', style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-      Column(
-        children: List<Widget>.generate(7, (int index) {
-          return CheckboxListTile(
-            title: Text(
-              getDay(index),
-              style: const TextStyle(fontSize: 16),
-            ),
-            value: workingDays[index],
-            onChanged: (bool? value) {
+        const SizedBox(height: 10),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: durationController,
+          maxLines: 1,
+          decoration: const InputDecoration(
+            labelText: 'Duration*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "1:15",
+          ),
+          readOnly: true,
+          onTap: () async {
+            final TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: duration,
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: true),
+                  child: child!,
+                );
+              },
+            );
+
+            if (pickedTime != null) {
               setState(() {
-                workingDays[index] = value!;
+                durationController.text =
+                    "${pickedTime.hour}:${pickedTime.minute}";
+                duration = pickedTime;
               });
-            },
-          );
-        }),
-      ),
-      const SizedBox(height: 10),
+            }
+          },
+        ),
+        const SizedBox(height: 10),
+        ListTile(
+          title: const Text('Starting/Opening Hours*'),
+          subtitle: Text(
+            'Selected Time: ${_selectedOpeningHours.format(context)}',
+          ),
+          onTap: () async {
+            TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: _selectedOpeningHours,
+            );
+            if (picked != _selectedOpeningHours) {
+              setState(() {
+                _selectedOpeningHours = picked!;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 10),
+        ListTile(
+          title: const Text('End/Closing Hours*'),
+          subtitle: Text(
+            'Selected Time: ${_selectedClosingHours.format(context)}',
+          ),
+          onTap: () async {
+            TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: _selectedClosingHours,
+            );
+            if (picked != _selectedClosingHours) {
+              setState(() {
+                _selectedClosingHours = picked!;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 10),
+        datePicker(context, startDate, endDate),
+        const SizedBox(height: 10),
+        const SizedBox(height: 10),
+        const Text('Working Days',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text('Please select your working days...',
+            style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+        Column(
+          children: List<Widget>.generate(7, (int index) {
+            return CheckboxListTile(
+              title: Text(
+                getDay(index),
+                style: const TextStyle(fontSize: 16),
+              ),
+              value: workingDays[index],
+              onChanged: (bool? value) {
+                setState(() {
+                  workingDays[index] = value!;
+                });
+              },
+            );
+          }),
+        ),
+        const SizedBox(height: 10),
       ],
-    ],
-  );
-}
+    );
+  }
+
+  Widget addActivitiesDetails(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _titleController,
+          decoration: const InputDecoration(
+            labelText: 'Listing Title*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Name of Listing",
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _descriptionController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Description*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Description of Listing",
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _priceController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Price*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Price per person",
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _capacityController,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Capacity*',
+            helperText: '*optional',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: "Capacity",
+          ),
+        ),
+        const SizedBox(height: 10),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: durationController,
+          maxLines: 1,
+          decoration: const InputDecoration(
+            labelText: 'Duration*',
+            helperText: '*required',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "1:15",
+          ),
+          readOnly: true,
+          onTap: () async {
+            final TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: duration,
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: true),
+                  child: child!,
+                );
+              },
+            );
+
+            if (pickedTime != null) {
+              setState(() {
+                durationController.text =
+                    "${pickedTime.hour}:${pickedTime.minute}";
+                duration = pickedTime;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 10),
+        ListTile(
+          title: const Text('Starting/Opening Hours*'),
+          subtitle: Text(
+            'Selected Time: ${_selectedOpeningHours.format(context)}',
+          ),
+          onTap: () async {
+            TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: _selectedOpeningHours,
+            );
+            if (picked != _selectedOpeningHours) {
+              setState(() {
+                _selectedOpeningHours = picked!;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 10),
+        ListTile(
+          title: const Text('End/Closing Hours*'),
+          subtitle: Text(
+            'Selected Time: ${_selectedClosingHours.format(context)}',
+          ),
+          onTap: () async {
+            TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: _selectedClosingHours,
+            );
+            if (picked != _selectedClosingHours) {
+              setState(() {
+                _selectedClosingHours = picked!;
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 10),
+        datePicker(context, startDate, endDate),
+        const SizedBox(height: 10),
+        const Text('Working Days',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text('Please select your working days...',
+            style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+        Column(
+          children: List<Widget>.generate(7, (int index) {
+            return CheckboxListTile(
+              title: Text(
+                getDay(index),
+                style: const TextStyle(fontSize: 16),
+              ),
+              value: workingDays[index],
+              onChanged: (bool? value) {
+                setState(() {
+                  workingDays[index] = value!;
+                });
+              },
+            );
+          }),
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
 
   String getDay(int index) {
     switch (index) {
@@ -545,44 +933,36 @@ Widget addDetails(BuildContext context) {
   }
 
   Widget addListingPhotos(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          child: Row(
-            children: [
-              Icon(
-                Icons.image_outlined,
-                color: Theme.of(context).iconTheme.color
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: ImagePickerFormField(
-                  height: MediaQuery.sizeOf(context).height / 2.5,
-                  width: MediaQuery.sizeOf(context).width,
-                  context: context,
-                  initialValue: _images,
-                  onSaved: (List<File>? files) {
-                    _images = files;
-                  },
-                  validator: (List<File>? files) {
-                    if (files == null || files.isEmpty) {
-                      return 'Please select some images';
-                    }
-                    return null;
-                  },
-                  onImagesSelected: (List<File> files) {
-                    _images = files;
-                  },
-                ),
-              )
-            ]
-          )
+    return Column(children: [
+      GestureDetector(
+          child: Row(children: [
+        Icon(Icons.image_outlined, color: Theme.of(context).iconTheme.color),
+        const SizedBox(width: 15),
+        Expanded(
+          child: ImagePickerFormField(
+            height: MediaQuery.sizeOf(context).height / 2.5,
+            width: MediaQuery.sizeOf(context).width,
+            context: context,
+            initialValue: _images,
+            onSaved: (List<File>? files) {
+              _images = files;
+            },
+            validator: (List<File>? files) {
+              if (files == null || files.isEmpty) {
+                return 'Please select some images';
+              }
+              return null;
+            },
+            onImagesSelected: (List<File> files) {
+              _images = files;
+            },
+          ),
         )
-      ]
-    );
+      ]))
+    ]);
   }
 
-  Widget addGuestInfo(BuildContext context) {
+  Widget calculateAvailability(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -650,8 +1030,7 @@ Widget addDetails(BuildContext context) {
             subtitle: Text(_descriptionController.text),
           ),
           ListTile(
-            title: const Text('Working Days',
-                style: TextStyle(fontSize: 20)),
+            title: const Text('Working Days', style: TextStyle(fontSize: 20)),
             subtitle: Text(workingDays
                 .asMap()
                 .entries
@@ -804,7 +1183,7 @@ Widget addDetails(BuildContext context) {
       case 3:
         return 'Add listing photo/s';
       case 4:
-        return 'What do you want the guest/s to know?';
+        return 'Availability and Intervals';
       case 5:
         return 'Review Listing';
       default:
@@ -814,174 +1193,98 @@ Widget addDetails(BuildContext context) {
 
   BottomAppBar bottomAppBar() {
     return BottomAppBar(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          if (activeStep == 0) ... [
-            TextButton(
-              onPressed: () {
-                context.pop();
-                // ref.read(navBarVisibilityProvider.notifier).show();
-              },
-              child: const Text('Cancel')
-            )
-          ]
-          else ... [
-            TextButton(
-              onPressed: () {
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      if (activeStep == 0) ...[
+        TextButton(
+            onPressed: () {
+              context.pop();
+              // ref.read(navBarVisibilityProvider.notifier).show();
+            },
+            child: const Text('Cancel'))
+      ] else ...[
+        TextButton(
+            onPressed: () {
+              setState(() {
+                activeStep--;
+              });
+            },
+            child: const Text('Back'))
+      ],
+
+      // Next
+      if (activeStep != upperBound) ...[
+        ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () {
+              if (activeStep < upperBound) {
                 setState(() {
-                  activeStep--;
+                  activeStep++;
                 });
-              },
-              child: const Text('Back')
-            )
-          ],
-          
-          // Next
-          if (activeStep != upperBound) ... [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
+              }
+            },
+            child: Text(
+              'Next',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
-              onPressed: () {
-                if (activeStep < upperBound) {
-                  setState(() {
-                    activeStep++;
-                  });
-                }
-              },
-              child: Text(
-                'Next',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
-              )
-            )
-          ]
-          else ... [
-            TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
+            ))
+      ] else ...[
+        TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () {
+              submitAddListing();
+            },
+            child: Text(
+              'Submit',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
-              onPressed: () {
-                submitAddListing();
-              },
-              child: Text(
-                'Submit',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
+            ))
+      ]
+    ]));
+  }
+
+  Column addNotes(
+    List<String> notes,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(
+          height: 20,
+        ),
+        DisplayText(
+          text: "Notes:",
+          lines: 1,
+          style: Theme.of(context).textTheme.headlineSmall!,
+        ),
+        ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: notes.length,
+            itemBuilder: ((context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 5),
+                    DisplayText(
+                      text: notes[index],
+                      lines: 10,
+                      style: Theme.of(context).textTheme.bodySmall!,
+                    ),
+                  ],
                 ),
-              )
-            )
-          ]
-        ]
-      )
+              );
+            }))
+      ],
     );
   }
-}
-
-class ImagePickerFormField extends FormField<List<File>> {
-  final Function(List<File>) onImagesSelected;
-
-  ImagePickerFormField({
-    super.key,
-    super.onSaved,
-    super.validator,
-    required BuildContext context,
-    required double height,
-    required double width,
-    List<File>? initialValue,
-    required this.onImagesSelected,
-  }) : super(
-          initialValue: initialValue ?? [],
-          builder: (FormFieldState<List<File>> state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () async {
-                    final picker = ImagePicker();
-                    final pickedFiles = await picker.pickMultiImage();
-
-                    if (pickedFiles.isNotEmpty) {
-                      List<File> files = pickedFiles
-                          .map((pickedFile) => File(pickedFile.path))
-                          .toList();
-                      state.didChange(files);
-                      onImagesSelected(files); // Use the callback here
-                    }
-                  },
-                  child: Column(
-                    children: [
-                      // If its empty
-                      if (state.value!.isEmpty)
-                        Container(
-                          height: height,
-                          width: width,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.grey, width: 1),
-                          ),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.add_photo_alternate_outlined,
-                                  color: Colors.grey,
-                                  size: 50,
-                                ),
-                                DisplayText(
-                                  text: "Add Images",
-                                  lines: 1,
-                                  style: Theme.of(context).textTheme.bodySmall!,
-                                ),
-                              ]),
-                        ),
-                      if (state.value!.isNotEmpty)
-                        Container(
-                          height: height,
-                          width: width,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          child:
-                              Image.file(state.value!.first, fit: BoxFit.cover),
-                        ),
-                      if (state.value!.length > 1)
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 1,
-                          ),
-                          itemCount: state.value!.length - 1,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Image.file(state.value![index + 1],
-                                  fit: BoxFit.cover),
-                            );
-                          },
-                        ),
-                    ],
-                  ),
-                ),
-                if (state.hasError)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, left: 12),
-                    child: Text(
-                      state.errorText!,
-                      style: const TextStyle(color: Colors.red, fontSize: 12),
-                    ),
-                  ),
-              ],
-            );
-          },
-        );
 }
 
 final listingStartDate =
@@ -1001,8 +1304,7 @@ class ListingStartDateNotifier extends StateNotifier<DateTime?> {
   }
 }
 
-final listingEndDate =
-    StateNotifierProvider<ListingEndDateNotifier, DateTime?>(
+final listingEndDate = StateNotifierProvider<ListingEndDateNotifier, DateTime?>(
   (ref) => ListingEndDateNotifier(),
 );
 
@@ -1017,5 +1319,3 @@ class ListingEndDateNotifier extends StateNotifier<DateTime?> {
     state = null;
   }
 }
-
-

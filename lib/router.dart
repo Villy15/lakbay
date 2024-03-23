@@ -341,7 +341,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                              listing: listing,
                            );
                         default:
-                          return AccommodationBookingsDetails(
+                          return BookingsAccomodationCustomer(
                             booking: booking,
                             listing: listing,
                           );

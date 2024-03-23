@@ -38,6 +38,7 @@ class _AddTourState extends ConsumerState<AddTour> {
   num guests = 0;
   List<bool> workingDays = List.filled(7, false);
   String selectedDurationUnit = 'Hours';
+  TimeOfDay duration = const TimeOfDay(hour: 1, minute: 15);
 
   // Controllers
   final TextEditingController _titleController = TextEditingController();
@@ -111,8 +112,7 @@ void submitAddListing() {
                   publisherName: ref.read(userProvider)!.name,
                   price: num.parse(_priceController.text),
                   pax: int.parse(_capacityController.text),
-                  duration: num.parse(_durationController.text),
-                  durationUnit: selectedDurationUnit,
+                  duration: duration,
                   openingHours: DateTime(
                     DateTime.now().year,
                     DateTime.now().month,
@@ -297,39 +297,44 @@ Widget addDetails(BuildContext context) {
             flex: 3,
             child: TextFormField(
               controller: _durationController,
-              maxLines: null,
+              maxLines: 1,
               decoration: const InputDecoration(
                 labelText: 'Duration*',
                 border: OutlineInputBorder(),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                hintText: "Duration",
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "1:15",
+                suffix: Text(
+                  'hr:mins',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            flex: 2,
-            child: DropdownButtonFormField<String>(
-              value: selectedDurationUnit,
-              items: durationUnitOptions.map((String unit) {
-                return DropdownMenuItem<String>(
-                  value: unit,
-                  child: Text(unit),
+              readOnly: true,
+              onTap: () async {
+                final TimeOfDay? pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: duration,
+                  initialEntryMode: TimePickerEntryMode.inputOnly,
+                  builder: (BuildContext context, Widget? child) {
+                    return MediaQuery(
+                      data: MediaQuery.of(context)
+                          .copyWith(alwaysUse24HourFormat: true),
+                      child: child!,
+                    );
+                  },
                 );
-              }).toList(),
-              onChanged: (String? newValue) {
-                if (newValue != null) {
+
+                if (pickedTime != null) {
                   setState(() {
-                    selectedDurationUnit = newValue;
+                    _durationController.text =
+                        "${pickedTime.hour}:${pickedTime.minute}";
+                    duration = pickedTime;
                   });
                 }
               },
-              decoration: const InputDecoration(
-                labelText: 'Unit',
-                border: OutlineInputBorder(),
-              ),
             ),
           ),
+          const SizedBox(width: 10),
         ],
       ),
       const SizedBox(height: 10),
