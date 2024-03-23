@@ -21,6 +21,7 @@ import 'package:lakbay/features/cooperatives/crud/read_coop.dart';
 import 'package:lakbay/features/cooperatives/join_coop.dart';
 import 'package:lakbay/features/cooperatives/leave_coop.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/read_announcement.dart';
+import 'package:lakbay/features/cooperatives/my_coop/goals/read_goal.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/add_committee_members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/join_coop_code.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_committees_page.dart';
@@ -735,6 +736,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   (context, pathParameters, extra) {
                 return CoopReadEventPage(eventId: pathParameters['eventId']!);
               }),
+
+              // Read Goal from my coop using id
+              buildSubRoute(
+                '/my_coop/goals/:goalId',
+                (context, pathParameters, extra) {
+                  return ReadGoal(
+                    goalId: pathParameters['goalId']!,
+                  );
+                },
+              ),
 
               // Read Announcement from my coop
               buildSubRoute(

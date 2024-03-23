@@ -95,6 +95,13 @@ final getAllGoalsProvider =
   return coopsController.getAllGoals(coopUid);
 });
 
+// Get a goal provider
+final getGoalProvider =
+    StreamProvider.autoDispose.family<CoopGoals, String>((ref, goalUid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getGoal(ref.read(userProvider)!.currentCoop!, goalUid);
+});
+
 // Get all votes provider
 final getAllVotesProvider =
     StreamProvider.autoDispose.family<List<CoopVote>, String>((ref, coopUid) {
@@ -584,6 +591,11 @@ class CoopsController extends StateNotifier<bool> {
   // Read all goals of a cooperative
   Stream<List<CoopGoals>> getAllGoals(String coopUid) {
     return _coopsRepository.readGoals(coopUid);
+  }
+
+  // Real a goal of a cooperative
+  Stream<CoopGoals> getGoal(String coopUid, String goalUid) {
+    return _coopsRepository.readGoal(coopUid, goalUid);
   }
 
   // Add Vote
