@@ -43,7 +43,7 @@ class CategoryPageController extends ConsumerWidget {
         return CustomerEntertainment(
           listing: listing,
         );
-      case 'Touring':
+      case 'Tour':
         return CustomerTouring(
           listing: listing,
         );
