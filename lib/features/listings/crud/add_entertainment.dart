@@ -329,7 +329,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           onStepReached: (index) {
             setState(() {
               activeStep = index;
-              debugPrint('the current step is $activeStep');
             });
           },
         ),
@@ -356,7 +355,16 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       case 3:
         return addListingPhotos(context);
       case 4:
-        return calculateIntervals(context);
+        switch (type) {
+          case 'Rentals':
+            return calculateIntervals(context);
+          case 'Watching/Performances':
+            return createScheduling(context);
+          case 'Activities':
+            return addActivitiesDetails(context);
+          default:
+            return addRentalDetails(context);
+        }
       case 5:
         return addPolicies(context);
       case 6:
@@ -582,6 +590,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   }
 
   Widget addWatchingPerformancesDetails(BuildContext context) {
+    List<String> notes = [
+      "Duration refers to how long the Showing/Performance will take to completion.",
+      "Capacity refers to the maximum number of persons allowed for a single Showing/Performance.",
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -590,7 +602,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           controller: _titleController,
           decoration: const InputDecoration(
             labelText: 'Listing Title*',
-            helperText: '*required',
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: "Name of Listing",
@@ -602,7 +613,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           maxLines: null,
           decoration: const InputDecoration(
             labelText: 'Description*',
-            helperText: '*required',
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: "Description of Listing",
@@ -614,100 +624,142 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           maxLines: null,
           decoration: const InputDecoration(
             labelText: 'Price*',
-            helperText: '*required',
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: "Price per person",
           ),
         ),
         const SizedBox(height: 10),
-        TextFormField(
-          controller: _capacityController,
-          maxLines: null,
-          decoration: const InputDecoration(
-            labelText: 'Capacity*',
-            helperText: '*optional',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Capacity",
-          ),
-        ),
-        const SizedBox(height: 10),
-        const SizedBox(height: 10),
-        TextFormField(
-          controller: durationController,
-          maxLines: 1,
-          decoration: const InputDecoration(
-            labelText: 'Duration*',
-            helperText: '*required',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior:
-                FloatingLabelBehavior.always, // Keep the label always visible
-            hintText: "1:15",
-          ),
-          readOnly: true,
-          onTap: () async {
-            final TimeOfDay? pickedTime = await showTimePicker(
-              context: context,
-              initialTime: duration,
-              initialEntryMode: TimePickerEntryMode.inputOnly,
-              builder: (BuildContext context, Widget? child) {
-                return MediaQuery(
-                  data: MediaQuery.of(context)
-                      .copyWith(alwaysUse24HourFormat: true),
-                  child: child!,
-                );
-              },
-            );
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _capacityController,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  labelText: 'Capacity*',
+                  border: OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  hintText: "Capacity",
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextFormField(
+                controller: durationController,
+                maxLines: 1,
+                decoration: const InputDecoration(
+                  labelText: 'Duration*',
+                  border: OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior
+                      .always, // Keep the label always visible
+                  hintText: "1:15",
+                ),
+                readOnly: true,
+                onTap: () async {
+                  final TimeOfDay? pickedTime = await showTimePicker(
+                    context: context,
+                    initialTime: duration,
+                    initialEntryMode: TimePickerEntryMode.inputOnly,
+                    builder: (BuildContext context, Widget? child) {
+                      return MediaQuery(
+                        data: MediaQuery.of(context)
+                            .copyWith(alwaysUse24HourFormat: true),
+                        child: child!,
+                      );
+                    },
+                  );
 
-            if (pickedTime != null) {
-              setState(() {
-                durationController.text =
-                    "${pickedTime.hour}:${pickedTime.minute}";
-                duration = pickedTime;
-              });
-            }
-          },
+                  if (pickedTime != null) {
+                    setState(() {
+                      durationController.text =
+                          "${pickedTime.hour}:${pickedTime.minute}";
+                      duration = pickedTime;
+                    });
+                  }
+                },
+              ),
+            )
+          ],
         ),
         const SizedBox(height: 10),
-        ListTile(
-          title: const Text('Starting/Opening Hours*'),
-          subtitle: Text(
-            'Selected Time: ${_selectedOpeningHours.format(context)}',
+        Row(children: [
+          Expanded(
+            child: TextFormField(
+              controller: _selectedOpeningHoursController,
+              maxLines: 1,
+              decoration: const InputDecoration(
+                labelText: 'Opening Hours*',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "8:30 AM",
+              ),
+              readOnly: true,
+              onTap: () async {
+                final TimeOfDay? pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: _selectedOpeningHours,
+                  initialEntryMode: TimePickerEntryMode.inputOnly,
+                  builder: (BuildContext context, Widget? child) {
+                    return MediaQuery(
+                      data: MediaQuery.of(context)
+                          .copyWith(alwaysUse24HourFormat: false),
+                      child: child!,
+                    );
+                  },
+                );
+
+                if (pickedTime != null) {
+                  setState(() {
+                    _selectedOpeningHoursController.text =
+                        pickedTime.format(context);
+                    _selectedOpeningHours = pickedTime;
+                  });
+                }
+              },
+            ),
           ),
-          onTap: () async {
-            TimeOfDay? picked = await showTimePicker(
-              context: context,
-              initialTime: _selectedOpeningHours,
-            );
-            if (picked != _selectedOpeningHours) {
-              setState(() {
-                _selectedOpeningHours = picked!;
-              });
-            }
-          },
-        ),
-        const SizedBox(height: 10),
-        ListTile(
-          title: const Text('End/Closing Hours*'),
-          subtitle: Text(
-            'Selected Time: ${_selectedClosingHours.format(context)}',
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextFormField(
+              controller: _selectedClosingHoursController,
+              maxLines: 1,
+              decoration: const InputDecoration(
+                labelText: 'Closing Hours*',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "5:30 PM",
+              ),
+              readOnly: true,
+              onTap: () async {
+                final TimeOfDay? pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: _selectedClosingHours,
+                  initialEntryMode: TimePickerEntryMode.inputOnly,
+                  builder: (BuildContext context, Widget? child) {
+                    return MediaQuery(
+                      data: MediaQuery.of(context)
+                          .copyWith(alwaysUse24HourFormat: false),
+                      child: child!,
+                    );
+                  },
+                );
+                if (pickedTime != null) {
+                  setState(() {
+                    _selectedClosingHoursController.text =
+                        pickedTime.format(context);
+                    _selectedClosingHours = pickedTime;
+                  });
+                }
+              },
+            ),
           ),
-          onTap: () async {
-            TimeOfDay? picked = await showTimePicker(
-              context: context,
-              initialTime: _selectedClosingHours,
-            );
-            if (picked != _selectedClosingHours) {
-              setState(() {
-                _selectedClosingHours = picked!;
-              });
-            }
-          },
-        ),
+        ]),
         const SizedBox(height: 10),
         datePicker(context, startDate, endDate),
-        const SizedBox(height: 10),
         const SizedBox(height: 10),
         const Text('Working Days',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -729,7 +781,9 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             );
           }),
         ),
-        const SizedBox(height: 10),
+        addNotes(
+          notes,
+        ),
       ],
     );
   }
@@ -1502,7 +1556,16 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       case 3:
         return 'Add listing photo/s';
       case 4:
-        return 'Intervals and Availability';
+        switch (type) {
+          case 'Rentals':
+            return 'Intervals and Availability';
+          case 'Watching/Performances':
+            return "Scheduling";
+          case 'Activities':
+            return '';
+          default:
+            return 'Intervals and Availability';
+        }
       case 5:
         return 'Add Policies';
       case 6:
@@ -1631,6 +1694,87 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             ),
           );
         });
+  }
+
+  Widget createScheduling(BuildContext context) {
+    AvailableDate availableDate = AvailableDate(
+        available: true, date: DateTime.now(), availableTimes: []);
+    TextEditingController availableDateController =
+        TextEditingController(text: '');
+    List<String> notes = [
+      'Intervals will determine the availability of your units to be rented at a given day.',
+      'Time Paddding refers to an added time you might want to add inbetween bookings, incase you might need time inbetween rentals of a unit (Duration: 30mins, Time Padding: 15mins, your rentals will have 45 minute intervals).',
+    ];
+    return StatefulBuilder(builder: (context, setOption) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Radio buttons for payment options
+                        Flexible(
+                          child: SizedBox(
+                            child: RadioListTile<IntervalOptions>(
+                              contentPadding: const EdgeInsets.all(0),
+                              title: const Text('Padded\nIntervals'),
+                              value: IntervalOptions.paddedIntervals,
+                              groupValue: _selectedIntervalOption,
+                              onChanged: (IntervalOptions? value) {
+                                setState(() {
+                                  _selectedIntervalOption = value!;
+                                  availableTimes = [];
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          child: RadioListTile<IntervalOptions>(
+                            contentPadding: const EdgeInsets.all(0),
+                            title: const Text('Fixed\nIntervals'),
+                            value: IntervalOptions.fixedIntervals,
+                            groupValue: _selectedIntervalOption,
+                            onChanged: (IntervalOptions? value) {
+                              setState(() {
+                                _selectedIntervalOption = value!;
+                                availableTimes = [];
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (_selectedIntervalOption ==
+                        IntervalOptions.paddedIntervals) ...[
+                      // timePaddingFormField(
+                      //     timePaddingController, timePadding, setOption),
+                      // showIntervalInfo(),
+                      // intervalOptionsDetails(timePadding: timePadding),
+                    ],
+                    if (_selectedIntervalOption ==
+                        IntervalOptions.fixedIntervals) ...[
+                      addIntervalButton(context),
+                      showIntervalInfo(),
+                      // intervalOptionsDetails(timePadding: timePadding),
+                    ]
+                  ],
+                ),
+              ),
+            ),
+            addNotes(notes),
+          ],
+        ),
+      );
+    });
   }
 }
 
