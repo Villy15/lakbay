@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+//import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:intl/intl.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
@@ -18,6 +18,8 @@ import 'package:lakbay/features/listings/widgets/image_picker_form_field.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+
+enum IntervalOptions { paddedIntervals, fixedIntervals }
 
 class AddEntertainment extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -35,16 +37,25 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 
   // stepper
   int activeStep = 0;
-  int upperBound = 5;
+  int upperBound = 6;
 
   // initial values
   String type = 'Rentals';
   num guests = 0;
   List<bool> workingDays = List.filled(7, false);
+  List<AvailableTime> availableTimes = [];
   TimeOfDay duration = const TimeOfDay(hour: 1, minute: 15);
-
+  IntervalOptions? _selectedIntervalOption; // Default value
+  String mapAddress = "";
+  List<File>? _images;
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now().add(const Duration(days: 1));
+  TimeOfDay _selectedOpeningHours = const TimeOfDay(hour: 8, minute: 30);
+  TimeOfDay _selectedClosingHours = const TimeOfDay(hour: 17, minute: 0);
   // controllers
-  final TextEditingController durationController = TextEditingController();
+
+  final TextEditingController durationController =
+      TextEditingController(text: '1:15');
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _addressController =
@@ -52,20 +63,15 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   final TextEditingController _unitsController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
-  final TextEditingController _durationController = TextEditingController();
   final TextEditingController _guestInfoController = TextEditingController();
   final TextEditingController _selectedOpeningHoursController =
-      TextEditingController();
+      TextEditingController(text: '8:30 AM');
   final TextEditingController _selectedClosingHoursController =
+      TextEditingController(text: '5:30 PM  ');
+  final TextEditingController _cancellationRateController =
       TextEditingController();
-
-  String mapAddress = "";
-  List<File>? _images;
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now().add(const Duration(days: 1));
-  TimeOfDay _selectedOpeningHours = const TimeOfDay(hour: 8, minute: 30);
-  TimeOfDay _selectedClosingHours = const TimeOfDay(hour: 17, minute: 0);
-
+  final TextEditingController _cancellationPeriodController =
+      TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -80,7 +86,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     _titleController.dispose();
     _descriptionController.dispose();
     _addressController.dispose();
-
     super.dispose();
   }
 
@@ -172,6 +177,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                   debugPrint(cooperative.toString());
                   // Prepare data for ListingModel
                   ListingModel listing = ListingModel(
+                    availableTimes: availableTimes,
                     address: _addressController.text,
                     category: widget.category,
                     description: _descriptionController.text,
@@ -192,21 +198,17 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                     pax: int.parse(_capacityController.text),
                     numberOfUnits: int.parse(_unitsController.text),
                     duration: duration,
-                    openingHours: DateTime(
-                      DateTime.now().year,
-                      DateTime.now().month,
-                      DateTime.now().day,
-                      _selectedOpeningHours.hour,
-                      _selectedOpeningHours.minute,
-                    ),
-                    closingHours: DateTime(
-                      DateTime.now().year,
-                      DateTime.now().month,
-                      DateTime.now().day,
-                      _selectedClosingHours.hour,
-                      _selectedClosingHours.minute,
-                    ),
+                    openingHours: TimeOfDay(
+                        hour: _selectedOpeningHours.hour,
+                        minute: _selectedOpeningHours.minute),
+                    closingHours: TimeOfDay(
+                        hour: _selectedClosingHours.hour,
+                        minute: _selectedClosingHours.minute),
                     guestInfo: _guestInfoController.text,
+                    cancellationRate:
+                        num.parse((_cancellationRateController.text)) / 100,
+                    cancellationPeriod:
+                        num.parse((_cancellationPeriodController.text)),
                   );
                   debugPrint(listing.toString());
                   //Update image URLs in the listing model
@@ -267,19 +269,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     );
   }
 
-  Future<DateTime?> _selectDate(
-    BuildContext context,
-    DateTime initialDate,
-    DateTime firstDate,
-  ) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: firstDate,
-      lastDate: DateTime(2101),
-    );
-    return picked;
-  }
 
   Column steppers(BuildContext context) {
     return Column(
@@ -308,6 +297,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             ),
             Icon(
               Icons.question_mark_outlined,
+              color: Theme.of(context).colorScheme.background,
+            ),
+            Icon(
+              Icons.policy,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
@@ -350,8 +343,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       case 3:
         return addListingPhotos(context);
       case 4:
-        return calculateAvailability(context);
+        return calculateIntervals(context);
       case 5:
+        return addPolicies(context);
+      case 6:
         return reviewListing(context);
       default:
         return chooseType(context);
@@ -765,7 +760,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             hintText: "Price per person",
           ),
         ),
-        const SizedBox(height: 10),
         TextFormField(
           controller: _capacityController,
           maxLines: null,
@@ -852,6 +846,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
         ),
         const SizedBox(height: 10),
         datePicker(context, startDate, endDate),
+        const SizedBox(height: 10),
         const SizedBox(height: 10),
         const Text('Working Days',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -962,22 +957,333 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     ]);
   }
 
-  Widget calculateAvailability(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 10),
-        TextFormField(
-          controller:
-              _guestInfoController, // Create a new TextEditingController for guest info
-          maxLines: null,
-          decoration: const InputDecoration(
-            labelText: 'Guest Information',
-            helperText: 'Enter additional information for guests (optional)',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
+  Widget calculateIntervals(BuildContext context) {
+    TimeOfDay timePadding = const TimeOfDay(hour: 0, minute: 15);
+    TextEditingController timePaddingController = TextEditingController(
+        text: '${timePadding.hour}:${timePadding.minute}');
+    List<String> notes = [
+      'Intervals will determine the availability of your units to be rented at a given day.',
+      'Time Paddding refers to an added time you might want to add inbetween bookings, incase you might need time inbetween rentals of a unit (Duration: 30mins, Time Padding: 15mins, your rentals will have 45 minute intervals).',
+    ];
+    return StatefulBuilder(builder: (context, setOption) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Radio buttons for payment options
+                        Flexible(
+                          child: SizedBox(
+                            child: RadioListTile<IntervalOptions>(
+                              contentPadding: const EdgeInsets.all(0),
+                              title: const Text('Padded\nIntervals'),
+                              value: IntervalOptions.paddedIntervals,
+                              groupValue: _selectedIntervalOption,
+                              onChanged: (IntervalOptions? value) {
+                                setState(() {
+                                  _selectedIntervalOption = value!;
+                                  availableTimes = [];
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          child: RadioListTile<IntervalOptions>(
+                            contentPadding: const EdgeInsets.all(0),
+                            title: const Text('Fixed\nIntervals'),
+                            value: IntervalOptions.fixedIntervals,
+                            groupValue: _selectedIntervalOption,
+                            onChanged: (IntervalOptions? value) {
+                              setState(() {
+                                _selectedIntervalOption = value!;
+                                availableTimes = [];
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (_selectedIntervalOption ==
+                        IntervalOptions.paddedIntervals) ...[
+                      timePaddingFormField(
+                          timePaddingController, timePadding, setOption),
+                      showIntervalInfo(),
+                      intervalOptionsDetails(timePadding: timePadding),
+                    ],
+                    if (_selectedIntervalOption ==
+                        IntervalOptions.fixedIntervals) ...[
+                      addIntervalButton(context),
+                      showIntervalInfo(),
+                      intervalOptionsDetails(timePadding: timePadding),
+                    ]
+                  ],
+                ),
+              ),
+            ),
+            addNotes(notes),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget addIntervalButton(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        width: MediaQuery.sizeOf(context).width / 2,
+        child: FilledButton(
+          onPressed: () async {
+            final TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: availableTimes.isEmpty
+                  ? _selectedOpeningHours
+                  : availableTimes.last.time,
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: true),
+                  child: child!,
+                );
+              },
+            );
+
+            if (pickedTime != null) {
+              setState(() {
+                availableTimes.add(AvailableTime(
+                    available: true,
+                    currentPax: 0,
+                    maxPax: num.parse(_capacityController.text),
+                    time: pickedTime));
+              });
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                  8), // Adjust the border radius as needed
+            ),
+          ),
+          child: const Text('Add Interval'),
+        ));
+  }
+
+  Widget showIntervalInfo() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const SizedBox(height: 20),
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Rental Intervals:',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+            ),
+            Row(
+              children: [
+                Text(
+                  '${availableTimes.length}',
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w400),
+                ),
+                const SizedBox(width: 2.5),
+                const Text(
+                  'per day',
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w300),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      Container(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Available Rentals:',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+              ),
+              Row(
+                children: [
+                  Text(
+                    '${availableTimes.length * int.parse(_unitsController.text)}',
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w400),
+                  ),
+                  const SizedBox(width: 2.5),
+                  const Text(
+                    'per day',
+                    style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w300),
+                  ),
+                ],
+              ),
+            ],
+          )),
+    ]);
+  }
+
+  Widget timePaddingFormField(TextEditingController timePaddingController,
+      TimeOfDay timePadding, StateSetter setOption) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      width: MediaQuery.sizeOf(context).width / 2,
+      child: TextFormField(
+        controller: timePaddingController,
+        maxLines: 1,
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.only(top: 5, bottom: 5, left: 10),
+          labelText: 'Time Padding*',
+          border: const OutlineInputBorder(),
+          floatingLabelBehavior:
+              FloatingLabelBehavior.always, // Keep the label always visible
+          hintText: timePaddingController.text,
+          suffix: const Text(
+            'hr:mins',
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
           ),
         ),
+        readOnly: true,
+        onTap: () async {
+          final TimeOfDay? pickedTime = await showTimePicker(
+            context: context,
+            initialTime: timePadding,
+            initialEntryMode: TimePickerEntryMode.inputOnly,
+            builder: (BuildContext context, Widget? child) {
+              return MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(alwaysUse24HourFormat: true),
+                child: child!,
+              );
+            },
+          );
+
+          if (pickedTime != null) {
+            setOption(() {
+              timePaddingController.text =
+                  "${pickedTime.hour}:${pickedTime.minute}";
+              timePadding = pickedTime;
+            });
+
+            TimeOfDay intervalDuration = TimeOfDay(
+                hour: duration.hour + timePadding.hour,
+                minute: duration.minute + timePadding.minute);
+            if (intervalDuration.minute >= 60) {
+              intervalDuration = TimeOfDay(
+                  hour: intervalDuration.hour + 1,
+                  minute: intervalDuration.minute - 60);
+            }
+            availableTimes = calculatePaddedIntervals(intervalDuration);
+          }
+        },
+      ),
+    );
+  }
+
+  List<AvailableTime> calculatePaddedIntervals(TimeOfDay intervalDuration) {
+    List<AvailableTime> intervals = [];
+    num maxPax = num.parse(_capacityController.text);
+    AvailableTime currentTime = AvailableTime(
+        available: true,
+        currentPax: 0,
+        maxPax: maxPax,
+        time: _selectedOpeningHours);
+    debugPrint('intervalDuration: $intervalDuration');
+    while (currentTime.time.hour < _selectedClosingHours.hour ||
+        (currentTime.time.hour == _selectedClosingHours.hour &&
+            currentTime.time.minute < _selectedClosingHours.minute)) {
+      intervals.add(currentTime);
+      currentTime = AvailableTime(
+        available: true,
+        currentPax: 0,
+        maxPax: maxPax,
+        time: TimeOfDay(
+            hour: currentTime.time.hour + intervalDuration.hour,
+            minute: currentTime.time.minute + intervalDuration.minute),
+      );
+
+      debugPrint('currentTime: $currentTime');
+      if (currentTime.time.minute >= 60) {
+        currentTime = AvailableTime(
+          available: true,
+          currentPax: 0,
+          maxPax: maxPax,
+          time: TimeOfDay(
+              hour: currentTime.time.hour + 1,
+              minute: currentTime.time.minute - 60),
+        );
+      }
+    }
+
+    return intervals;
+  }
+
+  Widget addPolicies(BuildContext context) {
+    List<String> notes = [
+      "Cancellation Rate: The amount that would not be refunded in the situation that a customer cancels their booking.",
+      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel. Otherwise their booking will be cancelled",
+      "Customers booking passed the cancellation period would be required to pay the full amount upon checkout."
+    ];
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _cancellationRateController,
+                maxLines: 1,
+                decoration: const InputDecoration(
+                    labelText: 'Cancellation Rate (%)*',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 5",
+                    suffixText: "%"),
+                onTap: () {},
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: TextFormField(
+                controller: _cancellationPeriodController,
+                maxLines: 1,
+                keyboardType: TextInputType.number, // For numeric input
+                decoration: const InputDecoration(
+                    labelText:
+                        'Cancellation Period (Day/s)*', // Indicate it's a percentage
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 5 Days before the booked date",
+                    suffixText: "Day/s"),
+                onTap: () {
+                  // Handle tap if needed, e.g., showing a dialog to select a percentage
+                },
+              ),
+            ),
+          ],
+        ),
+        addNotes(notes),
       ],
     );
   }
@@ -1058,7 +1364,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           ListTile(
             title: const Text('Duration',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            subtitle: Text(_durationController.text),
+            subtitle: Text(durationController.text),
           ),
           ListTile(
             title: const Text('Start/Opening: ',
@@ -1183,15 +1489,17 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       case 3:
         return 'Add listing photo/s';
       case 4:
-        return 'Availability and Intervals';
+        return 'Intervals and Availability';
       case 5:
+        return 'Add Policies';
+      case 6:
         return 'Review Listing';
       default:
         return 'Choose Type';
     }
   }
 
-  BottomAppBar bottomAppBar() {
+  Widget bottomAppBar() {
     return BottomAppBar(
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -1284,6 +1592,32 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             }))
       ],
     );
+  }
+
+  Widget intervalOptionsDetails({TimeOfDay? timePadding}) {
+    return GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // Number of columns
+            crossAxisSpacing: 10.0, // Spacing between columns
+            mainAxisSpacing: 0.0, // Spacing between rows
+            mainAxisExtent: MediaQuery.sizeOf(context).height / 15),
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: availableTimes.length,
+        itemBuilder: (context, timeIndex) {
+          final availableTime = availableTimes[timeIndex];
+          return ListTile(
+            horizontalTitleGap: 5,
+            leading: Text('${timeIndex + 1}'),
+            title: Text(
+                '${availableTime.time.hourOfPeriod}:${availableTime.time.minute == 0 ? '00' : availableTime.time.minute} ${availableTime.time.period.name.toUpperCase()}'),
+            titleTextStyle: const TextStyle(
+              fontSize: 14,
+              color: Colors.black,
+              fontWeight: FontWeight.w400,
+            ),
+          );
+        });
   }
 }
 

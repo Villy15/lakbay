@@ -18,10 +18,9 @@ class DaysPlanProvider extends ChangeNotifier {
 
   void setCurrentDay(DateTime day) {
     _currentDay = day;
-    // convert to YYYY/MM/DD 
+    // convert to YYYY/MM/DD
     _currentDay = DateTime(day.year, day.month, day.day);
     notifyListeners();
-  
   }
 }
 

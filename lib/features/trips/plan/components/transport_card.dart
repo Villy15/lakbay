@@ -668,12 +668,10 @@ class _TransportCardState extends ConsumerState<TransportCard> {
           bool governmentId = true;
           String formattedStartDate =
               DateFormat('MMMM dd, yyyy').format(startDate);
-          String formattedEndDate = DateFormat('MMMM dd, yyyy').format(endDate);
           return Dialog.fullscreen(
               child: StatefulBuilder(builder: (context, setState) {
             return confirmOneWay(
                 formattedStartDate,
-                formattedEndDate,
                 transport,
                 guests,
                 luggage,
@@ -693,7 +691,6 @@ class _TransportCardState extends ConsumerState<TransportCard> {
 
   SingleChildScrollView confirmOneWay(
       String formattedStartDate,
-      String formattedEndDate,
       AvailableTransport transport,
       num guests,
       num luggage,

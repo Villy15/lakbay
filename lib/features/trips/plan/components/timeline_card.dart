@@ -27,7 +27,6 @@ class TimelineCard extends ConsumerStatefulWidget {
 class _TimelineCardState extends ConsumerState<TimelineCard> {
   void onTap(ListingBookings booking, ListingModel listing) {
     // Action for Check In Details
-    debugPrint('Check In Details');
     context.push(
       '/bookings/booking_details',
       extra: {'booking': booking, 'listing': listing},
@@ -153,7 +152,7 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
           }).toList(),
         );
 
-        debugPrint('updatedPlan: $updatedPlan');
+        // debugPrint('updatedPlan: $updatedPlan');
 
         ref
             .read(plansControllerProvider.notifier)
@@ -309,14 +308,12 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                           return _buildCard(context, booking, listing);
                         },
                         error: ((error, stackTrace) {
-                          debugPrint('Error: $error');
                           return Text('Error: $error');
                         }),
                         loading: () => const CircularProgressIndicator());
               },
               loading: () => const CircularProgressIndicator(),
               error: (error, stackTrace) {
-                debugPrint('Error: $error');
                 return Text('Error: $error');
               },
             ),
@@ -382,6 +379,12 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
         'startValue': listing.availableTransport?.pickupPoint ?? '',
         'end': 'Drop Off',
         'endValue': listing.availableTransport?.destination ?? '',
+      },
+      'Entertainment': {
+        'start': 'Start',
+        'startValue': DateFormat('hh:mm a').format(booking.startDate!),
+        'end': 'End',
+        'endValue': DateFormat('hh:mm a').format(booking.endDate!),
       }
     };
     return Card(
@@ -483,22 +486,6 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                           ),
                         ],
                       ),
-
-                    // Align(
-                    //   alignment: Alignment.centerRight,
-                    //   child: Text(
-                    //     getDuration(
-                    //         widget.activity.startTime, widget.activity.endTime),
-                    //     style: TextStyle(
-                    //       color: Theme.of(context).colorScheme.primary,
-                    //       fontSize: 12,
-                    //     ),
-                    //   ),
-                    // ),
-                    // TextButton(
-                    //   onPressed: () => onTap(),
-                    //   child: const Text('Check In Details'),
-                    // ),
                   ],
                 ),
               ),

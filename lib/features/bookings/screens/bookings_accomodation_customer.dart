@@ -241,8 +241,7 @@ class _BookingsAccomodationCustomerState
                                             fontWeight: FontWeight.w500)),
                                     // Checkin time
                                     Text(
-                                      DateFormat.jm()
-                                          .format(widget.listing.checkIn!),
+                                      widget.listing.checkIn!.format(context),
                                       style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w300),
@@ -278,8 +277,7 @@ class _BookingsAccomodationCustomerState
                                             fontWeight: FontWeight.w500)),
                                     // Checkout time
                                     Text(
-                                      DateFormat.jm()
-                                          .format(widget.listing.checkOut!),
+                                      widget.listing.checkOut!.format(context),
                                       style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w300),

@@ -20,10 +20,10 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           .toList(),
       category: json['category'] as String,
       cancellationRate: json['cancellationRate'] as num?,
-      checkIn:
-          const TimestampSerializer().fromJson(json['checkIn'] as Timestamp?),
-      checkOut:
-          const TimestampSerializer().fromJson(json['checkOut'] as Timestamp?),
+      checkIn: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
+          json['checkIn'], const TimeOfDayConverter().fromJson),
+      checkOut: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
+          json['checkOut'], const TimeOfDayConverter().fromJson),
       city: json['city'] as String,
       cancellationPeriod: json['cancellationPeriod'] as num?,
       cooperative: ListingCooperative.fromJson(
@@ -39,10 +39,10 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           ?.map((e) => ListingCost.fromJson(e as Map<String, dynamic>))
           .toList(),
       numberOfUnits: json['numberOfUnits'] as num?,
-      openingHours: const TimestampSerializer()
-          .fromJson(json['openingHours'] as Timestamp?),
-      closingHours: const TimestampSerializer()
-          .fromJson(json['closingHours'] as Timestamp?),
+      openingHours: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
+          json['openingHours'], const TimeOfDayConverter().fromJson),
+      closingHours: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
+          json['closingHours'], const TimeOfDayConverter().fromJson),
       duration: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
           json['duration'], const TimeOfDayConverter().fromJson),
       pax: json['pax'] as num?,
@@ -86,8 +86,10 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
           instance.availableRooms?.map((e) => e.toJson()).toList(),
       'category': instance.category,
       'cancellationRate': instance.cancellationRate,
-      'checkIn': const TimestampSerializer().toJson(instance.checkIn),
-      'checkOut': const TimestampSerializer().toJson(instance.checkOut),
+      'checkIn': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
+          instance.checkIn, const TimeOfDayConverter().toJson),
+      'checkOut': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
+          instance.checkOut, const TimeOfDayConverter().toJson),
       'city': instance.city,
       'cancellationPeriod': instance.cancellationPeriod,
       'cooperative': instance.cooperative.toJson(),
@@ -98,8 +100,10 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'isPublished': instance.isPublished,
       'listingCosts': instance.listingCosts?.map((e) => e.toJson()).toList(),
       'numberOfUnits': instance.numberOfUnits,
-      'openingHours': const TimestampSerializer().toJson(instance.openingHours),
-      'closingHours': const TimestampSerializer().toJson(instance.closingHours),
+      'openingHours': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
+          instance.openingHours, const TimeOfDayConverter().toJson),
+      'closingHours': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
+          instance.closingHours, const TimeOfDayConverter().toJson),
       'duration': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
           instance.duration, const TimeOfDayConverter().toJson),
       'pax': instance.pax,
@@ -328,7 +332,8 @@ _$AvailableTimeImpl _$$AvailableTimeImplFromJson(Map<String, dynamic> json) =>
       available: json['available'] as bool,
       currentPax: json['currentPax'] as num,
       maxPax: json['maxPax'] as num,
-      time: DateTime.parse(json['time'] as String),
+      time: const TimeOfDayConverter()
+          .fromJson(json['time'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$AvailableTimeImplToJson(_$AvailableTimeImpl instance) =>
@@ -336,5 +341,5 @@ Map<String, dynamic> _$$AvailableTimeImplToJson(_$AvailableTimeImpl instance) =>
       'available': instance.available,
       'currentPax': instance.currentPax,
       'maxPax': instance.maxPax,
-      'time': instance.time.toIso8601String(),
+      'time': const TimeOfDayConverter().toJson(instance.time),
     };

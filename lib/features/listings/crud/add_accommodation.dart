@@ -56,8 +56,8 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   List<List<File>> roomImages = [];
   List<AvailableRoom> availableRooms = [];
 
-  TimeOfDay checkIn = TimeOfDay.now();
-  TimeOfDay checkOut = TimeOfDay.now();
+  TimeOfDay checkIn = const TimeOfDay(hour: 11, minute: 30);
+  TimeOfDay checkOut = const TimeOfDay(hour: 14, minute: 30);
 
   List<BookingTask>? fixedTasks = [];
 
@@ -113,10 +113,10 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                     address: _addressController.text,
                     category: widget.category,
                     city: "",
-                    checkIn: DateTime(DateTime.now().year)
-                        .copyWith(hour: checkIn.hour, minute: checkIn.minute),
-                    checkOut: DateTime(DateTime.now().year)
-                        .copyWith(hour: checkOut.hour, minute: checkOut.minute),
+                    checkIn:
+                        TimeOfDay(hour: checkIn.hour, minute: checkIn.minute),
+                    checkOut:
+                        TimeOfDay(hour: checkOut.hour, minute: checkOut.minute),
                     images: _images!.map((image) {
                       final imagePath =
                           'listings/${widget.coop.name}/${image.path.split('/').last}';
@@ -549,7 +549,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           onTap: () async {
             final TimeOfDay? pickedTime = await showTimePicker(
               context: context,
-              initialTime: const TimeOfDay(hour: 11, minute: 30),
+              initialTime: checkIn,
               initialEntryMode: TimePickerEntryMode.inputOnly,
               builder: (BuildContext context, Widget? child) {
                 return MediaQuery(
@@ -578,13 +578,13 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
             border: OutlineInputBorder(),
             floatingLabelBehavior:
                 FloatingLabelBehavior.always, // Keep the label always visible
-            hintText: "1:30",
+            hintText: "2:30",
           ),
           readOnly: true,
           onTap: () async {
             final TimeOfDay? pickedTime = await showTimePicker(
               context: context,
-              initialTime: const TimeOfDay(hour: 1, minute: 30),
+              initialTime: checkOut,
               initialEntryMode: TimePickerEntryMode.inputOnly,
               builder: (BuildContext context, Widget? child) {
                 return MediaQuery(
@@ -1573,7 +1573,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
     List<String> notes = [
       "Downpayment Rate: The necessary amount to be paid by a customer in order to book and reserve the service.",
       "Cancellation Rate: The amount that would not be refunded in the situation that a customer cancels their booking.",
-      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel and pay the full amount in the case for a downpayment. Otherwise their booking will be cancelled",
+      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel or pay the full amount in the case for a downpayment. Otherwise their booking will be cancelled",
       "Customers booking passed the cancellation period would be required to pay the downpayment or full amount upon checkout."
     ];
     return Column(
