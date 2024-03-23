@@ -55,7 +55,9 @@ import 'package:lakbay/features/listings/crud/category_page_controller.dart';
 import 'package:lakbay/features/listings/crud/choose_category.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_food_receipt.dart';
+import 'package:lakbay/features/listings/crud/customer_touring.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
+//import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/listings/transportation_booking_details.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
@@ -335,12 +337,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             booking: booking,
                             listing: listing,
                           );
-                        // case 'Touring':
-                        //   return SelectedTouringPage(
-                        //     listing: listing,
-                        //   );
+                         case 'Tour':
+                           return CustomerTouring(
+                             listing: listing,
+                           );
                         default:
-                          return AccommodationBookingsDetails(
+                          return BookingsAccomodationCustomer(
                             booking: booking,
                             listing: listing,
                           );
@@ -592,10 +594,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             //   return CustomerEntertainment(
                             //     listing: listing,
                             //   );
-                            // case 'touring':
-                            //   return SelectedTouringPage(
-                            //     listing: listing,
-                            //   );
+                            case 'tour':
+                              return CustomerTouring(
+                                listing: listing,
+                              );
                             default:
                               return AccommodationBookingsDetails(
                                 booking: booking,
@@ -665,7 +667,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     (context, pathParameters, extra) {
                       CooperativeModel coop = extra as CooperativeModel;
 
-                      return AddTour(coop: coop);
+                      return AddTour(
+                          coop: coop, category: 'Tour');
                     },
                     name: 'add_tour',
                   ),

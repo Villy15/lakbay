@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+//import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
@@ -269,19 +269,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     );
   }
 
-  Future<DateTime?> _selectDate(
-    BuildContext context,
-    DateTime initialDate,
-    DateTime firstDate,
-  ) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: firstDate,
-      lastDate: DateTime(2101),
-    );
-    return picked;
-  }
 
   Column steppers(BuildContext context) {
     return Column(
@@ -513,7 +500,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               controller: _selectedOpeningHoursController,
               maxLines: 1,
               decoration: const InputDecoration(
-                labelText: 'Opening Hours*',
+                labelText: 'Start Time*',
                 border: OutlineInputBorder(),
                 floatingLabelBehavior: FloatingLabelBehavior
                     .always, // Keep the label always visible
@@ -550,7 +537,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               controller: _selectedClosingHoursController,
               maxLines: 1,
               decoration: const InputDecoration(
-                labelText: 'Closing Hours*',
+                labelText: 'End Time*',
                 border: OutlineInputBorder(),
                 floatingLabelBehavior: FloatingLabelBehavior
                     .always, // Keep the label always visible
@@ -827,7 +814,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             hintText: "Price per person",
           ),
         ),
-        const SizedBox(height: 10),
         TextFormField(
           controller: _capacityController,
           maxLines: null,
@@ -914,6 +900,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
         ),
         const SizedBox(height: 10),
         datePicker(context, startDate, endDate),
+        const SizedBox(height: 10),
         const SizedBox(height: 10),
         const Text('Working Days',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),

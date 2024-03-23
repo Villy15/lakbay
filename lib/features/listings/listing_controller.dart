@@ -466,3 +466,5 @@ class ListingController extends StateNotifier<bool> {
     return _listingRepository.readEntertainmentByProperties(guests: guests);
   }
 }
+
+
