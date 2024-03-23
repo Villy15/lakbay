@@ -152,7 +152,7 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
           }).toList(),
         );
 
-        debugPrint('updatedPlan: $updatedPlan');
+        // debugPrint('updatedPlan: $updatedPlan');
 
         ref
             .read(plansControllerProvider.notifier)
@@ -308,14 +308,12 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                           return _buildCard(context, booking, listing);
                         },
                         error: ((error, stackTrace) {
-                          debugPrint('Error: $error');
                           return Text('Error: $error');
                         }),
                         loading: () => const CircularProgressIndicator());
               },
               loading: () => const CircularProgressIndicator(),
               error: (error, stackTrace) {
-                debugPrint('Error: $error');
                 return Text('Error: $error');
               },
             ),
@@ -488,22 +486,6 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                           ),
                         ],
                       ),
-
-                    // Align(
-                    //   alignment: Alignment.centerRight,
-                    //   child: Text(
-                    //     getDuration(
-                    //         widget.activity.startTime, widget.activity.endTime),
-                    //     style: TextStyle(
-                    //       color: Theme.of(context).colorScheme.primary,
-                    //       fontSize: 12,
-                    //     ),
-                    //   ),
-                    // ),
-                    // TextButton(
-                    //   onPressed: () => onTap(),
-                    //   child: const Text('Check In Details'),
-                    // ),
                   ],
                 ),
               ),

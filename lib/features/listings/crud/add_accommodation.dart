@@ -113,10 +113,10 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                     address: _addressController.text,
                     category: widget.category,
                     city: "",
-                    checkIn: DateTime(DateTime.now().year)
-                        .copyWith(hour: checkIn.hour, minute: checkIn.minute),
-                    checkOut: DateTime(DateTime.now().year)
-                        .copyWith(hour: checkOut.hour, minute: checkOut.minute),
+                    checkIn:
+                        TimeOfDay(hour: checkIn.hour, minute: checkIn.minute),
+                    checkOut:
+                        TimeOfDay(hour: checkOut.hour, minute: checkOut.minute),
                     images: _images!.map((image) {
                       final imagePath =
                           'listings/${widget.coop.name}/${image.path.split('/').last}';

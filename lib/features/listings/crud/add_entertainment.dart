@@ -198,20 +198,12 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                     pax: int.parse(_capacityController.text),
                     numberOfUnits: int.parse(_unitsController.text),
                     duration: duration,
-                    openingHours: DateTime(
-                      DateTime.now().year,
-                      DateTime.now().month,
-                      DateTime.now().day,
-                      _selectedOpeningHours.hour,
-                      _selectedOpeningHours.minute,
-                    ),
-                    closingHours: DateTime(
-                      DateTime.now().year,
-                      DateTime.now().month,
-                      DateTime.now().day,
-                      _selectedClosingHours.hour,
-                      _selectedClosingHours.minute,
-                    ),
+                    openingHours: TimeOfDay(
+                        hour: _selectedOpeningHours.hour,
+                        minute: _selectedOpeningHours.minute),
+                    closingHours: TimeOfDay(
+                        hour: _selectedClosingHours.hour,
+                        minute: _selectedClosingHours.minute),
                     guestInfo: _guestInfoController.text,
                     cancellationRate:
                         num.parse((_cancellationRateController.text)) / 100,

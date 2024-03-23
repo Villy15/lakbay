@@ -186,8 +186,8 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
       if (aStartTime == null) return 1;
       if (bStartTime == null) return -1;
       // If both have a startTime, compare them
-      debugPrint('This is the start time: $aStartTime');
-      debugPrint('This is the other start time: $bStartTime');
+      // debugPrint('This is the start time: $aStartTime');
+      // debugPrint('This is the other start time: $bStartTime');
       return aStartTime.compareTo(bStartTime);
     });
 
