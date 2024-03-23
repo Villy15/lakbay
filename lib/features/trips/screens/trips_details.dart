@@ -149,14 +149,16 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
   Widget daysPlan(PlanModel plan) {
     // debugPrint("Plan: $plan");
     final thisDay = plan.startDate!.add(Duration(days: _selectedDayIndex));
-    ref
-        .read(daysPlanProvider.notifier)
-        .setDays(plan.endDate!.difference(plan.startDate!).inDays + 1);
-    // q: what does the line of code above do?
-    // a: it sets the days plan provider to the number of days in the plan
+    Future.delayed(Duration.zero, () {
+      ref
+          .read(daysPlanProvider.notifier)
+          .setDays(plan.endDate!.difference(plan.startDate!).inDays + 1);
+      // q: what does the line of code above do?
+      // a: it sets the days plan provider to the number of days in the plan
 
-    ref.read(daysPlanProvider.notifier).setCurrentDay(thisDay);
-    // Filter and sort the activities list first
+      ref.read(daysPlanProvider.notifier).setCurrentDay(thisDay);
+      // Filter and sort the activities list first
+    });
     var filteredAndSortedActivities = plan.activities!.where((activity) {
       // if (activity.category == "Accommodation") {
       //   return (activity.startTime!.day == thisDay.day) ||
@@ -184,8 +186,8 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
       if (aStartTime == null) return 1;
       if (bStartTime == null) return -1;
       // If both have a startTime, compare them
-      debugPrint('This is the start time: $aStartTime');
-      debugPrint('This is the other start time: $bStartTime');
+      // debugPrint('This is the start time: $aStartTime');
+      // debugPrint('This is the other start time: $bStartTime');
       return aStartTime.compareTo(bStartTime);
     });
 

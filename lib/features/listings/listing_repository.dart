@@ -202,6 +202,7 @@ class ListingRepository {
     return query.snapshots().map((querySnapshot) {
       // Convert each document snapshot to a ListingBookings object
       return querySnapshot.docs.map((doc) {
+        debugPrint('doc: ${doc.data()}');
         return ListingBookings.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
