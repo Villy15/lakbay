@@ -37,7 +37,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 
   // stepper
   int activeStep = 0;
-  int upperBound = 5;
+  int upperBound = 6;
 
   // initial values
   String type = 'Rentals';
@@ -68,7 +68,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       TextEditingController(text: '8:30 AM');
   final TextEditingController _selectedClosingHoursController =
       TextEditingController(text: '5:30 PM  ');
-
+  final TextEditingController _cancellationRateController =
+      TextEditingController();
+  final TextEditingController _cancellationPeriodController =
+      TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -210,6 +213,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                       _selectedClosingHours.minute,
                     ),
                     guestInfo: _guestInfoController.text,
+                    cancellationRate:
+                        num.parse((_cancellationRateController.text)) / 100,
+                    cancellationPeriod:
+                        num.parse((_cancellationPeriodController.text)),
                   );
                   debugPrint(listing.toString());
                   //Update image URLs in the listing model
@@ -314,6 +321,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
+              Icons.policy,
+              color: Theme.of(context).colorScheme.background,
+            ),
+            Icon(
               Icons.summarize_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
@@ -355,6 +366,8 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       case 4:
         return calculateIntervals(context);
       case 5:
+        return addPolicies(context);
+      case 6:
         return reviewListing(context);
       default:
         return chooseType(context);
@@ -1244,6 +1257,58 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     return intervals;
   }
 
+  Widget addPolicies(BuildContext context) {
+    List<String> notes = [
+      "Cancellation Rate: The amount that would not be refunded in the situation that a customer cancels their booking.",
+      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel. Otherwise their booking will be cancelled",
+      "Customers booking passed the cancellation period would be required to pay the full amount upon checkout."
+    ];
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _cancellationRateController,
+                maxLines: 1,
+                decoration: const InputDecoration(
+                    labelText: 'Cancellation Rate (%)*',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 5",
+                    suffixText: "%"),
+                onTap: () {},
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: TextFormField(
+                controller: _cancellationPeriodController,
+                maxLines: 1,
+                keyboardType: TextInputType.number, // For numeric input
+                decoration: const InputDecoration(
+                    labelText:
+                        'Cancellation Period (Day/s)*', // Indicate it's a percentage
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 5 Days before the booked date",
+                    suffixText: "Day/s"),
+                onTap: () {
+                  // Handle tap if needed, e.g., showing a dialog to select a percentage
+                },
+              ),
+            ),
+          ],
+        ),
+        addNotes(notes),
+      ],
+    );
+  }
+
   Widget reviewListing(BuildContext context) {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1447,6 +1512,8 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       case 4:
         return 'Intervals and Availability';
       case 5:
+        return 'Add Policies';
+      case 6:
         return 'Review Listing';
       default:
         return 'Choose Type';

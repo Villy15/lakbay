@@ -35,9 +35,9 @@ class _CustomerAccomodationCheckoutState
   late num _maxGuestCount;
   late ListingBookings updatedBooking;
   PaymentOption _selectedPaymentOption =
-      PaymentOption.downpayment; // Default value
+      PaymentOption.fullPayment; // Default value
   late num vatAmount;
-  late num downpaymentAmount;
+  // late num downpaymentAmount;
   late num amountDue;
   @override
   void initState() {
@@ -47,9 +47,11 @@ class _CustomerAccomodationCheckoutState
     _endDate = widget.booking.endDate!;
     _maxGuestCount = widget.listing.pax!;
     updatedBooking = widget.booking;
-    downpaymentAmount = (widget.booking.price * _guestCount) * 1;
-    vatAmount = downpaymentAmount * (vat - 1);
-    amountDue = vatAmount + downpaymentAmount;
+    // downpaymentAmount = (widget.booking.price * _guestCount) * 1;
+    // vatAmount = downpaymentAmount * (vat - 1);
+    // amountDue = vatAmount + downpaymentAmount;
+    vatAmount = (widget.booking.price * _guestCount) * (vat - 1);
+    amountDue = (widget.booking.price * _guestCount) + vatAmount;
   }
 
   @override
@@ -347,22 +349,22 @@ class _CustomerAccomodationCheckoutState
               const SizedBox(height: 10),
 
               // Radio buttons for payment options
-              RadioListTile<PaymentOption>(
-                title: const Text('Downpayment'),
-                value: PaymentOption.downpayment,
-                groupValue: _selectedPaymentOption,
-                onChanged: (PaymentOption? value) {
-                  setState(() {
-                    _selectedPaymentOption = value!;
-                    downpaymentAmount =
-                        (widget.booking.price * _guestCount) * 1;
-                    vatAmount = (downpaymentAmount) * (vat - 1);
-                    amountDue = vatAmount + downpaymentAmount;
-                  });
-                },
-              ),
-              if (_selectedPaymentOption.name == "downpayment")
-                paymentOptionDetails(vatAmount, downpaymentAmount, amountDue),
+              // RadioListTile<PaymentOption>(
+              //   title: const Text('Downpayment'),
+              //   value: PaymentOption.downpayment,
+              //   groupValue: _selectedPaymentOption,
+              //   onChanged: (PaymentOption? value) {
+              //     setState(() {
+              //       _selectedPaymentOption = value!;
+              //       downpaymentAmount =
+              //           (widget.booking.price * _guestCount) * 1;
+              //       vatAmount = (downpaymentAmount) * (vat - 1);
+              //       amountDue = vatAmount + downpaymentAmount;
+              //     });
+              //   },
+              // ),
+              // if (_selectedPaymentOption.name == "downpayment")
+              //   paymentOptionDetails(vatAmount, downpaymentAmount, amountDue),
 
               RadioListTile<PaymentOption>(
                 title: const Text('Full Payment'),

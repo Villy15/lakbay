@@ -1573,7 +1573,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
     List<String> notes = [
       "Downpayment Rate: The necessary amount to be paid by a customer in order to book and reserve the service.",
       "Cancellation Rate: The amount that would not be refunded in the situation that a customer cancels their booking.",
-      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel and pay the full amount in the case for a downpayment. Otherwise their booking will be cancelled",
+      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel or pay the full amount in the case for a downpayment. Otherwise their booking will be cancelled",
       "Customers booking passed the cancellation period would be required to pay the downpayment or full amount upon checkout."
     ];
     return Column(

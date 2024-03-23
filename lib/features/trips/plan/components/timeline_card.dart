@@ -27,7 +27,6 @@ class TimelineCard extends ConsumerStatefulWidget {
 class _TimelineCardState extends ConsumerState<TimelineCard> {
   void onTap(ListingBookings booking, ListingModel listing) {
     // Action for Check In Details
-    debugPrint('Check In Details');
     context.push(
       '/bookings/booking_details',
       extra: {'booking': booking, 'listing': listing},
