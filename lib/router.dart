@@ -55,7 +55,6 @@ import 'package:lakbay/features/listings/crud/add_transport.dart';
 import 'package:lakbay/features/listings/crud/category_page_controller.dart';
 import 'package:lakbay/features/listings/crud/choose_category.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
-import 'package:lakbay/features/listings/crud/customer_entertainment.dart';
 import 'package:lakbay/features/listings/crud/customer_food_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_touring.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
@@ -176,13 +175,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               }),
 
               // Edit Profile Page
-              buildSubRoute('/profile/edit', (context, pathParameters, extra) {
-                UserModel user = extra as UserModel;
+              buildSubRoute(
+                '/profile/edit',
+                (context, pathParameters, extra) {
+                  UserModel user = extra as UserModel;
 
-                return EditProfilePage(
-                  user: user,
-                );
-              }),
+                  return EditProfilePage(
+                    user: user,
+                  );
+                },
+                name: 'edit_profile',
+              ),
 
               // My Coop Dashboard
               buildSubRoute('/my_coop/dashboard/:uid',
@@ -339,10 +342,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             booking: booking,
                             listing: listing,
                           );
-                         case 'Tour':
-                           return CustomerTouring(
-                             listing: listing,
-                           );
+                        case 'Tour':
+                          return CustomerTouring(
+                            listing: listing,
+                          );
                         default:
                           return BookingsAccomodationCustomer(
                             booking: booking,
@@ -669,8 +672,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     (context, pathParameters, extra) {
                       CooperativeModel coop = extra as CooperativeModel;
 
-                      return AddTour(
-                          coop: coop, category: 'Tour');
+                      return AddTour(coop: coop, category: 'Tour');
                     },
                     name: 'add_tour',
                   ),

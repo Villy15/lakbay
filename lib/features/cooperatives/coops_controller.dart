@@ -148,7 +148,7 @@ class CoopsController extends StateNotifier<bool> {
           cooperativesJoined: [
             ...?user.cooperativesJoined,
             CooperativesJoined(
-              cooperativeId: coop.uid!,
+              cooperativeId: coopUid,
               cooperativeName: coop.name,
               role: "Manager", // Set the role here
             ),
@@ -159,6 +159,30 @@ class CoopsController extends StateNotifier<bool> {
         _ref
             .read(usersControllerProvider.notifier)
             .editUserAfterRegisterCoop(user!.uid, updatedUser!);
+
+        var coopMember = CooperativeMembers(
+          name: user.name,
+          uid: user.uid,
+          privileges: [],
+          role: CooperativeMembersRole(
+            committeeName: '',
+            role: 'Manager',
+          ),
+          committees: [],
+          timestamp: DateTime.now(),
+        );
+
+        // Add user to members in Coop
+        _ref.read(coopsControllerProvider.notifier).addMember(
+              coopUid,
+              coopMember,
+              context,
+            );
+
+        // Initialized the privileges
+        _ref
+            .read(coopsControllerProvider.notifier)
+            .initializePrivileges(coopUid);
 
         state = false;
         showSnackBar(context, 'Cooperative registered successfully');
@@ -188,7 +212,8 @@ class CoopsController extends StateNotifier<bool> {
     );
   }
 
-  void joinCooperative(CooperativeModel coop, BuildContext context) async {
+  void joinCooperative(CooperativeModel coop, BuildContext context,
+      [bool? isManager]) async {
     state = true;
     final result = await _coopsRepository.updateCoop(coop);
 
@@ -202,6 +227,10 @@ class CoopsController extends StateNotifier<bool> {
         // Handle the success here
         final user = _ref.read(userProvider);
 
+        // If there is a passed optional parameter isManager
+        // then set the role to Manager else set it to Member
+        final role = isManager != null && isManager ? 'Manager' : 'Member';
+
         // Using copyWith to update the user
         final updatedUser = user?.copyWith(
           currentCoop: coop.uid,
@@ -211,7 +240,7 @@ class CoopsController extends StateNotifier<bool> {
             CooperativesJoined(
               cooperativeId: coop.uid!,
               cooperativeName: coop.name,
-              role: "Member", // Set the role here
+              role: role, // Set the role here
             ),
           ],
         );
@@ -227,7 +256,7 @@ class CoopsController extends StateNotifier<bool> {
           privileges: [],
           role: CooperativeMembersRole(
             committeeName: '',
-            role: 'Member',
+            role: role,
           ),
           committees: [],
           timestamp: DateTime.now(),

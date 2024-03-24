@@ -141,13 +141,11 @@ class _CustomerTransportCheckoutState
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold)),
                                     Text(DateFormat.yMMMd().format(_startDate)),
-                                    if (widget.booking.startTime != null) ... [
+                                    if (widget.booking.startTime != null) ...[
                                       Text(_formatTimeOfDay(
-                                        widget.booking.startTime!))
+                                          widget.booking.startTime!))
                                     ]
-                                    
-                                  ]
-                                  else ...[
+                                  ] else ...[
                                     Text(widget.booking.typeOfTrip!,
                                         style: const TextStyle(
                                             fontSize: 16,
@@ -363,7 +361,7 @@ class _CustomerTransportCheckoutState
                   SizedBox(
                     width: 70, // specify the width
                     height: 40, // specify the height
-                    child: Image.asset('lib/assets/images/paymaya.jpg'),
+                    child: Image.asset('lib/core/images/paymaya.png'),
                   ),
                   Icon(Icons.payment,
                       color: Theme.of(context).colorScheme.primary),

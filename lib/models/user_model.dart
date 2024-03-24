@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:lakbay/core/util/utils.dart';
 
 part 'user_model.freezed.dart';
 part 'user_model.g.dart';
@@ -7,19 +9,25 @@ part 'user_model.g.dart';
 class UserModel with _$UserModel {
   const UserModel._();
 
-  factory UserModel({
-    required String uid,
-    required String name,
-    required String profilePic,
-    String? phoneNo,
-    required bool isAuthenticated,
-    String? imageUrl,
-    String? firstName,
-    String? lastName,
-    bool? isCoopView,
-    List<CooperativesJoined>? cooperativesJoined,
-    String? currentCoop,
-  }) = _UserModel;
+  factory UserModel(
+      {required String uid,
+      required String name,
+      required String profilePic,
+      String? phoneNo,
+      String? email,
+      String? address,
+      String? emergencyContact,
+      required bool isAuthenticated,
+      String? imageUrl,
+      String? firstName,
+      String? lastName,
+      bool? isCoopView,
+      List<CooperativesJoined>? cooperativesJoined,
+      String? currentCoop,
+      String? validIdUrl,
+      String? birthCertificateUrl,
+      List<UserReviews>? reviews,
+      @TimestampSerializer() DateTime? createdAt}) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
@@ -55,4 +63,18 @@ class CooperativesJoined with _$CooperativesJoined {
 
   factory CooperativesJoined.fromJson(Map<String, dynamic> json) =>
       _$CooperativesJoinedFromJson(json);
+}
+
+@freezed
+class UserReviews with _$UserReviews {
+  factory UserReviews({
+    required String userId,
+    required String reviewerId,
+    required String listingId,
+    @TimestampSerializer() DateTime? createdAt,
+    required String review,
+  }) = _UserReviews;
+
+  factory UserReviews.fromJson(Map<String, dynamic> json) =>
+      _$UserReviewsFromJson(json);
 }

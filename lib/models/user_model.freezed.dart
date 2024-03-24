@@ -24,6 +24,9 @@ mixin _$UserModel {
   String get name => throw _privateConstructorUsedError;
   String get profilePic => throw _privateConstructorUsedError;
   String? get phoneNo => throw _privateConstructorUsedError;
+  String? get email => throw _privateConstructorUsedError;
+  String? get address => throw _privateConstructorUsedError;
+  String? get emergencyContact => throw _privateConstructorUsedError;
   bool get isAuthenticated => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
   String? get firstName => throw _privateConstructorUsedError;
@@ -32,6 +35,11 @@ mixin _$UserModel {
   List<CooperativesJoined>? get cooperativesJoined =>
       throw _privateConstructorUsedError;
   String? get currentCoop => throw _privateConstructorUsedError;
+  String? get validIdUrl => throw _privateConstructorUsedError;
+  String? get birthCertificateUrl => throw _privateConstructorUsedError;
+  List<UserReviews>? get reviews => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get createdAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -49,13 +57,20 @@ abstract class $UserModelCopyWith<$Res> {
       String name,
       String profilePic,
       String? phoneNo,
+      String? email,
+      String? address,
+      String? emergencyContact,
       bool isAuthenticated,
       String? imageUrl,
       String? firstName,
       String? lastName,
       bool? isCoopView,
       List<CooperativesJoined>? cooperativesJoined,
-      String? currentCoop});
+      String? currentCoop,
+      String? validIdUrl,
+      String? birthCertificateUrl,
+      List<UserReviews>? reviews,
+      @TimestampSerializer() DateTime? createdAt});
 }
 
 /// @nodoc
@@ -75,6 +90,9 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? name = null,
     Object? profilePic = null,
     Object? phoneNo = freezed,
+    Object? email = freezed,
+    Object? address = freezed,
+    Object? emergencyContact = freezed,
     Object? isAuthenticated = null,
     Object? imageUrl = freezed,
     Object? firstName = freezed,
@@ -82,6 +100,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? isCoopView = freezed,
     Object? cooperativesJoined = freezed,
     Object? currentCoop = freezed,
+    Object? validIdUrl = freezed,
+    Object? birthCertificateUrl = freezed,
+    Object? reviews = freezed,
+    Object? createdAt = freezed,
   }) {
     return _then(_value.copyWith(
       uid: null == uid
@@ -99,6 +121,18 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
       phoneNo: freezed == phoneNo
           ? _value.phoneNo
           : phoneNo // ignore: cast_nullable_to_non_nullable
+              as String?,
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+      emergencyContact: freezed == emergencyContact
+          ? _value.emergencyContact
+          : emergencyContact // ignore: cast_nullable_to_non_nullable
               as String?,
       isAuthenticated: null == isAuthenticated
           ? _value.isAuthenticated
@@ -128,6 +162,22 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.currentCoop
           : currentCoop // ignore: cast_nullable_to_non_nullable
               as String?,
+      validIdUrl: freezed == validIdUrl
+          ? _value.validIdUrl
+          : validIdUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      birthCertificateUrl: freezed == birthCertificateUrl
+          ? _value.birthCertificateUrl
+          : birthCertificateUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      reviews: freezed == reviews
+          ? _value.reviews
+          : reviews // ignore: cast_nullable_to_non_nullable
+              as List<UserReviews>?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -145,13 +195,20 @@ abstract class _$$UserModelImplCopyWith<$Res>
       String name,
       String profilePic,
       String? phoneNo,
+      String? email,
+      String? address,
+      String? emergencyContact,
       bool isAuthenticated,
       String? imageUrl,
       String? firstName,
       String? lastName,
       bool? isCoopView,
       List<CooperativesJoined>? cooperativesJoined,
-      String? currentCoop});
+      String? currentCoop,
+      String? validIdUrl,
+      String? birthCertificateUrl,
+      List<UserReviews>? reviews,
+      @TimestampSerializer() DateTime? createdAt});
 }
 
 /// @nodoc
@@ -169,6 +226,9 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? name = null,
     Object? profilePic = null,
     Object? phoneNo = freezed,
+    Object? email = freezed,
+    Object? address = freezed,
+    Object? emergencyContact = freezed,
     Object? isAuthenticated = null,
     Object? imageUrl = freezed,
     Object? firstName = freezed,
@@ -176,6 +236,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? isCoopView = freezed,
     Object? cooperativesJoined = freezed,
     Object? currentCoop = freezed,
+    Object? validIdUrl = freezed,
+    Object? birthCertificateUrl = freezed,
+    Object? reviews = freezed,
+    Object? createdAt = freezed,
   }) {
     return _then(_$UserModelImpl(
       uid: null == uid
@@ -193,6 +257,18 @@ class __$$UserModelImplCopyWithImpl<$Res>
       phoneNo: freezed == phoneNo
           ? _value.phoneNo
           : phoneNo // ignore: cast_nullable_to_non_nullable
+              as String?,
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+      emergencyContact: freezed == emergencyContact
+          ? _value.emergencyContact
+          : emergencyContact // ignore: cast_nullable_to_non_nullable
               as String?,
       isAuthenticated: null == isAuthenticated
           ? _value.isAuthenticated
@@ -222,6 +298,22 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.currentCoop
           : currentCoop // ignore: cast_nullable_to_non_nullable
               as String?,
+      validIdUrl: freezed == validIdUrl
+          ? _value.validIdUrl
+          : validIdUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      birthCertificateUrl: freezed == birthCertificateUrl
+          ? _value.birthCertificateUrl
+          : birthCertificateUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      reviews: freezed == reviews
+          ? _value._reviews
+          : reviews // ignore: cast_nullable_to_non_nullable
+              as List<UserReviews>?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -234,14 +326,22 @@ class _$UserModelImpl extends _UserModel {
       required this.name,
       required this.profilePic,
       this.phoneNo,
+      this.email,
+      this.address,
+      this.emergencyContact,
       required this.isAuthenticated,
       this.imageUrl,
       this.firstName,
       this.lastName,
       this.isCoopView,
       final List<CooperativesJoined>? cooperativesJoined,
-      this.currentCoop})
+      this.currentCoop,
+      this.validIdUrl,
+      this.birthCertificateUrl,
+      final List<UserReviews>? reviews,
+      @TimestampSerializer() this.createdAt})
       : _cooperativesJoined = cooperativesJoined,
+        _reviews = reviews,
         super._();
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -255,6 +355,12 @@ class _$UserModelImpl extends _UserModel {
   final String profilePic;
   @override
   final String? phoneNo;
+  @override
+  final String? email;
+  @override
+  final String? address;
+  @override
+  final String? emergencyContact;
   @override
   final bool isAuthenticated;
   @override
@@ -278,10 +384,27 @@ class _$UserModelImpl extends _UserModel {
 
   @override
   final String? currentCoop;
+  @override
+  final String? validIdUrl;
+  @override
+  final String? birthCertificateUrl;
+  final List<UserReviews>? _reviews;
+  @override
+  List<UserReviews>? get reviews {
+    final value = _reviews;
+    if (value == null) return null;
+    if (_reviews is EqualUnmodifiableListView) return _reviews;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @TimestampSerializer()
+  final DateTime? createdAt;
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, phoneNo: $phoneNo, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop)';
+    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, phoneNo: $phoneNo, email: $email, address: $address, emergencyContact: $emergencyContact, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop, validIdUrl: $validIdUrl, birthCertificateUrl: $birthCertificateUrl, reviews: $reviews, createdAt: $createdAt)';
   }
 
   @override
@@ -294,6 +417,10 @@ class _$UserModelImpl extends _UserModel {
             (identical(other.profilePic, profilePic) ||
                 other.profilePic == profilePic) &&
             (identical(other.phoneNo, phoneNo) || other.phoneNo == phoneNo) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.address, address) || other.address == address) &&
+            (identical(other.emergencyContact, emergencyContact) ||
+                other.emergencyContact == emergencyContact) &&
             (identical(other.isAuthenticated, isAuthenticated) ||
                 other.isAuthenticated == isAuthenticated) &&
             (identical(other.imageUrl, imageUrl) ||
@@ -307,7 +434,14 @@ class _$UserModelImpl extends _UserModel {
             const DeepCollectionEquality()
                 .equals(other._cooperativesJoined, _cooperativesJoined) &&
             (identical(other.currentCoop, currentCoop) ||
-                other.currentCoop == currentCoop));
+                other.currentCoop == currentCoop) &&
+            (identical(other.validIdUrl, validIdUrl) ||
+                other.validIdUrl == validIdUrl) &&
+            (identical(other.birthCertificateUrl, birthCertificateUrl) ||
+                other.birthCertificateUrl == birthCertificateUrl) &&
+            const DeepCollectionEquality().equals(other._reviews, _reviews) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
   }
 
   @JsonKey(ignore: true)
@@ -318,13 +452,20 @@ class _$UserModelImpl extends _UserModel {
       name,
       profilePic,
       phoneNo,
+      email,
+      address,
+      emergencyContact,
       isAuthenticated,
       imageUrl,
       firstName,
       lastName,
       isCoopView,
       const DeepCollectionEquality().hash(_cooperativesJoined),
-      currentCoop);
+      currentCoop,
+      validIdUrl,
+      birthCertificateUrl,
+      const DeepCollectionEquality().hash(_reviews),
+      createdAt);
 
   @JsonKey(ignore: true)
   @override
@@ -346,13 +487,20 @@ abstract class _UserModel extends UserModel {
       required final String name,
       required final String profilePic,
       final String? phoneNo,
+      final String? email,
+      final String? address,
+      final String? emergencyContact,
       required final bool isAuthenticated,
       final String? imageUrl,
       final String? firstName,
       final String? lastName,
       final bool? isCoopView,
       final List<CooperativesJoined>? cooperativesJoined,
-      final String? currentCoop}) = _$UserModelImpl;
+      final String? currentCoop,
+      final String? validIdUrl,
+      final String? birthCertificateUrl,
+      final List<UserReviews>? reviews,
+      @TimestampSerializer() final DateTime? createdAt}) = _$UserModelImpl;
   _UserModel._() : super._();
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
@@ -367,6 +515,12 @@ abstract class _UserModel extends UserModel {
   @override
   String? get phoneNo;
   @override
+  String? get email;
+  @override
+  String? get address;
+  @override
+  String? get emergencyContact;
+  @override
   bool get isAuthenticated;
   @override
   String? get imageUrl;
@@ -380,6 +534,15 @@ abstract class _UserModel extends UserModel {
   List<CooperativesJoined>? get cooperativesJoined;
   @override
   String? get currentCoop;
+  @override
+  String? get validIdUrl;
+  @override
+  String? get birthCertificateUrl;
+  @override
+  List<UserReviews>? get reviews;
+  @override
+  @TimestampSerializer()
+  DateTime? get createdAt;
   @override
   @JsonKey(ignore: true)
   _$$UserModelImplCopyWith<_$UserModelImpl> get copyWith =>
@@ -561,5 +724,232 @@ abstract class _CooperativesJoined implements CooperativesJoined {
   @override
   @JsonKey(ignore: true)
   _$$CooperativesJoinedImplCopyWith<_$CooperativesJoinedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+UserReviews _$UserReviewsFromJson(Map<String, dynamic> json) {
+  return _UserReviews.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UserReviews {
+  String get userId => throw _privateConstructorUsedError;
+  String get reviewerId => throw _privateConstructorUsedError;
+  String get listingId => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  String get review => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $UserReviewsCopyWith<UserReviews> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UserReviewsCopyWith<$Res> {
+  factory $UserReviewsCopyWith(
+          UserReviews value, $Res Function(UserReviews) then) =
+      _$UserReviewsCopyWithImpl<$Res, UserReviews>;
+  @useResult
+  $Res call(
+      {String userId,
+      String reviewerId,
+      String listingId,
+      @TimestampSerializer() DateTime? createdAt,
+      String review});
+}
+
+/// @nodoc
+class _$UserReviewsCopyWithImpl<$Res, $Val extends UserReviews>
+    implements $UserReviewsCopyWith<$Res> {
+  _$UserReviewsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? userId = null,
+    Object? reviewerId = null,
+    Object? listingId = null,
+    Object? createdAt = freezed,
+    Object? review = null,
+  }) {
+    return _then(_value.copyWith(
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      reviewerId: null == reviewerId
+          ? _value.reviewerId
+          : reviewerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      listingId: null == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      review: null == review
+          ? _value.review
+          : review // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UserReviewsImplCopyWith<$Res>
+    implements $UserReviewsCopyWith<$Res> {
+  factory _$$UserReviewsImplCopyWith(
+          _$UserReviewsImpl value, $Res Function(_$UserReviewsImpl) then) =
+      __$$UserReviewsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String userId,
+      String reviewerId,
+      String listingId,
+      @TimestampSerializer() DateTime? createdAt,
+      String review});
+}
+
+/// @nodoc
+class __$$UserReviewsImplCopyWithImpl<$Res>
+    extends _$UserReviewsCopyWithImpl<$Res, _$UserReviewsImpl>
+    implements _$$UserReviewsImplCopyWith<$Res> {
+  __$$UserReviewsImplCopyWithImpl(
+      _$UserReviewsImpl _value, $Res Function(_$UserReviewsImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? userId = null,
+    Object? reviewerId = null,
+    Object? listingId = null,
+    Object? createdAt = freezed,
+    Object? review = null,
+  }) {
+    return _then(_$UserReviewsImpl(
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      reviewerId: null == reviewerId
+          ? _value.reviewerId
+          : reviewerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      listingId: null == listingId
+          ? _value.listingId
+          : listingId // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      review: null == review
+          ? _value.review
+          : review // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UserReviewsImpl implements _UserReviews {
+  _$UserReviewsImpl(
+      {required this.userId,
+      required this.reviewerId,
+      required this.listingId,
+      @TimestampSerializer() this.createdAt,
+      required this.review});
+
+  factory _$UserReviewsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UserReviewsImplFromJson(json);
+
+  @override
+  final String userId;
+  @override
+  final String reviewerId;
+  @override
+  final String listingId;
+  @override
+  @TimestampSerializer()
+  final DateTime? createdAt;
+  @override
+  final String review;
+
+  @override
+  String toString() {
+    return 'UserReviews(userId: $userId, reviewerId: $reviewerId, listingId: $listingId, createdAt: $createdAt, review: $review)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UserReviewsImpl &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.reviewerId, reviewerId) ||
+                other.reviewerId == reviewerId) &&
+            (identical(other.listingId, listingId) ||
+                other.listingId == listingId) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.review, review) || other.review == review));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, userId, reviewerId, listingId, createdAt, review);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UserReviewsImplCopyWith<_$UserReviewsImpl> get copyWith =>
+      __$$UserReviewsImplCopyWithImpl<_$UserReviewsImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UserReviewsImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UserReviews implements UserReviews {
+  factory _UserReviews(
+      {required final String userId,
+      required final String reviewerId,
+      required final String listingId,
+      @TimestampSerializer() final DateTime? createdAt,
+      required final String review}) = _$UserReviewsImpl;
+
+  factory _UserReviews.fromJson(Map<String, dynamic> json) =
+      _$UserReviewsImpl.fromJson;
+
+  @override
+  String get userId;
+  @override
+  String get reviewerId;
+  @override
+  String get listingId;
+  @override
+  @TimestampSerializer()
+  DateTime? get createdAt;
+  @override
+  String get review;
+  @override
+  @JsonKey(ignore: true)
+  _$$UserReviewsImplCopyWith<_$UserReviewsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

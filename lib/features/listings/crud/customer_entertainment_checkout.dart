@@ -480,7 +480,7 @@ class _CustomerAccomodationCheckoutState
                   SizedBox(
                     width: 70, // specify the width
                     height: 40, // specify the height
-                    child: Image.asset('lib/assets/images/paymaya.jpg'),
+                    child: Image.asset('lib/core/images/paymaya.png'),
                   ),
                   Icon(Icons.payment,
                       color: Theme.of(context).colorScheme.primary),
