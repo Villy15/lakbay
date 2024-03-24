@@ -7,6 +7,7 @@ import 'package:lakbay/features/trips/plan/components/entertainment_card.dart';
 import 'package:lakbay/features/trips/plan/components/food_card.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
 import 'package:lakbay/features/trips/plan/components/transport_card.dart';
+import 'package:lakbay/features/trips/plan/components/trip_card.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -388,7 +389,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         return FoodCard(category: category, foodListings: widget.listings!);
 
       case "Tour":
-        return const Text("works");
+        return TripCard(category: category, tripListings: widget.listings!);
 
       case "Entertainment":
         return EntertainmentCard(
