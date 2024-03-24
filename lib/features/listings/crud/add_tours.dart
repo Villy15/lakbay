@@ -16,6 +16,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/coop_model.dart';
 
+
 enum IntervalOptions { paddedIntervals, fixedIntervals }
 
 class AddTour extends ConsumerStatefulWidget {
@@ -121,11 +122,14 @@ void submitAddListing() {
                   publisherId: ref.read(userProvider)!.uid,
                   publisherName: ref.read(userProvider)!.name,
                   price: num.parse(_priceController.text),
-                  pax: int.parse(_capacityController.text),
+                  
                   duration: duration,
-                   openingHours: TimeOfDay(
+                  openingHours: TimeOfDay(
                         hour: _selectedOpeningHours.hour,
                         minute: _selectedOpeningHours.minute),
+                  closingHours: TimeOfDay(
+                        hour: _selectedClosingHours.hour,
+                        minute: _selectedClosingHours.minute),
                   guestInfo: _guestInfoController.text,
                 );
                 debugPrint("Line 126");

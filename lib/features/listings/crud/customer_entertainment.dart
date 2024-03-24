@@ -261,56 +261,52 @@ for (int hour = openingHour; hour < closingHour; hour++) {
                       ],
                     ),
                     actions: [
-  Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Container(
-        width: 250,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.white, // Border color
-            width: 5.0, // Border width
-            
-          ),
-          borderRadius: BorderRadius.circular(30.0), // Border radius
-        ),
-        child: TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            Navigator.of(context).pop();
-          },
-          child: const Text(
-            "Confirm",
-            style: TextStyle(color: Colors.green), // Text color
-          ),
-        ),
-      ),
-    ],
-  ),
-],
-
-                  );
-                },
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              fixedSize: const Size(100, 36), // Adjust the width and height as needed
-            ),
-            child: Text(time),
-          ),
-          const SizedBox(width: 50), // Add space between button and text
-          Text(
-            'Slots : ${widget.listing.numberOfUnits}',
-            style: const TextStyle(fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-
-
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 250,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.white, // Border color
+                                    width: 5.0, // Border width
+                                    
+                                  ),
+                                  borderRadius: BorderRadius.circular(30.0), // Border radius
+                                ),
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    "Confirm",
+                                    style: TextStyle(color: Colors.green), // Text color
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size(100, 36), // Adjust the width and height as needed
+                                ),
+                                child: Text(time),
+                              ),
+                              const SizedBox(width: 50), // Add space between button and text
+                              Text(
+                                'Slots : ${widget.listing.numberOfUnits}',
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
