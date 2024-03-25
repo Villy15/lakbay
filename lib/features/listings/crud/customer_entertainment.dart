@@ -93,12 +93,22 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
                 ),
               ),
 
-              // No. of guests
               Padding(
                 padding: const EdgeInsets.only(top: 5, left: 12.0),
                 child: DisplayText(
                   text:
                       "Number of guests per booking: ${widget.listing.pax ?? 1}",
+                  lines: 1,
+                  style: const TextStyle(
+                      fontSize: 16),
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.only(top: 5, left: 12.0),
+                child: DisplayText(
+                  text:
+                      "Duration: ${widget.listing.duration!.hour.toInt()}:${widget.listing.duration!.minute.toInt()} ",
                   lines: 1,
                   style: const TextStyle(
                       fontSize: 16),

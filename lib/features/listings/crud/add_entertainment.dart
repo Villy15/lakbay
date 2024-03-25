@@ -494,6 +494,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               decoration: const InputDecoration(
                 labelText: 'Start Time*',
                 border: OutlineInputBorder(),
+                
                 floatingLabelBehavior: FloatingLabelBehavior
                     .always, // Keep the label always visible
                 hintText: "8:30 AM",

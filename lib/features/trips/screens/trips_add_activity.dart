@@ -278,8 +278,17 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                 break;
 
               case 'Tour':
-                context.push('/plan/add_activity/search_listing');
-
+              final query = FirebaseFirestore.instance
+                    .collection('listings')
+                    .where('category', isEqualTo: category["name"]);
+                final listings = await ref
+                    .watch(getListingsByPropertiesProvider(query).future);
+                if (context.mounted) {
+                  context.push('/plan/add_activity/search_listing', extra: {
+                    'listings': listings,
+                    'category': category["name"]
+                  });
+                }
                 break;
             }
           },
