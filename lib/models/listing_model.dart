@@ -43,7 +43,8 @@ class ListingModel with _$ListingModel {
     @TimestampSerializer() DateTime? timestamp,
     List<bool>? workingDays,
     required String title,
-    String? type, //[Private, Public, Rental, Performance, Activity]
+    String?
+        type, //[Private, Public, Rentals, Watching/Performances, Activities]
     List<FoodService>? availableDeals,
     List<ListingImages>? menuImgs,
     AvailableTransport? availableTransport,
@@ -122,8 +123,9 @@ class AvailableTransport with _$AvailableTransport {
     @TimeOfDayConverter() required TimeOfDay startTime,
     @TimeOfDayConverter() required TimeOfDay endTime,
     String? destination,
-    String? travelTime,
     String? pickupPoint,
+    String? travelTime,
+    num? priceByHour
   }) = _AvailableTransport;
 
   factory AvailableTransport.fromJson(Map<String, dynamic> json) =>
@@ -142,6 +144,8 @@ class FoodService with _$FoodService {
     required List<bool> workingDays,
     @TimeOfDayConverter() required TimeOfDay startTime,
     @TimeOfDayConverter() required TimeOfDay endTime,
+    // add the map of available tables here
+    List<Map<String, num>>? availableTables
   }) = _FoodService;
 
   factory FoodService.fromJson(Map<String, dynamic> json) =>

@@ -14,8 +14,8 @@ import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/listing_provider.dart';
-import 'package:lakbay/features/location/geocoding_repository.dart';
 import 'package:lakbay/features/location/map_repository.dart';
+import 'package:lakbay/features/tasks/widgets/today_task_card.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
@@ -60,18 +60,24 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   int departures = 0;
   final List<TextEditingController> _departureController = [];
   final List<TimeOfDay> _departureTime = [];
+  bool _showByHourFeeField = false;
 
   // controllers
   final TextEditingController _travelTimeController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _feeController = TextEditingController();
+  final TextEditingController _byHourFeeController = TextEditingController();
   final TextEditingController _addressController =
       TextEditingController(text: 'Eastwood City');
   final TextEditingController _destinationController =
       TextEditingController(text: 'Eastwood City');
   final TextEditingController _pickupController =
       TextEditingController(text: 'Eastwood City');
+  final TextEditingController _cancellationRateController =
+      TextEditingController();
+  final TextEditingController _cancellationPeriodController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +173,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 travelTime: _travelTimeController.text.isEmpty
                     ? null
                     : _travelTimeController.text,
+                priceByHour: _byHourFeeController.text.isEmpty
+                    ? null
+                    : num.parse(_byHourFeeController.text),
               );
 
               ListingModel listingModel = ListingModel(
@@ -185,7 +194,10 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                   publisherName: ref.read(userProvider)!.name,
                   images:
                       _images?.map((e) => ListingImages(path: e.path)).toList(),
-                  availableTransport: transport);
+                  availableTransport: transport,
+                  cancellationPeriod: num.parse(_cancellationPeriodController.text),
+                  cancellationRate: num.parse((_cancellationRateController.text)) / 100,
+                  );
 
               ref
                   .read(saveListingProvider.notifier)
@@ -810,6 +822,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           children: [
             Expanded(
               child: TextFormField(
+                controller: _cancellationRateController,
                 maxLines: 1,
                 decoration: const InputDecoration(
                     labelText: 'Cancellation Rate (%)*',
@@ -827,6 +840,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           height: 10,
         ),
         TextFormField(
+          controller: _cancellationPeriodController,
           maxLines: 1,
           keyboardType: TextInputType.number, // For numeric input
           decoration: const InputDecoration(
@@ -914,7 +928,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         TextFormField(
           controller: _feeController,
           decoration: const InputDecoration(
-              labelText: 'Price*',
+              labelText: 'Fixed Price*',
               prefix: Text('₱'),
               helperText: '*required',
               border: OutlineInputBorder(),
@@ -922,6 +936,43 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               hintText: "1000.00"),
         ),
         const SizedBox(height: 10),
+        if (type == 'Private') ...[
+          const Text('Add Price By Hour',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text('Would you like to add a price by hour?',
+              style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+          // add a button to add price by hour
+          const SizedBox(height: 10),
+          if (_showByHourFeeField) ...[
+            TextFormField(
+              controller: _byHourFeeController,
+              decoration: const InputDecoration(
+                  labelText: 'Price By Hour',
+                  border: OutlineInputBorder(),
+                  prefix: Text('₱'),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  hintText: "100.00"),
+            ),
+            const SizedBox(height: 10),
+          ],
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _showByHourFeeField = true;
+                  });
+                },
+                child: const Text('Add Price By Hour')),
+            ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _showByHourFeeField = false;
+                  });
+                },
+                child: const Text('Remove Price By Hour')),
+          ]),
+          const SizedBox(height: 10)
+        ],
         const Text('Guest Information',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const Text('Let the guests know how many people can stay...',
@@ -1267,14 +1318,17 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         ),
         const SizedBox(height: 10),
         TextFormField(
-          controller: _pickupController,
-          decoration: const InputDecoration(
-              labelText: 'Destination*',
-              helperText: '*required',
-              border: OutlineInputBorder(),
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: "Eastwood City"),
-        ),
+            controller: _pickupController,
+            decoration: const InputDecoration(
+                labelText: 'Destination*',
+                helperText: '*required',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                hintText: "Eastwood City"),
+            // readOnly: true,
+            onTap: () {
+              // make this pop another page so that
+            }),
         // Google Map
         const SizedBox(height: 15),
         SizedBox(
@@ -1330,47 +1384,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             child: const Text('Update Map'),
           ),
         ),
-        if (type == 'Public') ...[
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 12.0),
-            child: DisplayText(
-                text: "Travel Time",
-                lines: 1,
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextFormField(
-              controller: _travelTimeController,
-              decoration: const InputDecoration(
-                  labelText: 'Travel Time*',
-                  helperText: '*required',
-                  border: OutlineInputBorder(),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: "1 hour"),
-            ),
-          ),
-          // calculate the travel time
-          Center(
-            child: ElevatedButton(
-              onPressed: () async {
-                final mapRepository = ref.read(mapRepositoryProvider);
-                debugPrint(
-                    'this is the pickup point: ${_pickupController.text}');
-                debugPrint(
-                    'this is the destination point: ${_destinationController.text}');
-                // calculate the travel time
-                final travelTime = await mapRepository.calculateTravelTime(
-                    origin: _pickupController.text,
-                    destination: _destinationController.text);
-
-                debugPrint('this is the travel time: $travelTime');
-                _travelTimeController.text = travelTime;
-              },
-              child: const Text('Calculate Travel Time'),
-            ),
-          )
-        ]
       ],
     ]);
   }
@@ -1463,10 +1476,15 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             ),
           ] else ...[
             ListTile(
-              title: const Text('Price',
+              title: const Text('Whole Day Price',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               subtitle: Text("₱${_feeController.text}"),
             ),
+            ListTile(
+              title: const Text('Price By Hour',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              subtitle: Text("₱${_byHourFeeController.text} / per hour"),
+            )
           ],
 
           const Divider(),

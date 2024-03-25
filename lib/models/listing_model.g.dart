@@ -31,8 +31,6 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       description: json['description'] as String,
       downpaymentRate: json['downpaymentRate'] as num?,
       fixedCancellationRate: json['fixedCancellationRate'] as num?,
-      duration: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
-          json['duration'], const TimeOfDayConverter().fromJson),
       images: (json['images'] as List<dynamic>?)
           ?.map((e) => ListingImages.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -226,8 +224,9 @@ _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
       endTime: const TimeOfDayConverter()
           .fromJson(json['endTime'] as Map<String, dynamic>),
       destination: json['destination'] as String?,
-      travelTime: json['travelTime'] as String?,
       pickupPoint: json['pickupPoint'] as String?,
+      travelTime: json['travelTime'] as String?,
+      priceByHour: json['priceByHour'] as num?,
     );
 
 Map<String, dynamic> _$$AvailableTransportImplToJson(
@@ -247,8 +246,9 @@ Map<String, dynamic> _$$AvailableTransportImplToJson(
       'startTime': const TimeOfDayConverter().toJson(instance.startTime),
       'endTime': const TimeOfDayConverter().toJson(instance.endTime),
       'destination': instance.destination,
-      'travelTime': instance.travelTime,
       'pickupPoint': instance.pickupPoint,
+      'travelTime': instance.travelTime,
+      'priceByHour': instance.priceByHour,
     };
 
 _$FoodServiceImpl _$$FoodServiceImplFromJson(Map<String, dynamic> json) =>
@@ -267,6 +267,9 @@ _$FoodServiceImpl _$$FoodServiceImplFromJson(Map<String, dynamic> json) =>
           .fromJson(json['startTime'] as Map<String, dynamic>),
       endTime: const TimeOfDayConverter()
           .fromJson(json['endTime'] as Map<String, dynamic>),
+      availableTables: (json['availableTables'] as List<dynamic>?)
+          ?.map((e) => Map<String, num>.from(e as Map))
+          .toList(),
     );
 
 Map<String, dynamic> _$$FoodServiceImplToJson(_$FoodServiceImpl instance) =>
@@ -280,6 +283,7 @@ Map<String, dynamic> _$$FoodServiceImplToJson(_$FoodServiceImpl instance) =>
       'workingDays': instance.workingDays,
       'startTime': const TimeOfDayConverter().toJson(instance.startTime),
       'endTime': const TimeOfDayConverter().toJson(instance.endTime),
+      'availableTables': instance.availableTables,
     };
 
 _$EntertainmentServiceImpl _$$EntertainmentServiceImplFromJson(
