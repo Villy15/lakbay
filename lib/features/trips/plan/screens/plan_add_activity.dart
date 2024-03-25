@@ -177,9 +177,9 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
                             shrinkWrap: true,
                             itemCount: listings.length,
                             itemBuilder: (context, index) {
-                              final listing = listings[index];
-                              return TripCard(
-                                listing: listing,
+                              //final listing = listings[index];
+                              return const TripCard(
+                                 category: '', tripListings: [],
                               );
                             },
                           );

@@ -401,6 +401,13 @@ class CoopsRepository {
     });
   }
 
+  // Read a goal in goals subcollection
+  Stream<CoopGoals> readGoal(String coopId, String uid) {
+    return goals(coopId).doc(uid).snapshots().map((snapshot) {
+      return CoopGoals.fromJson(snapshot.data() as Map<String, dynamic>);
+    });
+  }
+
   // Update vote
   FutureVoid updateVote(String coopId, CoopVote coopVote) async {
     try {

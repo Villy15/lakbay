@@ -63,10 +63,13 @@ class AuthRepository {
       // Check if user already exists
       if (userCredential.additionalUserInfo!.isNewUser) {
         userModel = UserModel(
-            uid: userCredential.user?.uid ?? "",
-            name: userCredential.user?.displayName ?? "User Name",
-            profilePic: photoUrl ?? Constants.profilePic,
-            isAuthenticated: true);
+          uid: userCredential.user?.uid ?? "",
+          name: userCredential.user?.displayName ?? "User Name",
+          profilePic: photoUrl ?? Constants.profilePic,
+          isAuthenticated: true,
+          email: userCredential.user?.email ?? "",
+          createdAt: DateTime.now(),
+        );
 
         await _users.doc(userCredential.user!.uid).set(userModel.toJson());
       } else {
@@ -110,10 +113,13 @@ class AuthRepository {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       UserModel userModel = UserModel(
-          uid: userCredential.user?.uid ?? "",
-          name: userCredential.user?.displayName ?? "Lakbay User",
-          profilePic: '',
-          isAuthenticated: true);
+        uid: userCredential.user?.uid ?? "",
+        name: userCredential.user?.displayName ?? "Lakbay User",
+        profilePic: '',
+        isAuthenticated: true,
+        email: email,
+        createdAt: DateTime.now(),
+      );
 
       await _users.doc(userCredential.user!.uid).set(userModel.toJson());
 

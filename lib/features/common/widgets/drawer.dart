@@ -211,13 +211,6 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                   ),
 
                   //Go to customer home
-                  widget.user!.isCoopView ?? false
-                      ? const SizedBox.shrink()
-                      : ListTile(
-                          title: const Text('Home'),
-                          leading: const Icon(Icons.home),
-                          onTap: () => {viewHome(ref)},
-                        ),
 
                   // View customer profile
                   ListTile(
@@ -292,8 +285,8 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
                     child: ListTile(
-                      title: const Text('Settings'),
-                      leading: const Icon(Icons.settings),
+                      title: const Text('Logout'),
+                      leading: const Icon(Icons.logout),
                       trailing: IconButton(
                           onPressed: () => toggleTheme(ref),
                           icon: Icon(

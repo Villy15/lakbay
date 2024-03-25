@@ -673,10 +673,6 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           context.pop();
                           context.pop();
                         });
-
-                        // ref
-                        //     .read(listingControllerProvider.notifier)
-                        //     .addBooking(booking, widget.listing, context);
                       },
                       child: const Text('Proceed'),
                     ),

@@ -16,8 +16,8 @@ class ListingModel with _$ListingModel {
     List<AvailableRoom>? availableRooms,
     required String category,
     num? cancellationRate,
-    @TimestampSerializer() DateTime? checkIn,
-    @TimestampSerializer() DateTime? checkOut,
+    @TimeOfDayConverter() TimeOfDay? checkIn,
+    @TimeOfDayConverter() TimeOfDay? checkOut,
     required String city,
     num? cancellationPeriod,
     required ListingCooperative cooperative,
@@ -28,8 +28,8 @@ class ListingModel with _$ListingModel {
     bool? isPublished,
     List<ListingCost>? listingCosts,
     num? numberOfUnits,
-    @TimestampSerializer() DateTime? openingHours,
-    @TimestampSerializer() DateTime? closingHours,
+    @TimeOfDayConverter() TimeOfDay? openingHours,
+    @TimeOfDayConverter() TimeOfDay? closingHours,
     @TimeOfDayConverter()
     TimeOfDay? duration, //[Travel Duration, Entertainment Duration]
     num? pax,
@@ -184,7 +184,7 @@ class AvailableTime with _$AvailableTime {
     required bool available,
     required num currentPax,
     required num maxPax,
-    @TimestampSerializer() required DateTime time,
+    @TimeOfDayConverter() required TimeOfDay time,
   }) = _AvailableTime;
 
   factory AvailableTime.fromJson(Map<String, dynamic> json) =>

@@ -12,14 +12,14 @@ class CustomerFoodCheckout extends ConsumerStatefulWidget {
   final ListingBookings booking;
 
   const CustomerFoodCheckout(
-    {super.key,
-    required this.listing,
-    required this.foodService,
-    required this.booking}
-  );
+      {super.key,
+      required this.listing,
+      required this.foodService,
+      required this.booking});
 
   @override
-  ConsumerState<CustomerFoodCheckout> createState() => _CustomerFoodCheckoutState();
+  ConsumerState<CustomerFoodCheckout> createState() =>
+      _CustomerFoodCheckoutState();
 }
 
 class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
@@ -51,25 +51,21 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(context, "Checkout"),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _listingSummary(context, widget.listing),
-            _tripDetails(context),
-            _priceDetails(context),
-            _listingRules(context),
-            _confirmPay(context),
-          ]
-        )
-      )
-    );
+        appBar: _appBar(context, "Checkout"),
+        body: SingleChildScrollView(
+            child: Column(children: [
+          _listingSummary(context, widget.listing),
+          _tripDetails(context),
+          _priceDetails(context),
+          _listingRules(context),
+          _confirmPay(context),
+        ])));
   }
-  
+
   AppBar _appBar(BuildContext context, String title) {
     return AppBar(
       title: Text(
-        title, 
+        title,
         style: TextStyle(
           color: Theme.of(context).colorScheme.primary,
         ),
@@ -83,45 +79,29 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
   Widget _listingSummary(BuildContext context, ListingModel listing) {
     List<String?> imageUrls = widget.listing.images!.map((e) => e.url).toList();
     return InkWell(
-      onTap: () {
-
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 100,
-              width: 150,
-              child: ImageSlider(
-                images: imageUrls,
-                height: 100,
-                width: 150,
-                radius: BorderRadius.circular(10)
-              )
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.listing.title,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
-                      )
-                    ),
-                  ]
-                )
-              )
-            )
-          ]
-        )
-      )
-    );
+        onTap: () {},
+        child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              SizedBox(
+                  height: 100,
+                  width: 150,
+                  child: ImageSlider(
+                      images: imageUrls,
+                      height: 100,
+                      width: 150,
+                      radius: BorderRadius.circular(10))),
+              Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(widget.listing.title,
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                          ])))
+            ])));
   }
 
   String _formatTimeOfDay(TimeOfDay time) {
@@ -133,143 +113,98 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
 
   Widget _tripDetails(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-               'Your Reservation Details:', 
-               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold
-               )
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Date',
+        padding: const EdgeInsets.all(16),
+        child: Card(
+            child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Your Reservation Details:',
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold
-                        )
-                      ),
-                      Text(DateFormat.yMMMd().format(_startDate!)),
-                      Text(
-                        'Number of Guests: $_guestCount'
-                      )
-                    ]
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text('Edit')
-                  )
-                ]
-              )
-            ],
-          )
-        )
-      )
-    );
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Date',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold)),
+                                Text(DateFormat.yMMMd().format(_startDate!)),
+                                Text('Number of Guests: $_guestCount')
+                              ]),
+                          TextButton(
+                              onPressed: () {}, child: const Text('Edit'))
+                        ])
+                  ],
+                ))));
   }
 
   Widget _priceDetails(BuildContext context) {
     bool paymentMoreInfo = false;
 
-    return StatefulBuilder(
-      builder: ((context, setState) {
-        return Padding(
+    return StatefulBuilder(builder: ((context, setState) {
+      return Padding(
           padding: const EdgeInsets.all(16),
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Price Details',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold
-                    )
-                  ),
-                  const SizedBox(height: 10),
-                  ListTile(
-                    leading: Icon(
-                      Icons.circle,
-                      color: Theme.of(context).colorScheme.primary
-                    ),
-                    title: Text(_paymentOption)
-                  ),
-                  Column(
-                    children: [
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Price Details',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    ListTile(
+                        leading: Icon(Icons.circle,
+                            color: Theme.of(context).colorScheme.primary),
+                        title: Text(_paymentOption)),
+                    Column(children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Total:',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                            )
-                          ),
-                          Text(
-                            '₱${amountTotal.toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold
-                            )
-                          )
-                        ]
-                      ),
-                      if (paymentMoreInfo == true) 
-                      Container(
-                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
+                            const Text('Total:',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                            Text('₱${amountTotal.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold))
+                          ]),
+                      if (paymentMoreInfo == true)
+                        Container(
+                            child: Column(children: [
+                          Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 const Text('VAT (12%):',
-                                              style: TextStyle(fontSize: 12)),
-                                          Text('₱${vatAmount.toStringAsFixed(2)}',
-                                              style: const TextStyle(fontSize: 16))
-                              ]
-                            )
-                          ]
-                        )
-                      ),
+                                    style: TextStyle(fontSize: 12)),
+                                Text('₱${vatAmount.toStringAsFixed(2)}',
+                                    style: const TextStyle(fontSize: 16))
+                              ])
+                        ])),
                       Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              paymentMoreInfo = true;
-                            });
-                          },
-                          child: const Text('More info')
-                        )
-                      ),
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  paymentMoreInfo = true;
+                                });
+                              },
+                              child: const Text('More info'))),
                       const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Divider()
-                      )
-                    ]
-                  )
-                ]
-              ),
+                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                          child: Divider())
+                    ])
+                  ]),
             ),
-          ) 
-        );  
-      })
-    );
+          ));
+    }));
   }
 
   Widget _listingRules(BuildContext context) {
@@ -311,6 +246,7 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
       ),
     );
   }
+
   Widget _confirmPay(BuildContext context) {
     return Card(
         child: Padding(
@@ -367,7 +303,7 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
                   SizedBox(
                     width: 70, // specify the width
                     height: 40, // specify the height
-                    child: Image.asset('lib/assets/images/paymaya.jpg'),
+                    child: Image.asset('lib/core/images/paymaya.png'),
                   ),
                   Icon(Icons.payment,
                       color: Theme.of(context).colorScheme.primary),
@@ -385,6 +321,5 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
         ),
       ),
     );
-  } 
+  }
 }
-

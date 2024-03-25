@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/days_provider.dart';
@@ -98,14 +99,37 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
           ref.watch(getBookingsByPropertiesProvider(query)).when(
                 data: (bookings) {
                   if (bookings.isEmpty) {
-                    return const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'No Bookings Yet',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'lib/core/images/SleepingCatFromGlitch.svg',
+                            height: 100, // Adjust height as desired
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            'No Bookings yet!',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Add a new activity ',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const Text(
+                            'and make a reservation!',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     );
                   }
@@ -149,14 +173,16 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
   Widget daysPlan(PlanModel plan) {
     // debugPrint("Plan: $plan");
     final thisDay = plan.startDate!.add(Duration(days: _selectedDayIndex));
-    ref
-        .read(daysPlanProvider.notifier)
-        .setDays(plan.endDate!.difference(plan.startDate!).inDays + 1);
-    // q: what does the line of code above do?
-    // a: it sets the days plan provider to the number of days in the plan
+    Future.delayed(Duration.zero, () {
+      ref
+          .read(daysPlanProvider.notifier)
+          .setDays(plan.endDate!.difference(plan.startDate!).inDays + 1);
+      // q: what does the line of code above do?
+      // a: it sets the days plan provider to the number of days in the plan
 
-    ref.read(daysPlanProvider.notifier).setCurrentDay(thisDay);
-    // Filter and sort the activities list first
+      ref.read(daysPlanProvider.notifier).setCurrentDay(thisDay);
+      // Filter and sort the activities list first
+    });
     var filteredAndSortedActivities = plan.activities!.where((activity) {
       // if (activity.category == "Accommodation") {
       //   return (activity.startTime!.day == thisDay.day) ||
@@ -184,8 +210,8 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
       if (aStartTime == null) return 1;
       if (bStartTime == null) return -1;
       // If both have a startTime, compare them
-      debugPrint('This is the start time: $aStartTime');
-      debugPrint('This is the other start time: $bStartTime');
+      // debugPrint('This is the start time: $aStartTime');
+      // debugPrint('This is the other start time: $bStartTime');
       return aStartTime.compareTo(bStartTime);
     });
 

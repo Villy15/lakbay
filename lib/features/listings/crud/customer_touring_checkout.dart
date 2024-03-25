@@ -10,35 +10,34 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 enum PaymentOption { downpayment, fullPayment }
 
-class CustomerAccommodationCheckout extends ConsumerStatefulWidget {
+class CustomerTripCheckout extends ConsumerStatefulWidget {
   final ListingModel listing;
-  final AvailableRoom room;
+  final AvailableTime availableTime;
   final ListingBookings booking;
 
-  const CustomerAccommodationCheckout(
+  const CustomerTripCheckout(
       {super.key,
       required this.listing,
-      required this.room,
+      required this.availableTime,
       required this.booking});
 
   @override
-  ConsumerState<CustomerAccommodationCheckout> createState() =>
+  ConsumerState<CustomerTripCheckout> createState() =>
       _CustomerAccomodationCheckoutState();
 }
 
 class _CustomerAccomodationCheckoutState
-    extends ConsumerState<CustomerAccommodationCheckout> {
+    extends ConsumerState<CustomerTripCheckout> {
   late num _guestCount;
   late DateTime _startDate;
   late DateTime _endDate;
-  late num _nights;
   num vat = 1.12;
   late num _maxGuestCount;
   late ListingBookings updatedBooking;
   PaymentOption _selectedPaymentOption =
-      PaymentOption.downpayment; // Default value
+      PaymentOption.fullPayment; // Default value
   late num vatAmount;
-  late num downpaymentAmount;
+  // late num downpaymentAmount;
   late num amountDue;
   @override
   void initState() {
@@ -46,13 +45,13 @@ class _CustomerAccomodationCheckoutState
     _guestCount = widget.booking.guests;
     _startDate = widget.booking.startDate!;
     _endDate = widget.booking.endDate!;
-    _nights = _endDate.difference(_startDate).inDays;
-    _maxGuestCount = widget.room.guests;
+    _maxGuestCount = widget.listing.pax!;
     updatedBooking = widget.booking;
-    downpaymentAmount =
-        (widget.booking.price * _nights) * widget.listing.downpaymentRate!;
-    vatAmount = downpaymentAmount * (vat - 1);
-    amountDue = vatAmount + downpaymentAmount;
+    // downpaymentAmount = (widget.booking.price * _guestCount) * 1;
+    // vatAmount = downpaymentAmount * (vat - 1);
+    // amountDue = vatAmount + downpaymentAmount;
+    vatAmount = (widget.booking.price * _guestCount) * (vat - 1);
+    amountDue = (widget.booking.price * _guestCount) + vatAmount;
   }
 
   @override
@@ -100,7 +99,7 @@ class _CustomerAccomodationCheckoutState
               onPressed: () {
                 String paymentOption;
                 String paymentStatus;
-                num totalPrice = (updatedBooking.price * _nights) * vat * 1;
+                num totalPrice = (updatedBooking.price * _guestCount) * vat * 1;
 
                 if (_selectedPaymentOption.name == "downpayment") {
                   paymentOption = "Downpayment";
@@ -187,7 +186,7 @@ class _CustomerAccomodationCheckoutState
   Widget _listingSummary(BuildContext context, ListingModel listing) {
     // You will need to replace the Image.network with an image from your model
     List<String?> imageUrls =
-        widget.room.images!.map((roomImage) => roomImage.url).toList();
+        widget.listing.images!.map((listing) => listing.url).toList();
     return InkWell(
       onTap: () {
         // Handle tap
@@ -218,10 +217,6 @@ class _CustomerAccomodationCheckoutState
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      "${widget.room.bedrooms} Bedroom",
-                      style: const TextStyle(fontSize: 20),
-                    )
                   ],
                 ),
               ),
@@ -251,11 +246,11 @@ class _CustomerAccomodationCheckoutState
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Dates',
+                      const Text('Date',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                       Text(
-                          '${DateFormat('dd MMM').format(_startDate)} - ${DateFormat('dd MMM').format(_endDate)} (${_endDate.difference(_startDate).inDays} nights)',
+                          '${DateFormat('dd MMM').format(_startDate)}\n${DateFormat('hh:mm a').format(_startDate)} - ${DateFormat('hh:mm a').format(_endDate)}',
                           style: const TextStyle(
                             fontSize: 16,
                           )),
@@ -296,7 +291,6 @@ class _CustomerAccomodationCheckoutState
                         setState(() {
                           _startDate = result.startDate!;
                           _endDate = result.endDate!;
-                          _nights = _endDate.difference(_startDate).inDays;
                         });
                       }
                     },
@@ -322,7 +316,8 @@ class _CustomerAccomodationCheckoutState
                           style: const TextStyle(
                             fontSize: 16,
                           )),
-                      Text('This place has a maximum of $_maxGuestCount guests',
+                      Text(
+                          'This rental has a remaining capacity of ${_maxGuestCount - widget.availableTime.currentPax}',
                           style: TextStyle(
                               fontSize: 12,
                               color: Theme.of(context).colorScheme.primary,
@@ -354,22 +349,22 @@ class _CustomerAccomodationCheckoutState
               const SizedBox(height: 10),
 
               // Radio buttons for payment options
-              RadioListTile<PaymentOption>(
-                title: const Text('Downpayment'),
-                value: PaymentOption.downpayment,
-                groupValue: _selectedPaymentOption,
-                onChanged: (PaymentOption? value) {
-                  setState(() {
-                    _selectedPaymentOption = value!;
-                    downpaymentAmount = (widget.booking.price * _nights) *
-                        widget.listing.downpaymentRate!;
-                    vatAmount = (downpaymentAmount) * (vat - 1);
-                    amountDue = vatAmount + downpaymentAmount;
-                  });
-                },
-              ),
-              if (_selectedPaymentOption.name == "downpayment")
-                paymentOptionDetails(vatAmount, downpaymentAmount, amountDue),
+              // RadioListTile<PaymentOption>(
+              //   title: const Text('Downpayment'),
+              //   value: PaymentOption.downpayment,
+              //   groupValue: _selectedPaymentOption,
+              //   onChanged: (PaymentOption? value) {
+              //     setState(() {
+              //       _selectedPaymentOption = value!;
+              //       downpaymentAmount =
+              //           (widget.booking.price * _guestCount) * 1;
+              //       vatAmount = (downpaymentAmount) * (vat - 1);
+              //       amountDue = vatAmount + downpaymentAmount;
+              //     });
+              //   },
+              // ),
+              // if (_selectedPaymentOption.name == "downpayment")
+              //   paymentOptionDetails(vatAmount, downpaymentAmount, amountDue),
 
               RadioListTile<PaymentOption>(
                 title: const Text('Full Payment'),
@@ -378,8 +373,10 @@ class _CustomerAccomodationCheckoutState
                 onChanged: (PaymentOption? value) {
                   setState(() {
                     _selectedPaymentOption = value!;
-                    vatAmount = (widget.booking.price * _nights) * (vat - 1);
-                    amountDue = (widget.booking.price * _nights) + vatAmount;
+                    vatAmount =
+                        (widget.booking.price * _guestCount) * (vat - 1);
+                    amountDue =
+                        (widget.booking.price * _guestCount) + vatAmount;
                   });
                 },
               ),
@@ -400,11 +397,11 @@ class _CustomerAccomodationCheckoutState
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('₱${widget.booking.price} x $_nights nights',
+            Text('₱${widget.booking.price} x $_guestCount',
                 style: const TextStyle(
                   fontSize: 16,
                 )),
-            Text('₱${(widget.booking.price * _nights).toStringAsFixed(2)}',
+            Text('₱${(widget.booking.price * _guestCount).toStringAsFixed(2)}',
                 style: const TextStyle(
                   fontSize: 16,
                 )),
@@ -439,7 +436,7 @@ class _CustomerAccomodationCheckoutState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                        "Downpayment Rate (${(widget.listing.downpaymentRate! * 100).toStringAsFixed(0)}%):"),
+                        "Downpayment Rate (${(1 * 100).toStringAsFixed(0)}%):"),
                     Text("₱${downpaymentAmount?.toStringAsFixed(2)}"),
                   ],
                 ),
@@ -483,7 +480,7 @@ class _CustomerAccomodationCheckoutState
                   SizedBox(
                     width: 70, // specify the width
                     height: 40, // specify the height
-                    child: Image.asset('lib/core/images/paymaya.png'),
+                    child: Image.asset('lib/assets/images/paymaya.jpg'),
                   ),
                   Icon(Icons.payment,
                       color: Theme.of(context).colorScheme.primary),

@@ -26,10 +26,10 @@ mixin _$ListingModel {
   List<AvailableRoom>? get availableRooms => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
   num? get cancellationRate => throw _privateConstructorUsedError;
-  @TimestampSerializer()
-  DateTime? get checkIn => throw _privateConstructorUsedError;
-  @TimestampSerializer()
-  DateTime? get checkOut => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay? get checkIn => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay? get checkOut => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
   num? get cancellationPeriod => throw _privateConstructorUsedError;
   ListingCooperative get cooperative => throw _privateConstructorUsedError;
@@ -40,10 +40,10 @@ mixin _$ListingModel {
   bool? get isPublished => throw _privateConstructorUsedError;
   List<ListingCost>? get listingCosts => throw _privateConstructorUsedError;
   num? get numberOfUnits => throw _privateConstructorUsedError;
-  @TimestampSerializer()
-  DateTime? get openingHours => throw _privateConstructorUsedError;
-  @TimestampSerializer()
-  DateTime? get closingHours => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay? get openingHours => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay? get closingHours => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
   TimeOfDay? get duration =>
       throw _privateConstructorUsedError; //[Travel Duration, Entertainment Duration]
@@ -86,8 +86,8 @@ abstract class $ListingModelCopyWith<$Res> {
       List<AvailableRoom>? availableRooms,
       String category,
       num? cancellationRate,
-      @TimestampSerializer() DateTime? checkIn,
-      @TimestampSerializer() DateTime? checkOut,
+      @TimeOfDayConverter() TimeOfDay? checkIn,
+      @TimeOfDayConverter() TimeOfDay? checkOut,
       String city,
       num? cancellationPeriod,
       ListingCooperative cooperative,
@@ -98,8 +98,8 @@ abstract class $ListingModelCopyWith<$Res> {
       bool? isPublished,
       List<ListingCost>? listingCosts,
       num? numberOfUnits,
-      @TimestampSerializer() DateTime? openingHours,
-      @TimestampSerializer() DateTime? closingHours,
+      @TimeOfDayConverter() TimeOfDay? openingHours,
+      @TimeOfDayConverter() TimeOfDay? closingHours,
       @TimeOfDayConverter() TimeOfDay? duration,
       num? pax,
       num? price,
@@ -201,11 +201,11 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
       checkIn: freezed == checkIn
           ? _value.checkIn
           : checkIn // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as TimeOfDay?,
       checkOut: freezed == checkOut
           ? _value.checkOut
           : checkOut // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as TimeOfDay?,
       city: null == city
           ? _value.city
           : city // ignore: cast_nullable_to_non_nullable
@@ -249,11 +249,11 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
       openingHours: freezed == openingHours
           ? _value.openingHours
           : openingHours // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as TimeOfDay?,
       closingHours: freezed == closingHours
           ? _value.closingHours
           : closingHours // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as TimeOfDay?,
       duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
@@ -362,8 +362,8 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       List<AvailableRoom>? availableRooms,
       String category,
       num? cancellationRate,
-      @TimestampSerializer() DateTime? checkIn,
-      @TimestampSerializer() DateTime? checkOut,
+      @TimeOfDayConverter() TimeOfDay? checkIn,
+      @TimeOfDayConverter() TimeOfDay? checkOut,
       String city,
       num? cancellationPeriod,
       ListingCooperative cooperative,
@@ -374,8 +374,8 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       bool? isPublished,
       List<ListingCost>? listingCosts,
       num? numberOfUnits,
-      @TimestampSerializer() DateTime? openingHours,
-      @TimestampSerializer() DateTime? closingHours,
+      @TimeOfDayConverter() TimeOfDay? openingHours,
+      @TimeOfDayConverter() TimeOfDay? closingHours,
       @TimeOfDayConverter() TimeOfDay? duration,
       num? pax,
       num? price,
@@ -477,11 +477,11 @@ class __$$ListingModelImplCopyWithImpl<$Res>
       checkIn: freezed == checkIn
           ? _value.checkIn
           : checkIn // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as TimeOfDay?,
       checkOut: freezed == checkOut
           ? _value.checkOut
           : checkOut // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as TimeOfDay?,
       city: null == city
           ? _value.city
           : city // ignore: cast_nullable_to_non_nullable
@@ -525,11 +525,11 @@ class __$$ListingModelImplCopyWithImpl<$Res>
       openingHours: freezed == openingHours
           ? _value.openingHours
           : openingHours // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as TimeOfDay?,
       closingHours: freezed == closingHours
           ? _value.closingHours
           : closingHours // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as TimeOfDay?,
       duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
@@ -612,8 +612,8 @@ class _$ListingModelImpl implements _ListingModel {
       final List<AvailableRoom>? availableRooms,
       required this.category,
       this.cancellationRate,
-      @TimestampSerializer() this.checkIn,
-      @TimestampSerializer() this.checkOut,
+      @TimeOfDayConverter() this.checkIn,
+      @TimeOfDayConverter() this.checkOut,
       required this.city,
       this.cancellationPeriod,
       required this.cooperative,
@@ -624,8 +624,8 @@ class _$ListingModelImpl implements _ListingModel {
       this.isPublished,
       final List<ListingCost>? listingCosts,
       this.numberOfUnits,
-      @TimestampSerializer() this.openingHours,
-      @TimestampSerializer() this.closingHours,
+      @TimeOfDayConverter() this.openingHours,
+      @TimeOfDayConverter() this.closingHours,
       @TimeOfDayConverter() this.duration,
       this.pax,
       this.price,
@@ -693,11 +693,11 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   final num? cancellationRate;
   @override
-  @TimestampSerializer()
-  final DateTime? checkIn;
+  @TimeOfDayConverter()
+  final TimeOfDay? checkIn;
   @override
-  @TimestampSerializer()
-  final DateTime? checkOut;
+  @TimeOfDayConverter()
+  final TimeOfDay? checkOut;
   @override
   final String city;
   @override
@@ -735,11 +735,11 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   final num? numberOfUnits;
   @override
-  @TimestampSerializer()
-  final DateTime? openingHours;
+  @TimeOfDayConverter()
+  final TimeOfDay? openingHours;
   @override
-  @TimestampSerializer()
-  final DateTime? closingHours;
+  @TimeOfDayConverter()
+  final TimeOfDay? closingHours;
   @override
   @TimeOfDayConverter()
   final TimeOfDay? duration;
@@ -952,8 +952,8 @@ abstract class _ListingModel implements ListingModel {
       final List<AvailableRoom>? availableRooms,
       required final String category,
       final num? cancellationRate,
-      @TimestampSerializer() final DateTime? checkIn,
-      @TimestampSerializer() final DateTime? checkOut,
+      @TimeOfDayConverter() final TimeOfDay? checkIn,
+      @TimeOfDayConverter() final TimeOfDay? checkOut,
       required final String city,
       final num? cancellationPeriod,
       required final ListingCooperative cooperative,
@@ -964,8 +964,8 @@ abstract class _ListingModel implements ListingModel {
       final bool? isPublished,
       final List<ListingCost>? listingCosts,
       final num? numberOfUnits,
-      @TimestampSerializer() final DateTime? openingHours,
-      @TimestampSerializer() final DateTime? closingHours,
+      @TimeOfDayConverter() final TimeOfDay? openingHours,
+      @TimeOfDayConverter() final TimeOfDay? closingHours,
       @TimeOfDayConverter() final TimeOfDay? duration,
       final num? pax,
       final num? price,
@@ -1000,11 +1000,11 @@ abstract class _ListingModel implements ListingModel {
   @override
   num? get cancellationRate;
   @override
-  @TimestampSerializer()
-  DateTime? get checkIn;
+  @TimeOfDayConverter()
+  TimeOfDay? get checkIn;
   @override
-  @TimestampSerializer()
-  DateTime? get checkOut;
+  @TimeOfDayConverter()
+  TimeOfDay? get checkOut;
   @override
   String get city;
   @override
@@ -1026,11 +1026,11 @@ abstract class _ListingModel implements ListingModel {
   @override
   num? get numberOfUnits;
   @override
-  @TimestampSerializer()
-  DateTime? get openingHours;
+  @TimeOfDayConverter()
+  TimeOfDay? get openingHours;
   @override
-  @TimestampSerializer()
-  DateTime? get closingHours;
+  @TimeOfDayConverter()
+  TimeOfDay? get closingHours;
   @override
   @TimeOfDayConverter()
   TimeOfDay? get duration;
@@ -3246,8 +3246,8 @@ mixin _$AvailableTime {
   bool get available => throw _privateConstructorUsedError;
   num get currentPax => throw _privateConstructorUsedError;
   num get maxPax => throw _privateConstructorUsedError;
-  @TimestampSerializer()
-  DateTime get time => throw _privateConstructorUsedError;
+  @TimeOfDayConverter()
+  TimeOfDay get time => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -3265,7 +3265,7 @@ abstract class $AvailableTimeCopyWith<$Res> {
       {bool available,
       num currentPax,
       num maxPax,
-      @TimestampSerializer() DateTime time});
+      @TimeOfDayConverter() TimeOfDay time});
 }
 
 /// @nodoc
@@ -3302,7 +3302,7 @@ class _$AvailableTimeCopyWithImpl<$Res, $Val extends AvailableTime>
       time: null == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as TimeOfDay,
     ) as $Val);
   }
 }
@@ -3319,7 +3319,7 @@ abstract class _$$AvailableTimeImplCopyWith<$Res>
       {bool available,
       num currentPax,
       num maxPax,
-      @TimestampSerializer() DateTime time});
+      @TimeOfDayConverter() TimeOfDay time});
 }
 
 /// @nodoc
@@ -3354,7 +3354,7 @@ class __$$AvailableTimeImplCopyWithImpl<$Res>
       time: null == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as TimeOfDay,
     ));
   }
 }
@@ -3366,7 +3366,7 @@ class _$AvailableTimeImpl implements _AvailableTime {
       {required this.available,
       required this.currentPax,
       required this.maxPax,
-      @TimestampSerializer() required this.time});
+      @TimeOfDayConverter() required this.time});
 
   factory _$AvailableTimeImpl.fromJson(Map<String, dynamic> json) =>
       _$$AvailableTimeImplFromJson(json);
@@ -3378,8 +3378,8 @@ class _$AvailableTimeImpl implements _AvailableTime {
   @override
   final num maxPax;
   @override
-  @TimestampSerializer()
-  final DateTime time;
+  @TimeOfDayConverter()
+  final TimeOfDay time;
 
   @override
   String toString() {
@@ -3423,7 +3423,7 @@ abstract class _AvailableTime implements AvailableTime {
           {required final bool available,
           required final num currentPax,
           required final num maxPax,
-          @TimestampSerializer() required final DateTime time}) =
+          @TimeOfDayConverter() required final TimeOfDay time}) =
       _$AvailableTimeImpl;
 
   factory _AvailableTime.fromJson(Map<String, dynamic> json) =
@@ -3436,8 +3436,8 @@ abstract class _AvailableTime implements AvailableTime {
   @override
   num get maxPax;
   @override
-  @TimestampSerializer()
-  DateTime get time;
+  @TimeOfDayConverter()
+  TimeOfDay get time;
   @override
   @JsonKey(ignore: true)
   _$$AvailableTimeImplCopyWith<_$AvailableTimeImpl> get copyWith =>
