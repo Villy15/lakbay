@@ -272,7 +272,7 @@ _$FoodServiceImpl _$$FoodServiceImplFromJson(Map<String, dynamic> json) =>
       endTime: const TimeOfDayConverter()
           .fromJson(json['endTime'] as Map<String, dynamic>),
       availableTables: (json['availableTables'] as List<dynamic>?)
-          ?.map((e) => Map<String, num>.from(e as Map))
+          ?.map((e) => e as Map<String, dynamic>)
           .toList(),
     );
 

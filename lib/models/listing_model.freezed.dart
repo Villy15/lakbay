@@ -2393,7 +2393,7 @@ mixin _$FoodService {
   @TimeOfDayConverter()
   TimeOfDay get endTime =>
       throw _privateConstructorUsedError; // add the map of available tables here
-  List<Map<String, num>>? get availableTables =>
+  List<Map<String, dynamic>>? get availableTables =>
       throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -2418,7 +2418,7 @@ abstract class $FoodServiceCopyWith<$Res> {
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime,
-      List<Map<String, num>>? availableTables});
+      List<Map<String, dynamic>>? availableTables});
 }
 
 /// @nodoc
@@ -2485,7 +2485,7 @@ class _$FoodServiceCopyWithImpl<$Res, $Val extends FoodService>
       availableTables: freezed == availableTables
           ? _value.availableTables
           : availableTables // ignore: cast_nullable_to_non_nullable
-              as List<Map<String, num>>?,
+              as List<Map<String, dynamic>>?,
     ) as $Val);
   }
 }
@@ -2508,7 +2508,7 @@ abstract class _$$FoodServiceImplCopyWith<$Res>
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime,
-      List<Map<String, num>>? availableTables});
+      List<Map<String, dynamic>>? availableTables});
 }
 
 /// @nodoc
@@ -2573,7 +2573,7 @@ class __$$FoodServiceImplCopyWithImpl<$Res>
       availableTables: freezed == availableTables
           ? _value._availableTables
           : availableTables // ignore: cast_nullable_to_non_nullable
-              as List<Map<String, num>>?,
+              as List<Map<String, dynamic>>?,
     ));
   }
 }
@@ -2591,7 +2591,7 @@ class _$FoodServiceImpl implements _FoodService {
       required final List<bool> workingDays,
       @TimeOfDayConverter() required this.startTime,
       @TimeOfDayConverter() required this.endTime,
-      final List<Map<String, num>>? availableTables})
+      final List<Map<String, dynamic>>? availableTables})
       : _dealImgs = dealImgs,
         _workingDays = workingDays,
         _availableTables = availableTables;
@@ -2632,10 +2632,10 @@ class _$FoodServiceImpl implements _FoodService {
   @TimeOfDayConverter()
   final TimeOfDay endTime;
 // add the map of available tables here
-  final List<Map<String, num>>? _availableTables;
+  final List<Map<String, dynamic>>? _availableTables;
 // add the map of available tables here
   @override
-  List<Map<String, num>>? get availableTables {
+  List<Map<String, dynamic>>? get availableTables {
     final value = _availableTables;
     if (value == null) return null;
     if (_availableTables is EqualUnmodifiableListView) return _availableTables;
@@ -2711,7 +2711,7 @@ abstract class _FoodService implements FoodService {
       required final List<bool> workingDays,
       @TimeOfDayConverter() required final TimeOfDay startTime,
       @TimeOfDayConverter() required final TimeOfDay endTime,
-      final List<Map<String, num>>? availableTables}) = _$FoodServiceImpl;
+      final List<Map<String, dynamic>>? availableTables}) = _$FoodServiceImpl;
 
   factory _FoodService.fromJson(Map<String, dynamic> json) =
       _$FoodServiceImpl.fromJson;
@@ -2737,7 +2737,7 @@ abstract class _FoodService implements FoodService {
   @TimeOfDayConverter()
   TimeOfDay get endTime;
   @override // add the map of available tables here
-  List<Map<String, num>>? get availableTables;
+  List<Map<String, dynamic>>? get availableTables;
   @override
   @JsonKey(ignore: true)
   _$$FoodServiceImplCopyWith<_$FoodServiceImpl> get copyWith =>

@@ -145,7 +145,7 @@ class FoodService with _$FoodService {
     @TimeOfDayConverter() required TimeOfDay startTime,
     @TimeOfDayConverter() required TimeOfDay endTime,
     // add the map of available tables here
-    List<Map<String, num>>? availableTables
+    List<Map<String, dynamic>>? availableTables
   }) = _FoodService;
 
   factory FoodService.fromJson(Map<String, dynamic> json) =>
