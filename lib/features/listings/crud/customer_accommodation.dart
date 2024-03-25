@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -334,6 +336,19 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
     );
   }
 
+  void createRoom(BuildContext context, String senderId) async {
+    // Create a room
+    final room = await FirebaseChatCore.instance.createRoom(
+      types.User(id: senderId),
+    );
+
+    // ignore: use_build_context_synchronously
+    context.push(
+      '/inbox/id/$senderId',
+      extra: room,
+    );
+  }
+
   SingleChildScrollView destination(String? planUid) {
     return SingleChildScrollView(
       child: Column(
@@ -438,7 +453,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                     trailing: IconButton(
                       onPressed: () {
                         // Show snackbar with reviews
-                        showSnackBar(context, 'Contact owner');
+                        createRoom(context, widget.listing.publisherId);
                       },
                       icon: const Icon(Icons.message_rounded),
                     ),

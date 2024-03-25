@@ -28,6 +28,13 @@ final getCooperativeProvider =
   return coopsController.getCooperative(uid);
 });
 
+// Get cooperatives by member provider
+final getCooperativesByMemberProvider = StreamProvider.autoDispose
+    .family<List<CooperativeModel>, String>((ref, uid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getCooperativesByMember(uid);
+});
+
 // Cooperative controller provider
 final coopsControllerProvider =
     StateNotifierProvider<CoopsController, bool>((ref) {
@@ -95,6 +102,13 @@ final getAllGoalsProvider =
   return coopsController.getAllGoals(coopUid);
 });
 
+// Get a goal provider
+final getGoalProvider =
+    StreamProvider.autoDispose.family<CoopGoals, String>((ref, goalUid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getGoal(ref.read(userProvider)!.currentCoop!, goalUid);
+});
+
 // Get all votes provider
 final getAllVotesProvider =
     StreamProvider.autoDispose.family<List<CoopVote>, String>((ref, coopUid) {
@@ -141,7 +155,7 @@ class CoopsController extends StateNotifier<bool> {
           cooperativesJoined: [
             ...?user.cooperativesJoined,
             CooperativesJoined(
-              cooperativeId: coop.uid!,
+              cooperativeId: coopUid,
               cooperativeName: coop.name,
               role: "Manager", // Set the role here
             ),
@@ -152,6 +166,30 @@ class CoopsController extends StateNotifier<bool> {
         _ref
             .read(usersControllerProvider.notifier)
             .editUserAfterRegisterCoop(user!.uid, updatedUser!);
+
+        var coopMember = CooperativeMembers(
+          name: user.name,
+          uid: user.uid,
+          privileges: [],
+          role: CooperativeMembersRole(
+            committeeName: '',
+            role: 'Manager',
+          ),
+          committees: [],
+          timestamp: DateTime.now(),
+        );
+
+        // Add user to members in Coop
+        _ref.read(coopsControllerProvider.notifier).addMember(
+              coopUid,
+              coopMember,
+              context,
+            );
+
+        // Initialized the privileges
+        _ref
+            .read(coopsControllerProvider.notifier)
+            .initializePrivileges(coopUid);
 
         state = false;
         showSnackBar(context, 'Cooperative registered successfully');
@@ -181,7 +219,8 @@ class CoopsController extends StateNotifier<bool> {
     );
   }
 
-  void joinCooperative(CooperativeModel coop, BuildContext context) async {
+  void joinCooperative(CooperativeModel coop, BuildContext context,
+      [bool? isManager]) async {
     state = true;
     final result = await _coopsRepository.updateCoop(coop);
 
@@ -195,6 +234,10 @@ class CoopsController extends StateNotifier<bool> {
         // Handle the success here
         final user = _ref.read(userProvider);
 
+        // If there is a passed optional parameter isManager
+        // then set the role to Manager else set it to Member
+        final role = isManager != null && isManager ? 'Manager' : 'Member';
+
         // Using copyWith to update the user
         final updatedUser = user?.copyWith(
           currentCoop: coop.uid,
@@ -204,7 +247,7 @@ class CoopsController extends StateNotifier<bool> {
             CooperativesJoined(
               cooperativeId: coop.uid!,
               cooperativeName: coop.name,
-              role: "Member", // Set the role here
+              role: role, // Set the role here
             ),
           ],
         );
@@ -220,7 +263,7 @@ class CoopsController extends StateNotifier<bool> {
           privileges: [],
           role: CooperativeMembersRole(
             committeeName: '',
-            role: 'Member',
+            role: role,
           ),
           committees: [],
           timestamp: DateTime.now(),
@@ -331,6 +374,11 @@ class CoopsController extends StateNotifier<bool> {
   // Read a cooperative
   Stream<CooperativeModel> getCooperative(String uid) {
     return _coopsRepository.readCoop(uid);
+  }
+
+  // Read all cooperatives that the user is a member of
+  Stream<List<CooperativeModel>> getCooperativesByMember(String uid) {
+    return _coopsRepository.readCoopsJoined(uid);
   }
 
   // Real all members
@@ -584,6 +632,11 @@ class CoopsController extends StateNotifier<bool> {
   // Read all goals of a cooperative
   Stream<List<CoopGoals>> getAllGoals(String coopUid) {
     return _coopsRepository.readGoals(coopUid);
+  }
+
+  // Real a goal of a cooperative
+  Stream<CoopGoals> getGoal(String coopUid, String goalUid) {
+    return _coopsRepository.readGoal(coopUid, goalUid);
   }
 
   // Add Vote

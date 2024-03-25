@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/app_bar_provider.dart';
@@ -69,17 +70,52 @@ class InboxPage extends ConsumerWidget {
               StreamBuilder(
                 stream: FirebaseChatCore.instance.rooms(),
                 builder: (context, snapshot) {
-                  // if (snapshot.connectionState == ConnectionState.waiting) {
-                  //   return const Center(
-                  //     child: CircularProgressIndicator(),
-                  //   );
-                  // }
-                  // if (snapshot.hasError) {
-                  //   return const Center(
-                  //     child: Text('Error'),
-                  //   );
-                  // }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: SizedBox.shrink(),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: SizedBox.shrink(),
+                    );
+                  }
                   final rooms = snapshot.data as List<types.Room>;
+
+                  if (rooms.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'lib/core/images/SleepingCatFromGlitch.svg',
+                            height: 100, // Adjust height as desired
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            'No messages yet!',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Start a conversation when you chat',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const Text(
+                            'with someone now!',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
 
                   return ListView.builder(
                     itemCount: rooms.length,
@@ -152,34 +188,34 @@ class InboxPage extends ConsumerWidget {
                               );
                             });
 
-                        return ListTile(
-                          onTap: () {
-                            createRoom(context, senderId, user);
-                          },
-                          title: Text(user.name),
-                          subtitle: const Text('Hello po'),
-                          leading: CircleAvatar(
-                            radius: 20.0,
-                            backgroundImage: user.profilePic != ''
-                                ? NetworkImage(user.profilePic)
-                                : null,
-                            backgroundColor:
-                                Theme.of(context).colorScheme.onBackground,
-                            child: user.profilePic == ''
-                                ? Text(
-                                    user.name[0].toUpperCase(),
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .background,
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        );
+                        // return ListTile(
+                        //   onTap: () {
+                        //     createRoom(context, senderId, user);
+                        //   },
+                        //   title: Text(user.name),
+                        //   subtitle: const Text('Hello po'),
+                        //   leading: CircleAvatar(
+                        //     radius: 20.0,
+                        //     backgroundImage: user.profilePic != ''
+                        //         ? NetworkImage(user.profilePic)
+                        //         : null,
+                        //     backgroundColor:
+                        //         Theme.of(context).colorScheme.onBackground,
+                        //     child: user.profilePic == ''
+                        //         ? Text(
+                        //             user.name[0].toUpperCase(),
+                        //             style: TextStyle(
+                        //               color: Theme.of(context)
+                        //                   .colorScheme
+                        //                   .background,
+                        //             ),
+                        //           )
+                        //         : null,
+                        //   ),
+                        // );
                       });
 
-                      return Text(user.id);
+                      // return Text(user.id);
                       // return ListTile(
                       //   onTap: () {
                       //     context.push(
@@ -260,9 +296,38 @@ class InboxPage extends ConsumerWidget {
               //     ),
 
               // Food
-              const Center(
-                child: Text('Groups'),
-              ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'lib/core/images/SleepingCatFromGlitch.svg',
+                      height: 100, // Adjust height as desired
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'No messages yet!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Start a conversation when you chat',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    const Text(
+                      'with someone now!',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),

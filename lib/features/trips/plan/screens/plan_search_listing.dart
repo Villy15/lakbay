@@ -166,7 +166,10 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
             ),
 
             const Divider(),
-            listingCardController(selectedCategory),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: listingCardController(selectedCategory),
+            ),
             // ref.watch(getAllListingsProvider).when(
             //       data: (listings) {
             //         // Sort

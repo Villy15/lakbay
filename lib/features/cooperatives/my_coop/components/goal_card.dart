@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/models/subcollections/coop_goals_model.dart';
 
@@ -10,6 +11,12 @@ class GoalCard extends StatelessWidget {
 
   final CoopGoals goal;
 
+  void readGoal(BuildContext context, String goalId) {
+    context.push(
+      '/my_coop/goals/$goalId',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -17,7 +24,9 @@ class GoalCard extends StatelessWidget {
       // color: Theme.of(context).colorScheme.background,
       child: InkWell(
         // Make the entire card tappable
-        onTap: () => {},
+        onTap: () => {
+          readGoal(context, goal.uid!),
+        },
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(

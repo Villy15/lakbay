@@ -1925,6 +1925,8 @@ mixin _$AvailableTransport {
   TimeOfDay get endTime => throw _privateConstructorUsedError;
   String? get destination => throw _privateConstructorUsedError;
   String? get pickupPoint => throw _privateConstructorUsedError;
+  String? get travelTime => throw _privateConstructorUsedError;
+  num? get priceByHour => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1951,7 +1953,9 @@ abstract class $AvailableTransportCopyWith<$Res> {
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime,
       String? destination,
-      String? pickupPoint});
+      String? pickupPoint,
+      String? travelTime,
+      num? priceByHour});
 }
 
 /// @nodoc
@@ -1980,6 +1984,8 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
     Object? endTime = null,
     Object? destination = freezed,
     Object? pickupPoint = freezed,
+    Object? travelTime = freezed,
+    Object? priceByHour = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -2034,6 +2040,14 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
           ? _value.pickupPoint
           : pickupPoint // ignore: cast_nullable_to_non_nullable
               as String?,
+      travelTime: freezed == travelTime
+          ? _value.travelTime
+          : travelTime // ignore: cast_nullable_to_non_nullable
+              as String?,
+      priceByHour: freezed == priceByHour
+          ? _value.priceByHour
+          : priceByHour // ignore: cast_nullable_to_non_nullable
+              as num?,
     ) as $Val);
   }
 }
@@ -2059,7 +2073,9 @@ abstract class _$$AvailableTransportImplCopyWith<$Res>
       @TimeOfDayConverter() TimeOfDay startTime,
       @TimeOfDayConverter() TimeOfDay endTime,
       String? destination,
-      String? pickupPoint});
+      String? pickupPoint,
+      String? travelTime,
+      num? priceByHour});
 }
 
 /// @nodoc
@@ -2086,6 +2102,8 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
     Object? endTime = null,
     Object? destination = freezed,
     Object? pickupPoint = freezed,
+    Object? travelTime = freezed,
+    Object? priceByHour = freezed,
   }) {
     return _then(_$AvailableTransportImpl(
       uid: freezed == uid
@@ -2140,6 +2158,14 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
           ? _value.pickupPoint
           : pickupPoint // ignore: cast_nullable_to_non_nullable
               as String?,
+      travelTime: freezed == travelTime
+          ? _value.travelTime
+          : travelTime // ignore: cast_nullable_to_non_nullable
+              as String?,
+      priceByHour: freezed == priceByHour
+          ? _value.priceByHour
+          : priceByHour // ignore: cast_nullable_to_non_nullable
+              as num?,
     ));
   }
 }
@@ -2160,7 +2186,9 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       @TimeOfDayConverter() required this.startTime,
       @TimeOfDayConverter() required this.endTime,
       this.destination,
-      this.pickupPoint})
+      this.pickupPoint,
+      this.travelTime,
+      this.priceByHour})
       : _departureTimes = departureTimes,
         _workingDays = workingDays;
 
@@ -2210,10 +2238,14 @@ class _$AvailableTransportImpl implements _AvailableTransport {
   final String? destination;
   @override
   final String? pickupPoint;
+  @override
+  final String? travelTime;
+  @override
+  final num? priceByHour;
 
   @override
   String toString() {
-    return 'AvailableTransport(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, guests: $guests, departureTimes: $departureTimes, price: $price, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, destination: $destination, pickupPoint: $pickupPoint)';
+    return 'AvailableTransport(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, guests: $guests, departureTimes: $departureTimes, price: $price, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, destination: $destination, pickupPoint: $pickupPoint, travelTime: $travelTime, priceByHour: $priceByHour)';
   }
 
   @override
@@ -2241,7 +2273,11 @@ class _$AvailableTransportImpl implements _AvailableTransport {
             (identical(other.destination, destination) ||
                 other.destination == destination) &&
             (identical(other.pickupPoint, pickupPoint) ||
-                other.pickupPoint == pickupPoint));
+                other.pickupPoint == pickupPoint) &&
+            (identical(other.travelTime, travelTime) ||
+                other.travelTime == travelTime) &&
+            (identical(other.priceByHour, priceByHour) ||
+                other.priceByHour == priceByHour));
   }
 
   @JsonKey(ignore: true)
@@ -2260,7 +2296,9 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       startTime,
       endTime,
       destination,
-      pickupPoint);
+      pickupPoint,
+      travelTime,
+      priceByHour);
 
   @JsonKey(ignore: true)
   @override
@@ -2291,7 +2329,9 @@ abstract class _AvailableTransport implements AvailableTransport {
       @TimeOfDayConverter() required final TimeOfDay startTime,
       @TimeOfDayConverter() required final TimeOfDay endTime,
       final String? destination,
-      final String? pickupPoint}) = _$AvailableTransportImpl;
+      final String? pickupPoint,
+      final String? travelTime,
+      final num? priceByHour}) = _$AvailableTransportImpl;
 
   factory _AvailableTransport.fromJson(Map<String, dynamic> json) =
       _$AvailableTransportImpl.fromJson;
@@ -2326,6 +2366,10 @@ abstract class _AvailableTransport implements AvailableTransport {
   @override
   String? get pickupPoint;
   @override
+  String? get travelTime;
+  @override
+  num? get priceByHour;
+  @override
   @JsonKey(ignore: true)
   _$$AvailableTransportImplCopyWith<_$AvailableTransportImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -2347,7 +2391,10 @@ mixin _$FoodService {
   @TimeOfDayConverter()
   TimeOfDay get startTime => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
-  TimeOfDay get endTime => throw _privateConstructorUsedError;
+  TimeOfDay get endTime =>
+      throw _privateConstructorUsedError; // add the map of available tables here
+  List<Map<String, dynamic>>? get availableTables =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -2370,7 +2417,8 @@ abstract class $FoodServiceCopyWith<$Res> {
       List<ListingImages> dealImgs,
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
-      @TimeOfDayConverter() TimeOfDay endTime});
+      @TimeOfDayConverter() TimeOfDay endTime,
+      List<Map<String, dynamic>>? availableTables});
 }
 
 /// @nodoc
@@ -2395,6 +2443,7 @@ class _$FoodServiceCopyWithImpl<$Res, $Val extends FoodService>
     Object? workingDays = null,
     Object? startTime = null,
     Object? endTime = null,
+    Object? availableTables = freezed,
   }) {
     return _then(_value.copyWith(
       dealName: null == dealName
@@ -2433,6 +2482,10 @@ class _$FoodServiceCopyWithImpl<$Res, $Val extends FoodService>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay,
+      availableTables: freezed == availableTables
+          ? _value.availableTables
+          : availableTables // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>?,
     ) as $Val);
   }
 }
@@ -2454,7 +2507,8 @@ abstract class _$$FoodServiceImplCopyWith<$Res>
       List<ListingImages> dealImgs,
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
-      @TimeOfDayConverter() TimeOfDay endTime});
+      @TimeOfDayConverter() TimeOfDay endTime,
+      List<Map<String, dynamic>>? availableTables});
 }
 
 /// @nodoc
@@ -2477,6 +2531,7 @@ class __$$FoodServiceImplCopyWithImpl<$Res>
     Object? workingDays = null,
     Object? startTime = null,
     Object? endTime = null,
+    Object? availableTables = freezed,
   }) {
     return _then(_$FoodServiceImpl(
       dealName: null == dealName
@@ -2515,6 +2570,10 @@ class __$$FoodServiceImplCopyWithImpl<$Res>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay,
+      availableTables: freezed == availableTables
+          ? _value._availableTables
+          : availableTables // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>?,
     ));
   }
 }
@@ -2531,9 +2590,11 @@ class _$FoodServiceImpl implements _FoodService {
       required final List<ListingImages> dealImgs,
       required final List<bool> workingDays,
       @TimeOfDayConverter() required this.startTime,
-      @TimeOfDayConverter() required this.endTime})
+      @TimeOfDayConverter() required this.endTime,
+      final List<Map<String, dynamic>>? availableTables})
       : _dealImgs = dealImgs,
-        _workingDays = workingDays;
+        _workingDays = workingDays,
+        _availableTables = availableTables;
 
   factory _$FoodServiceImpl.fromJson(Map<String, dynamic> json) =>
       _$$FoodServiceImplFromJson(json);
@@ -2570,10 +2631,21 @@ class _$FoodServiceImpl implements _FoodService {
   @override
   @TimeOfDayConverter()
   final TimeOfDay endTime;
+// add the map of available tables here
+  final List<Map<String, dynamic>>? _availableTables;
+// add the map of available tables here
+  @override
+  List<Map<String, dynamic>>? get availableTables {
+    final value = _availableTables;
+    if (value == null) return null;
+    if (_availableTables is EqualUnmodifiableListView) return _availableTables;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'FoodService(dealName: $dealName, dealDescription: $dealDescription, guests: $guests, available: $available, price: $price, dealImgs: $dealImgs, workingDays: $workingDays, startTime: $startTime, endTime: $endTime)';
+    return 'FoodService(dealName: $dealName, dealDescription: $dealDescription, guests: $guests, available: $available, price: $price, dealImgs: $dealImgs, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, availableTables: $availableTables)';
   }
 
   @override
@@ -2594,7 +2666,9 @@ class _$FoodServiceImpl implements _FoodService {
                 .equals(other._workingDays, _workingDays) &&
             (identical(other.startTime, startTime) ||
                 other.startTime == startTime) &&
-            (identical(other.endTime, endTime) || other.endTime == endTime));
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            const DeepCollectionEquality()
+                .equals(other._availableTables, _availableTables));
   }
 
   @JsonKey(ignore: true)
@@ -2609,7 +2683,8 @@ class _$FoodServiceImpl implements _FoodService {
       const DeepCollectionEquality().hash(_dealImgs),
       const DeepCollectionEquality().hash(_workingDays),
       startTime,
-      endTime);
+      endTime,
+      const DeepCollectionEquality().hash(_availableTables));
 
   @JsonKey(ignore: true)
   @override
@@ -2627,16 +2702,16 @@ class _$FoodServiceImpl implements _FoodService {
 
 abstract class _FoodService implements FoodService {
   factory _FoodService(
-          {required final String dealName,
-          required final String dealDescription,
-          required final num guests,
-          required final bool available,
-          required final num price,
-          required final List<ListingImages> dealImgs,
-          required final List<bool> workingDays,
-          @TimeOfDayConverter() required final TimeOfDay startTime,
-          @TimeOfDayConverter() required final TimeOfDay endTime}) =
-      _$FoodServiceImpl;
+      {required final String dealName,
+      required final String dealDescription,
+      required final num guests,
+      required final bool available,
+      required final num price,
+      required final List<ListingImages> dealImgs,
+      required final List<bool> workingDays,
+      @TimeOfDayConverter() required final TimeOfDay startTime,
+      @TimeOfDayConverter() required final TimeOfDay endTime,
+      final List<Map<String, dynamic>>? availableTables}) = _$FoodServiceImpl;
 
   factory _FoodService.fromJson(Map<String, dynamic> json) =
       _$FoodServiceImpl.fromJson;
@@ -2661,6 +2736,8 @@ abstract class _FoodService implements FoodService {
   @override
   @TimeOfDayConverter()
   TimeOfDay get endTime;
+  @override // add the map of available tables here
+  List<Map<String, dynamic>>? get availableTables;
   @override
   @JsonKey(ignore: true)
   _$$FoodServiceImplCopyWith<_$FoodServiceImpl> get copyWith =>

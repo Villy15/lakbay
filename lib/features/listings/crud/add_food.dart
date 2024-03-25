@@ -52,6 +52,10 @@ class _AddFoodState extends ConsumerState<AddFood> {
   num guests = 0;
   List<FoodService> availableDeals = [];
   List<BookingTask>? fixedTasks = [];
+  int tables = 0;
+  final List<Map<TextEditingController, TextEditingController>>
+      _tableController = [];
+  final List<Map<String, dynamic>> _tableInfo = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -63,6 +67,13 @@ class _AddFoodState extends ConsumerState<AddFood> {
       TextEditingController();
   final TextEditingController _addressController =
       TextEditingController(text: 'Eastwood City');
+  final TextEditingController _cancellationPeriodController =
+      TextEditingController();
+  final TextEditingController _cancellationRateController =
+      TextEditingController();
+  final TextEditingController _typeOfTableController = TextEditingController();
+  final TextEditingController _quantityOfTablesController=
+      TextEditingController();
 
   @override
   void initState() {
@@ -116,7 +127,13 @@ class _AddFoodState extends ConsumerState<AddFood> {
                       fixedTasks: fixedTasks,
                       price: _feeController.text == ''
                           ? null
-                          : num.parse(_feeController.text));
+                          : num.parse(_feeController.text),
+                      cancellationRate:
+                          num.parse((_cancellationRateController.text)) / 100,
+                      cancellationPeriod:
+                          _cancellationPeriodController.text == ''
+                              ? null
+                              : num.parse(_cancellationPeriodController.text));
                   listing = await processMenuImages(listing);
                   listing = await processDealImages(listing);
                   listing = listing.copyWith(
@@ -573,26 +590,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
           children: [
             Expanded(
               child: TextFormField(
-                maxLines: 1,
-                keyboardType: TextInputType.number, // For numeric input
-                decoration: const InputDecoration(
-                    labelText:
-                        'Downpayment Rate (%)*', // Indicate it's a percentage
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    hintText: "e.g., 20",
-                    suffixText: "%"),
-                onTap: () {
-                  // Handle tap if needed, e.g., showing a dialog to select a percentage
-                },
-              ),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: TextFormField(
+                controller: _cancellationPeriodController,
                 maxLines: 1,
                 decoration: const InputDecoration(
                     labelText: 'Cancellation Rate (%)*',
@@ -610,6 +608,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
           height: 10,
         ),
         TextFormField(
+          controller: _cancellationPeriodController,
           maxLines: 1,
           keyboardType: TextInputType.number, // For numeric input
           decoration: const InputDecoration(
@@ -1076,6 +1075,66 @@ class _AddFoodState extends ConsumerState<AddFood> {
       const Text('Add more details to your listing...',
           style: TextStyle(fontSize: 15.0, fontStyle: FontStyle.italic)),
       const SizedBox(height: 20),
+      const Text('Add Tables',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      const Text(
+        'Indicate the tables you have available...',
+        style: TextStyle(
+          fontSize: 15.0,
+          fontStyle: FontStyle.italic,
+        ),
+      ),
+      const SizedBox(height: 10),
+      ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: tables,
+          itemBuilder: (BuildContext context, int index) {
+            return Row(children: [
+              const SizedBox(height: 15),
+              Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: TextFormField(
+                          controller: _tableController[index]
+                              [_typeOfTableController],
+                          decoration: const InputDecoration(
+                            labelText: 'Type of Table',
+                            border: OutlineInputBorder(),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            hintText: 'e.g., 4-Seat Table',
+                          ),
+                        ))),
+              const SizedBox(width: 5),
+              Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: TextFormField(
+                          controller: _tableController[index]
+                              [_quantityOfTablesController],
+                          decoration: const InputDecoration(
+                            labelText: 'Quantity',
+                            border: OutlineInputBorder(),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            hintText: 'e.g., 5',
+                          ),
+                        ))),
+            ]);
+          }),
+      const SizedBox(height: 10),
+      Center(
+          child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  tables++;
+                  // add the _tableController
+                  _tableController.add({
+                    _typeOfTableController: TextEditingController(),
+                    _quantityOfTablesController: TextEditingController()
+                  });
+                });
+              },
+              child: const Text('Add Table'))),
       const Text(
         'Working Hours',
         style: TextStyle(
@@ -1384,6 +1443,11 @@ class _AddFoodState extends ConsumerState<AddFood> {
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
+                    // remove all empty TextEditingControllers from _tableController
+                    _tableController.removeWhere((element) =>
+                        element[_typeOfTableController]!.text.isEmpty ||
+                        element[_quantityOfTablesController]!.text.isEmpty);
+                    debugPrint('this is now the _tableController: $_tableController');
                     debugPrint(
                         'this is the testing, i think it will work: $tempDealImgs');
                     // move testing to dealImgs
@@ -1399,7 +1463,8 @@ class _AddFoodState extends ConsumerState<AddFood> {
                         workingDays: workingDays,
                         dealImgs: images
                             .map((image) => ListingImages(path: image.path))
-                            .toList());
+                            .toList(),
+                        );
                     this.setState(() {
                       int index = availableDeals.indexWhere((element) =>
                           element.dealName == _dealNameController.text);

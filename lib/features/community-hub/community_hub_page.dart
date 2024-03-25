@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
@@ -95,6 +96,41 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
   Widget _events() {
     return ref.watch(getEventsByCoopIdProvider(widget.coopId)).maybeWhen(
           data: (events) {
+            if (events.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'lib/core/images/SleepingCatFromGlitch.svg',
+                      height: 100, // Adjust height as desired
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'No events yet!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Create an event at the',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    const Text(
+                      'bottom right corner!',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
             return ListView.builder(
               itemCount: events.length,
               itemBuilder: (context, index) {
@@ -113,6 +149,41 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
   Widget _listings() {
     return ref.watch(getListingsByCoopProvider(widget.coopId)).maybeWhen(
           data: (List<ListingModel> listings) {
+            if (listings.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'lib/core/images/SleepingCatFromGlitch.svg',
+                      height: 100, // Adjust height as desired
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'No listings yet!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Create a listing at the',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    const Text(
+                      'bottom right corner!',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
             // Sorting Logic
             listings.sort((a, b) {
               // Calculate the number of bookings for each listing
@@ -229,6 +300,36 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
         member?.committeeRole("Tourism") == "Member";
     bool isPrivilegeAllowed =
         privilege?.isManagerPrivilegeAllowed("Add listing") ?? false;
+
+    final user = ref.watch(userProvider);
+
+    if (user!.isManager) {
+      return SpeedDial(
+        icon: Icons.more_vert,
+        activeIcon: Icons.close,
+        renderOverlay: false,
+        overlayOpacity: 0.5,
+        elevation: 8.0,
+        shape: const CircleBorder(),
+        curve: Curves.bounceIn,
+        children: [
+          SpeedDialChild(
+            child: const Icon(Icons.add),
+            label: 'Add Listing',
+            labelStyle: const TextStyle(fontSize: 18.0),
+            onTap: () => addListing(context, coop),
+          ),
+
+          // Add event
+          SpeedDialChild(
+            child: const Icon(Icons.add),
+            label: 'Add Event',
+            labelStyle: const TextStyle(fontSize: 18.0),
+            onTap: () => addEvent(context, coop),
+          ),
+        ],
+      );
+    }
 
     if (!isMemberNotNull ||
         !isPrivilegeNotNull ||

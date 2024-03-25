@@ -36,7 +36,10 @@ class _TripsAddTripState extends ConsumerState<TripsAddTrip> {
   }
 
   void onTapLocation() {
-    context.push('/plan/location');
+    // context.push('/plan/location');
+
+    // this is to test the select_location
+    context.push('/select_location');
   }
 
   void onSubmit() {
