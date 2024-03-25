@@ -40,7 +40,16 @@ class _AddTourState extends ConsumerState<AddTour> {
   num guests = 0;
   IntervalOptions? _selectedIntervalOption; // Default value
   List<AvailableTime> availableTimes = [];
-  List<bool> workingDays = List.filled(7, false);
+  Map<String, bool> workingDays = {
+    'Monday': false,
+    'Tuesday': false,
+    'Wednesday': false,
+    'Thursday': false,
+    'Friday': false,
+    'Saturday': false,
+    'Sunday': false,
+  };
+  List<AvailableDay> availableDays = [];
   String selectedDurationUnit = 'Hours';
   TimeOfDay duration = const TimeOfDay(hour: 1, minute: 15);
   TimeOfDay _selectedOpeningHours = const TimeOfDay(hour: 8, minute: 30);
@@ -82,71 +91,70 @@ class _AddTourState extends ConsumerState<AddTour> {
     super.dispose();
   }
 
-void submitAddListing() {
-  if (_formKey.currentState!.validate()) {
-    _formKey.currentState!.save();
+  void submitAddListing() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
-    final imagePath = 'listings/${widget.coop.name}';
-    final ids = _images!.map((image) => image.path.split('/').last).toList();
-    ref
-        .read(storageRepositoryProvider)
-        .storeFiles(
-          path: imagePath,
-          ids: ids,
-          files: _images!,
-        )
-        .then((value) => value.fold(
-              (failure) => debugPrint('Failed to upload images: $failure'),
-              (imageUrls) async {
-                debugPrint("line 94");
-                ListingCooperative cooperative = ListingCooperative(
-                    cooperativeId: widget.coop.uid!,
-                    cooperativeName: widget.coop.name);
-                // Prepare data for ListingModel
-                ListingModel listing = ListingModel(
-                  address: _addressController.text,
-                  category: widget.category,
-                  description: _descriptionController.text,
-                  title: _titleController.text,
-                  workingDays: workingDays, 
-                  type: type,
-                  city: "",
-                  province: "",
-                  images: _images?.map((image) {
-                    final imagePath =
-                        'listings/${widget.coop.name}/${image.path.split('/').last}';
-                    return ListingImages(path: imagePath);
-                  }).toList(),
-                  cooperative: cooperative,
-                  publisherId: ref.read(userProvider)!.uid,
-                  publisherName: ref.read(userProvider)!.name,
-                  price: num.parse(_priceController.text),
-                  pax: int.parse(_capacityController.text),
-                  duration: duration,
-                   openingHours: TimeOfDay(
+      final imagePath = 'listings/${widget.coop.name}';
+      final ids = _images!.map((image) => image.path.split('/').last).toList();
+      ref
+          .read(storageRepositoryProvider)
+          .storeFiles(
+            path: imagePath,
+            ids: ids,
+            files: _images!,
+          )
+          .then((value) => value.fold(
+                (failure) => debugPrint('Failed to upload images: $failure'),
+                (imageUrls) async {
+                  debugPrint("line 94");
+                  ListingCooperative cooperative = ListingCooperative(
+                      cooperativeId: widget.coop.uid!,
+                      cooperativeName: widget.coop.name);
+                  // Prepare data for ListingModel
+                  ListingModel listing = ListingModel(
+                    address: _addressController.text,
+                    category: widget.category,
+                    description: _descriptionController.text,
+                    title: _titleController.text,
+                    availableDays: availableDays,
+                    type: type,
+                    city: "",
+                    province: "",
+                    images: _images?.map((image) {
+                      final imagePath =
+                          'listings/${widget.coop.name}/${image.path.split('/').last}';
+                      return ListingImages(path: imagePath);
+                    }).toList(),
+                    cooperative: cooperative,
+                    publisherId: ref.read(userProvider)!.uid,
+                    publisherName: ref.read(userProvider)!.name,
+                    price: num.parse(_priceController.text),
+                    pax: int.parse(_capacityController.text),
+                    duration: duration,
+                    openingHours: TimeOfDay(
                         hour: _selectedOpeningHours.hour,
                         minute: _selectedOpeningHours.minute),
-                  guestInfo: _guestInfoController.text,
-                );
-                debugPrint("Line 126");
-                // Update image URLs in the listing model
-                listing = listing.copyWith(
-                  images: listing.images!.asMap().entries.map((entry) {
-                    return entry.value.copyWith(url: imageUrls[entry.key]);
-                  }).toList(),
-                );
+                    guestInfo: _guestInfoController.text,
+                  );
+                  debugPrint("Line 126");
+                  // Update image URLs in the listing model
+                  listing = listing.copyWith(
+                    images: listing.images!.asMap().entries.map((entry) {
+                      return entry.value.copyWith(url: imageUrls[entry.key]);
+                    }).toList(),
+                  );
 
-                debugPrint(listing.toString());
-                if (mounted) {
-                  ref
-                      .read(listingControllerProvider.notifier)
-                      .addListing(listing, context);
-                }
-              },
-            ));
+                  debugPrint(listing.toString());
+                  if (mounted) {
+                    ref
+                        .read(listingControllerProvider.notifier)
+                        .addListing(listing, context);
+                  }
+                },
+              ));
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -248,8 +256,8 @@ void submitAddListing() {
     }
   }
 
-Widget addDayTourDetails(BuildContext context){
-  List<String> notes = [
+  Widget addDayTourDetails(BuildContext context) {
+    List<String> notes = [
       "Duration is the rental duration for every booking.",
       "Number of units refers to the total amount of units available for rent.",
       "Capacity refers to the maximum number of persons that can be accommodated per unit.",
@@ -421,7 +429,7 @@ Widget addDayTourDetails(BuildContext context){
         ),
       ],
     );
-}
+  }
 
   Column addNotes(
     List<String> notes,
@@ -859,41 +867,33 @@ Widget addDayTourDetails(BuildContext context){
   }
 
   Widget addListingPhotos(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          child: Row(
-            children: [
-              Icon(
-                Icons.image_outlined,
-                color: Theme.of(context).iconTheme.color
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: ImagePickerFormField(
-                  height: MediaQuery.sizeOf(context).height / 2.5,
-                  width: MediaQuery.sizeOf(context).width,
-                  context: context,
-                  initialValue: _images,
-                  onSaved: (List<File>? files) {
-                    _images = files;
-                  },
-                  validator: (List<File>? files) {
-                    if (files == null || files.isEmpty) {
-                      return 'Please select some images';
-                    }
-                    return null;
-                  },
-                  onImagesSelected: (List<File> files) {
-                    _images = files;
-                  },
-                ),
-              )
-            ]
-          )
+    return Column(children: [
+      GestureDetector(
+          child: Row(children: [
+        Icon(Icons.image_outlined, color: Theme.of(context).iconTheme.color),
+        const SizedBox(width: 15),
+        Expanded(
+          child: ImagePickerFormField(
+            height: MediaQuery.sizeOf(context).height / 2.5,
+            width: MediaQuery.sizeOf(context).width,
+            context: context,
+            initialValue: _images,
+            onSaved: (List<File>? files) {
+              _images = files;
+            },
+            validator: (List<File>? files) {
+              if (files == null || files.isEmpty) {
+                return 'Please select some images';
+              }
+              return null;
+            },
+            onImagesSelected: (List<File> files) {
+              _images = files;
+            },
+          ),
         )
-      ]
-    );
+      ]))
+    ]);
   }
 
   Widget addGuestInfo(BuildContext context) {
@@ -924,10 +924,7 @@ Widget addDayTourDetails(BuildContext context){
             const Padding(
               padding: EdgeInsets.only(top: 8.0, left: 12.0),
               child: DisplayText(
-                  text: "Images:",
-                  lines: 1,
-                  style:
-                      TextStyle(fontSize: 20.0)),
+                  text: "Images:", lines: 1, style: TextStyle(fontSize: 20.0)),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -941,74 +938,59 @@ Widget addDayTourDetails(BuildContext context){
           const Padding(
             padding: EdgeInsets.only(top: 8.0, left: 12.0),
             child: DisplayText(
-                text: "Title:",
-                lines: 1,
-                  style:
-                      TextStyle(fontSize: 20.0)),
+                text: "Title:", lines: 1, style: TextStyle(fontSize: 20.0)),
           ),
           ListTile(
             title: DisplayText(
                 text: _titleController.text,
                 lines: 1,
-                  style:
-                      const TextStyle(fontSize: 20.0)),
+                style: const TextStyle(fontSize: 20.0)),
           ),
           const Padding(
             padding: EdgeInsets.only(top: 8.0, left: 12.0),
             child: DisplayText(
                 text: "Description:",
                 lines: 1,
-                  style:
-                      TextStyle(fontSize: 20.0)),
+                style: TextStyle(fontSize: 20.0)),
           ),
           ListTile(
             title: DisplayText(
                 text: _descriptionController.text,
                 lines: 1,
-                  style:
-                      const TextStyle(fontSize: 20.0)),
+                style: const TextStyle(fontSize: 20.0)),
           ),
           const Padding(
             padding: EdgeInsets.only(top: 8.0, left: 12.0),
             child: DisplayText(
-                text: "Address:",
-                lines: 1,
-                  style:
-                      TextStyle(fontSize: 20.0)),
+                text: "Address:", lines: 1, style: TextStyle(fontSize: 20.0)),
           ),
           ListTile(
             title: DisplayText(
                 text: _addressController.text,
                 lines: 1,
-                  style:
-                      const TextStyle(fontSize: 20.0)),
+                style: const TextStyle(fontSize: 20.0)),
           ),
           // add working days
-          ListTile(
-            title: const Text('Working Days',
-                style: TextStyle(fontSize: 20)),
-            subtitle: Text(workingDays
-                .asMap()
-                .entries
-                .where((element) => element.value)
-                .map((e) => getDay(e.key))
-                .toList()
-                .join(', ')),
-          ),
+          // ListTile(
+          //   title: const Text('Working Days', style: TextStyle(fontSize: 20)),
+          //   subtitle: Text(workingDays
+          //       .asMap()
+          //       .entries
+          //       .where((element) => element.value)
+          //       .map((e) => getDay(e.key))
+          //       .toList()
+          //       .join(', ')),
+          // ),
           const Padding(
             padding: EdgeInsets.only(top: 8.0, left: 12.0),
             child: DisplayText(
-                text: "Price:",
-                lines: 1,
-                  style:
-                      TextStyle(fontSize: 20.0)),
+                text: "Price:", lines: 1, style: TextStyle(fontSize: 20.0)),
           ),
           ListTile(
             title: DisplayText(
                 text: _priceController.text,
                 lines: 1,
-                  style:
-                      const TextStyle(fontSize: 20.0)),
+                style: const TextStyle(fontSize: 20.0)),
           ),
           const Padding(
             padding: EdgeInsets.only(top: 8.0, left: 12.0),
@@ -1028,25 +1010,20 @@ Widget addDayTourDetails(BuildContext context){
           const Padding(
             padding: EdgeInsets.only(top: 8.0, left: 12.0),
             child: DisplayText(
-                text: "Capacity:",
-                lines: 1,
-                  style:
-                      TextStyle(fontSize: 20.0)),
+                text: "Capacity:", lines: 1, style: TextStyle(fontSize: 20.0)),
           ),
           ListTile(
             title: DisplayText(
                 text: _capacityController.text,
                 lines: 1,
-                  style:
-                      const TextStyle(fontSize: 20.0)),
+                style: const TextStyle(fontSize: 20.0)),
           ),
           const Padding(
             padding: EdgeInsets.only(top: 8.0, left: 12.0),
             child: DisplayText(
                 text: "Guest Information:",
                 lines: 1,
-                  style:
-                      TextStyle(fontSize: 20.0)),
+                style: TextStyle(fontSize: 20.0)),
           ),
           ListTile(
             title: DisplayText(
@@ -1054,8 +1031,7 @@ Widget addDayTourDetails(BuildContext context){
                     ? "No additional information provided."
                     : _guestInfoController.text,
                 lines: 1,
-                  style:
-                      const TextStyle(fontSize: 20.0)),
+                style: const TextStyle(fontSize: 20.0)),
           ),
           const SizedBox(height: 20.0),
         ]);
@@ -1148,69 +1124,60 @@ Widget addDayTourDetails(BuildContext context){
 
   BottomAppBar bottomAppBar() {
     return BottomAppBar(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          if (activeStep == 0) ... [
-            TextButton(
-              onPressed: () {
-                context.pop();
-                // ref.read(navBarVisibilityProvider.notifier).show();
-              },
-              child: const Text('Cancel')
-            )
-          ]
-          else ... [
-            TextButton(
-              onPressed: () {
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      if (activeStep == 0) ...[
+        TextButton(
+            onPressed: () {
+              context.pop();
+              // ref.read(navBarVisibilityProvider.notifier).show();
+            },
+            child: const Text('Cancel'))
+      ] else ...[
+        TextButton(
+            onPressed: () {
+              setState(() {
+                activeStep--;
+              });
+            },
+            child: const Text('Back'))
+      ],
+
+      // Next
+      if (activeStep != upperBound) ...[
+        ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () {
+              if (activeStep < upperBound) {
                 setState(() {
-                  activeStep--;
+                  activeStep++;
                 });
-              },
-              child: const Text('Back')
-            )
-          ],
-          
-          // Next
-          if (activeStep != upperBound) ... [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
+              }
+            },
+            child: Text(
+              'Next',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
-              onPressed: () {
-                if (activeStep < upperBound) {
-                  setState(() {
-                    activeStep++;
-                  });
-                }
-              },
-              child: Text(
-                'Next',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
-              )
-            )
-          ]
-          else ... [
-            TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
+            ))
+      ] else ...[
+        TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () {
+              submitAddListing();
+            },
+            child: Text(
+              'Submit',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
-              onPressed: () {
-                submitAddListing();
-              },
-              child: Text(
-                'Submit',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
-              )
-            )
-          ]
-        ]
-      )
-    );
+            ))
+      ]
+    ]));
   }
 }
 

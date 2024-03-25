@@ -57,7 +57,7 @@ mixin _$ListingModel {
   List<BookingTask>? get fixedTasks => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get timestamp => throw _privateConstructorUsedError;
-  List<bool>? get workingDays => throw _privateConstructorUsedError;
+  List<AvailableDay>? get availableDays => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String? get type =>
       throw _privateConstructorUsedError; //[Private, Public, Rentals, Watching/Performances, Activities]
@@ -110,7 +110,7 @@ abstract class $ListingModelCopyWith<$Res> {
       num? rating,
       List<BookingTask>? fixedTasks,
       @TimestampSerializer() DateTime? timestamp,
-      List<bool>? workingDays,
+      List<AvailableDay>? availableDays,
       String title,
       String? type,
       List<FoodService>? availableDeals,
@@ -165,7 +165,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? rating = freezed,
     Object? fixedTasks = freezed,
     Object? timestamp = freezed,
-    Object? workingDays = freezed,
+    Object? availableDays = freezed,
     Object? title = null,
     Object? type = freezed,
     Object? availableDeals = freezed,
@@ -294,10 +294,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      workingDays: freezed == workingDays
-          ? _value.workingDays
-          : workingDays // ignore: cast_nullable_to_non_nullable
-              as List<bool>?,
+      availableDays: freezed == availableDays
+          ? _value.availableDays
+          : availableDays // ignore: cast_nullable_to_non_nullable
+              as List<AvailableDay>?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -386,7 +386,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       num? rating,
       List<BookingTask>? fixedTasks,
       @TimestampSerializer() DateTime? timestamp,
-      List<bool>? workingDays,
+      List<AvailableDay>? availableDays,
       String title,
       String? type,
       List<FoodService>? availableDeals,
@@ -441,7 +441,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? rating = freezed,
     Object? fixedTasks = freezed,
     Object? timestamp = freezed,
-    Object? workingDays = freezed,
+    Object? availableDays = freezed,
     Object? title = null,
     Object? type = freezed,
     Object? availableDeals = freezed,
@@ -570,10 +570,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      workingDays: freezed == workingDays
-          ? _value._workingDays
-          : workingDays // ignore: cast_nullable_to_non_nullable
-              as List<bool>?,
+      availableDays: freezed == availableDays
+          ? _value._availableDays
+          : availableDays // ignore: cast_nullable_to_non_nullable
+              as List<AvailableDay>?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -636,7 +636,7 @@ class _$ListingModelImpl implements _ListingModel {
       this.rating,
       final List<BookingTask>? fixedTasks,
       @TimestampSerializer() this.timestamp,
-      final List<bool>? workingDays,
+      final List<AvailableDay>? availableDays,
       required this.title,
       this.type,
       final List<FoodService>? availableDeals,
@@ -649,7 +649,7 @@ class _$ListingModelImpl implements _ListingModel {
         _images = images,
         _listingCosts = listingCosts,
         _fixedTasks = fixedTasks,
-        _workingDays = workingDays,
+        _availableDays = availableDays,
         _availableDeals = availableDeals,
         _menuImgs = menuImgs;
 
@@ -771,12 +771,12 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   @TimestampSerializer()
   final DateTime? timestamp;
-  final List<bool>? _workingDays;
+  final List<AvailableDay>? _availableDays;
   @override
-  List<bool>? get workingDays {
-    final value = _workingDays;
+  List<AvailableDay>? get availableDays {
+    final value = _availableDays;
     if (value == null) return null;
-    if (_workingDays is EqualUnmodifiableListView) return _workingDays;
+    if (_availableDays is EqualUnmodifiableListView) return _availableDays;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -814,7 +814,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableTimes: $availableTimes, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, duration: $duration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, guestInfo: $guestInfo, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, workingDays: $workingDays, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableTimes: $availableTimes, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, duration: $duration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, guestInfo: $guestInfo, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, availableDays: $availableDays, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, uid: $uid)';
   }
 
   @override
@@ -876,7 +876,7 @@ class _$ListingModelImpl implements _ListingModel {
             (identical(other.timestamp, timestamp) ||
                 other.timestamp == timestamp) &&
             const DeepCollectionEquality()
-                .equals(other._workingDays, _workingDays) &&
+                .equals(other._availableDays, _availableDays) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.type, type) || other.type == type) &&
             const DeepCollectionEquality()
@@ -921,7 +921,7 @@ class _$ListingModelImpl implements _ListingModel {
         rating,
         const DeepCollectionEquality().hash(_fixedTasks),
         timestamp,
-        const DeepCollectionEquality().hash(_workingDays),
+        const DeepCollectionEquality().hash(_availableDays),
         title,
         type,
         const DeepCollectionEquality().hash(_availableDeals),
@@ -976,7 +976,7 @@ abstract class _ListingModel implements ListingModel {
       final num? rating,
       final List<BookingTask>? fixedTasks,
       @TimestampSerializer() final DateTime? timestamp,
-      final List<bool>? workingDays,
+      final List<AvailableDay>? availableDays,
       required final String title,
       final String? type,
       final List<FoodService>? availableDeals,
@@ -1054,7 +1054,7 @@ abstract class _ListingModel implements ListingModel {
   @TimestampSerializer()
   DateTime? get timestamp;
   @override
-  List<bool>? get workingDays;
+  List<AvailableDay>? get availableDays;
   @override
   String get title;
   @override
@@ -3157,6 +3157,189 @@ abstract class _AvailableDate implements AvailableDate {
   @override
   @JsonKey(ignore: true)
   _$$AvailableDateImplCopyWith<_$AvailableDateImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AvailableDay _$AvailableDayFromJson(Map<String, dynamic> json) {
+  return _AvailableDay.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AvailableDay {
+  bool get available => throw _privateConstructorUsedError;
+  String get day => throw _privateConstructorUsedError;
+  List<AvailableTime> get availableTimes => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AvailableDayCopyWith<AvailableDay> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AvailableDayCopyWith<$Res> {
+  factory $AvailableDayCopyWith(
+          AvailableDay value, $Res Function(AvailableDay) then) =
+      _$AvailableDayCopyWithImpl<$Res, AvailableDay>;
+  @useResult
+  $Res call({bool available, String day, List<AvailableTime> availableTimes});
+}
+
+/// @nodoc
+class _$AvailableDayCopyWithImpl<$Res, $Val extends AvailableDay>
+    implements $AvailableDayCopyWith<$Res> {
+  _$AvailableDayCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? available = null,
+    Object? day = null,
+    Object? availableTimes = null,
+  }) {
+    return _then(_value.copyWith(
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
+      day: null == day
+          ? _value.day
+          : day // ignore: cast_nullable_to_non_nullable
+              as String,
+      availableTimes: null == availableTimes
+          ? _value.availableTimes
+          : availableTimes // ignore: cast_nullable_to_non_nullable
+              as List<AvailableTime>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AvailableDayImplCopyWith<$Res>
+    implements $AvailableDayCopyWith<$Res> {
+  factory _$$AvailableDayImplCopyWith(
+          _$AvailableDayImpl value, $Res Function(_$AvailableDayImpl) then) =
+      __$$AvailableDayImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool available, String day, List<AvailableTime> availableTimes});
+}
+
+/// @nodoc
+class __$$AvailableDayImplCopyWithImpl<$Res>
+    extends _$AvailableDayCopyWithImpl<$Res, _$AvailableDayImpl>
+    implements _$$AvailableDayImplCopyWith<$Res> {
+  __$$AvailableDayImplCopyWithImpl(
+      _$AvailableDayImpl _value, $Res Function(_$AvailableDayImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? available = null,
+    Object? day = null,
+    Object? availableTimes = null,
+  }) {
+    return _then(_$AvailableDayImpl(
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
+      day: null == day
+          ? _value.day
+          : day // ignore: cast_nullable_to_non_nullable
+              as String,
+      availableTimes: null == availableTimes
+          ? _value._availableTimes
+          : availableTimes // ignore: cast_nullable_to_non_nullable
+              as List<AvailableTime>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AvailableDayImpl implements _AvailableDay {
+  _$AvailableDayImpl(
+      {required this.available,
+      required this.day,
+      required final List<AvailableTime> availableTimes})
+      : _availableTimes = availableTimes;
+
+  factory _$AvailableDayImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AvailableDayImplFromJson(json);
+
+  @override
+  final bool available;
+  @override
+  final String day;
+  final List<AvailableTime> _availableTimes;
+  @override
+  List<AvailableTime> get availableTimes {
+    if (_availableTimes is EqualUnmodifiableListView) return _availableTimes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_availableTimes);
+  }
+
+  @override
+  String toString() {
+    return 'AvailableDay(available: $available, day: $day, availableTimes: $availableTimes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AvailableDayImpl &&
+            (identical(other.available, available) ||
+                other.available == available) &&
+            (identical(other.day, day) || other.day == day) &&
+            const DeepCollectionEquality()
+                .equals(other._availableTimes, _availableTimes));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, available, day,
+      const DeepCollectionEquality().hash(_availableTimes));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AvailableDayImplCopyWith<_$AvailableDayImpl> get copyWith =>
+      __$$AvailableDayImplCopyWithImpl<_$AvailableDayImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AvailableDayImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AvailableDay implements AvailableDay {
+  factory _AvailableDay(
+      {required final bool available,
+      required final String day,
+      required final List<AvailableTime> availableTimes}) = _$AvailableDayImpl;
+
+  factory _AvailableDay.fromJson(Map<String, dynamic> json) =
+      _$AvailableDayImpl.fromJson;
+
+  @override
+  bool get available;
+  @override
+  String get day;
+  @override
+  List<AvailableTime> get availableTimes;
+  @override
+  @JsonKey(ignore: true)
+  _$$AvailableDayImplCopyWith<_$AvailableDayImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

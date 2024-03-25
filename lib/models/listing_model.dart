@@ -41,7 +41,7 @@ class ListingModel with _$ListingModel {
     num? rating,
     List<BookingTask>? fixedTasks,
     @TimestampSerializer() DateTime? timestamp,
-    List<bool>? workingDays,
+    List<AvailableDay>? availableDays,
     required String title,
     String?
         type, //[Private, Public, Rentals, Watching/Performances, Activities]
@@ -172,6 +172,18 @@ class AvailableDate with _$AvailableDate {
 
   factory AvailableDate.fromJson(Map<String, dynamic> json) =>
       _$AvailableDateFromJson(json);
+}
+
+@freezed
+class AvailableDay with _$AvailableDay {
+  factory AvailableDay({
+    required bool available,
+    required String day,
+    required List<AvailableTime> availableTimes,
+  }) = _AvailableDay;
+
+  factory AvailableDay.fromJson(Map<String, dynamic> json) =>
+      _$AvailableDayFromJson(json);
 }
 
 @freezed

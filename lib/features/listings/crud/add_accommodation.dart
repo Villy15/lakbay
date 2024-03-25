@@ -637,7 +637,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   Widget addRoomDetails(BuildContext context) {
     return Column(children: [
       Center(
-        child: ElevatedButton(
+        child: FilledButton(
           onPressed: () {
             showDialog(
                 context: context,
@@ -1225,7 +1225,11 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                                 color: Colors.black,
                                 size: 25,
                               ), // 'X' icon
-                              onPressed: () {},
+                              onPressed: () {
+                                setState(() {
+                                  fixedTasks?.remove(fixedTasks?[taskIndex]);
+                                });
+                              },
                             ),
                           ],
                         ),
