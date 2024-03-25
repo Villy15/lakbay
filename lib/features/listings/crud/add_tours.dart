@@ -960,19 +960,19 @@ class _AddTourState extends ConsumerState<AddTour> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             subtitle: Text(_descriptionController.text),
           ),
-          ListTile(
-            title: const Text(
-              'Working Days',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(workingDays
-                .asMap()
-                .entries
-                .where((element) => element.value)
-                .map((e) => getDay(e.key))
-                .toList()
-                .join(', ')),
-          ),
+          // ListTile(
+          //   title: const Text(
+          //     'Working Days',
+          //     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          //   ),
+          //   subtitle: Text(workingDays
+          //       .asMap()
+          //       .entries
+          //       .where((element) => element.value)
+          //       .map((e) => getDay(e.key))
+          //       .toList()
+          //       .join(', ')),
+          // ),
           const Divider(),
           ListTile(
             title: const Text('Price',
