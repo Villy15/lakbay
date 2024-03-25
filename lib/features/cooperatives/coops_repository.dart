@@ -56,8 +56,21 @@ class CoopsRepository {
 
   // Read community by uid
   Stream<CooperativeModel> readCoop(String uid) {
+    debugPrint('Reading coop: $uid');
     return _communities.doc(uid).snapshots().map((snapshot) {
+      debugPrint('Snapshot: ${snapshot.data()}');
       return CooperativeModel.fromJson(snapshot.data() as Map<String, dynamic>);
+    });
+  }
+
+  // Read all cooperativesJoined by a user
+  Stream<List<CooperativeModel>> readCoopsJoined(String uid) {
+    return _communities.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return CooperativeModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).where((coop) {
+        return coop.members.contains(uid);
+      }).toList();
     });
   }
 

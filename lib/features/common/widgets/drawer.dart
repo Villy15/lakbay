@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/theme/theme.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/error.dart';
+import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/user/user_controller.dart';
@@ -69,6 +71,21 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    return ref.watch(getUserDataProvider(widget.user!.uid)).when(
+          data: (data) {
+            return _buildDrawer(context, data);
+          },
+          loading: () => const Loader(),
+          error: (error, stackTrace) {
+            return Center(
+                child: ErrorText(
+                    error: error.toString(),
+                    stackTrace: stackTrace.toString()));
+          },
+        );
+  }
+
+  Drawer _buildDrawer(BuildContext context, UserModel user) {
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.background,
       child: SafeArea(
@@ -100,7 +117,7 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                   GestureDetector(
                     onTap: () => {
                       // Show modal bottom sheet
-                      modalBottomSheet(context)
+                      modalBottomSheet(context, user)
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -122,7 +139,7 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                   ),
                   const SizedBox(height: 10),
                   // Switch View Button show if the user is a member of a cooperative
-                  widget.user!.cooperativesJoined?.isNotEmpty ?? false
+                  user.cooperativesJoined?.isNotEmpty ?? false
                       ? switchViewButton(
                           context,
                           widget.user!.isCoopView ?? false,
@@ -130,15 +147,14 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                       : const SizedBox.shrink(),
                   const SizedBox(height: 10),
                   // Current cooperative dropdown
-                  widget.user!.isCoopView ?? false
+                  user.isCoopView ?? false
                       ? ref
-                          .watch(getCooperativeProvider(
-                              widget.user?.currentCoop ?? ''))
+                          .watch(getCooperativeProvider(user.currentCoop ?? ''))
                           .maybeWhen(
                               data: (data) => GestureDetector(
                                     onTap: () => {
                                       // Show modal bottom sheet
-                                      modalBottomSheetCooperative(context)
+                                      modalBottomSheetCooperative(context, user)
                                     },
                                     child: Row(
                                       mainAxisAlignment:
@@ -333,73 +349,140 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
     );
   }
 
-  Future<dynamic> modalBottomSheetCooperative(BuildContext context) {
+  Future<dynamic> modalBottomSheetCooperative(
+      BuildContext context, UserModel user) {
     return showModalBottomSheet(
         isScrollControlled: true,
         showDragHandle: true,
         context: context,
         builder: (BuildContext context) {
-          return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Text saying acounts
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(28, 0, 28, 0),
-                  child: Text('Cooperatives Joined',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                ),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(28, 0, 28, 0),
-                  child: Divider(),
-                ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: widget.user?.cooperativesJoined?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    // Store the uid of the cooperative
-                    final uid =
-                        widget.user?.cooperativesJoined?[index].cooperativeId ??
-                            '';
+          return Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+            return SizedBox(
+              height: MediaQuery.of(context).size.height * 0.3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Text saying acounts
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(28, 0, 28, 0),
+                    child: Text('Cooperatives Joined',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500)),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(28, 0, 28, 0),
+                    child: Divider(),
+                  ),
 
-                    return ref.watch(getCooperativeProvider(uid)).maybeWhen(
-                          data: (data) => ListTile(
-                            title: Text(data.name),
-                            trailing: const SizedBox(
-                              width: 60,
-                              child: Row(
-                                children: [
-                                  Icon(Icons.check),
-                                  SizedBox(width: 10),
-                                ],
-                              ),
-                            ),
-                            leading: CircleAvatar(
-                              radius: 20.0,
-                              backgroundImage: data.imageUrl != null &&
-                                      data.imageUrl != ''
-                                  ? NetworkImage(data.imageUrl!)
-                                  // Use placeholder image if user has no profile pic
-                                  : const AssetImage(
-                                      'lib/core/images/default_profile_pic.jpg',
-                                    ) as ImageProvider,
-                              backgroundColor: Colors.transparent,
-                            ),
-                            onTap: () => {},
-                          ),
-                          orElse: () => const SizedBox.shrink(),
-                        );
-                  },
-                ),
-              ],
-            ),
-          );
+                  ref
+                      .watch(getCooperativesByMemberProvider(user.uid))
+                      .maybeWhen(
+                          data: (data) {
+                            debugPrint('data: $data');
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: data.length,
+                              itemBuilder: (context, index) {
+                                // Store the uid of the cooperative
+                                final coop = data[index];
+                                return ListTile(
+                                  title: Text(coop.name),
+                                  trailing: SizedBox(
+                                    width: 60,
+                                    child: Row(
+                                      children: [
+                                        // If user is in current coop, show check icon
+                                        if (coop.uid == user.currentCoop)
+                                          const Icon(Icons.check),
+                                        const SizedBox(width: 10),
+                                      ],
+                                    ),
+                                  ),
+                                  leading: CircleAvatar(
+                                    radius: 20.0,
+                                    backgroundImage: coop.imageUrl != null &&
+                                            coop.imageUrl != ''
+                                        ? NetworkImage(coop.imageUrl!)
+                                        // Use placeholder image if user has no profile pic
+                                        : const AssetImage(
+                                            'lib/core/images/default_profile_pic.jpg',
+                                          ) as ImageProvider,
+                                    backgroundColor: Colors.transparent,
+                                  ),
+                                  onTap: () => {
+                                    // Edit user's currentCoop
+                                    ref
+                                        .read(usersControllerProvider.notifier)
+                                        .editUserAfterJoinCoop(
+                                          user.uid,
+                                          user.copyWith(currentCoop: coop.uid),
+                                        ),
+
+                                    // Close modal
+                                    context.pop(),
+                                    context.pop(),
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          orElse: () => const SizedBox.shrink()),
+                  // ListView.builder(
+                  //   shrinkWrap: true,
+                  //   physics: const NeverScrollableScrollPhysics(),
+                  //   itemCount: user.cooperativesJoined?.length ?? 0,
+                  //   itemBuilder: (context, index) {
+                  //     debugPrint(
+                  //         'item count: ${user.cooperativesJoined?.length}');
+                  //     // Store the uid of the cooperative
+                  //     final uid =
+                  //         user.cooperativesJoined?[index].cooperativeId ?? '';
+
+                  //     debugPrint('uid: $uid');
+
+                  //     return ref.watch(getCooperativeProvider(uid)).maybeWhen(
+                  //           data: (data) {
+                  //             debugPrint('dataa: $data');
+                  //             debugPrint('dataa: $data');
+                  //             return ListTile(
+                  //               title: Text(data.name),
+                  //               trailing: const SizedBox(
+                  //                 width: 60,
+                  //                 child: Row(
+                  //                   children: [
+                  //                     Icon(Icons.check),
+                  //                     SizedBox(width: 10),
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //               leading: CircleAvatar(
+                  //                 radius: 20.0,
+                  //                 backgroundImage: data.imageUrl != null &&
+                  //                         data.imageUrl != ''
+                  //                     ? NetworkImage(data.imageUrl!)
+                  //                     // Use placeholder image if user has no profile pic
+                  //                     : const AssetImage(
+                  //                         'lib/core/images/default_profile_pic.jpg',
+                  //                       ) as ImageProvider,
+                  //                 backgroundColor: Colors.transparent,
+                  //               ),
+                  //               onTap: () => {},
+                  //             );
+                  //           },
+                  //           orElse: () => const Text('No '),
+                  //         );
+                  //   },
+                  // ),
+                ],
+              ),
+            );
+          });
         });
   }
 
-  Future<dynamic> modalBottomSheet(BuildContext context) {
+  Future<dynamic> modalBottomSheet(BuildContext context, UserModel user) {
     return showModalBottomSheet(
         isScrollControlled: true,
         showDragHandle: true,

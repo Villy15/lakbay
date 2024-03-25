@@ -38,6 +38,14 @@ mixin _$UserModel {
   String? get validIdUrl => throw _privateConstructorUsedError;
   String? get birthCertificateUrl => throw _privateConstructorUsedError;
   List<UserReviews>? get reviews => throw _privateConstructorUsedError;
+  String? get middleName => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get birthDate => throw _privateConstructorUsedError;
+  num? get age => throw _privateConstructorUsedError;
+  String? get gender => throw _privateConstructorUsedError;
+  String? get religion => throw _privateConstructorUsedError;
+  String? get nationality => throw _privateConstructorUsedError;
+  String? get civilStatus => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get createdAt => throw _privateConstructorUsedError;
 
@@ -70,6 +78,13 @@ abstract class $UserModelCopyWith<$Res> {
       String? validIdUrl,
       String? birthCertificateUrl,
       List<UserReviews>? reviews,
+      String? middleName,
+      @TimestampSerializer() DateTime? birthDate,
+      num? age,
+      String? gender,
+      String? religion,
+      String? nationality,
+      String? civilStatus,
       @TimestampSerializer() DateTime? createdAt});
 }
 
@@ -103,6 +118,13 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? validIdUrl = freezed,
     Object? birthCertificateUrl = freezed,
     Object? reviews = freezed,
+    Object? middleName = freezed,
+    Object? birthDate = freezed,
+    Object? age = freezed,
+    Object? gender = freezed,
+    Object? religion = freezed,
+    Object? nationality = freezed,
+    Object? civilStatus = freezed,
     Object? createdAt = freezed,
   }) {
     return _then(_value.copyWith(
@@ -174,6 +196,34 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.reviews
           : reviews // ignore: cast_nullable_to_non_nullable
               as List<UserReviews>?,
+      middleName: freezed == middleName
+          ? _value.middleName
+          : middleName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      birthDate: freezed == birthDate
+          ? _value.birthDate
+          : birthDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      age: freezed == age
+          ? _value.age
+          : age // ignore: cast_nullable_to_non_nullable
+              as num?,
+      gender: freezed == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
+              as String?,
+      religion: freezed == religion
+          ? _value.religion
+          : religion // ignore: cast_nullable_to_non_nullable
+              as String?,
+      nationality: freezed == nationality
+          ? _value.nationality
+          : nationality // ignore: cast_nullable_to_non_nullable
+              as String?,
+      civilStatus: freezed == civilStatus
+          ? _value.civilStatus
+          : civilStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -208,6 +258,13 @@ abstract class _$$UserModelImplCopyWith<$Res>
       String? validIdUrl,
       String? birthCertificateUrl,
       List<UserReviews>? reviews,
+      String? middleName,
+      @TimestampSerializer() DateTime? birthDate,
+      num? age,
+      String? gender,
+      String? religion,
+      String? nationality,
+      String? civilStatus,
       @TimestampSerializer() DateTime? createdAt});
 }
 
@@ -239,6 +296,13 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? validIdUrl = freezed,
     Object? birthCertificateUrl = freezed,
     Object? reviews = freezed,
+    Object? middleName = freezed,
+    Object? birthDate = freezed,
+    Object? age = freezed,
+    Object? gender = freezed,
+    Object? religion = freezed,
+    Object? nationality = freezed,
+    Object? civilStatus = freezed,
     Object? createdAt = freezed,
   }) {
     return _then(_$UserModelImpl(
@@ -310,6 +374,34 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value._reviews
           : reviews // ignore: cast_nullable_to_non_nullable
               as List<UserReviews>?,
+      middleName: freezed == middleName
+          ? _value.middleName
+          : middleName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      birthDate: freezed == birthDate
+          ? _value.birthDate
+          : birthDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      age: freezed == age
+          ? _value.age
+          : age // ignore: cast_nullable_to_non_nullable
+              as num?,
+      gender: freezed == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
+              as String?,
+      religion: freezed == religion
+          ? _value.religion
+          : religion // ignore: cast_nullable_to_non_nullable
+              as String?,
+      nationality: freezed == nationality
+          ? _value.nationality
+          : nationality // ignore: cast_nullable_to_non_nullable
+              as String?,
+      civilStatus: freezed == civilStatus
+          ? _value.civilStatus
+          : civilStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -339,6 +431,13 @@ class _$UserModelImpl extends _UserModel {
       this.validIdUrl,
       this.birthCertificateUrl,
       final List<UserReviews>? reviews,
+      this.middleName,
+      @TimestampSerializer() this.birthDate,
+      this.age,
+      this.gender,
+      this.religion,
+      this.nationality,
+      this.civilStatus,
       @TimestampSerializer() this.createdAt})
       : _cooperativesJoined = cooperativesJoined,
         _reviews = reviews,
@@ -399,12 +498,27 @@ class _$UserModelImpl extends _UserModel {
   }
 
   @override
+  final String? middleName;
+  @override
+  @TimestampSerializer()
+  final DateTime? birthDate;
+  @override
+  final num? age;
+  @override
+  final String? gender;
+  @override
+  final String? religion;
+  @override
+  final String? nationality;
+  @override
+  final String? civilStatus;
+  @override
   @TimestampSerializer()
   final DateTime? createdAt;
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, phoneNo: $phoneNo, email: $email, address: $address, emergencyContact: $emergencyContact, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop, validIdUrl: $validIdUrl, birthCertificateUrl: $birthCertificateUrl, reviews: $reviews, createdAt: $createdAt)';
+    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, phoneNo: $phoneNo, email: $email, address: $address, emergencyContact: $emergencyContact, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop, validIdUrl: $validIdUrl, birthCertificateUrl: $birthCertificateUrl, reviews: $reviews, middleName: $middleName, birthDate: $birthDate, age: $age, gender: $gender, religion: $religion, nationality: $nationality, civilStatus: $civilStatus, createdAt: $createdAt)';
   }
 
   @override
@@ -440,32 +554,52 @@ class _$UserModelImpl extends _UserModel {
             (identical(other.birthCertificateUrl, birthCertificateUrl) ||
                 other.birthCertificateUrl == birthCertificateUrl) &&
             const DeepCollectionEquality().equals(other._reviews, _reviews) &&
+            (identical(other.middleName, middleName) ||
+                other.middleName == middleName) &&
+            (identical(other.birthDate, birthDate) ||
+                other.birthDate == birthDate) &&
+            (identical(other.age, age) || other.age == age) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
+            (identical(other.religion, religion) ||
+                other.religion == religion) &&
+            (identical(other.nationality, nationality) ||
+                other.nationality == nationality) &&
+            (identical(other.civilStatus, civilStatus) ||
+                other.civilStatus == civilStatus) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      uid,
-      name,
-      profilePic,
-      phoneNo,
-      email,
-      address,
-      emergencyContact,
-      isAuthenticated,
-      imageUrl,
-      firstName,
-      lastName,
-      isCoopView,
-      const DeepCollectionEquality().hash(_cooperativesJoined),
-      currentCoop,
-      validIdUrl,
-      birthCertificateUrl,
-      const DeepCollectionEquality().hash(_reviews),
-      createdAt);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        uid,
+        name,
+        profilePic,
+        phoneNo,
+        email,
+        address,
+        emergencyContact,
+        isAuthenticated,
+        imageUrl,
+        firstName,
+        lastName,
+        isCoopView,
+        const DeepCollectionEquality().hash(_cooperativesJoined),
+        currentCoop,
+        validIdUrl,
+        birthCertificateUrl,
+        const DeepCollectionEquality().hash(_reviews),
+        middleName,
+        birthDate,
+        age,
+        gender,
+        religion,
+        nationality,
+        civilStatus,
+        createdAt
+      ]);
 
   @JsonKey(ignore: true)
   @override
@@ -500,6 +634,13 @@ abstract class _UserModel extends UserModel {
       final String? validIdUrl,
       final String? birthCertificateUrl,
       final List<UserReviews>? reviews,
+      final String? middleName,
+      @TimestampSerializer() final DateTime? birthDate,
+      final num? age,
+      final String? gender,
+      final String? religion,
+      final String? nationality,
+      final String? civilStatus,
       @TimestampSerializer() final DateTime? createdAt}) = _$UserModelImpl;
   _UserModel._() : super._();
 
@@ -540,6 +681,21 @@ abstract class _UserModel extends UserModel {
   String? get birthCertificateUrl;
   @override
   List<UserReviews>? get reviews;
+  @override
+  String? get middleName;
+  @override
+  @TimestampSerializer()
+  DateTime? get birthDate;
+  @override
+  num? get age;
+  @override
+  String? get gender;
+  @override
+  String? get religion;
+  @override
+  String? get nationality;
+  @override
+  String? get civilStatus;
   @override
   @TimestampSerializer()
   DateTime? get createdAt;

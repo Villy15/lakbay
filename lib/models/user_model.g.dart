@@ -29,6 +29,14 @@ _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
       reviews: (json['reviews'] as List<dynamic>?)
           ?.map((e) => UserReviews.fromJson(e as Map<String, dynamic>))
           .toList(),
+      middleName: json['middleName'] as String?,
+      birthDate:
+          const TimestampSerializer().fromJson(json['birthDate'] as Timestamp?),
+      age: json['age'] as num?,
+      gender: json['gender'] as String?,
+      religion: json['religion'] as String?,
+      nationality: json['nationality'] as String?,
+      civilStatus: json['civilStatus'] as String?,
       createdAt:
           const TimestampSerializer().fromJson(json['createdAt'] as Timestamp?),
     );
@@ -53,6 +61,13 @@ Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
       'validIdUrl': instance.validIdUrl,
       'birthCertificateUrl': instance.birthCertificateUrl,
       'reviews': instance.reviews?.map((e) => e.toJson()).toList(),
+      'middleName': instance.middleName,
+      'birthDate': const TimestampSerializer().toJson(instance.birthDate),
+      'age': instance.age,
+      'gender': instance.gender,
+      'religion': instance.religion,
+      'nationality': instance.nationality,
+      'civilStatus': instance.civilStatus,
       'createdAt': const TimestampSerializer().toJson(instance.createdAt),
     };
 
