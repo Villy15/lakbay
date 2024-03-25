@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/location/map_repository.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 
 class SelectLocation extends ConsumerStatefulWidget {
   const SelectLocation({super.key});
@@ -62,8 +64,9 @@ class _SelectLocationState extends ConsumerState<SelectLocation> {
                       // get the coordinates of the selected location
                       final location = await mapRepository.getCoordinates(predictions[index]);
                       debugPrint('location: $location');
-                      // insert map widget here, then pass the location to it
-                      //
+                      ref.read(planLocationProvider.notifier).setLocation(predictions[index]); 
+                      // ignore: use_build_context_synchronously
+                      context.pop();
                     },
                   );
                 },

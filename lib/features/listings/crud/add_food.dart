@@ -55,7 +55,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
   int tables = 0;
   final List<Map<TextEditingController, TextEditingController>>
       _tableController = [];
-  final List<Map<String, num>> _tableInfo = [];
+  final List<Map<String, dynamic>> _tableInfo = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -72,7 +72,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
   final TextEditingController _cancellationRateController =
       TextEditingController();
   final TextEditingController _typeOfTableController = TextEditingController();
-  final TextEditingController _numAvailableTablesController =
+  final TextEditingController _quantityOfTablesController=
       TextEditingController();
 
   @override
@@ -1104,98 +1104,21 @@ class _AddFoodState extends ConsumerState<AddFood> {
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             hintText: 'e.g., 4-Seat Table',
                           ),
-                          readOnly: true,
-                          onTap: () {
-                            // showDialog to input the type of table
-
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                      title: const Text('Table Information',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          )),
-                                      content: SizedBox(
-                                        height:
-                                            MediaQuery.sizeOf(context).height /
-                                                6,
-                                        width:
-                                            MediaQuery.sizeOf(context).width /
-                                                2,
-                                        child: Column(
-                                          children: [
-                                            TextFormField(
-                                              controller:
-                                                  _tableController[index]
-                                                      [_typeOfTableController],
-                                              decoration: const InputDecoration(
-                                                labelText: 'Type of Table',
-                                                border: OutlineInputBorder(),
-                                                floatingLabelBehavior:
-                                                    FloatingLabelBehavior
-                                                        .always,
-                                                hintText: 'e.g., 4-Seat Table',
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            TextFormField(
-                                              controller: _tableController[
-                                                      index][
-                                                  _numAvailableTablesController],
-                                              decoration: const InputDecoration(
-                                                labelText: 'Available Tables',
-                                                border: OutlineInputBorder(),
-                                                floatingLabelBehavior:
-                                                    FloatingLabelBehavior
-                                                        .always,
-                                                hintText: 'e.g., 5',
-                                              ),
-                                              keyboardType:
-                                                  TextInputType.number,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            String tableType = _tableController[
-                                                    index][_typeOfTableController]
-                                                !.text;
-                                            num numSeatsInt = num.parse(
-                                                tableType.split('-')[0]);
-                                            debugPrint('this is the number of seats: $numSeatsInt');
-                                            _tableController[index]
-                                                    [_typeOfTableController] =
-                                                _typeOfTableController;
-                                            _tableController[index][
-                                                    _numAvailableTablesController] =
-                                                _numAvailableTablesController;
-                                            debugPrint('this is the number of available tables of that seat: ${_numAvailableTablesController.text}');
-
-                                            // store the _tableController into _tableInfo
-                                            // _tableInfo.add({
-                                            //   _tableController[index][_typeOfTableController]!.text: numSeatsInt,
-                                            //   'numAvailableTables': num.parse(
-                                            //       _numAvailableTablesController
-                                            //           .text)
-                                            // });
-                                            
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('Save'),
-                                        ),
-                                      ]);
-                                });
-                          })))
+                        ))),
+              const SizedBox(width: 5),
+              Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: TextFormField(
+                          controller: _tableController[index]
+                              [_quantityOfTablesController],
+                          decoration: const InputDecoration(
+                            labelText: 'Quantity',
+                            border: OutlineInputBorder(),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            hintText: 'e.g., 5',
+                          ),
+                        ))),
             ]);
           }),
       const SizedBox(height: 10),
@@ -1207,7 +1130,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                   // add the _tableController
                   _tableController.add({
                     _typeOfTableController: TextEditingController(),
-                    _numAvailableTablesController: TextEditingController()
+                    _quantityOfTablesController: TextEditingController()
                   });
                 });
               },
@@ -1520,6 +1443,11 @@ class _AddFoodState extends ConsumerState<AddFood> {
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
+                    // remove all empty TextEditingControllers from _tableController
+                    _tableController.removeWhere((element) =>
+                        element[_typeOfTableController]!.text.isEmpty ||
+                        element[_quantityOfTablesController]!.text.isEmpty);
+                    debugPrint('this is now the _tableController: $_tableController');
                     debugPrint(
                         'this is the testing, i think it will work: $tempDealImgs');
                     // move testing to dealImgs
@@ -1535,7 +1463,8 @@ class _AddFoodState extends ConsumerState<AddFood> {
                         workingDays: workingDays,
                         dealImgs: images
                             .map((image) => ListingImages(path: image.path))
-                            .toList());
+                            .toList(),
+                        );
                     this.setState(() {
                       int index = availableDeals.indexWhere((element) =>
                           element.dealName == _dealNameController.text);

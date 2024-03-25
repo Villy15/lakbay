@@ -259,12 +259,7 @@ class _AddTourState extends ConsumerState<AddTour> {
   }
 
   Widget addDayTourDetails(BuildContext context) {
-    List<String> notes = [
-      "Duration is the rental duration for every booking.",
-      "Number of units refers to the total amount of units available for rent.",
-      "Capacity refers to the maximum number of persons that can be accommodated per unit.",
-      "Start Time and End Time is similar to your working hours. This information can later be used to calculate availability of units in intervals using your provided duration",
-    ];
+    List<String> notes = [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -926,7 +921,10 @@ class _AddTourState extends ConsumerState<AddTour> {
             const Padding(
               padding: EdgeInsets.only(top: 8.0, left: 12.0),
               child: DisplayText(
-                  text: "Images:", lines: 1, style: TextStyle(fontSize: 20.0)),
+                  text: "Listing Photo/s",
+                  lines: 1,
+                  style:
+                      TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -937,105 +935,81 @@ class _AddTourState extends ConsumerState<AddTour> {
                   radius: BorderRadius.circular(10)),
             ),
           ],
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 12.0),
-            child: DisplayText(
-                text: "Title:", lines: 1, style: TextStyle(fontSize: 20.0)),
+
+          ListTile(
+              title: const Text('Category',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              subtitle: Text(widget.category)),
+          ListTile(
+              title: const Text(
+                'Type',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(type)),
+          const Divider(),
+          // Step 1
+          ListTile(
+            title: const Text(
+              'Title',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(_titleController.text),
           ),
           ListTile(
-            title: DisplayText(
-                text: _titleController.text,
-                lines: 1,
-                style: const TextStyle(fontSize: 20.0)),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 12.0),
-            child: DisplayText(
-                text: "Description:",
-                lines: 1,
-                style: TextStyle(fontSize: 20.0)),
+            title: const Text('Description',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(_descriptionController.text),
           ),
           ListTile(
-            title: DisplayText(
-                text: _descriptionController.text,
-                lines: 1,
-                style: const TextStyle(fontSize: 20.0)),
+            title: const Text(
+              'Working Days',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(workingDays
+                .asMap()
+                .entries
+                .where((element) => element.value)
+                .map((e) => getDay(e.key))
+                .toList()
+                .join(', ')),
           ),
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 12.0),
-            child: DisplayText(
-                text: "Address:", lines: 1, style: TextStyle(fontSize: 20.0)),
+          const Divider(),
+          ListTile(
+            title: const Text('Price',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(_priceController.text),
           ),
           ListTile(
-            title: DisplayText(
-                text: _addressController.text,
-                lines: 1,
-                style: const TextStyle(fontSize: 20.0)),
-          ),
-          // add working days
-          // ListTile(
-          //   title: const Text('Working Days', style: TextStyle(fontSize: 20)),
-          //   subtitle: Text(workingDays
-          //       .asMap()
-          //       .entries
-          //       .where((element) => element.value)
-          //       .map((e) => getDay(e.key))
-          //       .toList()
-          //       .join(', ')),
-          // ),
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 12.0),
-            child: DisplayText(
-                text: "Price:", lines: 1, style: TextStyle(fontSize: 20.0)),
+            title: const Text('Capacity',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(_capacityController.text),
           ),
           ListTile(
-            title: DisplayText(
-                text: _priceController.text,
-                lines: 1,
-                style: const TextStyle(fontSize: 20.0)),
+            title: const Text('Duration',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(durationController.text),
           ),
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 12.0),
-            child: DisplayText(
-              text: "Duration:",
-              lines: 1,
-              style: TextStyle(fontSize: 20.0),
+          ListTile(
+            title: const Text('Start/Opening: ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(
+              'Selected Time: ${_selectedOpeningHours.format(context)}',
             ),
           ),
           ListTile(
-            title: DisplayText(
-              text: "${_durationController.text} $selectedDurationUnit",
-              lines: 1,
-              style: const TextStyle(fontSize: 20.0),
+            title: const Text('End/Closing: ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            subtitle: Text(
+              'Selected Time: ${_selectedClosingHours.format(context)}',
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 12.0),
-            child: DisplayText(
-                text: "Capacity:", lines: 1, style: TextStyle(fontSize: 20.0)),
-          ),
           ListTile(
-            title: DisplayText(
-                text: _capacityController.text,
-                lines: 1,
-                style: const TextStyle(fontSize: 20.0)),
+            title: const Text(
+              'Guest Information',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(_guestInfoController.text),
           ),
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 12.0),
-            child: DisplayText(
-                text: "Guest Information:",
-                lines: 1,
-                style: TextStyle(fontSize: 20.0)),
-          ),
-          ListTile(
-            title: DisplayText(
-                text: _guestInfoController.text.isEmpty
-                    ? "No additional information provided."
-                    : _guestInfoController.text,
-                lines: 1,
-                style: const TextStyle(fontSize: 20.0)),
-          ),
-          const SizedBox(height: 20.0),
         ]);
   }
 

@@ -56,14 +56,14 @@ class _TripCardState extends ConsumerState<TripCard> {
     final List<String?> imageUrls =
         listing.images!.map((listingImage) => listingImage.url).toList();
     switch (type) {
-      case 'Rental':
-        return rentalCard(listing, imageUrls, currentDate);
+      case 'Day Trip':
+        return dayTripCard(listing, imageUrls, currentDate);
       default:
-        return rentalCard(listing, imageUrls, currentDate);
+        return dayTripCard(listing, imageUrls, currentDate);
     }
   }
 
-  Widget rentalCard(
+  Widget dayTripCard(
       ListingModel listing, List<String?> imageUrls, DateTime currentDate) {
     return SizedBox(
       // height: MediaQuery.sizeOf(context).height / 2,
