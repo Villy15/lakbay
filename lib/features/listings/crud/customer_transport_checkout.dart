@@ -27,6 +27,8 @@ class _CustomerTransportCheckoutState
   late num _guestCount;
   late DateTime _startDate;
   late DateTime _endDate;
+  late TimeOfDay? _startTime;
+  late TimeOfDay? _endTime;
   // ignore: unused_field
   late num _maxGuestCount;
   late ListingBookings updatedBooking;
@@ -34,6 +36,8 @@ class _CustomerTransportCheckoutState
   late num vatAmount;
   late num amountTotal;
   late num? days;
+  late num? _priceByHour;
+  late num? _priceByHalfHour;
 
   num vat = 1.12;
 
@@ -44,13 +48,85 @@ class _CustomerTransportCheckoutState
     _maxGuestCount = widget.transport.guests;
     _startDate = widget.booking.startDate!;
     _endDate = widget.booking.endDate!;
+    _startTime = widget.booking.startTime;
+    _endTime = widget.booking.endTime;
+    _priceByHour = widget.transport.priceByHour;
     updatedBooking = widget.booking;
     if (widget.booking.typeOfTrip == 'Public') {
       vatAmount = (widget.booking.price * _guestCount) * (vat - 1);
       amountTotal = (widget.booking.price * _guestCount) + vatAmount;
     } else {
-      vatAmount = widget.booking.price * (vat - 1);
-      amountTotal = widget.booking.price + vatAmount;
+      if (widget.booking.startTime != null && widget.booking.endTime != null) {
+        // compute the number of hours and minutes between the start and end time
+        debugPrint('This is the price by hour: $_priceByHour');
+        // compare the start time and end time, then store it in a variable
+        // compute the total price by multiplying the number of hours by the price by hour
+
+        var start = widget.booking.startTime;
+        var end = widget.booking.endTime;
+        var startHour = start!.hour;
+        var startMinute = start.minute;
+        var endHour = end!.hour;
+        var endMinute = end.minute;
+
+        var hours = endHour - startHour;
+
+        var minutes = endMinute - startMinute;
+
+        debugPrint('this is the original minutes: $minutes');
+        debugPrint('this is the original hours: $hours');
+        if (minutes < 0 && hours > 0) {
+          hours--;
+          debugPrint('this is hours now: $hours');
+          minutes += 60;
+          debugPrint('this is the new minutes: $minutes');
+
+          if (minutes <= 60) {
+            if (_priceByHour != null) {
+              _priceByHalfHour = _priceByHour! / 2;
+              vatAmount = _priceByHalfHour! * (vat - 1);
+              amountTotal = _priceByHalfHour! + vatAmount;
+              debugPrint(
+                  'this is your rental fee for half an hour: $amountTotal');
+            }
+          }
+        } else {
+          if (_priceByHour != null) {
+            var newPrice = _priceByHour! * hours;
+            vatAmount = newPrice * (vat - 1);
+            amountTotal = newPrice + vatAmount;
+            debugPrint('this is your rental fee: $amountTotal');
+          }
+        }
+      } else {
+        // used the fixed price and not the price by hour
+        debugPrint('this is the startDate: $_startDate');
+        debugPrint(
+            "this is the listing's startTime: ${widget.listing.availableTransport!.startTime}");
+        vatAmount = widget.booking.price * (vat - 1);
+        amountTotal = widget.booking.price + vatAmount;
+        // update the DateTime of startDate and endDate
+        _startDate = DateTime(
+          _startDate.year,
+          _startDate.month,
+          _startDate.day,
+          widget.listing.availableTransport!.startTime.hour,
+          widget.listing.availableTransport!.startTime.minute,
+        );
+        _endDate = DateTime(
+          _endDate.year,
+          _endDate.month,
+          _endDate.day,
+          widget.listing.availableTransport!.endTime.hour,
+          widget.listing.availableTransport!.endTime.minute,
+        );
+
+        updatedBooking = updatedBooking.copyWith(
+          startDate: _startDate,
+          endDate: _endDate,
+        );
+
+      }
     }
   }
 
@@ -143,7 +219,11 @@ class _CustomerTransportCheckoutState
                                     Text(DateFormat.yMMMd().format(_startDate)),
                                     if (widget.booking.startTime != null) ...[
                                       Text(_formatTimeOfDay(
-                                          widget.booking.startTime!))
+                                          widget.booking.startTime!)),
+
+                                      // compute thet travel time to startTime
+                                      Text(_formatTimeOfDay(
+                                          widget.booking.endTime!))
                                     ]
                                   ] else ...[
                                     Text(widget.booking.typeOfTrip!,

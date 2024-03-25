@@ -259,6 +259,37 @@ class ListingController extends StateNotifier<bool> {
             ));
         updatedBooking = booking.copyWith(id: bookingUid);
 
+        // check if the booking.startDate's time is set to 00:00:00 and if so, set it to booking.startTime
+        if (booking.startDate?.hour == 0 &&
+            booking.startDate?.minute == 0 &&
+            booking.startDate?.second == 0) {
+
+              DateTime mergedDate = DateTime(
+                booking.startDate!.year,
+                booking.startDate!.month,
+                booking.startDate!.day,
+                booking.startTime!.hour,
+                booking.startTime!.minute,
+              );
+
+              booking = booking.copyWith(startDate: mergedDate);
+        }
+
+        // check if the booking.endDate's time is set to 00:00:00 and if so, set it to booking.endTime
+        if (booking.endDate?.hour == 0 &&
+            booking.endDate?.minute == 0 &&
+            booking.endDate?.second == 0) {
+          DateTime mergedDate = DateTime(
+            booking.endDate!.year,
+            booking.endDate!.month,
+            booking.endDate!.day,
+            booking.endTime!.hour,
+            booking.endTime!.minute,
+          );
+
+          booking = booking.copyWith(endDate: mergedDate);
+        }
+
         PlanActivity activity = PlanActivity(
           // Create a random key for the activity
           key: DateTime.now().millisecondsSinceEpoch.toString(),

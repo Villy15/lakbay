@@ -151,10 +151,8 @@ class FoodCardState extends ConsumerState<FoodCard> {
 
           TextEditingController phoneNoController =
               TextEditingController(text: user?.phoneNo);
-          TextEditingController emergencyContactNameController =
-              TextEditingController();
-          TextEditingController emergencyContactNoController =
-              TextEditingController();
+          TextEditingController timeController =
+              TextEditingController(text: '11:00 AM');
           bool governmentId = true;
           String formattedDate = DateFormat('MMMM dd, yyyy').format(bookedDate);
 
@@ -180,13 +178,12 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                   const EdgeInsets.symmetric(horizontal: 10),
                               child: Column(children: [
                                 TextFormField(
-                                    decoration: InputDecoration(
-                                        labelText:
-                                            'Number of Guests (Max: ${food.guests})',
-                                        border: const OutlineInputBorder(),
+                                    decoration: const InputDecoration(
+                                        labelText: 'Number of Guests',
+                                        border: OutlineInputBorder(),
                                         floatingLabelBehavior:
                                             FloatingLabelBehavior.always,
-                                        hintText: '1'),
+                                        hintText: '12'),
                                     keyboardType: TextInputType.number,
                                     onChanged: (value) {
                                       guests = int.tryParse(value) ?? 0;
@@ -202,22 +199,130 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                     keyboardType: TextInputType.phone),
                                 const SizedBox(height: 10),
                                 TextFormField(
-                                    controller: emergencyContactNameController,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Emergency Contact Name',
-                                        border: OutlineInputBorder(),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always),
-                                    keyboardType: TextInputType.name),
-                                const SizedBox(height: 10),
-                                TextFormField(
-                                    controller: emergencyContactNoController,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Emergency Contact Number',
-                                        border: OutlineInputBorder(),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always),
-                                    keyboardType: TextInputType.phone),
+                                  controller: timeController,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Time of Arrival',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always),
+                                  onTap: () async {
+                                    showTimePicker(
+                                            context: context,
+                                            initialEntryMode:
+                                                TimePickerEntryMode.inputOnly,
+                                            initialTime: TimeOfDay.now())
+                                        .then((time) {
+                                      if (time != null) {
+                                        // check if time is within the open hours / working time
+                                        if (listing.availableDeals!.first
+                                                    .startTime !=
+                                                null &&
+                                            listing.availableDeals!.first
+                                                    .endTime !=
+                                                null) {
+                                          // compare time to the open hours
+                                          debugPrint(
+                                              'Opening Hour: ${listing.availableDeals!.first.startTime}');
+                                          debugPrint(
+                                              'Closing Hour: ${listing.availableDeals!.first.endTime}');
+
+                                          debugPrint(
+                                              "User's chosen time: $time");
+                                          // compare the hours and minutes of the time to start time and end time
+                                          if (time.hour <
+                                                  listing.availableDeals!.first
+                                                      .startTime!.hour ||
+                                              time.hour >
+                                                  listing.availableDeals!.first
+                                                      .endTime!.hour) {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                        'Invalid Time'),
+                                                    content: const Text(
+                                                        'The time you have chosen is not within the working hours of the listing.'),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            context.pop();
+                                                          },
+                                                          child:
+                                                              const Text('OK'))
+                                                    ],
+                                                  );
+                                                });
+                                            return;
+                                          } else if (time.hour ==
+                                                  listing.availableDeals!.first
+                                                      .startTime!.hour &&
+                                              time.minute <
+                                                  listing.availableDeals!.first
+                                                      .startTime!.minute) {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                        'Invalid Time'),
+                                                    content: const Text(
+                                                        'The time you have chosen is not within the working hours of the listing.'),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            context.pop();
+                                                          },
+                                                          child:
+                                                              const Text('OK'))
+                                                    ],
+                                                  );
+                                                });
+                                            return;
+                                          } else if (time.hour ==
+                                                  listing.availableDeals!.first
+                                                      .endTime!.hour &&
+                                              time.minute >
+                                                  listing.availableDeals!.first
+                                                      .endTime!.minute) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text('Invalid Time'),
+                                                  content: const Text(
+                                                      'The time you have chosen is not within the working hours of the listing.'),
+                                                  actions: [
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          context.pop();
+                                                        },
+                                                        child: const Text('OK'))
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                            return;
+                                          }
+                                        } 
+                                          setState(() {
+                                            // set the time to the textfield
+                                            timeController.text =
+                                                time.format(context);
+
+                                            // set bookedDate's time to the chosen time
+                                            bookedDate = DateTime(
+                                                bookedDate.year,
+                                                bookedDate.month,
+                                                bookedDate.day,
+                                                time.hour,
+                                                time.minute);
+                                          });
+                                      }
+                                    });
+                                  },
+                                  readOnly: true,
+                                ),
                                 Column(children: [
                                   CheckboxListTile(
                                       enabled: false,
@@ -242,9 +347,8 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                     width: double.infinity,
                                     child: ElevatedButton(
                                         onPressed: () {
-                                          final currentTrip =
-                                              ref.read(currentTripProvider);
-
+                                          context.pop();
+                                          final currentTrip = ref.read(currentTripProvider);
                                           ListingBookings booking =
                                               ListingBookings(
                                             tripUid: currentTrip!.uid!,
@@ -266,12 +370,6 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                                 phoneNoController.text,
                                             customerId:
                                                 ref.read(userProvider)!.uid,
-                                            emergencyContactName:
-                                                emergencyContactNameController
-                                                    .text,
-                                            emergencyContactNo:
-                                                emergencyContactNoController
-                                                    .text,
                                             needsContributions: false,
                                             tasks: listing.fixedTasks,
                                           );

@@ -7,6 +7,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_checkout.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/location/map_repository.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -121,7 +122,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                             ),
                                           ] else ...[
                                             TextSpan(
-                                              text: " rental",
+                                              text: " / day",
                                               style: TextStyle(
                                                   fontSize:
                                                       14, // Smaller size for 'per night'
@@ -137,6 +138,36 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                         ],
                                       ),
                                     ),
+                                    // add rental per hour if the transport is private and offers hourly rental
+                                    if (widget.transportListings![index].type ==
+                                        'Private') ...[
+                                      RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  "₱${transport.availableTransport!.priceByHour}",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface),
+                                            ),
+                                            TextSpan(
+                                              text: " / hour",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontStyle: FontStyle.italic,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ],
                                 ),
                               ],
@@ -310,7 +341,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                                             daysPlan
                                                                                 .currentDay!,
                                                                             departureTime,
-                                                                            'Public')
+                                                                            'Public',
+                                                                            null)
                                                                         .then(
                                                                             (value) {});
                                                                   }
@@ -325,7 +357,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                                       daysPlan
                                                                           .currentDay!,
                                                                       departureTime,
-                                                                      'Public');
+                                                                      'Public',
+                                                                      null);
                                                                 }
                                                               });
                                                         }).toList())),
@@ -369,6 +402,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                             }
                                           }
                                           if (flag) {
+                                            // ignore: use_build_context_synchronously
                                             showDialog(
                                                 context: context,
                                                 builder: (context) {
@@ -387,15 +421,83 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                   );
                                                 });
                                           } else {
-                                            showConfirmBooking(
-                                                transport.availableTransport!,
-                                                transport,
-                                                daysPlan.currentDay!,
-                                                daysPlan.currentDay!,
-                                                null,
-                                                'Private');
-                                            debugPrint(
-                                                'no other bookings are here.');
+                                            // ignore: use_build_context_synchronously
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  // ask the user if they want to rent the vehicle for the whole day or just for a specific time
+                                                  return SizedBox(
+                                                      height: MediaQuery.sizeOf(
+                                                                  context)
+                                                              .height /
+                                                          3.5,
+                                                      width: double.infinity,
+                                                      child: AlertDialog(
+                                                          title: const Text(
+                                                              'Select rental duration'),
+                                                          content: const Text(
+                                                              'Do you want to rent the vehicle for the whole day or just for a specific time?'),
+                                                          actions: [
+                                                            TextButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context,
+                                                                      'Whole Day');
+                                                                },
+                                                                child: const Text(
+                                                                    'Whole Day')),
+                                                            TextButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context,
+                                                                      'Select Time');
+                                                                },
+                                                                child: const Text(
+                                                                    'Select Time'))
+                                                          ]));
+                                                }).then((value) {
+                                              if (value == 'Whole Day') {
+                                                showConfirmBooking(
+                                                    transport
+                                                        .availableTransport!,
+                                                    transport,
+                                                    daysPlan.currentDay!,
+                                                    daysPlan.currentDay!,
+                                                    null,
+                                                    'Private',
+                                                    value);
+                                              } else {
+                                                showConfirmBooking(
+                                                    transport
+                                                        .availableTransport!,
+                                                    transport,
+                                                    daysPlan.currentDay!,
+                                                    daysPlan.currentDay!,
+                                                    null,
+                                                    'Private',
+                                                    value);
+
+                                                // List<TextEditingController> _textFormFieldControllers = [TextEditingController()];
+                                                // final mapRepository = ref.read(mapRepositoryProvider);
+
+                                                // uncomment this to test the select location page (predictive text)
+                                                // ignore: use_build_context_synchronously
+                                                // showDialog(
+                                                //   context: context,
+                                                //   builder: (context) {
+                                                //     return Navigator(
+                                                //       onGenerateRoute: (settings) {
+                                                //         return MaterialPageRoute(
+                                                //           builder: (context) {
+                                                //             return PrepareTravel(textFormFieldControllers: _textFormFieldControllers);
+                                                //           },
+                                                //         );
+                                                //       },
+                                                //     );
+                                                //   },
+                                                // );
+                                              }
+                                            });
                                           }
                                         }
                                       },
@@ -650,7 +752,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
       DateTime startDate,
       DateTime endDate,
       TimeOfDay? departureTime,
-      String typeOfTrip) {
+      String typeOfTrip,
+      String? privateBookingType) {
     return showDialog(
         context: context,
         // barrierDismissible: false,
@@ -665,6 +768,11 @@ class _TransportCardState extends ConsumerState<TransportCard> {
               TextEditingController();
           TextEditingController emergencyContactNoController =
               TextEditingController();
+          TimeOfDay? startTime;
+          TimeOfDay? endTime;
+          DateTime? finalDate;
+          TextEditingController startTimeController = TextEditingController();
+          TextEditingController endTimeController = TextEditingController();
           bool governmentId = true;
           String formattedStartDate =
               DateFormat('MMMM dd, yyyy').format(startDate);
@@ -678,13 +786,19 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                 phoneNoController,
                 emergencyContactNameController,
                 emergencyContactNoController,
+                startTimeController,
+                endTimeController,
                 governmentId,
                 startDate,
                 endDate,
+                finalDate,
+                startTime,
+                endTime,
                 departureTime,
                 typeOfTrip,
                 user!,
-                listing);
+                listing,
+                privateBookingType);
           }));
         });
   }
@@ -697,13 +811,19 @@ class _TransportCardState extends ConsumerState<TransportCard> {
       TextEditingController phoneNoController,
       TextEditingController emergencyContactNameController,
       TextEditingController emergencyContactNoController,
+      TextEditingController? startTimeController,
+      TextEditingController? endTimeController,
       bool governmentId,
       DateTime startDate,
       DateTime endDate,
+      DateTime? finalDate,
+      TimeOfDay? startTime,
+      TimeOfDay? endTime,
       TimeOfDay? departureTime,
       String typeOfTrip,
       UserModel user,
-      ListingModel listing) {
+      ListingModel listing,
+      String? privateBookingType) {
     return SingleChildScrollView(
         child: Container(
       margin: const EdgeInsets.only(top: 10),
@@ -768,6 +888,65 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                       prefixText: '+63 '),
                   keyboardType: TextInputType.phone),
+              if (privateBookingType == 'Select Time') ...[
+                const SizedBox(height: 10),
+                TextFormField(
+                    controller: startTimeController,
+                    decoration: InputDecoration(
+                      labelText: 'Booking Start Time',
+                      border: const OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: transport.startTime.format(context),
+                    ),
+                    readOnly: true,
+                    onTap: () async {
+                      // show time picker
+                      final time = await showTimePicker(
+                          context: context,
+                          initialTime: transport.startTime,
+                          initialEntryMode: TimePickerEntryMode.inputOnly,
+                          builder: (context, child) {
+                            return MediaQuery(
+                                data: MediaQuery.of(context)
+                                    .copyWith(alwaysUse24HourFormat: false),
+                                child: child!);
+                          });
+
+                      if (time != null) {
+                        // ignore: use_build_context_synchronously
+                        startTimeController!.text = time.format(context);
+                        startTime = time;
+                      }
+                    }),
+                const SizedBox(height: 10),
+                TextFormField(
+                    controller: endTimeController,
+                    decoration: InputDecoration(
+                        labelText: 'Booking End Time',
+                        border: const OutlineInputBorder(),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        hintText: transport.endTime!.format(context)),
+                    readOnly: true,
+                    onTap: () async {
+                      // show time picker
+                      final time = await showTimePicker(
+                          context: context,
+                          initialTime: transport.endTime,
+                          initialEntryMode: TimePickerEntryMode.inputOnly,
+                          builder: (context, child) {
+                            return MediaQuery(
+                                data: MediaQuery.of(context)
+                                    .copyWith(alwaysUse24HourFormat: false),
+                                child: child!);
+                          });
+
+                      if (time != null) {
+                        // ignore: use_build_context_synchronously
+                        endTimeController!.text = time.format(context);
+                        endTime = time;
+                      }
+                    }),
+              ],
               Column(children: [
                 CheckboxListTile(
                   enabled: false,
@@ -791,62 +970,217 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                   child: ElevatedButton(
                       onPressed: () {
                         final currentTrip = ref.read(currentTripProvider);
-                        ListingBookings booking = ListingBookings(
-                            tripUid: currentTrip!.uid!,
-                            tripName: currentTrip.name,
-                            listingId: listing.uid!,
-                            listingTitle: listing.title,
-                            customerName: user.name,
-                            bookingStatus: "Reserved",
-                            price: transport.price,
-                            category: "Transport",
-                            startDate: DateTime(
-                                startDate.year,
-                                startDate.month,
-                                startDate.day,
-                                departureTime!.hour,
-                                departureTime.minute),
-                            endDate: DateTime(
-                                    endDate.year,
-                                    endDate.month,
-                                    endDate.day,
-                                    departureTime.hour,
-                                    departureTime.minute)
-                                .add(Duration(
-                                    hours: listing.duration!.hour,
-                                    minutes: listing.duration!.minute)),
-                            startTime: departureTime,
-                            endTime: departureTime,
-                            email: "",
-                            governmentId:
-                                "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
-                            guests: guests,
-                            customerPhoneNo: phoneNoController.text,
-                            customerId: user.uid,
-                            emergencyContactName:
-                                emergencyContactNameController.text,
-                            emergencyContactNo:
-                                emergencyContactNoController.text,
-                            needsContributions: false,
-                            tasks: listing.fixedTasks,
-                            typeOfTrip: typeOfTrip);
+                        if (typeOfTrip == 'Public') {
+                          ListingBookings booking = ListingBookings(
+                              tripUid: currentTrip!.uid!,
+                              tripName: currentTrip.name,
+                              listingId: listing.uid!,
+                              listingTitle: listing.title,
+                              customerName: user.name,
+                              bookingStatus: "Reserved",
+                              price: transport.price,
+                              category: "Transport",
+                              startDate: DateTime(
+                                  startDate.year,
+                                  startDate.month,
+                                  startDate.day,
+                                  departureTime!.hour,
+                                  departureTime.minute),
+                              endDate: DateTime(
+                                      endDate.year,
+                                      endDate.month,
+                                      endDate.day,
+                                      departureTime.hour,
+                                      departureTime.minute)
+                                  .add(Duration(
+                                      hours: listing.duration!.hour,
+                                      minutes: listing.duration!.minute)),
+                              startTime: departureTime,
+                              endTime: departureTime,
+                              email: "",
+                              governmentId:
+                                  "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
+                              guests: guests,
+                              customerPhoneNo: phoneNoController.text,
+                              customerId: user.uid,
+                              emergencyContactName:
+                                  emergencyContactNameController.text,
+                              emergencyContactNo:
+                                  emergencyContactNoController.text,
+                              needsContributions: false,
+                              tasks: listing.fixedTasks,
+                              typeOfTrip: typeOfTrip);
 
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return Dialog.fullscreen(
-                                  child: CustomerTransportCheckout(
-                                      listing: listing,
-                                      transport: transport,
-                                      booking: booking));
-                            }).then((value) {
-                          context.pop();
-                          context.pop();
-                        });
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog.fullscreen(
+                                    child: CustomerTransportCheckout(
+                                        listing: listing,
+                                        transport: transport,
+                                        booking: booking));
+                              }).then((value) {
+                            context.pop();
+                          });
+                        } else {
+                          ListingBookings booking = ListingBookings(
+                              tripUid: currentTrip!.uid!,
+                              tripName: currentTrip.name,
+                              listingId: listing.uid!,
+                              listingTitle: listing.title,
+                              customerName: user.name,
+                              bookingStatus: "Reserved",
+                              price: transport.price,
+                              category: "Transport",
+                              // if startTime is not null, then use it for the startDate
+                              startDate: startTime != null
+                                  ? DateTime(
+                                      startDate.year,
+                                      startDate.month,
+                                      startDate.day,
+                                      startTime!.hour,
+                                      startTime!.minute)
+                                  : startDate,
+                              // if endTime is not null, then use it for the endDate
+                              endDate: endTime != null
+                                  ? DateTime(
+                                      endDate.year,
+                                      endDate.month,
+                                      endDate.day,
+                                      endTime!.hour,
+                                      endTime!.minute)
+                                  : endDate,
+                              // if the startTime is not null, then the booking is for a specific time
+                              startTime: startTime != null
+                                  ? TimeOfDay(hour: startTime!.hour, minute: startTime!.minute)
+                                  : null,
+                              // if the endTime is not null, then the booking is for a specific time
+                              endTime: endTime != null
+                                  ? TimeOfDay(hour: endTime!.hour, minute: endTime!.minute)
+                                  : null,
+                              email: "",
+                              governmentId:
+                                  "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
+                              guests: guests,
+                              customerPhoneNo: phoneNoController.text,
+                              customerId: user.uid,
+                              emergencyContactName:
+                                  emergencyContactNameController.text,
+                              emergencyContactNo:
+                                  emergencyContactNoController.text,
+                              needsContributions: false,
+                              tasks: listing.fixedTasks,
+                              typeOfTrip: typeOfTrip);
+                          
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog.fullscreen(
+                                    child: CustomerTransportCheckout(
+                                        listing: listing,
+                                        transport: transport,
+                                        booking: booking));
+                              }).then((value) {
+                            context.pop();
+                          });
+                        }
                       },
                       child: const Text('Proceed')))
             ]))
       ]),
+    ));
+  }
+}
+
+class PrepareTravel extends StatelessWidget {
+  const PrepareTravel({
+    super.key,
+    required List<TextEditingController> textFormFieldControllers,
+  }) : _textFormFieldControllers = textFormFieldControllers;
+
+  final List<TextEditingController> _textFormFieldControllers;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog.fullscreen(child: StatefulBuilder(
+      builder: (context, setState) {
+        return SingleChildScrollView(
+            child: Container(
+                margin: const EdgeInsets.only(top: 10),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppBar(
+                          leading: IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: () {
+                                context.pop();
+                              }),
+                          title: const Text('Choose Travel',
+                              style: TextStyle(fontSize: 18))),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Column(children: [
+                            TextFormField(
+                                decoration: const InputDecoration(
+                                  labelText: 'Booking Start Time',
+                                  border: OutlineInputBorder(),
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  hintText: '11:00 AM',
+                                ),
+                                readOnly: true,
+                                onTap: () {}),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                                decoration: const InputDecoration(
+                                    labelText: 'Booking End Time',
+                                    border: OutlineInputBorder(),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    hintText: '11:00 PM'),
+                                readOnly: true,
+                                onTap: () {}),
+                            // make a button that adds more textformfields if the user wishes to add their locations
+                            Column(
+                                children:
+                                    _textFormFieldControllers.map((controller) {
+                              return Column(
+                                children: [
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                      controller: controller,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Location',
+                                          border: OutlineInputBorder(),
+                                          floatingLabelBehavior:
+                                              FloatingLabelBehavior.always,
+                                          hintText: 'Mariveles City, Bulacan'),
+                                      readOnly: true,
+                                      onTap: () {
+                                        // navigate to the SelectLocation page
+                                        Navigator.of(context).pop();
+
+                                        // testing the location page for future implementations
+                                        context.push('/select_location');
+                                      }),
+                                ],
+                              );
+                            }).toList()),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                                onPressed: () {
+                                  // when pressed, it adds more textformfields for adding a location
+                                  setState(() {
+                                    // add more textformfields
+                                    _textFormFieldControllers
+                                        .add(TextEditingController());
+                                  });
+                                },
+                                child: const Text('Add Location')),
+                          ]))
+                    ])));
+      },
     ));
   }
 }

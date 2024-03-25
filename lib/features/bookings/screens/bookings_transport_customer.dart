@@ -141,167 +141,127 @@ class _BookingsTransportCustomerState
                             ]),
 
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 20),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Departure',
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                              DateFormat('E, MMM d')
-                                                  .format(booking.startDate!),
-                                              style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500)),
-                                          // Checkin time
-                                          Text(
-                                            DateFormat.jm().format(
-                                                widget.booking.startDate!),
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w300),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height:
-                                        MediaQuery.sizeOf(context).height / 7.5,
-                                    width: 1,
-                                    color: Colors
-                                        .grey, // Choose the color of the line
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Arrival',
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                              DateFormat('E, MMM d')
-                                                  .format(booking.endDate!),
-                                              style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500)),
-                                          // Checkout time
-                                          Text(
-                                            DateFormat.jm().format(
-                                                widget.booking.endDate!),
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w300),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 20),
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                            padding:
+                                                const EdgeInsets.only(left: 10),
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(widget.listing.title,
+                                                      style: const TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                  const SizedBox(height: 5),
+                                                  // put the date here
+                                                  Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Icon(
+                                                            Icons
+                                                                .calendar_today,
+                                                            size: 20),
+                                                        const SizedBox(
+                                                            width: 5),
+                                                        Text(
+                                                            // format the date that does not include the time
+                                                            "Booked Date: ${DateFormat('MMMM d, yyyy').format(widget.booking.startDate!)}",
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        16))
+                                                      ]),
+                                                  const SizedBox(height: 10),
+                                                  if (widget
+                                                          .booking.typeOfTrip ==
+                                                      'Public')
+                                                    Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          const Icon(
+                                                              Icons
+                                                                  .schedule_outlined,
+                                                              size: 20),
+                                                          const SizedBox(
+                                                              width: 5),
+                                                          Text(
+                                                              // format the startTime
+                                                              "Departure Time: ${widget.booking.startTime!.format(context)}",
+                                                              style:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          16))
+                                                        ]),
+                                                ])),
+                                      )
+                                    ])),
                             ...generalActions.entries.map((entry) {
                               final generalAction = entry.value;
-                              return Column(
-                                children: [
-                                  Container(
+                              return Column(children: [
+                                Container(
                                     padding: const EdgeInsets.only(
-                                      top: 8.0,
-                                      left: 15,
-                                      right: 15,
-                                    ), // Adjust the padding as needed
+                                        top: 8.0, left: 15.0, right: 15.0),
                                     child: const Divider(
-                                      color: Colors.grey,
-                                      height: 1.0,
-                                    ),
-                                  ),
-                                  ListTile(
-                                    leading: Icon(
-                                      generalAction['icon'],
-                                      size: 24,
-                                    ),
-                                    title: Text(generalAction['title']),
+                                        color: Colors.grey, height: 1.0)),
+                                ListTile(
+                                    leading:
+                                        Icon(generalAction["icon"], size: 24),
+                                    title: Text(generalAction["title"],
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                        )),
                                     onTap: generalAction["action"],
                                     trailing: const Icon(
-                                      Icons.arrow_forward_ios_rounded,
-                                      size: 16,
-                                    ),
-                                  ),
-                                ],
-                              );
+                                        Icons.arrow_forward_ios_rounded))
+                              ]);
                             }),
                             Container(
-                              margin: const EdgeInsets.only(top: 15),
-                              height: 10,
-                              width: double.infinity,
-                              color: Colors.grey[200],
-                            ),
+                                margin: const EdgeInsets.only(top: 15),
+                                height: 10,
+                                width: double.infinity,
+                                color: Colors.grey[200]),
+
+                            // reservation details
                             const Padding(
-                              padding: EdgeInsets.only(
-                                left: 15.0,
-                                right: 15.0,
-                                top: 20,
-                              ),
-                              child: Text(
-                                'Reservation Details',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                                padding: EdgeInsets.only(
+                                    left: 15, right: 15, top: 20),
+                                child: Text('Reservation Details',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold))),
+
                             if (booking.bookingStatus != 'Cancelled' &&
                                 booking.bookingStatus != 'Completed')
                               Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 15.0,
-                                  right: 15.0,
-                                  top: 10,
-                                  bottom: 15,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Cancellation Policy: ',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    if (booking.paymentOption == "Full Payment")
-                                      Text(
-                                          'Cancellation before ${DateFormat('MMM d, HH:mm a').format(booking.endDate!.subtract(Duration(days: int.parse(widget.listing.cancellationPeriod.toString()))))}'
-                                          ' entitles you to a refund amount of ₱${(booking.amountPaid!).toStringAsFixed(2)}\n'
-                                          'Cancellation after stated date entitles you to a refund amount of ₱${(booking.amountPaid! - (booking.amountPaid! * widget.listing.cancellationRate!)).toStringAsFixed(2)}'),
-                                  ],
-                                ),
-                              ),
+                                  padding: const EdgeInsets.only(
+                                      left: 15, right: 15, top: 10, bottom: 15),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text('Cancellation Policy: ',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500)),
+                                        if (booking.paymentOption ==
+                                            'Full Payment')
+                                          Text('Cancell')
+                                      ])),
 
                             ...reservationActions.entries.map((entry) {
                               final reservationAction = entry.value;
-                              if (booking.bookingStatus == "Cancelled" &&
+                              if (booking.bookingStatus == 'Cancelled' &&
                                       entry.key == 'booking' ||
                                   booking.bookingStatus == 'Completed' &&
                                       entry.key == 'booking') {
@@ -310,46 +270,37 @@ class _BookingsTransportCustomerState
                                 return Column(
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.only(
-                                        top: 8.0,
-                                        left: 15,
-                                        right: 15,
-                                      ), // Adjust the padding as needed
-                                      child: const Divider(
-                                        color: Colors.grey,
-                                        height: 1.0,
-                                      ),
-                                    ),
+                                        padding: const EdgeInsets.only(
+                                            top: 8.0, left: 15.0, right: 15.0),
+                                        child: const Divider(
+                                            color: Colors.grey, height: 1.0)),
                                     ListTile(
-                                      leading: Icon(
-                                        reservationAction['icon'],
-                                        size: 24,
-                                      ),
-                                      title: Text(reservationAction['title']),
-                                      onTap: reservationAction["action"],
-                                      trailing: const Icon(
-                                        Icons.arrow_forward_ios_rounded,
-                                        size: 16,
-                                      ),
-                                    ),
-                                  ],
+                                        leading: Icon(reservationAction["icon"],
+                                            size: 24),
+                                        title: Text(reservationAction["title"],
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                            )),
+                                        onTap: reservationAction["action"],
+                                        trailing: const Icon(
+                                            Icons.arrow_forward_ios_rounded))
+                                  ]
                                 );
                               }
                             }),
 
-                            // Getting There Header
                             const Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: EdgeInsets.only(
+                                    left: 15, right: 15, top: 20),
                               child: Text(
                                 'Getting There',
                                 style: TextStyle(
                                   fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                                  fontWeight: FontWeight.bold
+                                )
+                              )
                             ),
 
-                            // Getting There Address
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
@@ -366,20 +317,20 @@ class _BookingsTransportCustomerState
                                 ],
                               ),
                             ),
-
-                            // Hosted By Header
+                            
                             const Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: EdgeInsets.only(
+                                left: 15, right: 15, top: 20
+                              ),
                               child: Text(
-                                'Hosted By',
+                                "Hosted By",
                                 style: TextStyle(
                                   fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                                  fontWeight: FontWeight.bold
+                                )
+                              )
                             ),
 
-                            // Hosted by Cooperative Name
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
@@ -390,23 +341,24 @@ class _BookingsTransportCustomerState
                                     widget.listing.cooperative.cooperativeName,
                                     style: const TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                      fontWeight: FontWeight.normal
+                                    )
+                                  )
+                                ]
+                              )
                             ),
 
-                            // Payment Information Header
                             const Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: EdgeInsets.only(
+                                left: 15, right: 15, top: 20
+                              ),
                               child: Text(
-                                'Payment Information',
+                                "Payment Information",
                                 style: TextStyle(
                                   fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                                  fontWeight: FontWeight.bold
+                                )
+                              )
                             ),
                           ])));
                 },

@@ -7,6 +7,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
 import 'package:lakbay/features/bookings/bookings_page.dart';
 import 'package:lakbay/features/bookings/screens/bookings_accomodation_customer.dart';
+import 'package:lakbay/features/bookings/screens/bookings_food_customer.dart';
 import 'package:lakbay/features/bookings/screens/bookings_entertainment_customer.dart';
 import 'package:lakbay/features/bookings/screens/bookings_transport_customer.dart';
 import 'package:lakbay/features/calendar/calendar_page.dart';
@@ -66,6 +67,7 @@ import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/tasks/event_tasks_edit.dart';
 import 'package:lakbay/features/tasks/event_tasks_read.dart';
+import 'package:lakbay/features/trips/plan/components/select_location.dart';
 import 'package:lakbay/features/trips/plan/explore_page.dart';
 import 'package:lakbay/features/trips/plan/screens/plan_add_activity.dart';
 import 'package:lakbay/features/trips/plan/screens/plan_search_listing.dart';
@@ -333,10 +335,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             booking: booking,
                             listing: listing,
                           );
-                        // case 'Food':
-                        //   return CustomerFood(
-                        //     listing: listing,
-                        //   );
+                        case 'Food':
+                          return BookingsFoodCustomer(
+                            booking: booking,
+                            listing: listing,
+                          );
                         case 'Entertainment':
                           return BookingsEntertainmentCustomer(
                             booking: booking,
@@ -359,6 +362,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
               // Events Page
               buildMainRoute('/events', const EventsPage()),
+
+              buildSubRoute(
+                '/select_location', 
+                (context, pathParameters, extra) {
+                  return const SelectLocation();
+                }
+              ),
 
               // Coops Page
               buildMainRoute(
@@ -591,6 +601,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                                 booking: booking,
                                 listing: listing,
                               );
+                              
                             // case 'food':
                             //   return CustomerFood(
                             //     listing: listing,
