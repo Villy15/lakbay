@@ -22,6 +22,7 @@ _$CooperativeModelImpl _$$CooperativeModelImplFromJson(
           (json['members'] as List<dynamic>).map((e) => e as String).toList(),
       managers:
           (json['managers'] as List<dynamic>).map((e) => e as String).toList(),
+      membershipFee: json['membershipFee'] as num?,
     );
 
 Map<String, dynamic> _$$CooperativeModelImplToJson(
@@ -38,4 +39,5 @@ Map<String, dynamic> _$$CooperativeModelImplToJson(
       'code': instance.code,
       'members': instance.members,
       'managers': instance.managers,
+      'membershipFee': instance.membershipFee,
     };

@@ -154,7 +154,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                           onPressed: () async {
                             final bookings = await ref.watch(
                                 getAllBookingsProvider(listing.uid!).future);
-                            String formmattedCurrentDate =
+                            String formattedCurrentDate =
                                 DateFormat('MMMM dd, yyyy').format(currentDate);
                             if (context.mounted) {
                               showDialog(

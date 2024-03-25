@@ -117,7 +117,7 @@ class _AddTourState extends ConsumerState<AddTour> {
                     category: widget.category,
                     description: _descriptionController.text,
                     title: _titleController.text,
-                    availableDays: availableDays,
+                    workingDays: workingDays,
                     type: type,
                     city: "",
                     province: "",
@@ -130,11 +130,13 @@ class _AddTourState extends ConsumerState<AddTour> {
                     publisherId: ref.read(userProvider)!.uid,
                     publisherName: ref.read(userProvider)!.name,
                     price: num.parse(_priceController.text),
-                    pax: int.parse(_capacityController.text),
                     duration: duration,
                     openingHours: TimeOfDay(
                         hour: _selectedOpeningHours.hour,
                         minute: _selectedOpeningHours.minute),
+                    closingHours: TimeOfDay(
+                        hour: _selectedClosingHours.hour,
+                        minute: _selectedClosingHours.minute),
                     guestInfo: _guestInfoController.text,
                   );
                   debugPrint("Line 126");

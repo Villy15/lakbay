@@ -17,6 +17,7 @@ class CooperativeModel with _$CooperativeModel {
     String? code,
     required List<String> members,
     required List<String> managers,
+    num? membershipFee,
   }) = _CooperativeModel;
 
   factory CooperativeModel.fromJson(Map<String, dynamic> json) =>

@@ -23,7 +23,6 @@ class CooperativeMembers with _$CooperativeMembers {
   factory CooperativeMembers.fromJson(Map<String, dynamic> json) =>
       _$CooperativeMembersFromJson(json);
 
-
   // Is Committee Member given a string
   bool isCommitteeMember(String committeeName) {
     return committees
@@ -36,6 +35,7 @@ class CooperativeMembers with _$CooperativeMembers {
     return committees
         ?.firstWhere(
           (committee) => committee.committeeName == committeeName,
+          orElse: () => CooperativeMembersRole(role: null),
         )
         .role;
   }

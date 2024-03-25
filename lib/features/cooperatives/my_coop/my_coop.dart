@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
@@ -250,6 +251,40 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   Widget _coopVotes() {
     return ref.watch(getAllVotesProvider(widget.coopId)).when(
           data: (data) {
+            if (data.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'lib/core/images/SleepingCatFromGlitch.svg',
+                      height: 100, // Adjust height as desired
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'No votes yet!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Check back later or create your own in the',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    const Text(
+                      'Manager Tools section.',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
             return ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -270,6 +305,42 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   Widget _coopGoals() {
     return ref.watch(getAllGoalsProvider(widget.coopId)).when(
           data: (data) {
+            if (data.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'lib/core/images/SleepingCatFromGlitch.svg',
+
+                      height: 100, // Adjust height as desired
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'No goals yet!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Set goals for your cooperative in the',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    const Text(
+                      'Manager Tools section.',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
             return ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -292,6 +363,41 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   Widget _coopAnnouncements() {
     return ref.watch(getAllAnnouncementsProvider(widget.coopId)).when(
           data: (coopAnnouncements) {
+            if (coopAnnouncements.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'lib/core/images/SleepingCatFromGlitch.svg',
+                      height: 100, // Adjust height as desired
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'No announcements yet!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Check back later or create your own in the',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    const Text(
+                      'Manager Tools section.',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
             return ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

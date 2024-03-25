@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/bookings/widgets/booking_card.dart';
@@ -61,33 +62,73 @@ class _BookingsPageState extends ConsumerState<BookingsPage> {
                       data: (bookings) {
                         // If bookings is empty, show a message
                         if (bookings.isEmpty) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'No Bookings Yet',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
+                          return Padding(
+                            // Use screen size to center the content
+                            padding: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height / 5,
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    'lib/core/images/SleepingCatFromGlitch.svg',
+                                    height: 100, // Adjust height as desired
                                   ),
-                                ),
-                              ),
-                              // Let's create a new trip header
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Create a new trip to start planning your next adventure!',
-                                  style: TextStyle(
-                                    fontSize: 16,
+                                  const SizedBox(height: 20),
+                                  const Text(
+                                    'No Bookings yet!',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
+                                  const SizedBox(height: 4),
+                                  const Text(
+                                    'Create a new trip ',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'to start planning your next adventure!',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  createNewTrip(),
+                                ],
                               ),
-                              const SizedBox(height: 20),
-                              createNewTrip(),
-                            ],
+                            ),
                           );
+                          // return Column(
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: [
+                          //     const Padding(
+                          //       padding: EdgeInsets.all(8.0),
+                          //       child: Text(
+                          //         'No Bookings Yet',
+                          //         style: TextStyle(
+                          //           fontSize: 24,
+                          //           fontWeight: FontWeight.bold,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     // Let's create a new trip header
+                          //     const Padding(
+                          //       padding: EdgeInsets.all(8.0),
+                          //       child: Text(
+                          //         'Create a new trip to start planning your next adventure!',
+                          //         style: TextStyle(
+                          //           fontSize: 16,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     const SizedBox(height: 20),
+                          //     createNewTrip(),
+                          //   ],
+                          // );
                         }
                         return ListView.builder(
                           physics: const NeverScrollableScrollPhysics(),

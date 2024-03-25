@@ -31,6 +31,7 @@ mixin _$CooperativeModel {
   String? get code => throw _privateConstructorUsedError;
   List<String> get members => throw _privateConstructorUsedError;
   List<String> get managers => throw _privateConstructorUsedError;
+  num? get membershipFee => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -55,7 +56,8 @@ abstract class $CooperativeModelCopyWith<$Res> {
       String? imageUrl,
       String? code,
       List<String> members,
-      List<String> managers});
+      List<String> managers,
+      num? membershipFee});
 }
 
 /// @nodoc
@@ -82,6 +84,7 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
     Object? code = freezed,
     Object? members = null,
     Object? managers = null,
+    Object? membershipFee = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -128,6 +131,10 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
           ? _value.managers
           : managers // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      membershipFee: freezed == membershipFee
+          ? _value.membershipFee
+          : membershipFee // ignore: cast_nullable_to_non_nullable
+              as num?,
     ) as $Val);
   }
 }
@@ -151,7 +158,8 @@ abstract class _$$CooperativeModelImplCopyWith<$Res>
       String? imageUrl,
       String? code,
       List<String> members,
-      List<String> managers});
+      List<String> managers,
+      num? membershipFee});
 }
 
 /// @nodoc
@@ -176,6 +184,7 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
     Object? code = freezed,
     Object? members = null,
     Object? managers = null,
+    Object? membershipFee = freezed,
   }) {
     return _then(_$CooperativeModelImpl(
       uid: freezed == uid
@@ -222,6 +231,10 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
           ? _value._managers
           : managers // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      membershipFee: freezed == membershipFee
+          ? _value.membershipFee
+          : membershipFee // ignore: cast_nullable_to_non_nullable
+              as num?,
     ));
   }
 }
@@ -240,7 +253,8 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       this.imageUrl,
       this.code,
       required final List<String> members,
-      required final List<String> managers})
+      required final List<String> managers,
+      this.membershipFee})
       : _members = members,
         _managers = managers;
 
@@ -282,8 +296,11 @@ class _$CooperativeModelImpl implements _CooperativeModel {
   }
 
   @override
+  final num? membershipFee;
+
+  @override
   String toString() {
-    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers)';
+    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers, membershipFee: $membershipFee)';
   }
 
   @override
@@ -305,7 +322,9 @@ class _$CooperativeModelImpl implements _CooperativeModel {
                 other.imageUrl == imageUrl) &&
             (identical(other.code, code) || other.code == code) &&
             const DeepCollectionEquality().equals(other._members, _members) &&
-            const DeepCollectionEquality().equals(other._managers, _managers));
+            const DeepCollectionEquality().equals(other._managers, _managers) &&
+            (identical(other.membershipFee, membershipFee) ||
+                other.membershipFee == membershipFee));
   }
 
   @JsonKey(ignore: true)
@@ -322,7 +341,8 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       imageUrl,
       code,
       const DeepCollectionEquality().hash(_members),
-      const DeepCollectionEquality().hash(_managers));
+      const DeepCollectionEquality().hash(_managers),
+      membershipFee);
 
   @JsonKey(ignore: true)
   @override
@@ -351,7 +371,8 @@ abstract class _CooperativeModel implements CooperativeModel {
       final String? imageUrl,
       final String? code,
       required final List<String> members,
-      required final List<String> managers}) = _$CooperativeModelImpl;
+      required final List<String> managers,
+      final num? membershipFee}) = _$CooperativeModelImpl;
 
   factory _CooperativeModel.fromJson(Map<String, dynamic> json) =
       _$CooperativeModelImpl.fromJson;
@@ -378,6 +399,8 @@ abstract class _CooperativeModel implements CooperativeModel {
   List<String> get members;
   @override
   List<String> get managers;
+  @override
+  num? get membershipFee;
   @override
   @JsonKey(ignore: true)
   _$$CooperativeModelImplCopyWith<_$CooperativeModelImpl> get copyWith =>

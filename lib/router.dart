@@ -7,6 +7,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
 import 'package:lakbay/features/bookings/bookings_page.dart';
 import 'package:lakbay/features/bookings/screens/bookings_accomodation_customer.dart';
+import 'package:lakbay/features/bookings/screens/bookings_food_customer.dart';
 import 'package:lakbay/features/bookings/screens/bookings_entertainment_customer.dart';
 import 'package:lakbay/features/bookings/screens/bookings_transport_customer.dart';
 import 'package:lakbay/features/calendar/calendar_page.dart';
@@ -22,6 +23,7 @@ import 'package:lakbay/features/cooperatives/crud/read_coop.dart';
 import 'package:lakbay/features/cooperatives/join_coop.dart';
 import 'package:lakbay/features/cooperatives/leave_coop.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/read_announcement.dart';
+import 'package:lakbay/features/cooperatives/my_coop/goals/read_goal.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/add_committee_members.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/join_coop_code.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_committees_page.dart';
@@ -65,6 +67,7 @@ import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/tasks/event_tasks_edit.dart';
 import 'package:lakbay/features/tasks/event_tasks_read.dart';
+import 'package:lakbay/features/trips/plan/components/select_location.dart';
 import 'package:lakbay/features/trips/plan/explore_page.dart';
 import 'package:lakbay/features/trips/plan/screens/plan_add_activity.dart';
 import 'package:lakbay/features/trips/plan/screens/plan_search_listing.dart';
@@ -174,13 +177,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               }),
 
               // Edit Profile Page
-              buildSubRoute('/profile/edit', (context, pathParameters, extra) {
-                UserModel user = extra as UserModel;
+              buildSubRoute(
+                '/profile/edit',
+                (context, pathParameters, extra) {
+                  UserModel user = extra as UserModel;
 
-                return EditProfilePage(
-                  user: user,
-                );
-              }),
+                  return EditProfilePage(
+                    user: user,
+                  );
+                },
+                name: 'edit_profile',
+              ),
 
               // My Coop Dashboard
               buildSubRoute('/my_coop/dashboard/:uid',
@@ -328,19 +335,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             booking: booking,
                             listing: listing,
                           );
-                        // case 'Food':
-                        //   return CustomerFood(
-                        //     listing: listing,
-                        //   );
+                        case 'Food':
+                          return BookingsFoodCustomer(
+                            booking: booking,
+                            listing: listing,
+                          );
                         case 'Entertainment':
                           return BookingsEntertainmentCustomer(
                             booking: booking,
                             listing: listing,
                           );
-                         case 'Tour':
-                           return CustomerTouring(
-                             listing: listing,
-                           );
+                        case 'Tour':
+                          return CustomerTouring(
+                            listing: listing,
+                          );
                         default:
                           return BookingsAccomodationCustomer(
                             booking: booking,
@@ -354,6 +362,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
               // Events Page
               buildMainRoute('/events', const EventsPage()),
+
+              buildSubRoute(
+                '/select_location', 
+                (context, pathParameters, extra) {
+                  return const SelectLocation();
+                }
+              ),
 
               // Coops Page
               buildMainRoute(
@@ -586,6 +601,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                                 booking: booking,
                                 listing: listing,
                               );
+                              
                             // case 'food':
                             //   return CustomerFood(
                             //     listing: listing,
@@ -667,8 +683,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     (context, pathParameters, extra) {
                       CooperativeModel coop = extra as CooperativeModel;
 
-                      return AddTour(
-                          coop: coop, category: 'Tour');
+                      return AddTour(coop: coop, category: 'Tour');
                     },
                     name: 'add_tour',
                   ),
@@ -739,6 +754,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   (context, pathParameters, extra) {
                 return CoopReadEventPage(eventId: pathParameters['eventId']!);
               }),
+
+              // Read Goal from my coop using id
+              buildSubRoute(
+                '/my_coop/goals/:goalId',
+                (context, pathParameters, extra) {
+                  return ReadGoal(
+                    goalId: pathParameters['goalId']!,
+                  );
+                },
+              ),
 
               // Read Announcement from my coop
               buildSubRoute(
