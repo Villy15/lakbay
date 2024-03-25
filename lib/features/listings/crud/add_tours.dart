@@ -117,7 +117,7 @@ class _AddTourState extends ConsumerState<AddTour> {
                     category: widget.category,
                     description: _descriptionController.text,
                     title: _titleController.text,
-                    workingDays: workingDays,
+                    availableDays: availableDays,
                     type: type,
                     city: "",
                     province: "",
