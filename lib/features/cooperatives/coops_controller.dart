@@ -28,6 +28,13 @@ final getCooperativeProvider =
   return coopsController.getCooperative(uid);
 });
 
+// Get cooperatives by member provider
+final getCooperativesByMemberProvider = StreamProvider.autoDispose
+    .family<List<CooperativeModel>, String>((ref, uid) {
+  final coopsController = ref.watch(coopsControllerProvider.notifier);
+  return coopsController.getCooperativesByMember(uid);
+});
+
 // Cooperative controller provider
 final coopsControllerProvider =
     StateNotifierProvider<CoopsController, bool>((ref) {
@@ -367,6 +374,11 @@ class CoopsController extends StateNotifier<bool> {
   // Read a cooperative
   Stream<CooperativeModel> getCooperative(String uid) {
     return _coopsRepository.readCoop(uid);
+  }
+
+  // Read all cooperatives that the user is a member of
+  Stream<List<CooperativeModel>> getCooperativesByMember(String uid) {
+    return _coopsRepository.readCoopsJoined(uid);
   }
 
   // Real all members

@@ -27,6 +27,13 @@ class UserModel with _$UserModel {
       String? validIdUrl,
       String? birthCertificateUrl,
       List<UserReviews>? reviews,
+      String? middleName,
+      @TimestampSerializer() DateTime? birthDate,
+      num? age,
+      String? gender,
+      String? religion,
+      String? nationality,
+      String? civilStatus,
       @TimestampSerializer() DateTime? createdAt}) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

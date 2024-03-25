@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
@@ -62,12 +64,28 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
       _formKey.currentState!.save();
     }
 
-    final userUid = ref.read(userProvider)?.uid ?? '';
+    final userUid = ref.read(userProvider);
     // Add user to members in Coop
     var updatedCoop = widget.coop.copyWith(
-      members: [...widget.coop.members, userUid],
+      members: [...widget.coop.members, userUid!.uid],
     );
 
+    // Update user from the fields
+    final updatedUser = userUid.copyWith(
+      lastName: _lastName.text,
+      firstName: _firstName.text,
+      middleName: _middleName.text,
+      birthDate: _birthDate,
+      age: num.tryParse(_age.text),
+      gender: _gender.text,
+      religion: _religion.text,
+      nationality: _nationality.text,
+      civilStatus: _civilStatus.text,
+    );
+
+    ref
+        .read(usersControllerProvider.notifier)
+        .editProfileFromJoiningCoop(context, userUid.uid, updatedUser);
     // Update coop
     ref
         .read(coopsControllerProvider.notifier)
@@ -230,7 +248,9 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                 TextFormField(
                                   controller: _birthDate != null
                                       ? TextEditingController(
-                                          text: _birthDate!.toString())
+                                          text: DateFormat('yyyy-MM-dd')
+                                              .format(_birthDate!),
+                                        )
                                       : null,
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
@@ -263,6 +283,8 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                       flex: 1,
                                       child: TextFormField(
                                         controller: _age,
+                                        // number
+                                        keyboardType: TextInputType.number,
                                         decoration: const InputDecoration(
                                           border: OutlineInputBorder(),
                                           icon: Icon(Icons.person,
@@ -371,7 +393,9 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                   },
                                   title: const Text('Valid ID'),
                                   subtitle: _validId != null
-                                      ? const Text('PDF selected')
+                                      // File name
+                                      ? Text(
+                                          'PDF selected: ${_validId!.path.split('/').last}')
                                       : const Text('Select a PDF file'),
                                   trailing:
                                       const Icon(Icons.file_copy_outlined),
@@ -428,7 +452,8 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                   },
                                   title: const Text('Birth Certificate'),
                                   subtitle: _birthCertificate != null
-                                      ? const Text('PDF selected')
+                                      ? Text(
+                                          'PDF selected: ${_birthCertificate!.path.split('/').last}')
                                       : const Text('Select a PDF file'),
                                   trailing:
                                       const Icon(Icons.file_copy_outlined),
@@ -473,19 +498,18 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                           const SizedBox(height: 10),
 
                                           // Payment Instructions
-                                          const Row(
+                                          Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text('Total',
+                                              const Text('Total',
                                                   style: TextStyle(
                                                       fontSize: 20,
                                                       fontWeight:
                                                           FontWeight.bold)),
-
-                                              // TODO Add Amount For membership
-                                              Text('₱500.00',
-                                                  style: TextStyle(
+                                              Text(
+                                                  '₱${widget.coop.membershipFee?.toStringAsFixed(2)}',
+                                                  style: const TextStyle(
                                                       fontSize: 20,
                                                       fontWeight:
                                                           FontWeight.bold)),
@@ -499,12 +523,13 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold)),
 
-                                          const Row(
+                                          Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text("Membership Fee"),
-                                              Text("₱100.00"),
+                                              const Text("Membership Fee"),
+                                              Text(
+                                                  '₱${widget.coop.membershipFee?.toStringAsFixed(2)}'),
                                             ],
                                           ),
                                         ],

@@ -111,4 +111,18 @@ class UsersController extends StateNotifier<bool> {
       );
     });
   }
+
+  void editProfileFromJoiningCoop(
+      BuildContext context, String uid, UserModel user) {
+    state = true;
+    _userRepository.editUser(uid, user).then((result) {
+      state = false;
+      result.fold(
+        (l) => showSnackBar(context, l.message),
+        (r) {
+          _ref.read(userProvider.notifier).setUser(user);
+        },
+      );
+    });
+  }
 }

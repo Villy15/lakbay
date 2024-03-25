@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
 import 'package:lakbay/features/cooperatives/my_coop/goals/add_goal.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_fee.dart';
 import 'package:lakbay/features/cooperatives/my_coop/voting/add_vote.dart';
 import 'package:lakbay/models/coop_model.dart';
 
@@ -90,6 +91,20 @@ class ManagerToolsPage extends ConsumerWidget {
     );
   }
 
+  void manageMemberShipFee(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return ManageMemberFee(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // List Tile Map Cooperative Activities
@@ -157,6 +172,16 @@ class ManagerToolsPage extends ConsumerWidget {
             title: const Text('Add Members with CSV'),
             onTap: () => {
               joinCoopCode(
+                context,
+                coop,
+              )
+            },
+          ),
+      'Manage Membership Fee': () => ListTile(
+            leading: const Icon(Icons.money),
+            title: const Text('Manage Membership Fee'),
+            onTap: () => {
+              manageMemberShipFee(
                 context,
                 coop,
               )
