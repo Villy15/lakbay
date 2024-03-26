@@ -513,7 +513,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               decoration: const InputDecoration(
                 labelText: 'Start Time*',
                 border: OutlineInputBorder(),
-                
+
                 floatingLabelBehavior: FloatingLabelBehavior
                     .always, // Keep the label always visible
                 hintText: "8:30 AM",
@@ -1740,10 +1740,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                                 context: context,
                                 builder: (context) {
                                   return SizedBox(
-                                    child: AlertDialog(
-                                      content: showSchedulingForm(),
-                                      contentPadding: const EdgeInsets.only(
-                                          top: 30, left: 10, right: 10),
+                                    child: Dialog(
+                                      child: showSchedulingForm(),
+                                      // contentPadding: const EdgeInsets.only(
+                                      //     top: 30, left: 10, right: 10),
                                     ),
                                   );
                                 });
@@ -1783,8 +1783,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     int changeState = 0;
     return StatefulBuilder(builder: (context, setVars) {
       int indexPadder = 3;
-      return SizedBox(
-        height: MediaQuery.sizeOf(context).height / 1.3,
+      return Container(
+        padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
+        height: MediaQuery.sizeOf(context).height / 1.2,
+        width: MediaQuery.sizeOf(context).width * 1,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
