@@ -402,7 +402,7 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height / 30,
                     ),
-                    ElevatedButton(
+                    FilledButton(
                         onPressed: () async {
                           AvailableRoom room = AvailableRoom(
                               available: true,
@@ -449,94 +449,73 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
                   String formattedEndDate =
                       DateFormat('MMMM dd').format(bookings[index].endDate!);
                   return Card(
-                    elevation: 1.0, // Slight shadow for depth
-                    margin: const EdgeInsets.all(8.0), // Space around the card
+                    elevation: 1.0,
+                    margin: const EdgeInsets.all(15.0),
                     child: Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 20.0,
-                              right: 10,
-                              top: 10,
-                              bottom: 10), // Reduced overall padding
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
+                        ListTile(
+                          title: Row(
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "$formattedStartDate - ",
-                                            style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            formattedEndDate,
-                                            style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                      Text(
-                                        "Room ID: ${bookings[index].roomId}",
-                                        style: const TextStyle(
-                                          fontSize:
-                                              18, // Increased font size, larger than the previous one
-                                          fontWeight:
-                                              FontWeight.bold, // Bold text
-                                        ),
-                                      ),
-                                      RichText(
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text:
-                                                  "Guests: ${bookings[index].guests}",
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      16, // Size for the price
-                                                  fontWeight: FontWeight
-                                                      .bold, // Bold for the price
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurface),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              Text(
+                                "$formattedStartDate - ",
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                formattedEndDate,
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          subtitle: Row(
+                            children: [
+                              Text(
+                                "Room: ${bookings[index].roomId} | ",
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.black),
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: "Guests: ${bookings[index].guests}",
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.black),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: ElevatedButton(
-                              onPressed: () {
-                                context.push(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: SizedBox(
+                              width: MediaQuery.sizeOf(context).width * .5,
+                              child: FilledButton(
+                                onPressed: () {
+                                  context.push(
                                     '/market/${bookings[index].category}/booking_details',
                                     extra: {
                                       'booking': bookings[index],
                                       'listing': widget.listing
-                                    });
-                              },
-                              child: const Text("Booking Details")),
-                        )
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        4.0), // Adjust the radius as needed
+                                  ),
+                                ),
+                                child: const Text("Booking Details"),
+                              ),
+                            ))
                       ],
                     ),
                   );
@@ -806,9 +785,9 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
                                       ],
                                     ),
                                     Center(
-                                        child: ElevatedButton(
+                                        child: FilledButton(
                                       onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
+                                      style: FilledButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 50, vertical: 15),
                                       ),
@@ -948,7 +927,7 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
                 margin: const EdgeInsets.only(bottom: 25, right: 25),
                 child: Align(
                     alignment: Alignment.bottomRight,
-                    child: ElevatedButton(
+                    child: FilledButton(
                       onPressed: () {
                         showDialog(
                             context: context,
@@ -956,7 +935,7 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
                               return addRoomDialog();
                             });
                       },
-                      style: ElevatedButton.styleFrom(
+                      style: FilledButton.styleFrom(
                         shape: const CircleBorder(), // Circular shape
                         padding: const EdgeInsets.all(
                             15), // Padding to make the button larger

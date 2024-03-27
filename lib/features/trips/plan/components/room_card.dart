@@ -17,7 +17,21 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 class RoomCard extends ConsumerStatefulWidget {
   final String category;
   final List<ListingBookings> bookings;
-  const RoomCard({super.key, required this.category, required this.bookings});
+  final ListingBookings?
+      customerBooking; //use this for when you need to pass a booking here to streamline the process of booking, [1] Case: emergencybooking
+  final String? reason; //['emergency']
+  final num? guests;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  const RoomCard(
+      {super.key,
+      required this.category,
+      required this.bookings,
+      this.customerBooking,
+      this.reason,
+      this.guests,
+      this.startDate,
+      this.endDate});
 
   @override
   ConsumerState<RoomCard> createState() => _RoomCardState();
@@ -31,9 +45,9 @@ class _RoomCardState extends ConsumerState<RoomCard> {
 
   @override
   Widget build(BuildContext context) {
-    final guests = ref.read(currentPlanGuestsProvider);
-    final startDate = ref.read(planStartDateProvider);
-    final endDate = ref.read(planEndDateProvider);
+    final guests = ref.read(currentPlanGuestsProvider) ?? widget.guests;
+    final startDate = ref.read(planStartDateProvider) ?? widget.startDate;
+    final endDate = ref.read(planEndDateProvider) ?? widget.endDate;
     List<String> unavailableRoomUids =
         getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
     return ref
@@ -167,14 +181,20 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                   ),
                                                 ),
                                                 ElevatedButton(
-                                                  onPressed: () {
-                                                    showSelectDate(
-                                                        context,
-                                                        startDate,
-                                                        endDate,
-                                                        widget.bookings,
-                                                        listing,
-                                                        room);
+                                                  onPressed: () async {
+                                                    if (widget.reason !=
+                                                        'emergency') {
+                                                      showSelectDate(
+                                                          context,
+                                                          startDate,
+                                                          endDate,
+                                                          widget.bookings,
+                                                          listing,
+                                                          room);
+                                                    } else {
+                                                      emergencyBooking(context,
+                                                          room, listing);
+                                                    }
                                                   },
                                                   style:
                                                       ElevatedButton.styleFrom(
@@ -684,5 +704,69 @@ class _RoomCardState extends ConsumerState<RoomCard> {
         }));
       },
     );
+  }
+
+  Future<dynamic> emergencyBooking(
+    BuildContext context,
+    AvailableRoom room,
+    ListingModel listing,
+  ) async {
+    ListingBookings updatedBooking =
+        widget.customerBooking!.copyWith(roomId: room.roomId);
+    List<BookingTask> updatedBookingTasks = await ref.read(
+        getBookingTasksByBookingId((listing.uid!, updatedBooking.id!)).future);
+    if (context.mounted) {
+      ref
+          .read(listingControllerProvider.notifier)
+          .updateBooking(context, listing.uid!, updatedBooking, '');
+
+      for (var updatedBookingTask in updatedBookingTasks) {
+        updatedBookingTask =
+            updatedBookingTask.copyWith(roomId: updatedBooking.roomId);
+        ref
+            .read(listingControllerProvider.notifier)
+            .updateBookingTask(context, listing.uid!, updatedBookingTask, '');
+      }
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Room Transfer'),
+              content: SizedBox(
+                height: MediaQuery.sizeOf(context).height * .2,
+                child: FutureBuilder<bool>(
+                  future:
+                      Future.delayed(const Duration(seconds: 2), () => true),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: Column(
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(height: 10),
+                            Text('Transferring Customer'),
+                          ],
+                        ),
+                      ); // Show a loading indicator while waiting
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return const Text(
+                          'Customer has been transferred to another room. Tasks accomplished prior have been invalidated due to the room transfer.'); // Show the text after delay
+                    }
+                  },
+                ),
+              ),
+              actions: [
+                FilledButton(
+                    onPressed: () {
+                      context.pop();
+                      context.pop();
+                    },
+                    child: const Text('Close'))
+              ],
+            );
+          });
+    }
   }
 }

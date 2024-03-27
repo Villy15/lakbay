@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 //import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:intl/intl.dart';
@@ -624,6 +625,11 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           maxLines: null,
           decoration: const InputDecoration(
             labelText: 'Price*',
+            prefix: Text('₱'),
+            suffix: Text(
+              'per person',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+            ),
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: "400",
@@ -640,6 +646,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                   labelText: 'Capacity*',
                   border: OutlineInputBorder(),
                   floatingLabelBehavior: FloatingLabelBehavior.always,
+                  suffix: Text(
+                    'person/s',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                  ),
                   hintText: "10",
                 ),
               ),
@@ -800,6 +810,11 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           decoration: const InputDecoration(
             labelText: 'Price*',
             helperText: '*required',
+            prefix: Text('₱'),
+            suffix: Text(
+              'per person',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+            ),
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: "Price per person",
@@ -813,6 +828,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             helperText: '*optional',
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
+            suffix: Text(
+              'person/s',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+            ),
             hintText: "10",
           ),
         ),
@@ -1671,9 +1690,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
         available: true, date: DateTime.now(), availableTimes: []);
     TextEditingController availableDateController =
         TextEditingController(text: '');
-    TimeOfDay timeSlot = const TimeOfDay(hour: 8, minute: 30);
-    TextEditingController timeSlotController =
-        TextEditingController(text: '8:30 AM');
     List<String> notes = [
       'Selected working days will be the basis for making this Showing/Performance available for bookings.',
     ];
@@ -1732,7 +1748,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                     if (_selectedSchedulingOption ==
                         SchedulingOptions.dayAvaiabilityScheduling) ...[
                       Container(
-                        padding: const EdgeInsets.only(top: 10),
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
                         width: MediaQuery.sizeOf(context).width / 1.2,
                         child: FilledButton(
                           onPressed: () {
@@ -1742,8 +1758,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                                   return SizedBox(
                                     child: Dialog(
                                       child: showSchedulingForm(),
-                                      // contentPadding: const EdgeInsets.only(
-                                      //     top: 30, left: 10, right: 10),
                                     ),
                                   );
                                 });
@@ -1759,6 +1773,48 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                           child: const Text('Add Schedule'),
                         ),
                       ),
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, // Number of columns
+                          crossAxisSpacing: 0.0, // Spacing between columns
+                          mainAxisSpacing: 0.0, // Spacing between rows
+                          mainAxisExtent:
+                              MediaQuery.sizeOf(context).height * .18,
+                        ),
+                        itemCount: availableDays.length,
+                        itemBuilder: (context, dayIndex) {
+                          //this stupid logic just makes it so the days visually display
+                          //top to bottom left to right
+                          final day = availableDays[dayIndex];
+                          return Container(
+                            margin:
+                                const EdgeInsets.only(left: 10, bottom: 20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(day.day),
+                                day.availableTimes.isNotEmpty
+                                    ? Wrap(
+                                        children: day.availableTimes
+                                            .map((availableTime) {
+                                          return Text(
+                                            '${availableTime.time.format(context)} ',
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w300,
+                                              color: Colors.black,
+                                            ),
+                                          );
+                                        }).toList(),
+                                      )
+                                    : const Text('No Time Set'),
+                              ],
+                            ),
+                          );
+                        },
+                      )
                     ],
                     if (_selectedSchedulingOption ==
                         SchedulingOptions.fixedScheduling) ...[
@@ -1780,6 +1836,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     TextEditingController timeSlotController =
         TextEditingController(text: '8:30 AM');
     TextEditingController timeSlotCapacityController = TextEditingController();
+    ScrollController scrollController = ScrollController();
     int changeState = 0;
     return StatefulBuilder(builder: (context, setVars) {
       int indexPadder = 3;
@@ -1787,169 +1844,229 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
         padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
         height: MediaQuery.sizeOf(context).height / 1.2,
         width: MediaQuery.sizeOf(context).width * 1,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Working Days',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const Text('Please indicate the days of booking availability.',
-                style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Number of columns
-                  crossAxisSpacing: 0.0, // Spacing between columns
-                  mainAxisSpacing: 0.0, // Spacing between rows
-                  mainAxisExtent: MediaQuery.sizeOf(context).height / 15),
-              itemCount: workingDays.length,
-              itemBuilder: (context, dayIndex) {
-                //this stupid logic just makes it so the days visually display
-                //top to bottom left to right
-                final day = workingDays.keys.elementAt((dayIndex.isOdd)
-                    ? (dayIndex + indexPadder)
-                    : (dayIndex.isEven)
-                        ? (3 - indexPadder)
-                        : dayIndex);
-                dayIndex.isOdd ? (indexPadder = indexPadder - 1) : null;
-                final isOpen = workingDays[day]!;
-                return CheckboxListTile(
-                  dense: true,
-                  visualDensity: VisualDensity.compact,
-                  contentPadding: EdgeInsets.zero,
-                  controlAffinity: ListTileControlAffinity.leading,
-                  title: Text(
-                    day,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                  value: isOpen,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      workingDays[day] = value!;
-                    });
-                    setVars(() {
-                      //I use this to force a change state of the dialog when clicking a day
-                      changeState = changeState + 1;
-                    });
-                  },
-                );
-              },
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const Text('Time Slot & Capacity',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const Text(
-                'Please indicate the time slot and capacity for selected days.',
-                style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: timeSlotController,
-                    maxLines: 1,
-                    decoration: const InputDecoration(
-                      labelText: 'Time Slot*',
-                      border: OutlineInputBorder(),
-                      floatingLabelBehavior: FloatingLabelBehavior
-                          .always, // Keep the label always visible
-                      hintText: "8:30 AM",
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Working Days',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      Text('Please indicate the days of booking availability.',
+                          style: TextStyle(
+                              fontSize: 15, fontStyle: FontStyle.italic)),
+                    ]),
+              ),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // Number of columns
+                    crossAxisSpacing: 0.0, // Spacing between columns
+                    mainAxisSpacing: 0.0, // Spacing between rows
+                    mainAxisExtent: MediaQuery.sizeOf(context).height / 15),
+                itemCount: workingDays.length,
+                itemBuilder: (context, dayIndex) {
+                  //this stupid logic just makes it so the days visually display
+                  //top to bottom left to right
+                  final day = workingDays.keys.elementAt((dayIndex.isOdd)
+                      ? (dayIndex + indexPadder)
+                      : (dayIndex.isEven)
+                          ? (3 - indexPadder)
+                          : dayIndex);
+                  dayIndex.isOdd ? (indexPadder = indexPadder - 1) : null;
+                  final isOpen = workingDays[day]!;
+                  return CheckboxListTile(
+                    dense: true,
+                    visualDensity: VisualDensity.compact,
+                    contentPadding: EdgeInsets.zero,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text(
+                      day,
+                      style: const TextStyle(fontSize: 14),
                     ),
-                    readOnly: true,
-                    onTap: () async {
-                      final TimeOfDay? pickedTime = await showTimePicker(
-                        context: context,
-                        initialTime: timeSlot,
-                        initialEntryMode: TimePickerEntryMode.inputOnly,
-                        builder: (BuildContext context, Widget? child) {
-                          return MediaQuery(
-                            data: MediaQuery.of(context)
-                                .copyWith(alwaysUse24HourFormat: false),
-                            child: child!,
-                          );
-                        },
-                      );
-
-                      if (pickedTime != null) {
-                        setVars(() {
-                          timeSlotController.text = pickedTime.format(context);
-                          timeSlot = pickedTime;
-                        });
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: TextFormField(
-                    controller: timeSlotCapacityController,
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      labelText: 'Capacity*',
-                      border: OutlineInputBorder(),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      hintText: "10",
-                      suffix: Text(
-                        'person/s',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w300),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FilledButton(
-                    onPressed: () {
-                      context.pop();
-                    },
-                    child: const Text('Close')),
-                const SizedBox(
-                  width: 10,
-                ),
-                FilledButton(
-                    onPressed: () {
+                    value: isOpen,
+                    onChanged: (bool? value) {
                       setState(() {
-                        workingDays.forEach((key, value) {
-                          if (value == true) {
-                            if (availableDays
-                                .asMap()
-                                .entries
-                                .any((element) => element.value.day == key)) {
-                              availableDays[availableDays.indexWhere(
-                                      (element) => element.day == key)] =
-                                  AvailableDay(
-                                      available: true,
-                                      day: key,
-                                      availableTimes: availableTimes);
-                            } else {
-                              availableDays.add(AvailableDay(
-                                  available: true,
-                                  day: key,
-                                  availableTimes: availableTimes));
-                            }
-                          }
-                        });
+                        workingDays[day] = value!;
+                      });
+                      setVars(() {
+                        //I use this to force a change state of the dialog when clicking a day
+                        changeState = changeState + 1;
                       });
                     },
-                    child: const Text('Submit')),
-              ],
-            )
-          ],
+                  );
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Time Slot & Capacity',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      const Text(
+                          'Please indicate the time slot and capacity for selected days.',
+                          style: TextStyle(
+                              fontSize: 15, fontStyle: FontStyle.italic)),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: timeSlotController,
+                              maxLines: 1,
+                              decoration: const InputDecoration(
+                                labelText: 'Time Slot*',
+                                border: OutlineInputBorder(),
+                                floatingLabelBehavior: FloatingLabelBehavior
+                                    .always, // Keep the label always visible
+                                hintText: "8:30 AM",
+                              ),
+                              readOnly: true,
+                              onTap: () async {
+                                final TimeOfDay? pickedTime =
+                                    await showTimePicker(
+                                  context: context,
+                                  initialTime: timeSlot,
+                                  initialEntryMode:
+                                      TimePickerEntryMode.inputOnly,
+                                  builder:
+                                      (BuildContext context, Widget? child) {
+                                    return MediaQuery(
+                                      data: MediaQuery.of(context).copyWith(
+                                          alwaysUse24HourFormat: false),
+                                      child: child!,
+                                    );
+                                  },
+                                );
+
+                                if (pickedTime != null) {
+                                  setVars(() {
+                                    timeSlotController.text =
+                                        pickedTime.format(context);
+                                    timeSlot = pickedTime;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: TextFormField(
+                              keyboardType: TextInputType.number,
+                              controller: timeSlotCapacityController,
+                              decoration: const InputDecoration(
+                                labelText: 'Capacity*',
+                                border: OutlineInputBorder(),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                hintText: "10",
+                                suffix: Text(
+                                  'person/s',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ]),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FilledButton(
+                      onPressed: () {
+                        context.pop();
+                      },
+                      child: const Text('Close')),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  FilledButton(
+                      onPressed: () {
+                        onTapAddTime(
+                            context, timeSlot, timeSlotCapacityController);
+                      },
+                      child: const Text('Add Time')),
+                ],
+              )
+            ],
+          ),
         ),
       );
+    });
+  }
+
+  void onTapAddTime(BuildContext context, TimeOfDay timeSlot,
+      TextEditingController timeSlotCapacityController) {
+    availableTimes = [];
+    return setState(() {
+      workingDays.forEach((key, value) {
+        if (value == true) {
+          if (availableDays
+              .asMap()
+              .entries
+              .any((element) => element.value.day == key)) {
+            availableTimes = availableDays[
+                    availableDays.indexWhere((element) => element.day == key)]
+                .availableTimes
+                .toList(growable: true);
+            if (!availableTimes
+                .asMap()
+                .entries
+                .any((element) => element.value.time == timeSlot)) {
+              availableTimes.add(AvailableTime(
+                  available: true,
+                  currentPax: 0,
+                  maxPax: num.parse(timeSlotCapacityController.text),
+                  time: timeSlot));
+              availableTimes.sort((timeOne, timeTwo) {
+                return int.parse('${timeOne.time.hour}${timeOne.time.minute}')
+                    .compareTo(int.parse(
+                        '${timeTwo.time.hour}${timeTwo.time.minute}'));
+              });
+            }
+            availableDays[
+                    availableDays.indexWhere((element) => element.day == key)] =
+                AvailableDay(
+                    available: true, day: key, availableTimes: availableTimes);
+          } else {
+            availableTimes
+                    .asMap()
+                    .entries
+                    .any((element) => element.value.time != timeSlot)
+                ? availableTimes.add(AvailableTime(
+                    available: true,
+                    currentPax: 0,
+                    maxPax: num.parse(timeSlotCapacityController.text),
+                    time: timeSlot))
+                : null;
+            availableDays.add(AvailableDay(
+                available: true, day: key, availableTimes: availableTimes));
+          }
+        }
+        workingDays[key] = false;
+      });
     });
   }
 }

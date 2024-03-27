@@ -263,16 +263,15 @@ class ListingController extends StateNotifier<bool> {
         if (booking.startDate?.hour == 0 &&
             booking.startDate?.minute == 0 &&
             booking.startDate?.second == 0) {
+          DateTime mergedDate = DateTime(
+            booking.startDate!.year,
+            booking.startDate!.month,
+            booking.startDate!.day,
+            booking.startTime!.hour,
+            booking.startTime!.minute,
+          );
 
-              DateTime mergedDate = DateTime(
-                booking.startDate!.year,
-                booking.startDate!.month,
-                booking.startDate!.day,
-                booking.startTime!.hour,
-                booking.startTime!.minute,
-              );
-
-              booking = booking.copyWith(startDate: mergedDate);
+          booking = booking.copyWith(startDate: mergedDate);
         }
 
         // check if the booking.endDate's time is set to 00:00:00 and if so, set it to booking.endTime

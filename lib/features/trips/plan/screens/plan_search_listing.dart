@@ -166,54 +166,11 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                 ),
               ),
             ),
-
             const Divider(),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: listingCardController(selectedCategory),
             ),
-            // ref.watch(getAllListingsProvider).when(
-            //       data: (listings) {
-            //         // Sort
-            //         switch (sortBy) {
-            //           case SortBy.lowestPrice:
-            //             listings.sort((a, b) => a.price!.compareTo(b.price!));
-            //             break;
-            //           case SortBy.highestPrice:
-            //             listings.sort((a, b) => b.price!.compareTo(a.price!));
-            //             break;
-            //           case SortBy.rating:
-            //             break;
-            //           case SortBy.distance:
-            //             break;
-            //         }
-
-            //         // Filter
-            //         final filteredListings = listings.where((listing) {
-            //           return filters[listing.category] == true;
-            //         }).toList();
-
-            //         return Padding(
-            //           padding: const EdgeInsets.all(8.0),
-            //           child: ListView.separated(
-            //             separatorBuilder: (context, index) => const SizedBox(
-            //               height: 12.0,
-            //             ),
-            //             physics: const NeverScrollableScrollPhysics(),
-            //             shrinkWrap: true,
-            //             itemCount: filteredListings.length,
-            //             itemBuilder: (context, index) {
-            //               final listing = filteredListings[index];
-            //               return listingCardController(listing);
-            //             },
-            //           ),
-            //         );
-            //       },
-            //       error: (error, stackTrace) => ErrorText(
-            //           error: error.toString(),
-            //           stackTrace: stackTrace.toString()),
-            //       loading: () => const Loader(),
-            //     ),
           ],
         ),
       ),
