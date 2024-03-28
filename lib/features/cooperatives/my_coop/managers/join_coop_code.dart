@@ -1,6 +1,13 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
+import 'package:lakbay/core/constants/firebase_constants.dart';
+import 'package:lakbay/core/providers/firebase_providers.dart';
+import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/models/user_model.dart';
+import 'package:mailto/mailto.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +16,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class JoinCoopCodePage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -85,24 +93,68 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
     });
   }
 
-  void addMembers() {
+  void addMembers() async {
     // Add members to the cooperative
     debugPrint('Adding members: ${extractedMembers.toString()}');
     final user = ref.read(userProvider);
+    final firebase = ref.read(firestoreProvider);
+    List<MemberData> newMembers = [];
 
-    // Register members to firebase auth
-    ref.read(authControllerProvider.notifier).registerMembers(
+    debugPrint('this is extracted members: $extractedMembers');
+
+    // check if one of the extractedMembers is already registered in the application
+    for (var member in extractedMembers) {
+      final memberQuerySnapshot = await firebase
+          .collection(FirebaseConstants.usersCollection)
+          .where('email', isEqualTo: member.email)
+          .get();
+      if (memberQuerySnapshot.docs.isNotEmpty) {
+        debugPrint('Member already exists: ${member.email}');
+        debugPrint('Member data: ${memberQuerySnapshot.docs.first.data()}');
+      } else {
+        debugPrint('Member does not exist: ${member.email}');
+        newMembers.add(member);
+        debugPrint('New members: ${newMembers.toString()}');
+      }      
+    }
+
+    // check if the new members are stored
+    debugPrint('New members are stored: ${newMembers.toString()}');
+
+    try {
+      if (newMembers.isEmpty) {
+        debugPrint('there are no new members');
+        showSnackBar(
+          // ignore: use_build_context_synchronously
+          context, 
+          'There are no new members to add. Please check the CSV file and update it or select a new file.'
+        );
+        return;
+      }
+      else {
+        ref.read(authControllerProvider.notifier).registerMembers(
+          // ignore: use_build_context_synchronously
           context,
-          extractedMembers,
+          newMembers,
           user?.currentCoop,
         );
 
-    // Add members to the cooperative
+        // send email to the new members
+        sendEmail(newMembers, widget.coop, user!);
+        // ignore: use_build_context_synchronously
+        context.pop();
+        
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+    }
+
   }
 
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(authControllerProvider);
+    
 
     return PopScope(
       canPop: false,
@@ -157,6 +209,7 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
                               itemCount: extractedMembers.length,
                               itemBuilder: (context, index) => MemberListTile(
                                 member: extractedMembers[index],
+                                coop: widget.coop,
                               ),
                             )
                           : const Text('No members extracted yet'),
@@ -187,6 +240,45 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
   }
 }
 
+Future<void> sendEmail(List<MemberData> newMembers, CooperativeModel coop, UserModel user) async {
+  final mailtoLink = Mailto(
+    to: newMembers.map((e) => e.email).toList(),
+    subject: 'Welcome to Lakbay!',
+    body: 'Hello there! \n\n'
+          'The ${coop.name} has partnered with Lakbay and its team for a better cooperative experience. \n\n'
+          'To login, make sure to use the following credentials: \n\n'
+          'Email: your current email (refer to the email that you received this message from) \n'
+          'Password: password \n\n'
+          'It is advised to reset your password after logging in to avoid any security issues. \n\n'
+          'If you have any questions or concerns, please do not hesitate to contact me. \n\n'
+          'Thank you for your cooperation and welcome to the Lakbay App! \n\n'
+          'Best regards, \n'
+          '${user.firstName} ${user.lastName} \n'
+          ' ${user.email}'
+  );
+
+  // ignore: deprecated_member_use
+  await launch('$mailtoLink');
+}
+
+// send email to the new members
+// Future<void> sendEmail(List<String> recipients, String firstName, String lastName, String password, CooperativeModel coop) async {
+//   final mailtoLink = Mailto(
+//     to: recipients,
+//     subject: 'Welcome to ${coop.name}',
+//     body: 'Hello $firstName $lastName, \n\n'
+//         'Welcome to ${coop.name}! \n\n'
+//         'You can now login to your account using the following credentials: \n\n'
+//         'Email: $recipients \n'
+//         'Password: $password \n\n'
+//         'Thank you for joining ${coop.name}! \n\n'
+//         'Best regards, \n'
+//         '${coop.name} Team',
+//   );
+
+//   await launch('$mailtoLink');
+// }
+
 class MemberData {
   final String email;
   final String password;
@@ -206,12 +298,20 @@ class MemberData {
 
 class MemberListTile extends StatelessWidget {
   final MemberData member;
-  const MemberListTile({super.key, required this.member});
+  final CooperativeModel coop;
+  const MemberListTile({super.key, required this.member, required this.coop});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Text('${member.firstName} ${member.lastName}'),
+      trailing: IconButton(
+        icon: const Icon(Icons.email),
+        onPressed: () {
+          // sendEmail(member.email, member.firstName, member.lastName, member.password, coop);
+          context.push('/get_location');
+        },
+      ),
       subtitle: Text(member.email),
     );
   }

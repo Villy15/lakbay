@@ -154,6 +154,7 @@ class AuthRepository {
           name: '$firstName $lastName',
           firstName: firstName,
           lastName: lastName,
+          email: email,
           profilePic: '',
           isAuthenticated: true,
           currentCoop: coop.uid,

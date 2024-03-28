@@ -41,6 +41,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_chat_types: ^3.6.2
+  mailto: ^2.0.0
+  flutter_email_sender: ^6.0.0
   flutter_chat_ui: ^1.6.10
   flutter_config: ^2.0.2
   flutter_firebase_chat_core: ^1.6.7
