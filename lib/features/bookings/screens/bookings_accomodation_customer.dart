@@ -123,11 +123,11 @@ class _BookingsAccomodationCustomerState
                             children: [
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.8,
-                                child: ElevatedButton(
+                                child: FilledButton(
                                   onPressed: () {
                                     payBalance(context, booking);
                                   },
-                                  style: ElevatedButton.styleFrom(
+                                  style: FilledButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12.0),
                                     shape: RoundedRectangleBorder(
@@ -155,14 +155,14 @@ class _BookingsAccomodationCustomerState
                                   SizedBox(
                                     width:
                                         MediaQuery.of(context).size.width * 0.8,
-                                    child: ElevatedButton(
+                                    child: FilledButton(
                                       onPressed: (DateTime.now().isAfter(
                                                   booking.startDate!) ==
                                               true) // change for testing
                                           ? () =>
                                               onTapCheckOut(context, booking)
                                           : null,
-                                      style: ElevatedButton.styleFrom(
+                                      style: FilledButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 12.0),
                                         shape: RoundedRectangleBorder(
@@ -213,7 +213,7 @@ class _BookingsAccomodationCustomerState
                           ),
                         )
                       ]),
-                      // Check in Checkout
+                      // Check in Check out
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8.0, vertical: 20),
@@ -340,7 +340,7 @@ class _BookingsAccomodationCustomerState
                       // // Filled Button Add to a trip
                       // Padding(
                       //   padding: const EdgeInsets.all(8.0),
-                      //   child: ElevatedButton(
+                      //   child: FilledButton(
                       //     onPressed: () {},
                       //     child: const Text('Go to your trip'),
                       //   ),
@@ -576,10 +576,14 @@ class _BookingsAccomodationCustomerState
                   children: [
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.8,
-                      child: ElevatedButton(
+                      child: FilledButton(
                         onPressed: () =>
-                            onTapPayBalance(context, booking, amountDue),
-                        style: ElevatedButton.styleFrom(
+                            onTapPayBalance(context, booking, amountDue)
+                                .then((value) {
+                          showSnackBar(context, 'Payment Successfull');
+                          context.pop();
+                        }),
+                        style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -649,7 +653,8 @@ class _BookingsAccomodationCustomerState
         });
   }
 
-  void onTapPayBalance(context, ListingBookings booking, num amountDue) async {
+  Future<dynamic> onTapPayBalance(
+      context, ListingBookings booking, num amountDue) async {
     final updatedBooking = booking.copyWith(
         amountPaid: amountDue + booking.amountPaid!,
         paymentStatus: "Fully Paid");
@@ -658,9 +663,6 @@ class _BookingsAccomodationCustomerState
     ref
         .read(salesControllerProvider.notifier)
         .updateSale(context, updatedSale, booking: updatedBooking);
-
-    showSnackBar(context, 'Payment Received');
-    context.pop();
   }
 
   Future<dynamic> cancelBookingProcess(
@@ -704,14 +706,14 @@ class _BookingsAccomodationCustomerState
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.8,
-                        child: ElevatedButton(
+                        child: FilledButton(
                           onPressed: selectedReason != null
                               ? () {
                                   cancellationPaymentDetails(
                                       context, booking, paymentDetails);
                                 }
                               : null,
-                          style: ElevatedButton.styleFrom(
+                          style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
@@ -805,13 +807,13 @@ class _BookingsAccomodationCustomerState
                 children: [
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.8,
-                    child: ElevatedButton(
+                    child: FilledButton(
                       onPressed: () =>
                           onTapCancel(context, booking).then((value) {
                         context.pop();
                         context.pop();
                       }),
-                      style: ElevatedButton.styleFrom(
+                      style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(

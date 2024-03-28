@@ -366,7 +366,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
             children: [
               // Welcome name
               Text(
-                "Welcome,s ${user!.name}!",
+                "Welcome,\n${user!.name}!",
                 // bold and large
                 style: const TextStyle(
                   fontSize: 24,

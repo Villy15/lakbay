@@ -165,7 +165,7 @@ class CustomerTransportReceipt extends ConsumerWidget {
                       ),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
+                        child: FilledButton(
                             onPressed: () {
                               ref
                                   .read(parentStateProvider.notifier)

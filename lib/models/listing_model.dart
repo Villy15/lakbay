@@ -48,6 +48,8 @@ class ListingModel with _$ListingModel {
     List<FoodService>? availableDeals,
     List<ListingImages>? menuImgs,
     AvailableTransport? availableTransport,
+    // add the map of available tables here
+    List<List<dynamic>>? availableTables,
     String? uid,
   }) = _ListingModel;
 
@@ -144,8 +146,6 @@ class FoodService with _$FoodService {
     required List<bool> workingDays,
     @TimeOfDayConverter() required TimeOfDay startTime,
     @TimeOfDayConverter() required TimeOfDay endTime,
-    // add the map of available tables here
-    List<Map<String, dynamic>>? availableTables
   }) = _FoodService;
 
   factory FoodService.fromJson(Map<String, dynamic> json) =>

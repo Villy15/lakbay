@@ -16,6 +16,7 @@ import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/image_picker_form_field.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
@@ -149,6 +150,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                   );
                   // debugPrint("$listing");
                   if (mounted) {
+                    ref.read(listingLocationProvider.notifier).clearLocation();
                     ref.read(listingControllerProvider.notifier).addListing(
                         listing, context,
                         rooms: listing.availableRooms);
@@ -1159,6 +1161,11 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   }
 
   Widget addLocation(BuildContext context) {
+    final location = ref.read(listingLocationProvider);
+    if (location != null) {
+      _addressController.text = location;
+      mapAddress = location;
+    }
     return Column(children: [
       TextFormField(
           controller: _addressController,
@@ -1166,21 +1173,12 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
             labelText: 'Address*',
             border: OutlineInputBorder(),
           ),
-          validator: (String? value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter some text';
-            }
-            return null;
-          }),
-      const SizedBox(height: 10),
-      ElevatedButton(
-        onPressed: () {
-          setState(() {
-            mapAddress = _addressController.text;
-          });
-        },
-        child: const Text('Update Map'),
-      ),
+          readOnly: true,
+          onTap: () async {
+            await context.push('/select_location', extra: 'listing');
+          }
+        ),
+      
 
       const SizedBox(height: 10),
 

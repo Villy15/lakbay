@@ -88,6 +88,7 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
         .where('customerId', isEqualTo: user!.uid)
         .where('bookingStatus', isEqualTo: "Reserved");
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: _appBar(context, plan),
       body: TabBarView(
         children: [
