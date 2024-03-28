@@ -23,6 +23,10 @@ _$CooperativeModelImpl _$$CooperativeModelImplFromJson(
       managers:
           (json['managers'] as List<dynamic>).map((e) => e as String).toList(),
       membershipFee: json['membershipFee'] as num?,
+      validationFiles: json['validationFiles'] == null
+          ? null
+          : ValidationFiles.fromJson(
+              json['validationFiles'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$CooperativeModelImplToJson(
@@ -40,4 +44,25 @@ Map<String, dynamic> _$$CooperativeModelImplToJson(
       'members': instance.members,
       'managers': instance.managers,
       'membershipFee': instance.membershipFee,
+      'validationFiles': instance.validationFiles?.toJson(),
+    };
+
+_$ValidationFilesImpl _$$ValidationFilesImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ValidationFilesImpl(
+      certificateOfRegistration: json['certificateOfRegistration'] as String?,
+      articlesOfCooperation: json['articlesOfCooperation'] as String?,
+      byLaws: json['byLaws'] as String?,
+      audit: json['audit'] as String?,
+      letterAuth: json['letterAuth'] as String?,
+    );
+
+Map<String, dynamic> _$$ValidationFilesImplToJson(
+        _$ValidationFilesImpl instance) =>
+    <String, dynamic>{
+      'certificateOfRegistration': instance.certificateOfRegistration,
+      'articlesOfCooperation': instance.articlesOfCooperation,
+      'byLaws': instance.byLaws,
+      'audit': instance.audit,
+      'letterAuth': instance.letterAuth,
     };

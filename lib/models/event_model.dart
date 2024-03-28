@@ -21,6 +21,7 @@ class EventModel with _$EventModel {
     @TimestampSerializer() DateTime? startDate,
     @TimestampSerializer() DateTime? endDate,
     required EventCooperative cooperative,
+    String? eventType,
   }) = _EventModel;
 
   factory EventModel.fromJson(Map<String, dynamic> json) =>

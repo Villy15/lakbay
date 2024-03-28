@@ -36,6 +36,14 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 1));
 
+  String? _selectedType;
+  final List<String> _eventTypes = [
+    'General Assembly',
+    'Community Engagement',
+    'Seminar',
+    'Training and Education'
+  ]; // replace with your actual types
+
   @override
   void initState() {
     super.initState();
@@ -209,6 +217,28 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                               helperText: 'optional'),
                         ),
                         const SizedBox(height: 10),
+                        // Type of event
+                        DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            icon: Icon(Icons.event_note),
+                            border: OutlineInputBorder(),
+                            labelText: 'Type of Event*',
+                            helperText: '*required',
+                          ),
+                          value: _selectedType,
+                          items: _eventTypes.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedType = newValue;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 10),
                         TextFormField(
                           controller: _locationController,
                           decoration: const InputDecoration(
@@ -312,6 +342,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                       address: _locationController.text,
                       city: _cityController.text,
                       province: _provinceController.text,
+                      eventType: _selectedType,
                       imagePath: imagePath,
                       members: [userUid],
                       managers: [userUid],

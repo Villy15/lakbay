@@ -18,8 +18,23 @@ class CooperativeModel with _$CooperativeModel {
     required List<String> members,
     required List<String> managers,
     num? membershipFee,
+    ValidationFiles? validationFiles,
   }) = _CooperativeModel;
 
   factory CooperativeModel.fromJson(Map<String, dynamic> json) =>
       _$CooperativeModelFromJson(json);
+}
+
+@freezed
+class ValidationFiles with _$ValidationFiles {
+  factory ValidationFiles({
+    String? certificateOfRegistration,
+    String? articlesOfCooperation,
+    String? byLaws,
+    String? audit,
+    String? letterAuth,
+  }) = _ValidationFiles;
+
+  factory ValidationFiles.fromJson(Map<String, dynamic> json) =>
+      _$ValidationFilesFromJson(json);
 }

@@ -5,6 +5,7 @@ import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
 import 'package:lakbay/features/cooperatives/my_coop/goals/add_goal.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_fee.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/validate_coop.dart';
 import 'package:lakbay/features/cooperatives/my_coop/voting/add_vote.dart';
 import 'package:lakbay/models/coop_model.dart';
 
@@ -105,6 +106,21 @@ class ManagerToolsPage extends ConsumerWidget {
     );
   }
 
+  // Validate Cooperative
+  void validateCooperative(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return ValidateCoop(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // List Tile Map Cooperative Activities
@@ -187,6 +203,16 @@ class ManagerToolsPage extends ConsumerWidget {
               )
             },
           ),
+      // Validate Cooperative
+      'Validate Cooperative': () => ListTile(
+          leading: const Icon(Icons.verified),
+          title: const Text('Validate Cooperative'),
+          onTap: () => {
+                validateCooperative(
+                  context,
+                  coop,
+                )
+              }),
     };
 
     // List Tile Map Manage Committees

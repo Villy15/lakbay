@@ -32,6 +32,7 @@ mixin _$CooperativeModel {
   List<String> get members => throw _privateConstructorUsedError;
   List<String> get managers => throw _privateConstructorUsedError;
   num? get membershipFee => throw _privateConstructorUsedError;
+  ValidationFiles? get validationFiles => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -57,7 +58,10 @@ abstract class $CooperativeModelCopyWith<$Res> {
       String? code,
       List<String> members,
       List<String> managers,
-      num? membershipFee});
+      num? membershipFee,
+      ValidationFiles? validationFiles});
+
+  $ValidationFilesCopyWith<$Res>? get validationFiles;
 }
 
 /// @nodoc
@@ -85,6 +89,7 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
     Object? members = null,
     Object? managers = null,
     Object? membershipFee = freezed,
+    Object? validationFiles = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -135,7 +140,23 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
           ? _value.membershipFee
           : membershipFee // ignore: cast_nullable_to_non_nullable
               as num?,
+      validationFiles: freezed == validationFiles
+          ? _value.validationFiles
+          : validationFiles // ignore: cast_nullable_to_non_nullable
+              as ValidationFiles?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $ValidationFilesCopyWith<$Res>? get validationFiles {
+    if (_value.validationFiles == null) {
+      return null;
+    }
+
+    return $ValidationFilesCopyWith<$Res>(_value.validationFiles!, (value) {
+      return _then(_value.copyWith(validationFiles: value) as $Val);
+    });
   }
 }
 
@@ -159,7 +180,11 @@ abstract class _$$CooperativeModelImplCopyWith<$Res>
       String? code,
       List<String> members,
       List<String> managers,
-      num? membershipFee});
+      num? membershipFee,
+      ValidationFiles? validationFiles});
+
+  @override
+  $ValidationFilesCopyWith<$Res>? get validationFiles;
 }
 
 /// @nodoc
@@ -185,6 +210,7 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
     Object? members = null,
     Object? managers = null,
     Object? membershipFee = freezed,
+    Object? validationFiles = freezed,
   }) {
     return _then(_$CooperativeModelImpl(
       uid: freezed == uid
@@ -235,6 +261,10 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
           ? _value.membershipFee
           : membershipFee // ignore: cast_nullable_to_non_nullable
               as num?,
+      validationFiles: freezed == validationFiles
+          ? _value.validationFiles
+          : validationFiles // ignore: cast_nullable_to_non_nullable
+              as ValidationFiles?,
     ));
   }
 }
@@ -254,7 +284,8 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       this.code,
       required final List<String> members,
       required final List<String> managers,
-      this.membershipFee})
+      this.membershipFee,
+      this.validationFiles})
       : _members = members,
         _managers = managers;
 
@@ -297,10 +328,12 @@ class _$CooperativeModelImpl implements _CooperativeModel {
 
   @override
   final num? membershipFee;
+  @override
+  final ValidationFiles? validationFiles;
 
   @override
   String toString() {
-    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers, membershipFee: $membershipFee)';
+    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers, membershipFee: $membershipFee, validationFiles: $validationFiles)';
   }
 
   @override
@@ -324,7 +357,9 @@ class _$CooperativeModelImpl implements _CooperativeModel {
             const DeepCollectionEquality().equals(other._members, _members) &&
             const DeepCollectionEquality().equals(other._managers, _managers) &&
             (identical(other.membershipFee, membershipFee) ||
-                other.membershipFee == membershipFee));
+                other.membershipFee == membershipFee) &&
+            (identical(other.validationFiles, validationFiles) ||
+                other.validationFiles == validationFiles));
   }
 
   @JsonKey(ignore: true)
@@ -342,7 +377,8 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       code,
       const DeepCollectionEquality().hash(_members),
       const DeepCollectionEquality().hash(_managers),
-      membershipFee);
+      membershipFee,
+      validationFiles);
 
   @JsonKey(ignore: true)
   @override
@@ -372,7 +408,8 @@ abstract class _CooperativeModel implements CooperativeModel {
       final String? code,
       required final List<String> members,
       required final List<String> managers,
-      final num? membershipFee}) = _$CooperativeModelImpl;
+      final num? membershipFee,
+      final ValidationFiles? validationFiles}) = _$CooperativeModelImpl;
 
   factory _CooperativeModel.fromJson(Map<String, dynamic> json) =
       _$CooperativeModelImpl.fromJson;
@@ -402,7 +439,235 @@ abstract class _CooperativeModel implements CooperativeModel {
   @override
   num? get membershipFee;
   @override
+  ValidationFiles? get validationFiles;
+  @override
   @JsonKey(ignore: true)
   _$$CooperativeModelImplCopyWith<_$CooperativeModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ValidationFiles _$ValidationFilesFromJson(Map<String, dynamic> json) {
+  return _ValidationFiles.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ValidationFiles {
+  String? get certificateOfRegistration => throw _privateConstructorUsedError;
+  String? get articlesOfCooperation => throw _privateConstructorUsedError;
+  String? get byLaws => throw _privateConstructorUsedError;
+  String? get audit => throw _privateConstructorUsedError;
+  String? get letterAuth => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ValidationFilesCopyWith<ValidationFiles> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ValidationFilesCopyWith<$Res> {
+  factory $ValidationFilesCopyWith(
+          ValidationFiles value, $Res Function(ValidationFiles) then) =
+      _$ValidationFilesCopyWithImpl<$Res, ValidationFiles>;
+  @useResult
+  $Res call(
+      {String? certificateOfRegistration,
+      String? articlesOfCooperation,
+      String? byLaws,
+      String? audit,
+      String? letterAuth});
+}
+
+/// @nodoc
+class _$ValidationFilesCopyWithImpl<$Res, $Val extends ValidationFiles>
+    implements $ValidationFilesCopyWith<$Res> {
+  _$ValidationFilesCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? certificateOfRegistration = freezed,
+    Object? articlesOfCooperation = freezed,
+    Object? byLaws = freezed,
+    Object? audit = freezed,
+    Object? letterAuth = freezed,
+  }) {
+    return _then(_value.copyWith(
+      certificateOfRegistration: freezed == certificateOfRegistration
+          ? _value.certificateOfRegistration
+          : certificateOfRegistration // ignore: cast_nullable_to_non_nullable
+              as String?,
+      articlesOfCooperation: freezed == articlesOfCooperation
+          ? _value.articlesOfCooperation
+          : articlesOfCooperation // ignore: cast_nullable_to_non_nullable
+              as String?,
+      byLaws: freezed == byLaws
+          ? _value.byLaws
+          : byLaws // ignore: cast_nullable_to_non_nullable
+              as String?,
+      audit: freezed == audit
+          ? _value.audit
+          : audit // ignore: cast_nullable_to_non_nullable
+              as String?,
+      letterAuth: freezed == letterAuth
+          ? _value.letterAuth
+          : letterAuth // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ValidationFilesImplCopyWith<$Res>
+    implements $ValidationFilesCopyWith<$Res> {
+  factory _$$ValidationFilesImplCopyWith(_$ValidationFilesImpl value,
+          $Res Function(_$ValidationFilesImpl) then) =
+      __$$ValidationFilesImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? certificateOfRegistration,
+      String? articlesOfCooperation,
+      String? byLaws,
+      String? audit,
+      String? letterAuth});
+}
+
+/// @nodoc
+class __$$ValidationFilesImplCopyWithImpl<$Res>
+    extends _$ValidationFilesCopyWithImpl<$Res, _$ValidationFilesImpl>
+    implements _$$ValidationFilesImplCopyWith<$Res> {
+  __$$ValidationFilesImplCopyWithImpl(
+      _$ValidationFilesImpl _value, $Res Function(_$ValidationFilesImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? certificateOfRegistration = freezed,
+    Object? articlesOfCooperation = freezed,
+    Object? byLaws = freezed,
+    Object? audit = freezed,
+    Object? letterAuth = freezed,
+  }) {
+    return _then(_$ValidationFilesImpl(
+      certificateOfRegistration: freezed == certificateOfRegistration
+          ? _value.certificateOfRegistration
+          : certificateOfRegistration // ignore: cast_nullable_to_non_nullable
+              as String?,
+      articlesOfCooperation: freezed == articlesOfCooperation
+          ? _value.articlesOfCooperation
+          : articlesOfCooperation // ignore: cast_nullable_to_non_nullable
+              as String?,
+      byLaws: freezed == byLaws
+          ? _value.byLaws
+          : byLaws // ignore: cast_nullable_to_non_nullable
+              as String?,
+      audit: freezed == audit
+          ? _value.audit
+          : audit // ignore: cast_nullable_to_non_nullable
+              as String?,
+      letterAuth: freezed == letterAuth
+          ? _value.letterAuth
+          : letterAuth // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ValidationFilesImpl implements _ValidationFiles {
+  _$ValidationFilesImpl(
+      {this.certificateOfRegistration,
+      this.articlesOfCooperation,
+      this.byLaws,
+      this.audit,
+      this.letterAuth});
+
+  factory _$ValidationFilesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ValidationFilesImplFromJson(json);
+
+  @override
+  final String? certificateOfRegistration;
+  @override
+  final String? articlesOfCooperation;
+  @override
+  final String? byLaws;
+  @override
+  final String? audit;
+  @override
+  final String? letterAuth;
+
+  @override
+  String toString() {
+    return 'ValidationFiles(certificateOfRegistration: $certificateOfRegistration, articlesOfCooperation: $articlesOfCooperation, byLaws: $byLaws, audit: $audit, letterAuth: $letterAuth)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ValidationFilesImpl &&
+            (identical(other.certificateOfRegistration,
+                    certificateOfRegistration) ||
+                other.certificateOfRegistration == certificateOfRegistration) &&
+            (identical(other.articlesOfCooperation, articlesOfCooperation) ||
+                other.articlesOfCooperation == articlesOfCooperation) &&
+            (identical(other.byLaws, byLaws) || other.byLaws == byLaws) &&
+            (identical(other.audit, audit) || other.audit == audit) &&
+            (identical(other.letterAuth, letterAuth) ||
+                other.letterAuth == letterAuth));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, certificateOfRegistration,
+      articlesOfCooperation, byLaws, audit, letterAuth);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ValidationFilesImplCopyWith<_$ValidationFilesImpl> get copyWith =>
+      __$$ValidationFilesImplCopyWithImpl<_$ValidationFilesImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ValidationFilesImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ValidationFiles implements ValidationFiles {
+  factory _ValidationFiles(
+      {final String? certificateOfRegistration,
+      final String? articlesOfCooperation,
+      final String? byLaws,
+      final String? audit,
+      final String? letterAuth}) = _$ValidationFilesImpl;
+
+  factory _ValidationFiles.fromJson(Map<String, dynamic> json) =
+      _$ValidationFilesImpl.fromJson;
+
+  @override
+  String? get certificateOfRegistration;
+  @override
+  String? get articlesOfCooperation;
+  @override
+  String? get byLaws;
+  @override
+  String? get audit;
+  @override
+  String? get letterAuth;
+  @override
+  @JsonKey(ignore: true)
+  _$$ValidationFilesImplCopyWith<_$ValidationFilesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

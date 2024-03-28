@@ -12,6 +12,7 @@ import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
 import 'package:lakbay/features/cooperatives/my_coop/components/announcement_card.dart';
 import 'package:lakbay/features/cooperatives/my_coop/goals/add_goal.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_fee.dart';
 import 'package:lakbay/features/cooperatives/my_coop/voting/add_vote.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
@@ -83,7 +84,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
         'subtitle':
             'Set up your cooperative\'s membership application to start accepting members',
         'icon': Icons.app_registration,
-        'onTap': () => addEvent(context, coop),
+        'onTap': () => manageMemberShipFee(context, coop),
       },
       {
         'title': 'Add Your Current Members',
@@ -156,6 +157,20 @@ class _TodayPageState extends ConsumerState<TodayPage> {
     context.pushNamed(
       'join_coop_code',
       extra: coop,
+    );
+  }
+
+  void manageMemberShipFee(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return ManageMemberFee(
+          parentContext: context,
+          coop: coop,
+        );
+      },
     );
   }
 
