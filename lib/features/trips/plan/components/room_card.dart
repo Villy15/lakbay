@@ -161,7 +161,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceEvenly,
                                               children: [
-                                                ElevatedButton(
+                                                FilledButton(
                                                   onPressed: () {
                                                     context.push(
                                                         '/market/${widget.category}',
@@ -169,10 +169,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                   },
                                                   style:
                                                       ElevatedButton.styleFrom(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 25,
-                                                        vertical: 5),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              4.0), // Adjust the radius as needed
+                                                    ),
                                                   ),
                                                   child: const Text(
                                                     'View Listing',
@@ -180,7 +182,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                         TextStyle(fontSize: 14),
                                                   ),
                                                 ),
-                                                ElevatedButton(
+                                                FilledButton(
                                                   onPressed: () async {
                                                     if (widget.reason !=
                                                         'emergency') {
@@ -198,10 +200,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                   },
                                                   style:
                                                       ElevatedButton.styleFrom(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 25,
-                                                        vertical: 5),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              4.0), // Adjust the radius as needed
+                                                    ),
                                                   ),
                                                   child: const Text(
                                                     'Book Now',
@@ -439,6 +443,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                   showConfirmBooking(
                       room, listing, startDate, endDate, context);
                 },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        4.0), // Adjust the radius as needed
+                  ),
+                ),
                 child: const Text('Save'),
               ),
             ),
@@ -644,7 +654,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                   ),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
+                    child: FilledButton(
                       onPressed: () {
                         startDate = startDate.copyWith(
                             hour: listing.checkIn!.hour,
@@ -694,6 +704,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           context.pop();
                         });
                       },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              4.0), // Adjust the radius as needed
+                        ),
+                      ),
                       child: const Text('Proceed'),
                     ),
                   ),

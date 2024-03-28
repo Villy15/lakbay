@@ -226,17 +226,35 @@ class ListingController extends StateNotifier<bool> {
       },
       (bookingUid) async {
         state = false;
-        booking.tasks?.forEach((element) {
-          if (booking.category == "Accommodation") {
-            element = element.copyWith(
-              roomId: booking.roomId,
-              listingId: listing.uid,
-              bookingId: bookingUid,
-            );
+        booking.tasks?.forEach((element) async {
+          switch (booking.category) {
+            case 'Accommodation':
+              {
+                element = element.copyWith(
+                  roomId: booking.roomId,
+                  listingId: listing.uid,
+                  bookingId: bookingUid,
+                );
+                _ref
+                    .read(listingControllerProvider.notifier)
+                    .addBookingTask(context, listing.uid!, element);
+              }
+            case 'Transport':
+              {
+                element = element.copyWith(
+                  listingId: listing.uid,
+                  bookingId: bookingUid,
+                );
+                if (await _listingRepository
+                        .readBookingTasksByBookingId(listing.uid!, bookingUid)
+                        .isEmpty &&
+                    context.mounted) {
+                  _ref
+                      .read(listingControllerProvider.notifier)
+                      .addBookingTask(context, listing.uid!, element);
+                }
+              }
           }
-          _ref
-              .read(listingControllerProvider.notifier)
-              .addBookingTask(context, listing.uid!, element);
         });
         _ref.read(salesControllerProvider.notifier).addSale(
             context,

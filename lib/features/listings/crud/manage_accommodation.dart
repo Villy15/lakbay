@@ -450,7 +450,7 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
                       DateFormat('MMMM dd').format(bookings[index].endDate!);
                   return Card(
                     elevation: 1.0,
-                    margin: const EdgeInsets.all(15.0),
+                    margin: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
                         ListTile(
@@ -788,6 +788,10 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
                                         child: FilledButton(
                                       onPressed: () {},
                                       style: FilledButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              4.0), // Adjust the radius as needed
+                                        ),
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 50, vertical: 15),
                                       ),

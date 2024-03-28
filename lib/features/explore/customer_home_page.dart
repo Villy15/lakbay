@@ -19,6 +19,7 @@ class CustomerHomePage extends ConsumerWidget {
       initialIndex: 0,
       length: 5,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: _appBar(scaffoldKey, user, context),
         body: const TabBarView(
           children: [

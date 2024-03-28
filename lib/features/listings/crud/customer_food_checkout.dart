@@ -257,8 +257,8 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
                   style: TextStyle(fontSize: 16),
                   textAlign: TextAlign.center),
               const SizedBox(height: 20),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
+              FilledButton(
+                  style: FilledButton.styleFrom(
                       backgroundColor: Colors.orange.shade700,
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
@@ -310,7 +310,7 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
                   // Add more payment method icons as needed
                 ],
               ),
-              // ElevatedButton(
+              // FilledButton(
               //   onPressed: () {
               //     // Add your payment action here
               //   },

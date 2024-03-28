@@ -61,10 +61,10 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                   title: widget.listing.title.length > 20
                       ? Text('${widget.listing.title.substring(0, 20)}...',
                           style: const TextStyle(
-                              fontSize: 32.0, fontWeight: FontWeight.bold))
+                              fontSize: 24.0, fontWeight: FontWeight.bold))
                       : Text(widget.listing.title,
                           style: const TextStyle(
-                              fontSize: 32.0, fontWeight: FontWeight.bold)),
+                              fontSize: 24.0, fontWeight: FontWeight.bold)),
                   bottom: TabBar(
                     tabAlignment: TabAlignment.center,
                     labelPadding: EdgeInsets.zero,
@@ -251,15 +251,10 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                 // Handle button tap here
                 // Perform action when 'Edit Listing' button is tapped
               },
-              style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all<Size>(
-                  const Size(double.infinity, 45),
-                ),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  const RoundedRectangleBorder(
-                    borderRadius: BorderRadius
-                        .zero, // Zero out the border radius to make it flat at the bottom
-                  ),
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(4.0), // Adjust the radius as needed
                 ),
               ),
               child: const Text('Edit Listing'),
@@ -273,162 +268,124 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
   Widget bookings() {
     return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
         data: (List<ListingBookings> bookings) {
-          // get personal information (name) from listing's userId via userProvider
+          Map<DateTime, ListingBookings> filteredBookingsMap = {};
+
+          for (var booking in bookings) {
+            DateTime key = booking.startDate!;
+            if (!filteredBookingsMap.containsKey(key)) {
+              filteredBookingsMap[key] = ListingBookings(
+                id: booking.id,
+                customerId: '',
+                customerName: '',
+                customerPhoneNo: '',
+                category: 'Transport',
+                email: '',
+                governmentId: '',
+                guests: booking.guests,
+                listingId: booking.listingId,
+                listingTitle: booking.listingTitle,
+                needsContributions: booking.needsContributions,
+                price: 0,
+                bookingStatus: 'Reserved',
+                tripUid: '',
+                tripName: '',
+                startDate: booking.startDate,
+                endDate: booking.endDate,
+                startTime: booking.startTime,
+                endTime: booking.endTime,
+              );
+            } else {
+              ListingBookings oldBooking = filteredBookingsMap[key]!;
+              filteredBookingsMap[key] = filteredBookingsMap[key]!.copyWith(
+                guests: oldBooking.guests + booking.guests,
+                // luggage: oldBooking.luggage + booking.luggage,
+              );
+            }
+          }
+          List<DateTime> sortedKeys = filteredBookingsMap.keys.toList()
+            ..sort((a, b) => a.compareTo(b));
+          List<ListingBookings> filteredBookings =
+              sortedKeys.map((key) => filteredBookingsMap[key]!).toList();
+
           return ListView.builder(
               shrinkWrap: true,
-              itemCount: bookings.length,
+              itemCount: filteredBookings.length,
               itemBuilder: ((context, index) {
-                if (bookings[index].typeOfTrip == 'Two Way Trip') {
-                  String formattedStartDate =
-                      DateFormat('MMMM dd').format(bookings[index].startDate!);
-                  String formattedStartTime =
-                      bookings[index].startTime!.format(context);
-                  String formattedEndTime =
-                      bookings[index].endTime!.format(context);
-                  String formattedEndDate =
-                      DateFormat('MMMM dd').format(bookings[index].endDate!);
-
-                  debugPrint(
-                      'this is the formatted end date : $formattedEndDate');
-
-                  return Card(
-                      elevation: 1.0,
-                      margin: const EdgeInsets.all(8.0),
-                      child: Column(children: [
-                        Padding(
-                            padding: const EdgeInsets.only(
-                                left: 20, right: 10, top: 10, bottom: 10),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Center(
-                                      child: Text(
-                                    '${bookings[index].typeOfTrip}',
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                formattedStartDate,
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                "Departure Time: $formattedStartTime",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 20),
-                                              Text(
-                                                formattedEndDate,
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                "Departure Time: $formattedEndTime",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                            ])
-                                      ])
-                                ])),
-                        Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: ElevatedButton(
+                String formattedStartDate = DateFormat('MMMM dd')
+                    .format(filteredBookings[index].startDate!);
+                String formattedStartTime =
+                    filteredBookings[index].startTime!.format(context);
+                String formattedEndTime =
+                    filteredBookings[index].endTime!.format(context);
+                String formattedEndDate = DateFormat('MMMM dd')
+                    .format(filteredBookings[index].endDate!);
+                return Card(
+                    elevation: 1.0,
+                    margin: const EdgeInsets.all(8.0),
+                    child: Column(children: [
+                      Padding(
+                          padding: const EdgeInsets.only(
+                              left: 40, right: 10, top: 10, bottom: 10),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  formattedStartDate,
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Departure: $formattedStartTime | ",
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.black),
+                                    ),
+                                    Text(
+                                      "Arrival: $formattedEndTime",
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "Passengers: ${filteredBookings[index].guests}",
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300,
+                                      color: Colors.black),
+                                ),
+                              ])),
+                      Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: SizedBox(
+                            width: MediaQuery.sizeOf(context).width * .5,
+                            child: FilledButton(
                                 onPressed: () {
                                   context.push(
-                                    '/market/${bookings[index].category}/booking_details',
+                                    '/market/${filteredBookings[index].category.toLowerCase()}/booking_details',
                                     extra: {
-                                      'booking': bookings[index],
+                                      'booking': filteredBookings[index],
                                       'listing': widget.listing
                                     },
                                   );
                                 },
-                                child: const Text('Booking Details')))
-                      ]));
-                } else {
-                  debugPrint(
-                      'this is the type of trip: ${bookings[index].typeOfTrip}');
-                  String formattedStartDate =
-                      DateFormat('MMMM dd').format(bookings[index].startDate!);
-                  String formattedStartTime =
-                      bookings[index].startTime!.format(context);
-
-                  return Card(
-                      elevation: 1.0,
-                      margin: const EdgeInsets.all(8.0),
-                      child: Column(children: [
-                        Padding(
-                            padding: const EdgeInsets.only(
-                                left: 20, right: 10, top: 10, bottom: 10),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Center(
-                                      child: Text(
-                                    '${bookings[index].typeOfTrip}',
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                formattedStartDate,
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                "Departure Time: $formattedStartTime",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 20),
-                                            ])
-                                      ])
-                                ])),
-                        Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  context.push(
-                                    '/market/${bookings[index].category}/booking_details',
-                                    extra: {
-                                      'booking': bookings[index],
-                                      'listing': widget.listing
-                                    },
-                                  );
-                                },
-                                child: const Text('Booking Details')))
-                      ]));
-                }
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        4.0), // Adjust the radius as needed
+                                  ),
+                                ),
+                                child: const Text('Booking Details')),
+                          ))
+                    ]));
               }));
         },
         error: ((error, stackTrace) => Scaffold(
@@ -746,7 +703,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                             ]),
                             SizedBox(
                                 width: double.infinity,
-                                child: ElevatedButton(
+                                child: FilledButton(
                                   onPressed: () {
                                     final currentTrip =
                                         ref.read(currentTripProvider);
@@ -932,7 +889,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                             ]),
                             SizedBox(
                                 width: double.infinity,
-                                child: ElevatedButton(
+                                child: FilledButton(
                                   onPressed: () {
                                     final currentTrip =
                                         ref.read(currentTripProvider);

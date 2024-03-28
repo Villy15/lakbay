@@ -92,6 +92,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     });
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),

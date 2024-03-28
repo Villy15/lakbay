@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -12,12 +13,14 @@ import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/listings/widgets/emergency_process_dialog.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/committee_params.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AccommodationBookingsDetails extends ConsumerStatefulWidget {
   final ListingBookings booking;
@@ -40,14 +43,14 @@ class _AccommodationBookingsDetailsState
       width: 100.0,
       child: Tab(
         // icon: Icon(Icons.location_pin),
-        child: Text('Tasks'),
+        child: Text('Details'),
       ),
     ),
     const SizedBox(
       width: 100.0,
       child: Tab(
         // icon: Icon(Icons.location_pin),
-        child: Text('Details'),
+        child: Text('Tasks'),
       ),
     ),
     const SizedBox(
@@ -205,12 +208,12 @@ class _AccommodationBookingsDetailsState
                 ),
               ),
               actions: <Widget>[
-                TextButton(
+                FilledButton(
                     child: const Text('Close'),
                     onPressed: () {
                       context.pop();
                     }),
-                TextButton(
+                FilledButton(
                   child: const Text('Add'),
                   onPressed: () {
                     // Add logic to handle the input data
@@ -255,7 +258,9 @@ class _AccommodationBookingsDetailsState
                 return AlertDialog(
                   title: const Text('Contact'),
                   content: ListTile(
-                    onTap: () {},
+                    onTap: () async {
+                      await launch("tel://${booking.emergencyContactNo}");
+                    },
                     leading: const Icon(Icons.phone_rounded),
                     title: Text(
                       booking.emergencyContactName ?? "No Emergency Contact",
@@ -312,7 +317,7 @@ class _AccommodationBookingsDetailsState
                         child: const Text('Close')),
                     FilledButton(
                         onPressed: () {
-                          emergencyProcess(booking);
+                          emergencyProcess(ref, context, booking);
                         },
                         child: const Text('Continue')),
                   ],
@@ -327,9 +332,6 @@ class _AccommodationBookingsDetailsState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Customer Information
-            // _displayHeader("Booking Details"),
-            // _displaySubHeader("Check In and Check Out"),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
@@ -466,167 +468,6 @@ class _AccommodationBookingsDetailsState
     );
   }
 
-  Future<dynamic> emergencyProcess(ListingBookings booking) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        Map<String, Map<String, Map<String, dynamic>>> reasons = {
-          'Accommodation': {
-            'Find a room replacement': {
-              'action': () => onTapFindRoomReplacement(context, booking),
-              'subtitle':
-                  'This will search for a room replacement within the same cooperative.',
-            },
-            'Cancel booking': {
-              'action': () {},
-              'subtitle': 'Cancel the booking and refund the customer.'
-            },
-          },
-          // 'Tranport': {
-          //   'There is no driver available': {'': () {}},
-          //   'Vehicle broke down during transit': {'': () {}},
-          // }
-        };
-        Map<String, dynamic> categoryReason = reasons.entries
-            .firstWhere((element) => element.key == booking.category)
-            .value;
-
-        return StatefulBuilder(builder: (context, setDialogState) {
-          return Dialog.fullscreen(
-            child: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    context.pop();
-                    context.pop();
-                  },
-                ),
-              ),
-              body: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: const Text(
-                      "Select your preferred solution",
-                      style:
-                          TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.sizeOf(context).height / 20,
-                  ),
-                  Column(
-                    children: categoryReason.entries.map((entry) {
-                      final reason = entry.key;
-                      return Container(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Column(
-                          children: [
-                            InkWell(
-                              onTap: entry.value['action'],
-                              child: ListTile(
-                                title: Text(reason),
-                                trailing:
-                                    const Icon(Icons.arrow_forward_ios_rounded),
-                                subtitle: Text(entry.value['subtitle']),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Container(
-                              height: 1,
-                              width: double.infinity,
-                              color: Colors.grey[300],
-                            )
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-      },
-    );
-  }
-
-  Future<dynamic> onTapFindRoomReplacement(
-      BuildContext context, ListingBookings booking) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Search Room'),
-            content: const Text(
-                'Search for an available room offered by the same cooperative.'),
-            actions: [
-              FilledButton(
-                onPressed: () {
-                  context.pop();
-                },
-                child: const Text('Close'),
-              ),
-              FilledButton(
-                onPressed: () async {
-                  final query = FirebaseFirestore.instance
-                      .collectionGroup(
-                          'bookings') // Perform collection group query for 'bookings'
-                      .where('category', isEqualTo: booking.category)
-                      .where('bookingStatus', isEqualTo: "Reserved")
-                      .where('startDate', isGreaterThan: booking.startDate);
-                  final bookings = await ref
-                      .watch(getBookingsByPropertiesProvider((query)).future);
-
-                  context.mounted
-                      ? showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialog.fullscreen(
-                                child: Scaffold(
-                              appBar: AppBar(
-                                leading: IconButton(
-                                  onPressed: () {
-                                    context.pop();
-                                    context.pop();
-                                  },
-                                  icon: const Icon(
-                                      Icons.arrow_back_ios_new_rounded),
-                                ),
-                                title: const Text(''),
-                              ),
-                              body: SingleChildScrollView(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15.0),
-                                  child: RoomCard(
-                                      category: booking.category,
-                                      bookings: bookings,
-                                      customerBooking: booking,
-                                      reason: 'emergency',
-                                      guests: booking.guests,
-                                      startDate: booking.startDate,
-                                      endDate: booking.endDate),
-                                ),
-                              ),
-                            ));
-                          }).then(
-                          (value) {
-                            context.pop();
-                            context.pop();
-                            context.pop();
-                          },
-                        )
-                      : null;
-                },
-                child: const Text('Search'),
-              )
-            ],
-          );
-        });
-  }
-
   ListTile _displayGovId() {
     return ListTile(
       onTap: () {},
@@ -652,86 +493,6 @@ class _AccommodationBookingsDetailsState
       indent: 20,
       endIndent: 20,
       color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
-    );
-  }
-
-  Widget _displayCheckInCheckOut(ListingBookings booking) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Starts
-              const Text(
-                'Starts',
-                style: TextStyle(
-                  fontSize: 14, // Set your desired font size
-                  fontWeight: FontWeight.bold,
-                  // Add other styling as needed
-                ),
-              ),
-              // Tue, Aug 29, 2024
-              Text(
-                DateFormat('E, MMM dd, yyyy').format(booking.startDate!),
-                style: const TextStyle(
-                  fontSize: 16, // Set your desired font size
-                  fontWeight: FontWeight.bold,
-                  // Add other styling as needed
-                ),
-              ),
-              // 9:00 AM
-              Text(
-                DateFormat('h:mm a').format(booking.startDate!),
-                style: const TextStyle(
-                  fontSize: 14, // Set your desired font size
-                  // Add other styling as needed
-                ),
-              ),
-            ],
-          ),
-          // Divider
-          const VerticalDivider(
-            thickness: 1.5,
-            indent: 20,
-            endIndent: 20,
-            color: Colors.black,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Starts
-              const Text(
-                'Ends',
-                style: TextStyle(
-                  fontSize: 14, // Set your desired font size
-                  fontWeight: FontWeight.bold,
-                  // Add other styling as needed
-                ),
-              ),
-              // Tue, Aug 29, 2024
-              Text(
-                DateFormat('E, MMM dd, yyyy').format(booking.endDate!),
-                style: const TextStyle(
-                  fontSize: 16, // Set your desired font size
-                  fontWeight: FontWeight.bold,
-                  // Add other styling as needed
-                ),
-              ),
-              // 9:00 AM
-              Text(
-                DateFormat('h:mm a').format(booking.endDate!),
-                style: const TextStyle(
-                  fontSize: 14, // Set your desired font size
-                  // Add other styling as needed
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
     );
   }
 
@@ -771,17 +532,6 @@ class _AccommodationBookingsDetailsState
           fontWeight: FontWeight.w300,
           // You can add other styling as needed
         ),
-      ),
-    );
-  }
-
-  Text _displayHeader(String header) {
-    return Text(
-      header,
-      style: const TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.bold,
-        // Add other styling as needed
       ),
     );
   }
@@ -859,10 +609,13 @@ class _AccommodationBookingsDetailsState
                                   // You can add other styling as needed
                                 ),
                               ),
-                              onTap: () {
-                                showMarkAsDoneDialog(
-                                    context, bookingTasks[taskIndex]);
-                              },
+                              onTap:
+                                  bookingTasks[taskIndex].status != 'Completed'
+                                      ? () {
+                                          showMarkAsDoneDialog(
+                                              context, bookingTasks[taskIndex]);
+                                        }
+                                      : null,
                             ),
                             ListTile(
                               leading: Checkbox(
@@ -949,8 +702,10 @@ class _AccommodationBookingsDetailsState
                                         showDialog(
                                             context: context,
                                             builder: (context) {
-                                              return AlertDialog(
-                                                content: ImageSlider(
+                                              return Dialog(
+                                                insetPadding:
+                                                    const EdgeInsets.all(0),
+                                                child: ImageSlider(
                                                     images:
                                                         bookingTasks[taskIndex]
                                                             .imageProof!
@@ -979,19 +734,15 @@ class _AccommodationBookingsDetailsState
                                           : null,
 
                                   shape: MaterialStateProperty.all(
-                                    const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(
-                                            10), // Adjust the radius as needed
-                                        topRight: Radius.circular(
-                                            10), // Adjust the radius as needed
-                                        bottomLeft: Radius
-                                            .zero, // Flat bottom left corner
-                                        bottomRight: Radius
-                                            .zero, // Flat bottom right corner
-                                      ),
+                                    RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(4.0), // Adjus
                                       side: BorderSide(
-                                        color: Colors.grey, // Border color
+                                        color: proofNote == "No Proof Available"
+                                            ? Colors
+                                                .grey // Border color when proofNote is "No Proof Available"
+                                            : Colors
+                                                .transparent, // Transparent border color otherwise
                                         width: 1, // Border width
                                       ),
                                     ),
@@ -1003,7 +754,7 @@ class _AccommodationBookingsDetailsState
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                         color: proofNote == "No Proof Available"
-                                            ? Colors.black
+                                            ? Colors.grey
                                             : Colors.white)),
                               ),
                             ),
@@ -1331,36 +1082,46 @@ class _AccommodationBookingsDetailsState
                           SizedBox(
                             height: MediaQuery.sizeOf(context).height / 20,
                           ),
-                          ElevatedButton(
-                              onPressed: () {
-                                BookingTask bookingTask = BookingTask(
-                                    listingName: widget.listing.title,
-                                    listingId: widget.listing.uid,
-                                    status: 'Incomplete',
-                                    assignedIds: assignedIds,
-                                    assignedNames: assignedNames,
-                                    committee: committeeController.text,
-                                    complete: false,
-                                    openContribution: openContribution,
-                                    name: taskNameController.text);
+                          SizedBox(
+                            width: MediaQuery.sizeOf(context).width * .5,
+                            child: FilledButton(
+                                onPressed: () {
+                                  BookingTask bookingTask = BookingTask(
+                                      listingName: widget.listing.title,
+                                      listingId: widget.listing.uid,
+                                      status: 'Incomplete',
+                                      assignedIds: assignedIds,
+                                      assignedNames: assignedNames,
+                                      committee: committeeController.text,
+                                      complete: false,
+                                      openContribution: openContribution,
+                                      name: taskNameController.text);
 
-                                if (taskNameController.text.isNotEmpty) {
-                                  List<BookingTask> bookingTasks =
-                                      booking.tasks?.toList(growable: true) ??
-                                          [];
-                                  bookingTasks.add(bookingTask);
+                                  if (taskNameController.text.isNotEmpty) {
+                                    List<BookingTask> bookingTasks =
+                                        booking.tasks?.toList(growable: true) ??
+                                            [];
+                                    bookingTasks.add(bookingTask);
 
-                                  ref
-                                      .read(listingControllerProvider.notifier)
-                                      .updateBookingTask(
-                                          context,
-                                          widget.listing.uid!,
-                                          bookingTask,
-                                          "Tasks Updated");
-                                }
-                                taskNameController.dispose;
-                              },
-                              child: const Text("Add Task")),
+                                    ref
+                                        .read(
+                                            listingControllerProvider.notifier)
+                                        .updateBookingTask(
+                                            context,
+                                            widget.listing.uid!,
+                                            bookingTask,
+                                            "Tasks Updated");
+                                  }
+                                  taskNameController.dispose;
+                                },
+                                style: FilledButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        4.0), // Adjust the radius as needed
+                                  ),
+                                ),
+                                child: const Text("Add Task")),
+                          ),
                         ]),
                       ),
                     ),
@@ -1382,7 +1143,7 @@ class _AccommodationBookingsDetailsState
       canPop: false,
       onPopInvoked: (bool didPop) {
         context.pop();
-        ref.read(navBarVisibilityProvider.notifier).show();
+        // ref.read(navBarVisibilityProvider.notifier).show();
       },
       child: DefaultTabController(
           initialIndex: 0,
@@ -1401,8 +1162,8 @@ class _AccommodationBookingsDetailsState
                     body: StatefulBuilder(builder: (context, setState) {
                       return TabBarView(
                         children: [
-                          showTasks(booking),
                           showDetails(booking),
+                          showTasks(booking),
                           showExpenses(booking),
                         ],
                       );
@@ -1415,30 +1176,39 @@ class _AccommodationBookingsDetailsState
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Flexible(
-                            child: Padding(
+                            child: Container(
+                              width: MediaQuery.sizeOf(context).width * .5,
                               padding: const EdgeInsets.all(8.0),
                               child: FilledButton(
                                 // Make it wider
-                                style: ButtonStyle(
-                                  minimumSize: MaterialStateProperty.all<Size>(
-                                      const Size(180, 45)),
+                                style: FilledButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        4.0), // Adjust the radius as needed
+                                  ),
                                 ),
+
                                 onPressed: () {
                                   showAddTaskForm(context, booking);
                                 },
+
                                 child: const Text('Add Task'),
                               ),
                             ),
                           ),
                           Flexible(
-                            child: Padding(
+                            child: Container(
+                              width: MediaQuery.sizeOf(context).width * .5,
                               padding: const EdgeInsets.all(8.0),
                               child: FilledButton(
                                 // Make it wider
-                                style: ButtonStyle(
-                                  minimumSize: MaterialStateProperty.all<Size>(
-                                      const Size(180, 45)),
+                                style: FilledButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        4.0), // Adjust the radius as needed
+                                  ),
                                 ),
+
                                 onPressed: () {
                                   showAddExpenseForm(context, booking);
                                 },
