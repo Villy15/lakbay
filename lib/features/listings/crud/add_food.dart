@@ -15,6 +15,7 @@ import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
@@ -53,9 +54,10 @@ class _AddFoodState extends ConsumerState<AddFood> {
   List<FoodService> availableDeals = [];
   List<BookingTask>? fixedTasks = [];
   int tables = 0;
+  final List<List<TextEditingController>> _tableControllers = [];
   final List<Map<TextEditingController, TextEditingController>>
       _tableController = [];
-  final List<Map<String, dynamic>> _tableInfo = [];
+  List<List<dynamic>> _tableInfo = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -66,7 +68,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
   final TextEditingController _dealDescriptionController =
       TextEditingController();
   final TextEditingController _addressController =
-      TextEditingController(text: 'Eastwood City');
+      TextEditingController();
   final TextEditingController _cancellationPeriodController =
       TextEditingController();
   final TextEditingController _cancellationRateController =
@@ -90,6 +92,18 @@ class _AddFoodState extends ConsumerState<AddFood> {
       // Prepare data for storeFiles
       final imagePath = 'listings/${widget.coop.name}';
       final ids = _images!.map((image) => image.path.split('/').last).toList();
+      _tableInfo = _tableControllers.map((controllerList) {
+          return controllerList.asMap().entries.map((entry) {
+            var text = entry.value.text;
+            if (entry.key == 1 && num.tryParse(text) != null) {
+            // If it's the second value and it can be parsed into a number, parse it
+              return num.parse(text);
+            } else {
+            // Otherwise, return the original text
+              return text;
+            }
+          }).toList();
+        }).toList();
 
       // Upload images to firebase storage
       ref
@@ -133,7 +147,9 @@ class _AddFoodState extends ConsumerState<AddFood> {
                       cancellationPeriod:
                           _cancellationPeriodController.text == ''
                               ? null
-                              : num.parse(_cancellationPeriodController.text));
+                              : num.parse(_cancellationPeriodController.text),
+                      availableTables: _tableInfo
+                    );
                   listing = await processMenuImages(listing);
                   listing = await processDealImages(listing);
                   listing = listing.copyWith(
@@ -1096,8 +1112,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                   child: Padding(
                       padding: const EdgeInsets.only(top: 16),
                       child: TextFormField(
-                          controller: _tableController[index]
-                              [_typeOfTableController],
+                          controller: _tableControllers[index][0],
                           decoration: const InputDecoration(
                             labelText: 'Type of Table',
                             border: OutlineInputBorder(),
@@ -1110,8 +1125,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                   child: Padding(
                       padding: const EdgeInsets.only(top: 16),
                       child: TextFormField(
-                          controller: _tableController[index]
-                              [_quantityOfTablesController],
+                          controller: _tableControllers[index][1],
                           decoration: const InputDecoration(
                             labelText: 'Quantity',
                             border: OutlineInputBorder(),
@@ -1128,10 +1142,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                 setState(() {
                   tables++;
                   // add the _tableController
-                  _tableController.add({
-                    _typeOfTableController: TextEditingController(),
-                    _quantityOfTablesController: TextEditingController()
-                  });
+                  _tableControllers.add([TextEditingController(), TextEditingController()]);
                 });
               },
               child: const Text('Add Table'))),
@@ -1443,11 +1454,11 @@ class _AddFoodState extends ConsumerState<AddFood> {
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
-                    // remove all empty TextEditingControllers from _tableController
-                    _tableController.removeWhere((element) =>
-                        element[_typeOfTableController]!.text.isEmpty ||
-                        element[_quantityOfTablesController]!.text.isEmpty);
-                    debugPrint('this is now the _tableController: $_tableController');
+                    // _tableControllers 
+                    debugPrint('this is now the _tableController: ${_tableControllers[0][0]}');
+                    // get the text from _tableControllers and add to _tableInfo
+                   
+
                     debugPrint(
                         'this is the testing, i think it will work: $tempDealImgs');
                     // move testing to dealImgs
@@ -1497,7 +1508,14 @@ class _AddFoodState extends ConsumerState<AddFood> {
   }
 
   Widget addLocation(BuildContext context) {
+    final location = ref.read(listingLocationProvider);
+
+    if (location != null) {
+      _addressController.text = location;
+    }
+    
     return Column(children: [
+      
       TextFormField(
           controller: _addressController,
           decoration: const InputDecoration(
@@ -1505,18 +1523,18 @@ class _AddFoodState extends ConsumerState<AddFood> {
             helperText: '*required',
             border: OutlineInputBorder(),
           ),
+          readOnly: true,
+          onTap: () async {
+            
+            await context.push('/select_location');
+            debugPrint('this is the value of location now: $location');
+          },
           validator: (String? value) {
             if (value == null || value.isEmpty) {
               return 'Please enter some text';
             }
             return null;
           }),
-      const SizedBox(height: 10),
-      ElevatedButton(
-        onPressed: () {},
-        child: const Text('Update Map'),
-      ),
-
       const SizedBox(height: 10),
 
       // Google Map

@@ -39,7 +39,7 @@ class _TripsAddTripState extends ConsumerState<TripsAddTrip> {
     // context.push('/plan/location');
 
     // this is to test the select_location
-    context.push('/select_location');
+    context.push('/select_location', extra: 'plan');
   }
 
   void onSubmit() {

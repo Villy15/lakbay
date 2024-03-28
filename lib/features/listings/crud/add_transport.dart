@@ -16,6 +16,7 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/listing_provider.dart';
 import 'package:lakbay/features/location/map_repository.dart';
 import 'package:lakbay/features/tasks/widgets/today_task_card.dart';
+import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
@@ -52,9 +53,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
       TextEditingController();
   List<bool> workingDays = List.filled(7, false);
   List<BookingTask>? fixedTasks = [];
-  String _addressDestination = '';
-  String _addressPickup = '';
-  String _addressLocation = '';
+  final String _addressDestination = '';
+  final String _addressPickup = '';
+  final String _addressLocation = '';
 
   List<File>? _images = [];
   int departures = 0;
@@ -69,11 +70,11 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   final TextEditingController _feeController = TextEditingController();
   final TextEditingController _byHourFeeController = TextEditingController();
   final TextEditingController _addressController =
-      TextEditingController(text: 'Eastwood City');
+      TextEditingController();
   final TextEditingController _destinationController =
-      TextEditingController(text: 'Eastwood City');
+      TextEditingController();
   final TextEditingController _pickupController =
-      TextEditingController(text: 'Eastwood City');
+      TextEditingController();
   final TextEditingController _cancellationRateController =
       TextEditingController();
   final TextEditingController _cancellationPeriodController =
@@ -1058,6 +1059,11 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   }
 
   Widget addLocation(BuildContext context) {
+    final location = ref.read(listingLocationProvider);
+
+    if (location != null) {
+      _addressController.text = location;
+    }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const Padding(
         padding: EdgeInsets.only(left: 8.0),
@@ -1072,30 +1078,21 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             helperText: '*required',
             border: OutlineInputBorder(),
           ),
-          validator: (String? value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter some text';
-            }
-            return null;
-          }),
-      Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // update the map with the new address
-            setState(() {
-              _addressLocation = _addressController.text;
-            });
-          },
-          child: const Text('Update Map'),
-        ),
-      ),
+          readOnly: true,
+          onTap: () async {
+            await context.push('/select_location', extra: 'listing');
+          }
+          ),
 
       const SizedBox(height: 10),
 
       // Google Map
-      SizedBox(
-        height: 400,
-        child: MapWidget(address: _addressLocation),
+      GestureDetector(
+        onVerticalDragUpdate: (details) {},
+        child: SizedBox(
+          height: 400,
+          child: MapWidget(address: _addressController.text),
+        ),
       ),
 
       const SizedBox(height: 10),
@@ -1103,6 +1100,16 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   }
 
   Widget addSuppDetails(BuildContext context) {
+    final pickupPoint = ref.read(pickupPointLocationProvider);
+    final destination = ref.read(destinationLocationProvider);
+
+    if (pickupPoint != null ) {
+      _pickupController.text = pickupPoint;
+    }
+
+    if (destination != null) {
+      _destinationController.text = destination;
+    }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const SizedBox(height: 10),
       const Text('Working Days',
@@ -1324,27 +1331,20 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 helperText: '*required',
                 border: OutlineInputBorder(),
                 floatingLabelBehavior: FloatingLabelBehavior.always,
-                hintText: "Eastwood City"),
-            // readOnly: true,
-            onTap: () {
+                hintText: "Address*"),
+            readOnly: true,
+            onTap: () async {
               // make this pop another page so that
+              await context.push('/select_location', extra: 'pickup' );
+
             }),
         // Google Map
         const SizedBox(height: 15),
-        SizedBox(
-          height: 400,
-          child: MapWidget(address: _addressPickup),
-        ),
-        const SizedBox(height: 10),
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              // update the map according to the pickup point
-              setState(() {
-                _addressPickup = _pickupController.text;
-              });
-            },
-            child: const Text('Update Map'),
+        GestureDetector(
+          onVerticalDragUpdate: (details) {},
+          child: SizedBox(
+            height: 400,
+            child: MapWidget(address: _pickupController.text),
           ),
         ),
         const SizedBox(height: 30),
@@ -1363,27 +1363,23 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               helperText: '*required',
               border: OutlineInputBorder(),
               floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: "Eastwood City"),
+              hintText: "Address*"),
+          readOnly: true,
+          onTap: () async {
+            // make this pop another page so that
+            await context.push('/select_location', extra: 'destination' );
+          },
         ),
         // Google Map
         const SizedBox(height: 15),
-        SizedBox(
-          height: 400,
-          child: MapWidget(address: _addressDestination),
-        ),
-        const SizedBox(height: 10),
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              setState(() {
-                // update the map according to the destination
-                _addressDestination = _destinationController.text;
-                // update the value of travel time accordingly
-              });
-            },
-            child: const Text('Update Map'),
+        GestureDetector(
+          onVerticalDragUpdate: (details) {},
+          child: SizedBox(
+            height: 400,
+            child: MapWidget(address: _destinationController.text),
           ),
         ),
+        const SizedBox(height: 10),
       ],
     ]);
   }
@@ -1532,8 +1528,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 ),
               ),
             ),
-            ListTile(
-              title: const Text('Travel Time',
+            const ListTile(
+              title: Text('Travel Time',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             )
           ],

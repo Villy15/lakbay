@@ -6,7 +6,9 @@ import 'package:lakbay/features/location/map_repository.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 
 class SelectLocation extends ConsumerStatefulWidget {
-  const SelectLocation({super.key});
+  // declare a string to indicate which page the user is in
+  final String page;
+  const SelectLocation({super.key, required this.page});
 
   @override
   ConsumerState<SelectLocation> createState() => _SelectLocationState();
@@ -61,10 +63,29 @@ class _SelectLocationState extends ConsumerState<SelectLocation> {
                   return ListTile(
                     title: Text(predictions[index]),
                     onTap: () async {
-                      // get the coordinates of the selected location
-                      final location = await mapRepository.getCoordinates(predictions[index]);
-                      debugPrint('location: $location');
-                      ref.read(planLocationProvider.notifier).setLocation(predictions[index]); 
+                      // if the user is in the plan page, set the location
+                      switch (widget.page) {
+                        case 'plan':
+                          final planLocation = ref.read(planLocationProvider.notifier);
+                          planLocation.setLocation(predictions[index]);
+                          break;
+                        case 'listing':
+                          final listingLocation = ref.read(listingLocationProvider.notifier);
+                          listingLocation.setLocation(predictions[index]);
+                          break;
+                        case 'destination':
+                          final destinationLocation = ref.read(destinationLocationProvider.notifier);
+                          destinationLocation.setLocation(predictions[index]);
+                          break;
+                        case 'pickup':
+                          final pickupPointLocation = ref.read(pickupPointLocationProvider.notifier);
+                          pickupPointLocation.setLocation(predictions[index]);
+                          break;
+                        default:
+                        final planLocation = ref.read(planLocationProvider.notifier);
+                          planLocation.setLocation(predictions[index]);
+                          break;
+                      }
                       // ignore: use_build_context_synchronously
                       context.pop();
                     },
