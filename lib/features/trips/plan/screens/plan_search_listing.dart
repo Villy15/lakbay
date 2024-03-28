@@ -84,10 +84,12 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     final formattedCurrentDate =
         DateFormat.MMMMd().format(daysPlan.currentDay!);
 
-    if (ref.watch(parentStateProvider) == true) {
-      context.pop();
-      context.pop();
-    }
+    Future.delayed(Duration.zero, () {
+      if (ref.watch(parentStateProvider) == true) {
+        context.pop();
+        context.pop();
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(

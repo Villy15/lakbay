@@ -433,11 +433,11 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     for (ListingBookings booking in bookings) {
       if (booking.roomUid! == room.uid) {
         // Add start date
-        DateTime currentDate = booking.startDate!.add(const Duration(days: 1));
+        DateTime currentDate = booking.startDate!.add(const Duration(days: 0));
 
         // Keep adding dates until you reach the end date
-        while (currentDate.isBefore(booking.endDate!) ||
-            currentDate.isAtSameMomentAs(booking.endDate!)) {
+        while (currentDate
+            .isBefore(booking.endDate!.subtract(const Duration(days: 1)))) {
           allDates.add(currentDate);
           // Move to next day
           currentDate = currentDate.add(const Duration(days: 1));
@@ -485,9 +485,9 @@ class _RoomCardState extends ConsumerState<RoomCard> {
       DateTime startDate, DateTime endDate, List<DateTime> dateList) {
     // Loop through each date in the list
     for (DateTime date in dateList) {
-      debugPrint('dateList: $dateList');
-      debugPrint('startDate: $startDate');
-      debugPrint('endDate: $endDate');
+      // debugPrint('dateList: $dateList');
+      // debugPrint('startDate: $startDate');
+      // debugPrint('endDate: $endDate');
       // Check if the current date falls within the range
       if (_isDateInRange(date, startDate, endDate) == false) {
         return false;

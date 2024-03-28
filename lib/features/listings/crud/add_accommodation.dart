@@ -48,8 +48,10 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _addressController =
       TextEditingController(text: 'Eastwood City');
-  final TextEditingController checkInController = TextEditingController();
-  final TextEditingController checkOutController = TextEditingController();
+  final TextEditingController checkInController =
+      TextEditingController(text: ('11:30 AM'));
+  final TextEditingController checkOutController =
+      TextEditingController(text: ('2:30 PM'));
 
   String mapAddress = "";
   List<File>? _images;
@@ -515,7 +517,6 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           controller: _titleController,
           decoration: const InputDecoration(
             labelText: 'Listing Title*',
-            helperText: '*required',
             border: OutlineInputBorder(),
             floatingLabelBehavior:
                 FloatingLabelBehavior.always, // Keep the label always visible
@@ -528,81 +529,86 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           maxLines: null,
           decoration: const InputDecoration(
             labelText: 'Description*',
-            helperText: '*required',
             border: OutlineInputBorder(),
             floatingLabelBehavior:
                 FloatingLabelBehavior.always, // Keep the label always visible
             hintText: "Hotel near the beach....",
           ),
         ),
-        SizedBox(height: MediaQuery.sizeOf(context).height / 25),
-        TextFormField(
-          controller: checkInController,
-          maxLines: 1,
-          decoration: const InputDecoration(
-            labelText: 'Check In*',
-            helperText: '*required',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior:
-                FloatingLabelBehavior.always, // Keep the label always visible
-            hintText: "11:30",
-          ),
-          readOnly: true,
-          onTap: () async {
-            final TimeOfDay? pickedTime = await showTimePicker(
-              context: context,
-              initialTime: checkIn,
-              initialEntryMode: TimePickerEntryMode.inputOnly,
-              builder: (BuildContext context, Widget? child) {
-                return MediaQuery(
-                  data: MediaQuery.of(context)
-                      .copyWith(alwaysUse24HourFormat: false),
-                  child: child!,
-                );
-              },
-            );
-
-            if (pickedTime != null) {
-              setState(() {
-                checkInController.text = pickedTime.format(context);
-                checkIn = pickedTime;
-              });
-            }
-          },
-        ),
         const SizedBox(height: 10),
-        TextFormField(
-          controller: checkOutController,
-          maxLines: 1,
-          decoration: const InputDecoration(
-            labelText: 'Check Out*',
-            helperText: '*required',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior:
-                FloatingLabelBehavior.always, // Keep the label always visible
-            hintText: "2:30",
-          ),
-          readOnly: true,
-          onTap: () async {
-            final TimeOfDay? pickedTime = await showTimePicker(
-              context: context,
-              initialTime: checkOut,
-              initialEntryMode: TimePickerEntryMode.inputOnly,
-              builder: (BuildContext context, Widget? child) {
-                return MediaQuery(
-                  data: MediaQuery.of(context)
-                      .copyWith(alwaysUse24HourFormat: false),
-                  child: child!,
-                );
-              },
-            );
-            if (pickedTime != null) {
-              setState(() {
-                checkOutController.text = pickedTime.format(context);
-                checkOut = pickedTime;
-              });
-            }
-          },
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: checkInController,
+                maxLines: 1,
+                decoration: const InputDecoration(
+                  labelText: 'Check In*',
+                  border: OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior
+                      .always, // Keep the label always visible
+                  hintText: "11:30",
+                ),
+                readOnly: true,
+                onTap: () async {
+                  final TimeOfDay? pickedTime = await showTimePicker(
+                    context: context,
+                    initialTime: checkIn,
+                    initialEntryMode: TimePickerEntryMode.inputOnly,
+                    builder: (BuildContext context, Widget? child) {
+                      return MediaQuery(
+                        data: MediaQuery.of(context)
+                            .copyWith(alwaysUse24HourFormat: false),
+                        child: child!,
+                      );
+                    },
+                  );
+
+                  if (pickedTime != null) {
+                    setState(() {
+                      checkInController.text = pickedTime.format(context);
+                      checkIn = pickedTime;
+                    });
+                  }
+                },
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextFormField(
+                controller: checkOutController,
+                maxLines: 1,
+                decoration: const InputDecoration(
+                  labelText: 'Check Out*',
+                  border: OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior
+                      .always, // Keep the label always visible
+                  hintText: "2:30",
+                ),
+                readOnly: true,
+                onTap: () async {
+                  final TimeOfDay? pickedTime = await showTimePicker(
+                    context: context,
+                    initialTime: checkOut,
+                    initialEntryMode: TimePickerEntryMode.inputOnly,
+                    builder: (BuildContext context, Widget? child) {
+                      return MediaQuery(
+                        data: MediaQuery.of(context)
+                            .copyWith(alwaysUse24HourFormat: false),
+                        child: child!,
+                      );
+                    },
+                  );
+                  if (pickedTime != null) {
+                    setState(() {
+                      checkOutController.text = pickedTime.format(context);
+                      checkOut = pickedTime;
+                    });
+                  }
+                },
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         GestureDetector(
@@ -639,31 +645,42 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   Widget addRoomDetails(BuildContext context) {
     return Column(children: [
       Center(
-        child: ElevatedButton(
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  // String roomId = "";
-                  TextEditingController roomIdController =
-                      TextEditingController();
-                  // num price = 0;
-                  TextEditingController priceController =
-                      TextEditingController();
-                  num guests = 0;
-                  num bedrooms = 0;
-                  num beds = 0;
-                  num bathrooms = 0;
-                  List<File> images = [];
-                  return SizedBox(
-                    child: Dialog.fullscreen(
-                      child: showAddRoomForm(images, roomIdController,
-                          priceController, guests, bedrooms, beds, bathrooms),
-                    ),
-                  );
-                });
-          },
-          child: const Text('Add Room'),
+        child: SizedBox(
+          width: MediaQuery.sizeOf(context).width / 1.2,
+          child: FilledButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    // String roomId = "";
+                    TextEditingController roomIdController =
+                        TextEditingController();
+                    // num price = 0;
+                    TextEditingController priceController =
+                        TextEditingController();
+                    num guests = 0;
+                    num bedrooms = 0;
+                    num beds = 0;
+                    num bathrooms = 0;
+                    List<File> images = [];
+                    return SizedBox(
+                      child: Dialog.fullscreen(
+                        child: showAddRoomForm(images, roomIdController,
+                            priceController, guests, bedrooms, beds, bathrooms),
+                      ),
+                    );
+                  });
+            },
+            style: ElevatedButton.styleFrom(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                    8.0), // Adjust the border radius as needed
+              ),
+            ),
+            child: const Text('Add Room'),
+          ),
         ),
       ),
       if (availableRooms.isEmpty)
@@ -1154,7 +1171,6 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           controller: _addressController,
           decoration: const InputDecoration(
             labelText: 'Address*',
-            helperText: '*required',
             border: OutlineInputBorder(),
           ),
           readOnly: true,
@@ -1181,7 +1197,9 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
     ];
     return Column(
       children: [
-        ElevatedButton(
+        SizedBox(
+          width: MediaQuery.sizeOf(context).width / 1.2,
+          child: FilledButton(
             onPressed: () {
               showDialog(
                   context: context,
@@ -1191,7 +1209,17 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                     );
                   });
             },
-            child: const Text("Add Task")),
+            style: ElevatedButton.styleFrom(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                    8.0), // Adjust the border radius as needed
+              ),
+            ),
+            child: const Text("Add Task"),
+          ),
+        ),
         const SizedBox(
           height: 10,
         ),
@@ -1223,7 +1251,11 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                                 color: Colors.black,
                                 size: 25,
                               ), // 'X' icon
-                              onPressed: () {},
+                              onPressed: () {
+                                setState(() {
+                                  fixedTasks?.remove(fixedTasks?[taskIndex]);
+                                });
+                              },
                             ),
                           ],
                         ),

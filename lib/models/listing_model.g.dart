@@ -57,8 +57,8 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           .toList(),
       timestamp:
           const TimestampSerializer().fromJson(json['timestamp'] as Timestamp?),
-      workingDays: (json['workingDays'] as List<dynamic>?)
-          ?.map((e) => e as bool)
+      availableDays: (json['availableDays'] as List<dynamic>?)
+          ?.map((e) => AvailableDay.fromJson(e as Map<String, dynamic>))
           .toList(),
       title: json['title'] as String,
       type: json['type'] as String?,
@@ -118,7 +118,7 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'rating': instance.rating,
       'fixedTasks': instance.fixedTasks?.map((e) => e.toJson()).toList(),
       'timestamp': const TimestampSerializer().toJson(instance.timestamp),
-      'workingDays': instance.workingDays,
+      'availableDays': instance.availableDays?.map((e) => e.toJson()).toList(),
       'title': instance.title,
       'type': instance.type,
       'availableDeals':
@@ -332,6 +332,22 @@ Map<String, dynamic> _$$AvailableDateImplToJson(_$AvailableDateImpl instance) =>
     <String, dynamic>{
       'available': instance.available,
       'date': instance.date.toIso8601String(),
+      'availableTimes': instance.availableTimes.map((e) => e.toJson()).toList(),
+    };
+
+_$AvailableDayImpl _$$AvailableDayImplFromJson(Map<String, dynamic> json) =>
+    _$AvailableDayImpl(
+      available: json['available'] as bool,
+      day: json['day'] as String,
+      availableTimes: (json['availableTimes'] as List<dynamic>)
+          .map((e) => AvailableTime.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$AvailableDayImplToJson(_$AvailableDayImpl instance) =>
+    <String, dynamic>{
+      'available': instance.available,
+      'day': instance.day,
       'availableTimes': instance.availableTimes.map((e) => e.toJson()).toList(),
     };
 
