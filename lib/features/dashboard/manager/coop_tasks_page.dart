@@ -44,61 +44,42 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
             },
           ),
           title: const Text('Tasks')),
-      body: ref.watch(getBookingTasksByMemberId(user!.uid)).when(
-          data: (List<BookingTask>? bookingTasks) {
-            Map<String, List<BookingTask>>? bookingTasksSorted = {};
-            // // Build your list items here
-            if (bookingTasks != null) {
-              for (BookingTask task in bookingTasks) {
-                if (bookingTasksSorted.containsKey(task.listingName)) {
-                  bookingTasksSorted[task.listingName]!.add(task);
-                } else {
-                  bookingTasksSorted[task.listingName] = [task];
+      body: SingleChildScrollView(
+        child: ref.watch(getBookingTasksByMemberId(user!.uid)).when(
+            data: (List<BookingTask>? bookingTasks) {
+              Map<String, List<BookingTask>>? bookingTasksSorted = {};
+              // // Build your list items here
+              if (bookingTasks != null) {
+                for (BookingTask task in bookingTasks) {
+                  if (bookingTasksSorted.containsKey(task.listingName)) {
+                    bookingTasksSorted[task.listingName]!.add(task);
+                  } else {
+                    bookingTasksSorted[task.listingName] = [task];
+                  }
                 }
               }
-            }
-            return bookingTasks!.isNotEmpty
-                ? Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    // height: MediaQuery.sizeOf(context).height / 5,
-                    width: double.infinity,
-                    child: Column(
-                      children: [
-                        ...bookingTasksSorted.entries.map((entry) {
-                          return ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(20.0),
-                              topRight: Radius.circular(20.0),
-                            ),
-                            child: Column(
+              return bookingTasks!.isNotEmpty
+                  ? Card(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        children: [
+                          ...bookingTasksSorted.entries.map((entry) {
+                            return Column(
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 20, right: 30),
-                                  width: double.infinity,
-                                  color: Colors.grey[350],
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          entry.key,
-                                          style: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w400),
-                                        ),
-                                        Text(
-                                          '${entry.value.length}',
-                                          style: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 30,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ],
-                                    ),
+                                ListTile(
+                                  title: Text(
+                                    entry.key,
+                                    style: const TextStyle(
+                                        color: Colors.deepOrangeAccent,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  trailing: Text(
+                                    '${entry.value.length}',
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.w500),
                                   ),
                                 ),
                                 ListView.builder(
@@ -163,24 +144,25 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                                               }),
                                         ],
                                       );
-                                    })
+                                    }),
                               ],
-                            ),
-                          );
-                        })
-                      ],
-                    ))
-                : const Center(
-                    child: Text(
-                    "No Tasks Assigned",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
-                  ));
-          },
-          error: (error, stackTrace) => ErrorText(
-                error: error.toString(),
-                stackTrace: '',
-              ),
-          loading: () => const CircularProgressIndicator()),
+                            );
+                          })
+                        ],
+                      ))
+                  : const Center(
+                      child: Text(
+                      "No Tasks Assigned",
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
+                    ));
+            },
+            error: (error, stackTrace) => ErrorText(
+                  error: error.toString(),
+                  stackTrace: '',
+                ),
+            loading: () => const CircularProgressIndicator()),
+      ),
     );
   }
 

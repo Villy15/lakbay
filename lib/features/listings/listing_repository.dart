@@ -255,7 +255,6 @@ class ListingRepository {
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
-        debugPrint('docData: ${doc.data()}');
         return BookingTask.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });

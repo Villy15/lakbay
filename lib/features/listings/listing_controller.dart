@@ -226,17 +226,35 @@ class ListingController extends StateNotifier<bool> {
       },
       (bookingUid) async {
         state = false;
-        booking.tasks?.forEach((element) {
-          if (booking.category == "Accommodation") {
-            element = element.copyWith(
-              roomId: booking.roomId,
-              listingId: listing.uid,
-              bookingId: bookingUid,
-            );
+        booking.tasks?.forEach((element) async {
+          switch (booking.category) {
+            case 'Accommodation':
+              {
+                element = element.copyWith(
+                  roomId: booking.roomId,
+                  listingId: listing.uid,
+                  bookingId: bookingUid,
+                );
+                _ref
+                    .read(listingControllerProvider.notifier)
+                    .addBookingTask(context, listing.uid!, element);
+              }
+            case 'Transport':
+              {
+                element = element.copyWith(
+                  listingId: listing.uid,
+                  bookingId: bookingUid,
+                );
+                if (await _listingRepository
+                        .readBookingTasksByBookingId(listing.uid!, bookingUid)
+                        .isEmpty &&
+                    context.mounted) {
+                  _ref
+                      .read(listingControllerProvider.notifier)
+                      .addBookingTask(context, listing.uid!, element);
+                }
+              }
           }
-          _ref
-              .read(listingControllerProvider.notifier)
-              .addBookingTask(context, listing.uid!, element);
         });
         _ref.read(salesControllerProvider.notifier).addSale(
             context,
@@ -263,16 +281,15 @@ class ListingController extends StateNotifier<bool> {
         if (booking.startDate?.hour == 0 &&
             booking.startDate?.minute == 0 &&
             booking.startDate?.second == 0) {
+          DateTime mergedDate = DateTime(
+            booking.startDate!.year,
+            booking.startDate!.month,
+            booking.startDate!.day,
+            booking.startTime!.hour,
+            booking.startTime!.minute,
+          );
 
-              DateTime mergedDate = DateTime(
-                booking.startDate!.year,
-                booking.startDate!.month,
-                booking.startDate!.day,
-                booking.startTime!.hour,
-                booking.startTime!.minute,
-              );
-
-              booking = booking.copyWith(startDate: mergedDate);
+          booking = booking.copyWith(startDate: mergedDate);
         }
 
         // check if the booking.endDate's time is set to 00:00:00 and if so, set it to booking.endTime

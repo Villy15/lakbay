@@ -86,9 +86,9 @@ class _CustomerAccomodationCheckoutState
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20), // Add some spacing
-            ElevatedButton(
+            FilledButton(
               // Make it larger
-              style: ElevatedButton.styleFrom(
+              style: FilledButton.styleFrom(
                 // Color
                 backgroundColor: Colors.orange.shade700,
                 minimumSize: const Size(double.infinity, 50),
@@ -119,9 +119,6 @@ class _CustomerAccomodationCheckoutState
                 ref
                     .read(listingControllerProvider.notifier)
                     .addBooking(updatedBooking, widget.listing, context);
-                // context.pop();
-                // context.pop();
-                // context.pop();
               },
               child: Text('Confirm and Pay',
                   style: TextStyle(
@@ -490,7 +487,7 @@ class _CustomerAccomodationCheckoutState
                   // Add more payment method icons as needed
                 ],
               ),
-              // ElevatedButton(
+              // FilledButton(
               //   onPressed: () {
               //     // Add your payment action here
               //   },

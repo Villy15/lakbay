@@ -180,25 +180,28 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               );
 
               ListingModel listingModel = ListingModel(
-                  address: _addressController.text,
-                  category: widget.category,
-                  city: widget.coop.city,
-                  cooperative: ListingCooperative(
-                      cooperativeId: widget.coop.uid!,
-                      cooperativeName: widget.coop.name),
-                  duration: travelDuration,
-                  description: _descriptionController.text,
-                  province: widget.coop.province,
-                  publisherId: ref.read(userProvider)!.uid,
-                  title: _titleController.text,
-                  type: type,
-                  publisherName: ref.read(userProvider)!.name,
-                  images:
-                      _images?.map((e) => ListingImages(path: e.path)).toList(),
-                  availableTransport: transport,
-                  cancellationPeriod: num.parse(_cancellationPeriodController.text),
-                  cancellationRate: num.parse((_cancellationRateController.text)) / 100,
-                  );
+                address: _addressController.text,
+                category: widget.category,
+                city: widget.coop.city,
+                cooperative: ListingCooperative(
+                    cooperativeId: widget.coop.uid!,
+                    cooperativeName: widget.coop.name),
+                duration: travelDuration,
+                description: _descriptionController.text,
+                province: widget.coop.province,
+                publisherId: ref.read(userProvider)!.uid,
+                title: _titleController.text,
+                fixedTasks: fixedTasks,
+                type: type,
+                publisherName: ref.read(userProvider)!.name,
+                images:
+                    _images?.map((e) => ListingImages(path: e.path)).toList(),
+                availableTransport: transport,
+                cancellationPeriod:
+                    num.parse(_cancellationPeriodController.text),
+                cancellationRate:
+                    num.parse((_cancellationRateController.text)) / 100,
+              );
 
               ref
                   .read(saveListingProvider.notifier)
