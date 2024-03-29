@@ -46,6 +46,7 @@ dependencies:
   flutter_config: ^2.0.2
   flutter_email_sender: ^6.0.0
   flutter_firebase_chat_core: ^1.6.7
+  flutter_local_notifications: ^17.0.0
   flutter_riverpod: ^2.4.6
   flutter_slidable: ^3.0.1
   flutter_speed_dial: ^7.0.0

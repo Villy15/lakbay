@@ -282,11 +282,12 @@ class _TodayPageState extends ConsumerState<TodayPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Welcome name
+
               Text(
                 "Welcome, ${user!.name}!",
                 // bold and large
                 style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -505,8 +506,9 @@ class _TodayPageState extends ConsumerState<TodayPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Welcome name
+
               Text(
-                "Welcome,\n${user!.name}!",
+                "Welcome, ${user!.name}!",
                 // bold and large
                 style: const TextStyle(
                   fontSize: 24,
