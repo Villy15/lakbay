@@ -57,13 +57,6 @@ class _ValidateCoopState extends ConsumerState<ValidateCoop> {
       );
 
       // Upload files
-    ref
-          .read(storageRepositoryProvider)
-          .storeFile(
-            path: 'events/${_nameController.text}',
-            id: _image?.path.split('/').last ?? '',
-            file: _image,
-          )
 
       // ref
       //     .read(storageRepositoryProvider)

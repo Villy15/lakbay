@@ -53,7 +53,7 @@ mixin _$ListingBookings {
   @TimestampSerializer()
   DateTime? get startDate => throw _privateConstructorUsedError;
   String get bookingStatus =>
-      throw _privateConstructorUsedError; //[Reserved, Cancelled, Completed, Refunded
+      throw _privateConstructorUsedError; //[Reserved, Cancelled, Completed, Refunded, Maintenance
   num? get totalPrice => throw _privateConstructorUsedError;
   String get tripUid => throw _privateConstructorUsedError;
   String get tripName => throw _privateConstructorUsedError;
@@ -655,7 +655,7 @@ class _$ListingBookingsImpl extends _ListingBookings {
   final DateTime? startDate;
   @override
   final String bookingStatus;
-//[Reserved, Cancelled, Completed, Refunded
+//[Reserved, Cancelled, Completed, Refunded, Maintenance
   @override
   final num? totalPrice;
   @override
@@ -894,7 +894,7 @@ abstract class _ListingBookings extends ListingBookings {
   DateTime? get startDate;
   @override
   String get bookingStatus;
-  @override //[Reserved, Cancelled, Completed, Refunded
+  @override //[Reserved, Cancelled, Completed, Refunded, Maintenance
   num? get totalPrice;
   @override
   String get tripUid;

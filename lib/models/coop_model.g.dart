@@ -23,6 +23,7 @@ _$CooperativeModelImpl _$$CooperativeModelImplFromJson(
       managers:
           (json['managers'] as List<dynamic>).map((e) => e as String).toList(),
       membershipFee: json['membershipFee'] as num?,
+      membershipDividends: json['membershipDividends'] as num?,
       validationFiles: json['validationFiles'] == null
           ? null
           : ValidationFiles.fromJson(
@@ -44,6 +45,7 @@ Map<String, dynamic> _$$CooperativeModelImplToJson(
       'members': instance.members,
       'managers': instance.managers,
       'membershipFee': instance.membershipFee,
+      'membershipDividends': instance.membershipDividends,
       'validationFiles': instance.validationFiles?.toJson(),
     };
 

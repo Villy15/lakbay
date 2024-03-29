@@ -18,6 +18,7 @@ class CooperativeModel with _$CooperativeModel {
     required List<String> members,
     required List<String> managers,
     num? membershipFee,
+    num? membershipDividends,
     ValidationFiles? validationFiles,
   }) = _CooperativeModel;
 

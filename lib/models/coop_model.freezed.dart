@@ -32,6 +32,7 @@ mixin _$CooperativeModel {
   List<String> get members => throw _privateConstructorUsedError;
   List<String> get managers => throw _privateConstructorUsedError;
   num? get membershipFee => throw _privateConstructorUsedError;
+  num? get membershipDividends => throw _privateConstructorUsedError;
   ValidationFiles? get validationFiles => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -59,6 +60,7 @@ abstract class $CooperativeModelCopyWith<$Res> {
       List<String> members,
       List<String> managers,
       num? membershipFee,
+      num? membershipDividends,
       ValidationFiles? validationFiles});
 
   $ValidationFilesCopyWith<$Res>? get validationFiles;
@@ -89,6 +91,7 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
     Object? members = null,
     Object? managers = null,
     Object? membershipFee = freezed,
+    Object? membershipDividends = freezed,
     Object? validationFiles = freezed,
   }) {
     return _then(_value.copyWith(
@@ -140,6 +143,10 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
           ? _value.membershipFee
           : membershipFee // ignore: cast_nullable_to_non_nullable
               as num?,
+      membershipDividends: freezed == membershipDividends
+          ? _value.membershipDividends
+          : membershipDividends // ignore: cast_nullable_to_non_nullable
+              as num?,
       validationFiles: freezed == validationFiles
           ? _value.validationFiles
           : validationFiles // ignore: cast_nullable_to_non_nullable
@@ -181,6 +188,7 @@ abstract class _$$CooperativeModelImplCopyWith<$Res>
       List<String> members,
       List<String> managers,
       num? membershipFee,
+      num? membershipDividends,
       ValidationFiles? validationFiles});
 
   @override
@@ -210,6 +218,7 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
     Object? members = null,
     Object? managers = null,
     Object? membershipFee = freezed,
+    Object? membershipDividends = freezed,
     Object? validationFiles = freezed,
   }) {
     return _then(_$CooperativeModelImpl(
@@ -261,6 +270,10 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
           ? _value.membershipFee
           : membershipFee // ignore: cast_nullable_to_non_nullable
               as num?,
+      membershipDividends: freezed == membershipDividends
+          ? _value.membershipDividends
+          : membershipDividends // ignore: cast_nullable_to_non_nullable
+              as num?,
       validationFiles: freezed == validationFiles
           ? _value.validationFiles
           : validationFiles // ignore: cast_nullable_to_non_nullable
@@ -285,6 +298,7 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       required final List<String> members,
       required final List<String> managers,
       this.membershipFee,
+      this.membershipDividends,
       this.validationFiles})
       : _members = members,
         _managers = managers;
@@ -329,11 +343,13 @@ class _$CooperativeModelImpl implements _CooperativeModel {
   @override
   final num? membershipFee;
   @override
+  final num? membershipDividends;
+  @override
   final ValidationFiles? validationFiles;
 
   @override
   String toString() {
-    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers, membershipFee: $membershipFee, validationFiles: $validationFiles)';
+    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers, membershipFee: $membershipFee, membershipDividends: $membershipDividends, validationFiles: $validationFiles)';
   }
 
   @override
@@ -358,6 +374,8 @@ class _$CooperativeModelImpl implements _CooperativeModel {
             const DeepCollectionEquality().equals(other._managers, _managers) &&
             (identical(other.membershipFee, membershipFee) ||
                 other.membershipFee == membershipFee) &&
+            (identical(other.membershipDividends, membershipDividends) ||
+                other.membershipDividends == membershipDividends) &&
             (identical(other.validationFiles, validationFiles) ||
                 other.validationFiles == validationFiles));
   }
@@ -378,6 +396,7 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       const DeepCollectionEquality().hash(_members),
       const DeepCollectionEquality().hash(_managers),
       membershipFee,
+      membershipDividends,
       validationFiles);
 
   @JsonKey(ignore: true)
@@ -409,6 +428,7 @@ abstract class _CooperativeModel implements CooperativeModel {
       required final List<String> members,
       required final List<String> managers,
       final num? membershipFee,
+      final num? membershipDividends,
       final ValidationFiles? validationFiles}) = _$CooperativeModelImpl;
 
   factory _CooperativeModel.fromJson(Map<String, dynamic> json) =
@@ -438,6 +458,8 @@ abstract class _CooperativeModel implements CooperativeModel {
   List<String> get managers;
   @override
   num? get membershipFee;
+  @override
+  num? get membershipDividends;
   @override
   ValidationFiles? get validationFiles;
   @override
