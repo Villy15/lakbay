@@ -33,6 +33,9 @@ mixin _$CooperativeModel {
   List<String> get managers => throw _privateConstructorUsedError;
   num? get membershipFee => throw _privateConstructorUsedError;
   num? get membershipDividends => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get dateCreated => throw _privateConstructorUsedError;
+  ValidityStatus? get validityStatus => throw _privateConstructorUsedError;
   ValidationFiles? get validationFiles => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -61,8 +64,11 @@ abstract class $CooperativeModelCopyWith<$Res> {
       List<String> managers,
       num? membershipFee,
       num? membershipDividends,
+      @TimestampSerializer() DateTime? dateCreated,
+      ValidityStatus? validityStatus,
       ValidationFiles? validationFiles});
 
+  $ValidityStatusCopyWith<$Res>? get validityStatus;
   $ValidationFilesCopyWith<$Res>? get validationFiles;
 }
 
@@ -92,6 +98,8 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
     Object? managers = null,
     Object? membershipFee = freezed,
     Object? membershipDividends = freezed,
+    Object? dateCreated = freezed,
+    Object? validityStatus = freezed,
     Object? validationFiles = freezed,
   }) {
     return _then(_value.copyWith(
@@ -147,11 +155,31 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
           ? _value.membershipDividends
           : membershipDividends // ignore: cast_nullable_to_non_nullable
               as num?,
+      dateCreated: freezed == dateCreated
+          ? _value.dateCreated
+          : dateCreated // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      validityStatus: freezed == validityStatus
+          ? _value.validityStatus
+          : validityStatus // ignore: cast_nullable_to_non_nullable
+              as ValidityStatus?,
       validationFiles: freezed == validationFiles
           ? _value.validationFiles
           : validationFiles // ignore: cast_nullable_to_non_nullable
               as ValidationFiles?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $ValidityStatusCopyWith<$Res>? get validityStatus {
+    if (_value.validityStatus == null) {
+      return null;
+    }
+
+    return $ValidityStatusCopyWith<$Res>(_value.validityStatus!, (value) {
+      return _then(_value.copyWith(validityStatus: value) as $Val);
+    });
   }
 
   @override
@@ -189,8 +217,12 @@ abstract class _$$CooperativeModelImplCopyWith<$Res>
       List<String> managers,
       num? membershipFee,
       num? membershipDividends,
+      @TimestampSerializer() DateTime? dateCreated,
+      ValidityStatus? validityStatus,
       ValidationFiles? validationFiles});
 
+  @override
+  $ValidityStatusCopyWith<$Res>? get validityStatus;
   @override
   $ValidationFilesCopyWith<$Res>? get validationFiles;
 }
@@ -219,6 +251,8 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
     Object? managers = null,
     Object? membershipFee = freezed,
     Object? membershipDividends = freezed,
+    Object? dateCreated = freezed,
+    Object? validityStatus = freezed,
     Object? validationFiles = freezed,
   }) {
     return _then(_$CooperativeModelImpl(
@@ -274,6 +308,14 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
           ? _value.membershipDividends
           : membershipDividends // ignore: cast_nullable_to_non_nullable
               as num?,
+      dateCreated: freezed == dateCreated
+          ? _value.dateCreated
+          : dateCreated // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      validityStatus: freezed == validityStatus
+          ? _value.validityStatus
+          : validityStatus // ignore: cast_nullable_to_non_nullable
+              as ValidityStatus?,
       validationFiles: freezed == validationFiles
           ? _value.validationFiles
           : validationFiles // ignore: cast_nullable_to_non_nullable
@@ -299,6 +341,8 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       required final List<String> managers,
       this.membershipFee,
       this.membershipDividends,
+      @TimestampSerializer() this.dateCreated,
+      this.validityStatus,
       this.validationFiles})
       : _members = members,
         _managers = managers;
@@ -345,11 +389,16 @@ class _$CooperativeModelImpl implements _CooperativeModel {
   @override
   final num? membershipDividends;
   @override
+  @TimestampSerializer()
+  final DateTime? dateCreated;
+  @override
+  final ValidityStatus? validityStatus;
+  @override
   final ValidationFiles? validationFiles;
 
   @override
   String toString() {
-    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers, membershipFee: $membershipFee, membershipDividends: $membershipDividends, validationFiles: $validationFiles)';
+    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers, membershipFee: $membershipFee, membershipDividends: $membershipDividends, dateCreated: $dateCreated, validityStatus: $validityStatus, validationFiles: $validationFiles)';
   }
 
   @override
@@ -376,6 +425,10 @@ class _$CooperativeModelImpl implements _CooperativeModel {
                 other.membershipFee == membershipFee) &&
             (identical(other.membershipDividends, membershipDividends) ||
                 other.membershipDividends == membershipDividends) &&
+            (identical(other.dateCreated, dateCreated) ||
+                other.dateCreated == dateCreated) &&
+            (identical(other.validityStatus, validityStatus) ||
+                other.validityStatus == validityStatus) &&
             (identical(other.validationFiles, validationFiles) ||
                 other.validationFiles == validationFiles));
   }
@@ -397,6 +450,8 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       const DeepCollectionEquality().hash(_managers),
       membershipFee,
       membershipDividends,
+      dateCreated,
+      validityStatus,
       validationFiles);
 
   @JsonKey(ignore: true)
@@ -429,6 +484,8 @@ abstract class _CooperativeModel implements CooperativeModel {
       required final List<String> managers,
       final num? membershipFee,
       final num? membershipDividends,
+      @TimestampSerializer() final DateTime? dateCreated,
+      final ValidityStatus? validityStatus,
       final ValidationFiles? validationFiles}) = _$CooperativeModelImpl;
 
   factory _CooperativeModel.fromJson(Map<String, dynamic> json) =
@@ -460,6 +517,11 @@ abstract class _CooperativeModel implements CooperativeModel {
   num? get membershipFee;
   @override
   num? get membershipDividends;
+  @override
+  @TimestampSerializer()
+  DateTime? get dateCreated;
+  @override
+  ValidityStatus? get validityStatus;
   @override
   ValidationFiles? get validationFiles;
   @override
@@ -691,5 +753,166 @@ abstract class _ValidationFiles implements ValidationFiles {
   @override
   @JsonKey(ignore: true)
   _$$ValidationFilesImplCopyWith<_$ValidationFilesImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ValidityStatus _$ValidityStatusFromJson(Map<String, dynamic> json) {
+  return _ValidityStatus.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ValidityStatus {
+  String? get status => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get dateValidated => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ValidityStatusCopyWith<ValidityStatus> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ValidityStatusCopyWith<$Res> {
+  factory $ValidityStatusCopyWith(
+          ValidityStatus value, $Res Function(ValidityStatus) then) =
+      _$ValidityStatusCopyWithImpl<$Res, ValidityStatus>;
+  @useResult
+  $Res call({String? status, @TimestampSerializer() DateTime? dateValidated});
+}
+
+/// @nodoc
+class _$ValidityStatusCopyWithImpl<$Res, $Val extends ValidityStatus>
+    implements $ValidityStatusCopyWith<$Res> {
+  _$ValidityStatusCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? status = freezed,
+    Object? dateValidated = freezed,
+  }) {
+    return _then(_value.copyWith(
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dateValidated: freezed == dateValidated
+          ? _value.dateValidated
+          : dateValidated // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ValidityStatusImplCopyWith<$Res>
+    implements $ValidityStatusCopyWith<$Res> {
+  factory _$$ValidityStatusImplCopyWith(_$ValidityStatusImpl value,
+          $Res Function(_$ValidityStatusImpl) then) =
+      __$$ValidityStatusImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? status, @TimestampSerializer() DateTime? dateValidated});
+}
+
+/// @nodoc
+class __$$ValidityStatusImplCopyWithImpl<$Res>
+    extends _$ValidityStatusCopyWithImpl<$Res, _$ValidityStatusImpl>
+    implements _$$ValidityStatusImplCopyWith<$Res> {
+  __$$ValidityStatusImplCopyWithImpl(
+      _$ValidityStatusImpl _value, $Res Function(_$ValidityStatusImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? status = freezed,
+    Object? dateValidated = freezed,
+  }) {
+    return _then(_$ValidityStatusImpl(
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dateValidated: freezed == dateValidated
+          ? _value.dateValidated
+          : dateValidated // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ValidityStatusImpl implements _ValidityStatus {
+  _$ValidityStatusImpl(
+      {this.status, @TimestampSerializer() this.dateValidated});
+
+  factory _$ValidityStatusImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ValidityStatusImplFromJson(json);
+
+  @override
+  final String? status;
+  @override
+  @TimestampSerializer()
+  final DateTime? dateValidated;
+
+  @override
+  String toString() {
+    return 'ValidityStatus(status: $status, dateValidated: $dateValidated)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ValidityStatusImpl &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.dateValidated, dateValidated) ||
+                other.dateValidated == dateValidated));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, status, dateValidated);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ValidityStatusImplCopyWith<_$ValidityStatusImpl> get copyWith =>
+      __$$ValidityStatusImplCopyWithImpl<_$ValidityStatusImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ValidityStatusImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ValidityStatus implements ValidityStatus {
+  factory _ValidityStatus(
+          {final String? status,
+          @TimestampSerializer() final DateTime? dateValidated}) =
+      _$ValidityStatusImpl;
+
+  factory _ValidityStatus.fromJson(Map<String, dynamic> json) =
+      _$ValidityStatusImpl.fromJson;
+
+  @override
+  String? get status;
+  @override
+  @TimestampSerializer()
+  DateTime? get dateValidated;
+  @override
+  @JsonKey(ignore: true)
+  _$$ValidityStatusImplCopyWith<_$ValidityStatusImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

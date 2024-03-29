@@ -20,6 +20,55 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
   Widget build(BuildContext context) {
     final currentPageIndex = ref.watch(bottomNavBarProvider);
 
+    if (widget.user?.isAdmin ?? false) {
+      return BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: currentPageIndex,
+        onTap: (index) {
+          _onTap(index);
+        },
+        items: [
+          // First Nav Bar
+          if (widget.user?.isCoopView ?? false) ...[
+            // If user toggles coopview and user is manager
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home),
+              label: 'Home',
+            )
+          ] else if (widget.user?.isAdmin ?? false) ...[
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.verified_outlined),
+              activeIcon: Icon(Icons.verified),
+              label: 'Validate',
+            ),
+          ] else ...[
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.card_travel_outlined),
+              activeIcon: Icon(Icons.card_travel),
+              label: 'Trips',
+            ),
+          ],
+
+          // Fourth Nav Bar
+          if (widget.user?.isCoopView ?? false) ...[
+            // Tourism Listings
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard_outlined),
+              activeIcon: Icon(Icons.dashboard),
+              label: 'Dashboard',
+            ),
+          ] else ...[
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.people_outline),
+              activeIcon: Icon(Icons.people),
+              label: 'Coops',
+            ),
+          ],
+        ],
+      );
+    }
+
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       currentIndex: currentPageIndex,
@@ -124,6 +173,8 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
       case 1:
         if (widget.user?.isCoopView ?? false) {
           context.go('/calendar');
+        } else if (widget.user?.isAdmin ?? false) {
+          context.go('/coops');
         } else {
           context.go('/plan');
         }
