@@ -76,6 +76,7 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
                       if (filteredSales.isNotEmpty) ...[
                         rowSummaryCards(filteredSales),
                         lineChart(filteredSales),
+                        pieChart(filteredSales),
                         const SizedBox(height: 16),
                         Text('Transactions',
                             style: Theme.of(context).textTheme.titleLarge),
@@ -176,8 +177,8 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
     );
   }
 
-  Card lineChart(List<SaleModel> sales) {
-    // Group the filtered data by category.
+  Card pieChart(List<SaleModel> sales) {
+    // Group the filtered data by listingName.
     final chartDataByCategory =
         sales.fold<Map<String, List<SaleModel>>>({}, (previousValue, element) {
       if (previousValue.containsKey(element.listingName)) {
@@ -188,7 +189,66 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
       return previousValue;
     });
 
-    // Create a line series for each category.
+    // Create a pie series for each listingName.
+    final List<PieSeries<SaleData, String>> createSeries =
+        chartDataByCategory.entries.map((entry) {
+      // Sum up the saleAmount for each group of sales with the same listingName.
+      final totalSaleAmount = entry.value.fold<num>(
+          0, (previousValue, sale) => previousValue + sale.saleAmount);
+
+      // Create a new SaleData object for each entry.
+      final saleData = SaleData(entry.key, totalSaleAmount);
+
+      return PieSeries<SaleData, String>(
+        dataSource: [saleData],
+        xValueMapper: (SaleData data, _) => data.listingName,
+        yValueMapper: (SaleData data, _) => data.saleAmount,
+        dataLabelMapper: (SaleData data, _) =>
+            '₱${data.saleAmount.toStringAsFixed(2)}',
+        dataLabelSettings: const DataLabelSettings(
+          isVisible: true,
+          labelPosition: ChartDataLabelPosition.outside,
+          connectorLineSettings:
+              ConnectorLineSettings(type: ConnectorType.line),
+          textStyle: TextStyle(fontSize: 12),
+          labelIntersectAction: LabelIntersectAction.shift,
+        ),
+        name: entry.key,
+      );
+    }).toList();
+
+    return Card(
+      child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SfCircularChart(
+            title: const ChartTitle(
+                text: 'Sales Participation by Listing Name',
+                textStyle:
+                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            legend: const Legend(
+                isVisible: true,
+                overflowMode: LegendItemOverflowMode.wrap,
+                position: LegendPosition.bottom),
+            series: [
+              ...createSeries,
+            ],
+          )),
+    );
+  }
+
+  Card lineChart(List<SaleModel> sales) {
+    // Group the filtered data by listingName.
+    final chartDataByCategory =
+        sales.fold<Map<String, List<SaleModel>>>({}, (previousValue, element) {
+      if (previousValue.containsKey(element.listingName)) {
+        previousValue[element.listingName]!.add(element);
+      } else {
+        previousValue[element.listingName] = [element];
+      }
+      return previousValue;
+    });
+
+    // Create a line series for each listingName.
     final List<LineSeries<SaleModel, DateTime>> createSeries =
         chartDataByCategory.entries
             .map((entry) => LineSeries<SaleModel, DateTime>(
@@ -248,33 +308,6 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
         ),
       ),
     );
-
-    //  return SfCartesianChart(
-    //   title: ChartTitle(
-    //       text: 'Sales Trend by Service Category',
-    //       textStyle:
-    //           const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-    //   plotAreaBorderColor: Colors.transparent,
-    //   legend: const Legend(
-    //       isVisible: true,
-    //       alignment: ChartAlignment.center,
-    //       position: LegendPosition.bottom),
-    //   primaryXAxis: DateTimeAxis(
-    //     dateFormat: _selectedFilterType == 'Week' ? DateFormat.MMMd() : null,
-    //   ),
-    //   primaryYAxis: NumericAxis(
-    //     numberFormat: NumberFormat('₱#,##0'),
-    //     maximum: maxSales.toDouble(),
-    //     interval: 1000,
-    //   ),
-    //   tooltipBehavior: TooltipBehavior(
-    //     enable: true,
-    //     header: '',
-    //     canShowMarker: false,
-    //     format: 'point.x : point.y',
-    //   ),
-    //   series: createSeries(),
-    // );
   }
 
   Widget rowSummaryCards(List<SaleModel> sales) {
@@ -464,4 +497,11 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
   //   default:
   //     return true;
   // }
+}
+
+class SaleData {
+  final String listingName;
+  final num saleAmount;
+
+  SaleData(this.listingName, this.saleAmount);
 }
