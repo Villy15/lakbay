@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
@@ -58,25 +59,103 @@ class _ValidateCoopState extends ConsumerState<ValidateCoop> {
 
       // Upload files
 
-      // ref
-      //     .read(storageRepositoryProvider)
-      //     .storeFile(
-      //       path: 'events/${_nameController.text}',
-      //       id: _image?.path.split('/').last ?? '',
-      //       file: _image,
-      //     )
-      //     .then((value) => value.fold(
-      //           (failure) => debugPrint(
-      //             'Failed to upload image: $failure',
-      //           ),
-      //           (imageUrl) {
-      //             event = event.copyWith(imageUrl: imageUrl);
-      //             // Register cooperative
-      //             addEvent(event);
-      //           },
-      //         ));
-
-      ref.read(coopsControllerProvider.notifier).editCooperative(coop, context);
+      ref
+          .read(storageRepositoryProvider)
+          .storeFile(
+            file: _certificateOfRegistration,
+            path: 'cooperatives/${coop.name}',
+            id: 'certificate_of_registration.pdf',
+          )
+          .then((value) => value.fold(
+                (failure) => debugPrint(
+                  'Failed to upload image: $failure',
+                ),
+                (certificateOfRegistrationUrl) {
+                  // Add article of incorporation
+                  ref
+                      .read(storageRepositoryProvider)
+                      .storeFile(
+                        file: _articlesOfCooperation,
+                        path: 'cooperatives/${coop.name}',
+                        id: 'articles_of_cooperation.pdf',
+                      )
+                      .then((value) => value.fold(
+                            (failure) => debugPrint(
+                              'Failed to upload image: $failure',
+                            ),
+                            (articlesOfCooperationUrl) {
+                              // Add by laws
+                              ref
+                                  .read(storageRepositoryProvider)
+                                  .storeFile(
+                                    file: _byLaws,
+                                    path: 'cooperatives/${coop.name}',
+                                    id: 'by_laws.pdf',
+                                  )
+                                  .then((value) => value.fold(
+                                        (failure) => debugPrint(
+                                          'Failed to upload image: $failure',
+                                        ),
+                                        (byLawsUrl) {
+                                          // Add audit
+                                          ref
+                                              .read(storageRepositoryProvider)
+                                              .storeFile(
+                                                file:
+                                                    _latestAuditFinancialStatements,
+                                                path:
+                                                    'cooperatives/${coop.name}',
+                                                id: 'audit.pdf',
+                                              )
+                                              .then((value) => value.fold(
+                                                    (failure) => debugPrint(
+                                                      'Failed to upload image: $failure',
+                                                    ),
+                                                    (auditUrl) {
+                                                      // Add letter of authorization
+                                                      ref
+                                                          .read(
+                                                              storageRepositoryProvider)
+                                                          .storeFile(
+                                                            file:
+                                                                _letterOfAuthorization,
+                                                            path:
+                                                                'cooperatives/${coop.name}',
+                                                            id: 'letter_of_authorization.pdf',
+                                                          )
+                                                          .then(
+                                                              (value) =>
+                                                                  value.fold(
+                                                                    (failure) =>
+                                                                        debugPrint(
+                                                                      'Failed to upload image: $failure',
+                                                                    ),
+                                                                    (letterOfAuthorizationUrl) {
+                                                                      ref
+                                                                          .read(
+                                                                              coopsControllerProvider.notifier)
+                                                                          .editCooperative(
+                                                                            coop.copyWith(
+                                                                              validationFiles: ValidationFiles(
+                                                                                certificateOfRegistration: certificateOfRegistrationUrl,
+                                                                                articlesOfCooperation: articlesOfCooperationUrl,
+                                                                                byLaws: byLawsUrl,
+                                                                                audit: auditUrl,
+                                                                                letterAuth: letterOfAuthorizationUrl,
+                                                                              ),
+                                                                            ),
+                                                                            context,
+                                                                          );
+                                                                    },
+                                                                  ));
+                                                    },
+                                                  ));
+                                        },
+                                      ));
+                            },
+                          ));
+                },
+              ));
     }
   }
 

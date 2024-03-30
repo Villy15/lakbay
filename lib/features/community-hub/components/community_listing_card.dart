@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -18,11 +19,20 @@ class CommunityHubListingCard extends ConsumerWidget {
     context.push('/market/${listing.category.toLowerCase()}', extra: listing);
   }
 
-  int getNumberOfTasksThatNeedContributions() {
+  int getNumberOfTasksThatNeedContributions(WidgetRef ref) {
     int totalTasksNeedContributions = 0;
 
     for (var booking in bookings) {
-      totalTasksNeedContributions += booking.tasksNeedContributions;
+      ref
+          .watch(getBookingTasksByBookingId((booking.listingId, booking.id!)))
+          .whenData((tasks) {
+        for (var task in tasks) {
+          // Check if task is open for contributions
+          if (task.openContribution) {
+            totalTasksNeedContributions++;
+          }
+        }
+      });
     }
 
     debugPrint('Total Tasks Need Contributions: $totalTasksNeedContributions');
@@ -80,10 +90,12 @@ class CommunityHubListingCard extends ConsumerWidget {
                 ),
 
                 // Number of tasks that need contributions
+                // getBookingTasksByBookingId
+
                 ActionChip(
                   onPressed: () {},
                   label: Text(
-                    '${getNumberOfTasksThatNeedContributions()} Tasks Need Contributions',
+                    '${getNumberOfTasksThatNeedContributions(ref)} Tasks Need Contributions',
                   ),
                   // Icon to show the number of tasks
                   avatar: const Icon(
