@@ -605,58 +605,51 @@ class _RoomCardState extends ConsumerState<RoomCard> {
   }
 
   Future<UserModel> submitUpdateProfile(
-    BuildContext context,
-    UserModel user,
-    UserModel updatedUser,
-    GlobalKey<FormState> formKey,
-    File? profilePicture,
-    File? governmentId) async {
+      BuildContext context,
+      UserModel user,
+      UserModel updatedUser,
+      GlobalKey<FormState> formKey,
+      File? profilePicture,
+      File? governmentId) async {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
 
-  if (formKey.currentState!.validate()) {
-    formKey.currentState!.save();
+      if (profilePicture != null) {
+        final result = await ref.read(storageRepositoryProvider).storeFile(
+              path: 'users/${updatedUser.name}',
+              id: profilePicture.path.split('/').last,
+              file: profilePicture,
+            );
 
-    if (profilePicture != null) {
-      final result = await ref
-        .read(storageRepositoryProvider)
-        .storeFile(
-          path: 'users/${updatedUser.name}',
-          id: profilePicture.path.split('/').last,
-          file: profilePicture,
-        );
-
-      result.fold(
-        (failure) => debugPrint('Failed to upload image: $failure'),
-        (imageUrl) {
+        result.fold((failure) => debugPrint('Failed to upload image: $failure'),
+            (imageUrl) {
           // update user with the new profile picture
           updatedUser = updatedUser.copyWith(profilePic: imageUrl);
-        }
-      );
-    }
+        });
+      }
 
-    if (governmentId != null) {
-      final result = await ref
-        .read(storageRepositoryProvider)
-        .storeFile(
-          path: 'users/${updatedUser.name}',
-          id: governmentId.path.split('/').last,
-          file: governmentId,
-        );
+      if (governmentId != null) {
+        final result = await ref.read(storageRepositoryProvider).storeFile(
+              path: 'users/${updatedUser.name}',
+              id: governmentId.path.split('/').last,
+              file: governmentId,
+            );
 
-      result.fold(
-        (failure) => debugPrint('Failed to upload image: $failure'),
-        (imageUrl) {
+        result.fold((failure) => debugPrint('Failed to upload image: $failure'),
+            (imageUrl) {
           // update user with the new government id picture
           updatedUser = updatedUser.copyWith(governmentId: imageUrl);
-        }
-      );
+        });
+      }
+
+      // transfer updatedUser to user
+      ref
+          .read(usersControllerProvider.notifier)
+          .editProfile(context, user.uid, updatedUser);
     }
 
-    // transfer updatedUser to user
-    ref.read(usersControllerProvider.notifier).editProfile(context, user.uid, updatedUser);
+    return updatedUser;
   }
-
-  return updatedUser;
-}
 
   Future<UserModel> processGovernmentId(
       UserModel user, File? governmentId) async {
@@ -735,10 +728,10 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                       child: ImagePickerFormField(
                                         initialValue: profilePicture,
                                         onSaved: (value) {
-                                          
                                           this.setState(() {
                                             profilePicture = value;
-                                            debugPrint('this is the value: $profilePicture');
+                                            debugPrint(
+                                                'this is the value: $profilePicture');
                                           });
                                         },
                                       ),
@@ -842,7 +835,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                           onSaved: (value) {
                                             this.setState(() {
                                               governmentId = value;
-                                              debugPrint('this is the value: $governmentId');
+                                              debugPrint(
+                                                  'this is the value: $governmentId');
                                             });
                                           },
                                         ),
@@ -917,7 +911,9 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                         user = user;
                                       });
 
-                                      ref.read(userProvider.notifier).setUser(user);
+                                      ref
+                                          .read(userProvider.notifier)
+                                          .setUser(user);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
@@ -945,7 +941,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         num guests = 0;
-        TextEditingController guestController = TextEditingController(text: room.guests.toString() ?? '');
+        TextEditingController guestController =
+            TextEditingController(text: room.guests.toString() ?? '');
         TextEditingController phoneNoController =
             TextEditingController(text: user?.phoneNo ?? '');
         TextEditingController emergencyContactNameController =
