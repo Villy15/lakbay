@@ -111,9 +111,9 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                     style: Theme.of(context).textTheme.bodyMedium),
                 if (widget.category == 'Accommodation')
                   Text(
-                    planStartDate == null || planEndDate == null
+                    daysPlan.currentDay == null || planEndDate == null
                         ? 'Select a date'
-                        : '${DateFormat.yMMMMd().format(planStartDate)} - ${DateFormat.yMMMMd().format(planEndDate)}',
+                        : '${DateFormat.yMMMMd().format(daysPlan.currentDay!)} - ${DateFormat.yMMMMd().format(planEndDate)}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 if (widget.category == "Transport")
