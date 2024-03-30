@@ -55,9 +55,9 @@ class PlanLocationProvider extends StateNotifier<String?> {
   }
 }
 
-
-final listingLocationProvider = 
-    StateNotifierProvider<ListingLocationProvider, String?>((ref) => ListingLocationProvider());
+final listingLocationProvider =
+    StateNotifierProvider<ListingLocationProvider, String?>(
+        (ref) => ListingLocationProvider());
 
 class ListingLocationProvider extends StateNotifier<String?> {
   ListingLocationProvider() : super(null);
@@ -72,9 +72,22 @@ class ListingLocationProvider extends StateNotifier<String?> {
   }
 }
 
+// set current location
+final currentLocationProvider =
+    StateNotifierProvider<CurrentLocationProvider, String?>(
+        (ref) => CurrentLocationProvider());
 
-final destinationLocationProvider = 
-    StateNotifierProvider<DestinationLocationProvider, String?>((ref) => DestinationLocationProvider());
+class CurrentLocationProvider extends StateNotifier<String?> {
+  CurrentLocationProvider() : super(null);
+
+  void setLocation(String location) {
+    state = location;
+  }
+}
+
+final destinationLocationProvider =
+    StateNotifierProvider<DestinationLocationProvider, String?>(
+        (ref) => DestinationLocationProvider());
 
 class DestinationLocationProvider extends StateNotifier<String?> {
   DestinationLocationProvider() : super(null);
@@ -87,12 +100,11 @@ class DestinationLocationProvider extends StateNotifier<String?> {
   void clearLocation() {
     state = '';
   }
-
 }
 
-
 final pickupPointLocationProvider =
-    StateNotifierProvider<PickupPointLocationProvider, String?>((ref) => PickupPointLocationProvider());
+    StateNotifierProvider<PickupPointLocationProvider, String?>(
+        (ref) => PickupPointLocationProvider());
 
 class PickupPointLocationProvider extends StateNotifier<String?> {
   PickupPointLocationProvider() : super(null);

@@ -67,14 +67,13 @@ class _AddFoodState extends ConsumerState<AddFood> {
   final TextEditingController _dealNameController = TextEditingController();
   final TextEditingController _dealDescriptionController =
       TextEditingController();
-  final TextEditingController _addressController =
-      TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _cancellationPeriodController =
       TextEditingController();
   final TextEditingController _cancellationRateController =
       TextEditingController();
   final TextEditingController _typeOfTableController = TextEditingController();
-  final TextEditingController _quantityOfTablesController=
+  final TextEditingController _quantityOfTablesController =
       TextEditingController();
 
   @override
@@ -93,17 +92,17 @@ class _AddFoodState extends ConsumerState<AddFood> {
       final imagePath = 'listings/${widget.coop.name}';
       final ids = _images!.map((image) => image.path.split('/').last).toList();
       _tableInfo = _tableControllers.map((controllerList) {
-          return controllerList.asMap().entries.map((entry) {
-            var text = entry.value.text;
-            if (entry.key == 1 && num.tryParse(text) != null) {
+        return controllerList.asMap().entries.map((entry) {
+          var text = entry.value.text;
+          if (entry.key == 1 && num.tryParse(text) != null) {
             // If it's the second value and it can be parsed into a number, parse it
-              return num.parse(text);
-            } else {
+            return num.parse(text);
+          } else {
             // Otherwise, return the original text
-              return text;
-            }
-          }).toList();
+            return text;
+          }
         }).toList();
+      }).toList();
 
       // Upload images to firebase storage
       ref
@@ -148,8 +147,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                           _cancellationPeriodController.text == ''
                               ? null
                               : num.parse(_cancellationPeriodController.text),
-                      availableTables: _tableInfo
-                    );
+                      availableTables: _tableInfo);
                   listing = await processMenuImages(listing);
                   listing = await processDealImages(listing);
                   listing = listing.copyWith(
@@ -159,6 +157,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                   );
                   debugPrint("$listing");
                   if (mounted) {
+                    ref.read(listingLocationProvider.notifier).clearLocation();
                     ref
                         .read(listingControllerProvider.notifier)
                         .addListing(listing, context);
@@ -1112,27 +1111,27 @@ class _AddFoodState extends ConsumerState<AddFood> {
                   child: Padding(
                       padding: const EdgeInsets.only(top: 16),
                       child: TextFormField(
-                          controller: _tableControllers[index][0],
-                          decoration: const InputDecoration(
-                            labelText: 'Type of Table',
-                            border: OutlineInputBorder(),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            hintText: 'e.g., 4-Seat Table',
-                          ),
-                        ))),
+                        controller: _tableControllers[index][0],
+                        decoration: const InputDecoration(
+                          labelText: 'Type of Table',
+                          border: OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: 'e.g., 4-Seat Table',
+                        ),
+                      ))),
               const SizedBox(width: 5),
               Expanded(
                   child: Padding(
                       padding: const EdgeInsets.only(top: 16),
                       child: TextFormField(
-                          controller: _tableControllers[index][1],
-                          decoration: const InputDecoration(
-                            labelText: 'Quantity',
-                            border: OutlineInputBorder(),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            hintText: 'e.g., 5',
-                          ),
-                        ))),
+                        controller: _tableControllers[index][1],
+                        decoration: const InputDecoration(
+                          labelText: 'Quantity',
+                          border: OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: 'e.g., 5',
+                        ),
+                      ))),
             ]);
           }),
       const SizedBox(height: 10),
@@ -1142,7 +1141,8 @@ class _AddFoodState extends ConsumerState<AddFood> {
                 setState(() {
                   tables++;
                   // add the _tableController
-                  _tableControllers.add([TextEditingController(), TextEditingController()]);
+                  _tableControllers
+                      .add([TextEditingController(), TextEditingController()]);
                 });
               },
               child: const Text('Add Table'))),
@@ -1454,28 +1454,28 @@ class _AddFoodState extends ConsumerState<AddFood> {
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
-                    // _tableControllers 
-                    debugPrint('this is now the _tableController: ${_tableControllers[0][0]}');
+                    // _tableControllers
+                    debugPrint(
+                        'this is now the _tableController: ${_tableControllers[0][0]}');
                     // get the text from _tableControllers and add to _tableInfo
-                   
 
                     debugPrint(
                         'this is the testing, i think it will work: $tempDealImgs');
                     // move testing to dealImgs
                     _dealImgs = List.from(tempDealImgs);
                     FoodService deal = FoodService(
-                        available: true,
-                        dealName: _dealNameController.text,
-                        dealDescription: _dealDescriptionController.text,
-                        price: num.parse(_priceController.text),
-                        guests: guests,
-                        startTime: TimeOfDay.fromDateTime(startDate),
-                        endTime: TimeOfDay.fromDateTime(endDate),
-                        workingDays: workingDays,
-                        dealImgs: images
-                            .map((image) => ListingImages(path: image.path))
-                            .toList(),
-                        );
+                      available: true,
+                      dealName: _dealNameController.text,
+                      dealDescription: _dealDescriptionController.text,
+                      price: num.parse(_priceController.text),
+                      guests: guests,
+                      startTime: TimeOfDay.fromDateTime(startDate),
+                      endTime: TimeOfDay.fromDateTime(endDate),
+                      workingDays: workingDays,
+                      dealImgs: images
+                          .map((image) => ListingImages(path: image.path))
+                          .toList(),
+                    );
                     this.setState(() {
                       int index = availableDeals.indexWhere((element) =>
                           element.dealName == _dealNameController.text);
@@ -1513,9 +1513,8 @@ class _AddFoodState extends ConsumerState<AddFood> {
     if (location != null) {
       _addressController.text = location;
     }
-    
+
     return Column(children: [
-      
       TextFormField(
           controller: _addressController,
           decoration: const InputDecoration(
@@ -1525,7 +1524,6 @@ class _AddFoodState extends ConsumerState<AddFood> {
           ),
           readOnly: true,
           onTap: () async {
-            
             await context.push('/select_location');
             debugPrint('this is the value of location now: $location');
           },
