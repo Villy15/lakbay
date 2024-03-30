@@ -91,8 +91,7 @@ class _CustomerTransportationState
                                   child: RichText(
                                       text: TextSpan(children: [
                                     TextSpan(
-                                        text:
-                                            '₱${widget.listing.availableTransport?.price}',
+                                        text: '₱${widget.listing.price}',
                                         style: TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,
@@ -558,7 +557,7 @@ class _CustomerTransportationState
                             listingTitle: listing.title,
                             customerName: user.name,
                             bookingStatus: "Reserved",
-                            price: transport.price,
+                            price: listing.price!,
                             category: "Transport",
                             startDate: DateTime(
                                 startDate.year,

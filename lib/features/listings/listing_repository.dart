@@ -111,13 +111,10 @@ class ListingRepository {
       // Generate a new document ID based on the user's ID
       var doc = bookings(listingId).doc();
 
-      // Update the uid of the cooperative
       booking = booking.copyWith(id: doc.id);
 
-      // Add the cooperative to the database
       await doc.set(booking.toJson());
 
-      // Return the uid of the newly added cooperative
       return right(doc.id);
     } on FirebaseException catch (e) {
       throw e.message!;
@@ -202,7 +199,6 @@ class ListingRepository {
     return query.snapshots().map((querySnapshot) {
       // Convert each document snapshot to a ListingBookings object
       return querySnapshot.docs.map((doc) {
-        debugPrint('doc: ${doc.data()}');
         return ListingBookings.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
@@ -294,7 +290,6 @@ class ListingRepository {
         .collection(FirebaseConstants.roomsSubCollection);
   }
 
-// addRoom
   FutureEither<String> addRoom(
       String listingId, ListingModel listing, AvailableRoom room) async {
     try {
@@ -367,7 +362,6 @@ class ListingRepository {
         .collection(FirebaseConstants.transportSubcollection);
   }
 
-// addRoom
   FutureEither<String> addTransport(String listingId, ListingModel listing,
       AvailableTransport transport) async {
     try {
@@ -429,7 +423,6 @@ class ListingRepository {
         .collection(FirebaseConstants.entertainmentSubcollection);
   }
 
-// addRoom
   FutureEither<String> addEntertainment(String listingId, ListingModel listing,
       EntertainmentService entertainment) async {
     try {

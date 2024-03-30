@@ -203,14 +203,15 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                             .watch(getBookingTaskByTaskId(bookingTask.uid!))
                             .when(
                               data: (BookingTask? bookingTask) {
-                                List<BookingTaskMessage>? notes =
-                                    bookingTask?.notes?.toList(growable: true);
+                                List<BookingTaskMessage>? notes = bookingTask
+                                        ?.notes
+                                        ?.toList(growable: true) ??
+                                    [];
 
-                                notes?.sort((a, b) =>
-                                    a.timestamp.compareTo(b.timestamp));
-
+                                // notes?.sort((a, b) =>
+                                //     a.timestamp.compareTo(b.timestamp));
                                 return ListView.builder(
-                                  itemCount: notes!.length,
+                                  itemCount: notes.length,
                                   itemBuilder: (context, messageIndex) {
                                     final message = notes[messageIndex];
                                     return Container(

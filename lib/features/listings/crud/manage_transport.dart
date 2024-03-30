@@ -282,6 +282,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                 email: '',
                 governmentId: '',
                 guests: booking.guests,
+                luggage: booking.luggage,
                 listingId: booking.listingId,
                 listingTitle: booking.listingTitle,
                 needsContributions: booking.needsContributions,
@@ -713,7 +714,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                         tripName: currentTrip.name,
                                         listingId: widget.listing.uid!,
                                         listingTitle: widget.listing.title,
-                                        price: transport.price,
+                                        price: widget.listing.price!,
                                         roomId: widget.listing.title,
                                         category: "Transport",
                                         startDate: startDate,
@@ -731,7 +732,8 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                         emergencyContactNo:
                                             emergencyContactNoController.text,
                                         needsContributions: false,
-                                        totalPrice: transport.price * guests,
+                                        totalPrice:
+                                            widget.listing.price! * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
                                         tasks: [],
@@ -899,7 +901,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                         tripName: currentTrip.name,
                                         listingId: widget.listing.uid!,
                                         listingTitle: widget.listing.title,
-                                        price: transport.price,
+                                        price: widget.listing.price!,
                                         roomId: widget.listing.title,
                                         category: "Transport",
                                         startDate: startDate,
@@ -917,7 +919,8 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                         emergencyContactNo:
                                             emergencyContactNoController.text,
                                         needsContributions: false,
-                                        totalPrice: transport.price * guests,
+                                        totalPrice:
+                                            widget.listing.price! * guests,
                                         typeOfTrip: typeOfTrip,
                                         expenses: [],
                                         tasks: [],

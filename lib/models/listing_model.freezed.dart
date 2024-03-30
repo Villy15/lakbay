@@ -34,6 +34,8 @@ mixin _$ListingModel {
   num? get cancellationPeriod => throw _privateConstructorUsedError;
   ListingCooperative get cooperative => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
+  List<String>? get driverNames => throw _privateConstructorUsedError;
+  List<String>? get driverIds => throw _privateConstructorUsedError;
   num? get downpaymentRate => throw _privateConstructorUsedError;
   num? get fixedCancellationRate => throw _privateConstructorUsedError;
   List<ListingImages>? get images => throw _privateConstructorUsedError;
@@ -94,6 +96,8 @@ abstract class $ListingModelCopyWith<$Res> {
       num? cancellationPeriod,
       ListingCooperative cooperative,
       String description,
+      List<String>? driverNames,
+      List<String>? driverIds,
       num? downpaymentRate,
       num? fixedCancellationRate,
       List<ListingImages>? images,
@@ -150,6 +154,8 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? cancellationPeriod = freezed,
     Object? cooperative = null,
     Object? description = null,
+    Object? driverNames = freezed,
+    Object? driverIds = freezed,
     Object? downpaymentRate = freezed,
     Object? fixedCancellationRate = freezed,
     Object? images = freezed,
@@ -226,6 +232,14 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      driverNames: freezed == driverNames
+          ? _value.driverNames
+          : driverNames // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      driverIds: freezed == driverIds
+          ? _value.driverIds
+          : driverIds // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       downpaymentRate: freezed == downpaymentRate
           ? _value.downpaymentRate
           : downpaymentRate // ignore: cast_nullable_to_non_nullable
@@ -376,6 +390,8 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       num? cancellationPeriod,
       ListingCooperative cooperative,
       String description,
+      List<String>? driverNames,
+      List<String>? driverIds,
       num? downpaymentRate,
       num? fixedCancellationRate,
       List<ListingImages>? images,
@@ -432,6 +448,8 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? cancellationPeriod = freezed,
     Object? cooperative = null,
     Object? description = null,
+    Object? driverNames = freezed,
+    Object? driverIds = freezed,
     Object? downpaymentRate = freezed,
     Object? fixedCancellationRate = freezed,
     Object? images = freezed,
@@ -508,6 +526,14 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      driverNames: freezed == driverNames
+          ? _value._driverNames
+          : driverNames // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      driverIds: freezed == driverIds
+          ? _value._driverIds
+          : driverIds // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       downpaymentRate: freezed == downpaymentRate
           ? _value.downpaymentRate
           : downpaymentRate // ignore: cast_nullable_to_non_nullable
@@ -632,6 +658,8 @@ class _$ListingModelImpl implements _ListingModel {
       this.cancellationPeriod,
       required this.cooperative,
       required this.description,
+      final List<String>? driverNames,
+      final List<String>? driverIds,
       this.downpaymentRate,
       this.fixedCancellationRate,
       final List<ListingImages>? images,
@@ -661,6 +689,8 @@ class _$ListingModelImpl implements _ListingModel {
       : _availableDates = availableDates,
         _availableTimes = availableTimes,
         _availableRooms = availableRooms,
+        _driverNames = driverNames,
+        _driverIds = driverIds,
         _images = images,
         _listingCosts = listingCosts,
         _fixedTasks = fixedTasks,
@@ -722,6 +752,26 @@ class _$ListingModelImpl implements _ListingModel {
   final ListingCooperative cooperative;
   @override
   final String description;
+  final List<String>? _driverNames;
+  @override
+  List<String>? get driverNames {
+    final value = _driverNames;
+    if (value == null) return null;
+    if (_driverNames is EqualUnmodifiableListView) return _driverNames;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<String>? _driverIds;
+  @override
+  List<String>? get driverIds {
+    final value = _driverIds;
+    if (value == null) return null;
+    if (_driverIds is EqualUnmodifiableListView) return _driverIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final num? downpaymentRate;
   @override
@@ -842,7 +892,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableTimes: $availableTimes, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, duration: $duration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, guestInfo: $guestInfo, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, availableDays: $availableDays, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableTables: $availableTables, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableTimes: $availableTimes, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, driverNames: $driverNames, driverIds: $driverIds, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, duration: $duration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, guestInfo: $guestInfo, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, availableDays: $availableDays, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableTables: $availableTables, uid: $uid)';
   }
 
   @override
@@ -871,6 +921,10 @@ class _$ListingModelImpl implements _ListingModel {
                 other.cooperative == cooperative) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            const DeepCollectionEquality()
+                .equals(other._driverNames, _driverNames) &&
+            const DeepCollectionEquality()
+                .equals(other._driverIds, _driverIds) &&
             (identical(other.downpaymentRate, downpaymentRate) ||
                 other.downpaymentRate == downpaymentRate) &&
             (identical(other.fixedCancellationRate, fixedCancellationRate) ||
@@ -933,6 +987,8 @@ class _$ListingModelImpl implements _ListingModel {
         cancellationPeriod,
         cooperative,
         description,
+        const DeepCollectionEquality().hash(_driverNames),
+        const DeepCollectionEquality().hash(_driverIds),
         downpaymentRate,
         fixedCancellationRate,
         const DeepCollectionEquality().hash(_images),
@@ -989,6 +1045,8 @@ abstract class _ListingModel implements ListingModel {
       final num? cancellationPeriod,
       required final ListingCooperative cooperative,
       required final String description,
+      final List<String>? driverNames,
+      final List<String>? driverIds,
       final num? downpaymentRate,
       final num? fixedCancellationRate,
       final List<ListingImages>? images,
@@ -1045,6 +1103,10 @@ abstract class _ListingModel implements ListingModel {
   ListingCooperative get cooperative;
   @override
   String get description;
+  @override
+  List<String>? get driverNames;
+  @override
+  List<String>? get driverIds;
   @override
   num? get downpaymentRate;
   @override
@@ -1950,7 +2012,7 @@ mixin _$AvailableTransport {
   num get guests => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
   List<TimeOfDay>? get departureTimes => throw _privateConstructorUsedError;
-  num get price => throw _privateConstructorUsedError;
+  num? get vehicleNo => throw _privateConstructorUsedError;
   num get luggage => throw _privateConstructorUsedError;
   List<bool> get workingDays => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
@@ -1981,7 +2043,7 @@ abstract class $AvailableTransportCopyWith<$Res> {
       bool available,
       num guests,
       @TimeOfDayConverter() List<TimeOfDay>? departureTimes,
-      num price,
+      num? vehicleNo,
       num luggage,
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
@@ -2011,7 +2073,7 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
     Object? available = null,
     Object? guests = null,
     Object? departureTimes = freezed,
-    Object? price = null,
+    Object? vehicleNo = freezed,
     Object? luggage = null,
     Object? workingDays = null,
     Object? startTime = null,
@@ -2046,10 +2108,10 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
           ? _value.departureTimes
           : departureTimes // ignore: cast_nullable_to_non_nullable
               as List<TimeOfDay>?,
-      price: null == price
-          ? _value.price
-          : price // ignore: cast_nullable_to_non_nullable
-              as num,
+      vehicleNo: freezed == vehicleNo
+          ? _value.vehicleNo
+          : vehicleNo // ignore: cast_nullable_to_non_nullable
+              as num?,
       luggage: null == luggage
           ? _value.luggage
           : luggage // ignore: cast_nullable_to_non_nullable
@@ -2101,7 +2163,7 @@ abstract class _$$AvailableTransportImplCopyWith<$Res>
       bool available,
       num guests,
       @TimeOfDayConverter() List<TimeOfDay>? departureTimes,
-      num price,
+      num? vehicleNo,
       num luggage,
       List<bool> workingDays,
       @TimeOfDayConverter() TimeOfDay startTime,
@@ -2129,7 +2191,7 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
     Object? available = null,
     Object? guests = null,
     Object? departureTimes = freezed,
-    Object? price = null,
+    Object? vehicleNo = freezed,
     Object? luggage = null,
     Object? workingDays = null,
     Object? startTime = null,
@@ -2164,10 +2226,10 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
           ? _value._departureTimes
           : departureTimes // ignore: cast_nullable_to_non_nullable
               as List<TimeOfDay>?,
-      price: null == price
-          ? _value.price
-          : price // ignore: cast_nullable_to_non_nullable
-              as num,
+      vehicleNo: freezed == vehicleNo
+          ? _value.vehicleNo
+          : vehicleNo // ignore: cast_nullable_to_non_nullable
+              as num?,
       luggage: null == luggage
           ? _value.luggage
           : luggage // ignore: cast_nullable_to_non_nullable
@@ -2214,7 +2276,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       required this.available,
       required this.guests,
       @TimeOfDayConverter() final List<TimeOfDay>? departureTimes,
-      required this.price,
+      this.vehicleNo,
       required this.luggage,
       required final List<bool> workingDays,
       @TimeOfDayConverter() required this.startTime,
@@ -2251,7 +2313,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
   }
 
   @override
-  final num price;
+  final num? vehicleNo;
   @override
   final num luggage;
   final List<bool> _workingDays;
@@ -2279,7 +2341,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
 
   @override
   String toString() {
-    return 'AvailableTransport(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, guests: $guests, departureTimes: $departureTimes, price: $price, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, destination: $destination, pickupPoint: $pickupPoint, travelTime: $travelTime, priceByHour: $priceByHour)';
+    return 'AvailableTransport(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, guests: $guests, departureTimes: $departureTimes, vehicleNo: $vehicleNo, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, destination: $destination, pickupPoint: $pickupPoint, travelTime: $travelTime, priceByHour: $priceByHour)';
   }
 
   @override
@@ -2297,7 +2359,8 @@ class _$AvailableTransportImpl implements _AvailableTransport {
             (identical(other.guests, guests) || other.guests == guests) &&
             const DeepCollectionEquality()
                 .equals(other._departureTimes, _departureTimes) &&
-            (identical(other.price, price) || other.price == price) &&
+            (identical(other.vehicleNo, vehicleNo) ||
+                other.vehicleNo == vehicleNo) &&
             (identical(other.luggage, luggage) || other.luggage == luggage) &&
             const DeepCollectionEquality()
                 .equals(other._workingDays, _workingDays) &&
@@ -2324,7 +2387,7 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       available,
       guests,
       const DeepCollectionEquality().hash(_departureTimes),
-      price,
+      vehicleNo,
       luggage,
       const DeepCollectionEquality().hash(_workingDays),
       startTime,
@@ -2357,7 +2420,7 @@ abstract class _AvailableTransport implements AvailableTransport {
       required final bool available,
       required final num guests,
       @TimeOfDayConverter() final List<TimeOfDay>? departureTimes,
-      required final num price,
+      final num? vehicleNo,
       required final num luggage,
       required final List<bool> workingDays,
       @TimeOfDayConverter() required final TimeOfDay startTime,
@@ -2384,7 +2447,7 @@ abstract class _AvailableTransport implements AvailableTransport {
   @TimeOfDayConverter()
   List<TimeOfDay>? get departureTimes;
   @override
-  num get price;
+  num? get vehicleNo;
   @override
   num get luggage;
   @override

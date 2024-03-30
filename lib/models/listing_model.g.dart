@@ -29,6 +29,12 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       cooperative: ListingCooperative.fromJson(
           json['cooperative'] as Map<String, dynamic>),
       description: json['description'] as String,
+      driverNames: (json['driverNames'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      driverIds: (json['driverIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       downpaymentRate: json['downpaymentRate'] as num?,
       fixedCancellationRate: json['fixedCancellationRate'] as num?,
       images: (json['images'] as List<dynamic>?)
@@ -97,6 +103,8 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'cancellationPeriod': instance.cancellationPeriod,
       'cooperative': instance.cooperative.toJson(),
       'description': instance.description,
+      'driverNames': instance.driverNames,
+      'driverIds': instance.driverIds,
       'downpaymentRate': instance.downpaymentRate,
       'fixedCancellationRate': instance.fixedCancellationRate,
       'images': instance.images?.map((e) => e.toJson()).toList(),
@@ -223,7 +231,7 @@ _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
           ?.map((e) =>
               const TimeOfDayConverter().fromJson(e as Map<String, dynamic>))
           .toList(),
-      price: json['price'] as num,
+      vehicleNo: json['vehicleNo'] as num?,
       luggage: json['luggage'] as num,
       workingDays:
           (json['workingDays'] as List<dynamic>).map((e) => e as bool).toList(),
@@ -248,7 +256,7 @@ Map<String, dynamic> _$$AvailableTransportImplToJson(
       'departureTimes': instance.departureTimes
           ?.map(const TimeOfDayConverter().toJson)
           .toList(),
-      'price': instance.price,
+      'vehicleNo': instance.vehicleNo,
       'luggage': instance.luggage,
       'workingDays': instance.workingDays,
       'startTime': const TimeOfDayConverter().toJson(instance.startTime),
