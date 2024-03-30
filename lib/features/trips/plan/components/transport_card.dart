@@ -197,10 +197,22 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                           style: TextStyle(fontSize: 14))),
                                   FilledButton(
                                       onPressed: () async {
+                                        num slots = 0;
                                         final bookings = await ref.watch(
                                             getAllBookingsProvider(
                                                     transport.uid!)
                                                 .future);
+                                        Query query = FirebaseFirestore.instance
+                                            .collectionGroup(
+                                                'availableTransport')
+                                            .where('listingId',
+                                                isEqualTo: transport.uid);
+                                        List<AvailableTransport> vehicles =
+                                            await ref.watch(
+                                                getTransportByPropertiesProvider(
+                                                        query)
+                                                    .future);
+                                        // vehicles.forEach((element) {slots})
 
                                         if (transport.type == 'Public') {
                                           if (context.mounted) {
@@ -267,8 +279,6 @@ class _TransportCardState extends ConsumerState<TransportCard> {
 
                                                           for (ListingBookings booking
                                                               in bookingsCopy) {
-                                                            // only get the date and not the time from booking.startDate. trim it to only get the date
-
                                                             DateTime
                                                                 bookingStartDate =
                                                                 booking
