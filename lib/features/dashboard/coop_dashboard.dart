@@ -8,6 +8,9 @@ import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/models/listing_model.dart';
 
 class CoopDashboard extends ConsumerStatefulWidget {
   final String coopId;
@@ -21,48 +24,104 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
   DateTime _selectedDate = DateTime.now();
   final List<String> _filterTypes = ['Day', 'Week', 'Month', 'Year'];
   String _selectedFilterType = 'Month';
+  late AsyncValue<List<ListingModel>> _listings;
 
   @override
-  Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
-    debugPrintJson("File Name: coop_dashboard.dart");
-    return Scaffold(
-        appBar: CustomAppBar(title: 'My Dashboard', user: user),
-        body: ref.watch(getSalesProvider).when(
-              data: (sales) {
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView(
-                    children: [
-                      dashboardFunctions(context),
-                      rowSummaryCards(12000, 500),
-                      lineChart(),
-                      const SizedBox(height: 16),
-                      const Text("Sample Sales"),
+  void initState() {
+    super.initState();
+    // Fetch the list of listings when the widget initializes
+    _listings = ref.read(getAllListingsProvider);
+  }
 
-                      // ListView of listTile of sales name
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: sales.length,
-                        itemBuilder: (context, index) {
-                          final sale = sales[index];
-                          return ListTile(
-                            title: Text(sale.category),
-                          );
+@override
+Widget build(BuildContext context) {
+  final user = ref.watch(userProvider);
+  debugPrintJson("File Name: coop_dashboard.dart");
+  return Scaffold(
+    appBar: CustomAppBar(title: 'My Dashboard', user: user),
+    body: ref.watch(getSalesProvider).when(
+      data: (sales) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            children: [
+              dashboardFunctions(context),
+                            ref.watch(getAllListingsProvider).when(
+                data: (listings) {
+                  if (listings.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  int totalBookingsForUserListings = 0;
+                  
+                  for (final listing in listings) {
+                    if (listing.publisherName == user!.name) {
+                      ref.watch(getAllBookingsProvider(listing.uid!)).when(
+                        data: (List<ListingBookings> bookings) {
+                          for (final booking in bookings) {
+                              totalBookingsForUserListings++;
+                          }
                         },
+                        error: (error, stackTrace) => ErrorText(
+                          error: error.toString(),
+                          stackTrace: stackTrace.toString(),
+                        ),
+                        loading: () => const Loader(),
+                      );
+                    }
+                  }
+
+                  return Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      Center(
+                        child: Text(
+                          "Total Bookings for Your Listings: $totalBookingsForUserListings",
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ],
-                  ),
-                );
-              },
-              error: (error, stackTrace) => ErrorText(
-                error: error.toString(),
-                stackTrace: stackTrace.toString(),
+                  );
+                },
+                error: (error, stackTrace) => ErrorText(
+                  error: error.toString(),
+                  stackTrace: stackTrace.toString(),
+                ),
+                loading: () => const Loader(),
               ),
-              loading: () => const Loader(),
-            ));
-  }
+              rowSummaryCards(12000, 500),
+              lineChart(),
+              const SizedBox(height: 16),
+              const Text("Sample Sales"),
+
+              // ListView of listTile of sales name
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: sales.length,
+                itemBuilder: (context, index) {
+                  final sale = sales[index];
+                  return ListTile(
+                    title: Text(sale.category),
+                  );
+                },
+              ),
+
+
+            ],
+          ),
+        );
+      },
+      error: (error, stackTrace) => ErrorText(
+        error: error.toString(),
+        stackTrace: stackTrace.toString(),
+      ),
+      loading: () => const Loader(),
+    ),
+  );
+}
 
   Card lineChart() {
     return Card(

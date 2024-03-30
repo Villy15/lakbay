@@ -188,12 +188,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 },
                 name: 'edit_profile',
               ),
-
+ 
               // My Coop Dashboard
               buildSubRoute('/my_coop/dashboard/:uid',
-                  (context, pathParameters, extra) {
-                return CoopDashboard(coopId: pathParameters['uid']!);
-              }),
+                (context, pathParameters, extra) {
+                    return CoopDashboard(coopId: pathParameters['uid']!,);
+              },),
 
               // * CUSTOMER VIEW
               // Plan Page
