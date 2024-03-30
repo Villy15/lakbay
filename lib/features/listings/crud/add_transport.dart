@@ -69,12 +69,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _feeController = TextEditingController();
   final TextEditingController _byHourFeeController = TextEditingController();
-  final TextEditingController _addressController =
-      TextEditingController();
-  final TextEditingController _destinationController =
-      TextEditingController();
-  final TextEditingController _pickupController =
-      TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _destinationController = TextEditingController();
+  final TextEditingController _pickupController = TextEditingController();
   final TextEditingController _cancellationRateController =
       TextEditingController();
   final TextEditingController _cancellationPeriodController =
@@ -202,7 +199,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 cancellationRate:
                     num.parse((_cancellationRateController.text)) / 100,
               );
-
+              ref.read(listingLocationProvider.notifier).clearLocation();
+              ref.read(pickupPointLocationProvider.notifier).clearLocation();
+              ref.read(destinationLocationProvider.notifier).clearLocation();
               ref
                   .read(saveListingProvider.notifier)
                   .saveListingProvider(listingModel);
@@ -1084,8 +1083,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           readOnly: true,
           onTap: () async {
             await context.push('/select_location', extra: 'listing');
-          }
-          ),
+          }),
 
       const SizedBox(height: 10),
 
@@ -1106,7 +1104,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
     final pickupPoint = ref.read(pickupPointLocationProvider);
     final destination = ref.read(destinationLocationProvider);
 
-    if (pickupPoint != null ) {
+    if (pickupPoint != null) {
       _pickupController.text = pickupPoint;
     }
 
@@ -1338,8 +1336,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             readOnly: true,
             onTap: () async {
               // make this pop another page so that
-              await context.push('/select_location', extra: 'pickup' );
-
+              await context.push('/select_location', extra: 'pickup');
             }),
         // Google Map
         const SizedBox(height: 15),
@@ -1370,7 +1367,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           readOnly: true,
           onTap: () async {
             // make this pop another page so that
-            await context.push('/select_location', extra: 'destination' );
+            await context.push('/select_location', extra: 'destination');
           },
         ),
         // Google Map
