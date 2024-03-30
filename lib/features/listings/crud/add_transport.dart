@@ -38,7 +38,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   // stepper
   int activeStep = 0;
-  int upperBound = 7;
+  int upperBound = 8;
 
   // initial values
   String type = 'Public';
@@ -192,6 +192,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 description: _descriptionController.text,
                 driverIds: drivers.keys.toList(),
                 driverNames: drivers.values.toList(),
+                price: num.parse(_feeController.text),
                 province: widget.coop.province,
                 publisherId: ref.read(userProvider)!.uid,
                 title: _titleController.text,
@@ -1245,77 +1246,13 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             }
           },
         ),
-        const SizedBox(height: 10),
-        const Text('Departure Time',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const Text('Please select your departure time...',
-            style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-        const SizedBox(height: 10),
-        ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: departures,
-          itemBuilder: (BuildContext context, int index) {
-            return Row(
-              children: [
-                const SizedBox(height: 15),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: TextFormField(
-                      controller: _departureController[index],
-                      decoration: InputDecoration(
-                          labelText: 'Departure Time',
-                          border: const OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText:
-                              "${startDate.hour}:${startDate.minute} ${startDate.period.name.toUpperCase()}"),
-                      readOnly: true,
-                      onTap: () async {
-                        showTimePicker(
-                          context: context,
-                          initialTime: startDate,
-                          initialEntryMode: TimePickerEntryMode.inputOnly,
-                        ).then((time) {
-                          if (time != null) {
-                            setState(() {
-                              _departureTime.add(time);
-                              _departureController[index].text =
-                                  time.format(context);
-                            });
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-        const SizedBox(height: 10),
-        Center(
-          child: FilledButton(
-              onPressed: () {
-                setState(() {
-                  departures++;
-                  _departureController.add(TextEditingController());
-                });
-              },
-              style: FilledButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(4.0), // Adjust the radius as needed
-                ),
-              ),
-              child: const Text('Add Departure Time')),
-        ),
+
         const SizedBox(height: 15),
         const Text('Pickup & Destination',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const Padding(
           padding: EdgeInsets.only(left: 8.0),
-          child: Text('Add your pickup point for the listing...',
+          child: Text('Add your pickup and destination point...',
               style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
         ),
         const SizedBox(height: 10),
@@ -1542,12 +1479,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               showDialog(
                   context: context,
                   builder: (context) {
-                    TextEditingController vehicleNoController =
-                        TextEditingController();
-                    num capacity = 0;
-                    num luggage = 0;
                     return SizedBox(
                       child: AlertDialog(
+                        contentPadding: const EdgeInsets.all(10),
                         title: const Text('Create Vehicle'),
                         content: showAddVehicleForm(),
                       ),
@@ -1613,6 +1547,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   Widget showAddVehicleForm() {
     TextEditingController vehicleNoController = TextEditingController();
+    TextEditingController departureController = TextEditingController();
+    List<TimeOfDay> departureTimes = [];
     num capacity = 0;
     num luggage = 0;
     return StatefulBuilder(builder: (context, setState) {
@@ -1636,6 +1572,43 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                     }
                     return null;
                   })),
+          const SizedBox(height: 10),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: TextFormField(
+              controller: departureController,
+              decoration: InputDecoration(
+                  labelText: 'Departure Time',
+                  border: const OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  hintText:
+                      "${startDate.hour}:${startDate.minute} ${startDate.period.name.toUpperCase()}"),
+              readOnly: true,
+              onTap: () async {
+                showTimePicker(
+                  context: context,
+                  initialTime: startDate,
+                  initialEntryMode: TimePickerEntryMode.inputOnly,
+                ).then((time) {
+                  if (time != null) {
+                    setState(() {
+                      departureTimes.add(time);
+                      departureController.text = time.format(context);
+                    });
+                  }
+                });
+              },
+            ),
+          ),
+          ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: departureTimes.length,
+              itemBuilder: (context, timeIndex) {
+                return ListTile(
+                  title: Text(departureTimes[timeIndex].format(context)),
+                );
+              }),
           SizedBox(height: MediaQuery.sizeOf(context).height / 50),
           ListTile(
               horizontalTitleGap: 0,
@@ -1703,7 +1676,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                     AvailableTransport transport = AvailableTransport(
                         available: true,
                         vehicleNo: num.parse(vehicleNoController.text),
-                        guests: guests,
+                        guests: capacity,
                         luggage: luggage,
                         workingDays: workingDays,
                         startTime: startDate,
