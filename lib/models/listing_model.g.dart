@@ -29,6 +29,12 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       cooperative: ListingCooperative.fromJson(
           json['cooperative'] as Map<String, dynamic>),
       description: json['description'] as String,
+      driverNames: (json['driverNames'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      driverIds: (json['driverIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       downpaymentRate: json['downpaymentRate'] as num?,
       fixedCancellationRate: json['fixedCancellationRate'] as num?,
       images: (json['images'] as List<dynamic>?)
@@ -72,6 +78,9 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           ? null
           : AvailableTransport.fromJson(
               json['availableTransport'] as Map<String, dynamic>),
+      availableTables: (json['availableTables'] as List<dynamic>?)
+          ?.map((e) => e as List<dynamic>)
+          .toList(),
       uid: json['uid'] as String?,
     );
 
@@ -94,6 +103,8 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'cancellationPeriod': instance.cancellationPeriod,
       'cooperative': instance.cooperative.toJson(),
       'description': instance.description,
+      'driverNames': instance.driverNames,
+      'driverIds': instance.driverIds,
       'downpaymentRate': instance.downpaymentRate,
       'fixedCancellationRate': instance.fixedCancellationRate,
       'images': instance.images?.map((e) => e.toJson()).toList(),
@@ -122,6 +133,7 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
           instance.availableDeals?.map((e) => e.toJson()).toList(),
       'menuImgs': instance.menuImgs?.map((e) => e.toJson()).toList(),
       'availableTransport': instance.availableTransport?.toJson(),
+      'availableTables': instance.availableTables,
       'uid': instance.uid,
     };
 
@@ -219,7 +231,7 @@ _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
           ?.map((e) =>
               const TimeOfDayConverter().fromJson(e as Map<String, dynamic>))
           .toList(),
-      price: json['price'] as num,
+      vehicleNo: json['vehicleNo'] as num?,
       luggage: json['luggage'] as num,
       workingDays:
           (json['workingDays'] as List<dynamic>).map((e) => e as bool).toList(),
@@ -244,7 +256,7 @@ Map<String, dynamic> _$$AvailableTransportImplToJson(
       'departureTimes': instance.departureTimes
           ?.map(const TimeOfDayConverter().toJson)
           .toList(),
-      'price': instance.price,
+      'vehicleNo': instance.vehicleNo,
       'luggage': instance.luggage,
       'workingDays': instance.workingDays,
       'startTime': const TimeOfDayConverter().toJson(instance.startTime),
@@ -271,9 +283,6 @@ _$FoodServiceImpl _$$FoodServiceImplFromJson(Map<String, dynamic> json) =>
           .fromJson(json['startTime'] as Map<String, dynamic>),
       endTime: const TimeOfDayConverter()
           .fromJson(json['endTime'] as Map<String, dynamic>),
-      availableTables: (json['availableTables'] as List<dynamic>?)
-          ?.map((e) => e as Map<String, dynamic>)
-          .toList(),
     );
 
 Map<String, dynamic> _$$FoodServiceImplToJson(_$FoodServiceImpl instance) =>
@@ -287,7 +296,6 @@ Map<String, dynamic> _$$FoodServiceImplToJson(_$FoodServiceImpl instance) =>
       'workingDays': instance.workingDays,
       'startTime': const TimeOfDayConverter().toJson(instance.startTime),
       'endTime': const TimeOfDayConverter().toJson(instance.endTime),
-      'availableTables': instance.availableTables,
     };
 
 _$EntertainmentServiceImpl _$$EntertainmentServiceImplFromJson(

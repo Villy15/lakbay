@@ -15,6 +15,24 @@ class MapWidget extends StatefulWidget {
 class MapWidgetState extends State<MapWidget> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
+  final StreamController<GoogleMapController> _mapController =
+      StreamController<GoogleMapController>.broadcast();
+  GoogleMapController? _latestController;
+
+  @override
+  void initState() {
+    super.initState();
+    _mapController.stream.listen((GoogleMapController controller) {
+      // do something with the controller
+      _latestController = controller;
+    });
+  }
+  
+  @override
+  void dispose() {
+    _mapController.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +76,7 @@ class MapWidgetState extends State<MapWidget> {
                 zoom: 14.4746,
               ),
               onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
+                _mapController.add(controller);
               },
             ),
           );
@@ -77,6 +95,132 @@ class MapWidgetState extends State<MapWidget> {
     } catch (e) {
       return const LatLng(0, 0); // return a default value in case of error
     }
+  }
+
+  // Future<void> _goToTheLake() async {
+  //   final GoogleMapController controller = await _controller.future;
+  //   await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+  // }
+}
+
+class TwoMarkerMapWidget extends StatefulWidget {
+  final String pickup;
+  final String destination;
+  const TwoMarkerMapWidget(
+      {super.key, required this.pickup, required this.destination});
+
+  @override
+  State<TwoMarkerMapWidget> createState() => TwoMarkerMapWidgetState();
+}
+
+class TwoMarkerMapWidgetState extends State<TwoMarkerMapWidget> {
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
+
+  @override
+  Widget build(BuildContext context) {
+    Map<String, String> addresses = {};
+    addresses['pickup'] = widget.pickup;
+    addresses['destination'] = widget.destination;
+    return FutureBuilder<Map<String, LatLng>>(
+      future: getLatLng(addresses),
+      builder:
+          (BuildContext context, AsyncSnapshot<Map<String, LatLng>> snapshot) {
+        LatLng centerPoint;
+        if (addresses['pickup']!.isNotEmpty &&
+            addresses['destination']!.isNotEmpty) {
+          centerPoint = LatLng(
+            (snapshot.data!['pickup']!.latitude +
+                    snapshot.data!['destination']!.latitude) /
+                2,
+            (snapshot.data!['pickup']!.longitude +
+                    snapshot.data!['destination']!.longitude) /
+                2,
+          );
+        } else {
+          centerPoint = snapshot.data!['pickup']!;
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: GoogleMap(
+              markers: {
+                Marker(
+                  markerId: const MarkerId('Pickup'),
+                  position: snapshot.data!['pickup']!,
+                  infoWindow: InfoWindow(
+                    title: widget.pickup,
+                  ),
+                ),
+                Marker(
+                  markerId: const MarkerId('Destination'),
+                  position: snapshot.data!['destination']!,
+                  infoWindow: InfoWindow(
+                    title: widget.destination,
+                  ),
+                ),
+              },
+              circles: {
+                Circle(
+                  circleId: const CircleId('pickup'),
+                  center: snapshot.data!['pickup']!,
+                  radius: 100,
+                  fillColor:
+                      Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  strokeColor: Theme.of(context).colorScheme.primary,
+                  strokeWidth: 1,
+                ),
+                Circle(
+                  circleId: const CircleId('destination'),
+                  center: snapshot.data!['destination']!,
+                  radius: 100,
+                  fillColor:
+                      Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  strokeColor: Theme.of(context).colorScheme.primary,
+                  strokeWidth: 1,
+                ),
+              },
+              mapType: MapType.normal,
+              mapToolbarEnabled: true,
+              buildingsEnabled: true,
+              myLocationButtonEnabled: true,
+              initialCameraPosition: CameraPosition(
+                target: centerPoint,
+                zoom: 14.4746,
+              ),
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
+              },
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Future<Map<String, LatLng>> getLatLng(Map<String, String?> address) async {
+    Map<String, LatLng> latlngs = {};
+    for (var entry in address.entries) {
+      var key = entry.key;
+      var value = entry.value;
+      try {
+        if (value != null) {
+          List<Location> locations = await locationFromAddress(value);
+          double latitude = locations.first.latitude;
+          double longitude = locations.first.longitude;
+          latlngs[key] = LatLng(latitude, longitude);
+        } else {
+          latlngs[key] = const LatLng(0, 0);
+        }
+      } catch (e) {
+        latlngs[key] = const LatLng(0, 0);
+      }
+    }
+    return latlngs;
   }
 
   // Future<void> _goToTheLake() async {

@@ -93,6 +93,7 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
         context.pop();
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('Add Activity'),
         ),
@@ -179,7 +180,8 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
                             itemBuilder: (context, index) {
                               //final listing = listings[index];
                               return const TripCard(
-                                 category: '', tripListings: [],
+                                category: '',
+                                tripListings: [],
                               );
                             },
                           );

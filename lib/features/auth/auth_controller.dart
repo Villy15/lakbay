@@ -18,6 +18,11 @@ class UserModelNotifier extends StateNotifier<UserModel?> {
   void setUser(UserModel user) {
     state = user;
   }
+
+  // refresh user
+  void refreshUser(UserModel user) {
+    state = user;
+  }
 }
 
 final authControllerProvider =

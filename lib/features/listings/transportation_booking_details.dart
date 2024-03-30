@@ -3,18 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
-import 'package:lakbay/features/common/widgets/map.dart';
+import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/listings/widgets/emergency_process_dialog.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/committee_params.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TransportationBookingsDetails extends ConsumerStatefulWidget {
   final ListingBookings booking;
@@ -74,8 +78,7 @@ class _TransportationBookingsDetailsState
                           builder: (context, setState) {
                             return TabBarView(
                               children: [
-                                bookingDetails(context, formattedStartDate,
-                                    formattedEndDate),
+                                showDetails(context, widget.booking),
                                 showTasks(booking),
                                 expenses(),
                               ],
@@ -491,255 +494,450 @@ class _TransportationBookingsDetailsState
     );
   }
 
-  // create _tasks
-  Widget bookingDetails(BuildContext context, String formattedStartDate,
-      String formattedEndDate) {
-    if (widget.booking.typeOfTrip == 'Two Way Trip') {
-      return Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                ListTile(
-                  title: const Text(
-                    'First Trip: ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24.0,
+  Widget showDetails(BuildContext context, ListingBookings booking) {
+    Map<String, Map<String, dynamic>> generalActions = {
+      "contact": {
+        "icon": Icons.call,
+        "title": "Contact Passengers",
+        "action": () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Contact'),
+                  content: ListTile(
+                    onTap: () async {
+                      await launch("tel://${booking.emergencyContactNo}");
+                    },
+                    leading: const Icon(Icons.phone_rounded),
+                    title: Text(
+                      booking.emergencyContactName ?? "No Emergency Contact",
+                      style: const TextStyle(
+                        fontSize: 16, // Set your desired font size
+                        // Add other styling as needed
+                      ),
+                    ),
+                    subtitle: Text(
+                      booking.emergencyContactNo ??
+                          "No Emergency Contact Number",
+                      style: TextStyle(
+                        fontSize: 14, // Slightly smaller than the title
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.7),
+                        // You can add other styling as needed
+                      ),
+                    ),
+                    // Arrow Trailing
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 20,
                     ),
                   ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        formattedStartDate,
-                        style: const TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 19.0,
+                  actions: [
+                    FilledButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        child: const Text('Close'))
+                  ],
+                );
+              });
+        },
+      },
+      "emergency": {
+        "icon": Icons.emergency,
+        "title": "Emergency",
+        "action": () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Emergency Guide'),
+                  content: const Text(
+                      "An emergency would be a situation wherein the service provider cannot provide their service."),
+                  actions: [
+                    FilledButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        child: const Text('Close')),
+                    FilledButton(
+                        onPressed: () {
+                          emergencyProcess(ref, context, booking);
+                        },
+                        child: const Text('Continue')),
+                  ],
+                );
+              });
+        }
+      },
+    };
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: MediaQuery.sizeOf(context).height * .4,
+            child: const Placeholder(),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Departure',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500),
                         ),
-                      ),
-                      Text(
-                          'Departure Time: ${DateFormat('h:mm a').format(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, widget.booking.startTime!.hour, widget.booking.startTime!.minute))}'),
-                      Text(
-                          'Pickup Point: ${widget.listing.availableTransport!.pickupPoint}'),
-                      Text(
-                          'Destination: ${widget.listing.availableTransport!.destination}'),
-                      const SizedBox(height: 10),
-                      // show map widget
-                      // Center(
-                      //   child: SizedBox(
-                      //     height: 150,
-                      //     width: double.infinity,
-                      //     child: MapWidget(
-                      //         address: widget
-                      //             .listing.availableTransport!.destination),
-                      //   ),
-                      // ),
-                      const SizedBox(height: 10)
-                    ],
+                        const SizedBox(height: 10),
+                        Text(DateFormat('E, MMM d').format(booking.startDate!),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500)),
+                        // departure time
+                        Text(
+                          TimeOfDay.fromDateTime(booking.startDate!)
+                              .format(context),
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w300),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: const Text(
-                    'Last Trip: ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24.0,
-                    ),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        formattedEndDate,
-                        style: const TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 19.0,
+                Container(
+                  height: MediaQuery.sizeOf(context).height / 7.5,
+                  width: 1,
+                  color: Colors.grey, // Choose the color of the line
+                ),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _displaySubHeader('Arrival'),
+                        const SizedBox(height: 10),
+                        Text(DateFormat('E, MMM d').format(booking.endDate!),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500)),
+                        // Checkout time
+                        Text(
+                          TimeOfDay.fromDateTime(booking.endDate!)
+                              .format(context),
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w300),
                         ),
-                      ),
-                      Text(
-                          'Departure Time: ${DateFormat('h:mm a').format(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, widget.booking.endTime!.hour, widget.booking.endTime!.minute))}'),
-                      Text(
-                          'Pickup Point: ${widget.listing.availableTransport!.destination}'),
-                      Text(
-                          'Destination: ${widget.listing.availableTransport!.pickupPoint}'),
-                      const SizedBox(height: 10),
-                      // show map widget
-                      // Center(
-                      //   child: SizedBox(
-                      //     height: 150,
-                      //     width: double.infinity,
-                      //     child: MapWidget(
-                      //         address: widget
-                      //             .listing.availableTransport!.pickupPoint),
-                      //   ),
-                      // ),
-                      const SizedBox(height: 10)
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-        ],
-      );
-    } else {
-      return Column(children: [
-        Expanded(
-          child: ListView(
-            children: [
-              ListTile(
-                title: const Text(
-                  'Trip: ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24.0,
-                  ),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      formattedStartDate,
-                      style: const TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: 19.0,
-                      ),
-                    ),
-                    Text(
-                        'Departure Time: ${DateFormat('h:mm a').format(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, widget.booking.startTime!.hour, widget.booking.startTime!.minute))}'),
-                    Text(
-                        'Pickup Point: ${widget.listing.availableTransport!.pickupPoint}'),
-                    Text(
-                        'Destination: ${widget.listing.availableTransport!.destination}'),
-                    const SizedBox(height: 10),
-                    // show map widget
-                    // Center(
-                    //   child: SizedBox(
-                    //     height: 150,
-                    //     width: double.infinity,
-                    //     child: MapWidget(
-                    //         address:
-                    //             widget.listing.availableTransport!.destination),
-                    //   ),
-                    // ),
-                    const SizedBox(height: 10)
+                    _displaySubtitleText('Bus No: ${booking.roomId}'),
+                    Container(
+                        height: MediaQuery.sizeOf(context).height * .05,
+                        width: 1,
+                        color: Colors.grey),
+                    _displaySubtitleText('Passengers: ${booking.guests}'),
+                    Container(
+                        height: MediaQuery.sizeOf(context).height * .05,
+                        width: 1,
+                        color: Colors.grey),
+                    _displaySubtitleText('Luggage: ${booking.luggage}'),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                ...generalActions.entries.map((entry) {
+                  final generalAction = entry.value;
+                  return Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(
+                          left: 15,
+                          right: 15,
+                        ), // Adjust the padding as needed
+                        child: const Divider(
+                          color: Colors.grey,
+                          height: 1.0,
+                        ),
+                      ),
+                      ListTile(
+                        leading: Icon(
+                          generalAction['icon'],
+                          size: 20,
+                        ),
+                        title: Text(generalAction['title'],
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w400)),
+                        onTap: generalAction["action"],
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 16,
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+                const SizedBox(height: 10),
+                _displaySubHeader("Booking Details"),
+                // ref.watch(getUserDataProvider(booking.customerId)).maybeWhen(
+                //       data: (user) {
+                //         return _userInformation(user, booking);
+                //       },
+                //       orElse: () =>
+                //           const Center(child: CircularProgressIndicator()),
+                //     ),
+                // No of Guests
+                const SizedBox(height: 10),
+
+                _displayDivider(),
+                const SizedBox(height: 10),
+
+                _displaySubHeader("Additional Information"),
+                const SizedBox(height: 10),
+                // Government ID
+                _displayGovId(),
+              ],
+            ),
           ),
-        )
-      ]);
-    }
+        ],
+      ),
+    );
   }
 
   Widget showTasks(ListingBookings booking) {
-    return booking.tasks == null || booking.tasks!.isEmpty
-        ? SizedBox(
-            height: MediaQuery.sizeOf(context).height / 5,
-            child: const Center(
-              child: Text("No Tasks Listed"),
-            ),
-          )
-        : ListView.builder(
-            itemCount: booking.tasks!.length,
-            itemBuilder: (context, index) {
-              String proofNote;
-              if (booking.tasks![index].imageProof != null) {
-                proofNote = "Proof Submitted";
-              } else {
-                proofNote = "No Proof Submitted";
-              }
-              return Column(children: [
-                Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Checkbox(
-                        value: booking.tasks![index].complete,
-                        onChanged: null,
-                      ),
-                      Expanded(
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                            Text(booking.tasks![index].name,
+    return ref
+        .watch(getBookingTasksByBookingId((booking.listingId, booking.id!)))
+        .when(
+          data: (List<BookingTask>? bookingTasks) {
+            return bookingTasks == null || bookingTasks.isEmpty
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height / 5,
+                    child: const Center(child: Text("No Tasks Listed")),
+                  )
+                : ListView.builder(
+                    itemCount: bookingTasks.length,
+                    itemBuilder: (context, taskIndex) {
+                      String proofNote;
+                      if (bookingTasks[taskIndex].imageProof != null) {
+                        proofNote = "Proof Available";
+                      } else {
+                        proofNote = "No Proof Available";
+                      }
+                      return Card(
+                        margin: const EdgeInsets.all(15),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: bookingTasks[taskIndex].status ==
+                                      'Pending'
+                                  ? const Text('Pending')
+                                  : Checkbox(
+                                      value: bookingTasks[taskIndex].complete,
+                                      onChanged: null,
+                                    ),
+                              title: Text(
+                                bookingTasks[taskIndex].name,
                                 style: const TextStyle(
                                   fontSize: 16, // Set your desired font size
-                                )),
-                            Text(
-                                "Assigned: ${booking.tasks![index].assignedNames.join(",")}",
+                                  // Add other styling as needed
+                                ),
+                              ),
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    showNotesDialog(
+                                        context, bookingTasks[taskIndex]);
+                                  },
+                                  icon: const Icon(Icons.comment_outlined)),
+                              subtitle: Text(
+                                "Assigned: ${bookingTasks[taskIndex].assignedNames.join(", ")}",
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.grey[600]))
-                          ]))
-                    ]),
-                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  Checkbox(
-                      value: booking.tasks![index].openContribution,
-                      onChanged: (value) {
-                        String title = "";
-                        String note = "";
-                        if (value == true) {
-                          title = "Activate \"Open for Contribution\"";
-                          note =
-                              "This will allow other members to contribute to this task";
-                        } else {
-                          title = "Deactivate \"Open for Contribution\"";
-                          note =
-                              "This will disallow other members to contribute to this task";
-                        }
-                        showDialog<void>(
-                            context: context,
-                            barrierDismissible:
-                                false, // User must tap button to close the dialog
-                            builder: (context) {
-                              return AlertDialog(
-                                  title: Text(title,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                  content: Text(note,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                      )),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: const Text('Cancel'),
-                                      onPressed: () {
-                                        context.pop();
+                                  fontSize:
+                                      14, // Slightly smaller than the title
+                                  color: Colors
+                                      .grey[600], // Grey color for the subtitle
+                                  // You can add other styling as needed
+                                ),
+                              ),
+                              onTap:
+                                  bookingTasks[taskIndex].status != 'Completed'
+                                      ? () {
+                                          showMarkAsDoneDialog(
+                                              context, bookingTasks[taskIndex]);
+                                        }
+                                      : null,
+                            ),
+                            ListTile(
+                              leading: Checkbox(
+                                  value:
+                                      bookingTasks[taskIndex].openContribution,
+                                  onChanged: (value) {
+                                    String title = "";
+                                    String note = "";
+                                    if (value == true) {
+                                      title =
+                                          "Activate \"Open for Contribution\"";
+                                      note =
+                                          "Activating \"Open for Contribution\" will make this task visible to other cooperative members, giving them the opportunity to help.";
+                                    } else {
+                                      title =
+                                          "Deactivate Open for Contribution";
+                                      note =
+                                          "Deactivating Open for Contribution will make this task private to the assigned members.";
+                                    }
+                                    showDialog<void>(
+                                      context: context,
+                                      barrierDismissible:
+                                          false, // User must tap button to close the dialog
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                            title,
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          content: Text(note),
+                                          actions: <Widget>[
+                                            TextButton(
+                                                child: const Text('Cancel'),
+                                                onPressed: () {
+                                                  context.pop();
+                                                }),
+                                            TextButton(
+                                              child: const Text('Confirm'),
+                                              onPressed: () {
+                                                List<BookingTask>
+                                                    updatedBookingTasks =
+                                                    bookingTasks.toList(
+                                                        growable: true);
+                                                updatedBookingTasks[taskIndex] =
+                                                    bookingTasks[taskIndex]
+                                                        .copyWith(
+                                                            openContribution:
+                                                                value!);
+                                                ListingBookings updatedBooking =
+                                                    booking.copyWith(
+                                                        tasks:
+                                                            updatedBookingTasks);
+                                                debugPrint("$updatedBooking");
+
+                                                ref
+                                                    .read(
+                                                        listingControllerProvider
+                                                            .notifier)
+                                                    .updateBookingTask(
+                                                        context,
+                                                        widget.listing.uid!,
+                                                        updatedBookingTasks[
+                                                            taskIndex],
+                                                        "Tasks Updated");
+                                                context.pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
                                       },
+                                    );
+                                  }),
+                              title: const Text("Open for Contribution"),
+                            ),
+                            SizedBox(
+                              height: MediaQuery.sizeOf(context).height / 25,
+                              width: MediaQuery.sizeOf(context).width * .6,
+                              child: FilledButton(
+                                onPressed: bookingTasks[taskIndex].imageProof !=
+                                        null
+                                    ? () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return Dialog(
+                                                insetPadding:
+                                                    const EdgeInsets.all(0),
+                                                child: ImageSlider(
+                                                    images:
+                                                        bookingTasks[taskIndex]
+                                                            .imageProof!
+                                                            .map((image) =>
+                                                                image.url)
+                                                            .toList(),
+                                                    height: MediaQuery.sizeOf(
+                                                                context)
+                                                            .height /
+                                                        3,
+                                                    width: MediaQuery.sizeOf(
+                                                            context)
+                                                        .width,
+                                                    radius: BorderRadius.zero),
+                                              );
+                                            });
+                                      }
+                                    : null,
+                                style: ButtonStyle(
+                                  elevation: MaterialStateProperty.all(
+                                      0), // Removes the shadow/elevation
+                                  backgroundColor:
+                                      proofNote == "No Proof Available"
+                                          ? MaterialStateProperty.all(
+                                              Colors.transparent)
+                                          : null,
+
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          4.0), // Adjust the radius as needed
                                     ),
-                                    TextButton(
-                                      child: const Text('Confirm'),
-                                      onPressed: () {
-                                        List<BookingTask> bookingTasks = booking
-                                            .tasks!
-                                            .toList(growable: true);
-                                        bookingTasks[index] =
-                                            bookingTasks[index].copyWith(
-                                                openContribution: value!);
-                                        ListingBookings updatedBooking = booking
-                                            .copyWith(tasks: bookingTasks);
-                                        ref
-                                            .read(listingControllerProvider
-                                                .notifier)
-                                            .updateBookingTask(
-                                                context,
-                                                widget.listing.uid!,
-                                                bookingTasks[index],
-                                                "Task/s updated!");
-                                        context.pop();
-                                      },
-                                    )
-                                  ]);
-                            });
-                      })
-                ])
-              ]);
-            });
+                                  ),
+                                  // Apply additional styling as needed
+                                ),
+                                child: Text(proofNote,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: proofNote == "No Proof Available"
+                                            ? Colors.black
+                                            : Colors.white)),
+                              ),
+                            ),
+                            Divider(
+                              thickness: 1.5,
+                              indent: 20,
+                              endIndent: 20,
+                              color: Colors.grey[400],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+          },
+          error: (error, stackTrace) => ErrorText(
+            error: error.toString(),
+            stackTrace: '',
+          ),
+          loading: () => const Center(child: CircularProgressIndicator()),
+        );
   }
 
   Expanded tasks() {
@@ -822,6 +1020,252 @@ class _TransportationBookingsDetailsState
                 );
               },
             ),
+    );
+  }
+
+  Future<dynamic> showNotesDialog(
+      BuildContext context, BookingTask bookingTask) {
+    List<BookingTaskMessage>? notes =
+        bookingTask.notes?.toList(growable: true) ?? [];
+    TextEditingController messageController = TextEditingController();
+    notes.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text(
+              'Notes',
+              style: TextStyle(fontWeight: FontWeight.w400),
+            ),
+            InkWell(
+                onTap: () {
+                  context.pop();
+                },
+                child: const Icon(
+                  Icons.close,
+                  size: 20,
+                ))
+          ]),
+          content: SizedBox(
+            height: MediaQuery.of(context).size.height /
+                1.5, // Set a fixed height for the ListView
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: notes.length,
+                    itemBuilder: (context, messageIndex) {
+                      final message = notes[messageIndex];
+                      return Container(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  message.senderName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                Text(DateFormat('MMM d HH:mm')
+                                    .format(message.timestamp)),
+                              ],
+                            ),
+                            Text(message.content),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actionsPadding:
+              const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          actions: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                    10.0), // Adjust the border radius as needed
+                color:
+                    Colors.white, // Set the background color of the input field
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: messageController,
+                      decoration: const InputDecoration(
+                        hintText: 'Type your message here...',
+                      ),
+                      maxLines: null, // Allow multiple lines
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      String content = messageController.text;
+                      messageController.clear();
+                      final user = ref.read(userProvider);
+                      BookingTaskMessage message = BookingTaskMessage(
+                          listingName: bookingTask.listingName,
+                          senderId: user!.uid,
+                          senderName: user.name,
+                          taskId: bookingTask.uid!,
+                          timestamp: DateTime.now(),
+                          content: content);
+                      notes.add(message);
+                      BookingTask updatedBookingTask =
+                          bookingTask.copyWith(notes: notes);
+
+                      ref
+                          .read(listingControllerProvider.notifier)
+                          .updateBookingTask(context, bookingTask.listingId!,
+                              updatedBookingTask, '');
+                    },
+                    child: Icon(
+                      Icons.send,
+                      color: Colors.deepOrange[400],
+                    ), // Set the color of the send icon
+                  ),
+                ],
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Future<dynamic> showMarkAsDoneDialog(
+      BuildContext context, BookingTask bookingTask) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(bookingTask.name),
+            titleTextStyle: const TextStyle(
+                fontSize: 22, fontWeight: FontWeight.w400, color: Colors.black),
+            actions: [
+              FilledButton(
+                onPressed: () {
+                  context.pop();
+                },
+                child: const Text('Back'),
+              ),
+              FilledButton(
+                onPressed: bookingTask.status == 'Pending'
+                    ? () {
+                        BookingTask updatedBookingTask = bookingTask.copyWith(
+                            complete: true, status: 'Completed');
+                        ref
+                            .read(listingControllerProvider.notifier)
+                            .updateBookingTask(
+                                context,
+                                updatedBookingTask.listingId!,
+                                updatedBookingTask,
+                                'Task updated successfully!');
+                        context.pop();
+                      }
+                    : null,
+                child: bookingTask.status == 'Pending'
+                    ? const Text('Mark as Done')
+                    : const Text('Pending'),
+              )
+            ],
+          );
+        });
+  }
+
+  Text _displaySubHeader(String subHeader) {
+    return Text(
+      subHeader,
+      style: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        // Add other styling as needed
+      ),
+    );
+  }
+
+  Divider _displayDivider() {
+    return Divider(
+      thickness: 1.0,
+      indent: 20,
+      endIndent: 20,
+      color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+    );
+  }
+
+  ListTile _displayGovId() {
+    return ListTile(
+      onTap: () {},
+      leading: const Icon(Icons.card_membership_rounded),
+      title: const Text(
+        'Customer Government ID',
+        style: TextStyle(
+          fontSize: 16, // Set your desired font size
+          // Add other styling as needed
+        ),
+      ),
+      // Arrow Trailing
+      trailing: const Icon(
+        Icons.arrow_forward_ios_rounded,
+        size: 20,
+      ),
+    );
+  }
+
+  ListTile _userInformation(UserModel user, ListingBookings booking) {
+    return ListTile(
+      onTap: () {
+        // Show user profile
+      },
+      leading: CircleAvatar(
+        radius: 15.0,
+        backgroundImage: user.imageUrl != null && user.imageUrl != ''
+            ? NetworkImage(user.imageUrl!)
+            // Use placeholder image if user has no profile pic
+            : const AssetImage('lib/core/images/default_profile_pic.jpg')
+                as ImageProvider,
+      ),
+      // Contact owner
+      trailing: IconButton(
+        onPressed: () {
+          // Show snackbar with reviews
+          showSnackBar(context, 'Contact owner');
+        },
+        icon: const Icon(Icons.message_rounded),
+      ),
+      title: Text(
+        booking.customerName,
+        style: const TextStyle(
+            fontSize: 16, // Set your desired font size
+            fontWeight: FontWeight.w500
+            // Add other styling as needed
+            ),
+      ),
+      subtitle: const Text(
+        '1 month in lakbay',
+        style: TextStyle(
+          fontSize: 14, // Slightly smaller than the title
+          fontWeight: FontWeight.w300,
+          // You can add other styling as needed
+        ),
+      ),
+    );
+  }
+
+  Widget _displaySubtitleText(String text) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
     );
   }
 }

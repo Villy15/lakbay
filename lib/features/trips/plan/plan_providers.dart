@@ -48,6 +48,75 @@ class PlanLocationProvider extends StateNotifier<String?> {
   void setLocation(String location) {
     state = location;
   }
+
+  // set the location to empty
+  void clearLocation() {
+    state = '';
+  }
+}
+
+final listingLocationProvider =
+    StateNotifierProvider<ListingLocationProvider, String?>(
+        (ref) => ListingLocationProvider());
+
+class ListingLocationProvider extends StateNotifier<String?> {
+  ListingLocationProvider() : super(null);
+
+  void setLocation(String location) {
+    state = location;
+  }
+
+  // set the location to empty
+  void clearLocation() {
+    state = '';
+  }
+}
+
+// set current location
+final currentLocationProvider =
+    StateNotifierProvider<CurrentLocationProvider, String?>(
+        (ref) => CurrentLocationProvider());
+
+class CurrentLocationProvider extends StateNotifier<String?> {
+  CurrentLocationProvider() : super(null);
+
+  void setLocation(String location) {
+    state = location;
+  }
+}
+
+final destinationLocationProvider =
+    StateNotifierProvider<DestinationLocationProvider, String?>(
+        (ref) => DestinationLocationProvider());
+
+class DestinationLocationProvider extends StateNotifier<String?> {
+  DestinationLocationProvider() : super(null);
+
+  void setLocation(String location) {
+    state = location;
+  }
+
+  // set the location to empty
+  void clearLocation() {
+    state = '';
+  }
+}
+
+final pickupPointLocationProvider =
+    StateNotifierProvider<PickupPointLocationProvider, String?>(
+        (ref) => PickupPointLocationProvider());
+
+class PickupPointLocationProvider extends StateNotifier<String?> {
+  PickupPointLocationProvider() : super(null);
+
+  void setLocation(String location) {
+    state = location;
+  }
+
+  // set the location to empty
+  void clearLocation() {
+    state = '';
+  }
 }
 
 // Plan Start Date State Notifier Provider

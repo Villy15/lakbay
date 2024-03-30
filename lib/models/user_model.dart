@@ -17,6 +17,7 @@ class UserModel with _$UserModel {
       String? email,
       String? address,
       String? emergencyContact,
+      String? emergencyContactName,
       required bool isAuthenticated,
       String? imageUrl,
       String? firstName,
@@ -33,6 +34,7 @@ class UserModel with _$UserModel {
       String? gender,
       String? religion,
       String? nationality,
+      String? governmentId,
       String? civilStatus,
       @TimestampSerializer() DateTime? createdAt}) = _UserModel;
 
@@ -42,6 +44,11 @@ class UserModel with _$UserModel {
   // Check if user is a manager
   bool get isManager {
     return cooperativesJoined?.any((coop) => coop.role == 'Manager') ?? false;
+  }
+
+  bool get isAdmin {
+    // Check if email is adminlakbay@gmail.com
+    return email == 'adminlakbay@gmail.com';
   }
 
   // Get user's role

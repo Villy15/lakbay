@@ -27,6 +27,7 @@ mixin _$UserModel {
   String? get email => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
   String? get emergencyContact => throw _privateConstructorUsedError;
+  String? get emergencyContactName => throw _privateConstructorUsedError;
   bool get isAuthenticated => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
   String? get firstName => throw _privateConstructorUsedError;
@@ -45,6 +46,7 @@ mixin _$UserModel {
   String? get gender => throw _privateConstructorUsedError;
   String? get religion => throw _privateConstructorUsedError;
   String? get nationality => throw _privateConstructorUsedError;
+  String? get governmentId => throw _privateConstructorUsedError;
   String? get civilStatus => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get createdAt => throw _privateConstructorUsedError;
@@ -68,6 +70,7 @@ abstract class $UserModelCopyWith<$Res> {
       String? email,
       String? address,
       String? emergencyContact,
+      String? emergencyContactName,
       bool isAuthenticated,
       String? imageUrl,
       String? firstName,
@@ -84,6 +87,7 @@ abstract class $UserModelCopyWith<$Res> {
       String? gender,
       String? religion,
       String? nationality,
+      String? governmentId,
       String? civilStatus,
       @TimestampSerializer() DateTime? createdAt});
 }
@@ -108,6 +112,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? email = freezed,
     Object? address = freezed,
     Object? emergencyContact = freezed,
+    Object? emergencyContactName = freezed,
     Object? isAuthenticated = null,
     Object? imageUrl = freezed,
     Object? firstName = freezed,
@@ -124,6 +129,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? gender = freezed,
     Object? religion = freezed,
     Object? nationality = freezed,
+    Object? governmentId = freezed,
     Object? civilStatus = freezed,
     Object? createdAt = freezed,
   }) {
@@ -155,6 +161,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
       emergencyContact: freezed == emergencyContact
           ? _value.emergencyContact
           : emergencyContact // ignore: cast_nullable_to_non_nullable
+              as String?,
+      emergencyContactName: freezed == emergencyContactName
+          ? _value.emergencyContactName
+          : emergencyContactName // ignore: cast_nullable_to_non_nullable
               as String?,
       isAuthenticated: null == isAuthenticated
           ? _value.isAuthenticated
@@ -220,6 +230,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.nationality
           : nationality // ignore: cast_nullable_to_non_nullable
               as String?,
+      governmentId: freezed == governmentId
+          ? _value.governmentId
+          : governmentId // ignore: cast_nullable_to_non_nullable
+              as String?,
       civilStatus: freezed == civilStatus
           ? _value.civilStatus
           : civilStatus // ignore: cast_nullable_to_non_nullable
@@ -248,6 +262,7 @@ abstract class _$$UserModelImplCopyWith<$Res>
       String? email,
       String? address,
       String? emergencyContact,
+      String? emergencyContactName,
       bool isAuthenticated,
       String? imageUrl,
       String? firstName,
@@ -264,6 +279,7 @@ abstract class _$$UserModelImplCopyWith<$Res>
       String? gender,
       String? religion,
       String? nationality,
+      String? governmentId,
       String? civilStatus,
       @TimestampSerializer() DateTime? createdAt});
 }
@@ -286,6 +302,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? email = freezed,
     Object? address = freezed,
     Object? emergencyContact = freezed,
+    Object? emergencyContactName = freezed,
     Object? isAuthenticated = null,
     Object? imageUrl = freezed,
     Object? firstName = freezed,
@@ -302,6 +319,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? gender = freezed,
     Object? religion = freezed,
     Object? nationality = freezed,
+    Object? governmentId = freezed,
     Object? civilStatus = freezed,
     Object? createdAt = freezed,
   }) {
@@ -333,6 +351,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
       emergencyContact: freezed == emergencyContact
           ? _value.emergencyContact
           : emergencyContact // ignore: cast_nullable_to_non_nullable
+              as String?,
+      emergencyContactName: freezed == emergencyContactName
+          ? _value.emergencyContactName
+          : emergencyContactName // ignore: cast_nullable_to_non_nullable
               as String?,
       isAuthenticated: null == isAuthenticated
           ? _value.isAuthenticated
@@ -398,6 +420,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.nationality
           : nationality // ignore: cast_nullable_to_non_nullable
               as String?,
+      governmentId: freezed == governmentId
+          ? _value.governmentId
+          : governmentId // ignore: cast_nullable_to_non_nullable
+              as String?,
       civilStatus: freezed == civilStatus
           ? _value.civilStatus
           : civilStatus // ignore: cast_nullable_to_non_nullable
@@ -421,6 +447,7 @@ class _$UserModelImpl extends _UserModel {
       this.email,
       this.address,
       this.emergencyContact,
+      this.emergencyContactName,
       required this.isAuthenticated,
       this.imageUrl,
       this.firstName,
@@ -437,6 +464,7 @@ class _$UserModelImpl extends _UserModel {
       this.gender,
       this.religion,
       this.nationality,
+      this.governmentId,
       this.civilStatus,
       @TimestampSerializer() this.createdAt})
       : _cooperativesJoined = cooperativesJoined,
@@ -460,6 +488,8 @@ class _$UserModelImpl extends _UserModel {
   final String? address;
   @override
   final String? emergencyContact;
+  @override
+  final String? emergencyContactName;
   @override
   final bool isAuthenticated;
   @override
@@ -511,6 +541,8 @@ class _$UserModelImpl extends _UserModel {
   @override
   final String? nationality;
   @override
+  final String? governmentId;
+  @override
   final String? civilStatus;
   @override
   @TimestampSerializer()
@@ -518,7 +550,7 @@ class _$UserModelImpl extends _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, phoneNo: $phoneNo, email: $email, address: $address, emergencyContact: $emergencyContact, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop, validIdUrl: $validIdUrl, birthCertificateUrl: $birthCertificateUrl, reviews: $reviews, middleName: $middleName, birthDate: $birthDate, age: $age, gender: $gender, religion: $religion, nationality: $nationality, civilStatus: $civilStatus, createdAt: $createdAt)';
+    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, phoneNo: $phoneNo, email: $email, address: $address, emergencyContact: $emergencyContact, emergencyContactName: $emergencyContactName, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop, validIdUrl: $validIdUrl, birthCertificateUrl: $birthCertificateUrl, reviews: $reviews, middleName: $middleName, birthDate: $birthDate, age: $age, gender: $gender, religion: $religion, nationality: $nationality, governmentId: $governmentId, civilStatus: $civilStatus, createdAt: $createdAt)';
   }
 
   @override
@@ -535,6 +567,8 @@ class _$UserModelImpl extends _UserModel {
             (identical(other.address, address) || other.address == address) &&
             (identical(other.emergencyContact, emergencyContact) ||
                 other.emergencyContact == emergencyContact) &&
+            (identical(other.emergencyContactName, emergencyContactName) ||
+                other.emergencyContactName == emergencyContactName) &&
             (identical(other.isAuthenticated, isAuthenticated) ||
                 other.isAuthenticated == isAuthenticated) &&
             (identical(other.imageUrl, imageUrl) ||
@@ -564,6 +598,8 @@ class _$UserModelImpl extends _UserModel {
                 other.religion == religion) &&
             (identical(other.nationality, nationality) ||
                 other.nationality == nationality) &&
+            (identical(other.governmentId, governmentId) ||
+                other.governmentId == governmentId) &&
             (identical(other.civilStatus, civilStatus) ||
                 other.civilStatus == civilStatus) &&
             (identical(other.createdAt, createdAt) ||
@@ -581,6 +617,7 @@ class _$UserModelImpl extends _UserModel {
         email,
         address,
         emergencyContact,
+        emergencyContactName,
         isAuthenticated,
         imageUrl,
         firstName,
@@ -597,6 +634,7 @@ class _$UserModelImpl extends _UserModel {
         gender,
         religion,
         nationality,
+        governmentId,
         civilStatus,
         createdAt
       ]);
@@ -624,6 +662,7 @@ abstract class _UserModel extends UserModel {
       final String? email,
       final String? address,
       final String? emergencyContact,
+      final String? emergencyContactName,
       required final bool isAuthenticated,
       final String? imageUrl,
       final String? firstName,
@@ -640,6 +679,7 @@ abstract class _UserModel extends UserModel {
       final String? gender,
       final String? religion,
       final String? nationality,
+      final String? governmentId,
       final String? civilStatus,
       @TimestampSerializer() final DateTime? createdAt}) = _$UserModelImpl;
   _UserModel._() : super._();
@@ -661,6 +701,8 @@ abstract class _UserModel extends UserModel {
   String? get address;
   @override
   String? get emergencyContact;
+  @override
+  String? get emergencyContactName;
   @override
   bool get isAuthenticated;
   @override
@@ -694,6 +736,8 @@ abstract class _UserModel extends UserModel {
   String? get religion;
   @override
   String? get nationality;
+  @override
+  String? get governmentId;
   @override
   String? get civilStatus;
   @override

@@ -34,11 +34,13 @@ class ListingBookings with _$ListingBookings {
     String? paymentStatus, //Partially Paid, Fully Paid, Cancelled
     required num price,
     String? roomId,
+    num? busNo,
     String? roomUid,
     @TimestampSerializer() DateTime? selectedDate,
     String? selectedTime,
     @TimestampSerializer() DateTime? startDate,
-    required String bookingStatus, //[Reserved, Cancelled, Completed, Refunded
+    required String
+        bookingStatus, //[Reserved, Cancelled, Completed, Refunded, Maintenance
     num? totalPrice,
     required String tripUid,
     required String tripName,

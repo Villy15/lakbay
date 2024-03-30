@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/firebase_notif_api.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
@@ -174,7 +175,7 @@ class ListingController extends StateNotifier<bool> {
     ListingModel listing,
     BuildContext context, {
     List<AvailableRoom>? rooms,
-    AvailableTransport? transport,
+    List<AvailableTransport>? transports,
     List<EntertainmentService>? entertainment,
   }) async {
     state = true;
@@ -189,6 +190,9 @@ class ListingController extends StateNotifier<bool> {
       (listingUid) async {
         rooms?.forEach((room) async {
           await _listingRepository.addRoom(listingUid, listing, room);
+        });
+        transports?.forEach((transport) async {
+          await _listingRepository.addTransport(listingUid, listing, transport);
         });
         // use code below incase transport will need availableTransport
         // if (transport != null) {
@@ -226,17 +230,39 @@ class ListingController extends StateNotifier<bool> {
       },
       (bookingUid) async {
         state = false;
-        booking.tasks?.forEach((element) {
-          if (booking.category == "Accommodation") {
-            element = element.copyWith(
-              roomId: booking.roomId,
-              listingId: listing.uid,
-              bookingId: bookingUid,
-            );
+
+        sendNotification('Listing Booked: ${listing.title}',
+            'Dates: ${booking.startDate} - ${booking.endDate}');
+
+        booking.tasks?.forEach((element) async {
+          switch (booking.category) {
+            case 'Accommodation':
+              {
+                element = element.copyWith(
+                  roomId: booking.roomId,
+                  listingId: listing.uid,
+                  bookingId: bookingUid,
+                );
+                _ref
+                    .read(listingControllerProvider.notifier)
+                    .addBookingTask(context, listing.uid!, element);
+              }
+            case 'Transport':
+              {
+                element = element.copyWith(
+                  listingId: listing.uid,
+                  bookingId: bookingUid,
+                );
+                if (await _listingRepository
+                        .readBookingTasksByBookingId(listing.uid!, bookingUid)
+                        .isEmpty &&
+                    context.mounted) {
+                  _ref
+                      .read(listingControllerProvider.notifier)
+                      .addBookingTask(context, listing.uid!, element);
+                }
+              }
           }
-          _ref
-              .read(listingControllerProvider.notifier)
-              .addBookingTask(context, listing.uid!, element);
         });
         _ref.read(salesControllerProvider.notifier).addSale(
             context,
@@ -263,16 +289,15 @@ class ListingController extends StateNotifier<bool> {
         if (booking.startDate?.hour == 0 &&
             booking.startDate?.minute == 0 &&
             booking.startDate?.second == 0) {
+          DateTime mergedDate = DateTime(
+            booking.startDate!.year,
+            booking.startDate!.month,
+            booking.startDate!.day,
+            booking.startTime!.hour,
+            booking.startTime!.minute,
+          );
 
-              DateTime mergedDate = DateTime(
-                booking.startDate!.year,
-                booking.startDate!.month,
-                booking.startDate!.day,
-                booking.startTime!.hour,
-                booking.startTime!.minute,
-              );
-
-              booking = booking.copyWith(startDate: mergedDate);
+          booking = booking.copyWith(startDate: mergedDate);
         }
 
         // check if the booking.endDate's time is set to 00:00:00 and if so, set it to booking.endTime
@@ -484,6 +509,28 @@ class ListingController extends StateNotifier<bool> {
   Stream<List<AvailableRoom>> getRoomByProperties(
       List<String> unavailableRoomIds, num guests) {
     return _listingRepository.readRoomByProperties(unavailableRoomIds, guests);
+  }
+
+  void addTransport(BuildContext context, ListingModel listing,
+      AvailableTransport transport) async {
+    state = true;
+    final result =
+        await _listingRepository.addTransport(listing.uid!, listing, transport);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (roomUid) async {
+        state = false;
+        if (context.mounted) {
+          context.pop();
+          showSnackBar(context, 'Vehicle added successfully');
+        }
+      },
+    );
   }
 
   // Read transport by customer properties

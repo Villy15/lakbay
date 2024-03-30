@@ -67,6 +67,7 @@ import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/tasks/event_tasks_edit.dart';
 import 'package:lakbay/features/tasks/event_tasks_read.dart';
+import 'package:lakbay/features/trips/plan/components/check_current_location.dart';
 import 'package:lakbay/features/trips/plan/components/select_location.dart';
 import 'package:lakbay/features/trips/plan/explore_page.dart';
 import 'package:lakbay/features/trips/plan/screens/plan_add_activity.dart';
@@ -366,7 +367,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               buildSubRoute(
                 '/select_location', 
                 (context, pathParameters, extra) {
-                  return const SelectLocation();
+                  final page = extra as String;
+                  return SelectLocation(page: page);
+                }
+              ),
+
+              buildSubRoute(
+                '/get_location',
+                (context, pathParameters, extra) {
+                  return const CheckCurrentLocation();
                 }
               ),
 
