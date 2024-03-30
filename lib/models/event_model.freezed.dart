@@ -35,6 +35,7 @@ mixin _$EventModel {
   @TimestampSerializer()
   DateTime? get endDate => throw _privateConstructorUsedError;
   EventCooperative get cooperative => throw _privateConstructorUsedError;
+  String? get eventType => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -61,7 +62,8 @@ abstract class $EventModelCopyWith<$Res> {
       List<String> managers,
       @TimestampSerializer() DateTime? startDate,
       @TimestampSerializer() DateTime? endDate,
-      EventCooperative cooperative});
+      EventCooperative cooperative,
+      String? eventType});
 
   $EventCooperativeCopyWith<$Res> get cooperative;
 }
@@ -92,6 +94,7 @@ class _$EventModelCopyWithImpl<$Res, $Val extends EventModel>
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? cooperative = null,
+    Object? eventType = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -146,6 +149,10 @@ class _$EventModelCopyWithImpl<$Res, $Val extends EventModel>
           ? _value.cooperative
           : cooperative // ignore: cast_nullable_to_non_nullable
               as EventCooperative,
+      eventType: freezed == eventType
+          ? _value.eventType
+          : eventType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -179,7 +186,8 @@ abstract class _$$EventModelImplCopyWith<$Res>
       List<String> managers,
       @TimestampSerializer() DateTime? startDate,
       @TimestampSerializer() DateTime? endDate,
-      EventCooperative cooperative});
+      EventCooperative cooperative,
+      String? eventType});
 
   @override
   $EventCooperativeCopyWith<$Res> get cooperative;
@@ -209,6 +217,7 @@ class __$$EventModelImplCopyWithImpl<$Res>
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? cooperative = null,
+    Object? eventType = freezed,
   }) {
     return _then(_$EventModelImpl(
       uid: freezed == uid
@@ -263,6 +272,10 @@ class __$$EventModelImplCopyWithImpl<$Res>
           ? _value.cooperative
           : cooperative // ignore: cast_nullable_to_non_nullable
               as EventCooperative,
+      eventType: freezed == eventType
+          ? _value.eventType
+          : eventType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -283,7 +296,8 @@ class _$EventModelImpl implements _EventModel {
       required final List<String> managers,
       @TimestampSerializer() this.startDate,
       @TimestampSerializer() this.endDate,
-      required this.cooperative})
+      required this.cooperative,
+      this.eventType})
       : _members = members,
         _managers = managers;
 
@@ -330,10 +344,12 @@ class _$EventModelImpl implements _EventModel {
   final DateTime? endDate;
   @override
   final EventCooperative cooperative;
+  @override
+  final String? eventType;
 
   @override
   String toString() {
-    return 'EventModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, members: $members, managers: $managers, startDate: $startDate, endDate: $endDate, cooperative: $cooperative)';
+    return 'EventModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, members: $members, managers: $managers, startDate: $startDate, endDate: $endDate, cooperative: $cooperative, eventType: $eventType)';
   }
 
   @override
@@ -359,7 +375,9 @@ class _$EventModelImpl implements _EventModel {
                 other.startDate == startDate) &&
             (identical(other.endDate, endDate) || other.endDate == endDate) &&
             (identical(other.cooperative, cooperative) ||
-                other.cooperative == cooperative));
+                other.cooperative == cooperative) &&
+            (identical(other.eventType, eventType) ||
+                other.eventType == eventType));
   }
 
   @JsonKey(ignore: true)
@@ -378,7 +396,8 @@ class _$EventModelImpl implements _EventModel {
       const DeepCollectionEquality().hash(_managers),
       startDate,
       endDate,
-      cooperative);
+      cooperative,
+      eventType);
 
   @JsonKey(ignore: true)
   @override
@@ -408,7 +427,8 @@ abstract class _EventModel implements EventModel {
       required final List<String> managers,
       @TimestampSerializer() final DateTime? startDate,
       @TimestampSerializer() final DateTime? endDate,
-      required final EventCooperative cooperative}) = _$EventModelImpl;
+      required final EventCooperative cooperative,
+      final String? eventType}) = _$EventModelImpl;
 
   factory _EventModel.fromJson(Map<String, dynamic> json) =
       _$EventModelImpl.fromJson;
@@ -441,6 +461,8 @@ abstract class _EventModel implements EventModel {
   DateTime? get endDate;
   @override
   EventCooperative get cooperative;
+  @override
+  String? get eventType;
   @override
   @JsonKey(ignore: true)
   _$$EventModelImplCopyWith<_$EventModelImpl> get copyWith =>

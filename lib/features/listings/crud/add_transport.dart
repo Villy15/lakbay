@@ -44,19 +44,24 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   String type = 'Public';
   num guests = 0;
   num luggage = 0;
-  TimeOfDay startDate = TimeOfDay.now();
-  TimeOfDay endDate = TimeOfDay.now();
+  num vehicles = 0;
+  TimeOfDay startDate = const TimeOfDay(hour: 8, minute: 30);
+  TimeOfDay endDate = const TimeOfDay(hour: 17, minute: 30);
   TimeOfDay travelDuration = const TimeOfDay(hour: 1, minute: 15);
-  final TextEditingController startDateController = TextEditingController();
-  final TextEditingController endDateController = TextEditingController();
+  final TextEditingController startDateController =
+      TextEditingController(text: ('8:30 AM'));
+  final TextEditingController endDateController =
+      TextEditingController(text: ('5:30 AM'));
   final TextEditingController travelDurationController =
       TextEditingController();
   List<bool> workingDays = List.filled(7, false);
   List<BookingTask>? fixedTasks = [];
+  Map<String, String> drivers = {};
   final String _addressDestination = '';
   final String _addressPickup = '';
   final String _addressLocation = '';
 
+  List<AvailableTransport> availableTransports = [];
   List<File>? _images = [];
   int departures = 0;
   final List<TextEditingController> _departureController = [];
@@ -127,8 +132,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
       // Next
       if (activeStep != upperBound) ...[
-        ElevatedButton(
-            style: ElevatedButton.styleFrom(
+        FilledButton(
+            style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
@@ -151,9 +156,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             ),
             onPressed: () {
               AvailableTransport transport = AvailableTransport(
+                vehicleNo: vehicles,
                 guests: guests,
                 luggage: luggage,
-                price: num.parse(_feeController.text),
                 available: true,
                 workingDays: workingDays,
                 startTime: startDate,
@@ -185,6 +190,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                     cooperativeName: widget.coop.name),
                 duration: travelDuration,
                 description: _descriptionController.text,
+                driverIds: drivers.keys.toList(),
+                driverNames: drivers.values.toList(),
                 province: widget.coop.province,
                 publisherId: ref.read(userProvider)!.uid,
                 title: _titleController.text,
@@ -243,7 +250,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 // add listing
                 ref.read(listingControllerProvider.notifier).addListing(
                     listing, context,
-                    transport: listing.availableTransport);
+                    transports: availableTransports);
               }));
     }
   }
@@ -263,6 +270,10 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             ),
             Icon(
               Icons.details_outlined,
+              color: Theme.of(context).colorScheme.background,
+            ),
+            Icon(
+              Icons.directions_bus_filled_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
@@ -295,7 +306,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           onStepReached: (index) {
             setState(() {
               activeStep = index;
-              debugPrint('the current step is $activeStep');
             });
           },
         ),
@@ -331,21 +341,24 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         return 'Add details';
 
       case 2:
-        return 'Add supporting details...';
+        return 'Vehicle Information';
 
       case 3:
-        return 'Where are you located?';
+        return 'Add supporting details...';
 
       case 4:
-        return 'Add listing photo/s';
+        return 'Where are you located?';
 
       case 5:
-        return 'Add Fixed Tasks';
+        return 'Add listing photo/s';
 
       case 6:
-        return 'Add Policies';
+        return 'Add Fixed Tasks';
 
       case 7:
+        return 'Add Policies';
+
+      case 8:
         return 'Review Listing';
 
       default:
@@ -428,17 +441,27 @@ class _AddTransportState extends ConsumerState<AddTransport> {
     ];
     return Column(
       children: [
-        ElevatedButton(
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return SizedBox(
-                      child: Dialog.fullscreen(child: showFixedTaskForm()),
-                    );
-                  });
-            },
-            child: const Text("Add Task")),
+        SizedBox(
+          width: MediaQuery.sizeOf(context).width * .5,
+          child: FilledButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text("Create Task"),
+                        content: showFixedTaskForm(),
+                      );
+                    });
+              },
+              style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(4.0), // Adjust the radius as needed
+                ),
+              ),
+              child: const Text("Add Task")),
+        ),
         const SizedBox(
           height: 10,
         ),
@@ -447,124 +470,56 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: fixedTasks?.length,
             itemBuilder: ((context, taskIndex) {
-              return Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Colors.black, width: 1), // Border color
-                    borderRadius: BorderRadius.circular(
-                        6), // Border radius for rounded corners
+              return ListTile(
+                title: DisplayText(
+                  text: 'Task: ${fixedTasks![taskIndex].name}',
+                  lines: 3,
+                  style: const TextStyle(
+                    fontSize: 16, // Adjust text style
+                    fontWeight: FontWeight.w500,
                   ),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.only(left: 5.0, right: 5, bottom: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Spacer(),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.close,
-                                color: Colors.black,
-                                size: 25,
-                              ), // 'X' icon
-                              onPressed: () {},
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment
-                              .start, // Aligns children at the start of the cross axis
-                          children: [
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Task: ",
-                                style: TextStyle(
-                                  fontSize:
-                                      16, // Ensure this matches the font size of the other text
-                                ),
+                ),
+                trailing: IconButton(
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.black,
+                    size: 16,
+                  ), // 'X' icon
+                  onPressed: () {
+                    setState(
+                      () {
+                        fixedTasks?.removeAt(taskIndex);
+                      },
+                    );
+                  },
+                ),
+                subtitle: SizedBox(
+                  height: MediaQuery.sizeOf(context).height * .03,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: fixedTasks?[taskIndex].assignedNames.length ?? 0,
+                    itemBuilder: (context, nameIndex) {
+                      return nameIndex == 0
+                          ? Text(
+                              'Assigned: ${fixedTasks?[taskIndex].assignedNames[nameIndex]}, ',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w300,
                               ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 10.0),
-                                child: DisplayText(
-                                  text: fixedTasks![taskIndex].name,
-                                  lines: 3,
-                                  style: const TextStyle(
-                                    fontSize: 16, // Adjust text style
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                            )
+                          : Text(
+                              '${fixedTasks?[taskIndex].assignedNames[nameIndex]}, ',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w300,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Assigned: ",
-                                style: TextStyle(
-                                  fontSize:
-                                      16, // Ensure this matches the font size of the other text
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2, // 2 items per row
-                                    crossAxisSpacing:
-                                        1.5, // Space between cards horizontally
-                                    mainAxisSpacing: 1.5,
-                                    mainAxisExtent: MediaQuery.sizeOf(context)
-                                            .height /
-                                        20, // Space between cards vertically
-                                  ),
-                                  itemCount: fixedTasks![taskIndex]
-                                      .assignedNames
-                                      .length,
-                                  itemBuilder: (context, assignedIndex) {
-                                    return Container(
-                                        alignment: Alignment.centerLeft,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color:
-                                                  Colors.grey), // Border color
-                                          borderRadius: BorderRadius.circular(
-                                              4), // Border radius for rounded corners
-                                        ),
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10.0),
-                                          child: Text(
-                                            fixedTasks![taskIndex]
-                                                    .assignedNames[
-                                                assignedIndex], // Replace with the name from your data
-                                            style: const TextStyle(
-                                              fontSize: 14, // Adjust text style
-                                              overflow: TextOverflow
-                                                  .ellipsis, // Handle long text
-                                            ),
-                                          ),
-                                        ));
-                                  }),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ));
+                            );
+                    },
+                  ),
+                ),
+              );
             })),
         if (fixedTasks!.isEmpty)
           SizedBox(
@@ -585,232 +540,203 @@ class _AddTransportState extends ConsumerState<AddTransport> {
     List<String> assignedIds = [];
     List<String> assignedNames = [];
     List<CooperativeMembers>? members;
-    return StatefulBuilder(builder: (context, setState) {
-      return Column(
-        children: [
-          AppBar(
-            leading: IconButton(
-              iconSize: 30,
-              onPressed: () {
-                Navigator.of(context).pop(); // Corrected the navigation method
-              },
-              icon: const Icon(
-                Icons.arrow_back,
+    return SingleChildScrollView(
+      child: StatefulBuilder(builder: (context, setState) {
+        return Column(
+          children: [
+            Column(children: [
+              TextFormField(
+                controller: taskNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Task Name*',
+                  border: OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior
+                      .always, // Keep the label always visible
+                  hintText: "e.g., Clean the car",
+                ),
               ),
-            ),
-            title: const Text(
-              "Create Task",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+              const SizedBox(
+                height: 10,
               ),
-            ),
-          ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(children: [
-                TextFormField(
-                  controller: taskNameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Task Name*',
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    hintText: "e.g., Clean the car",
-                  ),
+              TextFormField(
+                controller: committeeController,
+                maxLines: 1,
+                decoration: const InputDecoration(
+                  labelText: 'Committee Assigned*',
+                  border: OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior
+                      .always, // Keep the label always visible
+                  suffixIcon:
+                      Icon(Icons.arrow_drop_down), // Dropdown arrow icon
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                  controller: committeeController,
-                  maxLines: 1,
-                  decoration: const InputDecoration(
-                    labelText: 'Committee Assigned*',
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    suffixIcon:
-                        Icon(Icons.arrow_drop_down), // Dropdown arrow icon
-                  ),
-                  readOnly: true,
-                  enabled: false,
-                  onTap: () {},
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Column(
-                  children: [
-                    TextFormField(
-                      maxLines: 1,
-                      decoration: const InputDecoration(
-                          labelText: 'Members Assigned*',
-                          border: OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior
-                              .always, // Keep the label always visible
-                          suffixIcon: Icon(Icons.arrow_drop_down),
-                          hintText:
-                              "Press to select member" // Dropdown arrow icon
-                          ),
-                      readOnly: true,
-                      canRequestFocus: false,
-                      onTap: () async {
-                        members = await ref.read(
-                            getAllMembersInCommitteeProvider(CommitteeParams(
-                          committeeName: committeeController.text,
-                          coopUid: ref.watch(userProvider)!.currentCoop!,
-                        )).future);
+                readOnly: true,
+                enabled: false,
+                onTap: () {},
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Column(
+                children: [
+                  TextFormField(
+                    maxLines: 1,
+                    decoration: const InputDecoration(
+                        labelText: 'Members Assigned*',
+                        border: OutlineInputBorder(),
+                        floatingLabelBehavior: FloatingLabelBehavior
+                            .always, // Keep the label always visible
+                        suffixIcon: Icon(Icons.arrow_drop_down),
+                        hintText:
+                            "Press to select member" // Dropdown arrow icon
+                        ),
+                    readOnly: true,
+                    canRequestFocus: false,
+                    onTap: () async {
+                      members = await ref.read(
+                          getAllMembersInCommitteeProvider(CommitteeParams(
+                        committeeName: committeeController.text,
+                        coopUid: ref.watch(userProvider)!.currentCoop!,
+                      )).future);
 
-                        members = members!
-                            .where((member) =>
-                                !assignedNames.contains(member.name))
-                            .toList();
-                        if (context.mounted) {
-                          return showModalBottomSheet(
-                            context: context,
-                            builder: (builder) {
-                              return Container(
-                                padding: const EdgeInsets.all(
-                                    10.0), // Padding for overall container
-                                child: Column(
-                                  children: [
-                                    // Optional: Add a title or header for the modal
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10.0),
-                                      child: Text(
-                                        "Members (${committeeController.text})",
-                                        style: const TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: members!.length,
-                                        itemBuilder: (context, index) {
-                                          return ListTile(
-                                            title: Text(
-                                              members![index].name,
-                                              style: const TextStyle(
-                                                  fontSize:
-                                                      16.0), // Adjust font size
-                                            ),
-                                            onTap: () {
-                                              setState(
-                                                () {
-                                                  assignedIds.add(
-                                                      members![index].uid!);
-                                                  assignedNames.add(
-                                                      members![index].name);
-                                                },
-                                              );
-                                              context.pop();
-                                            },
-                                            // Optional: Add trailing icons or actions
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // 2 items per row
-                        crossAxisSpacing:
-                            1.5, // Space between cards horizontally
-                        mainAxisSpacing: 1.5,
-                        mainAxisExtent: MediaQuery.sizeOf(context).height /
-                            8, // Space between cards vertically
-                      ),
-                      itemCount: assignedNames
-                          .length, // Replace with the length of your data
-                      itemBuilder: (context, index) {
-                        return Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.grey), // Border color
-                              borderRadius: BorderRadius.circular(
-                                  4), // Border radius for rounded corners
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 10.0),
-                              child: Row(
+                      members = members!
+                          .where(
+                              (member) => !assignedNames.contains(member.name))
+                          .toList();
+                      if (context.mounted) {
+                        return showModalBottomSheet(
+                          context: context,
+                          builder: (builder) {
+                            return Container(
+                              padding: const EdgeInsets.all(
+                                  10.0), // Padding for overall container
+                              child: Column(
                                 children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.close,
-                                      color: Colors.black,
-                                      size: 16,
-                                    ), // 'X' icon
-                                    onPressed: () {
-                                      setState(
-                                        () {
-                                          assignedIds.remove(members![members!
-                                                  .indexWhere((element) =>
-                                                      element.name ==
-                                                      assignedNames[index])]
-                                              .uid!);
-                                          assignedNames.removeAt(index);
-                                        },
-                                      );
-                                    },
+                                  // Optional: Add a title or header for the modal
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0),
+                                    child: Text(
+                                      "Members (${committeeController.text})",
+                                      style: const TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                   Expanded(
-                                    child: Text(
-                                      assignedNames[
-                                          index], // Replace with the name from your data
-                                      style: const TextStyle(
-                                        fontSize: 14, // Adjust text style
-                                        overflow: TextOverflow
-                                            .ellipsis, // Handle long text
-                                      ),
+                                    child: ListView.builder(
+                                      itemCount: members!.length,
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          title: Text(
+                                            members![index].name,
+                                            style: const TextStyle(
+                                                fontSize:
+                                                    16.0), // Adjust font size
+                                          ),
+                                          onTap: () {
+                                            setState(
+                                              () {
+                                                assignedIds
+                                                    .add(members![index].uid!);
+                                                assignedNames
+                                                    .add(members![index].name);
+                                              },
+                                            );
+                                            context.pop();
+                                          },
+                                          // Optional: Add trailing icons or actions
+                                        );
+                                      },
                                     ),
                                   ),
                                 ],
                               ),
-                            ));
-                      },
-                    )
-                  ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: assignedNames.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.all(0),
+                        horizontalTitleGap: 8,
+                        leading: Text('[${index + 1}]'),
+                        title: Text(
+                          assignedNames[index],
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        trailing: IconButton(
+                          icon: const Icon(
+                            Icons.close,
+                            color: Colors.black,
+                            size: 16,
+                          ), // 'X' icon
+                          onPressed: () {
+                            setState(
+                              () {
+                                assignedIds.remove(members![members!.indexWhere(
+                                        (element) =>
+                                            element.name ==
+                                            assignedNames[index])]
+                                    .uid!);
+                                assignedNames.removeAt(index);
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  )
+                ],
+              ),
+            ]),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FilledButton(
+                    onPressed: () {
+                      context.pop();
+                    },
+                    child: const Text('Close')),
+                const SizedBox(
+                  width: 10,
                 ),
-              ]),
+                FilledButton(
+                    onPressed: () {
+                      this.setState(() {
+                        fixedTasks?.add(BookingTask(
+                            listingName: _titleController.text,
+                            status: 'Incomplete',
+                            assignedIds: assignedIds,
+                            assignedNames: assignedNames,
+                            committee: committeeController.text,
+                            complete: false,
+                            openContribution: false,
+                            name: taskNameController.text));
+                      });
+                      context.pop();
+                    },
+                    child: const Text("Add Task")),
+              ],
             ),
-          ),
-          const Spacer(),
-          ElevatedButton(
-              onPressed: () {
-                this.setState(() {
-                  fixedTasks?.add(BookingTask(
-                      listingName: _titleController.text,
-                      status: 'Incomplete',
-                      assignedIds: assignedIds,
-                      assignedNames: assignedNames,
-                      committee: committeeController.text,
-                      complete: false,
-                      openContribution: false,
-                      name: taskNameController.text));
-                });
-                context.pop();
-              },
-              child: const Text("Add Task")),
-        ],
-      );
-    });
+          ],
+        );
+      }),
+    );
   }
 
   Widget addPolicies(BuildContext context) {
@@ -901,6 +827,11 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   }
 
   Widget addDetails(BuildContext context) {
+    List<String> notes = [
+      'Vehicle count will be used to determine how many availability of your service.',
+      'Luggage and Capacity is referring to a singular vehicle.',
+      'Vehicles pertained should be of similar capacity, in the case of a larger or smaller vehicle, create another listing for it.',
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -911,7 +842,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           controller: _titleController,
           decoration: const InputDecoration(
               labelText: 'Listing Title*',
-              helperText: '*required',
               border: OutlineInputBorder(),
               floatingLabelBehavior: FloatingLabelBehavior.always,
               hintText: "Lakbay Transport"),
@@ -922,7 +852,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           maxLines: null,
           decoration: const InputDecoration(
               labelText: 'Description*',
-              helperText: '*required',
               border: OutlineInputBorder(),
               floatingLabelBehavior: FloatingLabelBehavior.always,
               hintText: "A transport from Lakbay..."),
@@ -931,12 +860,11 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         TextFormField(
           controller: _feeController,
           decoration: const InputDecoration(
-              labelText: 'Fixed Price*',
+              labelText: 'Price*',
               prefix: Text('₱'),
-              helperText: '*required',
               border: OutlineInputBorder(),
               floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: "1000.00"),
+              hintText: "150.00"),
         ),
         const SizedBox(height: 10),
         if (type == 'Private') ...[
@@ -959,14 +887,14 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             const SizedBox(height: 10),
           ],
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            ElevatedButton(
+            FilledButton(
                 onPressed: () {
                   setState(() {
                     _showByHourFeeField = true;
                   });
                 },
                 child: const Text('Add Price By Hour')),
-            ElevatedButton(
+            FilledButton(
                 onPressed: () {
                   setState(() {
                     _showByHourFeeField = false;
@@ -976,67 +904,132 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           ]),
           const SizedBox(height: 10)
         ],
-        const Text('Guest Information',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const Text('Let the guests know how many people can stay...',
-            style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-        ListTile(
-            title: const Row(children: [
-              Icon(Icons.people_alt_outlined),
-              SizedBox(width: 10),
-              Text('Guests')
-            ]),
-            trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-              IconButton(
-                  icon: const Icon(Icons.remove),
-                  onPressed: () {
-                    if (guests >= 1) {
-                      setState(() {
-                        guests--;
-                      });
-                    }
-                  }),
-              const SizedBox(width: 10),
-              Text("$guests", style: const TextStyle(fontSize: 16)),
-              const SizedBox(width: 10),
-              IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    setState(() {
-                      guests++;
-                    });
-                  })
-            ])),
         const SizedBox(height: 10),
-        ListTile(
-            title: const Row(children: [
-              Icon(Icons.luggage),
-              SizedBox(width: 10),
-              Text('Luggages')
-            ]),
-            trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-              IconButton(
-                  icon: const Icon(Icons.remove),
+        const Text('Select Drivers',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text(
+            'Select the drivers of the vehicles when the service is booked...',
+            style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+        ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: drivers.keys.length,
+            itemBuilder: (context, driverIndex) {
+              final driverKey = drivers.keys
+                  .toList()[driverIndex]; // Get the key at the current index
+              final driverName =
+                  drivers[driverKey]; // Get the corresponding value
+
+              return ListTile(
+                dense: true,
+                contentPadding: const EdgeInsets.all(0),
+                horizontalTitleGap: 8,
+                leading: Text('[${driverIndex + 1}]'),
+                title: Text('$driverName'),
+                trailing: IconButton(
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.black,
+                    size: 16,
+                  ), // 'X' icon
                   onPressed: () {
-                    if (luggage >= 1) {
-                      setState(() {
-                        luggage--;
-                      });
+                    setState(
+                      () {
+                        drivers.remove(driverKey);
+                      },
+                    );
+                  },
+                ),
+              );
+            }),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width * .5,
+              child: FilledButton(
+                  onPressed: () async {
+                    List<String> assignedNames = [];
+                    List<CooperativeMembers>? members;
+                    TextEditingController committeeController =
+                        TextEditingController(text: 'Tourism');
+                    members = await ref
+                        .read(getAllMembersInCommitteeProvider(CommitteeParams(
+                      committeeName: committeeController.text,
+                      coopUid: ref.watch(userProvider)!.currentCoop!,
+                    )).future);
+
+                    members = members!
+                        .where(
+                            (member) => !drivers.values.contains(member.name))
+                        .toList();
+                    if (context.mounted) {
+                      return showModalBottomSheet(
+                        context: context,
+                        builder: (builder) {
+                          return Container(
+                            padding: const EdgeInsets.all(
+                                10.0), // Padding for overall container
+                            child: Column(
+                              children: [
+                                // Optional: Add a title or header for the modal
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10.0),
+                                  child: Text(
+                                    "Members (${committeeController.text})",
+                                    style: const TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: members!.length,
+                                    itemBuilder: (context, index) {
+                                      return ListTile(
+                                        title: Text(
+                                          members![index].name,
+                                          style: const TextStyle(
+                                              fontSize:
+                                                  16.0), // Adjust font size
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            drivers[members![index].uid!] =
+                                                members[index]
+                                                    .name; // Add to the map
+                                            assignedNames
+                                                .add(members[index].name);
+                                          });
+                                          Navigator.pop(
+                                              context); // Use Navigator.pop to close the bottom sheet
+                                        },
+
+                                        // Optional: Add trailing icons or actions
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
                     }
-                  }),
-              const SizedBox(width: 10),
-              Text("$luggage", style: const TextStyle(fontSize: 16)),
-              const SizedBox(width: 10),
-              IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    setState(() {
-                      luggage++;
-                    });
-                  })
-            ])),
-        // add working days of the listing
-        const SizedBox(height: 10)
+                  },
+                  style: FilledButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          4.0), // Adjust the radius as needed
+                    ),
+                  ),
+                  child: const Text('Add Driver')),
+            ),
+          ],
+        ),
+        addNotes(notes),
       ],
     );
   }
@@ -1077,7 +1070,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           controller: _addressController,
           decoration: const InputDecoration(
             labelText: 'Address*',
-            helperText: '*required',
             border: OutlineInputBorder(),
           ),
           readOnly: true,
@@ -1145,7 +1137,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         maxLines: 1,
         decoration: const InputDecoration(
           labelText: 'Start Time*',
-          helperText: '*required',
           border: OutlineInputBorder(),
           floatingLabelBehavior:
               FloatingLabelBehavior.always, // Keep the label always visible
@@ -1184,7 +1175,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         maxLines: 1,
         decoration: const InputDecoration(
           labelText: 'End Time*',
-          helperText: '*required',
           border: OutlineInputBorder(),
           floatingLabelBehavior:
               FloatingLabelBehavior.always, // Keep the label always visible
@@ -1226,7 +1216,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           maxLines: 1,
           decoration: const InputDecoration(
             labelText: 'Duration*',
-            helperText: '*required',
             border: OutlineInputBorder(),
             floatingLabelBehavior:
                 FloatingLabelBehavior.always, // Keep the label always visible
@@ -1269,7 +1258,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           itemBuilder: (BuildContext context, int index) {
             return Row(
               children: [
-                // replace elevatedButton with textfield
                 const SizedBox(height: 15),
                 Expanded(
                   child: Padding(
@@ -1307,17 +1295,23 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         ),
         const SizedBox(height: 10),
         Center(
-          child: ElevatedButton(
+          child: FilledButton(
               onPressed: () {
                 setState(() {
                   departures++;
                   _departureController.add(TextEditingController());
                 });
               },
+              style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(4.0), // Adjust the radius as needed
+                ),
+              ),
               child: const Text('Add Departure Time')),
         ),
         const SizedBox(height: 15),
-        const Text('Pickup Point',
+        const Text('Pickup & Destination',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const Padding(
           padding: EdgeInsets.only(left: 8.0),
@@ -1328,8 +1322,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         TextFormField(
             controller: _pickupController,
             decoration: const InputDecoration(
-                labelText: 'Destination*',
-                helperText: '*required',
+                labelText: 'Pickup*',
                 border: OutlineInputBorder(),
                 floatingLabelBehavior: FloatingLabelBehavior.always,
                 hintText: "Address*"),
@@ -1339,28 +1332,11 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               await context.push('/select_location', extra: 'pickup');
             }),
         // Google Map
-        const SizedBox(height: 15),
-        GestureDetector(
-          onVerticalDragUpdate: (details) {},
-          child: SizedBox(
-            height: 400,
-            child: MapWidget(address: _pickupController.text),
-          ),
-        ),
-        const SizedBox(height: 30),
-        const Text('Destination',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const Padding(
-          padding: EdgeInsets.only(left: 8.0),
-          child: Text('Add your preferred destination for the listing...',
-              style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-        ),
         const SizedBox(height: 10),
         TextFormField(
           controller: _destinationController,
           decoration: const InputDecoration(
               labelText: 'Destination*',
-              helperText: '*required',
               border: OutlineInputBorder(),
               floatingLabelBehavior: FloatingLabelBehavior.always,
               hintText: "Address*"),
@@ -1370,13 +1346,14 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             await context.push('/select_location', extra: 'destination');
           },
         ),
-        // Google Map
         const SizedBox(height: 15),
         GestureDetector(
           onVerticalDragUpdate: (details) {},
           child: SizedBox(
             height: 400,
-            child: MapWidget(address: _destinationController.text),
+            child: TwoMarkerMapWidget(
+                pickup: _pickupController.text,
+                destination: _destinationController.text),
           ),
         ),
         const SizedBox(height: 10),
@@ -1412,10 +1389,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         )
       ]))
     ]);
-  }
-
-  Widget addGuestInfo(BuildContext context) {
-    return const Column();
   }
 
   Widget reviewListing(BuildContext context) {
@@ -1541,20 +1514,218 @@ class _AddTransportState extends ConsumerState<AddTransport> {
       case 1:
         return addDetails(context);
       case 2:
-        return addSuppDetails(context);
+        return addVehicleDetails(context);
       case 3:
-        return addLocation(context);
+        return addSuppDetails(context);
       case 4:
-        return addListingPhotos(context);
+        return addLocation(context);
       case 5:
-        return addFixedTasks(context);
+        return addListingPhotos(context);
       case 6:
-        return addPolicies(context);
+        return addFixedTasks(context);
       case 7:
+        return addPolicies(context);
+      case 8:
         return reviewListing(context);
       default:
         return chooseType(context);
     }
+  }
+
+  Widget addVehicleDetails(BuildContext context) {
+    return Column(children: [
+      Center(
+        child: SizedBox(
+          width: MediaQuery.sizeOf(context).width / 1.2,
+          child: FilledButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    TextEditingController vehicleNoController =
+                        TextEditingController();
+                    num capacity = 0;
+                    num luggage = 0;
+                    return SizedBox(
+                      child: AlertDialog(
+                        title: const Text('Create Vehicle'),
+                        content: showAddVehicleForm(),
+                      ),
+                    );
+                  });
+            },
+            style: FilledButton.styleFrom(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                    8.0), // Adjust the border radius as needed
+              ),
+            ),
+            child: const Text('Add Vehicle'),
+          ),
+        ),
+      ),
+      if (availableTransports.isEmpty)
+        SizedBox(
+            height: MediaQuery.sizeOf(context).height / 4,
+            width: double.infinity,
+            child: const Center(child: Text("No Vehicles Added"))),
+      ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: availableTransports.length,
+          itemBuilder: ((context, index) {
+            return ListTile(
+              leading: Text('[${index + 1}]'),
+              title: Text(
+                "Vehicle No: ${availableTransports[index].vehicleNo}",
+                style: const TextStyle(fontSize: 14),
+              ),
+              subtitle: Row(
+                children: [
+                  Text(
+                    'Capacity: ${availableTransports[index].guests} | ',
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w300),
+                  ),
+                  Text(
+                    'Luggage: ${availableTransports[index].luggage}',
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w300),
+                  ),
+                ],
+              ),
+              trailing: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      availableTransports.removeAt(index);
+                    });
+                  },
+                  icon: const Icon(
+                    Icons.close,
+                    size: 16,
+                  )),
+            );
+          })),
+    ]);
+  }
+
+  Widget showAddVehicleForm() {
+    TextEditingController vehicleNoController = TextEditingController();
+    num capacity = 0;
+    num luggage = 0;
+    return StatefulBuilder(builder: (context, setState) {
+      return SingleChildScrollView(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: TextFormField(
+                  controller: vehicleNoController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Vehicle No",
+                      floatingLabelBehavior: FloatingLabelBehavior
+                          .always, // Keep the label always visible
+                      hintText: "",
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 12.0)),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  })),
+          SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+          ListTile(
+              horizontalTitleGap: 0,
+              title: const Text('Passengers', style: TextStyle(fontSize: 14)),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                IconButton(
+                    iconSize: 14,
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      if (capacity >= 1) {
+                        setState(() {
+                          capacity--;
+                        });
+                      }
+                    }),
+                Text("$capacity", style: const TextStyle(fontSize: 16)),
+                IconButton(
+                    iconSize: 14,
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      setState(() {
+                        capacity++;
+                      });
+                    })
+              ])),
+          ListTile(
+              title: const Text(
+                'Luggage',
+                style: TextStyle(fontSize: 14),
+              ),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                IconButton(
+                    iconSize: 14,
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      if (luggage >= 1) {
+                        setState(() {
+                          luggage--;
+                        });
+                      }
+                    }),
+                Text("$luggage", style: const TextStyle(fontSize: 16)),
+                IconButton(
+                    iconSize: 14,
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      setState(() {
+                        luggage++;
+                      });
+                    })
+              ])),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FilledButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: const Text("Close")),
+              const SizedBox(
+                width: 10,
+              ),
+              FilledButton(
+                  onPressed: () {
+                    AvailableTransport transport = AvailableTransport(
+                        available: true,
+                        vehicleNo: num.parse(vehicleNoController.text),
+                        guests: guests,
+                        luggage: luggage,
+                        workingDays: workingDays,
+                        startTime: startDate,
+                        endTime: endDate);
+                    this.setState(() {
+                      int index = availableTransports.indexWhere((element) =>
+                          element.vehicleNo ==
+                          num.parse(vehicleNoController.text));
+                      if (index == -1) {
+                        availableTransports.add(transport);
+                      } else {
+                        availableTransports[index] = transport;
+                      }
+                    });
+                    context.pop();
+                  },
+                  child: const Text("Confirm")),
+            ],
+          )
+        ]),
+      );
+    });
   }
 }
 

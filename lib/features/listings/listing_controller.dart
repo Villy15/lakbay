@@ -174,7 +174,7 @@ class ListingController extends StateNotifier<bool> {
     ListingModel listing,
     BuildContext context, {
     List<AvailableRoom>? rooms,
-    AvailableTransport? transport,
+    List<AvailableTransport>? transports,
     List<EntertainmentService>? entertainment,
   }) async {
     state = true;
@@ -189,6 +189,9 @@ class ListingController extends StateNotifier<bool> {
       (listingUid) async {
         rooms?.forEach((room) async {
           await _listingRepository.addRoom(listingUid, listing, room);
+        });
+        transports?.forEach((transport) async {
+          await _listingRepository.addTransport(listingUid, listing, transport);
         });
         // use code below incase transport will need availableTransport
         // if (transport != null) {
@@ -501,6 +504,28 @@ class ListingController extends StateNotifier<bool> {
   Stream<List<AvailableRoom>> getRoomByProperties(
       List<String> unavailableRoomIds, num guests) {
     return _listingRepository.readRoomByProperties(unavailableRoomIds, guests);
+  }
+
+  void addTransport(BuildContext context, ListingModel listing,
+      AvailableTransport transport) async {
+    state = true;
+    final result =
+        await _listingRepository.addTransport(listing.uid!, listing, transport);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (roomUid) async {
+        state = false;
+        if (context.mounted) {
+          context.pop();
+          showSnackBar(context, 'Vehicle added successfully');
+        }
+      },
+    );
   }
 
   // Read transport by customer properties

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -94,7 +96,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                         children: [
                                           TextSpan(
                                             text:
-                                                "₱${transport.availableTransport!.price}",
+                                                "₱${widget.transportListings![index].price}",
                                             style: TextStyle(
                                                 fontSize:
                                                     14, // Size for the price
@@ -956,8 +958,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                     margin: const EdgeInsets.only(top: 20),
                     width: double.infinity,
                     child: FilledButton(
-                        onPressed: () {
-                          proceedTransportCheckOut(
+                        onPressed: () async {
+                          await proceedTransportCheckOut(
                               typeOfTrip,
                               listing,
                               user,
@@ -985,7 +987,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
         )));
   }
 
-  void proceedTransportCheckOut(
+  Future<dynamic> proceedTransportCheckOut(
       String typeOfTrip,
       ListingModel listing,
       UserModel user,
@@ -998,98 +1000,66 @@ class _TransportCardState extends ConsumerState<TransportCard> {
       TextEditingController emergencyContactNameController,
       TextEditingController emergencyContactNoController,
       TimeOfDay? startTime,
-      TimeOfDay? endTime) {
+      TimeOfDay? endTime) async {
     final currentTrip = ref.read(currentTripProvider);
-    if (typeOfTrip == 'Public') {
-      ListingBookings booking = ListingBookings(
-          tripUid: currentTrip!.uid!,
-          tripName: currentTrip.name,
-          listingId: listing.uid!,
-          listingTitle: listing.title,
-          customerName: user.name,
-          bookingStatus: "Reserved",
-          price: transport.price,
-          category: "Transport",
-          startDate: DateTime(startDate.year, startDate.month, startDate.day,
-              departureTime!.hour, departureTime.minute),
-          endDate: DateTime(endDate.year, endDate.month, endDate.day,
-                  departureTime.hour, departureTime.minute)
-              .add(Duration(
-                  hours: listing.duration!.hour,
-                  minutes: listing.duration!.minute)),
-          startTime: departureTime,
-          endTime: departureTime,
-          email: "",
-          governmentId:
-              "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
-          guests: guests,
-          customerPhoneNo: phoneNoController.text,
-          customerId: user.uid,
-          emergencyContactName: emergencyContactNameController.text,
-          emergencyContactNo: emergencyContactNoController.text,
-          needsContributions: false,
-          tasks: listing.fixedTasks,
-          typeOfTrip: typeOfTrip);
+    DateFormat('MMMM dd, yyyy').format(startDate);
+    DateFormat('MMMM dd, yyyy').format(endDate);
+    final query = FirebaseFirestore.instance
+        .collectionGroup(
+            'bookings') // Perform collection group query for 'bookings'
+        .where('category', isEqualTo: 'Transport')
+        .where('bookingStatus', isEqualTo: "Reserved")
+        .where('listingId', isEqualTo: listing.uid);
 
-      showDialog(
-          context: context,
-          builder: (context) {
-            return Dialog.fullscreen(
-                child: CustomerTransportCheckout(
-                    listing: listing, transport: transport, booking: booking));
-          }).then((value) {
-        context.pop();
-      });
-    } else {
-      ListingBookings booking = ListingBookings(
-          tripUid: currentTrip!.uid!,
-          tripName: currentTrip.name,
-          listingId: listing.uid!,
-          listingTitle: listing.title,
-          customerName: user.name,
-          bookingStatus: "Reserved",
-          price: transport.price,
-          category: "Transport",
-          // if startTime is not null, then use it for the startDate
-          startDate: startTime != null
-              ? DateTime(startDate.year, startDate.month, startDate.day,
-                  startTime.hour, startTime.minute)
-              : startDate,
-          // if endTime is not null, then use it for the endDate
-          endDate: endTime != null
-              ? DateTime(endDate.year, endDate.month, endDate.day, endTime.hour,
-                  endTime.minute)
-              : endDate,
-          // if the startTime is not null, then the booking is for a specific time
-          startTime: startTime != null
-              ? TimeOfDay(hour: startTime.hour, minute: startTime.minute)
-              : null,
-          // if the endTime is not null, then the booking is for a specific time
-          endTime: endTime != null
-              ? TimeOfDay(hour: endTime.hour, minute: endTime.minute)
-              : null,
-          email: "",
-          governmentId:
-              "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
-          guests: guests,
-          customerPhoneNo: phoneNoController.text,
-          customerId: user.uid,
-          emergencyContactName: emergencyContactNameController.text,
-          emergencyContactNo: emergencyContactNoController.text,
-          needsContributions: false,
-          tasks: listing.fixedTasks,
-          typeOfTrip: typeOfTrip);
+    List<ListingBookings> todaysBookings =
+        await ref.read(getBookingsByPropertiesProvider(query).future);
+    todaysBookings = todaysBookings.where((booking) {
+      // Assuming 'startDate' is a DateTime property in 'ListingBookings'
+      return booking.startDate!.year == startDate.year &&
+          booking.startDate!.month == startDate.month &&
+          booking.startDate!.day == startDate.day;
+    }).toList();
 
-      showDialog(
-          context: context,
-          builder: (context) {
-            return Dialog.fullscreen(
-                child: CustomerTransportCheckout(
-                    listing: listing, transport: transport, booking: booking));
-          }).then((value) {
-        context.pop();
-      });
-    }
+    debugPrint('todaysbookings: $todaysBookings');
+    ListingBookings booking = ListingBookings(
+        tripUid: currentTrip!.uid!,
+        tripName: currentTrip.name,
+        listingId: listing.uid!,
+        listingTitle: listing.title,
+        customerName: user.name,
+        bookingStatus: "Reserved",
+        price: listing.price!,
+        category: "Transport",
+        startDate: DateTime(startDate.year, startDate.month, startDate.day,
+            departureTime!.hour, departureTime.minute),
+        endDate: DateTime(endDate.year, endDate.month, endDate.day,
+                departureTime.hour, departureTime.minute)
+            .add(Duration(
+                hours: listing.duration!.hour,
+                minutes: listing.duration!.minute)),
+        startTime: departureTime,
+        endTime: departureTime,
+        email: "",
+        governmentId:
+            "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
+        guests: guests,
+        customerPhoneNo: phoneNoController.text,
+        customerId: user.uid,
+        emergencyContactName: emergencyContactNameController.text,
+        emergencyContactNo: emergencyContactNoController.text,
+        needsContributions: false,
+        tasks: listing.fixedTasks,
+        typeOfTrip: typeOfTrip);
+    return null;
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog.fullscreen(
+              child: CustomerTransportCheckout(
+                  listing: listing, transport: transport, booking: booking));
+        }).then((value) {
+      context.pop();
+    });
   }
 }
 

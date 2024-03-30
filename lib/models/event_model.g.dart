@@ -26,6 +26,7 @@ _$EventModelImpl _$$EventModelImplFromJson(Map<String, dynamic> json) =>
           const TimestampSerializer().fromJson(json['endDate'] as Timestamp?),
       cooperative: EventCooperative.fromJson(
           json['cooperative'] as Map<String, dynamic>),
+      eventType: json['eventType'] as String?,
     );
 
 Map<String, dynamic> _$$EventModelImplToJson(_$EventModelImpl instance) =>
@@ -43,6 +44,7 @@ Map<String, dynamic> _$$EventModelImplToJson(_$EventModelImpl instance) =>
       'startDate': const TimestampSerializer().toJson(instance.startDate),
       'endDate': const TimestampSerializer().toJson(instance.endDate),
       'cooperative': instance.cooperative.toJson(),
+      'eventType': instance.eventType,
     };
 
 _$EventCooperativeImpl _$$EventCooperativeImplFromJson(

@@ -653,7 +653,7 @@ class _TransportationBookingsDetailsState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _displaySubtitleText('Room: ${booking.roomId}'),
+                    _displaySubtitleText('Bus No: ${booking.roomId}'),
                     Container(
                         height: MediaQuery.sizeOf(context).height * .05,
                         width: 1,
