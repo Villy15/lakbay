@@ -211,7 +211,7 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
         padding: const EdgeInsets.all(8.0),
         child: SfCartesianChart(
           title: const ChartTitle(
-              text: 'Sales Trend by Service Category',
+              text: 'Sales Trend by Listing Name',
               textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           // plotAreaBorderColor: Colors.transparent,
           legend: const Legend(
