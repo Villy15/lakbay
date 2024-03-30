@@ -1,6 +1,5 @@
 // ignore_for_file: unused_local_variable
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -98,7 +97,8 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                   children: [
                     bookings(),
                     details(),
-                    vehicles(),
+                    //! TODO REMOVE THIS
+                    // vehicles(),
                   ],
                 ))));
   }
@@ -1010,9 +1010,10 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                             ),
                             InkWell(
                               onTap: () {
-                                setState(() {
-                                  availableTransports.removeAt(transportIndex);
-                                });
+                                //! TODO REMOVE THIS
+                                // setState(() {
+                                //   availableTransports.removeAt(transportIndex);
+                                // });
                               },
                               child: const Icon(
                                 Icons.close,
@@ -1040,46 +1041,47 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                             ],
                           ),
                         ),
-                        availableTransports.isEmpty
-                            ? SizedBox(
-                                height: MediaQuery.sizeOf(context).height / 4,
-                                width: double.infinity,
-                                child: const Center(
-                                    child: Text("No Vehicles Added")))
-                            : Container(
-                                padding: EdgeInsets.only(
-                                    left:
-                                        MediaQuery.sizeOf(context).width * .1),
-                                child: Wrap(
-                                  direction: Axis.horizontal,
-                                  spacing:
-                                      8, // Adjust the spacing between items as needed
-                                  runSpacing:
-                                      8, // Adjust the run spacing (vertical spacing) as needed
-                                  children: List.generate(
-                                    vehicle.departureTimes!.length,
-                                    (index) {
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Text(
-                                          vehicle.departureTimes![index]
-                                              .format(context),
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w300),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
+                        //! TODO REMOVE THIS
+                        // availableTransports.isEmpty
+                        //     ? SizedBox(
+                        //         height: MediaQuery.sizeOf(context).height / 4,
+                        //         width: double.infinity,
+                        //         child: const Center(
+                        //             child: Text("No Vehicles Added")))
+                        //     : Container(
+                        //         padding: EdgeInsets.only(
+                        //             left:
+                        //                 MediaQuery.sizeOf(context).width * .1),
+                        //         child: Wrap(
+                        //           direction: Axis.horizontal,
+                        //           spacing:
+                        //               8, // Adjust the spacing between items as needed
+                        //           runSpacing:
+                        //               8, // Adjust the run spacing (vertical spacing) as needed
+                        //           children: List.generate(
+                        //             vehicle.departureTimes!.length,
+                        //             (index) {
+                        //               return Container(
+                        //                 padding: const EdgeInsets.symmetric(
+                        //                     horizontal: 8, vertical: 4),
+                        //                 decoration: BoxDecoration(
+                        //                   border:
+                        //                       Border.all(color: Colors.grey),
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(8),
+                        //                 ),
+                        //                 child: Text(
+                        //                   vehicle.departureTimes![index]
+                        //                       .format(context),
+                        //                   style: const TextStyle(
+                        //                       fontSize: 12,
+                        //                       fontWeight: FontWeight.w300),
+                        //                 ),
+                        //               );
+                        //             },
+                        //           ),
+                        //         ),
+                        //       )
                       ],
                     );
                   })),
@@ -1092,7 +1094,9 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                         showDialog(
                             context: context,
                             builder: (context) {
-                              return addRoomDialog();
+                              //! TODO REMOVE THIS
+                              // return addRoomDialog();
+                              return const SizedBox();
                             });
                       },
                       style: FilledButton.styleFrom(
