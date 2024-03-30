@@ -12,6 +12,9 @@ import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
 import 'package:lakbay/features/cooperatives/my_coop/components/announcement_card.dart';
 import 'package:lakbay/features/cooperatives/my_coop/goals/add_goal.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_dvidends.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_fee.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/validate_coop.dart';
 import 'package:lakbay/features/cooperatives/my_coop/voting/add_vote.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
@@ -79,11 +82,18 @@ class _TodayPageState extends ConsumerState<TodayPage> {
       BuildContext context, CooperativeModel coop) {
     return [
       {
+        'title': 'Validate your cooperative',
+        'subtitle':
+            'Submit files to validate your cooperative to the admin for approval of your coop',
+        'icon': Icons.verified,
+        'onTap': () => validateCooperative(context, coop),
+      },
+      {
         'title': 'Set Up Your Membership Application',
         'subtitle':
             'Set up your cooperative\'s membership application to start accepting members',
         'icon': Icons.app_registration,
-        'onTap': () => addEvent(context, coop),
+        'onTap': () => manageMemberShipFee(context, coop),
       },
       {
         'title': 'Add Your Current Members',
@@ -94,6 +104,35 @@ class _TodayPageState extends ConsumerState<TodayPage> {
       },
       // Set up your membership application
     ];
+  }
+
+  // Build coopCards
+  List<Map<String, dynamic>> buildCoopCards2(
+      BuildContext context, CooperativeModel coop) {
+    return [
+      {
+        'title': 'Setup member dividends',
+        'subtitle':
+            'Setup member dividends to start paying out to your members share',
+        'icon': Icons.monetization_on,
+        'onTap': () => manageMemberDividends(context, coop),
+      },
+      // Set up your committees for member contributions
+      {
+        'title': 'Set Up Your Committees',
+        'subtitle':
+            'Set up your cooperative\'s committees for members to contribute',
+        'icon': Icons.group_work,
+        'onTap': () => managerTools(context, coop),
+      }
+    ];
+  }
+
+  void managerTools(BuildContext context, CooperativeModel coop) {
+    context.pushNamed(
+      'manager_tools',
+      extra: coop,
+    );
   }
 
   void addListing(BuildContext context, CooperativeModel coop) {
@@ -159,6 +198,48 @@ class _TodayPageState extends ConsumerState<TodayPage> {
     );
   }
 
+  void manageMemberShipFee(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return ManageMemberFee(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
+  }
+
+  void validateCooperative(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return ValidateCoop(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
+  }
+
+  void manageMemberDividends(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return ManageMemberDividends(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
@@ -168,8 +249,10 @@ class _TodayPageState extends ConsumerState<TodayPage> {
             data: (coop) {
               final cards = buildCards(context, coop);
               final coopCards = buildCoopCards(context, coop);
+              final coopCards2 = buildCoopCards2(context, coop);
 
-              return managerScaffold(user, context, coop, cards, coopCards);
+              return managerScaffold(
+                  user, context, coop, cards, coopCards, coopCards2);
             },
             loading: () => const CircularProgressIndicator(),
             error: (error, stack) => ErrorText(
@@ -187,7 +270,8 @@ class _TodayPageState extends ConsumerState<TodayPage> {
       BuildContext context,
       CooperativeModel coop,
       List<Map<String, dynamic>> cards,
-      List<Map<String, dynamic>> coopCards) {
+      List<Map<String, dynamic>> coopCards,
+      List<Map<String, dynamic>> coopCards2) {
     return Scaffold(
       appBar: CustomAppBar(title: 'Home', user: user),
       body: Padding(
@@ -198,11 +282,12 @@ class _TodayPageState extends ConsumerState<TodayPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Welcome name
+
               Text(
                 "Welcome, ${user!.name}!",
                 // bold and large
                 style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -224,7 +309,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
 
               // Your Next Steps
               Text(
-                "Your Next Steps",
+                "Validate and start setting up your cooperative members",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
 
@@ -240,6 +325,77 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                   itemCount: coopCards.length,
                   itemBuilder: (context, index) {
                     final card = coopCards[index];
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: SizedBox(
+                        width: 200,
+                        child: Card(
+                          child: InkWell(
+                            onTap: () {
+                              card['onTap']();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    card['icon'],
+                                    size: 30,
+                                  ),
+
+                                  const SizedBox(height: 24),
+
+                                  // Title
+                                  Text(
+                                    card['title'],
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 8),
+
+                                  // Subtitle
+                                  Text(
+                                    card['subtitle'],
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Your Next Steps
+              Text(
+                "Setup member dividends",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+
+              const SizedBox(height: 8),
+
+              // It's time to review your cooperative details
+              SizedBox(
+                height: 300,
+                child: ListView.builder(
+                  physics: const ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: coopCards2.length,
+                  itemBuilder: (context, index) {
+                    final card = coopCards2[index];
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -350,8 +506,9 @@ class _TodayPageState extends ConsumerState<TodayPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Welcome name
+
               Text(
-                "Welcome,\n${user!.name}!",
+                "Welcome, ${user!.name}!",
                 // bold and large
                 style: const TextStyle(
                   fontSize: 24,

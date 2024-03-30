@@ -25,6 +25,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   File? _image;
   final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _phoneNoController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _emergenyNoController = TextEditingController();
+  final _emergencyNameController = TextEditingController();
 
   @override
   void initState() {
@@ -32,6 +38,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
     // Set initial values
     _nameController.text = widget.user.name;
+    _firstNameController.text = widget.user.firstName ?? '';
+    _lastNameController.text = widget.user.lastName ?? '';
+    _phoneNoController.text = widget.user.phoneNo ?? '';
+    _addressController.text = widget.user.address ?? '';
+    _emergenyNoController.text = widget.user.emergencyContact ?? '';
+    _emergencyNameController.text = widget.user.emergencyContactName ?? '';
   }
 
   @override
@@ -48,6 +60,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
       var user = widget.user.copyWith(
         name: _nameController.text,
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        phoneNo: _phoneNoController.text,
+        address: _addressController.text,
+        emergencyContact: _emergenyNoController.text,
+        emergencyContactName: _emergencyNameController.text,
       );
 
       // Upload image to Firebase Storage
@@ -160,6 +178,130 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                           ),
                           border: OutlineInputBorder(),
                           labelText: 'Name*',
+                          helperText: '*required',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      TextFormField(
+                        controller: _firstNameController,
+                        decoration: const InputDecoration(
+                          icon: Icon(
+                            Icons.person,
+                          ),
+                          border: OutlineInputBorder(),
+                          labelText: 'First Name*',
+                          helperText: '*required',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      TextFormField(
+                        controller: _lastNameController,
+                        decoration: const InputDecoration(
+                          icon: Icon(
+                            Icons.person,
+                          ),
+                          border: OutlineInputBorder(),
+                          labelText: 'Last Name*',
+                          helperText: '*required',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      TextFormField(
+                        controller: _phoneNoController,
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(
+                          icon: Icon(
+                            Icons.phone,
+                          ),
+                          prefixText: '+63',
+                          border: OutlineInputBorder(),
+                          labelText: 'Phone Number*',
+                          helperText: '*required',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      TextFormField(
+                        controller: _addressController,
+                        decoration: const InputDecoration(
+                          icon: Icon(
+                            Icons.home,
+                          ),
+                          border: OutlineInputBorder(),
+                          labelText: 'Address*',
+                          helperText: '*required',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      TextFormField(
+                        controller: _emergenyNoController,
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(
+                          icon: Icon(
+                            Icons.phone,
+                          ),
+                          prefixText: '+63',
+                          border: OutlineInputBorder(),
+                          labelText: 'Emergency Number*',
+                          helperText: '*required',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      TextFormField(
+                        controller: _emergencyNameController,
+                        decoration: const InputDecoration(
+                          icon: Icon(
+                            Icons.person,
+                          ),
+                          border: OutlineInputBorder(),
+                          labelText: 'Emergency Name*',
                           helperText: '*required',
                         ),
                         validator: (String? value) {

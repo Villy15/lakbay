@@ -36,16 +36,17 @@ dependencies:
   excel: ^4.0.2
   file_picker: ^6.1.1
   firebase_auth: ^4.14.0
-  firebase_core: ^2.27.0
+  firebase_core: ^2.22.0
+  firebase_messaging: ^14.7.21
   firebase_storage: ^11.5.1
   flutter:
     sdk: flutter
   flutter_chat_types: ^3.6.2
-  mailto: ^2.0.0
-  flutter_email_sender: ^6.0.0
   flutter_chat_ui: ^1.6.10
   flutter_config: ^2.0.2
+  flutter_email_sender: ^6.0.0
   flutter_firebase_chat_core: ^1.6.7
+  flutter_local_notifications: ^17.0.0
   flutter_riverpod: ^2.4.6
   flutter_slidable: ^3.0.1
   flutter_speed_dial: ^7.0.0
@@ -62,6 +63,7 @@ dependencies:
   intl: ^0.18.0
   json_annotation: ^4.8.1
   logger: ^2.0.2+1
+  mailto: ^2.0.0
   mime: ^1.0.4
   open_filex: ^4.3.4
   path_provider: ^2.1.1

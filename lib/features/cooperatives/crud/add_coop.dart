@@ -101,6 +101,9 @@ class _AddCoopPageState extends ConsumerState<AddCoopPage> {
                         members: [userUid],
                         managers: [userUid],
                         code: '123456',
+                        validityStatus: ValidityStatus(
+                          status: 'pending',
+                        ),
                       );
 
                       // Upload image to Firebase Storage

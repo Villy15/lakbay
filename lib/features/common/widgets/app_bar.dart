@@ -29,6 +29,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
       // Add icon on the right side of the app bar of a person
       actions: [
         // Inbox Icon Button for the app bar
+        //
         IconButton(
           onPressed: () {
             context.push('/inbox');

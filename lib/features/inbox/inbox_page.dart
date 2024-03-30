@@ -76,6 +76,7 @@ class InboxPage extends ConsumerWidget {
                     );
                   }
                   if (snapshot.hasError) {
+                    debugPrint('Error: ${snapshot.error}');
                     return const Center(
                       child: SizedBox.shrink(),
                     );
@@ -116,6 +117,8 @@ class InboxPage extends ConsumerWidget {
                       ),
                     );
                   }
+
+                  debugPrint('Rooms: ${rooms.length}');
 
                   return ListView.builder(
                     itemCount: rooms.length,

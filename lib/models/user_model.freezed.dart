@@ -27,6 +27,7 @@ mixin _$UserModel {
   String? get email => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
   String? get emergencyContact => throw _privateConstructorUsedError;
+  String? get emergencyContactName => throw _privateConstructorUsedError;
   bool get isAuthenticated => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
   String? get firstName => throw _privateConstructorUsedError;
@@ -68,6 +69,7 @@ abstract class $UserModelCopyWith<$Res> {
       String? email,
       String? address,
       String? emergencyContact,
+      String? emergencyContactName,
       bool isAuthenticated,
       String? imageUrl,
       String? firstName,
@@ -108,6 +110,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? email = freezed,
     Object? address = freezed,
     Object? emergencyContact = freezed,
+    Object? emergencyContactName = freezed,
     Object? isAuthenticated = null,
     Object? imageUrl = freezed,
     Object? firstName = freezed,
@@ -155,6 +158,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
       emergencyContact: freezed == emergencyContact
           ? _value.emergencyContact
           : emergencyContact // ignore: cast_nullable_to_non_nullable
+              as String?,
+      emergencyContactName: freezed == emergencyContactName
+          ? _value.emergencyContactName
+          : emergencyContactName // ignore: cast_nullable_to_non_nullable
               as String?,
       isAuthenticated: null == isAuthenticated
           ? _value.isAuthenticated
@@ -248,6 +255,7 @@ abstract class _$$UserModelImplCopyWith<$Res>
       String? email,
       String? address,
       String? emergencyContact,
+      String? emergencyContactName,
       bool isAuthenticated,
       String? imageUrl,
       String? firstName,
@@ -286,6 +294,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? email = freezed,
     Object? address = freezed,
     Object? emergencyContact = freezed,
+    Object? emergencyContactName = freezed,
     Object? isAuthenticated = null,
     Object? imageUrl = freezed,
     Object? firstName = freezed,
@@ -333,6 +342,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
       emergencyContact: freezed == emergencyContact
           ? _value.emergencyContact
           : emergencyContact // ignore: cast_nullable_to_non_nullable
+              as String?,
+      emergencyContactName: freezed == emergencyContactName
+          ? _value.emergencyContactName
+          : emergencyContactName // ignore: cast_nullable_to_non_nullable
               as String?,
       isAuthenticated: null == isAuthenticated
           ? _value.isAuthenticated
@@ -421,6 +434,7 @@ class _$UserModelImpl extends _UserModel {
       this.email,
       this.address,
       this.emergencyContact,
+      this.emergencyContactName,
       required this.isAuthenticated,
       this.imageUrl,
       this.firstName,
@@ -460,6 +474,8 @@ class _$UserModelImpl extends _UserModel {
   final String? address;
   @override
   final String? emergencyContact;
+  @override
+  final String? emergencyContactName;
   @override
   final bool isAuthenticated;
   @override
@@ -518,7 +534,7 @@ class _$UserModelImpl extends _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, phoneNo: $phoneNo, email: $email, address: $address, emergencyContact: $emergencyContact, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop, validIdUrl: $validIdUrl, birthCertificateUrl: $birthCertificateUrl, reviews: $reviews, middleName: $middleName, birthDate: $birthDate, age: $age, gender: $gender, religion: $religion, nationality: $nationality, civilStatus: $civilStatus, createdAt: $createdAt)';
+    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, phoneNo: $phoneNo, email: $email, address: $address, emergencyContact: $emergencyContact, emergencyContactName: $emergencyContactName, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop, validIdUrl: $validIdUrl, birthCertificateUrl: $birthCertificateUrl, reviews: $reviews, middleName: $middleName, birthDate: $birthDate, age: $age, gender: $gender, religion: $religion, nationality: $nationality, civilStatus: $civilStatus, createdAt: $createdAt)';
   }
 
   @override
@@ -535,6 +551,8 @@ class _$UserModelImpl extends _UserModel {
             (identical(other.address, address) || other.address == address) &&
             (identical(other.emergencyContact, emergencyContact) ||
                 other.emergencyContact == emergencyContact) &&
+            (identical(other.emergencyContactName, emergencyContactName) ||
+                other.emergencyContactName == emergencyContactName) &&
             (identical(other.isAuthenticated, isAuthenticated) ||
                 other.isAuthenticated == isAuthenticated) &&
             (identical(other.imageUrl, imageUrl) ||
@@ -581,6 +599,7 @@ class _$UserModelImpl extends _UserModel {
         email,
         address,
         emergencyContact,
+        emergencyContactName,
         isAuthenticated,
         imageUrl,
         firstName,
@@ -624,6 +643,7 @@ abstract class _UserModel extends UserModel {
       final String? email,
       final String? address,
       final String? emergencyContact,
+      final String? emergencyContactName,
       required final bool isAuthenticated,
       final String? imageUrl,
       final String? firstName,
@@ -661,6 +681,8 @@ abstract class _UserModel extends UserModel {
   String? get address;
   @override
   String? get emergencyContact;
+  @override
+  String? get emergencyContactName;
   @override
   bool get isAuthenticated;
   @override
