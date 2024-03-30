@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -9,8 +13,10 @@ import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_checkout.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
+import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/rooms_params.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -48,6 +54,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     final guests = ref.read(currentPlanGuestsProvider) ?? widget.guests;
     final startDate = ref.read(planStartDateProvider) ?? widget.startDate;
     final endDate = ref.read(planEndDateProvider) ?? widget.endDate;
+    final currentUser = ref.read(userProvider);
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     List<String> unavailableRoomUids =
         getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
     return ref
@@ -184,6 +192,60 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                 ),
                                                 FilledButton(
                                                   onPressed: () async {
+                                                    debugPrint(
+                                                        'this is the current user name : ${currentUser?.name}');
+                                                    if (currentUser?.name ==
+                                                            'Lakbay User' ||
+                                                        currentUser?.phoneNo ==
+                                                            null ||
+                                                        currentUser
+                                                                ?.emergencyContactName ==
+                                                            null ||
+                                                        currentUser
+                                                                ?.emergencyContact ==
+                                                            null ||
+                                                        currentUser
+                                                                ?.governmentId ==
+                                                            null) {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return AlertDialog(
+                                                              title: const Text(
+                                                                  'Profile Incomplete'),
+                                                              content: const Text(
+                                                                  'To book a room, you need to complete your profile first.'),
+                                                              actions: [
+                                                                FilledButton(
+                                                                  onPressed:
+                                                                      () async {
+                                                                    showUpdateProfile(
+                                                                        context,
+                                                                        currentUser!);
+                                                                  },
+                                                                  style: ElevatedButton
+                                                                      .styleFrom(
+                                                                    shape:
+                                                                        RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              4.0), // Adjust the radius as needed
+                                                                    ),
+                                                                  ),
+                                                                  child:
+                                                                      const Text(
+                                                                    'Update Profile',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            14),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          });
+                                                      return;
+                                                    }
+
                                                     if (widget.reason !=
                                                         'emergency') {
                                                       showSelectDate(
@@ -193,6 +255,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                           widget.bookings,
                                                           listing,
                                                           room);
+                                                      debugPrint(
+                                                          "This is the current user's phone number: ${currentUser!.phoneNo}");
                                                     } else {
                                                       emergencyBooking(context,
                                                           room, listing);
@@ -536,19 +600,354 @@ class _RoomCardState extends ConsumerState<RoomCard> {
         date.isBefore(planEnd.add(const Duration(days: 1)));
   }
 
+  Future<UserModel> submitUpdateProfile(
+    BuildContext context,
+    UserModel user,
+    UserModel updatedUser,
+    GlobalKey<FormState> formKey,
+    File? profilePicture,
+    File? governmentId) async {
+
+  if (formKey.currentState!.validate()) {
+    formKey.currentState!.save();
+
+    if (profilePicture != null) {
+      final result = await ref
+        .read(storageRepositoryProvider)
+        .storeFile(
+          path: 'users/${updatedUser.name}',
+          id: profilePicture.path.split('/').last,
+          file: profilePicture,
+        );
+
+      result.fold(
+        (failure) => debugPrint('Failed to upload image: $failure'),
+        (imageUrl) {
+          // update user with the new profile picture
+          updatedUser = updatedUser.copyWith(profilePic: imageUrl);
+        }
+      );
+    }
+
+    if (governmentId != null) {
+      final result = await ref
+        .read(storageRepositoryProvider)
+        .storeFile(
+          path: 'users/${updatedUser.name}',
+          id: governmentId.path.split('/').last,
+          file: governmentId,
+        );
+
+      result.fold(
+        (failure) => debugPrint('Failed to upload image: $failure'),
+        (imageUrl) {
+          // update user with the new government id picture
+          updatedUser = updatedUser.copyWith(governmentId: imageUrl);
+        }
+      );
+    }
+
+    // transfer updatedUser to user
+    ref.read(usersControllerProvider.notifier).editProfile(context, user.uid, updatedUser);
+  }
+
+  return updatedUser;
+}
+
+  Future<UserModel> processGovernmentId(
+      UserModel user, File? governmentId) async {
+    if (governmentId != null) {
+      final result = await ref.read(storageRepositoryProvider).storeFile(
+            path: 'users/${user.name}',
+            id: governmentId.path.split('/').last,
+            file: governmentId,
+          );
+
+      result.fold((failure) => debugPrint('Failed to upload image: $failure'),
+          (imageUrl) {
+        // update user with the new government id picture
+        user = user.copyWith(governmentId: imageUrl);
+        ref
+            .read(usersControllerProvider.notifier)
+            .editProfile(context, user.uid, user);
+      });
+    }
+
+    return user;
+  }
+
+  // a dialog for the user to update their profile
+  void showUpdateProfile(BuildContext context, UserModel user) async {
+    File? profilePicture;
+    File? governmentId;
+    final TextEditingController firstNameController =
+        TextEditingController(text: user.firstName ?? '');
+    final TextEditingController lastNameController =
+        TextEditingController(text: user.lastName ?? '');
+    final TextEditingController phoneNoController =
+        TextEditingController(text: user.phoneNo ?? '');
+    final TextEditingController emailController =
+        TextEditingController(text: user.email);
+    final TextEditingController emergencyContactNameController =
+        TextEditingController(text: user.emergencyContactName ?? '');
+    final TextEditingController emergencyContactNoController =
+        TextEditingController(text: user.emergencyContact ?? '');
+    final TextEditingController addressController =
+        TextEditingController(text: user.address ?? '');
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog.fullscreen(
+              child: StatefulBuilder(builder: (context, setState) {
+            return SingleChildScrollView(
+                child: Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppBar(
+                                leading: IconButton(
+                                    icon: const Icon(Icons.close),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop()),
+                                title: const Text('Edit Profile',
+                                    style: TextStyle(fontSize: 18)),
+                                elevation: 0),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10.0),
+                              child: Column(
+                                children: [
+                                  GestureDetector(
+                                      child: Row(children: [
+                                    Icon(Icons.image,
+                                        color:
+                                            Theme.of(context).iconTheme.color),
+                                    const SizedBox(width: 15),
+                                    Expanded(
+                                      child: ImagePickerFormField(
+                                        initialValue: profilePicture,
+                                        onSaved: (value) {
+                                          
+                                          this.setState(() {
+                                            profilePicture = value;
+                                            debugPrint('this is the value: $profilePicture');
+                                          });
+                                        },
+                                      ),
+                                    )
+                                  ])),
+                                  const SizedBox(height: 20),
+                                  TextFormField(
+                                      controller: emailController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Email*',
+                                          border: OutlineInputBorder(),
+                                          floatingLabelBehavior:
+                                              FloatingLabelBehavior.always,
+                                          hintText: "username@gmail.com",
+                                          helperText: "*required"),
+                                      keyboardType: TextInputType.emailAddress,
+                                      // if email is not null, put the initial value
+                                      onChanged: (value) {
+                                        user = user.copyWith(email: value);
+                                      },
+                                      readOnly: true,
+                                      style:
+                                          const TextStyle(color: Colors.grey)),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: firstNameController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'First Name*',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: "First Name",
+                                        helperText: "*required"),
+                                    // put initial value if the user's first name is not null
+                                    // initialValue: user.firstName ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(firstName: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: lastNameController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Last Name*',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: "Last Name",
+                                        helperText: "*required"),
+                                    // initialValue: user.lastName ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(lastName: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: addressController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Address*',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: "Street, City, Province",
+                                        helperText: "*required"),
+                                    // initialValue: user.address ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(address: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: phoneNoController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Phone Number*',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        prefixText: "+63 ",
+                                        helperText: "*required",
+                                        hintText: '91234567891'),
+                                    keyboardType: TextInputType.phone,
+                                    // initialValue: user.phoneNo ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(phoneNo: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  // text for government id
+                                  const Text('Government ID'),
+                                  GestureDetector(
+                                      child: Row(
+                                    children: [
+                                      Icon(Icons.card_travel,
+                                          color: Theme.of(context)
+                                              .iconTheme
+                                              .color),
+                                      const SizedBox(width: 15),
+                                      Expanded(
+                                        child: ImagePickerFormField(
+                                          initialValue: governmentId,
+                                          onSaved: (value) {
+                                            this.setState(() {
+                                              governmentId = value;
+                                              debugPrint('this is the value: $governmentId');
+                                            });
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  )),
+                                  const SizedBox(height: 20),
+                                  TextFormField(
+                                    controller: emergencyContactNameController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Emergency Contact Name',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: "Lastname Firstname",
+                                        helperText: "*required"),
+                                    // initialValue: user.emergencyContactName ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(
+                                          emergencyContactName: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: emergencyContactNoController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Emergency Contact Number',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        prefixText: "+63 ",
+                                        hintText: '91234567891',
+                                        helperText: "*required"),
+                                    keyboardType: TextInputType.phone,
+                                    // initialValue: user.emergencyContactNo ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(
+                                          emergencyContact: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  FilledButton(
+                                    onPressed: () async {
+                                      formKey.currentState!.save();
+                                      UserModel updatedUser = user.copyWith(
+                                        firstName: firstNameController.text,
+                                        lastName: lastNameController.text,
+                                        name:
+                                            "${firstNameController.text} ${lastNameController.text}",
+                                        address: addressController.text,
+                                        phoneNo: phoneNoController.text,
+                                        emergencyContactName:
+                                            emergencyContactNameController.text,
+                                        emergencyContact:
+                                            emergencyContactNoController.text,
+                                      );
+                                      debugPrint(
+                                          'this is the government id and the profile picture: $governmentId, $profilePicture');
+                                      user = await submitUpdateProfile(
+                                          context,
+                                          user,
+                                          updatedUser,
+                                          formKey,
+                                          profilePicture,
+                                          governmentId);
+
+                                      debugPrint('this is user: $user');
+
+                                      // close dialog
+                                      Navigator.of(context).pop();
+                                      this.setState(() {
+                                        user = user;
+                                      });
+
+                                      ref.read(userProvider.notifier).setUser(user);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            4.0), // Adjust the radius as needed
+                                      ),
+                                    ),
+                                    child: const Text(
+                                        'Update Profile Information'),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ]),
+                    )));
+          }));
+        });
+  }
+
   void showConfirmBooking(AvailableRoom room, ListingModel listing,
       DateTime startDate, DateTime endDate, BuildContext context) {
+    final user = ref.read(userProvider);
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         num guests = 0;
+        TextEditingController guestController = TextEditingController(text: room.guests.toString() ?? '');
         TextEditingController phoneNoController =
-            TextEditingController(text: "${ref.read(userProvider)?.phoneNo}");
+            TextEditingController(text: user?.phoneNo ?? '');
         TextEditingController emergencyContactNameController =
-            TextEditingController();
+            TextEditingController(text: user?.emergencyContactName ?? '');
         TextEditingController emergencyContactNoController =
-            TextEditingController();
+            TextEditingController(text: user?.emergencyContactName ?? '');
         bool governmentId = true;
         String formattedStartDate = DateFormat('MMMM dd').format(startDate);
         String formattedEndDate = DateFormat('MMMM dd').format(endDate);
@@ -576,9 +975,9 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                     child: Column(
                       children: [
                         TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Number of Guests (Max: ${room.guests})',
-                            border: const OutlineInputBorder(),
+                          decoration: const InputDecoration(
+                            labelText: 'Number of Guests',
+                            border: OutlineInputBorder(),
                             floatingLabelBehavior: FloatingLabelBehavior
                                 .always, // Keep the label always visible
                             hintText: "1",
@@ -603,21 +1002,24 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                         TextFormField(
                           controller: emergencyContactNameController,
                           decoration: const InputDecoration(
-                            labelText: 'Emergency Contact Name',
-                            border: OutlineInputBorder(),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            hintText: "Lastname Firstname",
-                          ),
+                              labelText: 'Emergency Contact Name*',
+                              border: OutlineInputBorder(),
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.always,
+                              hintText: "Lastname Firstname",
+                              helperText: "*required"),
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
                           controller: emergencyContactNoController,
                           decoration: const InputDecoration(
-                            labelText: 'Emergency Contact Number',
-                            border: OutlineInputBorder(),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            prefixText: "+63 ",
-                          ),
+                              labelText: 'Emergency Contact Number',
+                              border: OutlineInputBorder(),
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.always,
+                              prefixText: "+63 ",
+                              hintText: '91234567891',
+                              helperText: "*required"),
                           keyboardType: TextInputType.phone,
                         ),
                       ],
@@ -785,4 +1187,53 @@ class _RoomCardState extends ConsumerState<RoomCard> {
           });
     }
   }
+}
+
+class ImagePickerFormField extends FormField<File> {
+  ImagePickerFormField({
+    super.key,
+    super.onSaved,
+    super.validator,
+    super.initialValue,
+    String? imageUrl,
+  }) : super(
+          builder: (FormFieldState<File> state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () async {
+                    final picker = ImagePicker();
+                    final pickedFile =
+                        await picker.pickImage(source: ImageSource.gallery);
+
+                    if (pickedFile != null) {
+                      state.didChange(File(pickedFile.path));
+                    }
+                  },
+                  child: Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: state.value != null
+                        ? Image.file(state.value!, fit: BoxFit.cover)
+                        : (imageUrl != null && imageUrl.isNotEmpty)
+                            ? Image.network(imageUrl, fit: BoxFit.cover)
+                            : const Center(child: Text('Select an image')),
+                  ),
+                ),
+                if (state.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, left: 12),
+                    child: Text(
+                      state.errorText!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
 }

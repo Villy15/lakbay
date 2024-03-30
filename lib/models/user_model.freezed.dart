@@ -46,6 +46,7 @@ mixin _$UserModel {
   String? get gender => throw _privateConstructorUsedError;
   String? get religion => throw _privateConstructorUsedError;
   String? get nationality => throw _privateConstructorUsedError;
+  String? get governmentId => throw _privateConstructorUsedError;
   String? get civilStatus => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get createdAt => throw _privateConstructorUsedError;
@@ -86,6 +87,7 @@ abstract class $UserModelCopyWith<$Res> {
       String? gender,
       String? religion,
       String? nationality,
+      String? governmentId,
       String? civilStatus,
       @TimestampSerializer() DateTime? createdAt});
 }
@@ -127,6 +129,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? gender = freezed,
     Object? religion = freezed,
     Object? nationality = freezed,
+    Object? governmentId = freezed,
     Object? civilStatus = freezed,
     Object? createdAt = freezed,
   }) {
@@ -227,6 +230,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.nationality
           : nationality // ignore: cast_nullable_to_non_nullable
               as String?,
+      governmentId: freezed == governmentId
+          ? _value.governmentId
+          : governmentId // ignore: cast_nullable_to_non_nullable
+              as String?,
       civilStatus: freezed == civilStatus
           ? _value.civilStatus
           : civilStatus // ignore: cast_nullable_to_non_nullable
@@ -272,6 +279,7 @@ abstract class _$$UserModelImplCopyWith<$Res>
       String? gender,
       String? religion,
       String? nationality,
+      String? governmentId,
       String? civilStatus,
       @TimestampSerializer() DateTime? createdAt});
 }
@@ -311,6 +319,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? gender = freezed,
     Object? religion = freezed,
     Object? nationality = freezed,
+    Object? governmentId = freezed,
     Object? civilStatus = freezed,
     Object? createdAt = freezed,
   }) {
@@ -411,6 +420,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.nationality
           : nationality // ignore: cast_nullable_to_non_nullable
               as String?,
+      governmentId: freezed == governmentId
+          ? _value.governmentId
+          : governmentId // ignore: cast_nullable_to_non_nullable
+              as String?,
       civilStatus: freezed == civilStatus
           ? _value.civilStatus
           : civilStatus // ignore: cast_nullable_to_non_nullable
@@ -451,6 +464,7 @@ class _$UserModelImpl extends _UserModel {
       this.gender,
       this.religion,
       this.nationality,
+      this.governmentId,
       this.civilStatus,
       @TimestampSerializer() this.createdAt})
       : _cooperativesJoined = cooperativesJoined,
@@ -527,6 +541,8 @@ class _$UserModelImpl extends _UserModel {
   @override
   final String? nationality;
   @override
+  final String? governmentId;
+  @override
   final String? civilStatus;
   @override
   @TimestampSerializer()
@@ -534,7 +550,7 @@ class _$UserModelImpl extends _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, phoneNo: $phoneNo, email: $email, address: $address, emergencyContact: $emergencyContact, emergencyContactName: $emergencyContactName, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop, validIdUrl: $validIdUrl, birthCertificateUrl: $birthCertificateUrl, reviews: $reviews, middleName: $middleName, birthDate: $birthDate, age: $age, gender: $gender, religion: $religion, nationality: $nationality, civilStatus: $civilStatus, createdAt: $createdAt)';
+    return 'UserModel(uid: $uid, name: $name, profilePic: $profilePic, phoneNo: $phoneNo, email: $email, address: $address, emergencyContact: $emergencyContact, emergencyContactName: $emergencyContactName, isAuthenticated: $isAuthenticated, imageUrl: $imageUrl, firstName: $firstName, lastName: $lastName, isCoopView: $isCoopView, cooperativesJoined: $cooperativesJoined, currentCoop: $currentCoop, validIdUrl: $validIdUrl, birthCertificateUrl: $birthCertificateUrl, reviews: $reviews, middleName: $middleName, birthDate: $birthDate, age: $age, gender: $gender, religion: $religion, nationality: $nationality, governmentId: $governmentId, civilStatus: $civilStatus, createdAt: $createdAt)';
   }
 
   @override
@@ -582,6 +598,8 @@ class _$UserModelImpl extends _UserModel {
                 other.religion == religion) &&
             (identical(other.nationality, nationality) ||
                 other.nationality == nationality) &&
+            (identical(other.governmentId, governmentId) ||
+                other.governmentId == governmentId) &&
             (identical(other.civilStatus, civilStatus) ||
                 other.civilStatus == civilStatus) &&
             (identical(other.createdAt, createdAt) ||
@@ -616,6 +634,7 @@ class _$UserModelImpl extends _UserModel {
         gender,
         religion,
         nationality,
+        governmentId,
         civilStatus,
         createdAt
       ]);
@@ -660,6 +679,7 @@ abstract class _UserModel extends UserModel {
       final String? gender,
       final String? religion,
       final String? nationality,
+      final String? governmentId,
       final String? civilStatus,
       @TimestampSerializer() final DateTime? createdAt}) = _$UserModelImpl;
   _UserModel._() : super._();
@@ -716,6 +736,8 @@ abstract class _UserModel extends UserModel {
   String? get religion;
   @override
   String? get nationality;
+  @override
+  String? get governmentId;
   @override
   String? get civilStatus;
   @override

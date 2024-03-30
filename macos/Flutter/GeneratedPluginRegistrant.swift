@@ -11,8 +11,8 @@ import firebase_auth
 import firebase_core
 import firebase_messaging
 import firebase_storage
-import geolocator_apple
 import flutter_local_notifications
+import geolocator_apple
 import google_sign_in_ios
 import path_provider_foundation
 import shared_preferences_foundation
