@@ -8,9 +8,11 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/features/trips/app_coop.dart';
 import 'package:lakbay/features/trips/components/trip_card.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
+import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
@@ -192,6 +194,20 @@ class _TripsPageState extends ConsumerState<TripsPage> {
     );
   }
 
+  void approveCoop(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return ApproveCoop(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
+  }
+
   Scaffold adminScaffold(UserModel? user) {
     return Scaffold(
       appBar: CustomAppBar(title: 'Admin Page', user: user),
@@ -236,8 +252,14 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                           // Trailing arrow to the right
                           trailing: IconButton(
                             icon: const Icon(Icons.arrow_forward_ios),
-                            onPressed: () {},
+                            onPressed: () {
+                              approveCoop(context, coop);
+                            },
                           ),
+
+                          onTap: () {
+                            approveCoop(context, coop);
+                          },
                         );
                       },
                     );
@@ -263,6 +285,11 @@ class _TripsPageState extends ConsumerState<TripsPage> {
 
             ref.watch(getAllCooperativesProvider).when(
                   data: (cooperatives) {
+                    cooperatives = cooperatives
+                        .where(
+                            (coop) => coop.validityStatus?.status == 'approved')
+                        .toList();
+
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -271,6 +298,9 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                         final coop = cooperatives[index];
 
                         return ListTile(
+                          onTap: () {
+                            approveCoop(context, coop);
+                          },
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(coop.imageUrl!),
                           ),
@@ -280,7 +310,9 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                           ),
                           trailing: IconButton(
                             icon: const Icon(Icons.check),
-                            onPressed: () {},
+                            onPressed: () {
+                              approveCoop(context, coop);
+                            },
                           ),
                         );
                       },

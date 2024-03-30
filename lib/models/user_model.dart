@@ -34,6 +34,7 @@ class UserModel with _$UserModel {
       String? gender,
       String? religion,
       String? nationality,
+      String? governmentId,
       String? civilStatus,
       @TimestampSerializer() DateTime? createdAt}) = _UserModel;
 

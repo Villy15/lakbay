@@ -207,7 +207,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 cancellationRate:
                     num.parse((_cancellationRateController.text)) / 100,
               );
-
+              ref.read(listingLocationProvider.notifier).clearLocation();
+              ref.read(pickupPointLocationProvider.notifier).clearLocation();
+              ref.read(destinationLocationProvider.notifier).clearLocation();
               ref
                   .read(saveListingProvider.notifier)
                   .saveListingProvider(listingModel);

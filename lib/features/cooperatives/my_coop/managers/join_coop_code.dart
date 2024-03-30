@@ -261,24 +261,6 @@ Future<void> sendEmail(List<MemberData> newMembers, CooperativeModel coop, UserM
   await launch('$mailtoLink');
 }
 
-// send email to the new members
-// Future<void> sendEmail(List<String> recipients, String firstName, String lastName, String password, CooperativeModel coop) async {
-//   final mailtoLink = Mailto(
-//     to: recipients,
-//     subject: 'Welcome to ${coop.name}',
-//     body: 'Hello $firstName $lastName, \n\n'
-//         'Welcome to ${coop.name}! \n\n'
-//         'You can now login to your account using the following credentials: \n\n'
-//         'Email: $recipients \n'
-//         'Password: $password \n\n'
-//         'Thank you for joining ${coop.name}! \n\n'
-//         'Best regards, \n'
-//         '${coop.name} Team',
-//   );
-
-//   await launch('$mailtoLink');
-// }
-
 class MemberData {
   final String email;
   final String password;

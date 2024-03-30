@@ -15,6 +15,24 @@ class MapWidget extends StatefulWidget {
 class MapWidgetState extends State<MapWidget> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
+  final StreamController<GoogleMapController> _mapController =
+      StreamController<GoogleMapController>.broadcast();
+  GoogleMapController? _latestController;
+
+  @override
+  void initState() {
+    super.initState();
+    _mapController.stream.listen((GoogleMapController controller) {
+      // do something with the controller
+      _latestController = controller;
+    });
+  }
+  
+  @override
+  void dispose() {
+    _mapController.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +76,7 @@ class MapWidgetState extends State<MapWidget> {
                 zoom: 14.4746,
               ),
               onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
+                _mapController.add(controller);
               },
             ),
           );

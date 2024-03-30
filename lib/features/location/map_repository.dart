@@ -49,6 +49,18 @@ class MapRepository {
     }
   }
 
+  // get the address from the coordinates
+  Future<List<Placemark>> getAddressFromLatLng(
+      double latitude, double longitude) async {
+    try {
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
+      return placemarks;
+    } on Exception catch (e) {
+      rethrow;
+    }
+  }
+
   Future<List<String>> getPlacePredictions(String input) async {
   const String apiKey = 'AIzaSyCZJI2SdZFSoFc_W3Ma9qWttKz_OVXe05I';
   final String url =

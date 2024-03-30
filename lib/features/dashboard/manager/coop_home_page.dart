@@ -5,20 +5,20 @@ import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/calendar/components/booking_card.dart';
 import 'package:lakbay/features/common/error.dart';
-import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
-import 'package:lakbay/features/cooperatives/my_coop/components/announcement_card.dart';
 import 'package:lakbay/features/cooperatives/my_coop/goals/add_goal.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_dvidends.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_fee.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/validate_coop.dart';
 import 'package:lakbay/features/cooperatives/my_coop/voting/add_vote.dart';
+import 'package:lakbay/features/dashboard/manager/show_all_bookings.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
 
 class TodayPage extends ConsumerStatefulWidget {
@@ -235,6 +235,19 @@ class _TodayPageState extends ConsumerState<TodayPage> {
         return ManageMemberDividends(
           parentContext: context,
           coop: coop,
+        );
+      },
+    );
+  }
+
+  void showAllBookins(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return ShowAllBookings(
+          parentContext: context,
         );
       },
     );
@@ -506,7 +519,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Welcome name
-
+              // 2 Carsd Row for Quick Actions to Announcements and Events
               Text(
                 "Welcome, ${user!.name}!",
                 // bold and large
@@ -515,11 +528,53 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              const SizedBox(height: 8),
+              Row(
+                // Center
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    // Width / 2
+                    height: 90,
+                    width: MediaQuery.of(context).size.width / 2 - 24,
+                    child: announcementCard(),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    // Width / 2
+                    height: 90,
+                    width: MediaQuery.of(context).size.width / 2 - 24,
+                    child: voteCard(),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
 
-              const SizedBox(height: 16),
+              Row(
+                // Center
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                      // Width / 2
+                      height: 90,
+                      width: MediaQuery.of(context).size.width / 2 - 24,
+                      child: goalCard()),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    // Width / 2
+                    height: 90,
+                    width: MediaQuery.of(context).size.width / 2 - 24,
+                    child: contributeCard(),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 32),
 
               Text(
-                "Upcoming bookings this week",
+                "Upcoming bookings",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
 
@@ -578,7 +633,9 @@ class _TodayPageState extends ConsumerState<TodayPage> {
               // Wide button to show Show All Bookings
               Center(
                   child: FilledButton(
-                onPressed: () {},
+                onPressed: () {
+                  showAllBookins(context);
+                },
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -600,7 +657,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                 ),
               ),
               Text(
-                "Tasks (Due This Week)",
+                "Bookings Tasks ",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               // ref.watch(getTasksByUserIdProvider(user.uid)).when(
@@ -705,40 +762,215 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                   ),
 
               const SizedBox(height: 32),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
+  Card contributeCard() {
+    return Card(
+      surfaceTintColor: Colors.lightBlue.withOpacity(0.1),
+      child: InkWell(
+        onTap: () {
+          context
+              .go('/my_coop/listings/${ref.watch(userProvider)!.currentCoop}');
+          ref.read(bottomNavBarProvider.notifier).setPosition(2);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               const Text(
-                "Coop Activities",
-                // bold and large
+                'Contributions',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
-                "New Announcements",
-                style: Theme.of(context).textTheme.titleLarge,
+              const SizedBox(height: 8),
+
+              // 2 new announcements this week
+              ref
+                  .watch(getAllBookingsByCoopIdProvider(
+                      ref.watch(userProvider)!.currentCoop!))
+                  .maybeWhen(
+                      orElse: () => const Text("No contributions found"),
+                      data: (bookings) {
+                        int totalTasksNeedContributions = 0;
+
+                        for (var booking in bookings) {
+                          ref
+                              .watch(getBookingTasksByBookingId(
+                                  (booking.listingId, booking.id!)))
+                              .whenData((tasks) {
+                            for (var task in tasks) {
+                              // Check if task is open for contributions
+                              if (task.openContribution) {
+                                totalTasksNeedContributions++;
+                              }
+                            }
+                          });
+                        }
+
+                        return Text(
+                          '$totalTasksNeedContributions tasks need contributions',
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
+                        );
+                      }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  int getNumberOfTasksThatNeedContributions(List<ListingBookings> bookings) {
+    int totalTasksNeedContributions = 0;
+
+    for (var booking in bookings) {
+      totalTasksNeedContributions += booking.tasksNeedContributions;
+    }
+
+    debugPrint('Total Tasks Need Contributions: $totalTasksNeedContributions');
+
+    return totalTasksNeedContributions;
+  }
+
+  Card goalCard() {
+    return Card(
+      surfaceTintColor: Colors.green.withOpacity(0.1),
+      child: InkWell(
+        onTap: () {
+          context.go('/my_coop/${ref.watch(userProvider)!.currentCoop}');
+          ref.read(bottomNavBarProvider.notifier).setPosition(3);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Goals',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+              const SizedBox(height: 8),
 
-              ref.watch(getAllAnnouncementsProvider(user.currentCoop!)).when(
-                    data: (coopAnnouncements) {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: coopAnnouncements.length,
-                        itemBuilder: (context, index) {
-                          final announcement = coopAnnouncements[index];
+              // 2 new announcements this week
+              ref
+                  .watch(getAllGoalsProvider(
+                      ref.watch(userProvider)!.currentCoop!))
+                  .maybeWhen(
+                      orElse: () => const Text("No goals found"),
+                      data: (goals) {
+                        return Text(
+                          '${goals.length} goals to achieve for this month',
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
+                        );
+                      }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-                          return AnnouncementCard(
-                            announcement: announcement,
-                          );
-                        },
-                      );
-                    },
-                    error: (error, stackTrace) => ErrorText(
-                        error: error.toString(),
-                        stackTrace: stackTrace.toString()),
-                    loading: () => const Loader(),
-                  )
+  Card voteCard() {
+    return Card(
+      surfaceTintColor: Colors.blueAccent.withOpacity(0.1),
+      child: InkWell(
+        onTap: () {
+          context.go('/my_coop/${ref.watch(userProvider)!.currentCoop}');
+          ref.read(bottomNavBarProvider.notifier).setPosition(3);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Vote Now',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ref
+                  .watch(getAllVotesProvider(
+                      ref.watch(userProvider)!.currentCoop!))
+                  .maybeWhen(
+                      orElse: () => const Text("No votes found"),
+                      data: (votes) {
+                        return Text(
+                          '${votes.length} candidates to vote for the next election',
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
+                        );
+                      }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Card announcementCard() {
+    return Card(
+      surfaceTintColor: Colors.deepOrange.withOpacity(0.1),
+      child: InkWell(
+        onTap: () {
+          context.go('/my_coop/${ref.watch(userProvider)!.currentCoop}');
+          ref.read(bottomNavBarProvider.notifier).setPosition(3);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Announcements',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // 2 new announcements this week
+              ref
+                  .watch(getAllAnnouncementsProvider(
+                      ref.watch(userProvider)!.currentCoop!))
+                  .maybeWhen(
+                      orElse: () => const Text("No announcements found"),
+                      data: (announcements) {
+                        // Filter announcements that are within the last 7 days
+                        final updatedAnnouncements = announcements
+                            .where((announcement) =>
+                                DateTime.now()
+                                    .isBefore(announcement.timestamp!) &&
+                                DateTime.now()
+                                    .add(const Duration(days: 7))
+                                    .isAfter(announcement.timestamp!))
+                            .toList();
+
+                        return Text(
+                          '${updatedAnnouncements.length} new announcements this week',
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
+                        );
+                      }),
             ],
           ),
         ),

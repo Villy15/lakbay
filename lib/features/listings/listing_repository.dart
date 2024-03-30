@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:lakbay/core/constants/firebase_constants.dart';
@@ -140,6 +139,15 @@ class ListingRepository {
     return bookings(listingId).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return ListingBookings.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  // read task
+  Stream<List<BookingTask>> readBookingTasks(String listingId) {
+    return bookingTasksCollection(listingId).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return BookingTask.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
