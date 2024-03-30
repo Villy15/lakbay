@@ -36,8 +36,7 @@ dependencies:
   excel: ^4.0.2
   file_picker: ^6.1.1
   firebase_auth: ^4.14.0
-  firebase_core: ^2.22.0
-  firebase_messaging: ^14.7.21
+  firebase_core: ^2.27.0
   firebase_storage: ^11.5.1
   flutter:
     sdk: flutter
