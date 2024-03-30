@@ -44,7 +44,7 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
       width: 100.0,
       child: Tab(
         // icon: Icon(Icons.location_pin),
-        child: Text('Destination'),
+        child: Text('Details'),
       ),
     ),
     const SizedBox(

@@ -545,6 +545,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           children: [
             Column(children: [
               TextFormField(
+                maxLines: null,
                 controller: taskNameController,
                 decoration: const InputDecoration(
                   labelText: 'Task Name*',
@@ -1145,7 +1146,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         onTap: () async {
           final TimeOfDay? pickedTime = await showTimePicker(
             context: context,
-            initialTime: const TimeOfDay(hour: 8, minute: 30),
+            initialTime: startDate,
             initialEntryMode: TimePickerEntryMode.inputOnly,
             builder: (BuildContext context, Widget? child) {
               return MediaQuery(
@@ -1183,7 +1184,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         onTap: () async {
           final TimeOfDay? pickedTime = await showTimePicker(
             context: context,
-            initialTime: const TimeOfDay(hour: 5, minute: 30),
+            initialTime: endDate,
             initialEntryMode: TimePickerEntryMode.inputOnly,
             builder: (BuildContext context, Widget? child) {
               return MediaQuery(
@@ -1498,49 +1499,106 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           ),
         ),
       ),
-      if (availableTransports.isEmpty)
-        SizedBox(
-            height: MediaQuery.sizeOf(context).height / 4,
-            width: double.infinity,
-            child: const Center(child: Text("No Vehicles Added"))),
-      ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: availableTransports.length,
-          itemBuilder: ((context, index) {
-            return ListTile(
-              leading: Text('[${index + 1}]'),
-              title: Text(
-                "Vehicle No: ${availableTransports[index].vehicleNo}",
-                style: const TextStyle(fontSize: 14),
-              ),
-              subtitle: Row(
+      const SizedBox(height: 20),
+      vehicleInfoCard(),
+    ]);
+  }
+
+  ListView vehicleInfoCard() {
+    return ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: availableTransports.length,
+        itemBuilder: ((context, transportIndex) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Text(
-                    'Capacity: ${availableTransports[index].guests} | ',
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w300),
+                  Text('[${transportIndex + 1}]'),
+                  const SizedBox(
+                    width: 20,
                   ),
                   Text(
-                    'Luggage: ${availableTransports[index].luggage}',
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w300),
+                    "Vehicle No: ${availableTransports[transportIndex].vehicleNo}",
+                    style: const TextStyle(fontSize: 14),
                   ),
+                  SizedBox(
+                    width: MediaQuery.sizeOf(context).width * .3,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        availableTransports.removeAt(transportIndex);
+                      });
+                    },
+                    child: const Icon(
+                      Icons.close,
+                      size: 16,
+                      color: Colors.black,
+                    ),
+                  )
                 ],
               ),
-              trailing: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      availableTransports.removeAt(index);
-                    });
-                  },
-                  icon: const Icon(
-                    Icons.close,
-                    size: 16,
-                  )),
-            );
-          })),
-    ]);
+              Container(
+                padding: EdgeInsets.only(
+                    left: MediaQuery.sizeOf(context).width * .1),
+                child: Row(
+                  children: [
+                    Text(
+                      'Capacity: ${availableTransports[transportIndex].guests} | ',
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w300),
+                    ),
+                    Text(
+                      'Luggage: ${availableTransports[transportIndex].luggage}',
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w300),
+                    ),
+                  ],
+                ),
+              ),
+              availableTransports.isEmpty
+                  ? SizedBox(
+                      height: MediaQuery.sizeOf(context).height / 4,
+                      width: double.infinity,
+                      child: const Center(child: Text("No Vehicles Added")))
+                  : Container(
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.sizeOf(context).width * .1),
+                      child: Wrap(
+                        direction: Axis.horizontal,
+                        spacing:
+                            8, // Adjust the spacing between items as needed
+                        runSpacing:
+                            8, // Adjust the run spacing (vertical spacing) as needed
+                        children: List.generate(
+                          availableTransports[transportIndex]
+                              .departureTimes!
+                              .length,
+                          (index) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                availableTransports[transportIndex]
+                                    .departureTimes![index]
+                                    .format(context),
+                                style: const TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w300),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    )
+            ],
+          );
+        }));
   }
 
   Widget showAddVehicleForm() {
@@ -1598,15 +1656,35 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               },
             ),
           ),
-          ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: departureTimes.length,
-              itemBuilder: (context, timeIndex) {
-                return ListTile(
-                  title: Text(departureTimes[timeIndex].format(context)),
-                );
-              }),
+          SizedBox(
+            height: MediaQuery.sizeOf(context).height * .15,
+            child: departureTimes.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: departureTimes.length,
+                    itemBuilder: (context, timeIndex) {
+                      return ListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 0, horizontal: 25),
+                        leading: Text('[${timeIndex + 1}]'),
+                        title: Text(
+                          departureTimes[timeIndex].format(context),
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        trailing: IconButton(
+                          onPressed: () {
+                            departureTimes.removeAt(timeIndex);
+                          },
+                          icon: const Icon(Icons.close),
+                          iconSize: 14,
+                        ),
+                      );
+                    })
+                : const Center(
+                    child: Text('No Departure Times',
+                        style: TextStyle(fontWeight: FontWeight.w300))),
+          ),
           SizedBox(height: MediaQuery.sizeOf(context).height / 50),
           ListTile(
               horizontalTitleGap: 0,
@@ -1674,6 +1752,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                     AvailableTransport transport = AvailableTransport(
                         available: true,
                         vehicleNo: num.parse(vehicleNoController.text),
+                        departureTimes: departureTimes,
                         guests: capacity,
                         luggage: luggage,
                         workingDays: workingDays,

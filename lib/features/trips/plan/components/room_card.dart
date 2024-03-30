@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/providers/days_provider.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -48,6 +49,8 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     final guests = ref.read(currentPlanGuestsProvider) ?? widget.guests;
     final startDate = ref.read(planStartDateProvider) ?? widget.startDate;
     final endDate = ref.read(planEndDateProvider) ?? widget.endDate;
+    final daysPlan = ref.read(daysPlanProvider);
+
     List<String> unavailableRoomUids =
         getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
     return ref
@@ -188,7 +191,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                         'emergency') {
                                                       showSelectDate(
                                                           context,
-                                                          startDate,
+                                                          daysPlan.currentDay!,
                                                           endDate,
                                                           widget.bookings,
                                                           listing,
@@ -419,7 +422,9 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           startDate = args.value.startDate;
                           endDate = args.value.endDate;
                         },
-                        minDate: DateTime.now(),
+                        initialSelectedRange:
+                            PickerDateRange(startDate, endDate),
+                        minDate: startDate,
                         selectableDayPredicate: (DateTime day) {
                           //       // Check if the day is in the list of booked dates
                           final bookedDates =

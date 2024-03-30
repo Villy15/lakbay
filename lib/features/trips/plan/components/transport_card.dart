@@ -197,6 +197,9 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                           style: TextStyle(fontSize: 14))),
                                   FilledButton(
                                       onPressed: () async {
+                                        List<TimeOfDay> timeSlot = [];
+                                        Set<TimeOfDay> departureTimesSet = {};
+
                                         num slots = 0;
                                         final bookings = await ref.watch(
                                             getAllBookingsProvider(
@@ -212,7 +215,21 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                 getTransportByPropertiesProvider(
                                                         query)
                                                     .future);
-                                        // vehicles.forEach((element) {slots})
+                                        for (var vehicle in vehicles) {
+                                          for (var departureTime
+                                              in vehicle.departureTimes!) {
+                                            // Check if the departure time is not already in the set
+                                            if (!departureTimesSet
+                                                .contains(departureTime)) {
+                                              departureTimesSet.add(
+                                                  departureTime); // Add the unique departure time to the set
+                                              timeSlot.add(
+                                                  departureTime); // Add it to the list as well
+                                            }
+                                          }
+                                        }
+
+                                        debugPrint('timeSlot: $timeSlot');
 
                                         if (transport.type == 'Public') {
                                           if (context.mounted) {
