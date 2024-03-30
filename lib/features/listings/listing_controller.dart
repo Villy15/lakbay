@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/firebase_notif_api.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
@@ -229,6 +230,10 @@ class ListingController extends StateNotifier<bool> {
       },
       (bookingUid) async {
         state = false;
+
+        sendNotification('Listing Booked: ${listing.title}',
+            'Dates: ${booking.startDate} - ${booking.endDate}');
+
         booking.tasks?.forEach((element) async {
           switch (booking.category) {
             case 'Accommodation':
