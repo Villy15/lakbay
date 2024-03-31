@@ -42,8 +42,7 @@ class _ManageShareCapitalState extends ConsumerState<ManageShareCapital> {
       _formKey.currentState!.save();
 
       final coop = widget.coop.copyWith(
-        shareCapital: double.parse(_valuePerShare.text) *
-            double.parse(_minimumShareCount.text),
+        shareCapital: double.parse(_valuePerShare.text),
         minimumMemberShareCount: int.parse(_minimumShareCount.text),
       );
 

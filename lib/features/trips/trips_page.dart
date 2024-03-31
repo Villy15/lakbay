@@ -12,6 +12,7 @@ import 'package:lakbay/features/trips/app_coop.dart';
 import 'package:lakbay/features/trips/components/trip_card.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
+import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -34,6 +35,23 @@ class _TripsPageState extends ConsumerState<TripsPage> {
     // context.push('/market/${listing.category}', extra: listing);
     ref.read(currentTripProvider.notifier).setPlan(plan);
     context.push('/trips/details/${plan.uid}');
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // final user = ref.read(userProvider)!;
+
+    // // Temp user to edit user's cooperativesJoined.role to manager by finding its currentCoop
+    // final tempUser = user.copyWith(email: 'timothymendoza23@gmail.com');
+
+    // // Update the user's cooperativesJoined.role to manager
+    // ref.read(usersControllerProvider.notifier).editProfile(
+    //       context,
+    //       user.uid,
+    //       tempUser,
+    //     );
   }
 
   @override
