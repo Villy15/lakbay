@@ -565,7 +565,8 @@ class _TransportationBookingsDetailsState
                         child: const Text('Close')),
                     FilledButton(
                         onPressed: () {
-                          emergencyProcess(ref, context, booking);
+                          emergencyProcess(ref, context, 'Transport',
+                              booking: booking);
                         },
                         child: const Text('Continue')),
                   ],

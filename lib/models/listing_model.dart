@@ -142,13 +142,25 @@ class DepartureModel with _$DepartureModel {
     String? listingName,
     String? listingId,
     required List<ListingBookings> passengers,
-    AvailableTransport? vehicle,
+    List<AssignedVehicle>? vehicles,
     @TimestampSerializer() DateTime? arrival,
     @TimestampSerializer() DateTime? departure,
+    String? departureStatus, //Waiting, Completed, OnGoing, Cancelled
   }) = _DepartureModel;
 
   factory DepartureModel.fromJson(Map<String, dynamic> json) =>
       _$DepartureModelFromJson(json);
+}
+
+@freezed
+class AssignedVehicle with _$AssignedVehicle {
+  factory AssignedVehicle({
+    AvailableTransport? vehicle,
+    List<ListingBookings>? passengers,
+  }) = _AssignedVehicle;
+
+  factory AssignedVehicle.fromJson(Map<String, dynamic> json) =>
+      _$AssignedVehicleFromJson(json);
 }
 
 @freezed
