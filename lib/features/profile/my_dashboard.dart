@@ -204,28 +204,21 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
 
   Card pieChart(List<SaleModel> sales) {
     // Group the filtered data by listingName.
-    final chartDataByCategory =
-        sales.fold<Map<String, List<SaleModel>>>({}, (previousValue, element) {
-      if (previousValue.containsKey(element.listingName)) {
-        previousValue[element.listingName]!.add(element);
-      } else {
-        previousValue[element.listingName] = [element];
-      }
-      return previousValue;
-    });
+    final Map<String, num> groupedSales = {};
+    for (var sale in sales) {
+      groupedSales[sale.listingName] =
+          (groupedSales[sale.listingName] ?? 0) + sale.saleAmount;
+    }
 
-    // Create a pie series for each listingName.
-    final List<PieSeries<SaleData, String>> createSeries =
-        chartDataByCategory.entries.map((entry) {
-      // Sum up the saleAmount for each group of sales with the same listingName.
-      final totalSaleAmount = entry.value.fold<num>(
-          0, (previousValue, sale) => previousValue + sale.saleAmount);
+// Create a SaleData object for each group of sales.
+    final List<SaleData> data = groupedSales.entries.map((entry) {
+      return SaleData(entry.key, entry.value);
+    }).toList();
 
-      // Create a new SaleData object for each entry.
-      final saleData = SaleData(entry.key, totalSaleAmount);
-
-      return PieSeries<SaleData, String>(
-        dataSource: [saleData],
+// Create a pie series.
+    final List<PieSeries<SaleData, String>> createSeries = [
+      PieSeries<SaleData, String>(
+        dataSource: data,
         xValueMapper: (SaleData data, _) => data.listingName,
         yValueMapper: (SaleData data, _) => data.saleAmount,
         dataLabelMapper: (SaleData data, _) =>
@@ -238,9 +231,8 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
           textStyle: TextStyle(fontSize: 12),
           labelIntersectAction: LabelIntersectAction.shift,
         ),
-        name: entry.key,
-      );
-    }).toList();
+      ),
+    ];
 
     return Card(
       child: Padding(
@@ -286,7 +278,6 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
                       .startDate!,
                   yValueMapper: (SaleModel sales, _) => sales.saleAmount,
                   name: entry.key,
-                  color: Theme.of(context).colorScheme.primary,
                   markerSettings: const MarkerSettings(isVisible: true),
                 ))
             .toList();

@@ -196,6 +196,8 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
         case 'Transport':
           return (activity.startTime!.day == thisDay.day) ||
               (activity.endTime!.day == thisDay.day);
+        case 'Food':
+          return (activity.dateTime!.day == thisDay.day);
       }
       return activity.dateTime!.day == thisDay.day;
     }).toList(); // Convert to List for sorting

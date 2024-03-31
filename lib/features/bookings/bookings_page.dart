@@ -144,6 +144,7 @@ class _BookingsPageState extends ConsumerState<BookingsPage> {
                                     return BookingCard(
                                       booking: booking,
                                       listing: listing,
+                                      shouldShow: true,
                                     );
                                   },
                                   error: (error, stackTrace) => ErrorText(

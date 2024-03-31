@@ -102,7 +102,33 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         return;
       }
 
+      // Upload government ID to Firebase Storage
+      if (_governmentIdFile != null) {
+        ref
+            .read(storageRepositoryProvider)
+            .storeFile(
+              path: 'users/${_nameController.text}',
+              id: _governmentIdFile?.path.split('/').last ?? '',
+              file: _governmentIdFile,
+            )
+            .then((value) => value.fold(
+                  (failure) => debugPrint(
+                    'Failed to upload government ID: $failure',
+                  ),
+                  (governmentId) {
+                    // Update user
+                    user = user.copyWith(governmentId: governmentId);
 
+                    // Register cooperative
+                    ref
+                        .read(usersControllerProvider.notifier)
+                        .editProfile(context, user.uid, user);
+                  },
+                ));
+
+        return;
+      }
+      
       ref
           .read(usersControllerProvider.notifier)
           .editProfile(context, user.uid, user);

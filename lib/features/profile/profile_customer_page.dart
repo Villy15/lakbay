@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
+import 'package:lakbay/features/profile/crud/edit_profile.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/user_model.dart';
 
@@ -102,7 +103,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     ),
                     onTap: () async {
                       // view the government ID here
-
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        isDismissible: true,
+                        builder: (context) {
+                          return ViewPdf(url: userModel.governmentId!);
+                        } 
+                      );
                     }
                   ),
             };

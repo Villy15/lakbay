@@ -398,7 +398,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                             filteredVehicles.add(vehicle);
                           }
                         }
-                        if (context.mounted) {
+                        if (mounted) {
                           showDialog(
                               context: context,
                               builder: (context) {
@@ -411,98 +411,96 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                         },
                                         child: const Text('Close'))
                                   ],
-                                  content: ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: vehicles.length,
-                                      itemBuilder: (context, index) {
-                                        AvailableTransport vehicle =
-                                            vehicles[index];
-                                        return InkWell(
-                                          onTap: () {
-                                            for (var booking in bookings) {
-                                              ListingBookings updatedBooking =
-                                                  booking.copyWith(
-                                                      vehicleNo:
-                                                          vehicle.vehicleNo);
-
-                                              DepartureModel updatedDeparture =
-                                                  widget.departure.copyWith(
-                                                      vehicle: vehicle);
-                                              ref
-                                                  .read(
-                                                      listingControllerProvider
-                                                          .notifier)
-                                                  .updateBooking(
-                                                      context,
-                                                      updatedBooking.listingId,
-                                                      updatedBooking,
-                                                      "");
-                                              ref
-                                                  .read(
-                                                      listingControllerProvider
-                                                          .notifier)
-                                                  .updateDeparture(context,
-                                                      updatedDeparture, '');
-                                            }
-                                            setState(() {
-                                              departureDetails =
-                                                  departureDetails.copyWith(
-                                                      vehicle: vehicle);
-                                            });
-                                            context.pop();
-                                          },
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Text('[${index + 1}]'),
-                                                  const SizedBox(
-                                                    width: 20,
-                                                  ),
-                                                  Text(
-                                                    "Vehicle No: ${vehicle.vehicleNo}",
-                                                    style: const TextStyle(
-                                                        fontSize: 14),
-                                                  ),
-                                                  SizedBox(
-                                                    width: MediaQuery.sizeOf(
-                                                                context)
-                                                            .width *
-                                                        .3,
-                                                  ),
-                                                ],
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.only(
-                                                    left: MediaQuery.sizeOf(
-                                                                context)
-                                                            .width *
-                                                        .1),
-                                                child: Row(
+                                  content: SizedBox(
+                                    height:
+                                        MediaQuery.sizeOf(context).height * .3,
+                                    width:
+                                        MediaQuery.sizeOf(context).width * .5,
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: vehicles.length,
+                                        itemBuilder: (context, index) {
+                                          AvailableTransport vehicle =
+                                              vehicles[index];
+                                          return InkWell(
+                                            onTap: () {
+                                              for (var booking in bookings) {
+                                                ListingBookings updatedBooking =
+                                                    booking.copyWith(
+                                                        vehicleNo:
+                                                            vehicle.vehicleNo);
+                                                ref
+                                                    .read(
+                                                        listingControllerProvider
+                                                            .notifier)
+                                                    .updateBooking(
+                                                        context,
+                                                        widget.listing.uid!,
+                                                        updatedBooking,
+                                                        "Booking updated!");
+                                              }
+                                              setState(() {
+                                                departureDetails =
+                                                    departureDetails.copyWith(
+                                                        vehicle: vehicle);
+                                              });
+                                              context.pop();
+                                            },
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
                                                   children: [
-                                                    Text(
-                                                      'Capacity: ${vehicle.guests} | ',
-                                                      style: const TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w300),
+                                                    Text('[${index + 1}]'),
+                                                    const SizedBox(
+                                                      width: 20,
                                                     ),
                                                     Text(
-                                                      'Luggage: ${vehicle.luggage}',
+                                                      "Vehicle No: ${vehicle.vehicleNo}",
                                                       style: const TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w300),
+                                                          fontSize: 14),
+                                                    ),
+                                                    SizedBox(
+                                                      width: MediaQuery.sizeOf(
+                                                                  context)
+                                                              .width *
+                                                          .3,
                                                     ),
                                                   ],
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }),
+                                                Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: MediaQuery.sizeOf(
+                                                                  context)
+                                                              .width *
+                                                          .1),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        'Capacity: ${vehicle.guests} | ',
+                                                        style: const TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w300),
+                                                      ),
+                                                      Text(
+                                                        'Luggage: ${vehicle.luggage}',
+                                                        style: const TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w300),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }),
+                                  ),
                                 );
                               });
                         }

@@ -11,9 +11,9 @@ import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
 import 'package:lakbay/features/cooperatives/my_coop/goals/add_goal.dart';
-import 'package:lakbay/features/cooperatives/my_coop/managers/manag_shar_capital.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_dvidends.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_fee.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/manage_share_capital.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/validate_coop.dart';
 import 'package:lakbay/features/cooperatives/my_coop/voting/add_vote.dart';
 import 'package:lakbay/features/dashboard/manager/show_all_bookings.dart';
@@ -38,13 +38,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
     // final user = ref.read(userProvider)!;
 
     // // Temp user to edit user's cooperativesJoined.role to manager by finding its currentCoop
-    // final tempUser = user.copyWith(
-    //   cooperativesJoined: user.cooperativesJoined
-    //       ?.map((coop) => coop.copyWith(
-    //             role: 'Member',
-    //           ))
-    //       .toList(),
-    // );
+    // final tempUser = user.copyWith(email: 'adrianvill07@gmail.com');
 
     // // Update the user's cooperativesJoined.role to manager
     // ref.read(usersControllerProvider.notifier).editProfile(

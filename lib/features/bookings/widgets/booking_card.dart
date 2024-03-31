@@ -12,7 +12,13 @@ import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 class BookingCard extends ConsumerStatefulWidget {
   final ListingBookings booking;
   final ListingModel listing;
-  const BookingCard({super.key, required this.booking, required this.listing});
+  final bool shouldShow;
+
+  const BookingCard(
+      {super.key,
+      required this.booking,
+      required this.listing,
+      this.shouldShow = false});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _BookingCardState();
@@ -25,7 +31,12 @@ class _BookingCardState extends ConsumerState<BookingCard> {
       extra: {'booking': widget.booking, 'listing': widget.listing},
     ).then(
       (value) {
-        ref.read(navBarVisibilityProvider.notifier).hide();
+        debugPrint('Returned from booking details');
+        if (widget.shouldShow) {
+          ref.read(navBarVisibilityProvider.notifier).show();
+        } else {
+          ref.read(navBarVisibilityProvider.notifier).hide();
+        }
       },
     );
   }
