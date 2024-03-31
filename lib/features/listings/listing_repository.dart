@@ -55,6 +55,18 @@ class ListingRepository {
     });
   }
 
+  // Read all listings by owner
+  Stream<List<ListingModel>> readListingsByOwner(String ownerId) {
+    return _listings
+        .where('publisherId', isEqualTo: ownerId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ListingModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Read all listing by CoopID
   Stream<List<ListingModel>> readListingsByCoopId(String coopId) {
     return _listings
@@ -491,5 +503,4 @@ class ListingRepository {
       }).toList();
     });
   }
-  
 }

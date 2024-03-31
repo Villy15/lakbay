@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -10,19 +9,20 @@ import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
+import 'package:lakbay/features/tasks/tasks_controller.dart';
 import 'package:lakbay/models/sale_model.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class CoopDashboard extends ConsumerStatefulWidget {
+class MyDashBoard extends ConsumerStatefulWidget {
   final String coopId;
-  const CoopDashboard({super.key, required this.coopId});
+  const MyDashBoard({super.key, required this.coopId});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _CoopDashboardState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _MyDashBoardState();
 }
 
-class _CoopDashboardState extends ConsumerState<CoopDashboard> {
+class _MyDashBoardState extends ConsumerState<MyDashBoard> {
   DateTime _selectedDate = DateTime.now();
   final List<String> _filterTypes = ['Day', 'Week', 'Month', 'Year'];
   String _selectedFilterType = 'Year';
@@ -30,19 +30,26 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
   @override
   void initState() {
     super.initState();
+    // Fetch the list of listings when the widget initializes
   }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
-    debugPrintJson("File Name: coop_dashboard.dart");
     return Scaffold(
-      appBar: CustomAppBar(title: 'Coop Dashboard', user: user),
+      appBar: CustomAppBar(title: 'My Dashboard', user: user),
       body: ref.watch(getSalesByCoopIdProvider(user!.currentCoop!)).when(
             data: (sales) {
               if (sales.isEmpty) {
                 return salesEmpty();
               }
+
+              // Filter sales by ownerId
+              sales = sales.where((sale) => sale.ownerId == user.uid).toList();
+
+              // if (sales.isEmpty) {
+              //   return salesEmpty();
+              // }
 
               // Sort sales by date
               sales.sort((a, b) {
@@ -74,59 +81,23 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
                 return false;
               }).toList();
 
-              //       data: (listings) {
-              //         if (listings.isEmpty) {
-              //           return const SizedBox.shrink();
-              //         }
-              //         int totalBookingsForUserListings = 0;
-
-              //         for (final listing in listings) {
-              //           if (listing.publisherName == user.name) {
-              //             ref
-              //                 .watch(getAllBookingsProvider(listing.uid!))
-              //                 .when(
-              //                   data: (List<ListingBookings> bookings) {
-              //                     for (final booking in bookings) {
-              //                       totalBookingsForUserListings++;
-              //                     }
-              //                   },
-              //                   error: (error, stackTrace) => ErrorText(
-              //                     error: error.toString(),
-              //                     stackTrace: stackTrace.toString(),
-              //                   ),
-              //                   loading: () => const Loader(),
-              //                 );
-              //           }
-              //         }
-
-              //         return Column(
-              //           children: [
-              //             const SizedBox(height: 16),
-              //             Center(
-              //               child: Text(
-              //                 "Current points: $totalBookingsForUserListings",
-              //                 style: const TextStyle(
-              //                   fontSize: 20,
-              //                   fontWeight: FontWeight.bold,
-              //                 ),
-              //               ),
-              //             ),
-              //           ],
-              //         );
-              //       },
-              //       error: (error, stackTrace) => ErrorText(
-              //         error: error.toString(),
-              //         stackTrace: stackTrace.toString(),
-              //       ),
-              //       loading: () => const Loader(),
-              //     ),
+              // Filter data based on ownerId as well
 
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ListView(
                   children: [
                     dashboardFunctions(context),
+                    const SizedBox(height: 16),
+                    Text('Your Contributions',
+                        style: Theme.of(context).textTheme.titleLarge),
+                    const SizedBox(height: 16),
+                    rowContributionCardsListings(filteredSales),
+                    rowContributionCardsCommunityHub(),
                     if (filteredSales.isNotEmpty) ...[
+                      Text('Your Services Sales',
+                          style: Theme.of(context).textTheme.titleLarge),
+                      const SizedBox(height: 16),
                       rowSummaryCards(filteredSales),
                       lineChart(filteredSales),
                       pieChart(filteredSales),
@@ -360,6 +331,236 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
             ...createSeries,
           ],
         ),
+      ),
+    );
+  }
+
+  Widget rowContributionCardsCommunityHub() {
+    // Get how many events and listings the user has contributed to the coop
+    final user = ref.watch(userProvider);
+
+    final listingsContributeCount =
+        ref.watch(getBookingTasksByMemberId(user!.uid)).asData?.value.length ??
+            0;
+
+    final eventsContributeCount =
+        ref.watch(getTasksByUserIdProvider(user.uid)).asData?.value.length ?? 0;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          listingsContributed(listingsContributeCount),
+          eventsContributed(eventsContributeCount),
+        ],
+      ),
+    );
+  }
+
+  Widget eventsContributed(int eventsContributeCount) {
+    return SizedBox(
+      // Width / 2
+      height: 95,
+      width: MediaQuery.of(context).size.width / 2 - 24,
+      child: Card(
+        surfaceTintColor: Colors.yellow.withOpacity(0.1),
+        child: InkWell(
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Events Contributed',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // 2 new announcements this week
+                Text(
+                  '$eventsContributeCount events contributed',
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget listingsContributed(int listingsContributeCount) {
+    return SizedBox(
+      // Width / 2
+      height: 95,
+      width: MediaQuery.of(context).size.width / 2 - 24,
+      child: Card(
+        surfaceTintColor: Colors.blue.withOpacity(0.1),
+        child: InkWell(
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Listings Contributed',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // 2 new announcements this week
+                Text(
+                  '$listingsContributeCount listings contributed',
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget rowContributionCardsListings(List<SaleModel> sales) {
+    final totalSales = sales.fold(0.0,
+        (previousValue, sale) => previousValue + sale.saleAmount.toDouble());
+    var averageSales = totalSales / sales.length;
+    final user = ref.watch(userProvider);
+
+    if (averageSales.isNaN) {
+      averageSales = 0.0;
+    }
+
+    // Count the number of sales made by the user
+    final totalSalesCount = sales.length;
+    final totalListingsUser = ref
+            .watch(getListingsByOwnerIdProvider(user!.uid))
+            .asData
+            ?.value
+            .length ??
+        0;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          listingsCreated(totalListingsUser),
+          listingsBooked(totalSalesCount),
+        ],
+      ),
+    );
+  }
+
+  Widget listingsBooked(int sales) {
+    return SizedBox(
+      // Width / 2
+      height: 95,
+      width: MediaQuery.of(context).size.width / 2 - 24,
+      child: Card(
+        surfaceTintColor: Colors.red.withOpacity(0.1),
+        child: InkWell(
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Listings Booked',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // 2 new announcements this week
+                Text(
+                  '$sales bookings made for the coop',
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget listingsCreated(int sales) {
+    return SizedBox(
+      // Width / 2
+      height: 95,
+      width: MediaQuery.of(context).size.width / 2 - 24,
+      child: Card(
+        surfaceTintColor: Colors.green.withOpacity(0.1),
+        child: InkWell(
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Listings Created',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // 2 new announcements this week
+                Text(
+                  '$sales listings created for the coop',
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget rowContributionCardsCommunityHubContributed(List<SaleModel> sales) {
+    final totalSales = sales.fold(0.0,
+        (previousValue, sale) => previousValue + sale.saleAmount.toDouble());
+    var averageSales = totalSales / sales.length;
+
+    if (averageSales.isNaN) {
+      averageSales = 0.0;
+    }
+
+    // Count the number of sales made by the user
+    final totalSalesCount = sales.length;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          summaryCard('Listings Contributed', sales.length.toString()),
+          summaryCard('Event Contributed', totalSalesCount.toString()),
+        ],
       ),
     );
   }

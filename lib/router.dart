@@ -7,8 +7,8 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
 import 'package:lakbay/features/bookings/bookings_page.dart';
 import 'package:lakbay/features/bookings/screens/bookings_accomodation_customer.dart';
-import 'package:lakbay/features/bookings/screens/bookings_food_customer.dart';
 import 'package:lakbay/features/bookings/screens/bookings_entertainment_customer.dart';
+import 'package:lakbay/features/bookings/screens/bookings_food_customer.dart';
 import 'package:lakbay/features/bookings/screens/bookings_transport_customer.dart';
 import 'package:lakbay/features/calendar/calendar_page.dart';
 import 'package:lakbay/features/common/error.dart';
@@ -63,6 +63,7 @@ import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/transportation_booking_details.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
+import 'package:lakbay/features/profile/my_dashboard.dart';
 import 'package:lakbay/features/profile/profile_customer_page.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/tasks/event_tasks_edit.dart';
@@ -189,12 +190,26 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 },
                 name: 'edit_profile',
               ),
- 
+
               // My Coop Dashboard
-              buildSubRoute('/my_coop/dashboard/:uid',
+              buildSubRoute(
+                '/my_coop/dashboard/:uid',
                 (context, pathParameters, extra) {
-                    return CoopDashboard(coopId: pathParameters['uid']!,);
-              },),
+                  return CoopDashboard(
+                    coopId: pathParameters['uid']!,
+                  );
+                },
+              ),
+
+              // My Coop Dashboard
+              buildSubRoute(
+                '/my_coop/my_dashboard/:uid',
+                (context, pathParameters, extra) {
+                  return MyDashBoard(
+                    coopId: pathParameters['uid']!,
+                  );
+                },
+              ),
 
               // * CUSTOMER VIEW
               // Plan Page
@@ -364,20 +379,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               // Events Page
               buildMainRoute('/events', const EventsPage()),
 
-              buildSubRoute(
-                '/select_location', 
-                (context, pathParameters, extra) {
-                  final page = extra as String;
-                  return SelectLocation(page: page);
-                }
-              ),
+              buildSubRoute('/select_location',
+                  (context, pathParameters, extra) {
+                final page = extra as String;
+                return SelectLocation(page: page);
+              }),
 
-              buildSubRoute(
-                '/get_location',
-                (context, pathParameters, extra) {
-                  return const CheckCurrentLocation();
-                }
-              ),
+              buildSubRoute('/get_location', (context, pathParameters, extra) {
+                return const CheckCurrentLocation();
+              }),
 
               // Coops Page
               buildMainRoute(
@@ -610,7 +620,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                                 booking: booking,
                                 listing: listing,
                               );
-                              
+
                             // case 'food':
                             //   return CustomerFood(
                             //     listing: listing,

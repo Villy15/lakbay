@@ -41,7 +41,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
     // final tempUser = user.copyWith(
     //   cooperativesJoined: user.cooperativesJoined
     //       ?.map((coop) => coop.copyWith(
-    //             role: 'Manager',
+    //             role: 'Member',
     //           ))
     //       .toList(),
     // );
