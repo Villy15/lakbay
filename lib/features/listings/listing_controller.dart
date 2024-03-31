@@ -301,7 +301,9 @@ class ListingController extends StateNotifier<bool> {
                 updatedDeparture);
           } else {
             List<ListingBookings> currentPassengers = [];
-            currentPassengers.addAll(departures.first.passengers);
+            for (var booking in departures.first.passengers) {
+              currentPassengers.add(booking);
+            }
             currentPassengers.add(booking);
             DepartureModel updatedDeparture =
                 departures.first.copyWith(passengers: currentPassengers);
