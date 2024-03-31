@@ -154,7 +154,7 @@ class _CustomerTransportationState
                                                                   .luggage_outlined,
                                                               size: 30),
                                                           Text(
-                                                              "Pickup Point: ${widget.listing.availableTransport!.pickupPoint}",
+                                                              "Pickup Point: ${widget.listing.pickUp}",
                                                               style:
                                                                   const TextStyle(
                                                                       fontSize:
@@ -169,7 +169,7 @@ class _CustomerTransportationState
                                                                     .location_on_outlined,
                                                                 size: 30),
                                                             Text(
-                                                                'Destination: ${widget.listing.availableTransport!.destination}',
+                                                                'Destination: ${widget.listing.destination}',
                                                                 style:
                                                                     const TextStyle(
                                                                         fontSize:

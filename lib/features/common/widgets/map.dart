@@ -27,7 +27,7 @@ class MapWidgetState extends State<MapWidget> {
       _latestController = controller;
     });
   }
-  
+
   @override
   void dispose() {
     _mapController.close();
@@ -126,17 +126,19 @@ class TwoMarkerMapWidgetState extends State<TwoMarkerMapWidget> {
       future: getLatLng(addresses),
       builder:
           (BuildContext context, AsyncSnapshot<Map<String, LatLng>> snapshot) {
-        LatLng centerPoint;
+        LatLng? centerPoint;
         if (addresses['pickup']!.isNotEmpty &&
             addresses['destination']!.isNotEmpty) {
-          centerPoint = LatLng(
-            (snapshot.data!['pickup']!.latitude +
-                    snapshot.data!['destination']!.latitude) /
-                2,
-            (snapshot.data!['pickup']!.longitude +
-                    snapshot.data!['destination']!.longitude) /
-                2,
-          );
+          if (snapshot.data != null) {
+            centerPoint = LatLng(
+              (snapshot.data!['pickup']!.latitude +
+                      snapshot.data!['destination']!.latitude) /
+                  2,
+              (snapshot.data!['pickup']!.longitude +
+                      snapshot.data!['destination']!.longitude) /
+                  2,
+            );
+          }
         } else {
           centerPoint = snapshot.data!['pickup']!;
         }
@@ -189,7 +191,7 @@ class TwoMarkerMapWidgetState extends State<TwoMarkerMapWidget> {
               buildingsEnabled: true,
               myLocationButtonEnabled: true,
               initialCameraPosition: CameraPosition(
-                target: centerPoint,
+                target: centerPoint ?? const LatLng(0, 0),
                 zoom: 14.4746,
               ),
               onMapCreated: (GoogleMapController controller) {

@@ -59,6 +59,7 @@ import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dar
 import 'package:lakbay/features/listings/crud/customer_food_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_touring.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
+import 'package:lakbay/features/listings/departure_details.dart';
 //import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/listings/transportation_booking_details.dart';
 import 'package:lakbay/features/market/market_page.dart';
@@ -364,20 +365,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               // Events Page
               buildMainRoute('/events', const EventsPage()),
 
-              buildSubRoute(
-                '/select_location', 
-                (context, pathParameters, extra) {
-                  final page = extra as String;
-                  return SelectLocation(page: page);
-                }
-              ),
+              buildSubRoute('/select_location',
+                  (context, pathParameters, extra) {
+                final page = extra as String;
+                return SelectLocation(page: page);
+              }),
 
-              buildSubRoute(
-                '/get_location',
-                (context, pathParameters, extra) {
-                  return const CheckCurrentLocation();
-                }
-              ),
+              buildSubRoute('/get_location', (context, pathParameters, extra) {
+                return const CheckCurrentLocation();
+              }),
 
               // Coops Page
               buildMainRoute(
@@ -610,7 +606,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                                 booking: booking,
                                 listing: listing,
                               );
-                              
+
                             // case 'food':
                             //   return CustomerFood(
                             //     listing: listing,
@@ -631,6 +627,23 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           }
                         },
                         name: 'booking_details',
+                      ),
+                      buildSubRoute(
+                        'departure_details',
+                        (context, pathParameters, extra) {
+                          final Map<String, dynamic> departureDetails =
+                              extra as Map<String, dynamic>;
+                          final DepartureModel departure =
+                              departureDetails['departure'] as DepartureModel;
+                          final ListingModel listing =
+                              departureDetails['listing'] as ListingModel;
+
+                          return DepartureDetails(
+                            departure: departure,
+                            listing: listing,
+                          );
+                        },
+                        name: 'departure_details',
                       ),
                     ],
                   )

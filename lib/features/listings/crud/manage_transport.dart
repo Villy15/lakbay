@@ -37,6 +37,13 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
       width: 100.0,
       child: Tab(
         // icon: Icon(Icons.meeting_room_outlined),
+        child: Text('Departures'),
+      ),
+    ),
+    const SizedBox(
+      width: 100.0,
+      child: Tab(
+        // icon: Icon(Icons.meeting_room_outlined),
         child: Text('Bookings'),
       ),
     ),
@@ -95,10 +102,10 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                 ),
                 body: TabBarView(
                   children: [
+                    departures(),
                     bookings(),
                     details(),
-                    //! TODO REMOVE THIS
-                    // vehicles(),
+                    vehicles(),
                   ],
                 ))));
   }
@@ -279,58 +286,20 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
   Widget bookings() {
     return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
         data: (List<ListingBookings> bookings) {
-          Map<DateTime, ListingBookings> filteredBookingsMap = {};
-
-          for (var booking in bookings) {
-            DateTime key = booking.startDate!;
-            if (!filteredBookingsMap.containsKey(key)) {
-              filteredBookingsMap[key] = ListingBookings(
-                id: booking.id,
-                customerId: '',
-                customerName: '',
-                customerPhoneNo: '',
-                category: 'Transport',
-                email: '',
-                governmentId: '',
-                guests: booking.guests,
-                luggage: booking.luggage,
-                listingId: booking.listingId,
-                listingTitle: booking.listingTitle,
-                needsContributions: booking.needsContributions,
-                price: 0,
-                bookingStatus: 'Reserved',
-                tripUid: '',
-                tripName: '',
-                startDate: booking.startDate,
-                endDate: booking.endDate,
-                startTime: booking.startTime,
-                endTime: booking.endTime,
-              );
-            } else {
-              ListingBookings oldBooking = filteredBookingsMap[key]!;
-              filteredBookingsMap[key] = filteredBookingsMap[key]!.copyWith(
-                guests: oldBooking.guests + booking.guests,
-                // luggage: oldBooking.luggage + booking.luggage,
-              );
-            }
-          }
-          List<DateTime> sortedKeys = filteredBookingsMap.keys.toList()
-            ..sort((a, b) => a.compareTo(b));
-          List<ListingBookings> filteredBookings =
-              sortedKeys.map((key) => filteredBookingsMap[key]!).toList();
-
           return ListView.builder(
               shrinkWrap: true,
-              itemCount: filteredBookings.length,
+              itemCount: bookings.length,
               itemBuilder: ((context, index) {
-                String formattedStartDate = DateFormat('MMMM dd')
-                    .format(filteredBookings[index].startDate!);
+                String formattedStartDate =
+                    DateFormat('MMMM dd').format(bookings[index].startDate!);
                 String formattedStartTime =
-                    filteredBookings[index].startTime!.format(context);
+                    TimeOfDay.fromDateTime(bookings[index].startDate!)
+                        .format(context);
                 String formattedEndTime =
-                    filteredBookings[index].endTime!.format(context);
-                String formattedEndDate = DateFormat('MMMM dd')
-                    .format(filteredBookings[index].endDate!);
+                    TimeOfDay.fromDateTime(bookings[index].endDate!)
+                        .format(context);
+                String formattedEndDate =
+                    DateFormat('MMMM dd').format(bookings[index].endDate!);
                 return Card(
                     elevation: 1.0,
                     margin: const EdgeInsets.all(8.0),
@@ -368,7 +337,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                   ],
                                 ),
                                 Text(
-                                  "Passengers: ${filteredBookings[index].guests}",
+                                  "Passengers: ${bookings[index].guests}",
                                   style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w300,
@@ -382,9 +351,9 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                             child: FilledButton(
                                 onPressed: () {
                                   context.push(
-                                    '/market/${filteredBookings[index].category.toLowerCase()}/booking_details',
+                                    '/market/${bookings[index].category.toLowerCase()}/booking_details',
                                     extra: {
-                                      'booking': filteredBookings[index],
+                                      'booking': bookings[index],
                                       'listing': widget.listing
                                     },
                                   );
@@ -1276,5 +1245,154 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
         ]),
       );
     });
+  }
+
+  Widget departures() {
+    return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
+        data: (List<ListingBookings> bookings) {
+          Map<DateTime, ListingBookings> filteredBookingsMap = {};
+
+          for (var booking in bookings) {
+            DateTime key = booking.startDate!;
+            if (!filteredBookingsMap.containsKey(key)) {
+              filteredBookingsMap[key] = ListingBookings(
+                id: booking.id,
+                customerId: '',
+                customerName: '',
+                customerPhoneNo: '',
+                category: 'Transport',
+                email: '',
+                governmentId: '',
+                guests: booking.guests,
+                luggage: booking.luggage,
+                listingId: booking.listingId,
+                listingTitle: booking.listingTitle,
+                needsContributions: booking.needsContributions,
+                price: 0,
+                bookingStatus: 'Reserved',
+                tripUid: '',
+                tripName: '',
+                startDate: booking.startDate,
+                endDate: booking.endDate,
+                startTime: booking.startTime,
+                endTime: booking.endTime,
+              );
+            } else {
+              ListingBookings oldBooking = filteredBookingsMap[key]!;
+              filteredBookingsMap[key] = filteredBookingsMap[key]!.copyWith(
+                guests: oldBooking.guests + booking.guests,
+                // luggage: oldBooking.luggage + booking.luggage,
+              );
+            }
+          }
+          List<DateTime> sortedKeys = filteredBookingsMap.keys.toList()
+            ..sort((a, b) => a.compareTo(b));
+          List<ListingBookings> filteredBookings =
+              sortedKeys.map((key) => filteredBookingsMap[key]!).toList();
+
+          return ListView.builder(
+              shrinkWrap: true,
+              itemCount: filteredBookings.length,
+              itemBuilder: ((context, index) {
+                String formattedStartDate = DateFormat('MMMM dd')
+                    .format(filteredBookings[index].startDate!);
+                String formattedStartTime =
+                    TimeOfDay.fromDateTime(filteredBookings[index].startDate!)
+                        .format(context);
+                String formattedEndTime =
+                    TimeOfDay.fromDateTime(filteredBookings[index].endDate!)
+                        .format(context);
+                String formattedEndDate = DateFormat('MMMM dd')
+                    .format(filteredBookings[index].endDate!);
+                return Card(
+                    elevation: 1.0,
+                    margin: const EdgeInsets.all(8.0),
+                    child: Column(children: [
+                      Padding(
+                          padding: const EdgeInsets.only(
+                              left: 40, right: 10, top: 10, bottom: 10),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  formattedStartDate,
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Departure: $formattedStartTime | ",
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.black),
+                                    ),
+                                    Text(
+                                      "Arrival: $formattedEndTime",
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "Passengers: ${filteredBookings[index].guests}",
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300,
+                                      color: Colors.black),
+                                ),
+                              ])),
+                      Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: SizedBox(
+                            width: MediaQuery.sizeOf(context).width * .5,
+                            child: FilledButton(
+                                onPressed: () {
+                                  List<ListingBookings> selectedBookings = [];
+                                  for (var booking in bookings) {
+                                    if (TimeOfDay.fromDateTime(
+                                            booking.startDate!) ==
+                                        TimeOfDay.fromDateTime(
+                                            filteredBookings[index]
+                                                .startDate!)) {
+                                      selectedBookings.add(booking);
+                                    }
+                                  }
+                                  DepartureModel departure = DepartureModel(
+                                      passengers: selectedBookings,
+                                      vehicleNo:
+                                          selectedBookings.first.vehicleNo,
+                                      departure:
+                                          selectedBookings.first.startDate,
+                                      arrival: selectedBookings.first.endDate);
+                                  context.push(
+                                    '/market/${filteredBookings[index].category.toLowerCase()}/departure_details',
+                                    extra: {
+                                      'departure': departure,
+                                      'listing': widget.listing
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        4.0), // Adjust the radius as needed
+                                  ),
+                                ),
+                                child: const Text('Departure Details')),
+                          ))
+                    ]));
+              }));
+        },
+        error: ((error, stackTrace) => Scaffold(
+            body: ErrorText(
+                error: error.toString(), stackTrace: stackTrace.toString()))),
+        loading: () => const Scaffold(body: Loader()));
   }
 }

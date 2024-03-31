@@ -54,6 +54,8 @@ mixin _$ListingModel {
   String get province => throw _privateConstructorUsedError;
   String get publisherId => throw _privateConstructorUsedError;
   String get publisherName => throw _privateConstructorUsedError;
+  String? get pickUp => throw _privateConstructorUsedError;
+  String? get destination => throw _privateConstructorUsedError;
   String? get guestInfo => throw _privateConstructorUsedError;
   num? get rating => throw _privateConstructorUsedError;
   List<BookingTask>? get fixedTasks => throw _privateConstructorUsedError;
@@ -112,6 +114,8 @@ abstract class $ListingModelCopyWith<$Res> {
       String province,
       String publisherId,
       String publisherName,
+      String? pickUp,
+      String? destination,
       String? guestInfo,
       num? rating,
       List<BookingTask>? fixedTasks,
@@ -170,6 +174,8 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? province = null,
     Object? publisherId = null,
     Object? publisherName = null,
+    Object? pickUp = freezed,
+    Object? destination = freezed,
     Object? guestInfo = freezed,
     Object? rating = freezed,
     Object? fixedTasks = freezed,
@@ -296,6 +302,14 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
           ? _value.publisherName
           : publisherName // ignore: cast_nullable_to_non_nullable
               as String,
+      pickUp: freezed == pickUp
+          ? _value.pickUp
+          : pickUp // ignore: cast_nullable_to_non_nullable
+              as String?,
+      destination: freezed == destination
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as String?,
       guestInfo: freezed == guestInfo
           ? _value.guestInfo
           : guestInfo // ignore: cast_nullable_to_non_nullable
@@ -406,6 +420,8 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       String province,
       String publisherId,
       String publisherName,
+      String? pickUp,
+      String? destination,
       String? guestInfo,
       num? rating,
       List<BookingTask>? fixedTasks,
@@ -464,6 +480,8 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? province = null,
     Object? publisherId = null,
     Object? publisherName = null,
+    Object? pickUp = freezed,
+    Object? destination = freezed,
     Object? guestInfo = freezed,
     Object? rating = freezed,
     Object? fixedTasks = freezed,
@@ -590,6 +608,14 @@ class __$$ListingModelImplCopyWithImpl<$Res>
           ? _value.publisherName
           : publisherName // ignore: cast_nullable_to_non_nullable
               as String,
+      pickUp: freezed == pickUp
+          ? _value.pickUp
+          : pickUp // ignore: cast_nullable_to_non_nullable
+              as String?,
+      destination: freezed == destination
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as String?,
       guestInfo: freezed == guestInfo
           ? _value.guestInfo
           : guestInfo // ignore: cast_nullable_to_non_nullable
@@ -674,6 +700,8 @@ class _$ListingModelImpl implements _ListingModel {
       required this.province,
       required this.publisherId,
       required this.publisherName,
+      this.pickUp,
+      this.destination,
       this.guestInfo,
       this.rating,
       final List<BookingTask>? fixedTasks,
@@ -821,6 +849,10 @@ class _$ListingModelImpl implements _ListingModel {
   @override
   final String publisherName;
   @override
+  final String? pickUp;
+  @override
+  final String? destination;
+  @override
   final String? guestInfo;
   @override
   final num? rating;
@@ -892,7 +924,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableTimes: $availableTimes, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, driverNames: $driverNames, driverIds: $driverIds, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, duration: $duration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, guestInfo: $guestInfo, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, availableDays: $availableDays, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableTables: $availableTables, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableTimes: $availableTimes, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, driverNames: $driverNames, driverIds: $driverIds, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, duration: $duration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, pickUp: $pickUp, destination: $destination, guestInfo: $guestInfo, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, availableDays: $availableDays, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableTables: $availableTables, uid: $uid)';
   }
 
   @override
@@ -950,6 +982,9 @@ class _$ListingModelImpl implements _ListingModel {
                 other.publisherId == publisherId) &&
             (identical(other.publisherName, publisherName) ||
                 other.publisherName == publisherName) &&
+            (identical(other.pickUp, pickUp) || other.pickUp == pickUp) &&
+            (identical(other.destination, destination) ||
+                other.destination == destination) &&
             (identical(other.guestInfo, guestInfo) ||
                 other.guestInfo == guestInfo) &&
             (identical(other.rating, rating) || other.rating == rating) &&
@@ -1003,6 +1038,8 @@ class _$ListingModelImpl implements _ListingModel {
         province,
         publisherId,
         publisherName,
+        pickUp,
+        destination,
         guestInfo,
         rating,
         const DeepCollectionEquality().hash(_fixedTasks),
@@ -1061,6 +1098,8 @@ abstract class _ListingModel implements ListingModel {
       required final String province,
       required final String publisherId,
       required final String publisherName,
+      final String? pickUp,
+      final String? destination,
       final String? guestInfo,
       final num? rating,
       final List<BookingTask>? fixedTasks,
@@ -1138,6 +1177,10 @@ abstract class _ListingModel implements ListingModel {
   String get publisherId;
   @override
   String get publisherName;
+  @override
+  String? get pickUp;
+  @override
+  String? get destination;
   @override
   String? get guestInfo;
   @override
@@ -2019,9 +2062,6 @@ mixin _$AvailableTransport {
   TimeOfDay? get startTime => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
   TimeOfDay? get endTime => throw _privateConstructorUsedError;
-  String? get destination => throw _privateConstructorUsedError;
-  String? get pickupPoint => throw _privateConstructorUsedError;
-  String? get travelTime => throw _privateConstructorUsedError;
   num? get priceByHour => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -2048,9 +2088,6 @@ abstract class $AvailableTransportCopyWith<$Res> {
       List<bool>? workingDays,
       @TimeOfDayConverter() TimeOfDay? startTime,
       @TimeOfDayConverter() TimeOfDay? endTime,
-      String? destination,
-      String? pickupPoint,
-      String? travelTime,
       num? priceByHour});
 }
 
@@ -2078,9 +2115,6 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
     Object? workingDays = freezed,
     Object? startTime = freezed,
     Object? endTime = freezed,
-    Object? destination = freezed,
-    Object? pickupPoint = freezed,
-    Object? travelTime = freezed,
     Object? priceByHour = freezed,
   }) {
     return _then(_value.copyWith(
@@ -2128,18 +2162,6 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay?,
-      destination: freezed == destination
-          ? _value.destination
-          : destination // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupPoint: freezed == pickupPoint
-          ? _value.pickupPoint
-          : pickupPoint // ignore: cast_nullable_to_non_nullable
-              as String?,
-      travelTime: freezed == travelTime
-          ? _value.travelTime
-          : travelTime // ignore: cast_nullable_to_non_nullable
-              as String?,
       priceByHour: freezed == priceByHour
           ? _value.priceByHour
           : priceByHour // ignore: cast_nullable_to_non_nullable
@@ -2168,9 +2190,6 @@ abstract class _$$AvailableTransportImplCopyWith<$Res>
       List<bool>? workingDays,
       @TimeOfDayConverter() TimeOfDay? startTime,
       @TimeOfDayConverter() TimeOfDay? endTime,
-      String? destination,
-      String? pickupPoint,
-      String? travelTime,
       num? priceByHour});
 }
 
@@ -2196,9 +2215,6 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
     Object? workingDays = freezed,
     Object? startTime = freezed,
     Object? endTime = freezed,
-    Object? destination = freezed,
-    Object? pickupPoint = freezed,
-    Object? travelTime = freezed,
     Object? priceByHour = freezed,
   }) {
     return _then(_$AvailableTransportImpl(
@@ -2246,18 +2262,6 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay?,
-      destination: freezed == destination
-          ? _value.destination
-          : destination // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupPoint: freezed == pickupPoint
-          ? _value.pickupPoint
-          : pickupPoint // ignore: cast_nullable_to_non_nullable
-              as String?,
-      travelTime: freezed == travelTime
-          ? _value.travelTime
-          : travelTime // ignore: cast_nullable_to_non_nullable
-              as String?,
       priceByHour: freezed == priceByHour
           ? _value.priceByHour
           : priceByHour // ignore: cast_nullable_to_non_nullable
@@ -2281,9 +2285,6 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       final List<bool>? workingDays,
       @TimeOfDayConverter() this.startTime,
       @TimeOfDayConverter() this.endTime,
-      this.destination,
-      this.pickupPoint,
-      this.travelTime,
       this.priceByHour})
       : _departureTimes = departureTimes,
         _workingDays = workingDays;
@@ -2333,17 +2334,11 @@ class _$AvailableTransportImpl implements _AvailableTransport {
   @TimeOfDayConverter()
   final TimeOfDay? endTime;
   @override
-  final String? destination;
-  @override
-  final String? pickupPoint;
-  @override
-  final String? travelTime;
-  @override
   final num? priceByHour;
 
   @override
   String toString() {
-    return 'AvailableTransport(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, guests: $guests, departureTimes: $departureTimes, vehicleNo: $vehicleNo, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, destination: $destination, pickupPoint: $pickupPoint, travelTime: $travelTime, priceByHour: $priceByHour)';
+    return 'AvailableTransport(uid: $uid, listingId: $listingId, listingName: $listingName, available: $available, guests: $guests, departureTimes: $departureTimes, vehicleNo: $vehicleNo, luggage: $luggage, workingDays: $workingDays, startTime: $startTime, endTime: $endTime, priceByHour: $priceByHour)';
   }
 
   @override
@@ -2369,12 +2364,6 @@ class _$AvailableTransportImpl implements _AvailableTransport {
             (identical(other.startTime, startTime) ||
                 other.startTime == startTime) &&
             (identical(other.endTime, endTime) || other.endTime == endTime) &&
-            (identical(other.destination, destination) ||
-                other.destination == destination) &&
-            (identical(other.pickupPoint, pickupPoint) ||
-                other.pickupPoint == pickupPoint) &&
-            (identical(other.travelTime, travelTime) ||
-                other.travelTime == travelTime) &&
             (identical(other.priceByHour, priceByHour) ||
                 other.priceByHour == priceByHour));
   }
@@ -2394,9 +2383,6 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       const DeepCollectionEquality().hash(_workingDays),
       startTime,
       endTime,
-      destination,
-      pickupPoint,
-      travelTime,
       priceByHour);
 
   @JsonKey(ignore: true)
@@ -2427,9 +2413,6 @@ abstract class _AvailableTransport implements AvailableTransport {
       final List<bool>? workingDays,
       @TimeOfDayConverter() final TimeOfDay? startTime,
       @TimeOfDayConverter() final TimeOfDay? endTime,
-      final String? destination,
-      final String? pickupPoint,
-      final String? travelTime,
       final num? priceByHour}) = _$AvailableTransportImpl;
 
   factory _AvailableTransport.fromJson(Map<String, dynamic> json) =
@@ -2461,16 +2444,232 @@ abstract class _AvailableTransport implements AvailableTransport {
   @TimeOfDayConverter()
   TimeOfDay? get endTime;
   @override
-  String? get destination;
-  @override
-  String? get pickupPoint;
-  @override
-  String? get travelTime;
-  @override
   num? get priceByHour;
   @override
   @JsonKey(ignore: true)
   _$$AvailableTransportImplCopyWith<_$AvailableTransportImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+DepartureModel _$DepartureModelFromJson(Map<String, dynamic> json) {
+  return _DepartureModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DepartureModel {
+  List<ListingBookings> get passengers => throw _privateConstructorUsedError;
+  num? get vehicleNo => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get arrival => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get departure => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $DepartureModelCopyWith<DepartureModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DepartureModelCopyWith<$Res> {
+  factory $DepartureModelCopyWith(
+          DepartureModel value, $Res Function(DepartureModel) then) =
+      _$DepartureModelCopyWithImpl<$Res, DepartureModel>;
+  @useResult
+  $Res call(
+      {List<ListingBookings> passengers,
+      num? vehicleNo,
+      @TimestampSerializer() DateTime? arrival,
+      @TimestampSerializer() DateTime? departure});
+}
+
+/// @nodoc
+class _$DepartureModelCopyWithImpl<$Res, $Val extends DepartureModel>
+    implements $DepartureModelCopyWith<$Res> {
+  _$DepartureModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? passengers = null,
+    Object? vehicleNo = freezed,
+    Object? arrival = freezed,
+    Object? departure = freezed,
+  }) {
+    return _then(_value.copyWith(
+      passengers: null == passengers
+          ? _value.passengers
+          : passengers // ignore: cast_nullable_to_non_nullable
+              as List<ListingBookings>,
+      vehicleNo: freezed == vehicleNo
+          ? _value.vehicleNo
+          : vehicleNo // ignore: cast_nullable_to_non_nullable
+              as num?,
+      arrival: freezed == arrival
+          ? _value.arrival
+          : arrival // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      departure: freezed == departure
+          ? _value.departure
+          : departure // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DepartureModelImplCopyWith<$Res>
+    implements $DepartureModelCopyWith<$Res> {
+  factory _$$DepartureModelImplCopyWith(_$DepartureModelImpl value,
+          $Res Function(_$DepartureModelImpl) then) =
+      __$$DepartureModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {List<ListingBookings> passengers,
+      num? vehicleNo,
+      @TimestampSerializer() DateTime? arrival,
+      @TimestampSerializer() DateTime? departure});
+}
+
+/// @nodoc
+class __$$DepartureModelImplCopyWithImpl<$Res>
+    extends _$DepartureModelCopyWithImpl<$Res, _$DepartureModelImpl>
+    implements _$$DepartureModelImplCopyWith<$Res> {
+  __$$DepartureModelImplCopyWithImpl(
+      _$DepartureModelImpl _value, $Res Function(_$DepartureModelImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? passengers = null,
+    Object? vehicleNo = freezed,
+    Object? arrival = freezed,
+    Object? departure = freezed,
+  }) {
+    return _then(_$DepartureModelImpl(
+      passengers: null == passengers
+          ? _value._passengers
+          : passengers // ignore: cast_nullable_to_non_nullable
+              as List<ListingBookings>,
+      vehicleNo: freezed == vehicleNo
+          ? _value.vehicleNo
+          : vehicleNo // ignore: cast_nullable_to_non_nullable
+              as num?,
+      arrival: freezed == arrival
+          ? _value.arrival
+          : arrival // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      departure: freezed == departure
+          ? _value.departure
+          : departure // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DepartureModelImpl implements _DepartureModel {
+  _$DepartureModelImpl(
+      {required final List<ListingBookings> passengers,
+      this.vehicleNo,
+      @TimestampSerializer() this.arrival,
+      @TimestampSerializer() this.departure})
+      : _passengers = passengers;
+
+  factory _$DepartureModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DepartureModelImplFromJson(json);
+
+  final List<ListingBookings> _passengers;
+  @override
+  List<ListingBookings> get passengers {
+    if (_passengers is EqualUnmodifiableListView) return _passengers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_passengers);
+  }
+
+  @override
+  final num? vehicleNo;
+  @override
+  @TimestampSerializer()
+  final DateTime? arrival;
+  @override
+  @TimestampSerializer()
+  final DateTime? departure;
+
+  @override
+  String toString() {
+    return 'DepartureModel(passengers: $passengers, vehicleNo: $vehicleNo, arrival: $arrival, departure: $departure)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DepartureModelImpl &&
+            const DeepCollectionEquality()
+                .equals(other._passengers, _passengers) &&
+            (identical(other.vehicleNo, vehicleNo) ||
+                other.vehicleNo == vehicleNo) &&
+            (identical(other.arrival, arrival) || other.arrival == arrival) &&
+            (identical(other.departure, departure) ||
+                other.departure == departure));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_passengers),
+      vehicleNo,
+      arrival,
+      departure);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DepartureModelImplCopyWith<_$DepartureModelImpl> get copyWith =>
+      __$$DepartureModelImplCopyWithImpl<_$DepartureModelImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DepartureModelImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DepartureModel implements DepartureModel {
+  factory _DepartureModel(
+      {required final List<ListingBookings> passengers,
+      final num? vehicleNo,
+      @TimestampSerializer() final DateTime? arrival,
+      @TimestampSerializer() final DateTime? departure}) = _$DepartureModelImpl;
+
+  factory _DepartureModel.fromJson(Map<String, dynamic> json) =
+      _$DepartureModelImpl.fromJson;
+
+  @override
+  List<ListingBookings> get passengers;
+  @override
+  num? get vehicleNo;
+  @override
+  @TimestampSerializer()
+  DateTime? get arrival;
+  @override
+  @TimestampSerializer()
+  DateTime? get departure;
+  @override
+  @JsonKey(ignore: true)
+  _$$DepartureModelImplCopyWith<_$DepartureModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

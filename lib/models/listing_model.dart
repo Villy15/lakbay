@@ -39,6 +39,8 @@ class ListingModel with _$ListingModel {
     required String province,
     required String publisherId,
     required String publisherName,
+    String? pickUp,
+    String? destination,
     String? guestInfo,
     num? rating,
     List<BookingTask>? fixedTasks,
@@ -126,14 +128,24 @@ class AvailableTransport with _$AvailableTransport {
     List<bool>? workingDays,
     @TimeOfDayConverter() TimeOfDay? startTime,
     @TimeOfDayConverter() TimeOfDay? endTime,
-    String? destination,
-    String? pickupPoint,
-    String? travelTime,
     num? priceByHour,
   }) = _AvailableTransport;
 
   factory AvailableTransport.fromJson(Map<String, dynamic> json) =>
       _$AvailableTransportFromJson(json);
+}
+
+@freezed
+class DepartureModel with _$DepartureModel {
+  factory DepartureModel({
+    required List<ListingBookings> passengers,
+    num? vehicleNo,
+    @TimestampSerializer() DateTime? arrival,
+    @TimestampSerializer() DateTime? departure,
+  }) = _DepartureModel;
+
+  factory DepartureModel.fromJson(Map<String, dynamic> json) =>
+      _$DepartureModelFromJson(json);
 }
 
 @freezed
