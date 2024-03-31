@@ -10,11 +10,10 @@ import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
-import 'package:lakbay/models/sale_model.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/sale_model.dart';
+import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class CoopDashboard extends ConsumerStatefulWidget {
@@ -38,128 +37,128 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
     _listings = ref.read(getAllListingsProvider);
   }
 
-@override
-Widget build(BuildContext context) {
-  final user = ref.watch(userProvider);
-  debugPrintJson("File Name: coop_dashboard.dart");
-  return Scaffold(
-    appBar: CustomAppBar(title: 'My Dashboard', user: user),
-    body: ref.watch(getSalesByCoopIdProvider(user!.currentCoop!)).when(
-      data: (sales) {
-        if (sales.isEmpty) {
-          return salesEmpty();
-        }
+  @override
+  Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    debugPrintJson("File Name: coop_dashboard.dart");
+    return Scaffold(
+      appBar: CustomAppBar(title: 'My Dashboard', user: user),
+      body: ref.watch(getSalesByCoopIdProvider(user!.currentCoop!)).when(
+            data: (sales) {
+              if (sales.isEmpty) {
+                return salesEmpty();
+              }
 
-        // Sort sales by date
-        sales.sort((a, b) {
-          final bookingA = ref
-              .watch(getBookingByIdProvider((a.listingId, a.bookingId)))
-              .asData
-              ?.value;
+              // Sort sales by date
+              sales.sort((a, b) {
+                final bookingA = ref
+                    .watch(getBookingByIdProvider((a.listingId, a.bookingId)))
+                    .asData
+                    ?.value;
 
-          final bookingB = ref
-              .watch(getBookingByIdProvider((b.listingId, b.bookingId)))
-              .asData
-              ?.value;
+                final bookingB = ref
+                    .watch(getBookingByIdProvider((b.listingId, b.bookingId)))
+                    .asData
+                    ?.value;
 
-          if (bookingA == null || bookingB == null) {
-            return 0;
-          }
+                if (bookingA == null || bookingB == null) {
+                  return 0;
+                }
 
-          return bookingA.startDate!.compareTo(bookingB.startDate!);
-        });
+                return bookingA.startDate!.compareTo(bookingB.startDate!);
+              });
 
-        // Filter data based on selection
-        final filteredSales = sales
-            .where((sale) => filterDataBasedOnSelection(ref
-                .watch(getBookingByIdProvider(
-                    (sale.listingId, sale.bookingId)))
-                .asData!
-                .value
-                .startDate!))
-            .toList();
+              // Filter data based on selection
+              final filteredSales = sales
+                  .where((sale) => filterDataBasedOnSelection(ref
+                      .watch(getBookingByIdProvider(
+                          (sale.listingId, sale.bookingId)))
+                      .asData!
+                      .value
+                      .startDate!))
+                  .toList();
 
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView(
-            children: [
-              dashboardFunctions(context),
-              if (filteredSales.isNotEmpty) ...[
-                rowSummaryCards(filteredSales),
-                lineChart(filteredSales),
-                pieChart(filteredSales),
-                const SizedBox(height: 16),
-                Text('Transactions',
-                    style: Theme.of(context).textTheme.titleLarge),
-                listTransactions(filteredSales),
-              ] else ...[
-                Padding(
-                  // padding screen height - appbar height - padding
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.2),
-                  child: salesEmpty(),
-                ),
-              ],
-              // Add the provided code snippet here
-              ref.watch(getAllListingsProvider).when(
-                data: (listings) {
-                  if (listings.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
-                  int totalBookingsForUserListings = 0;
-                  
-                  for (final listing in listings) {
-                    if (listing.publisherName == user.name) {
-                      ref.watch(getAllBookingsProvider(listing.uid!)).when(
-                        data: (List<ListingBookings> bookings) {
-                          for (final booking in bookings) {
-                              totalBookingsForUserListings++;
-                          }
-                        },
-                        error: (error, stackTrace) => ErrorText(
-                          error: error.toString(),
-                          stackTrace: stackTrace.toString(),
-                        ),
-                        loading: () => const Loader(),
-                      );
-                    }
-                  }
-
-                  return Column(
-                    children: [
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ListView(
+                  children: [
+                    dashboardFunctions(context),
+                    if (filteredSales.isNotEmpty) ...[
+                      rowSummaryCards(filteredSales),
+                      lineChart(filteredSales),
+                      pieChart(filteredSales),
                       const SizedBox(height: 16),
-                      Center(
-                        child: Text(
-                          "Current points: $totalBookingsForUserListings",
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      Text('Transactions',
+                          style: Theme.of(context).textTheme.titleLarge),
+                      listTransactions(filteredSales),
+                    ] else ...[
+                      Padding(
+                        // padding screen height - appbar height - padding
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.2),
+                        child: salesEmpty(),
                       ),
                     ],
-                  );
-                },
-                error: (error, stackTrace) => ErrorText(
-                  error: error.toString(),
-                  stackTrace: stackTrace.toString(),
-                ),
-                loading: () => const Loader(),
-              ),
-  )
-            ],
-          ),
-        );
-      },
-      error: (error, stackTrace) => ErrorText(
-        error: error.toString(),
-        stackTrace: stackTrace.toString(),
-      ),
-      loading: () => const Loader(),
-    ),
-  );
-}
+                    // Add the provided code snippet here
+                    ref.watch(getAllListingsProvider).when(
+                          data: (listings) {
+                            if (listings.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+                            int totalBookingsForUserListings = 0;
 
+                            for (final listing in listings) {
+                              if (listing.publisherName == user.name) {
+                                ref
+                                    .watch(getAllBookingsProvider(listing.uid!))
+                                    .when(
+                                      data: (List<ListingBookings> bookings) {
+                                        for (final booking in bookings) {
+                                          totalBookingsForUserListings++;
+                                        }
+                                      },
+                                      error: (error, stackTrace) => ErrorText(
+                                        error: error.toString(),
+                                        stackTrace: stackTrace.toString(),
+                                      ),
+                                      loading: () => const Loader(),
+                                    );
+                              }
+                            }
+
+                            return Column(
+                              children: [
+                                const SizedBox(height: 16),
+                                Center(
+                                  child: Text(
+                                    "Current points: $totalBookingsForUserListings",
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                          error: (error, stackTrace) => ErrorText(
+                            error: error.toString(),
+                            stackTrace: stackTrace.toString(),
+                          ),
+                          loading: () => const Loader(),
+                        ),
+                  ],
+                ),
+              );
+            },
+            error: (error, stackTrace) => ErrorText(
+              error: error.toString(),
+              stackTrace: stackTrace.toString(),
+            ),
+            loading: () => const Loader(),
+          ),
+    );
+  }
 
   Center salesEmpty() {
     return Center(
