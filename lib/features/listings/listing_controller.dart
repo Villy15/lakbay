@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:lakbay/core/firebase_notif_api.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
@@ -240,7 +241,7 @@ class ListingController extends StateNotifier<bool> {
         state = false;
 
         sendNotification('Listing Booked: ${listing.title}',
-            'Dates: ${booking.startDate} - ${booking.endDate}');
+            'Dates: ${DateFormat('MMM d, H:mm').format(booking.startDate!)} - ${DateFormat('MMM d, H:mm').format(booking.endDate!)}');
 
         booking.tasks?.forEach((element) async {
           switch (booking.category) {
@@ -275,6 +276,8 @@ class ListingController extends StateNotifier<bool> {
         if (booking.category == 'Transport') {
           final departures =
               await _ref.read(getDeparturesByPropertiesProvider(query!).future);
+
+          debugPrint('departures: $departures');
           if (departures.isEmpty) {
             DepartureModel updatedDeparture = DepartureModel(
                 listingName: listing.title,
