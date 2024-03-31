@@ -423,14 +423,23 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                                 booking.copyWith(
                                                     vehicleNo:
                                                         vehicle.vehicleNo);
+
+                                            DepartureModel updatedDeparture =
+                                                widget.departure
+                                                    .copyWith(vehicle: vehicle);
                                             ref
                                                 .read(listingControllerProvider
                                                     .notifier)
                                                 .updateBooking(
                                                     context,
-                                                    widget.listing.uid!,
+                                                    updatedBooking.listingId,
                                                     updatedBooking,
                                                     "Booking updated!");
+                                            ref
+                                                .read(listingControllerProvider
+                                                    .notifier)
+                                                .updateDeparture(context,
+                                                    updatedDeparture, '');
                                           }
                                           setState(() {
                                             departureDetails = departureDetails
