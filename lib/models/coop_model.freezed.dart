@@ -33,6 +33,8 @@ mixin _$CooperativeModel {
   List<String> get managers => throw _privateConstructorUsedError;
   num? get membershipFee => throw _privateConstructorUsedError;
   num? get membershipDividends => throw _privateConstructorUsedError;
+  num? get shareCapital => throw _privateConstructorUsedError;
+  num? get minimumMemberShareCount => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get dateCreated => throw _privateConstructorUsedError;
   ValidityStatus? get validityStatus => throw _privateConstructorUsedError;
@@ -64,6 +66,8 @@ abstract class $CooperativeModelCopyWith<$Res> {
       List<String> managers,
       num? membershipFee,
       num? membershipDividends,
+      num? shareCapital,
+      num? minimumMemberShareCount,
       @TimestampSerializer() DateTime? dateCreated,
       ValidityStatus? validityStatus,
       ValidationFiles? validationFiles});
@@ -98,6 +102,8 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
     Object? managers = null,
     Object? membershipFee = freezed,
     Object? membershipDividends = freezed,
+    Object? shareCapital = freezed,
+    Object? minimumMemberShareCount = freezed,
     Object? dateCreated = freezed,
     Object? validityStatus = freezed,
     Object? validationFiles = freezed,
@@ -154,6 +160,14 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
       membershipDividends: freezed == membershipDividends
           ? _value.membershipDividends
           : membershipDividends // ignore: cast_nullable_to_non_nullable
+              as num?,
+      shareCapital: freezed == shareCapital
+          ? _value.shareCapital
+          : shareCapital // ignore: cast_nullable_to_non_nullable
+              as num?,
+      minimumMemberShareCount: freezed == minimumMemberShareCount
+          ? _value.minimumMemberShareCount
+          : minimumMemberShareCount // ignore: cast_nullable_to_non_nullable
               as num?,
       dateCreated: freezed == dateCreated
           ? _value.dateCreated
@@ -217,6 +231,8 @@ abstract class _$$CooperativeModelImplCopyWith<$Res>
       List<String> managers,
       num? membershipFee,
       num? membershipDividends,
+      num? shareCapital,
+      num? minimumMemberShareCount,
       @TimestampSerializer() DateTime? dateCreated,
       ValidityStatus? validityStatus,
       ValidationFiles? validationFiles});
@@ -251,6 +267,8 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
     Object? managers = null,
     Object? membershipFee = freezed,
     Object? membershipDividends = freezed,
+    Object? shareCapital = freezed,
+    Object? minimumMemberShareCount = freezed,
     Object? dateCreated = freezed,
     Object? validityStatus = freezed,
     Object? validationFiles = freezed,
@@ -308,6 +326,14 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
           ? _value.membershipDividends
           : membershipDividends // ignore: cast_nullable_to_non_nullable
               as num?,
+      shareCapital: freezed == shareCapital
+          ? _value.shareCapital
+          : shareCapital // ignore: cast_nullable_to_non_nullable
+              as num?,
+      minimumMemberShareCount: freezed == minimumMemberShareCount
+          ? _value.minimumMemberShareCount
+          : minimumMemberShareCount // ignore: cast_nullable_to_non_nullable
+              as num?,
       dateCreated: freezed == dateCreated
           ? _value.dateCreated
           : dateCreated // ignore: cast_nullable_to_non_nullable
@@ -341,6 +367,8 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       required final List<String> managers,
       this.membershipFee,
       this.membershipDividends,
+      this.shareCapital,
+      this.minimumMemberShareCount,
       @TimestampSerializer() this.dateCreated,
       this.validityStatus,
       this.validationFiles})
@@ -389,6 +417,10 @@ class _$CooperativeModelImpl implements _CooperativeModel {
   @override
   final num? membershipDividends;
   @override
+  final num? shareCapital;
+  @override
+  final num? minimumMemberShareCount;
+  @override
   @TimestampSerializer()
   final DateTime? dateCreated;
   @override
@@ -398,7 +430,7 @@ class _$CooperativeModelImpl implements _CooperativeModel {
 
   @override
   String toString() {
-    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers, membershipFee: $membershipFee, membershipDividends: $membershipDividends, dateCreated: $dateCreated, validityStatus: $validityStatus, validationFiles: $validationFiles)';
+    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers, membershipFee: $membershipFee, membershipDividends: $membershipDividends, shareCapital: $shareCapital, minimumMemberShareCount: $minimumMemberShareCount, dateCreated: $dateCreated, validityStatus: $validityStatus, validationFiles: $validationFiles)';
   }
 
   @override
@@ -425,6 +457,11 @@ class _$CooperativeModelImpl implements _CooperativeModel {
                 other.membershipFee == membershipFee) &&
             (identical(other.membershipDividends, membershipDividends) ||
                 other.membershipDividends == membershipDividends) &&
+            (identical(other.shareCapital, shareCapital) ||
+                other.shareCapital == shareCapital) &&
+            (identical(
+                    other.minimumMemberShareCount, minimumMemberShareCount) ||
+                other.minimumMemberShareCount == minimumMemberShareCount) &&
             (identical(other.dateCreated, dateCreated) ||
                 other.dateCreated == dateCreated) &&
             (identical(other.validityStatus, validityStatus) ||
@@ -450,6 +487,8 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       const DeepCollectionEquality().hash(_managers),
       membershipFee,
       membershipDividends,
+      shareCapital,
+      minimumMemberShareCount,
       dateCreated,
       validityStatus,
       validationFiles);
@@ -484,6 +523,8 @@ abstract class _CooperativeModel implements CooperativeModel {
       required final List<String> managers,
       final num? membershipFee,
       final num? membershipDividends,
+      final num? shareCapital,
+      final num? minimumMemberShareCount,
       @TimestampSerializer() final DateTime? dateCreated,
       final ValidityStatus? validityStatus,
       final ValidationFiles? validationFiles}) = _$CooperativeModelImpl;
@@ -517,6 +558,10 @@ abstract class _CooperativeModel implements CooperativeModel {
   num? get membershipFee;
   @override
   num? get membershipDividends;
+  @override
+  num? get shareCapital;
+  @override
+  num? get minimumMemberShareCount;
   @override
   @TimestampSerializer()
   DateTime? get dateCreated;
