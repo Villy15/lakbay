@@ -398,7 +398,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                             filteredVehicles.add(vehicle);
                           }
                         }
-                        if (mounted) {
+                        if (context.mounted) {
                           showDialog(
                               context: context,
                               builder: (context) {
@@ -414,8 +414,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                   content: SizedBox(
                                     height:
                                         MediaQuery.sizeOf(context).height * .3,
-                                    width:
-                                        MediaQuery.sizeOf(context).width * .5,
+                                    width: double.infinity,
                                     child: ListView.builder(
                                         shrinkWrap: true,
                                         itemCount: vehicles.length,
@@ -424,7 +423,8 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                               vehicles[index];
                                           return InkWell(
                                             onTap: () {
-                                              for (var booking in bookings) {
+                                              for (ListingBookings booking
+                                                  in bookings) {
                                                 ListingBookings updatedBooking =
                                                     booking.copyWith(
                                                         vehicleNo:
