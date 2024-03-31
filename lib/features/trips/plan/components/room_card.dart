@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:lakbay/core/providers/days_provider.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
@@ -55,8 +54,6 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     final guests = ref.read(currentPlanGuestsProvider) ?? widget.guests;
     final startDate = ref.read(planStartDateProvider) ?? widget.startDate;
     final endDate = ref.read(planEndDateProvider) ?? widget.endDate;
-    final daysPlan = ref.read(daysPlanProvider);
-
     final currentUser = ref.read(userProvider);
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     List<String> unavailableRoomUids =
@@ -253,7 +250,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                         'emergency') {
                                                       showSelectDate(
                                                           context,
-                                                          daysPlan.currentDay!,
+                                                          startDate,
                                                           endDate,
                                                           widget.bookings,
                                                           listing,
@@ -486,9 +483,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           startDate = args.value.startDate;
                           endDate = args.value.endDate;
                         },
-                        initialSelectedRange:
-                            PickerDateRange(startDate, endDate),
-                        minDate: startDate,
+                        minDate: DateTime.now(),
                         selectableDayPredicate: (DateTime day) {
                           //       // Check if the day is in the list of booked dates
                           final bookedDates =
