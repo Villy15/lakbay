@@ -437,6 +437,55 @@ class ListingRepository {
     });
   }
 
+  CollectionReference departureCollection(String listingId) {
+    return _listings
+        .doc(listingId)
+        .collection(FirebaseConstants.departuresSubCollection);
+  }
+
+// Read room by properties
+  Stream<List<DepartureModel>> readDeparturesByPoperties(Query query) {
+    return query.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return DepartureModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  FutureEither<String> addDeparture(
+      ListingModel listing, DepartureModel departure) async {
+    try {
+      // Generate a new document ID based on the user's ID
+      var doc = departureCollection(listing.uid!).doc();
+
+      // Update the uid of the entertainment
+      departure = departure.copyWith(
+          uid: doc.id, listingId: listing.uid, listingName: listing.title);
+
+      // Add the cooperative to the database
+      await doc.set(departure.toJson());
+
+      // Return the uid of the newly added entertainment
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureVoid updateDeparture(DepartureModel departure) async {
+    try {
+      return right(await departureCollection(departure.listingId!)
+          .doc(departure.uid!)
+          .update(departure.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   CollectionReference entertainmentCollection(String listingId) {
     return _listings
         .doc(listingId)

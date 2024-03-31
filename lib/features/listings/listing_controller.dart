@@ -159,6 +159,13 @@ final getEntertainmentByPropertiesProvider = StreamProvider.autoDispose
   return listingController.getEntertainmentByProperties(guests: params.guests);
 });
 
+// getAllBookingsByProperties
+final getDeparturesByPropertiesProvider = StreamProvider.autoDispose
+    .family<List<DepartureModel>, Query>((ref, query) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getDeparturesByProperties(query);
+});
+
 final listingControllerProvider =
     StateNotifierProvider<ListingController, bool>((ref) {
   final listingRepository = ref.watch(listingRepositoryProvider);
@@ -221,8 +228,9 @@ class ListingController extends StateNotifier<bool> {
     );
   }
 
-  void addBooking(ListingBookings booking, ListingModel listing,
-      BuildContext context) async {
+  void addBooking(
+      ListingBookings booking, ListingModel listing, BuildContext context,
+      {Query? query}) async {
     state = true;
     final result = await _listingRepository.addBooking(listing.uid!, booking);
     final selectedDate = _ref.read(selectedDateProvider);
@@ -271,7 +279,41 @@ class ListingController extends StateNotifier<bool> {
               }
           }
         });
+        if (booking.category == 'Transport') {
+          final departures =
+              await _ref.read(getDeparturesByPropertiesProvider(query!).future);
+          if (departures.isEmpty) {
+            DepartureModel updatedDeparture = DepartureModel(
+                listingName: listing.title,
+                listingId: listing.uid,
+                passengers: [booking],
+                arrival: booking.endDate,
+                departure: booking.startDate);
+            _ref.read(listingControllerProvider.notifier).addDeparture(
+                // ignore: use_build_context_synchronously
+                context,
+                listing,
+                booking,
+                bookingUid,
+                updatedDeparture);
+          } else {
+            List<ListingBookings> currentPassengers = [];
+            currentPassengers.addAll(departures.first.passengers);
+            currentPassengers.add(booking);
+            DepartureModel updatedDeparture = DepartureModel(
+                listingName: listing.title,
+                listingId: listing.uid,
+                passengers: currentPassengers,
+                arrival: booking.endDate,
+                departure: booking.startDate);
+            _ref
+                .read(listingControllerProvider.notifier)
+                // ignore: use_build_context_synchronously
+                .updateDeparture(context, updatedDeparture, '');
+          }
+        }
         _ref.read(salesControllerProvider.notifier).addSale(
+            // ignore: use_build_context_synchronously
             context,
             SaleModel(
               bookingId: bookingUid,
@@ -554,5 +596,48 @@ class ListingController extends StateNotifier<bool> {
   Stream<List<EntertainmentService>> getEntertainmentByProperties(
       {num? guests}) {
     return _listingRepository.readEntertainmentByProperties(guests: guests);
+  }
+
+  // Read entertainment by customer properties
+  Stream<List<DepartureModel>> getDeparturesByProperties(Query query) {
+    return _listingRepository.readDeparturesByPoperties(query);
+  }
+
+  void addDeparture(
+      BuildContext context,
+      ListingModel listing,
+      ListingBookings booking,
+      String bookingUid,
+      DepartureModel departure) async {
+    state = true;
+    final result = await _listingRepository.addDeparture(listing, departure);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        context.pop;
+        showSnackBar(context, l.message);
+      },
+      (bookingUid) async {
+        state = false;
+      },
+    );
+  }
+
+  void updateDeparture(
+      BuildContext context, DepartureModel departure, String message) {
+    state = true;
+    _listingRepository.updateDeparture(departure).then((result) {
+      state = false;
+      result.fold(
+        (l) => showSnackBar(context, l.message),
+        (r) {
+          if (message.isNotEmpty) {
+            showSnackBar(context, message);
+          }
+        },
+      );
+    });
   }
 }
