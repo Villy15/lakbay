@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/calendar/components/booking_card.dart';
 import 'package:lakbay/features/common/error.dart';
-import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
@@ -269,7 +268,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
               return managerScaffold(
                   user, context, coop, cards, coopCards, coopCards2);
             },
-            loading: () => const Loader(),
+            loading: () => const CircularProgressIndicator(),
             error: (error, stack) => ErrorText(
               error: error.toString(),
               stackTrace: stack.toString(),
@@ -613,7 +612,8 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                                     listing: listing,
                                   );
                                 },
-                                loading: () => const Loader(),
+                                loading: () =>
+                                    const CircularProgressIndicator(),
                                 error: (error, stack) => ErrorText(
                                   error: error.toString(),
                                   stackTrace: stack.toString(),
@@ -622,7 +622,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                         },
                       );
                     },
-                    loading: () => const Loader(),
+                    loading: () => const CircularProgressIndicator(),
                     error: (error, stack) => ErrorText(
                       error: error.toString(),
                       stackTrace: stack.toString(),
@@ -658,7 +658,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                 ),
               ),
               Text(
-                "Booking Tasks ",
+                "Bookings Tasks ",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               ref.watch(getBookingTasksByMemberId(user.uid)).when(
@@ -729,11 +729,6 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                             .compareTo(b!.booking.startDate!);
                       });
 
-                      // Make the lenght of the list to be 3
-                      if (taskBookingsListings.length > 3) {
-                        taskBookingsListings.length = 3;
-                      }
-
                       return ListView.builder(
                         itemCount: taskBookingsListings.length,
                         shrinkWrap: true,
@@ -751,9 +746,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                                     'booking': task.booking,
                                     'listing': task.listing,
                                   },
-                                ).then((value) => ref
-                                    .read(navBarVisibilityProvider.notifier)
-                                    .show());
+                                );
                               },
                               title: Text(task!.task.name),
                               // subtitle Start Date - End Date, format it to Feb 26, 2024
@@ -786,17 +779,17 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                                   // ),
                                 ],
                               ),
-                              trailing: Text(
-                                task.task.status,
-                              ),
+                              // trailing: Text(
+                              //   booking.bookingStatus,
+                              // ),
 
                               // display Image in leading
-                              leading: Image.network(
-                                task.listing.images!.first.url!,
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                              ),
+                              // leading: Image.network(
+                              //   listing.images!.first.url!,
+                              //   width: 50,
+                              //   height: 50,
+                              //   fit: BoxFit.cover,
+                              // ),
                             ),
                           );
                         },
@@ -846,9 +839,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                           return Card(
                             borderOnForeground: true,
                             child: ListTile(
-                              onTap: () {
-                                context.push("/my_coop/event/${event.uid}");
-                              },
+                              onTap: () {},
                               title: Text(event.name),
                               // subtitle Start Date - End Date, format it to Feb 26, 2024
                               subtitle: Column(
@@ -883,7 +874,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                         },
                       );
                     },
-                    loading: () => const Loader(),
+                    loading: () => const CircularProgressIndicator(),
                     error: (error, stack) => ErrorText(
                       error: error.toString(),
                       stackTrace: stack.toString(),
