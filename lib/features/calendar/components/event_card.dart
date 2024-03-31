@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/models/event_model.dart';
+import 'package:lakbay/models/user_model.dart';
 
-class EventCard extends StatelessWidget {
+class EventCard extends ConsumerWidget {
   const EventCard({
     super.key,
     required this.event,
@@ -10,8 +14,16 @@ class EventCard extends StatelessWidget {
 
   final EventModel event;
 
+  void readEvent(BuildContext context, String eventId, UserModel user) {
+    if (user.isCoopView!) {
+      context.push("/my_coop/event/$eventId");
+    } else {
+      context.push("/read_event/$eventId");
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       elevation: 1,
       borderOnForeground: true,
@@ -22,7 +34,9 @@ class EventCard extends StatelessWidget {
       //   vertical: 4.0,
       // ),
       child: ListTile(
-        onTap: () {},
+        onTap: () {
+          readEvent(context, event.uid!, ref.read(userProvider)!);
+        },
         title: Text(event.name),
         // subtitle Start Date - End Date, format it to Feb 26, 2024
         subtitle: Column(

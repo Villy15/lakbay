@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
+import 'package:lakbay/features/common/widgets/display_image.dart';
+import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
+import 'package:lakbay/models/sale_model.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class CoopDashboard extends ConsumerStatefulWidget {
   final String coopId;
@@ -23,7 +28,7 @@ class CoopDashboard extends ConsumerStatefulWidget {
 class _CoopDashboardState extends ConsumerState<CoopDashboard> {
   DateTime _selectedDate = DateTime.now();
   final List<String> _filterTypes = ['Day', 'Week', 'Month', 'Year'];
-  String _selectedFilterType = 'Month';
+  String _selectedFilterType = 'Year';
   late AsyncValue<List<ListingModel>> _listings;
 
   @override
@@ -39,14 +44,64 @@ Widget build(BuildContext context) {
   debugPrintJson("File Name: coop_dashboard.dart");
   return Scaffold(
     appBar: CustomAppBar(title: 'My Dashboard', user: user),
-    body: ref.watch(getSalesProvider).when(
+    body: ref.watch(getSalesByCoopIdProvider(user!.currentCoop!)).when(
       data: (sales) {
+        if (sales.isEmpty) {
+          return salesEmpty();
+        }
+
+        // Sort sales by date
+        sales.sort((a, b) {
+          final bookingA = ref
+              .watch(getBookingByIdProvider((a.listingId, a.bookingId)))
+              .asData
+              ?.value;
+
+          final bookingB = ref
+              .watch(getBookingByIdProvider((b.listingId, b.bookingId)))
+              .asData
+              ?.value;
+
+          if (bookingA == null || bookingB == null) {
+            return 0;
+          }
+
+          return bookingA.startDate!.compareTo(bookingB.startDate!);
+        });
+
+        // Filter data based on selection
+        final filteredSales = sales
+            .where((sale) => filterDataBasedOnSelection(ref
+                .watch(getBookingByIdProvider(
+                    (sale.listingId, sale.bookingId)))
+                .asData!
+                .value
+                .startDate!))
+            .toList();
+
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: ListView(
             children: [
               dashboardFunctions(context),
-                            ref.watch(getAllListingsProvider).when(
+              if (filteredSales.isNotEmpty) ...[
+                rowSummaryCards(filteredSales),
+                lineChart(filteredSales),
+                pieChart(filteredSales),
+                const SizedBox(height: 16),
+                Text('Transactions',
+                    style: Theme.of(context).textTheme.titleLarge),
+                listTransactions(filteredSales),
+              ] else ...[
+                Padding(
+                  // padding screen height - appbar height - padding
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.2),
+                  child: salesEmpty(),
+                ),
+              ],
+              // Add the provided code snippet here
+              ref.watch(getAllListingsProvider).when(
                 data: (listings) {
                   if (listings.isEmpty) {
                     return const SizedBox.shrink();
@@ -91,25 +146,6 @@ Widget build(BuildContext context) {
                 ),
                 loading: () => const Loader(),
               ),
-              rowSummaryCards(12000, 500),
-              lineChart(),
-              const SizedBox(height: 16),
-              const Text("Sample Sales"),
-
-              // ListView of listTile of sales name
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: sales.length,
-                itemBuilder: (context, index) {
-                  final sale = sales[index];
-                  return ListTile(
-                    title: Text(sale.category),
-                  );
-                },
-              ),
-
-
             ],
           ),
         );
@@ -123,36 +159,225 @@ Widget build(BuildContext context) {
   );
 }
 
-  Card lineChart() {
+
+  Center salesEmpty() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            'lib/core/images/SleepingCatFromGlitch.svg',
+            height: 100, // Adjust height as desired
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'No sales yet!',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Start selling your services',
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          const Text(
+            'and see your sales here!',
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ListView listTransactions(List<SaleModel> sales) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: sales.length,
+      itemBuilder: (context, index) {
+        final sale = sales[index];
+        return ListTile(
+          leading: DisplayImage(
+            imageUrl: ref.watch(getListingProvider(sale.listingId)).when(
+                  data: (listing) {
+                    // If listing is null, return Icon
+                    return listing.images?.first.url;
+                  },
+                  loading: () => '',
+                  error: (error, stackTrace) => '',
+                ),
+            width: 50,
+            height: 50,
+            radius: BorderRadius.circular(8),
+          ),
+          title: Text(sale.listingName),
+          trailing: Text('₱${sale.saleAmount.toStringAsFixed(2)}'),
+          subtitle: ref
+              .watch(getBookingByIdProvider((sale.listingId, sale.bookingId)))
+              .when(
+                data: (booking) {
+                  return Text(
+                      '${DateFormat('MM/dd/yyyy').format(booking.startDate!)} - ${DateFormat('MM/dd/yyyy').format(booking.endDate!)}');
+                },
+                loading: () => const Text('Loading...'),
+                error: (error, stackTrace) => ErrorText(
+                  error: error.toString(),
+                  stackTrace: stackTrace.toString(),
+                ),
+              ),
+        );
+      },
+    );
+  }
+
+  Card pieChart(List<SaleModel> sales) {
+    // Group the filtered data by listingName.
+    final chartDataByCategory =
+        sales.fold<Map<String, List<SaleModel>>>({}, (previousValue, element) {
+      if (previousValue.containsKey(element.listingName)) {
+        previousValue[element.listingName]!.add(element);
+      } else {
+        previousValue[element.listingName] = [element];
+      }
+      return previousValue;
+    });
+
+    // Create a pie series for each listingName.
+    final List<PieSeries<SaleData, String>> createSeries =
+        chartDataByCategory.entries.map((entry) {
+      // Sum up the saleAmount for each group of sales with the same listingName.
+      final totalSaleAmount = entry.value.fold<num>(
+          0, (previousValue, sale) => previousValue + sale.saleAmount);
+
+      // Create a new SaleData object for each entry.
+      final saleData = SaleData(entry.key, totalSaleAmount);
+
+      return PieSeries<SaleData, String>(
+        dataSource: [saleData],
+        xValueMapper: (SaleData data, _) => data.listingName,
+        yValueMapper: (SaleData data, _) => data.saleAmount,
+        dataLabelMapper: (SaleData data, _) =>
+            '₱${data.saleAmount.toStringAsFixed(2)}',
+        dataLabelSettings: const DataLabelSettings(
+          isVisible: true,
+          labelPosition: ChartDataLabelPosition.outside,
+          connectorLineSettings:
+              ConnectorLineSettings(type: ConnectorType.line),
+          textStyle: TextStyle(fontSize: 12),
+          labelIntersectAction: LabelIntersectAction.shift,
+        ),
+        name: entry.key,
+      );
+    }).toList();
+
     return Card(
-      child: SfCartesianChart(
-        title: const ChartTitle(
-            text: 'Sales Trend by Service Category',
-            textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        // plotAreaBorderColor: Colors.transparent,
-        legend: const Legend(
-            isVisible: true,
-            alignment: ChartAlignment.center,
-            position: LegendPosition.bottom),
-        primaryXAxis: DateTimeAxis(
-          dateFormat: _selectedFilterType == 'Week' ? DateFormat.MMMd() : null,
-        ),
-        primaryYAxis: NumericAxis(
-          numberFormat: NumberFormat('₱#,##0'),
-          maximum: 10000,
-          interval: 1000,
-        ),
-        tooltipBehavior: TooltipBehavior(
-          enable: true,
-          header: '',
-          canShowMarker: false,
-          format: 'point.x : point.y',
+      child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SfCircularChart(
+            title: const ChartTitle(
+                text: 'Sales Participation by Listing Name',
+                textStyle:
+                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            legend: const Legend(
+                isVisible: true,
+                overflowMode: LegendItemOverflowMode.wrap,
+                position: LegendPosition.bottom),
+            series: [
+              ...createSeries,
+            ],
+          )),
+    );
+  }
+
+  Card lineChart(List<SaleModel> sales) {
+    // Group the filtered data by listingName.
+    final chartDataByCategory =
+        sales.fold<Map<String, List<SaleModel>>>({}, (previousValue, element) {
+      if (previousValue.containsKey(element.listingName)) {
+        previousValue[element.listingName]!.add(element);
+      } else {
+        previousValue[element.listingName] = [element];
+      }
+      return previousValue;
+    });
+
+    // Create a line series for each listingName.
+    final List<LineSeries<SaleModel, DateTime>> createSeries =
+        chartDataByCategory.entries
+            .map((entry) => LineSeries<SaleModel, DateTime>(
+                  dataSource: entry.value,
+                  xValueMapper: (SaleModel sales, _) => ref
+                      .watch(getBookingByIdProvider(
+                          (sales.listingId, sales.bookingId)))
+                      .asData
+                      ?.value
+                      .startDate!,
+                  yValueMapper: (SaleModel sales, _) => sales.saleAmount,
+                  name: entry.key,
+                  color: Theme.of(context).colorScheme.primary,
+                  markerSettings: const MarkerSettings(isVisible: true),
+                ))
+            .toList();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SfCartesianChart(
+          title: const ChartTitle(
+              text: 'Sales Trend by Listing Name',
+              textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          // plotAreaBorderColor: Colors.transparent,
+          legend: const Legend(
+              isVisible: true,
+              alignment: ChartAlignment.center,
+              position: LegendPosition.bottom),
+          primaryXAxis: DateTimeAxis(
+            dateFormat: _selectedFilterType == 'Week'
+                ? DateFormat.MMMd()
+                : _selectedFilterType == 'Month'
+                    ? DateFormat.MMMd()
+                    : _selectedFilterType == 'Year'
+                        ? DateFormat.MMM()
+                        : DateFormat.MMMd(),
+          ),
+          primaryYAxis: NumericAxis(
+            numberFormat: NumberFormat('₱#,##0'),
+            maximum: sales.fold(
+                0.0,
+                (previousValue, sale) =>
+                    previousValue! + sale.saleAmount.toDouble() * 1.1),
+            // Average interval
+            interval: 1000,
+          ),
+          tooltipBehavior: TooltipBehavior(
+            enable: true,
+            header: '',
+            canShowMarker: false,
+            format: 'point.x : point.y',
+          ),
+          series: [
+            ...createSeries,
+          ],
         ),
       ),
     );
   }
 
-  Widget rowSummaryCards(num totalSales, double averageSales) {
+  Widget rowSummaryCards(List<SaleModel> sales) {
+    final totalSales = sales.fold(0.0,
+        (previousValue, sale) => previousValue + sale.saleAmount.toDouble());
+    var averageSales = totalSales / sales.length;
+
+    if (averageSales.isNaN) {
+      averageSales = 0.0;
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
@@ -230,7 +455,7 @@ Widget build(BuildContext context) {
             const Icon(Icons.calendar_today),
             const SizedBox(width: 8),
             TextButton(
-              onPressed: () => (),
+              onPressed: () => _selectDate(context),
               child: Text(_selectedFilterType == 'Week'
                   ? '${DateFormat('MM/dd/yyyy').format(_selectedDate)} - ${DateFormat('MM/dd/yyyy').format(_selectedDate.add(const Duration(days: 6)))}'
                   : _selectedFilterType == 'Month'
@@ -244,4 +469,98 @@ Widget build(BuildContext context) {
       ],
     );
   }
+
+  void _selectDate(BuildContext context) {
+    DateTime tempDate = _selectedDate;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: SizedBox(
+            height: 500, // Increase the height to accommodate the buttons
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: SfDateRangePicker(
+                onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                  if (args.value is DateTime) {
+                    tempDate = args.value as DateTime;
+                  }
+                },
+                // selectionMode: DateRangePickerSelectionMode.range,
+                selectionMode: DateRangePickerSelectionMode.single,
+                view: _selectedFilterType == 'Day'
+                    ? DateRangePickerView.month
+                    : _selectedFilterType == 'Week'
+                        ? DateRangePickerView.month
+                        : _selectedFilterType == 'Month'
+                            ? DateRangePickerView.month
+                            : DateRangePickerView.year,
+                showActionButtons:
+                    true, // Enable the confirm and cancel buttons
+                onSubmit: (Object? value) {
+                  setState(() {
+                    _selectedDate = tempDate;
+                  });
+                  Navigator.pop(context);
+                },
+                onCancel: () {
+                  // Pop the dialog without updating _selectedDate
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  bool filterDataBasedOnSelection(DateTime bookingStartDate) {
+    switch (_selectedFilterType) {
+      case 'Day':
+        return bookingStartDate.day == _selectedDate.day &&
+            bookingStartDate.month == _selectedDate.month &&
+            bookingStartDate.year == _selectedDate.year;
+      case 'Week':
+        DateTime startWeek =
+            _selectedDate.subtract(Duration(days: _selectedDate.weekday - 1));
+        DateTime endWeek = startWeek.add(const Duration(days: 7));
+        return bookingStartDate.isAfter(startWeek) &&
+            bookingStartDate.isBefore(endWeek.add(const Duration(days: 1)));
+      case 'Month':
+        return bookingStartDate.month == _selectedDate.month &&
+            bookingStartDate.year == _selectedDate.year;
+      case 'Year':
+        return bookingStartDate.year == _selectedDate.year;
+      default:
+        return true;
+    }
+  }
+  // switch (_selectedFilterType) {
+  //   case 'Day':
+  //     return data.date.toDate().day == _selectedDate.day &&
+  //         data.date.toDate().month == _selectedDate.month &&
+  //         data.date.toDate().year == _selectedDate.year;
+  //   case 'Week':
+  //     DateTime startWeek =
+  //         _selectedDate.subtract(Duration(days: _selectedDate.weekday - 1));
+  //     DateTime endWeek = startWeek.add(const Duration(days: 7));
+  //     return data.date.toDate().isAfter(startWeek) &&
+  //         data.date.toDate().isBefore(endWeek.add(const Duration(days: 1)));
+  //   case 'Month':
+  //     return data.date.toDate().month == _selectedDate.month &&
+  //         data.date.toDate().year == _selectedDate.year;
+  //   case 'Year':
+  //     return data.date.toDate().year == _selectedDate.year;
+  //   default:
+  //     return true;
+  // }
+}
+
+class SaleData {
+  final String listingName;
+  final num saleAmount;
+
+  SaleData(this.listingName, this.saleAmount);
 }

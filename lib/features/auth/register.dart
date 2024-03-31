@@ -64,7 +64,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height / 8,
+            top: MediaQuery.of(context).size.height / 14,
             left: MediaQuery.of(context).size.width / 12,
             right: MediaQuery.of(context).size.width / 12,
             child: SizedBox(

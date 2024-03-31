@@ -110,15 +110,15 @@ class _CustomerTransportCheckoutState
           _startDate.year,
           _startDate.month,
           _startDate.day,
-          widget.listing.availableTransport!.startTime.hour,
-          widget.listing.availableTransport!.startTime.minute,
+          widget.listing.availableTransport!.startTime!.hour,
+          widget.listing.availableTransport!.startTime!.minute,
         );
         _endDate = DateTime(
           _endDate.year,
           _endDate.month,
           _endDate.day,
-          widget.listing.availableTransport!.endTime.hour,
-          widget.listing.availableTransport!.endTime.minute,
+          widget.listing.availableTransport!.endTime!.hour,
+          widget.listing.availableTransport!.endTime!.minute,
         );
 
         updatedBooking = updatedBooking.copyWith(

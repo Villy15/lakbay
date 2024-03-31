@@ -44,7 +44,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
       width: 100.0,
       child: Tab(
         // icon: Icon(Icons.location_pin),
-        child: Text('Deatils'),
+        child: Text('Details'),
       ),
     ),
     const SizedBox(
@@ -179,7 +179,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                 ),
               ),
               Text(
-                '${widget.listing.availableTransport!.startTime.format(context)} - ${widget.listing.availableTransport!.endTime.format(context)}',
+                '${widget.listing.availableTransport!.startTime!.format(context)} - ${widget.listing.availableTransport!.endTime!.format(context)}',
                 style: const TextStyle(fontSize: 12),
               ),
             ],
@@ -199,7 +199,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Text(
                   getWorkingDays(
-                      widget.listing.availableTransport!.workingDays),
+                      widget.listing.availableTransport!.workingDays!),
                   style: const TextStyle(fontSize: 12),
                 ),
               ),
@@ -977,7 +977,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
         });
   }
 
-  Widget rooms() {
+  Widget vehicles() {
     Query query = FirebaseFirestore.instance
         .collectionGroup('availableTransport')
         .where('listingId', isEqualTo: widget.listing.uid!);
@@ -992,97 +992,87 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                   itemCount: vehicles.length,
                   itemBuilder: ((context, index) {
                     final vehicle = vehicles[index];
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text('[${index + 1}]'),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Text(
-                              "Vehicle No: ${vehicle.vehicleNo}",
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                            SizedBox(
-                              width: MediaQuery.sizeOf(context).width * .3,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                //! TODO REMOVE THIS
-                                // setState(() {
-                                //   availableTransports.removeAt(transportIndex);
-                                // });
-                              },
-                              child: const Icon(
-                                Icons.close,
-                                size: 16,
-                                color: Colors.black,
-                              ),
-                            )
-                          ],
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(
-                              left: MediaQuery.sizeOf(context).width * .1),
-                          child: Row(
+                    return Card(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Text(
-                                'Capacity: ${vehicle.guests} | ',
-                                style: const TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.w300),
+                              Text('[${index + 1}]'),
+                              const SizedBox(
+                                width: 20,
                               ),
                               Text(
-                                'Luggage: ${vehicle.luggage}',
-                                style: const TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.w300),
+                                "Vehicle No: ${vehicle.vehicleNo}",
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.sizeOf(context).width * .3,
                               ),
                             ],
                           ),
-                        ),
-                        //! TODO REMOVE THIS
-                        // availableTransports.isEmpty
-                        //     ? SizedBox(
-                        //         height: MediaQuery.sizeOf(context).height / 4,
-                        //         width: double.infinity,
-                        //         child: const Center(
-                        //             child: Text("No Vehicles Added")))
-                        //     : Container(
-                        //         padding: EdgeInsets.only(
-                        //             left:
-                        //                 MediaQuery.sizeOf(context).width * .1),
-                        //         child: Wrap(
-                        //           direction: Axis.horizontal,
-                        //           spacing:
-                        //               8, // Adjust the spacing between items as needed
-                        //           runSpacing:
-                        //               8, // Adjust the run spacing (vertical spacing) as needed
-                        //           children: List.generate(
-                        //             vehicle.departureTimes!.length,
-                        //             (index) {
-                        //               return Container(
-                        //                 padding: const EdgeInsets.symmetric(
-                        //                     horizontal: 8, vertical: 4),
-                        //                 decoration: BoxDecoration(
-                        //                   border:
-                        //                       Border.all(color: Colors.grey),
-                        //                   borderRadius:
-                        //                       BorderRadius.circular(8),
-                        //                 ),
-                        //                 child: Text(
-                        //                   vehicle.departureTimes![index]
-                        //                       .format(context),
-                        //                   style: const TextStyle(
-                        //                       fontSize: 12,
-                        //                       fontWeight: FontWeight.w300),
-                        //                 ),
-                        //               );
-                        //             },
-                        //           ),
-                        //         ),
-                        //       )
-                      ],
+                          Container(
+                            padding: EdgeInsets.only(
+                                left: MediaQuery.sizeOf(context).width * .1),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Capacity: ${vehicle.guests} | ',
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                                Text(
+                                  'Luggage: ${vehicle.luggage}',
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                              ],
+                            ),
+                          ),
+                          vehicles.isEmpty
+                              ? SizedBox(
+                                  height: MediaQuery.sizeOf(context).height / 4,
+                                  width: double.infinity,
+                                  child: const Center(
+                                      child: Text("No Vehicles Added")))
+                              : Container(
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.sizeOf(context).width *
+                                          .1),
+                                  child: Wrap(
+                                    direction: Axis.horizontal,
+                                    spacing:
+                                        8, // Adjust the spacing between items as needed
+                                    runSpacing:
+                                        8, // Adjust the run spacing (vertical spacing) as needed
+                                    children: List.generate(
+                                      vehicle.departureTimes!.length,
+                                      (index) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Text(
+                                            vehicle.departureTimes![index]
+                                                .format(context),
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w300),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                )
+                        ],
+                      ),
                     );
                   })),
               Container(
@@ -1094,9 +1084,10 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                         showDialog(
                             context: context,
                             builder: (context) {
-                              //! TODO REMOVE THIS
-                              // return addRoomDialog();
-                              return const SizedBox();
+                              return AlertDialog(
+                                  contentPadding: const EdgeInsets.all(10),
+                                  title: const Text('Add Vehicle'),
+                                  content: addVehicleForm());
                             });
                       },
                       style: FilledButton.styleFrom(
@@ -1114,5 +1105,176 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
             body: ErrorText(
                 error: error.toString(), stackTrace: stackTrace.toString()))),
         loading: () => const Scaffold(body: Loader()));
+  }
+
+  Widget addVehicleForm() {
+    TimeOfDay departureTime = const TimeOfDay(hour: 8, minute: 30);
+    TextEditingController vehicleNoController = TextEditingController();
+    TextEditingController departureController = TextEditingController();
+    List<TimeOfDay> departureTimes = [];
+    num capacity = 0;
+    num luggage = 0;
+    return StatefulBuilder(builder: (context, setState) {
+      return SingleChildScrollView(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: TextFormField(
+                  controller: vehicleNoController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Vehicle No",
+                      floatingLabelBehavior: FloatingLabelBehavior
+                          .always, // Keep the label always visible
+                      hintText: "",
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 12.0)),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  })),
+          const SizedBox(height: 10),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: TextFormField(
+              controller: departureController,
+              decoration: InputDecoration(
+                  labelText: 'Departure Time',
+                  border: const OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  hintText: departureTime.format(context)),
+              readOnly: true,
+              onTap: () async {
+                showTimePicker(
+                  context: context,
+                  initialTime: departureTime,
+                  initialEntryMode: TimePickerEntryMode.inputOnly,
+                ).then((time) {
+                  if (time != null) {
+                    setState(() {
+                      departureTimes.add(time);
+                      departureController.text = time.format(context);
+                    });
+                  }
+                });
+              },
+            ),
+          ),
+          SizedBox(
+            height: MediaQuery.sizeOf(context).height * .15,
+            child: departureTimes.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: departureTimes.length,
+                    itemBuilder: (context, timeIndex) {
+                      return ListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 0, horizontal: 25),
+                        leading: Text('[${timeIndex + 1}]'),
+                        title: Text(
+                          departureTimes[timeIndex].format(context),
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        trailing: IconButton(
+                          onPressed: () {
+                            departureTimes.removeAt(timeIndex);
+                          },
+                          icon: const Icon(Icons.close),
+                          iconSize: 14,
+                        ),
+                      );
+                    })
+                : const Center(
+                    child: Text('No Departure Times',
+                        style: TextStyle(fontWeight: FontWeight.w300))),
+          ),
+          SizedBox(height: MediaQuery.sizeOf(context).height / 50),
+          ListTile(
+              horizontalTitleGap: 0,
+              title: const Text('Passengers', style: TextStyle(fontSize: 14)),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                IconButton(
+                    iconSize: 14,
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      if (capacity >= 1) {
+                        setState(() {
+                          capacity--;
+                        });
+                      }
+                    }),
+                Text("$capacity", style: const TextStyle(fontSize: 16)),
+                IconButton(
+                    iconSize: 14,
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      setState(() {
+                        capacity++;
+                      });
+                    })
+              ])),
+          ListTile(
+              title: const Text(
+                'Luggage',
+                style: TextStyle(fontSize: 14),
+              ),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                IconButton(
+                    iconSize: 14,
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      if (luggage >= 1) {
+                        setState(() {
+                          luggage--;
+                        });
+                      }
+                    }),
+                Text("$luggage", style: const TextStyle(fontSize: 16)),
+                IconButton(
+                    iconSize: 14,
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      setState(() {
+                        luggage++;
+                      });
+                    })
+              ])),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FilledButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: const Text("Close")),
+              const SizedBox(
+                width: 10,
+              ),
+              FilledButton(
+                  onPressed: () {
+                    AvailableTransport transport = AvailableTransport(
+                      available: true,
+                      vehicleNo: num.parse(vehicleNoController.text),
+                      departureTimes: departureTimes,
+                      guests: capacity,
+                      luggage: luggage,
+                    );
+                    if (context.mounted) {
+                      ref
+                          .read(listingControllerProvider.notifier)
+                          .addTransport(context, widget.listing, transport);
+                    }
+
+                    context.pop();
+                  },
+                  child: const Text("Confirm")),
+            ],
+          )
+        ]),
+      );
+    });
   }
 }

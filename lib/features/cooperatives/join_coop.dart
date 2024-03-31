@@ -97,6 +97,11 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
     final isLoading = ref.watch(coopsControllerProvider);
     final user = ref.watch(userProvider);
 
+    // Initialize the controllers with the user's data
+    if (user != null) {
+      _lastName.text = user.lastName ?? '';
+      _firstName.text = user.firstName ?? '';
+    }
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {

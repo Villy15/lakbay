@@ -14,6 +14,13 @@ final getSalesProvider = StreamProvider<List<SaleModel>>((ref) {
   return salesController.getSales();
 });
 
+// Stream Provider for get sales by CoopId
+final getSalesByCoopIdProvider =
+    StreamProvider.autoDispose.family<List<SaleModel>, String>((ref, coopId) {
+  final salesController = ref.watch(salesControllerProvider.notifier);
+  return salesController.getSalesByCoopId(coopId);
+});
+
 // get saleByBookingId
 final getSaleByBookingIdProvider =
     StreamProvider.autoDispose.family<SaleModel, String>((ref, bookingId) {
@@ -96,6 +103,11 @@ class SalesController extends StateNotifier<bool> {
   // Read all sales
   Stream<List<SaleModel>> getSales() {
     return _salesRepository.readSales();
+  }
+
+  // Read sales by CoopId
+  Stream<List<SaleModel>> getSalesByCoopId(String coopId) {
+    return _salesRepository.readSalesByCoopId(coopId);
   }
 
   // Read sale by bookingId

@@ -252,7 +252,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                         'emergency') {
                                                       showSelectDate(
                                                           context,
-                                                          daysPlan.currentDay!,
+                                                          startDate,
                                                           endDate,
                                                           widget.bookings,
                                                           listing,
@@ -485,9 +485,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           startDate = args.value.startDate;
                           endDate = args.value.endDate;
                         },
-                        initialSelectedRange:
-                            PickerDateRange(startDate, endDate),
-                        minDate: startDate,
+                        minDate: DateTime.now(),
                         selectableDayPredicate: (DateTime day) {
                           //       // Check if the day is in the list of booked dates
                           final bookedDates =

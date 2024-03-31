@@ -197,10 +197,10 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                           style: TextStyle(fontSize: 14))),
                                   FilledButton(
                                       onPressed: () async {
-                                        List<TimeOfDay> timeSlot = [];
+                                        Map<TimeOfDay, num> timeSlots = {};
+
                                         Set<TimeOfDay> departureTimesSet = {};
 
-                                        num slots = 0;
                                         final bookings = await ref.watch(
                                             getAllBookingsProvider(
                                                     transport.uid!)
@@ -219,17 +219,21 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                           for (var departureTime
                                               in vehicle.departureTimes!) {
                                             // Check if the departure time is not already in the set
-                                            if (!departureTimesSet
+                                            if (!timeSlots.keys
                                                 .contains(departureTime)) {
+                                              timeSlots[departureTime] =
+                                                  vehicle.guests;
                                               departureTimesSet.add(
                                                   departureTime); // Add the unique departure time to the set
-                                              timeSlot.add(
-                                                  departureTime); // Add it to the list as well
+                                              timeSlots[departureTime] =
+                                                  vehicle.guests;
+                                            } else {
+                                              timeSlots[departureTime] =
+                                                  timeSlots[departureTime]! +
+                                                      vehicle.guests;
                                             }
                                           }
                                         }
-
-                                        debugPrint('timeSlot: $timeSlot');
 
                                         if (transport.type == 'Public') {
                                           if (context.mounted) {
@@ -256,11 +260,11 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                                     .width /
                                                                 1.5,
                                                         child: Column(
-                                                            children: transport
-                                                                .availableTransport!
-                                                                .departureTimes!
-                                                                .map(
-                                                                    (departureTime) {
+                                                            children: timeSlots
+                                                                .keys
+                                                                .map((key) {
+                                                          num passengers =
+                                                              timeSlots[key]!;
                                                           DateTime dateTimeSlot =
                                                               DateTime(
                                                                   daysPlan
@@ -272,19 +276,16 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                                   daysPlan
                                                                       .currentDay!
                                                                       .day,
-                                                                  departureTime
-                                                                      .hour,
-                                                                  departureTime
-                                                                      .minute);
+                                                                  key.hour,
+                                                                  key.minute);
                                                           List<ListingBookings>
                                                               bookingsCopy =
                                                               bookings;
                                                           Map<DateTime?, num>
                                                               deptTimeAndGuests =
                                                               {
-                                                            dateTimeSlot: transport
-                                                                .availableTransport!
-                                                                .guests
+                                                            dateTimeSlot:
+                                                                passengers
                                                           };
                                                           // format the currentDate
                                                           String
@@ -326,9 +327,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                           }
                                                           return ListTile(
                                                               title: Text(
-                                                                  departureTime
-                                                                      .format(
-                                                                          context)),
+                                                                  key.format(
+                                                                      context)),
                                                               trailing: Text(
                                                                   'Slots Left: ${deptTimeAndGuests[dateTimeSlot]}'),
                                                               onTap: () async {
@@ -346,7 +346,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                                             (context) {
                                                                           return AlertDialog(
                                                                               title: const Text('Departure Time is Full'),
-                                                                              content: Text('The time ${departureTime.format(context)} has reached its capacity of ${deptTimeAndGuests[dateTimeSlot]}.  Please select another time.'),
+                                                                              content: Text('The time ${key.format(context)} has reached its capacity of $passengers.  Please select another time.'),
                                                                               actions: [
                                                                                 TextButton(
                                                                                     onPressed: () {
@@ -365,7 +365,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                                                 .currentDay!,
                                                                             daysPlan
                                                                                 .currentDay!,
-                                                                            departureTime,
+                                                                            key,
                                                                             'Public',
                                                                             null)
                                                                         .then(
@@ -381,7 +381,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                                           .currentDay!,
                                                                       daysPlan
                                                                           .currentDay!,
-                                                                      departureTime,
+                                                                      key,
                                                                       'Public',
                                                                       null);
                                                                 }
@@ -912,14 +912,14 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                           labelText: 'Booking Start Time',
                           border: const OutlineInputBorder(),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: transport.startTime.format(context),
+                          hintText: transport.startTime!.format(context),
                         ),
                         readOnly: true,
                         onTap: () async {
                           // show time picker
                           final time = await showTimePicker(
                               context: context,
-                              initialTime: transport.startTime,
+                              initialTime: transport.startTime!,
                               initialEntryMode: TimePickerEntryMode.inputOnly,
                               builder: (context, child) {
                                 return MediaQuery(
@@ -941,13 +941,13 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                             labelText: 'Booking End Time',
                             border: const OutlineInputBorder(),
                             floatingLabelBehavior: FloatingLabelBehavior.always,
-                            hintText: transport.endTime.format(context)),
+                            hintText: transport.endTime!.format(context)),
                         readOnly: true,
                         onTap: () async {
                           // show time picker
                           final time = await showTimePicker(
                               context: context,
-                              initialTime: transport.endTime,
+                              initialTime: transport.endTime!,
                               initialEntryMode: TimePickerEntryMode.inputOnly,
                               builder: (context, child) {
                                 return MediaQuery(
@@ -1031,23 +1031,23 @@ class _TransportCardState extends ConsumerState<TransportCard> {
     final currentTrip = ref.read(currentTripProvider);
     DateFormat('MMMM dd, yyyy').format(startDate);
     DateFormat('MMMM dd, yyyy').format(endDate);
-    final query = FirebaseFirestore.instance
-        .collectionGroup(
-            'bookings') // Perform collection group query for 'bookings'
-        .where('category', isEqualTo: 'Transport')
-        .where('bookingStatus', isEqualTo: "Reserved")
-        .where('listingId', isEqualTo: listing.uid);
+    // final query = FirebaseFirestore.instance
+    //     .collectionGroup(
+    //         'bookings') // Perform collection group query for 'bookings'
+    //     .where('category', isEqualTo: 'Transport')
+    //     .where('bookingStatus', isEqualTo: "Reserved")
+    //     .where('listingId', isEqualTo: listing.uid);
 
-    List<ListingBookings> todaysBookings =
-        await ref.read(getBookingsByPropertiesProvider(query).future);
-    todaysBookings = todaysBookings.where((booking) {
-      // Assuming 'startDate' is a DateTime property in 'ListingBookings'
-      return booking.startDate!.year == startDate.year &&
-          booking.startDate!.month == startDate.month &&
-          booking.startDate!.day == startDate.day;
-    }).toList();
+    // List<ListingBookings> todaysBookings =
+    //     await ref.read(getBookingsByPropertiesProvider(query).future);
+    // todaysBookings = todaysBookings.where((booking) {
+    //   // Assuming 'startDate' is a DateTime property in 'ListingBookings'
+    //   return booking.startDate!.year == startDate.year &&
+    //       booking.startDate!.month == startDate.month &&
+    //       booking.startDate!.day == startDate.day;
+    // }).toList();
 
-    debugPrint('todaysbookings: $todaysBookings');
+    // debugPrint('todaysbookings: $todaysBookings');
     ListingBookings booking = ListingBookings(
         tripUid: currentTrip!.uid!,
         tripName: currentTrip.name,
@@ -1077,7 +1077,6 @@ class _TransportCardState extends ConsumerState<TransportCard> {
         needsContributions: false,
         tasks: listing.fixedTasks,
         typeOfTrip: typeOfTrip);
-    return null;
     return showDialog(
         context: context,
         builder: (context) {
