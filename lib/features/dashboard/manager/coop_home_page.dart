@@ -38,13 +38,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
     // final user = ref.read(userProvider)!;
 
     // // Temp user to edit user's cooperativesJoined.role to manager by finding its currentCoop
-    // final tempUser = user.copyWith(
-    //   cooperativesJoined: user.cooperativesJoined
-    //       ?.map((coop) => coop.copyWith(
-    //             role: 'Member',
-    //           ))
-    //       .toList(),
-    // );
+    // final tempUser = user.copyWith(email: 'adrianvill07@gmail.com');
 
     // // Update the user's cooperativesJoined.role to manager
     // ref.read(usersControllerProvider.notifier).editProfile(
