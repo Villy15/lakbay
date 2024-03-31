@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, unused_local_variable
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
@@ -55,6 +55,13 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
         .format(departureDetails.passengers.first.startDate!);
     String formattedEndDate = DateFormat('MMMM dd')
         .format(departureDetails.passengers.first.endDate!);
+    num passengerCount = 0;
+    for (var booking in departureDetails.passengers) {
+      if (booking.vehicleNo == departureDetails.vehicle?.vehicleNo) {
+        passengerCount = passengerCount + booking.guests;
+      }
+    }
+
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
@@ -71,7 +78,8 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                 builder: (context, setState) {
                   return TabBarView(
                     children: [
-                      details(context, departureDetails.passengers),
+                      details(
+                          context, departureDetails.passengers, passengerCount),
                       passengers(departureDetails.passengers),
                     ],
                   );
@@ -274,7 +282,8 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
     );
   }
 
-  Widget details(BuildContext context, List<ListingBookings> bookings) {
+  Widget details(BuildContext context, List<ListingBookings> bookings,
+      num passengerCount) {
     Map<String, Map<String, dynamic>> generalActions = {
       "contact": {
         "icon": Icons.call,
@@ -424,10 +433,8 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                                     "Booking updated!");
                                           }
                                           setState(() {
-                                            departureDetails =
-                                                departureDetails.copyWith(
-                                                    vehicleNo:
-                                                        vehicle.vehicleNo);
+                                            departureDetails = departureDetails
+                                                .copyWith(vehicle: vehicle);
                                           });
                                           context.pop();
                                         },
@@ -494,15 +501,14 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: _displaySubtitleText(
-                            'Vehicle No: ${departureDetails.vehicleNo ?? 'Not Set'}'),
+                            'Vehicle No: ${departureDetails.vehicle?.vehicleNo ?? 'Not Set'}'),
                       ),
                     ),
                     Container(
                         height: MediaQuery.sizeOf(context).height * .05,
                         width: 1,
                         color: Colors.grey),
-                    _displaySubtitleText(
-                        'Passengers: ${bookings.first.guests}'),
+                    _displaySubtitleText('Passengers: $passengerCount'),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -641,6 +647,21 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
   }
 
   Widget passengers(List<ListingBookings> bookings) {
-    return const Placeholder();
+    return ListView.builder(
+        shrinkWrap: true,
+        itemCount: bookings.length,
+        itemBuilder: (context, index) {
+          final passenger = bookings[index];
+          return ListTile(
+            leading: Text(
+              '${passenger.guests}',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+            ),
+            title: Text(
+              passenger.customerName,
+            ),
+            subtitle: _displaySubtitleText(passenger.customerPhoneNo),
+          );
+        });
   }
 }

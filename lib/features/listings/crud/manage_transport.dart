@@ -1353,7 +1353,16 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                           child: SizedBox(
                             width: MediaQuery.sizeOf(context).width * .5,
                             child: FilledButton(
-                                onPressed: () {
+                                onPressed: () async {
+                                  Query query = FirebaseFirestore.instance
+                                      .collectionGroup('availableTransport')
+                                      .where('listingId',
+                                          isEqualTo: widget.listing.uid!);
+                                  final vehicles = await ref.read(
+                                      getTransportByPropertiesProvider(query)
+                                          .future);
+                                  AvailableTransport currentVehicle;
+
                                   List<ListingBookings> selectedBookings = [];
                                   for (var booking in bookings) {
                                     if (TimeOfDay.fromDateTime(
@@ -1364,13 +1373,17 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                       selectedBookings.add(booking);
                                     }
                                   }
+
                                   DepartureModel departure = DepartureModel(
                                       passengers: selectedBookings,
-                                      vehicleNo:
-                                          selectedBookings.first.vehicleNo,
+                                      vehicle: AvailableTransport(
+                                          available: true,
+                                          guests: 0,
+                                          luggage: 0),
                                       departure:
                                           selectedBookings.first.startDate,
                                       arrival: selectedBookings.first.endDate);
+                                  // ignore: use_build_context_synchronously
                                   context.push(
                                     '/market/${filteredBookings[index].category.toLowerCase()}/departure_details',
                                     extra: {

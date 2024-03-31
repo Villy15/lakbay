@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -408,10 +409,12 @@ class _CustomerTransportCheckoutState
                         amountPaid: num.parse(amountTotal.toStringAsFixed(2)),
                       );
                     });
-
-                    ref
-                        .read(listingControllerProvider.notifier)
-                        .addBooking(updatedBooking, widget.listing, context);
+                    Query query = FirebaseFirestore.instance
+                        .collectionGroup('departures')
+                        .where('arrival', isEqualTo: updatedBooking.startDate);
+                    ref.read(listingControllerProvider.notifier).addBooking(
+                        updatedBooking, widget.listing, context,
+                        query: query);
                     // Navigator.pop(context);
                   },
                   child: Text('Confirm and Pay',

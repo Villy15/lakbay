@@ -138,8 +138,11 @@ class AvailableTransport with _$AvailableTransport {
 @freezed
 class DepartureModel with _$DepartureModel {
   factory DepartureModel({
+    String? uid,
+    String? listingName,
+    String? listingId,
     required List<ListingBookings> passengers,
-    num? vehicleNo,
+    AvailableTransport? vehicle,
     @TimestampSerializer() DateTime? arrival,
     @TimestampSerializer() DateTime? departure,
   }) = _DepartureModel;
