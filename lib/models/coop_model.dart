@@ -21,6 +21,8 @@ class CooperativeModel with _$CooperativeModel {
     required List<String> managers,
     num? membershipFee,
     num? membershipDividends,
+    num? shareCapital,
+    num? minimumMemberShareCount,
     @TimestampSerializer() DateTime? dateCreated,
     ValidityStatus? validityStatus,
     ValidationFiles? validationFiles,

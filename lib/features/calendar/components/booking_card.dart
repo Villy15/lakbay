@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
-class BookingCard extends StatelessWidget {
+class BookingCard extends ConsumerWidget {
   const BookingCard({
     super.key,
     required this.booking,
@@ -14,18 +16,20 @@ class BookingCard extends StatelessWidget {
   final ListingBookings booking;
   final ListingModel listing;
 
-  void _onTap(BuildContext context) {
-    context.push('/market/${booking.category}/booking_details',
-        extra: {'booking': booking, 'listing': listing});
+  void _onTap(BuildContext context, WidgetRef ref) {
+    context.push('/market/${booking.category}/booking_details', extra: {
+      'booking': booking,
+      'listing': listing
+    }).then((value) => ref.read(navBarVisibilityProvider.notifier).show());
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       borderOnForeground: true,
       child: ListTile(
         onTap: () {
-          _onTap(context);
+          _onTap(context, ref);
         },
         title: Text(booking.listingTitle),
         // subtitle Start Date - End Date, format it to Feb 26, 2024

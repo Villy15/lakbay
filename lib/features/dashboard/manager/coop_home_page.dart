@@ -11,6 +11,7 @@ import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
 import 'package:lakbay/features/cooperatives/my_coop/goals/add_goal.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/manag_shar_capital.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_dvidends.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_fee.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/validate_coop.dart';
@@ -34,6 +35,23 @@ class _TodayPageState extends ConsumerState<TodayPage> {
   @override
   void initState() {
     super.initState();
+    // final user = ref.read(userProvider)!;
+
+    // // Temp user to edit user's cooperativesJoined.role to manager by finding its currentCoop
+    // final tempUser = user.copyWith(
+    //   cooperativesJoined: user.cooperativesJoined
+    //       ?.map((coop) => coop.copyWith(
+    //             role: 'Manager',
+    //           ))
+    //       .toList(),
+    // );
+
+    // // Update the user's cooperativesJoined.role to manager
+    // ref.read(usersControllerProvider.notifier).editProfile(
+    //       context,
+    //       user.uid,
+    //       tempUser,
+    //     );
   }
 
   // Map of data for cards
@@ -112,6 +130,14 @@ class _TodayPageState extends ConsumerState<TodayPage> {
   List<Map<String, dynamic>> buildCoopCards2(
       BuildContext context, CooperativeModel coop) {
     return [
+      // Setup Member Share Capital
+      {
+        'title': 'Setup Member Share Capital',
+        'subtitle':
+            'Setup member share capital to start paying out to your members share',
+        'icon': Icons.money,
+        'onTap': () => manageShareCapital(context, coop),
+      },
       {
         'title': 'Setup member dividends',
         'subtitle':
@@ -242,6 +268,20 @@ class _TodayPageState extends ConsumerState<TodayPage> {
     );
   }
 
+  void manageShareCapital(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return ManageShareCapital(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
+  }
+
   void showAllBookins(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -257,9 +297,9 @@ class _TodayPageState extends ConsumerState<TodayPage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
+    final user = ref.watch(userProvider)!;
 
-    if (user!.isManager) {
+    if (user.isManager) {
       return ref.watch(getCooperativeProvider(user.currentCoop!)).when(
             data: (coop) {
               final cards = buildCards(context, coop);
@@ -395,7 +435,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
 
               // Your Next Steps
               Text(
-                "Setup member dividends",
+                "Setup member contributions and dividends",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
 
@@ -537,14 +577,14 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                 children: [
                   SizedBox(
                     // Width / 2
-                    height: 90,
+                    height: 95,
                     width: MediaQuery.of(context).size.width / 2 - 24,
                     child: announcementCard(),
                   ),
                   const SizedBox(width: 8),
                   SizedBox(
                     // Width / 2
-                    height: 90,
+                    height: 95,
                     width: MediaQuery.of(context).size.width / 2 - 24,
                     child: voteCard(),
                   ),
@@ -560,13 +600,13 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                 children: [
                   SizedBox(
                       // Width / 2
-                      height: 90,
+                      height: 95,
                       width: MediaQuery.of(context).size.width / 2 - 24,
                       child: goalCard()),
                   const SizedBox(width: 8),
                   SizedBox(
                     // Width / 2
-                    height: 90,
+                    height: 95,
                     width: MediaQuery.of(context).size.width / 2 - 24,
                     child: contributeCard(),
                   ),
