@@ -29,6 +29,12 @@ class EventsPage extends ConsumerWidget {
               children: [
                 ref.watch(getAllEventsProvider).when(
                       data: (events) {
+                        // Filter events show that only eventType == 'Community Engagement'
+                        events = events
+                            .where((event) =>
+                                event.eventType == 'Community Engagement')
+                            .toList();
+
                         // return a grid view of events
                         return GridView.builder(
                           itemCount: events.length,

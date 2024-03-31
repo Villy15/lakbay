@@ -229,17 +229,6 @@ class _ReadEventPageState extends ConsumerState<ReadEventPage> {
                           color: Colors.grey[300],
                         ),
                       ),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Text(
-                          event.name,
-                          style: const TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),

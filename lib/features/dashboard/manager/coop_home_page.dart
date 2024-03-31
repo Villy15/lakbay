@@ -41,7 +41,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
     // final tempUser = user.copyWith(
     //   cooperativesJoined: user.cooperativesJoined
     //       ?.map((coop) => coop.copyWith(
-    //             role: 'Manager',
+    //             role: 'Member',
     //           ))
     //       .toList(),
     // );
@@ -877,6 +877,11 @@ class _TodayPageState extends ConsumerState<TodayPage> {
 
               ref.watch(getEventsByCoopIdProvider(user.currentCoop!)).when(
                     data: (events) {
+                      // Filter events that you have joined
+                      events = events
+                          .where((event) => event.members.contains(user.uid))
+                          .toList();
+
                       return ListView.builder(
                         itemCount: events.length,
                         shrinkWrap: true,

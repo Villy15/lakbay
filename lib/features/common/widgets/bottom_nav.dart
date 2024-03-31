@@ -195,7 +195,7 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         break;
       case 4:
         if (widget.user?.isCoopView ?? false) {
-          context.go('/my_coop/dashboard/${widget.user?.currentCoop}');
+          context.go('/my_coop/my_dashboard/${widget.user?.currentCoop}');
         } else {
           context.go('/coops');
         }
