@@ -398,100 +398,110 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                             filteredVehicles.add(vehicle);
                           }
                         }
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Select Vehicle'),
-                                actions: [
-                                  FilledButton(
-                                      onPressed: () {
-                                        context.pop();
-                                      },
-                                      child: const Text('Close'))
-                                ],
-                                content: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: vehicles.length,
-                                    itemBuilder: (context, index) {
-                                      AvailableTransport vehicle =
-                                          vehicles[index];
-                                      return InkWell(
-                                        onTap: () {
-                                          for (var booking in bookings) {
-                                            ListingBookings updatedBooking =
-                                                booking.copyWith(
-                                                    vehicleNo:
-                                                        vehicle.vehicleNo);
-                                            ref
-                                                .read(listingControllerProvider
-                                                    .notifier)
-                                                .updateBooking(
-                                                    context,
-                                                    widget.listing.uid!,
-                                                    updatedBooking,
-                                                    "Booking updated!");
-                                          }
-                                          setState(() {
-                                            departureDetails = departureDetails
-                                                .copyWith(vehicle: vehicle);
-                                          });
+                        if (mounted) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Select Vehicle'),
+                                  actions: [
+                                    FilledButton(
+                                        onPressed: () {
                                           context.pop();
                                         },
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
+                                        child: const Text('Close'))
+
+                                  ],
+                                  content: SizedBox(
+                                    height: MediaQuery.sizeOf(context).height *
+                                        .3,
+                                    width: MediaQuery.sizeOf(context).width * .5,
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: vehicles.length,
+                                        itemBuilder: (context, index) {
+                                          AvailableTransport vehicle =
+                                              vehicles[index];
+                                          return InkWell(
+                                            onTap: () {
+                                              for (var booking in bookings) {
+                                                ListingBookings updatedBooking =
+                                                    booking.copyWith(
+                                                        vehicleNo:
+                                                            vehicle.vehicleNo);
+                                                ref
+                                                    .read(
+                                                        listingControllerProvider
+                                                            .notifier)
+                                                    .updateBooking(
+                                                        context,
+                                                        widget.listing.uid!,
+                                                        updatedBooking,
+                                                        "Booking updated!");
+                                              }
+                                              setState(() {
+                                                departureDetails =
+                                                    departureDetails.copyWith(
+                                                        vehicle: vehicle);
+                                              });
+                                              context.pop();
+                                            },
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                Text('[${index + 1}]'),
-                                                const SizedBox(
-                                                  width: 20,
-                                                ),
-                                                Text(
-                                                  "Vehicle No: ${vehicle.vehicleNo}",
-                                                  style: const TextStyle(
-                                                      fontSize: 14),
-                                                ),
-                                                SizedBox(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
+                                                Row(
+                                                  children: [
+                                                    Text('[${index + 1}]'),
+                                                    const SizedBox(
+                                                      width: 20,
+                                                    ),
+                                                    Text(
+                                                      "Vehicle No: ${vehicle.vehicleNo}",
+                                                      style: const TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                    SizedBox(
+                                                      width: MediaQuery.sizeOf(
+                                                                  context)
                                                               .width *
                                                           .3,
+                                                    ),
+                                                  ],
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: MediaQuery.sizeOf(
+                                                                  context)
+                                                              .width *
+                                                          .1),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        'Capacity: ${vehicle.guests} | ',
+                                                        style: const TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w300),
+                                                      ),
+                                                      Text(
+                                                        'Luggage: ${vehicle.luggage}',
+                                                        style: const TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w300),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ],
                                             ),
-                                            Container(
-                                              padding: EdgeInsets.only(
-                                                  left:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          .1),
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    'Capacity: ${vehicle.guests} | ',
-                                                    style: const TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w300),
-                                                  ),
-                                                  Text(
-                                                    'Luggage: ${vehicle.luggage}',
-                                                    style: const TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w300),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                              );
-                            });
+                                          );
+                                        }),
+                                  ),
+                                );
+                              });
+                        }
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
