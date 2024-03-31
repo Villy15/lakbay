@@ -245,6 +245,8 @@ class ListingController extends StateNotifier<bool> {
         showSnackBar(context, l.message);
       },
       (bookingUid) async {
+        updatedBooking = booking.copyWith(id: bookingUid);
+
         state = false;
 
         sendNotification('Listing Booked: ${listing.title}',
@@ -292,12 +294,12 @@ class ListingController extends StateNotifier<bool> {
                 passengers: [booking],
                 arrival: booking.endDate,
                 departure: booking.startDate);
+
             _ref.read(listingControllerProvider.notifier).addDeparture(
                 // ignore: use_build_context_synchronously
                 context,
                 listing,
-                booking,
-                bookingUid,
+                updatedBooking!,
                 updatedDeparture);
           } else {
             List<ListingBookings> currentPassengers = [];
@@ -333,7 +335,6 @@ class ListingController extends StateNotifier<bool> {
               paymentOption: booking.paymentOption!,
               transactionType: booking.paymentOption!,
             ));
-        updatedBooking = booking.copyWith(id: bookingUid);
 
         // check if the booking.startDate's time is set to 00:00:00 and if so, set it to booking.startTime
         if (booking.startDate?.hour == 0 &&
@@ -383,8 +384,6 @@ class ListingController extends StateNotifier<bool> {
             .read(plansControllerProvider.notifier)
             .addActivityToPlan(planUid!, activity, context);
         context.pop();
-        // context.pop();
-        // context.pop();
         context.push('/market/${booking.category}/customer_receipt',
             extra: {'booking': updatedBooking, 'listing': listing});
       },
@@ -604,12 +603,8 @@ class ListingController extends StateNotifier<bool> {
     return _listingRepository.readDeparturesByPoperties(query);
   }
 
-  void addDeparture(
-      BuildContext context,
-      ListingModel listing,
-      ListingBookings booking,
-      String bookingUid,
-      DepartureModel departure) async {
+  void addDeparture(BuildContext context, ListingModel listing,
+      ListingBookings booking, DepartureModel departure) async {
     state = true;
     final result = await _listingRepository.addDeparture(listing, departure);
 
@@ -620,7 +615,7 @@ class ListingController extends StateNotifier<bool> {
         context.pop;
         showSnackBar(context, l.message);
       },
-      (bookingUid) async {
+      (departureUid) async {
         state = false;
       },
     );

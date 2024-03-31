@@ -398,7 +398,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                             filteredVehicles.add(vehicle);
                           }
                         }
-                        if (mounted) {
+                        if (context.mounted) {
                           showDialog(
                               context: context,
                               builder: (context) {
@@ -410,12 +410,11 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                           context.pop();
                                         },
                                         child: const Text('Close'))
-
                                   ],
                                   content: SizedBox(
-                                    height: MediaQuery.sizeOf(context).height *
-                                        .3,
-                                    width: MediaQuery.sizeOf(context).width * .5,
+                                    height:
+                                        MediaQuery.sizeOf(context).height * .3,
+                                    width: double.infinity,
                                     child: ListView.builder(
                                         shrinkWrap: true,
                                         itemCount: vehicles.length,
@@ -424,7 +423,8 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                               vehicles[index];
                                           return InkWell(
                                             onTap: () {
-                                              for (var booking in bookings) {
+                                              for (ListingBookings booking
+                                                  in bookings) {
                                                 ListingBookings updatedBooking =
                                                     booking.copyWith(
                                                         vehicleNo:
@@ -482,14 +482,16 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                                         style: const TextStyle(
                                                             fontSize: 12,
                                                             fontWeight:
-                                                                FontWeight.w300),
+                                                                FontWeight
+                                                                    .w300),
                                                       ),
                                                       Text(
                                                         'Luggage: ${vehicle.luggage}',
                                                         style: const TextStyle(
                                                             fontSize: 12,
                                                             fontWeight:
-                                                                FontWeight.w300),
+                                                                FontWeight
+                                                                    .w300),
                                                       ),
                                                     ],
                                                   ),
