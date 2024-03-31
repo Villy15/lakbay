@@ -695,8 +695,19 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                 "Booking Tasks ",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
+
               ref.watch(getBookingTasksByMemberId(user.uid)).when(
                     data: (tasks) {
+                      // Add tasks to if task is also a contributor ID
+                      tasks.addAll(
+                        ref
+                                .watch(getBookingTasksByContributorId(user.uid))
+                                .asData
+                                ?.value
+                                .toList() ??
+                            [],
+                      );
+
                       if (tasks.isEmpty) {
                         return const Text("No tasks found");
                       }
@@ -871,6 +882,12 @@ class _TodayPageState extends ConsumerState<TodayPage> {
 
               ref.watch(getEventsByCoopIdProvider(user.currentCoop!)).when(
                     data: (events) {
+                      if (events.isEmpty) {
+                        return const Text("No events found");
+                      }
+
+                      debugPrint('Events: $events');
+
                       // Filter events that you have joined
                       events = events
                           .where((event) => event.members.contains(user.uid))

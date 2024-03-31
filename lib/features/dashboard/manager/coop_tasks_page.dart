@@ -129,8 +129,8 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                                                               ),
                                                             )
                                                           : null, // Handle other conditions if needed
-                                              subtitle: Text(
-                                                  'Assigned: ${entry.value[index].assignedNames.join(', ')}'),
+                                              // Check if the task is by the contributor or not
+
                                               trailing: IconButton(
                                                   onPressed: () {
                                                     showNotesDialog(context,
@@ -191,6 +191,8 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
                 ))
           ]),
           content: SizedBox(
+            width: MediaQuery.of(context).size.width /
+                1.5, // Set a fixed width for the ListView
             height: MediaQuery.of(context).size.height /
                 1.5, // Set a fixed height for the ListView
             child: Column(
@@ -330,37 +332,42 @@ class _CoopTasksPageState extends ConsumerState<CoopTasksPage> {
             title: Text(entry.value[index].name),
             titleTextStyle: const TextStyle(
                 fontSize: 22, fontWeight: FontWeight.w400, color: Colors.black),
-            content: Column(
-              children: [
-                if (sliderImages == null)
-                  GestureDetector(
-                    child: ImagePickerFormField(
-                      height: MediaQuery.sizeOf(context).height / 3,
-                      width: MediaQuery.sizeOf(context).width,
-                      context: context,
-                      initialValue: uploadImages,
-                      onSaved: (List<File>? files) {
-                        uploadImages = files;
-                      },
-                      validator: (List<File>? files) {
-                        if (files == null || files.isEmpty) {
-                          return 'Please select some images';
-                        }
-                        return null;
-                      },
-                      onImagesSelected: (List<File> files) {
-                        uploadImages = files;
-                      },
-                    ),
-                  )
-                else
-                  ImageSlider(
-                      images: sliderImages.map((image) => image.url).toList(),
-                      height: MediaQuery.sizeOf(context).height / 3,
-                      width: MediaQuery.sizeOf(context).width,
-                      radius: BorderRadius.zero),
-                addNotes(notes),
-              ],
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width /
+                  1.5, // Set a fixed width for the ListView
+              height: MediaQuery.of(context).size.height / 1.5,
+              child: Column(
+                children: [
+                  if (sliderImages == null)
+                    GestureDetector(
+                      child: ImagePickerFormField(
+                        height: MediaQuery.sizeOf(context).height / 3,
+                        width: MediaQuery.sizeOf(context).width,
+                        context: context,
+                        initialValue: uploadImages,
+                        onSaved: (List<File>? files) {
+                          uploadImages = files;
+                        },
+                        validator: (List<File>? files) {
+                          if (files == null || files.isEmpty) {
+                            return 'Please select some images';
+                          }
+                          return null;
+                        },
+                        onImagesSelected: (List<File> files) {
+                          uploadImages = files;
+                        },
+                      ),
+                    )
+                  else
+                    ImageSlider(
+                        images: sliderImages.map((image) => image.url).toList(),
+                        height: MediaQuery.sizeOf(context).height / 3,
+                        width: MediaQuery.sizeOf(context).width,
+                        radius: BorderRadius.zero),
+                  addNotes(notes),
+                ],
+              ),
             ),
             actions: [
               FilledButton(

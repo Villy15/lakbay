@@ -134,6 +134,12 @@ _$BookingTaskImpl _$$BookingTaskImplFromJson(Map<String, dynamic> json) =>
       assignedNames: (json['assignedNames'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      contributorsIds: (json['contributorsIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      contributorsNames: (json['contributorsNames'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       committee: json['committee'] as String,
       complete: json['complete'] as bool,
       notes: (json['notes'] as List<dynamic>?)
@@ -156,6 +162,8 @@ Map<String, dynamic> _$$BookingTaskImplToJson(_$BookingTaskImpl instance) =>
       'roomId': instance.roomId,
       'assignedIds': instance.assignedIds,
       'assignedNames': instance.assignedNames,
+      'contributorsIds': instance.contributorsIds,
+      'contributorsNames': instance.contributorsNames,
       'committee': instance.committee,
       'complete': instance.complete,
       'notes': instance.notes?.map((e) => e.toJson()).toList(),

@@ -79,6 +79,8 @@ class BookingTask with _$BookingTask {
     String? roomId,
     required List<String> assignedIds,
     required List<String> assignedNames,
+    List<String>? contributorsIds,
+    List<String>? contributorsNames,
     required String committee,
     required bool complete,
     List<BookingTaskMessage>? notes,

@@ -8,6 +8,7 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
 import 'package:lakbay/models/sale_model.dart';
@@ -128,6 +129,7 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
                     dashboardFunctions(context),
                     if (filteredSales.isNotEmpty) ...[
                       rowSummaryCards(filteredSales),
+                      rowShareCapital(filteredSales),
                       lineChart(filteredSales),
                       pieChart(filteredSales),
                       const SizedBox(height: 16),
@@ -233,28 +235,21 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
 
   Card pieChart(List<SaleModel> sales) {
     // Group the filtered data by listingName.
-    final chartDataByCategory =
-        sales.fold<Map<String, List<SaleModel>>>({}, (previousValue, element) {
-      if (previousValue.containsKey(element.listingName)) {
-        previousValue[element.listingName]!.add(element);
-      } else {
-        previousValue[element.listingName] = [element];
-      }
-      return previousValue;
-    });
+    final Map<String, num> groupedSales = {};
+    for (var sale in sales) {
+      groupedSales[sale.listingName] =
+          (groupedSales[sale.listingName] ?? 0) + sale.saleAmount;
+    }
 
-    // Create a pie series for each listingName.
-    final List<PieSeries<SaleData, String>> createSeries =
-        chartDataByCategory.entries.map((entry) {
-      // Sum up the saleAmount for each group of sales with the same listingName.
-      final totalSaleAmount = entry.value.fold<num>(
-          0, (previousValue, sale) => previousValue + sale.saleAmount);
+// Create a SaleData object for each group of sales.
+    final List<SaleData> data = groupedSales.entries.map((entry) {
+      return SaleData(entry.key, entry.value);
+    }).toList();
 
-      // Create a new SaleData object for each entry.
-      final saleData = SaleData(entry.key, totalSaleAmount);
-
-      return PieSeries<SaleData, String>(
-        dataSource: [saleData],
+// Create a pie series.
+    final List<PieSeries<SaleData, String>> createSeries = [
+      PieSeries<SaleData, String>(
+        dataSource: data,
         xValueMapper: (SaleData data, _) => data.listingName,
         yValueMapper: (SaleData data, _) => data.saleAmount,
         dataLabelMapper: (SaleData data, _) =>
@@ -267,9 +262,8 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
           textStyle: TextStyle(fontSize: 12),
           labelIntersectAction: LabelIntersectAction.shift,
         ),
-        name: entry.key,
-      );
-    }).toList();
+      ),
+    ];
 
     return Card(
       child: Padding(
@@ -315,7 +309,6 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
                       .startDate!,
                   yValueMapper: (SaleModel sales, _) => sales.saleAmount,
                   name: entry.key,
-                  color: Theme.of(context).colorScheme.primary,
                   markerSettings: const MarkerSettings(isVisible: true),
                 ))
             .toList();
@@ -360,6 +353,35 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
             ...createSeries,
           ],
         ),
+      ),
+    );
+  }
+
+  Widget rowShareCapital(List<SaleModel> sales) {
+    final totalSales = sales.fold(0.0,
+        (previousValue, sale) => previousValue + sale.saleAmount.toDouble());
+
+    final getSharePercentage = ref
+            .watch(getCooperativeProvider(widget.coopId))
+            .asData
+            ?.value
+            .membershipDividends ??
+        0.0;
+
+    var shareCapital = totalSales * (getSharePercentage / 100);
+
+    if (shareCapital.isNaN) {
+      shareCapital = 0.0;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          summaryCard('Share Percentage', '${getSharePercentage.toString()}%'),
+          summaryCard('Share Capital', '₱${shareCapital.toStringAsFixed(2)}'),
+        ],
       ),
     );
   }

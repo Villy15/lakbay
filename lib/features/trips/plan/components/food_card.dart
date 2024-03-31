@@ -424,7 +424,7 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                             category: 'Food',
                                             startDate: bookedDate,
                                             endDate: bookedDate,
-                                            email: "",
+                                            email: user?.email ?? '',
                                             governmentId:
                                                 "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
                                             guests: guests,
