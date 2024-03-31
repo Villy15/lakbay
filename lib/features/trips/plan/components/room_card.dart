@@ -1,15 +1,13 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-<<<<<<< HEAD
 import 'package:lakbay/core/providers/days_provider.dart';
-=======
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
->>>>>>> 653edb701ae9da64fcd260d83b033a86bbe3ad67
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -58,13 +56,10 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     final guests = ref.read(currentPlanGuestsProvider) ?? widget.guests;
     final startDate = ref.read(planStartDateProvider) ?? widget.startDate;
     final endDate = ref.read(planEndDateProvider) ?? widget.endDate;
-<<<<<<< HEAD
     final daysPlan = ref.read(daysPlanProvider);
 
-=======
     final currentUser = ref.read(userProvider);
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
->>>>>>> 653edb701ae9da64fcd260d83b033a86bbe3ad67
     List<String> unavailableRoomUids =
         getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
     return ref
@@ -612,58 +607,51 @@ class _RoomCardState extends ConsumerState<RoomCard> {
   }
 
   Future<UserModel> submitUpdateProfile(
-    BuildContext context,
-    UserModel user,
-    UserModel updatedUser,
-    GlobalKey<FormState> formKey,
-    File? profilePicture,
-    File? governmentId) async {
+      BuildContext context,
+      UserModel user,
+      UserModel updatedUser,
+      GlobalKey<FormState> formKey,
+      File? profilePicture,
+      File? governmentId) async {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
 
-  if (formKey.currentState!.validate()) {
-    formKey.currentState!.save();
+      if (profilePicture != null) {
+        final result = await ref.read(storageRepositoryProvider).storeFile(
+              path: 'users/${updatedUser.name}',
+              id: profilePicture.path.split('/').last,
+              file: profilePicture,
+            );
 
-    if (profilePicture != null) {
-      final result = await ref
-        .read(storageRepositoryProvider)
-        .storeFile(
-          path: 'users/${updatedUser.name}',
-          id: profilePicture.path.split('/').last,
-          file: profilePicture,
-        );
-
-      result.fold(
-        (failure) => debugPrint('Failed to upload image: $failure'),
-        (imageUrl) {
+        result.fold((failure) => debugPrint('Failed to upload image: $failure'),
+            (imageUrl) {
           // update user with the new profile picture
           updatedUser = updatedUser.copyWith(profilePic: imageUrl);
-        }
-      );
-    }
+        });
+      }
 
-    if (governmentId != null) {
-      final result = await ref
-        .read(storageRepositoryProvider)
-        .storeFile(
-          path: 'users/${updatedUser.name}',
-          id: governmentId.path.split('/').last,
-          file: governmentId,
-        );
+      if (governmentId != null) {
+        final result = await ref.read(storageRepositoryProvider).storeFile(
+              path: 'users/${updatedUser.name}',
+              id: governmentId.path.split('/').last,
+              file: governmentId,
+            );
 
-      result.fold(
-        (failure) => debugPrint('Failed to upload image: $failure'),
-        (imageUrl) {
+        result.fold((failure) => debugPrint('Failed to upload image: $failure'),
+            (imageUrl) {
           // update user with the new government id picture
           updatedUser = updatedUser.copyWith(governmentId: imageUrl);
-        }
-      );
+        });
+      }
+
+      // transfer updatedUser to user
+      ref
+          .read(usersControllerProvider.notifier)
+          .editProfile(context, user.uid, updatedUser);
     }
 
-    // transfer updatedUser to user
-    ref.read(usersControllerProvider.notifier).editProfile(context, user.uid, updatedUser);
+    return updatedUser;
   }
-
-  return updatedUser;
-}
 
   Future<UserModel> processGovernmentId(
       UserModel user, File? governmentId) async {
@@ -742,10 +730,10 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                       child: ImagePickerFormField(
                                         initialValue: profilePicture,
                                         onSaved: (value) {
-                                          
                                           this.setState(() {
                                             profilePicture = value;
-                                            debugPrint('this is the value: $profilePicture');
+                                            debugPrint(
+                                                'this is the value: $profilePicture');
                                           });
                                         },
                                       ),
@@ -834,28 +822,19 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                   ),
                                   const SizedBox(height: 10),
                                   // text for government id
-                                  const Text('Government ID'),
-                                  GestureDetector(
-                                      child: Row(
-                                    children: [
-                                      Icon(Icons.card_travel,
-                                          color: Theme.of(context)
-                                              .iconTheme
-                                              .color),
-                                      const SizedBox(width: 15),
-                                      Expanded(
-                                        child: ImagePickerFormField(
-                                          initialValue: governmentId,
-                                          onSaved: (value) {
-                                            this.setState(() {
-                                              governmentId = value;
-                                              debugPrint('this is the value: $governmentId');
-                                            });
-                                          },
-                                        ),
-                                      )
-                                    ],
-                                  )),
+                                  ListTile(
+                                    title: const Text('Government ID*'),
+                                    trailing: const Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 16,
+                                    ),
+                                    subtitle:  governmentId == null 
+                                              ? const Text('Upload a valid Government ID ')
+                                              : Text('Govenrment ID selected: $governmentId'),
+                                    // onTap: () async {
+                                    //   FilePickerResult? result = await FilePicker.platform. 
+                                    // }
+                                  ),
                                   const SizedBox(height: 20),
                                   TextFormField(
                                     controller: emergencyContactNameController,
@@ -924,7 +903,9 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                         user = user;
                                       });
 
-                                      ref.read(userProvider.notifier).setUser(user);
+                                      ref
+                                          .read(userProvider.notifier)
+                                          .setUser(user);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
@@ -952,13 +933,16 @@ class _RoomCardState extends ConsumerState<RoomCard> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         num guests = 0;
-        TextEditingController guestController = TextEditingController(text: room.guests.toString() ?? '');
+        String? guestNum = room.guests.toString();
+        debugPrint('this is the room number of guests: $guestNum');
+        TextEditingController guestController =
+            TextEditingController(text: guestNum ?? '');
         TextEditingController phoneNoController =
             TextEditingController(text: user?.phoneNo ?? '');
         TextEditingController emergencyContactNameController =
             TextEditingController(text: user?.emergencyContactName ?? '');
         TextEditingController emergencyContactNoController =
-            TextEditingController(text: user?.emergencyContactName ?? '');
+            TextEditingController(text: user?.emergencyContact ?? '');
         bool governmentId = true;
         String formattedStartDate = DateFormat('MMMM dd').format(startDate);
         String formattedEndDate = DateFormat('MMMM dd').format(endDate);
@@ -986,6 +970,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                     child: Column(
                       children: [
                         TextFormField(
+                          controller: guestController,
                           decoration: const InputDecoration(
                             labelText: 'Number of Guests',
                             border: OutlineInputBorder(),
@@ -1076,13 +1061,14 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                             hour: listing.checkOut!.hour,
                             minute: listing.checkOut!.minute);
                         final currentTrip = ref.read(currentTripProvider);
+                        final user = ref.read(userProvider);
 
                         ListingBookings booking = ListingBookings(
                           tripUid: currentTrip!.uid!,
                           tripName: currentTrip.name,
                           listingId: listing.uid!,
                           listingTitle: listing.title,
-                          customerName: ref.read(userProvider)!.name,
+                          customerName: user!.name,
                           bookingStatus: "Reserved",
                           price: room.price,
                           category: "Accommodation",
@@ -1090,12 +1076,11 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                           roomUid: room.uid,
                           startDate: startDate,
                           endDate: endDate,
-                          email: "",
-                          governmentId:
-                              "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
-                          guests: guests,
+                          email: user.email ?? '',
+                          governmentId: user.governmentId ?? '',
+                          guests: num.parse(guestNum),
                           customerPhoneNo: phoneNoController.text,
-                          customerId: ref.read(userProvider)!.uid,
+                          customerId: user.uid,
                           emergencyContactName:
                               emergencyContactNameController.text,
                           emergencyContactNo: emergencyContactNoController.text,

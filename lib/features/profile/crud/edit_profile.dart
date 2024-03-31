@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +25,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   File? _image;
+  String? _governmentId;
   final _nameController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -44,6 +46,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _addressController.text = widget.user.address ?? '';
     _emergenyNoController.text = widget.user.emergencyContact ?? '';
     _emergencyNameController.text = widget.user.emergencyContactName ?? '';
+    _governmentId = widget.user.governmentId ?? '';
   }
 
   @override
@@ -313,6 +316,16 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       ),
 
                       const SizedBox(height: 10),
+                      ListTile(
+                        leading: const Icon(Icons.file_copy),
+                        title: const Text('Government ID'),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                        subtitle: _governmentId == null ? const Text('Upload a Valid Government ID')
+                            : Text('File selected: ${_governmentId!.split('/').last}'),
+                        // onTap: () async {
+                        //   FilePickerResult? result 
+                        // }
+                      )
                     ],
                   ),
                 ),

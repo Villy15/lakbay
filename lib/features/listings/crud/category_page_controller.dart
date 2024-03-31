@@ -61,10 +61,10 @@ class CategoryPageController extends ConsumerWidget {
           listing: listing,
         );
       
-      case 'Transport' : 
-        return ManageTransportation(
-          listing: listing
-        );
+      // case 'Transport' : 
+      //   return ManageTransportation(
+      //     listing: listing
+      //   );
 
       default:
         return ManageAccommodation(
