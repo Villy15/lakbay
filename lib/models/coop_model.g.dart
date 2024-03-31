@@ -24,6 +24,8 @@ _$CooperativeModelImpl _$$CooperativeModelImplFromJson(
           (json['managers'] as List<dynamic>).map((e) => e as String).toList(),
       membershipFee: json['membershipFee'] as num?,
       membershipDividends: json['membershipDividends'] as num?,
+      shareCapital: json['shareCapital'] as num?,
+      minimumMemberShareCount: json['minimumMemberShareCount'] as num?,
       dateCreated: const TimestampSerializer()
           .fromJson(json['dateCreated'] as Timestamp?),
       validityStatus: json['validityStatus'] == null
@@ -52,6 +54,8 @@ Map<String, dynamic> _$$CooperativeModelImplToJson(
       'managers': instance.managers,
       'membershipFee': instance.membershipFee,
       'membershipDividends': instance.membershipDividends,
+      'shareCapital': instance.shareCapital,
+      'minimumMemberShareCount': instance.minimumMemberShareCount,
       'dateCreated': const TimestampSerializer().toJson(instance.dateCreated),
       'validityStatus': instance.validityStatus?.toJson(),
       'validationFiles': instance.validationFiles?.toJson(),

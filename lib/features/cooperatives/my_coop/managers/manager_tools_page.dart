@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
 import 'package:lakbay/features/cooperatives/my_coop/goals/add_goal.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/manag_shar_capital.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_dvidends.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_fee.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/validate_coop.dart';
@@ -137,6 +138,21 @@ class ManagerToolsPage extends ConsumerWidget {
     );
   }
 
+  // Manager Share Capital
+  void manageShareCapital(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return ManageShareCapital(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // List Tile Map Cooperative Activities
@@ -235,6 +251,16 @@ class ManagerToolsPage extends ConsumerWidget {
           title: const Text('Member Dividends'),
           onTap: () => {
                 manageMemberDividends(
+                  context,
+                  coop,
+                )
+              }),
+      // Manager Share Capital
+      'Manage Share Capital': () => ListTile(
+          leading: const Icon(Icons.money),
+          title: const Text('Manage Share Capital'),
+          onTap: () => {
+                manageShareCapital(
                   context,
                   coop,
                 )

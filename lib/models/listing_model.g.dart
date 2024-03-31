@@ -56,6 +56,8 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       province: json['province'] as String,
       publisherId: json['publisherId'] as String,
       publisherName: json['publisherName'] as String,
+      pickUp: json['pickUp'] as String?,
+      destination: json['destination'] as String?,
       guestInfo: json['guestInfo'] as String?,
       rating: json['rating'] as num?,
       fixedTasks: (json['fixedTasks'] as List<dynamic>?)
@@ -122,6 +124,8 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'province': instance.province,
       'publisherId': instance.publisherId,
       'publisherName': instance.publisherName,
+      'pickUp': instance.pickUp,
+      'destination': instance.destination,
       'guestInfo': instance.guestInfo,
       'rating': instance.rating,
       'fixedTasks': instance.fixedTasks?.map((e) => e.toJson()).toList(),
@@ -240,9 +244,6 @@ _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
           json['startTime'], const TimeOfDayConverter().fromJson),
       endTime: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
           json['endTime'], const TimeOfDayConverter().fromJson),
-      destination: json['destination'] as String?,
-      pickupPoint: json['pickupPoint'] as String?,
-      travelTime: json['travelTime'] as String?,
       priceByHour: json['priceByHour'] as num?,
     );
 
@@ -264,10 +265,37 @@ Map<String, dynamic> _$$AvailableTransportImplToJson(
           instance.startTime, const TimeOfDayConverter().toJson),
       'endTime': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
           instance.endTime, const TimeOfDayConverter().toJson),
-      'destination': instance.destination,
-      'pickupPoint': instance.pickupPoint,
-      'travelTime': instance.travelTime,
       'priceByHour': instance.priceByHour,
+    };
+
+_$DepartureModelImpl _$$DepartureModelImplFromJson(Map<String, dynamic> json) =>
+    _$DepartureModelImpl(
+      uid: json['uid'] as String?,
+      listingName: json['listingName'] as String?,
+      listingId: json['listingId'] as String?,
+      passengers: (json['passengers'] as List<dynamic>)
+          .map((e) => ListingBookings.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      vehicle: json['vehicle'] == null
+          ? null
+          : AvailableTransport.fromJson(
+              json['vehicle'] as Map<String, dynamic>),
+      arrival:
+          const TimestampSerializer().fromJson(json['arrival'] as Timestamp?),
+      departure:
+          const TimestampSerializer().fromJson(json['departure'] as Timestamp?),
+    );
+
+Map<String, dynamic> _$$DepartureModelImplToJson(
+        _$DepartureModelImpl instance) =>
+    <String, dynamic>{
+      'uid': instance.uid,
+      'listingName': instance.listingName,
+      'listingId': instance.listingId,
+      'passengers': instance.passengers.map((e) => e.toJson()).toList(),
+      'vehicle': instance.vehicle?.toJson(),
+      'arrival': const TimestampSerializer().toJson(instance.arrival),
+      'departure': const TimestampSerializer().toJson(instance.departure),
     };
 
 _$FoodServiceImpl _$$FoodServiceImplFromJson(Map<String, dynamic> json) =>

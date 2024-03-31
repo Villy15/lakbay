@@ -376,9 +376,9 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
       },
       'Transport': {
         'start': 'Pick Up',
-        'startValue': listing.availableTransport?.pickupPoint ?? '',
+        'startValue': listing.pickUp ?? '',
         'end': 'Drop Off',
-        'endValue': listing.availableTransport?.destination ?? '',
+        'endValue': listing.destination ?? '',
       },
       'Entertainment': {
         'start': 'Start',

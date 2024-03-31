@@ -163,19 +163,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 workingDays: workingDays,
                 startTime: startDate,
                 endTime: endDate,
-                // if destination is empty, set to null
-                destination: _destinationController.text.isEmpty
-                    ? null
-                    : _destinationController.text,
-                pickupPoint: _pickupController.text.isEmpty
-                    ? null
-                    : _pickupController.text,
-                // if departure times are empty, set to null
                 departureTimes: _departureTime.isEmpty ? null : _departureTime,
                 // if travel time is empty, set to null
-                travelTime: _travelTimeController.text.isEmpty
-                    ? null
-                    : _travelTimeController.text,
                 priceByHour: _byHourFeeController.text.isEmpty
                     ? null
                     : num.parse(_byHourFeeController.text),
@@ -195,6 +184,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 price: num.parse(_feeController.text),
                 province: widget.coop.province,
                 publisherId: ref.read(userProvider)!.uid,
+                pickUp: _pickupController.text,
+                destination: _destinationController.text,
                 title: _titleController.text,
                 fixedTasks: fixedTasks,
                 type: type,
