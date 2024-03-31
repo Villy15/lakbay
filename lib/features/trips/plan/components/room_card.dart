@@ -21,6 +21,8 @@ import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/rooms_params.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
 
 class RoomCard extends ConsumerStatefulWidget {
   final String category;
@@ -645,38 +647,20 @@ class _RoomCardState extends ConsumerState<RoomCard> {
       // transfer updatedUser to user
       ref
           .read(usersControllerProvider.notifier)
+          // ignore: use_build_context_synchronously
           .editProfile(context, user.uid, updatedUser);
     }
 
     return updatedUser;
   }
 
-  Future<UserModel> processGovernmentId(
-      UserModel user, File? governmentId) async {
-    if (governmentId != null) {
-      final result = await ref.read(storageRepositoryProvider).storeFile(
-            path: 'users/${user.name}',
-            id: governmentId.path.split('/').last,
-            file: governmentId,
-          );
-
-      result.fold((failure) => debugPrint('Failed to upload image: $failure'),
-          (imageUrl) {
-        // update user with the new government id picture
-        user = user.copyWith(governmentId: imageUrl);
-        ref
-            .read(usersControllerProvider.notifier)
-            .editProfile(context, user.uid, user);
-      });
-    }
-
-    return user;
-  }
-
   // a dialog for the user to update their profile
   void showUpdateProfile(BuildContext context, UserModel user) async {
     File? profilePicture;
+    String? profilePicLink = user.profilePic;
     File? governmentId;
+    String? governmentIdLink = user.governmentId;
+    ValueNotifier<File?> governmentIdNotifier = ValueNotifier<File?>(null);
     final TextEditingController firstNameController =
         TextEditingController(text: user.firstName ?? '');
     final TextEditingController lastNameController =
@@ -719,24 +703,29 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                               child: Column(
                                 children: [
                                   GestureDetector(
-                                      child: Row(children: [
-                                    Icon(Icons.image,
-                                        color:
-                                            Theme.of(context).iconTheme.color),
-                                    const SizedBox(width: 15),
-                                    Expanded(
-                                      child: ImagePickerFormField(
-                                        initialValue: profilePicture,
-                                        onSaved: (value) {
-                                          this.setState(() {
-                                            profilePicture = value;
-                                            debugPrint(
-                                                'this is the value: $profilePicture');
-                                          });
-                                        },
-                                      ),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.image,
+                                            color: Theme.of(context)
+                                                .iconTheme
+                                                .color),
+                                        const SizedBox(width: 15),
+                                        Expanded(
+                                          child: ImagePickerFormField(
+                                            imageUrl: profilePicLink,
+                                            initialValue: profilePicture,
+                                            onSaved: (value) {
+                                              this.setState(() {
+                                                profilePicture = value;
+                                                debugPrint(
+                                                    'this is the value: $profilePicture');
+                                              });
+                                            },
+                                          ),
+                                        )
+                                      ],
                                     )
-                                  ])),
+                                  ),
                                   const SizedBox(height: 20),
                                   TextFormField(
                                       controller: emailController,
@@ -826,13 +815,29 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                       Icons.arrow_forward_ios,
                                       size: 16,
                                     ),
-                                    subtitle:  governmentId == null 
-                                              ? const Text('Upload a valid Government ID ')
-                                              : Text('Govenrment ID selected: $governmentId'),
-                                    // onTap: () async {
-                                    //   FilePickerResult? result = await FilePicker.platform. 
-                                    // }
+                                    subtitle: ValueListenableBuilder<File?>(
+                                      valueListenable: governmentIdNotifier,
+                                      builder: (context, governmentId, child) {
+                                        return governmentId == null
+                                            ? const Text('Upload a valid Government ID ')
+                                            : Text('Government ID selected: ${path.basename(governmentId.path)}');
+                                      },
+                                    ),
+                                    onTap: () async {
+                                      FilePickerResult? result = await FilePicker.platform.pickFiles(
+                                        type: FileType.custom,
+                                        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc'],
+                                      );
+
+                                      if (result != null) {
+                                        this.setState(() {
+                                          governmentId = File(result.files.single.path!);
+                                          governmentIdNotifier.value = governmentId;
+                                        });
+                                      }
+                                    },
                                   ),
+
                                   const SizedBox(height: 20),
                                   TextFormField(
                                     controller: emergencyContactNameController,
@@ -934,7 +939,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
         String? guestNum = room.guests.toString();
         debugPrint('this is the room number of guests: $guestNum');
         TextEditingController guestController =
-            TextEditingController(text: guestNum ?? '');
+            TextEditingController(text: guestNum);
         TextEditingController phoneNoController =
             TextEditingController(text: user?.phoneNo ?? '');
         TextEditingController emergencyContactNameController =

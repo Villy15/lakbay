@@ -57,7 +57,6 @@ class _AddFoodState extends ConsumerState<AddFood> {
   final List<List<TextEditingController>> _tableControllers = [];
   final List<Map<TextEditingController, TextEditingController>>
       _tableController = [];
-  List<List<dynamic>> _tableInfo = [];
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -91,18 +90,6 @@ class _AddFoodState extends ConsumerState<AddFood> {
       // Prepare data for storeFiles
       final imagePath = 'listings/${widget.coop.name}';
       final ids = _images!.map((image) => image.path.split('/').last).toList();
-      _tableInfo = _tableControllers.map((controllerList) {
-        return controllerList.asMap().entries.map((entry) {
-          var text = entry.value.text;
-          if (entry.key == 1 && num.tryParse(text) != null) {
-            // If it's the second value and it can be parsed into a number, parse it
-            return num.parse(text);
-          } else {
-            // Otherwise, return the original text
-            return text;
-          }
-        }).toList();
-      }).toList();
 
       // Upload images to firebase storage
       ref
@@ -146,8 +133,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                       cancellationPeriod:
                           _cancellationPeriodController.text == ''
                               ? null
-                              : num.parse(_cancellationPeriodController.text),
-                      availableTables: _tableInfo);
+                              : num.parse(_cancellationPeriodController.text),);
                   listing = await processMenuImages(listing);
                   listing = await processDealImages(listing);
                   listing = listing.copyWith(
@@ -158,6 +144,9 @@ class _AddFoodState extends ConsumerState<AddFood> {
                   debugPrint("$listing");
                   if (mounted) {
                     ref.read(listingLocationProvider.notifier).clearLocation();
+
+                    debugPrint(
+                        'this is the listing location: ${ref.read(listingLocationProvider)}');
                     ref
                         .read(listingControllerProvider.notifier)
                         .addListing(listing, context);
@@ -605,7 +594,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
           children: [
             Expanded(
               child: TextFormField(
-                controller: _cancellationPeriodController,
+                controller: _cancellationRateController,
                 maxLines: 1,
                 decoration: const InputDecoration(
                     labelText: 'Cancellation Rate (%)*',
@@ -1524,7 +1513,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
           ),
           readOnly: true,
           onTap: () async {
-            await context.push('/select_location');
+            await context.push('/select_location', extra: 'listing');
             debugPrint('this is the value of location now: $location');
           },
           validator: (String? value) {
