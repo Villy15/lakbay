@@ -233,12 +233,13 @@ _$AvailableTransportImpl _$$AvailableTransportImplFromJson(
           .toList(),
       vehicleNo: json['vehicleNo'] as num?,
       luggage: json['luggage'] as num,
-      workingDays:
-          (json['workingDays'] as List<dynamic>).map((e) => e as bool).toList(),
-      startTime: const TimeOfDayConverter()
-          .fromJson(json['startTime'] as Map<String, dynamic>),
-      endTime: const TimeOfDayConverter()
-          .fromJson(json['endTime'] as Map<String, dynamic>),
+      workingDays: (json['workingDays'] as List<dynamic>?)
+          ?.map((e) => e as bool)
+          .toList(),
+      startTime: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
+          json['startTime'], const TimeOfDayConverter().fromJson),
+      endTime: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
+          json['endTime'], const TimeOfDayConverter().fromJson),
       destination: json['destination'] as String?,
       pickupPoint: json['pickupPoint'] as String?,
       travelTime: json['travelTime'] as String?,
@@ -259,8 +260,10 @@ Map<String, dynamic> _$$AvailableTransportImplToJson(
       'vehicleNo': instance.vehicleNo,
       'luggage': instance.luggage,
       'workingDays': instance.workingDays,
-      'startTime': const TimeOfDayConverter().toJson(instance.startTime),
-      'endTime': const TimeOfDayConverter().toJson(instance.endTime),
+      'startTime': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
+          instance.startTime, const TimeOfDayConverter().toJson),
+      'endTime': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
+          instance.endTime, const TimeOfDayConverter().toJson),
       'destination': instance.destination,
       'pickupPoint': instance.pickupPoint,
       'travelTime': instance.travelTime,

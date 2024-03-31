@@ -693,23 +693,6 @@ class _CustomerTransportationState
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  'Working Hours',
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
-                  ),
-                ),
-              ),
-              Text(
-                '${widget.listing.availableTransport!.startTime.format(context)} - ${widget.listing.availableTransport!.endTime.format(context)}',
-                style: const TextStyle(fontSize: 12),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Text(
                   'Available Days',
@@ -722,7 +705,7 @@ class _CustomerTransportationState
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Text(
                   getWorkingDays(
-                      widget.listing.availableTransport!.workingDays),
+                      widget.listing.availableTransport!.workingDays!),
                   style: const TextStyle(fontSize: 12),
                 ),
               ),

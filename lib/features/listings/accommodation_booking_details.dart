@@ -1,20 +1,17 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/emergency_process_dialog.dart';
-import 'package:lakbay/features/trips/plan/components/room_card.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -499,12 +496,12 @@ class _AccommodationBookingsDetailsState
   ListTile _userInformation(UserModel user, ListingBookings booking) {
     return ListTile(
       onTap: () {
-        // Show user profile
+        context.push('/profile/id/${user.uid}');
       },
       leading: CircleAvatar(
         radius: 15.0,
-        backgroundImage: user.imageUrl != null && user.imageUrl != ''
-            ? NetworkImage(user.imageUrl!)
+        backgroundImage: user.profilePic != ''
+            ? NetworkImage(user.profilePic)
             // Use placeholder image if user has no profile pic
             : const AssetImage('lib/core/images/default_profile_pic.jpg')
                 as ImageProvider,
@@ -512,8 +509,7 @@ class _AccommodationBookingsDetailsState
       // Contact owner
       trailing: IconButton(
         onPressed: () {
-          // Show snackbar with reviews
-          showSnackBar(context, 'Contact owner');
+          createRoom(context, user.uid, ref.watch(userProvider)!);
         },
         icon: const Icon(Icons.message_rounded),
       ),

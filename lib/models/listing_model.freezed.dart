@@ -2014,11 +2014,11 @@ mixin _$AvailableTransport {
   List<TimeOfDay>? get departureTimes => throw _privateConstructorUsedError;
   num? get vehicleNo => throw _privateConstructorUsedError;
   num get luggage => throw _privateConstructorUsedError;
-  List<bool> get workingDays => throw _privateConstructorUsedError;
+  List<bool>? get workingDays => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
-  TimeOfDay get startTime => throw _privateConstructorUsedError;
+  TimeOfDay? get startTime => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
-  TimeOfDay get endTime => throw _privateConstructorUsedError;
+  TimeOfDay? get endTime => throw _privateConstructorUsedError;
   String? get destination => throw _privateConstructorUsedError;
   String? get pickupPoint => throw _privateConstructorUsedError;
   String? get travelTime => throw _privateConstructorUsedError;
@@ -2045,9 +2045,9 @@ abstract class $AvailableTransportCopyWith<$Res> {
       @TimeOfDayConverter() List<TimeOfDay>? departureTimes,
       num? vehicleNo,
       num luggage,
-      List<bool> workingDays,
-      @TimeOfDayConverter() TimeOfDay startTime,
-      @TimeOfDayConverter() TimeOfDay endTime,
+      List<bool>? workingDays,
+      @TimeOfDayConverter() TimeOfDay? startTime,
+      @TimeOfDayConverter() TimeOfDay? endTime,
       String? destination,
       String? pickupPoint,
       String? travelTime,
@@ -2075,9 +2075,9 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
     Object? departureTimes = freezed,
     Object? vehicleNo = freezed,
     Object? luggage = null,
-    Object? workingDays = null,
-    Object? startTime = null,
-    Object? endTime = null,
+    Object? workingDays = freezed,
+    Object? startTime = freezed,
+    Object? endTime = freezed,
     Object? destination = freezed,
     Object? pickupPoint = freezed,
     Object? travelTime = freezed,
@@ -2116,18 +2116,18 @@ class _$AvailableTransportCopyWithImpl<$Res, $Val extends AvailableTransport>
           ? _value.luggage
           : luggage // ignore: cast_nullable_to_non_nullable
               as num,
-      workingDays: null == workingDays
+      workingDays: freezed == workingDays
           ? _value.workingDays
           : workingDays // ignore: cast_nullable_to_non_nullable
-              as List<bool>,
-      startTime: null == startTime
+              as List<bool>?,
+      startTime: freezed == startTime
           ? _value.startTime
           : startTime // ignore: cast_nullable_to_non_nullable
-              as TimeOfDay,
-      endTime: null == endTime
+              as TimeOfDay?,
+      endTime: freezed == endTime
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
-              as TimeOfDay,
+              as TimeOfDay?,
       destination: freezed == destination
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
@@ -2165,9 +2165,9 @@ abstract class _$$AvailableTransportImplCopyWith<$Res>
       @TimeOfDayConverter() List<TimeOfDay>? departureTimes,
       num? vehicleNo,
       num luggage,
-      List<bool> workingDays,
-      @TimeOfDayConverter() TimeOfDay startTime,
-      @TimeOfDayConverter() TimeOfDay endTime,
+      List<bool>? workingDays,
+      @TimeOfDayConverter() TimeOfDay? startTime,
+      @TimeOfDayConverter() TimeOfDay? endTime,
       String? destination,
       String? pickupPoint,
       String? travelTime,
@@ -2193,9 +2193,9 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
     Object? departureTimes = freezed,
     Object? vehicleNo = freezed,
     Object? luggage = null,
-    Object? workingDays = null,
-    Object? startTime = null,
-    Object? endTime = null,
+    Object? workingDays = freezed,
+    Object? startTime = freezed,
+    Object? endTime = freezed,
     Object? destination = freezed,
     Object? pickupPoint = freezed,
     Object? travelTime = freezed,
@@ -2234,18 +2234,18 @@ class __$$AvailableTransportImplCopyWithImpl<$Res>
           ? _value.luggage
           : luggage // ignore: cast_nullable_to_non_nullable
               as num,
-      workingDays: null == workingDays
+      workingDays: freezed == workingDays
           ? _value._workingDays
           : workingDays // ignore: cast_nullable_to_non_nullable
-              as List<bool>,
-      startTime: null == startTime
+              as List<bool>?,
+      startTime: freezed == startTime
           ? _value.startTime
           : startTime // ignore: cast_nullable_to_non_nullable
-              as TimeOfDay,
-      endTime: null == endTime
+              as TimeOfDay?,
+      endTime: freezed == endTime
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
-              as TimeOfDay,
+              as TimeOfDay?,
       destination: freezed == destination
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
@@ -2278,9 +2278,9 @@ class _$AvailableTransportImpl implements _AvailableTransport {
       @TimeOfDayConverter() final List<TimeOfDay>? departureTimes,
       this.vehicleNo,
       required this.luggage,
-      required final List<bool> workingDays,
-      @TimeOfDayConverter() required this.startTime,
-      @TimeOfDayConverter() required this.endTime,
+      final List<bool>? workingDays,
+      @TimeOfDayConverter() this.startTime,
+      @TimeOfDayConverter() this.endTime,
       this.destination,
       this.pickupPoint,
       this.travelTime,
@@ -2316,20 +2316,22 @@ class _$AvailableTransportImpl implements _AvailableTransport {
   final num? vehicleNo;
   @override
   final num luggage;
-  final List<bool> _workingDays;
+  final List<bool>? _workingDays;
   @override
-  List<bool> get workingDays {
+  List<bool>? get workingDays {
+    final value = _workingDays;
+    if (value == null) return null;
     if (_workingDays is EqualUnmodifiableListView) return _workingDays;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_workingDays);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
   @TimeOfDayConverter()
-  final TimeOfDay startTime;
+  final TimeOfDay? startTime;
   @override
   @TimeOfDayConverter()
-  final TimeOfDay endTime;
+  final TimeOfDay? endTime;
   @override
   final String? destination;
   @override
@@ -2422,9 +2424,9 @@ abstract class _AvailableTransport implements AvailableTransport {
       @TimeOfDayConverter() final List<TimeOfDay>? departureTimes,
       final num? vehicleNo,
       required final num luggage,
-      required final List<bool> workingDays,
-      @TimeOfDayConverter() required final TimeOfDay startTime,
-      @TimeOfDayConverter() required final TimeOfDay endTime,
+      final List<bool>? workingDays,
+      @TimeOfDayConverter() final TimeOfDay? startTime,
+      @TimeOfDayConverter() final TimeOfDay? endTime,
       final String? destination,
       final String? pickupPoint,
       final String? travelTime,
@@ -2451,13 +2453,13 @@ abstract class _AvailableTransport implements AvailableTransport {
   @override
   num get luggage;
   @override
-  List<bool> get workingDays;
+  List<bool>? get workingDays;
   @override
   @TimeOfDayConverter()
-  TimeOfDay get startTime;
+  TimeOfDay? get startTime;
   @override
   @TimeOfDayConverter()
-  TimeOfDay get endTime;
+  TimeOfDay? get endTime;
   @override
   String? get destination;
   @override

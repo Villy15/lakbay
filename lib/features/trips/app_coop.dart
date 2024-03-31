@@ -412,11 +412,12 @@ class _ViewPdfState extends ConsumerState<ViewPdf> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
+          debugPrint('Path: ${snapshot.data}');
           return SizedBox(
             height: MediaQuery.of(context).size.height * 0.95,
             child: Scaffold(
               appBar: AppBar(
-                title: const Text('Manage Member Dividends'),
+                title: const Text('View Pdf'),
                 leading: IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
