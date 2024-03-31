@@ -89,6 +89,22 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     subtitle: Text(userModel.emergencyContact ??
                         'No emergency contact provided'),
                   ),
+              'Government ID': () => ListTile(
+                    leading: const Icon(Icons.credit_card),
+                    title: const Text('Government ID'),
+                    subtitle: userModel.governmentId == null ||
+                            userModel.governmentId == ''
+                        ? const Text('No government ID provided')
+                        : const Text('View Government ID'),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                    ),
+                    onTap: () async {
+                      // view the government ID here
+
+                    }
+                  ),
             };
 
             Map<String, Function> documents = {

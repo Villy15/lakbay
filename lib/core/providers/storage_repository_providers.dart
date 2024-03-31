@@ -19,6 +19,23 @@ class StorageRepository {
   StorageRepository({required FirebaseStorage firebaseStorage})
       : _firebaseStorage = firebaseStorage;
 
+  // Retrieve single file from firebase storage
+  FutureEither<File> retrieveFile({
+    required String path,
+    required String id,
+  }) async {
+    try {
+      final ref = _firebaseStorage.ref().child(path).child(id);
+
+      final url = await ref.getDownloadURL();
+
+      return right(File(url));
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+
   // Store single file to firebase storage
   FutureEither<String> storeFile({
     required String path,

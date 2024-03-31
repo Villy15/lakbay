@@ -1,19 +1,27 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/days_provider.dart';
+import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_checkout.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/location/map_repository.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
+import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
 
 class TransportCard extends ConsumerStatefulWidget {
   final String category;
@@ -32,6 +40,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
     final startDate = ref.read(planStartDateProvider);
     final endDate = ref.read(planEndDateProvider);
     final daysPlan = ref.read(daysPlanProvider);
+    final currentUser = ref.read(userProvider);
 
     if (widget.transportListings != null) {
       return SizedBox(
@@ -197,312 +206,351 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                           style: TextStyle(fontSize: 14))),
                                   FilledButton(
                                       onPressed: () async {
-                                        Map<TimeOfDay, num> timeSlots = {};
-
-                                        Set<TimeOfDay> departureTimesSet = {};
-
-                                        final bookings = await ref.watch(
-                                            getAllBookingsProvider(
-                                                    transport.uid!)
-                                                .future);
-                                        Query query = FirebaseFirestore.instance
-                                            .collectionGroup(
-                                                'availableTransport')
-                                            .where('listingId',
-                                                isEqualTo: transport.uid);
-                                        List<AvailableTransport> vehicles =
-                                            await ref.watch(
-                                                getTransportByPropertiesProvider(
-                                                        query)
-                                                    .future);
-                                        for (var vehicle in vehicles) {
-                                          for (var departureTime
-                                              in vehicle.departureTimes!) {
-                                            // Check if the departure time is not already in the set
-                                            if (!timeSlots.keys
-                                                .contains(departureTime)) {
-                                              timeSlots[departureTime] =
-                                                  vehicle.guests;
-                                              departureTimesSet.add(
-                                                  departureTime); // Add the unique departure time to the set
-                                              timeSlots[departureTime] =
-                                                  vehicle.guests;
-                                            } else {
-                                              timeSlots[departureTime] =
-                                                  timeSlots[departureTime]! +
-                                                      vehicle.guests;
-                                            }
-                                          }
-                                        }
-
-                                        if (transport.type == 'Public') {
-                                          if (context.mounted) {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: const Text(
-                                                        'Select a Departure Time',
+                                        if (currentUser?.name ==
+                                                'Lakbay User' ||
+                                            currentUser?.phoneNo == null ||
+                                            currentUser?.emergencyContact ==
+                                                null ||
+                                            currentUser?.emergencyContactName ==
+                                                null ||
+                                            currentUser?.governmentId == null) {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      'Profile Incomplete'),
+                                                  content: const Text(
+                                                      'To book a room, you need to complete your profile first.'),
+                                                  actions: [
+                                                    FilledButton(
+                                                      onPressed: () async {
+                                                        showUpdateProfile(
+                                                            context,
+                                                            currentUser!);
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  4.0), // Adjust the radius as needed
+                                                        ),
+                                                      ),
+                                                      child: const Text(
+                                                        'Update Profile',
                                                         style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
-                                                    content: SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height /
-                                                                3.5,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width /
-                                                                1.5,
-                                                        child: Column(
-                                                            children: timeSlots
-                                                                .keys
-                                                                .map((key) {
-                                                          num passengers =
-                                                              timeSlots[key]!;
-                                                          DateTime dateTimeSlot =
-                                                              DateTime(
-                                                                  daysPlan
-                                                                      .currentDay!
-                                                                      .year,
-                                                                  daysPlan
-                                                                      .currentDay!
-                                                                      .month,
-                                                                  daysPlan
-                                                                      .currentDay!
-                                                                      .day,
-                                                                  key.hour,
-                                                                  key.minute);
-                                                          List<ListingBookings>
-                                                              bookingsCopy =
-                                                              bookings;
-                                                          Map<DateTime?, num>
-                                                              deptTimeAndGuests =
-                                                              {
-                                                            dateTimeSlot:
-                                                                passengers
-                                                          };
-                                                          // format the currentDate
-                                                          String
-                                                              formattedCurrentDate =
-                                                              DateFormat(
-                                                                      'yyyy-MM-dd')
-                                                                  .format(daysPlan
-                                                                      .currentDay!);
+                                                            fontSize: 14),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              });
+                                        } else {
+                                          Map<TimeOfDay, num> timeSlots = {};
 
-                                                          for (ListingBookings booking
-                                                              in bookingsCopy) {
-                                                            DateTime
-                                                                bookingStartDate =
-                                                                booking
-                                                                    .startDate!;
-                                                            String
-                                                                formattedDate =
-                                                                DateFormat(
-                                                                        'yyyy-MM-dd')
-                                                                    .format(
-                                                                        bookingStartDate);
+                                          Set<TimeOfDay> departureTimesSet = {};
 
-                                                            // check the formattedCurrentDate and the formattedDate if they are the same
-                                                            if (formattedCurrentDate ==
-                                                                formattedDate) {
-                                                              // remove duplicates of departure time, and get the total number of guests for each departure time
-
-                                                              if (deptTimeAndGuests
-                                                                  .containsKey(
-                                                                      bookingStartDate)) {
-                                                                deptTimeAndGuests[
-                                                                        bookingStartDate] =
-                                                                    deptTimeAndGuests[
-                                                                            bookingStartDate]! -
-                                                                        booking
-                                                                            .guests;
-                                                              }
-                                                            }
-                                                          }
-                                                          return ListTile(
-                                                              title: Text(
-                                                                  key.format(
-                                                                      context)),
-                                                              trailing: Text(
-                                                                  'Slots Left: ${deptTimeAndGuests[dateTimeSlot]}'),
-                                                              onTap: () async {
-                                                                if (deptTimeAndGuests[
-                                                                        dateTimeSlot] !=
-                                                                    null) {
-                                                                  if (deptTimeAndGuests[
-                                                                          dateTimeSlot]! ==
-                                                                      0) {
-                                                                    // show an alert dialog that the selected departure time is already full
-                                                                    showDialog(
-                                                                        context:
-                                                                            context,
-                                                                        builder:
-                                                                            (context) {
-                                                                          return AlertDialog(
-                                                                              title: const Text('Departure Time is Full'),
-                                                                              content: Text('The time ${key.format(context)} has reached its capacity of $passengers.  Please select another time.'),
-                                                                              actions: [
-                                                                                TextButton(
-                                                                                    onPressed: () {
-                                                                                      Navigator.pop(context);
-                                                                                    },
-                                                                                    child: const Text('Close'))
-                                                                              ]);
-                                                                        });
-                                                                  } else {
-                                                                    // show confirm booking
-                                                                    showConfirmBooking(
-                                                                            transport
-                                                                                .availableTransport!,
-                                                                            transport,
-                                                                            daysPlan
-                                                                                .currentDay!,
-                                                                            daysPlan
-                                                                                .currentDay!,
-                                                                            key,
-                                                                            'Public',
-                                                                            null)
-                                                                        .then(
-                                                                            (value) {});
-                                                                  }
-                                                                } else {
-                                                                  // show confirm booking
-                                                                  showConfirmBooking(
-                                                                      transport
-                                                                          .availableTransport!,
-                                                                      transport,
-                                                                      daysPlan
-                                                                          .currentDay!,
-                                                                      daysPlan
-                                                                          .currentDay!,
-                                                                      key,
-                                                                      'Public',
-                                                                      null);
-                                                                }
-                                                              });
-                                                        }).toList())),
-                                                    actions: [
-                                                      FilledButton(
-                                                          onPressed: () {
-                                                            context.pop();
-                                                          },
-                                                          child: const Text(
-                                                              "Back"))
-                                                    ],
-                                                  );
-                                                  // });
-                                                });
-                                          }
-                                          // showConfirmBooking(transport, listing, DateTime.now(), DateTime.now(), , endTime, typeOfTrip);
-                                        } else if (transport.type ==
-                                            'Private') {
-                                          // check if the selected date is available
                                           final bookings = await ref.watch(
                                               getAllBookingsProvider(
                                                       transport.uid!)
                                                   .future);
-
-                                          List<ListingBookings> bookingsCopy =
-                                              List.from(bookings);
-
-                                          bool flag = false;
-
-                                          for (ListingBookings bookings
-                                              in bookingsCopy) {
-                                            // check if the listing id is already booked
-                                            if (bookings.listingId ==
-                                                transport.uid) {
-                                              // check if the current date is already booked
-                                              if (bookings.startDate!
-                                                  .isAtSameMomentAs(
-                                                      daysPlan.currentDay!)) {
-                                                flag = true;
+                                          Query query = FirebaseFirestore
+                                              .instance
+                                              .collectionGroup(
+                                                  'availableTransport')
+                                              .where('listingId',
+                                                  isEqualTo: transport.uid);
+                                          List<AvailableTransport> vehicles =
+                                              await ref.watch(
+                                                  getTransportByPropertiesProvider(
+                                                          query)
+                                                      .future);
+                                          for (var vehicle in vehicles) {
+                                            for (var departureTime
+                                                in vehicle.departureTimes!) {
+                                              // Check if the departure time is not already in the set
+                                              if (!timeSlots.keys
+                                                  .contains(departureTime)) {
+                                                timeSlots[departureTime] =
+                                                    vehicle.guests;
+                                                departureTimesSet.add(
+                                                    departureTime); // Add the unique departure time to the set
+                                                timeSlots[departureTime] =
+                                                    vehicle.guests;
+                                              } else {
+                                                timeSlots[departureTime] =
+                                                    timeSlots[departureTime]! +
+                                                        vehicle.guests;
                                               }
                                             }
                                           }
-                                          if (flag) {
-                                            // ignore: use_build_context_synchronously
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return SizedBox(
-                                                    height: MediaQuery.sizeOf(
-                                                                context)
-                                                            .height /
-                                                        3.5,
-                                                    width: double.infinity,
-                                                    child: const AlertDialog(
-                                                      title: Text(
-                                                          'Booking Unavailable'),
-                                                      content: Text(
-                                                          'Someone has rented the vehicle already. Please select another day from your plan or rent a new vehicle.'),
-                                                    ),
-                                                  );
-                                                });
-                                          } else {
-                                            // ignore: use_build_context_synchronously
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  // ask the user if they want to rent the vehicle for the whole day or just for a specific time
-                                                  return SizedBox(
+
+                                          if (transport.type == 'Public') {
+                                            if (context.mounted) {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                          'Select a Departure Time',
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      content: SizedBox(
+                                                          height:
+                                                              MediaQuery.sizeOf(
+                                                                          context)
+                                                                      .height /
+                                                                  3.5,
+                                                          width:
+                                                              MediaQuery.sizeOf(
+                                                                          context)
+                                                                      .width /
+                                                                  1.5,
+                                                          child: Column(
+                                                              children: timeSlots
+                                                                  .keys
+                                                                  .map((key) {
+                                                            num passengers =
+                                                                timeSlots[key]!;
+                                                            DateTime dateTimeSlot = DateTime(
+                                                                daysPlan
+                                                                    .currentDay!
+                                                                    .year,
+                                                                daysPlan
+                                                                    .currentDay!
+                                                                    .month,
+                                                                daysPlan
+                                                                    .currentDay!
+                                                                    .day,
+                                                                key.hour,
+                                                                key.minute);
+                                                            List<ListingBookings>
+                                                                bookingsCopy =
+                                                                bookings;
+                                                            Map<DateTime?, num>
+                                                                deptTimeAndGuests =
+                                                                {
+                                                              dateTimeSlot:
+                                                                  passengers
+                                                            };
+                                                            // format the currentDate
+                                                            String
+                                                                formattedCurrentDate =
+                                                                DateFormat(
+                                                                        'yyyy-MM-dd')
+                                                                    .format(daysPlan
+                                                                        .currentDay!);
+
+                                                            for (ListingBookings booking
+                                                                in bookingsCopy) {
+                                                              DateTime
+                                                                  bookingStartDate =
+                                                                  booking
+                                                                      .startDate!;
+                                                              String
+                                                                  formattedDate =
+                                                                  DateFormat(
+                                                                          'yyyy-MM-dd')
+                                                                      .format(
+                                                                          bookingStartDate);
+
+                                                              // check the formattedCurrentDate and the formattedDate if they are the same
+                                                              if (formattedCurrentDate ==
+                                                                  formattedDate) {
+                                                                // remove duplicates of departure time, and get the total number of guests for each departure time
+
+                                                                if (deptTimeAndGuests
+                                                                    .containsKey(
+                                                                        bookingStartDate)) {
+                                                                  deptTimeAndGuests[
+                                                                      bookingStartDate] = deptTimeAndGuests[
+                                                                          bookingStartDate]! -
+                                                                      booking
+                                                                          .guests;
+                                                                }
+                                                              }
+                                                            }
+                                                            return ListTile(
+                                                                title: Text(
+                                                                    key.format(
+                                                                        context)),
+                                                                trailing: Text(
+                                                                    'Slots Left: ${deptTimeAndGuests[dateTimeSlot]}'),
+                                                                onTap:
+                                                                    () async {
+                                                                  if (deptTimeAndGuests[
+                                                                          dateTimeSlot] !=
+                                                                      null) {
+                                                                    if (deptTimeAndGuests[
+                                                                            dateTimeSlot]! ==
+                                                                        0) {
+                                                                      // show an alert dialog that the selected departure time is already full
+                                                                      showDialog(
+                                                                          context:
+                                                                              context,
+                                                                          builder:
+                                                                              (context) {
+                                                                            return AlertDialog(title: const Text('Departure Time is Full'), content: Text('The time ${key.format(context)} has reached its capacity of $passengers.  Please select another time.'), actions: [
+                                                                              TextButton(
+                                                                                  onPressed: () {
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                  child: const Text('Close'))
+                                                                            ]);
+                                                                          });
+                                                                    } else {
+                                                                      // show confirm booking
+                                                                      showConfirmBooking(
+                                                                              transport.availableTransport!,
+                                                                              transport,
+                                                                              daysPlan.currentDay!,
+                                                                              daysPlan.currentDay!,
+                                                                              key,
+                                                                              'Public',
+                                                                              null)
+                                                                          .then((value) {});
+                                                                    }
+                                                                  } else {
+                                                                    // show confirm booking
+                                                                    showConfirmBooking(
+                                                                        transport
+                                                                            .availableTransport!,
+                                                                        transport,
+                                                                        daysPlan
+                                                                            .currentDay!,
+                                                                        daysPlan
+                                                                            .currentDay!,
+                                                                        key,
+                                                                        'Public',
+                                                                        null);
+                                                                  }
+                                                                });
+                                                          }).toList())),
+                                                      actions: [
+                                                        FilledButton(
+                                                            onPressed: () {
+                                                              context.pop();
+                                                            },
+                                                            child: const Text(
+                                                                "Back"))
+                                                      ],
+                                                    );
+                                                    // });
+                                                  });
+                                            }
+                                            // showConfirmBooking(transport, listing, DateTime.now(), DateTime.now(), , endTime, typeOfTrip);
+                                          } else if (transport.type ==
+                                              'Private') {
+                                            // check if the selected date is available
+                                            final bookings = await ref.watch(
+                                                getAllBookingsProvider(
+                                                        transport.uid!)
+                                                    .future);
+
+                                            List<ListingBookings> bookingsCopy =
+                                                List.from(bookings);
+
+                                            bool flag = false;
+
+                                            for (ListingBookings bookings
+                                                in bookingsCopy) {
+                                              // check if the listing id is already booked
+                                              if (bookings.listingId ==
+                                                  transport.uid) {
+                                                // check if the current date is already booked
+                                                if (bookings.startDate!
+                                                    .isAtSameMomentAs(
+                                                        daysPlan.currentDay!)) {
+                                                  flag = true;
+                                                }
+                                              }
+                                            }
+                                            if (flag) {
+                                              // ignore: use_build_context_synchronously
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return SizedBox(
                                                       height: MediaQuery.sizeOf(
                                                                   context)
                                                               .height /
                                                           3.5,
                                                       width: double.infinity,
-                                                      child: AlertDialog(
-                                                          title: const Text(
-                                                              'Select rental duration'),
-                                                          content: const Text(
-                                                              'Do you want to rent the vehicle for the whole day or just for a specific time?'),
-                                                          actions: [
-                                                            TextButton(
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                      context,
-                                                                      'Whole Day');
-                                                                },
-                                                                child: const Text(
-                                                                    'Whole Day')),
-                                                            TextButton(
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                      context,
-                                                                      'Select Time');
-                                                                },
-                                                                child: const Text(
-                                                                    'Select Time'))
-                                                          ]));
-                                                }).then((value) {
-                                              if (value == 'Whole Day') {
-                                                showConfirmBooking(
-                                                    transport
-                                                        .availableTransport!,
-                                                    transport,
-                                                    daysPlan.currentDay!,
-                                                    daysPlan.currentDay!,
-                                                    null,
-                                                    'Private',
-                                                    value);
-                                              } else {
-                                                showConfirmBooking(
-                                                    transport
-                                                        .availableTransport!,
-                                                    transport,
-                                                    daysPlan.currentDay!,
-                                                    daysPlan.currentDay!,
-                                                    null,
-                                                    'Private',
-                                                    value);
-                                              }
-                                            });
+                                                      child: const AlertDialog(
+                                                        title: Text(
+                                                            'Booking Unavailable'),
+                                                        content: Text(
+                                                            'Someone has rented the vehicle already. Please select another day from your plan or rent a new vehicle.'),
+                                                      ),
+                                                    );
+                                                  });
+                                            } else {
+                                              // ignore: use_build_context_synchronously
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    // ask the user if they want to rent the vehicle for the whole day or just for a specific time
+                                                    return SizedBox(
+                                                        height:
+                                                            MediaQuery.sizeOf(
+                                                                        context)
+                                                                    .height /
+                                                                3.5,
+                                                        width: double.infinity,
+                                                        child: AlertDialog(
+                                                            title: const Text(
+                                                                'Select rental duration'),
+                                                            content: const Text(
+                                                                'Do you want to rent the vehicle for the whole day or just for a specific time?'),
+                                                            actions: [
+                                                              TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context,
+                                                                        'Whole Day');
+                                                                  },
+                                                                  child: const Text(
+                                                                      'Whole Day')),
+                                                              TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context,
+                                                                        'Select Time');
+                                                                  },
+                                                                  child: const Text(
+                                                                      'Select Time'))
+                                                            ]));
+                                                  }).then((value) {
+                                                if (value == 'Whole Day') {
+                                                  showConfirmBooking(
+                                                      transport
+                                                          .availableTransport!,
+                                                      transport,
+                                                      daysPlan.currentDay!,
+                                                      daysPlan.currentDay!,
+                                                      null,
+                                                      'Private',
+                                                      value);
+                                                } else {
+                                                  showConfirmBooking(
+                                                      transport
+                                                          .availableTransport!,
+                                                      transport,
+                                                      daysPlan.currentDay!,
+                                                      daysPlan.currentDay!,
+                                                      null,
+                                                      'Private',
+                                                      value);
+                                                }
+                                              });
+                                            }
                                           }
                                         }
                                       },
@@ -768,14 +816,20 @@ class _TransportCardState extends ConsumerState<TransportCard> {
         builder: (context) {
           num guests = 0;
           num luggage = 0;
+          final numGuests = ref.read(currentPlanGuestsProvider);
           final user = ref.read(userProvider);
+          guests = numGuests!;
 
+          TextEditingController guestController =
+              TextEditingController(text: numGuests.toString());
+          TextEditingController luggageController =
+              TextEditingController(text: transport.luggage.toString());
           TextEditingController phoneNoController =
-              TextEditingController(text: user?.phoneNo);
+              TextEditingController(text: user?.phoneNo ?? '');
           TextEditingController emergencyContactNameController =
-              TextEditingController();
+              TextEditingController(text: user?.emergencyContactName ?? '');
           TextEditingController emergencyContactNoController =
-              TextEditingController();
+              TextEditingController(text: user?.emergencyContact ?? '');
           TimeOfDay? startTime;
           TimeOfDay? endTime;
           DateTime? finalDate;
@@ -790,6 +844,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                   transport,
                   guests,
                   luggage,
+                  guestController,
+                  luggageController,
                   phoneNoController,
                   emergencyContactNameController,
                   emergencyContactNoController,
@@ -814,6 +870,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
       AvailableTransport transport,
       num guests,
       num luggage,
+      TextEditingController guestController,
+      TextEditingController luggageController,
       TextEditingController phoneNoController,
       TextEditingController emergencyContactNameController,
       TextEditingController emergencyContactNoController,
@@ -852,9 +910,10 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                   Row(children: [
                     Expanded(
                       child: TextFormField(
-                          decoration: InputDecoration(
-                              labelText: 'Guests: (Max: ${transport.guests})',
-                              border: const OutlineInputBorder(),
+                          controller: guestController,
+                          decoration: const InputDecoration(
+                              labelText: 'Guests: ',
+                              border: OutlineInputBorder(),
                               floatingLabelBehavior:
                                   FloatingLabelBehavior.always,
                               hintText: "1"),
@@ -1014,6 +1073,336 @@ class _TransportCardState extends ConsumerState<TransportCard> {
         )));
   }
 
+  Future<UserModel> submitUpdateProfile(
+      BuildContext context,
+      UserModel user,
+      UserModel updatedUser,
+      GlobalKey<FormState> formKey,
+      File? profilePicture,
+      File? governmentId) async {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+
+      if (profilePicture != null) {
+        final result = await ref.read(storageRepositoryProvider).storeFile(
+              path: 'users/${updatedUser.name}',
+              id: profilePicture.path.split('/').last,
+              file: profilePicture,
+            );
+
+        result.fold((failure) => debugPrint('Failed to upload image: $failure'),
+            (imageUrl) {
+          // update user with the new profile picture
+          updatedUser = updatedUser.copyWith(profilePic: imageUrl);
+        });
+      }
+
+      if (governmentId != null) {
+        final result = await ref.read(storageRepositoryProvider).storeFile(
+              path: 'users/${updatedUser.name}',
+              id: governmentId.path.split('/').last,
+              file: governmentId,
+            );
+
+        result.fold((failure) => debugPrint('Failed to upload image: $failure'),
+            (imageUrl) {
+          // update user with the new government id picture
+          updatedUser = updatedUser.copyWith(governmentId: imageUrl);
+        });
+      }
+
+      // transfer updatedUser to user
+      ref
+          .read(usersControllerProvider.notifier)
+          .editProfile(context, user.uid, updatedUser);
+    }
+
+    return updatedUser;
+  }
+
+  void showUpdateProfile(BuildContext context, UserModel user) async {
+    File? profilePicture;
+    String? profilePicLink = user.profilePic;
+    File? governmentId;
+    String? governmentIdLink = user.governmentId;
+    ValueNotifier<File?> governmentIdNotifier = ValueNotifier<File?>(null);
+    final TextEditingController firstNameController =
+        TextEditingController(text: user.firstName ?? '');
+    final TextEditingController lastNameController =
+        TextEditingController(text: user.lastName ?? '');
+    final TextEditingController phoneNoController =
+        TextEditingController(text: user.phoneNo ?? '');
+    final TextEditingController emailController =
+        TextEditingController(text: user.email);
+    final TextEditingController emergencyContactNameController =
+        TextEditingController(text: user.emergencyContactName ?? '');
+    final TextEditingController emergencyContactNoController =
+        TextEditingController(text: user.emergencyContact ?? '');
+    final TextEditingController addressController =
+        TextEditingController(text: user.address ?? '');
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog.fullscreen(
+              child: StatefulBuilder(builder: (context, setState) {
+            return SingleChildScrollView(
+                child: Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppBar(
+                                leading: IconButton(
+                                    icon: const Icon(Icons.close),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop()),
+                                title: const Text('Edit Profile',
+                                    style: TextStyle(fontSize: 18)),
+                                elevation: 0),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10.0),
+                              child: Column(
+                                children: [
+                                  GestureDetector(
+                                      child: Row(
+                                    children: [
+                                      Icon(Icons.image,
+                                          color: Theme.of(context)
+                                              .iconTheme
+                                              .color),
+                                      const SizedBox(width: 15),
+                                      Expanded(
+                                        child: ImagePickerFormField(
+                                          imageUrl: profilePicLink,
+                                          initialValue: profilePicture,
+                                          onSaved: (value) {
+                                            this.setState(() {
+                                              profilePicture = value;
+                                              debugPrint(
+                                                  'this is the value: $profilePicture');
+                                            });
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  )),
+                                  const SizedBox(height: 20),
+                                  TextFormField(
+                                      controller: emailController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Email*',
+                                          border: OutlineInputBorder(),
+                                          floatingLabelBehavior:
+                                              FloatingLabelBehavior.always,
+                                          hintText: "username@gmail.com",
+                                          helperText: "*required"),
+                                      keyboardType: TextInputType.emailAddress,
+                                      // if email is not null, put the initial value
+                                      onChanged: (value) {
+                                        user = user.copyWith(email: value);
+                                      },
+                                      readOnly: true,
+                                      style:
+                                          const TextStyle(color: Colors.grey)),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: firstNameController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'First Name*',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: "First Name",
+                                        helperText: "*required"),
+                                    // put initial value if the user's first name is not null
+                                    // initialValue: user.firstName ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(firstName: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: lastNameController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Last Name*',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: "Last Name",
+                                        helperText: "*required"),
+                                    // initialValue: user.lastName ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(lastName: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: addressController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Address*',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: "Street, City, Province",
+                                        helperText: "*required"),
+                                    // initialValue: user.address ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(address: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: phoneNoController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Phone Number*',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        prefixText: "+63 ",
+                                        helperText: "*required",
+                                        hintText: '91234567891'),
+                                    keyboardType: TextInputType.phone,
+                                    // initialValue: user.phoneNo ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(phoneNo: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  // text for government id
+                                  ListTile(
+                                    title: const Text('Government ID*'),
+                                    trailing: const Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 16,
+                                    ),
+                                    subtitle: ValueListenableBuilder<File?>(
+                                      valueListenable: governmentIdNotifier,
+                                      builder: (context, governmentId, child) {
+                                        return governmentId == null
+                                            ? const Text(
+                                                'Upload a valid Government ID ')
+                                            : Text(
+                                                'Government ID selected: ${path.basename(governmentId.path)}');
+                                      },
+                                    ),
+                                    onTap: () async {
+                                      FilePickerResult? result =
+                                          await FilePicker.platform.pickFiles(
+                                        type: FileType.custom,
+                                        allowedExtensions: [
+                                          'jpg',
+                                          'jpeg',
+                                          'png',
+                                          'pdf',
+                                          'doc'
+                                        ],
+                                      );
+
+                                      if (result != null) {
+                                        this.setState(() {
+                                          governmentId =
+                                              File(result.files.single.path!);
+                                          governmentIdNotifier.value =
+                                              governmentId;
+                                        });
+                                      }
+                                    },
+                                  ),
+
+                                  const SizedBox(height: 20),
+                                  TextFormField(
+                                    controller: emergencyContactNameController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Emergency Contact Name',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: "Lastname Firstname",
+                                        helperText: "*required"),
+                                    // initialValue: user.emergencyContactName ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(
+                                          emergencyContactName: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: emergencyContactNoController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Emergency Contact Number',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        prefixText: "+63 ",
+                                        hintText: '91234567891',
+                                        helperText: "*required"),
+                                    keyboardType: TextInputType.phone,
+                                    // initialValue: user.emergencyContactNo ?? '',
+                                    onChanged: (value) {
+                                      user = user.copyWith(
+                                          emergencyContact: value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  FilledButton(
+                                    onPressed: () async {
+                                      formKey.currentState!.save();
+                                      UserModel updatedUser = user.copyWith(
+                                        firstName: firstNameController.text,
+                                        lastName: lastNameController.text,
+                                        name:
+                                            "${firstNameController.text} ${lastNameController.text}",
+                                        address: addressController.text,
+                                        phoneNo: phoneNoController.text,
+                                        emergencyContactName:
+                                            emergencyContactNameController.text,
+                                        emergencyContact:
+                                            emergencyContactNoController.text,
+                                      );
+                                      debugPrint(
+                                          'this is the government id and the profile picture: $governmentId, $profilePicture');
+                                      user = await submitUpdateProfile(
+                                          context,
+                                          user,
+                                          updatedUser,
+                                          formKey,
+                                          profilePicture,
+                                          governmentId);
+
+                                      debugPrint('this is user: $user');
+
+                                      // close dialog
+                                      Navigator.of(context).pop();
+                                      this.setState(() {
+                                        user = user;
+                                      });
+
+                                      ref
+                                          .read(userProvider.notifier)
+                                          .setUser(user);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            4.0), // Adjust the radius as needed
+                                      ),
+                                    ),
+                                    child: const Text(
+                                        'Update Profile Information'),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ]),
+                    )));
+          }));
+        });
+  }
+
   Future<dynamic> proceedTransportCheckOut(
       String typeOfTrip,
       ListingModel listing,
@@ -1066,9 +1455,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                 minutes: listing.duration!.minute)),
         startTime: departureTime,
         endTime: departureTime,
-        email: "",
-        governmentId:
-            "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
+        email: user.email!,
+        governmentId: user.governmentId!,
         guests: guests,
         customerPhoneNo: phoneNoController.text,
         customerId: user.uid,
@@ -1180,4 +1568,53 @@ class PrepareTravel extends StatelessWidget {
       },
     ));
   }
+}
+
+class ImagePickerFormField extends FormField<File> {
+  ImagePickerFormField({
+    super.key,
+    super.onSaved,
+    super.validator,
+    super.initialValue,
+    String? imageUrl,
+  }) : super(
+          builder: (FormFieldState<File> state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () async {
+                    final picker = ImagePicker();
+                    final pickedFile =
+                        await picker.pickImage(source: ImageSource.gallery);
+
+                    if (pickedFile != null) {
+                      state.didChange(File(pickedFile.path));
+                    }
+                  },
+                  child: Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: state.value != null
+                        ? Image.file(state.value!, fit: BoxFit.cover)
+                        : (imageUrl != null && imageUrl.isNotEmpty)
+                            ? Image.network(imageUrl, fit: BoxFit.cover)
+                            : const Center(child: Text('Select an image')),
+                  ),
+                ),
+                if (state.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, left: 12),
+                    child: Text(
+                      state.errorText!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
 }
