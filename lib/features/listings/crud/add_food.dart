@@ -56,7 +56,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
   int tables = 0;
   final List<List<TextEditingController>> _tableControllers = [];
   final List<Map<TextEditingController, TextEditingController>>
-      _tableController = [];
+      _tableController = [];      
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -74,6 +74,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
   final TextEditingController _typeOfTableController = TextEditingController();
   final TextEditingController _quantityOfTablesController =
       TextEditingController();
+  final TextEditingController _paxController = TextEditingController();
 
   @override
   void initState() {
@@ -119,6 +120,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                       }).toList(),
                       cooperative: cooperative,
                       description: _descriptionController.text,
+                      pax: num.parse(_paxController.text),
                       province: "",
                       publisherId: ref.read(userProvider)!.uid,
                       publisherName: ref.read(userProvider)!.name,
@@ -1006,6 +1008,16 @@ class _AddFoodState extends ConsumerState<AddFood> {
             helperText: '*required',
             border: OutlineInputBorder(),
           ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          controller: _paxController, 
+          decoration: const InputDecoration(
+            labelText: 'Guest Capacity*',
+            border: OutlineInputBorder(),
+            helperText: '*required',
+            hintText: 'e.g., 50',
+          )
         ),
         const SizedBox(height: 10),
         TextFormField(

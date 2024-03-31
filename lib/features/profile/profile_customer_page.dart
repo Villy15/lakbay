@@ -92,9 +92,18 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               'Government ID': () => ListTile(
                     leading: const Icon(Icons.credit_card),
                     title: const Text('Government ID'),
-                    subtitle: Text(
-                      userModel.governmentId ??
-                        'No government ID provided'),
+                    subtitle: userModel.governmentId == null ||
+                            userModel.governmentId == ''
+                        ? const Text('No government ID provided')
+                        : const Text('View Government ID'),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                    ),
+                    onTap: () async {
+                      // view the government ID here
+
+                    }
                   ),
             };
 

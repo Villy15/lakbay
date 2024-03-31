@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +12,7 @@ import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:path_provider/path_provider.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
   final UserModel user;
@@ -26,6 +29,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   File? _image;
   String? _governmentId;
+  File? _governmentIdFile;
   final _nameController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -97,6 +101,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
         return;
       }
+
 
       ref
           .read(usersControllerProvider.notifier)
@@ -321,10 +326,20 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         title: const Text('Government ID'),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         subtitle: _governmentId == null ? const Text('Upload a Valid Government ID')
-                            : Text('File selected: ${_governmentId!.split('/').last}'),
-                        // onTap: () async {
-                        //   FilePickerResult? result 
-                        // }
+                            : Text(getFileUrl(_governmentId)),
+                        onTap: () async {
+                          FilePickerResult? result = await FilePicker.platform.pickFiles(
+                            type: FileType.custom,
+                            allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc'],
+                          ); 
+
+                          if (result != null) {
+                            setState(() {
+                              _governmentIdFile = File(result.files.single.path!);
+                              _governmentId = _governmentIdFile?.path;
+                            });
+                          }
+                        }
                       )
                     ],
                   ),
@@ -332,6 +347,16 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
             ),
     );
+  }
+  String getFileUrl(String? value) {
+    String url = value ?? '';
+    Uri uri = Uri.parse(url);
+    String fullPath = uri.pathSegments.last;
+
+    List<String> parts = fullPath.split('/');
+    String filename = parts.last;
+
+    return filename;
   }
 }
 
@@ -383,3 +408,77 @@ class ImagePickerFormField extends FormField<File> {
           },
         );
 }
+
+
+
+class ViewPdf extends ConsumerStatefulWidget {
+  final String url;
+
+  const ViewPdf({super.key, required this.url});
+
+  @override
+  ConsumerState<ViewPdf> createState() => _ViewPdfState();
+}
+
+class _ViewPdfState extends ConsumerState<ViewPdf> {
+  Future<String>? path;
+
+  @override
+  void initState() {
+    super.initState();
+    path = downloadFile();
+  }
+
+  Future<String> downloadFile() async {
+    final Dio dio = Dio();
+
+    final dir = await getApplicationDocumentsDirectory();
+    final path = '${dir.path}/${Uri.parse(widget.url).pathSegments.last}';
+
+    debugPrint('Path: $path');
+
+    final response = await dio.download(
+      widget.url,
+      path,
+    );
+    if (response.statusCode == 200) {
+      debugPrint('Downloaded');
+    }
+
+    return path;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String>(
+      future: path,
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          debugPrint('Path: ${snapshot.data}');
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.95,
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text('View Pdf'),
+                leading: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    context.pop();
+                  },
+                ),
+              ),
+              body: PDFView(
+                filePath: snapshot.data!,
+              ),
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+

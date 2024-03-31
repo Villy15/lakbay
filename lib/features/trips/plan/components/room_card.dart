@@ -659,7 +659,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     File? profilePicture;
     String? profilePicLink = user.profilePic;
     File? governmentId;
-    String? governmentIdLink = user.governmentId;
+    // String? governmentIdLink = user.governmentId;
     ValueNotifier<File?> governmentIdNotifier = ValueNotifier<File?>(null);
     final TextEditingController firstNameController =
         TextEditingController(text: user.firstName ?? '');
