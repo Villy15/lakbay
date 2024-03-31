@@ -59,14 +59,15 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
                 });
 
                 // Filter data based on selection
-                final filteredSales = sales
-                    .where((sale) => filterDataBasedOnSelection(ref
-                        .watch(getBookingByIdProvider(
-                            (sale.listingId, sale.bookingId)))
-                        .asData!
-                        .value
-                        .startDate!))
-                    .toList();
+                final filteredSales = sales.where((sale) {
+                  final booking = ref.watch(
+                      getBookingByIdProvider((sale.listingId, sale.bookingId)));
+                  final startDate = booking.asData?.value.startDate;
+                  if (startDate != null) {
+                    return filterDataBasedOnSelection(startDate);
+                  }
+                  return false;
+                }).toList();
 
                 return Padding(
                   padding: const EdgeInsets.all(16.0),
