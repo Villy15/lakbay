@@ -75,7 +75,7 @@ Widget build(BuildContext context) {
                       const SizedBox(height: 16),
                       Center(
                         child: Text(
-                          "Total Bookings for Your Listings: $totalBookingsForUserListings",
+                          "Current points: $totalBookingsForUserListings",
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
