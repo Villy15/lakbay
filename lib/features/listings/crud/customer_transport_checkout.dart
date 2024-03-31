@@ -411,7 +411,10 @@ class _CustomerTransportCheckoutState
                     });
                     Query query = FirebaseFirestore.instance
                         .collectionGroup('departures')
-                        .where('arrival', isEqualTo: updatedBooking.startDate);
+                        .where('departure',
+                            isEqualTo:
+                                Timestamp.fromDate(updatedBooking.startDate!));
+
                     ref.read(listingControllerProvider.notifier).addBooking(
                         updatedBooking, widget.listing, context,
                         query: query);

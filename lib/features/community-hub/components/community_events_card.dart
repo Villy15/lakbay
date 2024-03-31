@@ -39,11 +39,25 @@ class CommunityHubEventsCard extends ConsumerWidget {
         onTap: () {
           readEvent(context, event.uid!, user);
         },
-        title: Text(
-          event.name,
-          style: const TextStyle(
-            fontSize: 20,
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (event.eventType != null)
+              Text(
+                event.eventType!.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 14,
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                ),
+              ),
+            Text(
+              event.name,
+              style: const TextStyle(
+                fontSize: 20,
+              ),
+            ),
+          ],
         ),
         // subtitle Start Date - End Date, format it to Feb 26, 2024
         subtitle: Column(

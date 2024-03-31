@@ -444,55 +444,81 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
                 shrinkWrap: true,
                 itemCount: bookings.length,
                 itemBuilder: ((context, index) {
+                  final booking = bookings[index];
+                  num needsContribution = 0;
                   String formattedStartDate =
                       DateFormat('MMMM dd').format(bookings[index].startDate!);
                   String formattedEndDate =
                       DateFormat('MMMM dd').format(bookings[index].endDate!);
+
+                  ref
+                      .watch(getBookingTasksByBookingId(
+                          (booking.listingId, booking.id!)))
+                      .when(
+                        data: (List<BookingTask> bookingTasks) {
+                          for (var bookingTask in bookingTasks) {
+                            if (bookingTask.openContribution == true) {
+                              needsContribution = needsContribution + 1;
+                            }
+                          }
+                        },
+                        error: (error, stackTrace) => ErrorText(
+                          error: error.toString(),
+                          stackTrace: '',
+                        ),
+                        loading: () => const Loader(),
+                      );
+
                   return Card(
                     elevation: 1.0,
                     margin: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
                         ListTile(
-                          title: Row(
-                            children: [
-                              Text(
-                                "$formattedStartDate - ",
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                formattedEndDate,
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          subtitle: Row(
-                            children: [
-                              Text(
-                                "Room: ${bookings[index].roomId} | ",
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w300,
-                                    color: Colors.black),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: "Guests: ${bookings[index].guests}",
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300,
-                                          color: Colors.black),
-                                    ),
-                                  ],
+                            title: Row(
+                              children: [
+                                Text(
+                                  "$formattedStartDate - ",
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                                Text(
+                                  formattedEndDate,
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            subtitle: Row(
+                              children: [
+                                Text(
+                                  "Room: ${booking.roomId} | ",
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300,
+                                      color: Colors.black),
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "Guests: ${booking.guests}",
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w300,
+                                            color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            trailing: Text('$needsContribution',
+                                style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold))),
                         Padding(
                             padding: const EdgeInsets.only(bottom: 10.0),
                             child: SizedBox(
@@ -500,9 +526,9 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
                               child: FilledButton(
                                 onPressed: () {
                                   context.push(
-                                    '/market/${bookings[index].category}/booking_details',
+                                    '/market/${booking.category}/booking_details',
                                     extra: {
-                                      'booking': bookings[index],
+                                      'booking': booking,
                                       'listing': widget.listing
                                     },
                                   );

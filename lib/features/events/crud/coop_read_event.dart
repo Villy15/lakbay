@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
@@ -55,6 +56,7 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
     return ref.watch(getEventsProvider(widget.eventId)).when(
           data: (EventModel event) {
             debugPrintJson("File Name: coop_read_event.dart");
+            final bool isMember = event.members.contains(user.uid);
 
             return DefaultTabController(
               initialIndex: 0,
@@ -82,30 +84,46 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
                           .when(
                             data: (tasks) {
                               if (tasks.isEmpty) {
-                                return const Column(
+                                return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'No Tasks Yet',
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                    const SizedBox(height: 100),
+                                    Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            'lib/core/images/SleepingCatFromGlitch.svg',
+                                            height:
+                                                100, // Adjust height as desired
+                                          ),
+                                          const SizedBox(height: 20),
+                                          const Text(
+                                            'No tasks yet!',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          const Text(
+                                            'Create a task and share it',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const Text(
+                                            'with your team members',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    // Let's create a new trip header
-                                    Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'Create a new tasks for your event for members to participate in!',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 20),
+
+                                    const SizedBox(height: 20),
                                     // createNewTrip(),
                                   ],
                                 );
@@ -141,6 +159,33 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
                           const SizedBox(height: 10),
                           // Address
                           eventLocation(event),
+                          const SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: FilledButton(
+                              // Make it wider
+                              style: ButtonStyle(
+                                minimumSize: MaterialStateProperty.all<Size>(
+                                    const Size(180, 45)),
+                              ),
+                              onPressed: () {
+                                if (isMember) {
+                                  showSnackBar(context,
+                                      'Check Event Tasks to contribute');
+                                } else {
+                                  context.pushNamed(
+                                    'join_event',
+                                    extra: event,
+                                  );
+                                }
+                              },
+                              child: Text(
+                                isMember ? 'Joined Event' : 'Join Event',
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 100),
                         ],
                       )
                     ],
@@ -210,8 +255,116 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
               fontSize: 16.0,
             ),
           ),
+          const SizedBox(width: 20),
+          TextButton(
+            onPressed: () {
+              showMembersWhoJoined(event.members, event);
+            },
+            child: const Text('View Participants'),
+          ),
         ],
       ),
+    );
+  }
+
+  bool hasJoined(String uid, EventModel event) {
+    // Check if the user has joined the event
+
+    return event.members.contains(uid);
+  }
+
+  void showMembersWhoJoined(List<String> members, EventModel event) {
+    // Get the list of members who have not voted
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        // Return the list of names with the number of votes
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 16.0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.bar_chart),
+                          SizedBox(width: 8),
+                          Text('Check Members Joined',
+                              style: TextStyle(fontSize: 18)),
+                        ],
+                      ),
+                      // Close button
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                ),
+                // Divider
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                    itemCount: members.length,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final member = members[index];
+
+                      return ref.watch(getUserDataProvider(member)).maybeWhen(
+                            data: (user) {
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  radius: 20.0,
+                                  backgroundImage: user.profilePic != ''
+                                      ? NetworkImage(user.profilePic)
+                                      : null,
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground,
+                                  child: user.profilePic == ''
+                                      ? Text(
+                                          user.name[0].toUpperCase(),
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .background,
+                                          ),
+                                        )
+                                      : null,
+                                ),
+                                title: Text(user.name),
+                                trailing: hasJoined(member, event).toString() ==
+                                        'true'
+                                    ? const Icon(Icons.check,
+                                        color: Colors.green)
+                                    : const Icon(Icons.close,
+                                        color: Colors.red),
+                              );
+                            },
+                            orElse: () => const SizedBox(
+                                height: 50, child: CircularProgressIndicator()),
+                          );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

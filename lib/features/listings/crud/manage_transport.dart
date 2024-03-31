@@ -286,88 +286,92 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
   Widget bookings() {
     return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
         data: (List<ListingBookings> bookings) {
-          return ListView.builder(
-              shrinkWrap: true,
-              itemCount: bookings.length,
-              itemBuilder: ((context, index) {
-                String formattedStartDate =
-                    DateFormat('MMMM dd').format(bookings[index].startDate!);
-                String formattedStartTime =
-                    TimeOfDay.fromDateTime(bookings[index].startDate!)
-                        .format(context);
-                String formattedEndTime =
-                    TimeOfDay.fromDateTime(bookings[index].endDate!)
-                        .format(context);
-                String formattedEndDate =
-                    DateFormat('MMMM dd').format(bookings[index].endDate!);
-                return Card(
-                    elevation: 1.0,
-                    margin: const EdgeInsets.all(8.0),
-                    child: Column(children: [
-                      Padding(
-                          padding: const EdgeInsets.only(
-                              left: 40, right: 10, top: 10, bottom: 10),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  formattedStartDate,
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Departure: $formattedStartTime | ",
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300,
-                                          color: Colors.black),
-                                    ),
-                                    Text(
-                                      "Arrival: $formattedEndTime",
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300,
-                                          color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  "Passengers: ${bookings[index].guests}",
-                                  style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w300,
-                                      color: Colors.black),
-                                ),
-                              ])),
-                      Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: SizedBox(
-                            width: MediaQuery.sizeOf(context).width * .5,
-                            child: FilledButton(
-                                onPressed: () {
-                                  context.push(
-                                    '/market/${bookings[index].category.toLowerCase()}/booking_details',
-                                    extra: {
-                                      'booking': bookings[index],
-                                      'listing': widget.listing
-                                    },
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        4.0), // Adjust the radius as needed
+          if (bookings.isEmpty) {
+            return const Center(child: Text('No Bookings'));
+          } else {
+            return ListView.builder(
+                shrinkWrap: true,
+                itemCount: bookings.length,
+                itemBuilder: ((context, index) {
+                  String formattedStartDate =
+                      DateFormat('MMMM dd').format(bookings[index].startDate!);
+                  String formattedStartTime =
+                      TimeOfDay.fromDateTime(bookings[index].startDate!)
+                          .format(context);
+                  String formattedEndTime =
+                      TimeOfDay.fromDateTime(bookings[index].endDate!)
+                          .format(context);
+                  String formattedEndDate =
+                      DateFormat('MMMM dd').format(bookings[index].endDate!);
+                  return Card(
+                      elevation: 1.0,
+                      margin: const EdgeInsets.all(8.0),
+                      child: Column(children: [
+                        Padding(
+                            padding: const EdgeInsets.only(
+                                left: 40, right: 10, top: 10, bottom: 10),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    formattedStartDate,
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                ),
-                                child: const Text('Booking Details')),
-                          ))
-                    ]));
-              }));
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Departure: $formattedStartTime | ",
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w300,
+                                            color: Colors.black),
+                                      ),
+                                      Text(
+                                        "Arrival: $formattedEndTime",
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w300,
+                                            color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    "Passengers: ${bookings[index].guests}",
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.black),
+                                  ),
+                                ])),
+                        Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: SizedBox(
+                              width: MediaQuery.sizeOf(context).width * .5,
+                              child: FilledButton(
+                                  onPressed: () {
+                                    context.push(
+                                      '/market/${bookings[index].category.toLowerCase()}/booking_details',
+                                      extra: {
+                                        'booking': bookings[index],
+                                        'listing': widget.listing
+                                      },
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          4.0), // Adjust the radius as needed
+                                    ),
+                                  ),
+                                  child: const Text('Booking Details')),
+                            ))
+                      ]));
+                }));
+          }
         },
         error: ((error, stackTrace) => Scaffold(
             body: ErrorText(
@@ -1248,160 +1252,102 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
   }
 
   Widget departures() {
-    return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
-        data: (List<ListingBookings> bookings) {
-          Map<DateTime, ListingBookings> filteredBookingsMap = {};
-
-          for (var booking in bookings) {
-            DateTime key = booking.startDate!;
-            if (!filteredBookingsMap.containsKey(key)) {
-              filteredBookingsMap[key] = ListingBookings(
-                id: booking.id,
-                customerId: '',
-                customerName: '',
-                customerPhoneNo: '',
-                category: 'Transport',
-                email: '',
-                governmentId: '',
-                guests: booking.guests,
-                luggage: booking.luggage,
-                listingId: booking.listingId,
-                listingTitle: booking.listingTitle,
-                needsContributions: booking.needsContributions,
-                price: 0,
-                bookingStatus: 'Reserved',
-                tripUid: '',
-                tripName: '',
-                startDate: booking.startDate,
-                endDate: booking.endDate,
-                startTime: booking.startTime,
-                endTime: booking.endTime,
-              );
-            } else {
-              ListingBookings oldBooking = filteredBookingsMap[key]!;
-              filteredBookingsMap[key] = filteredBookingsMap[key]!.copyWith(
-                guests: oldBooking.guests + booking.guests,
-                // luggage: oldBooking.luggage + booking.luggage,
-              );
-            }
-          }
-          List<DateTime> sortedKeys = filteredBookingsMap.keys.toList()
-            ..sort((a, b) => a.compareTo(b));
-          List<ListingBookings> filteredBookings =
-              sortedKeys.map((key) => filteredBookingsMap[key]!).toList();
-
-          return ListView.builder(
-              shrinkWrap: true,
-              itemCount: filteredBookings.length,
-              itemBuilder: ((context, index) {
-                String formattedStartDate = DateFormat('MMMM dd')
-                    .format(filteredBookings[index].startDate!);
-                String formattedStartTime =
-                    TimeOfDay.fromDateTime(filteredBookings[index].startDate!)
-                        .format(context);
-                String formattedEndTime =
-                    TimeOfDay.fromDateTime(filteredBookings[index].endDate!)
-                        .format(context);
-                String formattedEndDate = DateFormat('MMMM dd')
-                    .format(filteredBookings[index].endDate!);
-                return Card(
-                    elevation: 1.0,
-                    margin: const EdgeInsets.all(8.0),
-                    child: Column(children: [
-                      Padding(
-                          padding: const EdgeInsets.only(
-                              left: 40, right: 10, top: 10, bottom: 10),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  formattedStartDate,
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Departure: $formattedStartTime | ",
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300,
-                                          color: Colors.black),
-                                    ),
-                                    Text(
-                                      "Arrival: $formattedEndTime",
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300,
-                                          color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  "Passengers: ${filteredBookings[index].guests}",
-                                  style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w300,
-                                      color: Colors.black),
-                                ),
-                              ])),
-                      Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: SizedBox(
-                            width: MediaQuery.sizeOf(context).width * .5,
-                            child: FilledButton(
-                                onPressed: () async {
-                                  Query query = FirebaseFirestore.instance
-                                      .collectionGroup('availableTransport')
-                                      .where('listingId',
-                                          isEqualTo: widget.listing.uid!);
-                                  final vehicles = await ref.read(
-                                      getTransportByPropertiesProvider(query)
-                                          .future);
-                                  AvailableTransport currentVehicle;
-
-                                  List<ListingBookings> selectedBookings = [];
-                                  for (var booking in bookings) {
-                                    if (TimeOfDay.fromDateTime(
-                                            booking.startDate!) ==
-                                        TimeOfDay.fromDateTime(
-                                            filteredBookings[index]
-                                                .startDate!)) {
-                                      selectedBookings.add(booking);
-                                    }
-                                  }
-
-                                  DepartureModel departure = DepartureModel(
-                                      passengers: selectedBookings,
-                                      vehicle: AvailableTransport(
-                                          available: true,
-                                          guests: 0,
-                                          luggage: 0),
-                                      departure:
-                                          selectedBookings.first.startDate,
-                                      arrival: selectedBookings.first.endDate);
-                                  // ignore: use_build_context_synchronously
-                                  context.push(
-                                    '/market/${filteredBookings[index].category.toLowerCase()}/departure_details',
-                                    extra: {
-                                      'departure': departure,
-                                      'listing': widget.listing
-                                    },
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        4.0), // Adjust the radius as needed
+    Query query = FirebaseFirestore.instance
+        .collectionGroup('departures')
+        .where('listingId', isEqualTo: widget.listing.uid!);
+    return ref.watch(getDeparturesByPropertiesProvider(query)).when(
+        data: (List<DepartureModel> departures) {
+          if (departures.isEmpty) {
+            return const Center(child: Text('No Departures'));
+          } else {
+            return ListView.builder(
+                shrinkWrap: true,
+                itemCount: departures.length,
+                itemBuilder: ((context, index) {
+                  num passengers = 0;
+                  final departure = departures[index];
+                  for (var booking in departure.passengers) {
+                    passengers = passengers + booking.guests;
+                  }
+                  String formattedStartDate =
+                      DateFormat('MMMM dd').format(departure.arrival!);
+                  String formattedStartTime =
+                      TimeOfDay.fromDateTime(departure.departure!)
+                          .format(context);
+                  String formattedEndTime =
+                      TimeOfDay.fromDateTime(departure.arrival!)
+                          .format(context);
+                  String formattedEndDate =
+                      DateFormat('MMMM dd').format(departure.arrival!);
+                  return Card(
+                      elevation: 1.0,
+                      margin: const EdgeInsets.all(8.0),
+                      child: Column(children: [
+                        Padding(
+                            padding: const EdgeInsets.only(
+                                left: 40, right: 10, top: 10, bottom: 10),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    formattedStartDate,
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                ),
-                                child: const Text('Departure Details')),
-                          ))
-                    ]));
-              }));
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Departure: $formattedStartTime | ",
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w300,
+                                            color: Colors.black),
+                                      ),
+                                      Text(
+                                        "Arrival: $formattedEndTime",
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w300,
+                                            color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    "Passengers: $passengers",
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.black),
+                                  ),
+                                ])),
+                        Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: SizedBox(
+                              width: MediaQuery.sizeOf(context).width * .5,
+                              child: FilledButton(
+                                  onPressed: () {
+                                    context.push(
+                                      '/market/${'transport'}/departure_details',
+                                      extra: {
+                                        'departure': departure,
+                                        'listing': widget.listing
+                                      },
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          4.0), // Adjust the radius as needed
+                                    ),
+                                  ),
+                                  child: const Text('Departure Details')),
+                            ))
+                      ]));
+                }));
+          }
         },
         error: ((error, stackTrace) => Scaffold(
             body: ErrorText(

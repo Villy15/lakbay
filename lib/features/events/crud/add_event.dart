@@ -59,6 +59,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
     _locationController.dispose();
     _cityController.dispose();
     _provinceController.dispose();
+
     // Dispose start and end date
     debugPrint('Disposing start and end date');
     ref.read(eventStartDateProvider.notifier).clearStartDate();

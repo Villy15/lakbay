@@ -337,47 +337,50 @@ class ReadWikiPageState extends ConsumerState<ReadWikiPage> {
       showDragHandle: true,
       isDismissible: true,
       builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Please be respectful to others when adding comments.',
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _commentController,
-                decoration: const InputDecoration(
-                  hintText: 'Type your comment here',
-                  labelText: 'Add Comment',
-                ),
-                minLines: 3,
-                maxLines: null,
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // IconButton to add image
-                  IconButton.filledTonal(
-                    onPressed: () {
-                      showSnackBar(context, 'Add Image Not Implemented Yet');
-                    },
-                    icon: const Icon(Icons.image_outlined),
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.7,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Please be respectful to others when adding comments.',
+                  style: TextStyle(
+                    fontSize: 16,
                   ),
-                  FilledButton(
-                    onPressed: () {
-                      replyComment(wiki, _commentController.text);
-                    },
-                    child: const Text('Reply'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _commentController,
+                  decoration: const InputDecoration(
+                    hintText: 'Type your comment here',
+                    labelText: 'Add Comment',
                   ),
-                ],
-              ),
-            ],
+                  minLines: 3,
+                  maxLines: null,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // IconButton to add image
+                    IconButton.filledTonal(
+                      onPressed: () {
+                        showSnackBar(context, 'Add Image Not Implemented Yet');
+                      },
+                      icon: const Icon(Icons.image_outlined),
+                    ),
+                    FilledButton(
+                      onPressed: () {
+                        replyComment(wiki, _commentController.text);
+                      },
+                      child: const Text('Reply'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -473,10 +476,13 @@ class ReadWikiPageState extends ConsumerState<ReadWikiPage> {
   Padding _desc(WikiModel wiki) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: Text(
-        wiki.description,
-        style: const TextStyle(
-          fontSize: 18.0,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          wiki.description,
+          style: const TextStyle(
+            fontSize: 18.0,
+          ),
         ),
       ),
     );
