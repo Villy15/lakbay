@@ -334,6 +334,13 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
         ref.watch(getBookingTasksByMemberId(user!.uid)).asData?.value.length ??
             0;
 
+    final listingContributedCount = ref
+            .watch(getBookingTasksByContributorId(user.uid))
+            .asData
+            ?.value
+            .length ??
+        0;
+
     final eventsContributeCount =
         ref.watch(getTasksByUserIdProvider(user.uid)).asData?.value.length ?? 0;
 
@@ -342,7 +349,8 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          listingsContributed(listingsContributeCount),
+          listingsContributed(
+              listingsContributeCount + listingContributedCount),
           eventsContributed(eventsContributeCount),
         ],
       ),

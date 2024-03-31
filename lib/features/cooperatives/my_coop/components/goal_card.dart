@@ -54,35 +54,35 @@ class GoalCard extends StatelessWidget {
               Text(goal.description!,
                   maxLines: 3, overflow: TextOverflow.ellipsis),
               const SizedBox(height: 24),
-              Column(
-                children: [
-                  LinearProgressIndicator(
-                    borderRadius: BorderRadius.circular(10),
-                    minHeight: 5,
-                    value: goal.progress!.toDouble(),
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).colorScheme.primary),
-                  ),
+              // Column(
+              //   children: [
+              //     LinearProgressIndicator(
+              //       borderRadius: BorderRadius.circular(10),
+              //       minHeight: 5,
+              //       value: goal.progress!.toDouble(),
+              //       backgroundColor:
+              //           Theme.of(context).colorScheme.primary.withOpacity(0.2),
+              //       valueColor: AlwaysStoppedAnimation<Color>(
+              //           Theme.of(context).colorScheme.primary),
+              //     ),
 
-                  // Progress Bar Label
-                  const SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Progress",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      Text(
-                        "${(goal.progress! * 100).toStringAsFixed(0)}%",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              //     // Progress Bar Label
+              //     const SizedBox(height: 5),
+              //     Row(
+              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       children: [
+              //         Text(
+              //           "Progress",
+              //           style: Theme.of(context).textTheme.titleMedium,
+              //         ),
+              //         Text(
+              //           "${(goal.progress! * 100).toStringAsFixed(0)}%",
+              //           style: Theme.of(context).textTheme.titleMedium,
+              //         ),
+              //       ],
+              //     ),
+              //   ],
+              // ),
               const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -99,7 +99,7 @@ class GoalCard extends StatelessWidget {
                       // Posted on
 
                       Text(
-                        'Target Date${DateFormat.yMMMd().format(
+                        'Target Date: ${DateFormat.yMMMd().format(
                           goal.targetDate ?? DateTime.now(),
                         )}.',
                         style: TextStyle(

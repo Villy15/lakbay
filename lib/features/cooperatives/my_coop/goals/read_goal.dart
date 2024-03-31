@@ -39,6 +39,7 @@ class _ReadGoalState extends ConsumerState<ReadGoal> {
                 ),
                 body: SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _header(goal),
                       const SizedBox(height: 8),

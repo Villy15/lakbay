@@ -1098,6 +1098,8 @@ mixin _$BookingTask {
   String? get roomId => throw _privateConstructorUsedError;
   List<String> get assignedIds => throw _privateConstructorUsedError;
   List<String> get assignedNames => throw _privateConstructorUsedError;
+  List<String>? get contributorsIds => throw _privateConstructorUsedError;
+  List<String>? get contributorsNames => throw _privateConstructorUsedError;
   String get committee => throw _privateConstructorUsedError;
   bool get complete => throw _privateConstructorUsedError;
   List<BookingTaskMessage>? get notes => throw _privateConstructorUsedError;
@@ -1127,6 +1129,8 @@ abstract class $BookingTaskCopyWith<$Res> {
       String? roomId,
       List<String> assignedIds,
       List<String> assignedNames,
+      List<String>? contributorsIds,
+      List<String>? contributorsNames,
       String committee,
       bool complete,
       List<BookingTaskMessage>? notes,
@@ -1156,6 +1160,8 @@ class _$BookingTaskCopyWithImpl<$Res, $Val extends BookingTask>
     Object? roomId = freezed,
     Object? assignedIds = null,
     Object? assignedNames = null,
+    Object? contributorsIds = freezed,
+    Object? contributorsNames = freezed,
     Object? committee = null,
     Object? complete = null,
     Object? notes = freezed,
@@ -1193,6 +1199,14 @@ class _$BookingTaskCopyWithImpl<$Res, $Val extends BookingTask>
           ? _value.assignedNames
           : assignedNames // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      contributorsIds: freezed == contributorsIds
+          ? _value.contributorsIds
+          : contributorsIds // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      contributorsNames: freezed == contributorsNames
+          ? _value.contributorsNames
+          : contributorsNames // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       committee: null == committee
           ? _value.committee
           : committee // ignore: cast_nullable_to_non_nullable
@@ -1241,6 +1255,8 @@ abstract class _$$BookingTaskImplCopyWith<$Res>
       String? roomId,
       List<String> assignedIds,
       List<String> assignedNames,
+      List<String>? contributorsIds,
+      List<String>? contributorsNames,
       String committee,
       bool complete,
       List<BookingTaskMessage>? notes,
@@ -1268,6 +1284,8 @@ class __$$BookingTaskImplCopyWithImpl<$Res>
     Object? roomId = freezed,
     Object? assignedIds = null,
     Object? assignedNames = null,
+    Object? contributorsIds = freezed,
+    Object? contributorsNames = freezed,
     Object? committee = null,
     Object? complete = null,
     Object? notes = freezed,
@@ -1305,6 +1323,14 @@ class __$$BookingTaskImplCopyWithImpl<$Res>
           ? _value._assignedNames
           : assignedNames // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      contributorsIds: freezed == contributorsIds
+          ? _value._contributorsIds
+          : contributorsIds // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      contributorsNames: freezed == contributorsNames
+          ? _value._contributorsNames
+          : contributorsNames // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       committee: null == committee
           ? _value.committee
           : committee // ignore: cast_nullable_to_non_nullable
@@ -1348,6 +1374,8 @@ class _$BookingTaskImpl implements _BookingTask {
       this.roomId,
       required final List<String> assignedIds,
       required final List<String> assignedNames,
+      final List<String>? contributorsIds,
+      final List<String>? contributorsNames,
       required this.committee,
       required this.complete,
       final List<BookingTaskMessage>? notes,
@@ -1357,6 +1385,8 @@ class _$BookingTaskImpl implements _BookingTask {
       required this.name})
       : _assignedIds = assignedIds,
         _assignedNames = assignedNames,
+        _contributorsIds = contributorsIds,
+        _contributorsNames = contributorsNames,
         _notes = notes,
         _imageProof = imageProof;
 
@@ -1387,6 +1417,27 @@ class _$BookingTaskImpl implements _BookingTask {
     if (_assignedNames is EqualUnmodifiableListView) return _assignedNames;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_assignedNames);
+  }
+
+  final List<String>? _contributorsIds;
+  @override
+  List<String>? get contributorsIds {
+    final value = _contributorsIds;
+    if (value == null) return null;
+    if (_contributorsIds is EqualUnmodifiableListView) return _contributorsIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<String>? _contributorsNames;
+  @override
+  List<String>? get contributorsNames {
+    final value = _contributorsNames;
+    if (value == null) return null;
+    if (_contributorsNames is EqualUnmodifiableListView)
+      return _contributorsNames;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
   }
 
   @override
@@ -1423,7 +1474,7 @@ class _$BookingTaskImpl implements _BookingTask {
 
   @override
   String toString() {
-    return 'BookingTask(uid: $uid, bookingId: $bookingId, listingName: $listingName, listingId: $listingId, roomId: $roomId, assignedIds: $assignedIds, assignedNames: $assignedNames, committee: $committee, complete: $complete, notes: $notes, status: $status, openContribution: $openContribution, imageProof: $imageProof, name: $name)';
+    return 'BookingTask(uid: $uid, bookingId: $bookingId, listingName: $listingName, listingId: $listingId, roomId: $roomId, assignedIds: $assignedIds, assignedNames: $assignedNames, contributorsIds: $contributorsIds, contributorsNames: $contributorsNames, committee: $committee, complete: $complete, notes: $notes, status: $status, openContribution: $openContribution, imageProof: $imageProof, name: $name)';
   }
 
   @override
@@ -1443,6 +1494,10 @@ class _$BookingTaskImpl implements _BookingTask {
                 .equals(other._assignedIds, _assignedIds) &&
             const DeepCollectionEquality()
                 .equals(other._assignedNames, _assignedNames) &&
+            const DeepCollectionEquality()
+                .equals(other._contributorsIds, _contributorsIds) &&
+            const DeepCollectionEquality()
+                .equals(other._contributorsNames, _contributorsNames) &&
             (identical(other.committee, committee) ||
                 other.committee == committee) &&
             (identical(other.complete, complete) ||
@@ -1467,6 +1522,8 @@ class _$BookingTaskImpl implements _BookingTask {
       roomId,
       const DeepCollectionEquality().hash(_assignedIds),
       const DeepCollectionEquality().hash(_assignedNames),
+      const DeepCollectionEquality().hash(_contributorsIds),
+      const DeepCollectionEquality().hash(_contributorsNames),
       committee,
       complete,
       const DeepCollectionEquality().hash(_notes),
@@ -1498,6 +1555,8 @@ abstract class _BookingTask implements BookingTask {
       final String? roomId,
       required final List<String> assignedIds,
       required final List<String> assignedNames,
+      final List<String>? contributorsIds,
+      final List<String>? contributorsNames,
       required final String committee,
       required final bool complete,
       final List<BookingTaskMessage>? notes,
@@ -1523,6 +1582,10 @@ abstract class _BookingTask implements BookingTask {
   List<String> get assignedIds;
   @override
   List<String> get assignedNames;
+  @override
+  List<String>? get contributorsIds;
+  @override
+  List<String>? get contributorsNames;
   @override
   String get committee;
   @override

@@ -113,6 +113,13 @@ final getBookingTasksByMemberId = StreamProvider.autoDispose
   return listingController.getBookingTasksByMemberId(memberId);
 });
 
+// getBookingTasksByContributorId
+final getBookingTasksByContributorId = StreamProvider.autoDispose
+    .family<List<BookingTask>, String>((ref, contributorId) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getBookingTasksByContributorId(contributorId);
+});
+
 // getBookingTaskByTaskId
 final getBookingTaskByTaskId = StreamProvider.autoDispose
     .family<BookingTask?, String>((ref, bookingTaskId) {
@@ -462,6 +469,12 @@ class ListingController extends StateNotifier<bool> {
   // Read bookingTasks by memberId
   Stream<List<BookingTask>> getBookingTasksByMemberId(String memberId) {
     return _listingRepository.readBookingTasksByMemberId(memberId);
+  }
+
+  // Read bookingTasks by contributorId
+  Stream<List<BookingTask>> getBookingTasksByContributorId(
+      String contributorId) {
+    return _listingRepository.readBookingTasksByContributorId(contributorId);
   }
 
   // Read bookingTasks by memberId

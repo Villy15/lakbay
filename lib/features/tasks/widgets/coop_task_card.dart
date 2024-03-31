@@ -79,10 +79,24 @@ class _CoopTaskCardState extends ConsumerState<CoopTaskCard> {
                           ref.watch(getUserDataProvider(userId!)).maybeWhen(
                                 data: (user) {
                                   return CircleAvatar(
-                                    radius: 20,
-                                    backgroundImage: NetworkImage(
-                                      user.profilePic,
-                                    ),
+                                    radius: 20.0,
+                                    backgroundImage: user.profilePic != ''
+                                        ? NetworkImage(user.profilePic)
+                                        : null,
+                                    backgroundColor: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground,
+                                    child: user.profilePic == ''
+                                        ? Text(
+                                            user.name[0].toUpperCase(),
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .background,
+                                              fontSize: 20,
+                                            ),
+                                          )
+                                        : null,
                                   );
                                 },
                                 orElse: () => const SizedBox.shrink(),
