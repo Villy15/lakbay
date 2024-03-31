@@ -303,12 +303,8 @@ class ListingController extends StateNotifier<bool> {
             List<ListingBookings> currentPassengers = [];
             currentPassengers.addAll(departures.first.passengers);
             currentPassengers.add(booking);
-            DepartureModel updatedDeparture = DepartureModel(
-                listingName: listing.title,
-                listingId: listing.uid,
-                passengers: currentPassengers,
-                arrival: booking.endDate,
-                departure: booking.startDate);
+            DepartureModel updatedDeparture =
+                departures.first.copyWith(passengers: currentPassengers);
             _ref
                 .read(listingControllerProvider.notifier)
                 // ignore: use_build_context_synchronously
