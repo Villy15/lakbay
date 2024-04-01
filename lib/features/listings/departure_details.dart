@@ -2,11 +2,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/error.dart';
+import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
@@ -33,13 +34,14 @@ class DepartureDetails extends ConsumerStatefulWidget {
 }
 
 late DepartureModel departureDetails;
+Map<num, num> passengerCount = {};
 
 class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
   List<SizedBox> tabs = [
     const SizedBox(width: 100.0, child: Tab(child: Text('Details'))),
     const SizedBox(width: 100.0, child: Tab(child: Text('Passengers'))),
   ];
-  late ListingBookings modifiableBooking;
+
   @override
   void initState() {
     super.initState();
@@ -50,18 +52,27 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
   }
 
   @override
+  void dispose() {
+    passengerCount.clear(); // Clear the map when the widget is disposed
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     String formattedStartDate = DateFormat('MMMM dd')
         .format(departureDetails.passengers.first.startDate!);
     String formattedEndDate = DateFormat('MMMM dd')
         .format(departureDetails.passengers.first.endDate!);
-    num passengerCount = 0;
+
+    for (var vehicle in departureDetails.vehicles!) {
+      passengerCount[vehicle.vehicle!.vehicleNo!] = 0;
+    }
     for (var booking in departureDetails.passengers) {
-      if (booking.vehicleNo == departureDetails.vehicle?.vehicleNo) {
-        passengerCount = passengerCount + booking.guests;
+      if (booking.vehicleNo != null) {
+        passengerCount[booking.vehicleNo!] =
+            passengerCount[booking.vehicleNo!]! + booking.guests;
       }
     }
-
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
@@ -73,13 +84,12 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
             length: tabs.length,
             child: Scaffold(
               resizeToAvoidBottomInset: true,
-              appBar: _appBar("Booking Details", context),
+              appBar: _appBar("Departure Details", context),
               body: StatefulBuilder(
                 builder: (context, setState) {
                   return TabBarView(
                     children: [
-                      details(
-                          context, departureDetails.passengers, passengerCount),
+                      details(context),
                       passengers(departureDetails.passengers),
                     ],
                   );
@@ -99,153 +109,6 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
             isScrollable: true,
             indicatorSize: TabBarIndicatorSize.label,
             tabs: tabs));
-  }
-
-  Future<dynamic> showAddTaskDialog(
-      BuildContext context, ListingBookings booking) {
-    List<String> notes = [
-      "'Open for Contribution' will make this task available for other members to accomplish."
-    ];
-    return showDialog(
-        context: context,
-        barrierDismissible: false, // User must tap button to close the dialog
-        builder: (BuildContext context) {
-          TextEditingController nameOfTaskController = TextEditingController();
-          TextEditingController committeeController =
-              TextEditingController(text: "Tourism");
-          bool openContribution = false;
-          List<String> assignedIds = [];
-          List<String> assignedNames = [];
-          List<CooperativeMembers>? members;
-          return Dialog.fullscreen(
-            child: StatefulBuilder(builder: (context, setState) {
-              return Column(children: [
-                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  IconButton(
-                    iconSize: 30,
-                    onPressed: () {
-                      context.pop();
-                    },
-                    icon: const Icon(Icons.arrow_back),
-                  )
-                ]),
-                const Text('Add Task',
-                    style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                Expanded(
-                    child: SingleChildScrollView(
-                  child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(children: [
-                        TextFormField(
-                            controller: nameOfTaskController,
-                            decoration: const InputDecoration(
-                                labelText: 'Task Name*',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                hintText: 'Assigned Driver')),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                            controller: committeeController,
-                            decoration: const InputDecoration(
-                                labelText: 'Committee Assigned*',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                suffixIcon: Icon(Icons.arrow_drop_down)),
-                            readOnly: true,
-                            enabled: false,
-                            onTap: () {}),
-                        const SizedBox(height: 10),
-                        Column(children: [
-                          TextFormField(
-                              maxLines: 1,
-                              decoration: const InputDecoration(
-                                  labelText: 'Members Assigned*',
-                                  border: OutlineInputBorder(),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  suffixIcon: Icon(Icons.arrow_drop_down),
-                                  hintText: 'Press to select member'),
-                              readOnly: true,
-                              canRequestFocus: false,
-                              onTap: () async {
-                                members = await ref.read(
-                                    getAllMembersInCommitteeProvider(
-                                            CommitteeParams(
-                                                coopUid: ref
-                                                    .watch(userProvider)!
-                                                    .currentCoop!,
-                                                committeeName:
-                                                    committeeController.text))
-                                        .future);
-                                members = members!
-                                    .where((member) =>
-                                        !assignedNames.contains(member.name))
-                                    .toList();
-                                if (context.mounted) {
-                                  return showModalBottomSheet(
-                                      context: context,
-                                      builder: (context) {
-                                        return Container(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Column(
-                                              children: [
-                                                Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 10.0),
-                                                    child: Text(
-                                                        "Members in ${committeeController.text}",
-                                                        style: const TextStyle(
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold))),
-                                                Expanded(
-                                                    child: ListView.builder(
-                                                        itemCount:
-                                                            members!.length,
-                                                        itemBuilder:
-                                                            (BuildContext
-                                                                    context,
-                                                                index) {
-                                                          return ListTile(
-                                                            title: Text(
-                                                                members![index]
-                                                                    .name,
-                                                                style:
-                                                                    const TextStyle(
-                                                                        fontSize:
-                                                                            16)),
-                                                            onTap: () {
-                                                              setState(() {
-                                                                assignedIds.add(
-                                                                    members![
-                                                                            index]
-                                                                        .uid!);
-                                                                assignedNames.add(
-                                                                    members![
-                                                                            index]
-                                                                        .name);
-                                                              });
-                                                              context.pop();
-                                                            },
-                                                          );
-                                                        }))
-                                              ],
-                                            ));
-                                      });
-                                }
-                              })
-                        ])
-                      ])),
-                )),
-              ]);
-            }),
-          );
-        });
   }
 
   Column addNotes(
@@ -282,8 +145,12 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
     );
   }
 
-  Widget details(BuildContext context, List<ListingBookings> bookings,
-      num passengerCount) {
+  Widget details(
+    BuildContext context,
+  ) {
+    Query query = FirebaseFirestore.instance
+        .collectionGroup('availableTransport')
+        .where('listingId', isEqualTo: widget.listing.uid);
     Map<String, Map<String, dynamic>> generalActions = {
       "contact": {
         "icon": Icons.call,
@@ -293,7 +160,30 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
       "emergency": {
         "icon": Icons.emergency,
         "title": "Emergency",
-        "action": () {}
+        "action": () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Emergency Guide'),
+                  content: const Text(
+                      "An emergency would be a situation wherein the service provider cannot provide their service."),
+                  actions: [
+                    FilledButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        child: const Text('Close')),
+                    FilledButton(
+                        onPressed: () {
+                          emergencyProcess(ref, context, 'Transport',
+                              departureDetails: departureDetails);
+                        },
+                        child: const Text('Continue')),
+                  ],
+                );
+              });
+        }
       },
     };
     return SingleChildScrollView(
@@ -325,13 +215,14 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                            DateFormat('E, MMM d')
-                                .format(bookings.first.startDate!),
+                            DateFormat('E, MMM d').format(
+                                departureDetails.passengers.first.startDate!),
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w500)),
                         // departure time
                         Text(
-                          TimeOfDay.fromDateTime(bookings.first.startDate!)
+                          TimeOfDay.fromDateTime(
+                                  departureDetails.passengers.first.startDate!)
                               .format(context),
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w300),
@@ -354,13 +245,14 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                         _displaySubHeader('Arrival'),
                         const SizedBox(height: 10),
                         Text(
-                            DateFormat('E, MMM d')
-                                .format(bookings.first.endDate!),
+                            DateFormat('E, MMM d').format(
+                                departureDetails.passengers.first.endDate!),
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w500)),
                         // Checkout time
                         Text(
-                          TimeOfDay.fromDateTime(bookings.first.endDate!)
+                          TimeOfDay.fromDateTime(
+                                  departureDetails.passengers.first.endDate!)
                               .format(context),
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w300),
@@ -378,151 +270,130 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        Query query = FirebaseFirestore.instance
-                            .collectionGroup('availableTransport')
-                            .where('listingId', isEqualTo: widget.listing.uid);
-                        List<AvailableTransport> vehicles = await ref.read(
-                            getTransportByPropertiesProvider(query).future);
+                ref.watch(getTransportByPropertiesProvider(query)).when(
+                      data: (List<AvailableTransport> vehicles) {
                         List<AvailableTransport> filteredVehicles = [];
-
                         for (var vehicle in vehicles) {
-                          if (vehicle.departureTimes?.contains(
-                                  TimeOfDay.fromDateTime(departureDetails
-                                      .passengers.first.startDate!)) ==
-                              true) {
+                          if (vehicle.departureTimes!.contains(
+                              TimeOfDay.fromDateTime(
+                                  departureDetails.departure!))) {
                             filteredVehicles.add(vehicle);
                           }
                         }
-                        if (context.mounted) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Select Vehicle'),
-                                  actions: [
-                                    FilledButton(
-                                        onPressed: () {
-                                          context.pop();
-                                        },
-                                        child: const Text('Close'))
+                        return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: filteredVehicles.length,
+                            itemBuilder: (context, vehicleIndex) {
+                              final vehicle = filteredVehicles[vehicleIndex];
+                              return Container(
+                                padding: const EdgeInsets.only(bottom: 5),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                    'Vehicle Information'),
+                                                content: SizedBox(
+                                                  height:
+                                                      MediaQuery.sizeOf(context)
+                                                              .height *
+                                                          .1,
+                                                  width:
+                                                      MediaQuery.sizeOf(context)
+                                                              .width *
+                                                          1,
+                                                  child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text.rich(
+                                                          TextSpan(
+                                                            text: 'Capacity: ',
+                                                            style: const TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    '${vehicle.guests}',
+                                                                style: const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ]),
+                                                ),
+                                                actions: [
+                                                  FilledButton(
+                                                      onPressed: () {
+                                                        context.pop();
+                                                      },
+                                                      child:
+                                                          const Text('Close'))
+                                                ],
+                                              );
+                                            });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.grey),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: _displaySubtitleText(
+                                          'Vehicle No: ${vehicle.vehicleNo ?? 'Not Set'}',
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                        height:
+                                            MediaQuery.sizeOf(context).height *
+                                                .05,
+                                        width: 1,
+                                        color: Colors.grey),
+                                    InkWell(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.grey),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: _displaySubtitleText(
+                                            'Passengers: ${passengerCount[vehicle.vehicleNo]}'),
+                                      ),
+                                      onTap: () async {
+                                        selectPassengerDialog(context, vehicle);
+                                      },
+                                    ),
                                   ],
-                                  content: SizedBox(
-                                    height:
-                                        MediaQuery.sizeOf(context).height * .3,
-                                    width: double.infinity,
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: vehicles.length,
-                                        itemBuilder: (context, index) {
-                                          AvailableTransport vehicle =
-                                              vehicles[index];
-                                          return InkWell(
-                                            onTap: () {
-                                              for (ListingBookings booking
-                                                  in bookings) {
-                                                ListingBookings updatedBooking =
-                                                    booking.copyWith(
-                                                        vehicleNo:
-                                                            vehicle.vehicleNo);
-                                                ref
-                                                    .read(
-                                                        listingControllerProvider
-                                                            .notifier)
-                                                    .updateBooking(
-                                                        context,
-                                                        widget.listing.uid!,
-                                                        updatedBooking,
-                                                        "Booking updated!");
-                                              }
-                                              setState(() {
-                                                departureDetails =
-                                                    departureDetails.copyWith(
-                                                        vehicle: vehicle);
-                                              });
-                                              context.pop();
-                                            },
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Text('[${index + 1}]'),
-                                                    const SizedBox(
-                                                      width: 20,
-                                                    ),
-                                                    Text(
-                                                      "Vehicle No: ${vehicle.vehicleNo}",
-                                                      style: const TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                    SizedBox(
-                                                      width: MediaQuery.sizeOf(
-                                                                  context)
-                                                              .width *
-                                                          .3,
-                                                    ),
-                                                  ],
-                                                ),
-                                                Container(
-                                                  padding: EdgeInsets.only(
-                                                      left: MediaQuery.sizeOf(
-                                                                  context)
-                                                              .width *
-                                                          .1),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        'Capacity: ${vehicle.guests} | ',
-                                                        style: const TextStyle(
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w300),
-                                                      ),
-                                                      Text(
-                                                        'Luggage: ${vehicle.luggage}',
-                                                        style: const TextStyle(
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w300),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        }),
-                                  ),
-                                );
-                              });
-                        }
+                                ),
+                              );
+                            });
                       },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: _displaySubtitleText(
-                            'Vehicle No: ${departureDetails.vehicle?.vehicleNo ?? 'Not Set'}'),
+                      error: (error, stackTrace) => ErrorText(
+                        error: error.toString(),
+                        stackTrace: '',
                       ),
+                      loading: () => const Loader(),
                     ),
-                    Container(
-                        height: MediaQuery.sizeOf(context).height * .05,
-                        width: 1,
-                        color: Colors.grey),
-                    _displaySubtitleText('Passengers: $passengerCount'),
-                  ],
-                ),
                 const SizedBox(height: 10),
                 ...generalActions.entries.map((entry) {
                   final generalAction = entry.value;
@@ -556,20 +427,244 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                   );
                 }),
                 const SizedBox(height: 10),
-                _displaySubHeader("Booking Details"),
-                _displayDivider(),
-                const SizedBox(height: 10),
-
-                _displaySubHeader("Additional Information"),
-                const SizedBox(height: 10),
-                // Government ID
-                _displayGovId(),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<dynamic> selectPassengerDialog(
+      BuildContext context, AvailableTransport vehicle) {
+    List<ListingBookings> boardedPassengers = [];
+    List<ListingBookings> notBoardedPassengers = [];
+    for (var booking in departureDetails.passengers) {
+      if (booking.vehicleNo == vehicle.vehicleNo) {
+        boardedPassengers.add(booking);
+      } else if (booking.vehicleNo == null) {
+        notBoardedPassengers.add(booking);
+      }
+    }
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Select Passengers'),
+            actions: [
+              FilledButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: const Text('Close'))
+            ],
+            content: SizedBox(
+              height: MediaQuery.sizeOf(context).height * .5,
+              width: MediaQuery.sizeOf(context).height * 1,
+              child: StatefulBuilder(builder: (context, setPassengers) {
+                return Column(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Boarded',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w500)),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: boardedPassengers.length,
+                              itemBuilder: (context, boardedIndex) {
+                                final booking = boardedPassengers[boardedIndex];
+                                return InkWell(
+                                  onTap: () {
+                                    ListingBookings updatedPassenger =
+                                        booking.copyWith(vehicleNo: null);
+                                    setPassengers(() {
+                                      notBoardedPassengers
+                                          .add(updatedPassenger);
+                                      boardedPassengers.remove(booking);
+                                    });
+
+                                    List<AssignedVehicle>
+                                        updatedAssignedVehicles = [];
+                                    AssignedVehicle updatedAssignedVehicle =
+                                        AssignedVehicle(
+                                            vehicle: vehicle.copyWith(
+                                                vehicleNo: vehicle.vehicleNo),
+                                            passengers: boardedPassengers);
+                                    for (var currentVehicle
+                                        in departureDetails.vehicles!) {
+                                      if (vehicle.vehicleNo ==
+                                          currentVehicle.vehicle!.vehicleNo) {
+                                        updatedAssignedVehicles
+                                            .add(updatedAssignedVehicle);
+                                      } else {
+                                        updatedAssignedVehicles
+                                            .add(currentVehicle);
+                                      }
+                                    }
+                                    List<ListingBookings> updatedPassengers =
+                                        [];
+                                    for (var passenger
+                                        in notBoardedPassengers) {
+                                      updatedPassengers.add(passenger);
+                                    }
+                                    for (var passenger in boardedPassengers) {
+                                      updatedPassengers.add(passenger);
+                                    }
+
+                                    DepartureModel updatedDeparture =
+                                        departureDetails.copyWith(
+                                            passengers: updatedPassengers,
+                                            vehicles: updatedAssignedVehicles);
+
+                                    ref
+                                        .read(
+                                            listingControllerProvider.notifier)
+                                        .updateDeparture(
+                                            context, updatedDeparture, '');
+                                    ListingBookings updatedBooking = booking
+                                        .copyWith(vehicleNo: vehicle.vehicleNo);
+                                    ref
+                                        .read(
+                                            listingControllerProvider.notifier)
+                                        .updateBooking(
+                                            context,
+                                            booking.listingId,
+                                            updatedBooking,
+                                            '');
+                                    setState(() {
+                                      departureDetails = updatedDeparture;
+                                    });
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ListTile(
+                                        leading: Text(
+                                          '${booking.guests}',
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        title: Text(
+                                          booking.customerName,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Not Boarded',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w500)),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: notBoardedPassengers.length,
+                              itemBuilder: (context, notBoardedIndex) {
+                                final booking =
+                                    notBoardedPassengers[notBoardedIndex];
+                                return InkWell(
+                                  onTap: () {
+                                    ListingBookings updatedPassenger = booking
+                                        .copyWith(vehicleNo: vehicle.vehicleNo);
+                                    setPassengers(() {
+                                      boardedPassengers.add(updatedPassenger);
+                                      notBoardedPassengers.remove(booking);
+                                    });
+                                    List<AssignedVehicle>
+                                        updatedAssignedVehicles = [];
+                                    AssignedVehicle updatedAssignedVehicle =
+                                        AssignedVehicle(
+                                            vehicle: vehicle,
+                                            passengers: boardedPassengers);
+                                    for (var currentVehicle
+                                        in departureDetails.vehicles!) {
+                                      if (currentVehicle.vehicle!.vehicleNo ==
+                                          updatedAssignedVehicle
+                                              .vehicle!.vehicleNo) {
+                                        updatedAssignedVehicles
+                                            .add(updatedAssignedVehicle);
+                                      } else {
+                                        updatedAssignedVehicles
+                                            .add(currentVehicle);
+                                      }
+                                    }
+                                    List<ListingBookings> updatedPassengers =
+                                        [];
+                                    for (var passenger in boardedPassengers) {
+                                      updatedPassengers.add(passenger);
+                                    }
+
+                                    for (var passenger
+                                        in notBoardedPassengers) {
+                                      updatedPassengers.add(passenger);
+                                    }
+                                    DepartureModel updatedDeparture =
+                                        departureDetails.copyWith(
+                                            passengers: updatedPassengers,
+                                            vehicles: updatedAssignedVehicles);
+
+                                    ref
+                                        .read(
+                                            listingControllerProvider.notifier)
+                                        .updateDeparture(
+                                            context, updatedDeparture, '');
+                                    ListingBookings updatedBooking = booking
+                                        .copyWith(vehicleNo: vehicle.vehicleNo);
+                                    ref
+                                        .read(
+                                            listingControllerProvider.notifier)
+                                        .updateBooking(
+                                            context,
+                                            booking.listingId,
+                                            updatedBooking,
+                                            '');
+                                    setState(() {
+                                      departureDetails = updatedDeparture;
+                                    });
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ListTile(
+                                        leading: Text(
+                                          '${booking.guests}',
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        title: Text(
+                                          booking.customerName,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }),
+            ),
+          );
+        });
   }
 
   Text _displaySubHeader(String subHeader) {
@@ -673,6 +768,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
               passenger.customerName,
             ),
             subtitle: _displaySubtitleText(passenger.customerPhoneNo),
+            trailing: Text('Vehicle No: ${passenger.vehicleNo ?? 'Not Set'}'),
           );
         });
   }

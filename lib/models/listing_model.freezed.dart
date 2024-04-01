@@ -2461,11 +2461,12 @@ mixin _$DepartureModel {
   String? get listingName => throw _privateConstructorUsedError;
   String? get listingId => throw _privateConstructorUsedError;
   List<ListingBookings> get passengers => throw _privateConstructorUsedError;
-  AvailableTransport? get vehicle => throw _privateConstructorUsedError;
+  List<AssignedVehicle>? get vehicles => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get arrival => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get departure => throw _privateConstructorUsedError;
+  String? get departureStatus => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -2484,11 +2485,10 @@ abstract class $DepartureModelCopyWith<$Res> {
       String? listingName,
       String? listingId,
       List<ListingBookings> passengers,
-      AvailableTransport? vehicle,
+      List<AssignedVehicle>? vehicles,
       @TimestampSerializer() DateTime? arrival,
-      @TimestampSerializer() DateTime? departure});
-
-  $AvailableTransportCopyWith<$Res>? get vehicle;
+      @TimestampSerializer() DateTime? departure,
+      String? departureStatus});
 }
 
 /// @nodoc
@@ -2508,9 +2508,10 @@ class _$DepartureModelCopyWithImpl<$Res, $Val extends DepartureModel>
     Object? listingName = freezed,
     Object? listingId = freezed,
     Object? passengers = null,
-    Object? vehicle = freezed,
+    Object? vehicles = freezed,
     Object? arrival = freezed,
     Object? departure = freezed,
+    Object? departureStatus = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -2529,10 +2530,10 @@ class _$DepartureModelCopyWithImpl<$Res, $Val extends DepartureModel>
           ? _value.passengers
           : passengers // ignore: cast_nullable_to_non_nullable
               as List<ListingBookings>,
-      vehicle: freezed == vehicle
-          ? _value.vehicle
-          : vehicle // ignore: cast_nullable_to_non_nullable
-              as AvailableTransport?,
+      vehicles: freezed == vehicles
+          ? _value.vehicles
+          : vehicles // ignore: cast_nullable_to_non_nullable
+              as List<AssignedVehicle>?,
       arrival: freezed == arrival
           ? _value.arrival
           : arrival // ignore: cast_nullable_to_non_nullable
@@ -2541,19 +2542,11 @@ class _$DepartureModelCopyWithImpl<$Res, $Val extends DepartureModel>
           ? _value.departure
           : departure // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      departureStatus: freezed == departureStatus
+          ? _value.departureStatus
+          : departureStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $AvailableTransportCopyWith<$Res>? get vehicle {
-    if (_value.vehicle == null) {
-      return null;
-    }
-
-    return $AvailableTransportCopyWith<$Res>(_value.vehicle!, (value) {
-      return _then(_value.copyWith(vehicle: value) as $Val);
-    });
   }
 }
 
@@ -2570,12 +2563,10 @@ abstract class _$$DepartureModelImplCopyWith<$Res>
       String? listingName,
       String? listingId,
       List<ListingBookings> passengers,
-      AvailableTransport? vehicle,
+      List<AssignedVehicle>? vehicles,
       @TimestampSerializer() DateTime? arrival,
-      @TimestampSerializer() DateTime? departure});
-
-  @override
-  $AvailableTransportCopyWith<$Res>? get vehicle;
+      @TimestampSerializer() DateTime? departure,
+      String? departureStatus});
 }
 
 /// @nodoc
@@ -2593,9 +2584,10 @@ class __$$DepartureModelImplCopyWithImpl<$Res>
     Object? listingName = freezed,
     Object? listingId = freezed,
     Object? passengers = null,
-    Object? vehicle = freezed,
+    Object? vehicles = freezed,
     Object? arrival = freezed,
     Object? departure = freezed,
+    Object? departureStatus = freezed,
   }) {
     return _then(_$DepartureModelImpl(
       uid: freezed == uid
@@ -2614,10 +2606,10 @@ class __$$DepartureModelImplCopyWithImpl<$Res>
           ? _value._passengers
           : passengers // ignore: cast_nullable_to_non_nullable
               as List<ListingBookings>,
-      vehicle: freezed == vehicle
-          ? _value.vehicle
-          : vehicle // ignore: cast_nullable_to_non_nullable
-              as AvailableTransport?,
+      vehicles: freezed == vehicles
+          ? _value._vehicles
+          : vehicles // ignore: cast_nullable_to_non_nullable
+              as List<AssignedVehicle>?,
       arrival: freezed == arrival
           ? _value.arrival
           : arrival // ignore: cast_nullable_to_non_nullable
@@ -2626,6 +2618,10 @@ class __$$DepartureModelImplCopyWithImpl<$Res>
           ? _value.departure
           : departure // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      departureStatus: freezed == departureStatus
+          ? _value.departureStatus
+          : departureStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -2638,10 +2634,12 @@ class _$DepartureModelImpl implements _DepartureModel {
       this.listingName,
       this.listingId,
       required final List<ListingBookings> passengers,
-      this.vehicle,
+      final List<AssignedVehicle>? vehicles,
       @TimestampSerializer() this.arrival,
-      @TimestampSerializer() this.departure})
-      : _passengers = passengers;
+      @TimestampSerializer() this.departure,
+      this.departureStatus})
+      : _passengers = passengers,
+        _vehicles = vehicles;
 
   factory _$DepartureModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$DepartureModelImplFromJson(json);
@@ -2660,18 +2658,28 @@ class _$DepartureModelImpl implements _DepartureModel {
     return EqualUnmodifiableListView(_passengers);
   }
 
+  final List<AssignedVehicle>? _vehicles;
   @override
-  final AvailableTransport? vehicle;
+  List<AssignedVehicle>? get vehicles {
+    final value = _vehicles;
+    if (value == null) return null;
+    if (_vehicles is EqualUnmodifiableListView) return _vehicles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @TimestampSerializer()
   final DateTime? arrival;
   @override
   @TimestampSerializer()
   final DateTime? departure;
+  @override
+  final String? departureStatus;
 
   @override
   String toString() {
-    return 'DepartureModel(uid: $uid, listingName: $listingName, listingId: $listingId, passengers: $passengers, vehicle: $vehicle, arrival: $arrival, departure: $departure)';
+    return 'DepartureModel(uid: $uid, listingName: $listingName, listingId: $listingId, passengers: $passengers, vehicles: $vehicles, arrival: $arrival, departure: $departure, departureStatus: $departureStatus)';
   }
 
   @override
@@ -2686,10 +2694,12 @@ class _$DepartureModelImpl implements _DepartureModel {
                 other.listingId == listingId) &&
             const DeepCollectionEquality()
                 .equals(other._passengers, _passengers) &&
-            (identical(other.vehicle, vehicle) || other.vehicle == vehicle) &&
+            const DeepCollectionEquality().equals(other._vehicles, _vehicles) &&
             (identical(other.arrival, arrival) || other.arrival == arrival) &&
             (identical(other.departure, departure) ||
-                other.departure == departure));
+                other.departure == departure) &&
+            (identical(other.departureStatus, departureStatus) ||
+                other.departureStatus == departureStatus));
   }
 
   @JsonKey(ignore: true)
@@ -2700,9 +2710,10 @@ class _$DepartureModelImpl implements _DepartureModel {
       listingName,
       listingId,
       const DeepCollectionEquality().hash(_passengers),
-      vehicle,
+      const DeepCollectionEquality().hash(_vehicles),
       arrival,
-      departure);
+      departure,
+      departureStatus);
 
   @JsonKey(ignore: true)
   @override
@@ -2725,9 +2736,10 @@ abstract class _DepartureModel implements DepartureModel {
       final String? listingName,
       final String? listingId,
       required final List<ListingBookings> passengers,
-      final AvailableTransport? vehicle,
+      final List<AssignedVehicle>? vehicles,
       @TimestampSerializer() final DateTime? arrival,
-      @TimestampSerializer() final DateTime? departure}) = _$DepartureModelImpl;
+      @TimestampSerializer() final DateTime? departure,
+      final String? departureStatus}) = _$DepartureModelImpl;
 
   factory _DepartureModel.fromJson(Map<String, dynamic> json) =
       _$DepartureModelImpl.fromJson;
@@ -2741,7 +2753,7 @@ abstract class _DepartureModel implements DepartureModel {
   @override
   List<ListingBookings> get passengers;
   @override
-  AvailableTransport? get vehicle;
+  List<AssignedVehicle>? get vehicles;
   @override
   @TimestampSerializer()
   DateTime? get arrival;
@@ -2749,8 +2761,192 @@ abstract class _DepartureModel implements DepartureModel {
   @TimestampSerializer()
   DateTime? get departure;
   @override
+  String? get departureStatus;
+  @override
   @JsonKey(ignore: true)
   _$$DepartureModelImplCopyWith<_$DepartureModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AssignedVehicle _$AssignedVehicleFromJson(Map<String, dynamic> json) {
+  return _AssignedVehicle.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AssignedVehicle {
+  AvailableTransport? get vehicle => throw _privateConstructorUsedError;
+  List<ListingBookings>? get passengers => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AssignedVehicleCopyWith<AssignedVehicle> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AssignedVehicleCopyWith<$Res> {
+  factory $AssignedVehicleCopyWith(
+          AssignedVehicle value, $Res Function(AssignedVehicle) then) =
+      _$AssignedVehicleCopyWithImpl<$Res, AssignedVehicle>;
+  @useResult
+  $Res call({AvailableTransport? vehicle, List<ListingBookings>? passengers});
+
+  $AvailableTransportCopyWith<$Res>? get vehicle;
+}
+
+/// @nodoc
+class _$AssignedVehicleCopyWithImpl<$Res, $Val extends AssignedVehicle>
+    implements $AssignedVehicleCopyWith<$Res> {
+  _$AssignedVehicleCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? vehicle = freezed,
+    Object? passengers = freezed,
+  }) {
+    return _then(_value.copyWith(
+      vehicle: freezed == vehicle
+          ? _value.vehicle
+          : vehicle // ignore: cast_nullable_to_non_nullable
+              as AvailableTransport?,
+      passengers: freezed == passengers
+          ? _value.passengers
+          : passengers // ignore: cast_nullable_to_non_nullable
+              as List<ListingBookings>?,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $AvailableTransportCopyWith<$Res>? get vehicle {
+    if (_value.vehicle == null) {
+      return null;
+    }
+
+    return $AvailableTransportCopyWith<$Res>(_value.vehicle!, (value) {
+      return _then(_value.copyWith(vehicle: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$AssignedVehicleImplCopyWith<$Res>
+    implements $AssignedVehicleCopyWith<$Res> {
+  factory _$$AssignedVehicleImplCopyWith(_$AssignedVehicleImpl value,
+          $Res Function(_$AssignedVehicleImpl) then) =
+      __$$AssignedVehicleImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({AvailableTransport? vehicle, List<ListingBookings>? passengers});
+
+  @override
+  $AvailableTransportCopyWith<$Res>? get vehicle;
+}
+
+/// @nodoc
+class __$$AssignedVehicleImplCopyWithImpl<$Res>
+    extends _$AssignedVehicleCopyWithImpl<$Res, _$AssignedVehicleImpl>
+    implements _$$AssignedVehicleImplCopyWith<$Res> {
+  __$$AssignedVehicleImplCopyWithImpl(
+      _$AssignedVehicleImpl _value, $Res Function(_$AssignedVehicleImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? vehicle = freezed,
+    Object? passengers = freezed,
+  }) {
+    return _then(_$AssignedVehicleImpl(
+      vehicle: freezed == vehicle
+          ? _value.vehicle
+          : vehicle // ignore: cast_nullable_to_non_nullable
+              as AvailableTransport?,
+      passengers: freezed == passengers
+          ? _value._passengers
+          : passengers // ignore: cast_nullable_to_non_nullable
+              as List<ListingBookings>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AssignedVehicleImpl implements _AssignedVehicle {
+  _$AssignedVehicleImpl({this.vehicle, final List<ListingBookings>? passengers})
+      : _passengers = passengers;
+
+  factory _$AssignedVehicleImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AssignedVehicleImplFromJson(json);
+
+  @override
+  final AvailableTransport? vehicle;
+  final List<ListingBookings>? _passengers;
+  @override
+  List<ListingBookings>? get passengers {
+    final value = _passengers;
+    if (value == null) return null;
+    if (_passengers is EqualUnmodifiableListView) return _passengers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'AssignedVehicle(vehicle: $vehicle, passengers: $passengers)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AssignedVehicleImpl &&
+            (identical(other.vehicle, vehicle) || other.vehicle == vehicle) &&
+            const DeepCollectionEquality()
+                .equals(other._passengers, _passengers));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, vehicle, const DeepCollectionEquality().hash(_passengers));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AssignedVehicleImplCopyWith<_$AssignedVehicleImpl> get copyWith =>
+      __$$AssignedVehicleImplCopyWithImpl<_$AssignedVehicleImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AssignedVehicleImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AssignedVehicle implements AssignedVehicle {
+  factory _AssignedVehicle(
+      {final AvailableTransport? vehicle,
+      final List<ListingBookings>? passengers}) = _$AssignedVehicleImpl;
+
+  factory _AssignedVehicle.fromJson(Map<String, dynamic> json) =
+      _$AssignedVehicleImpl.fromJson;
+
+  @override
+  AvailableTransport? get vehicle;
+  @override
+  List<ListingBookings>? get passengers;
+  @override
+  @JsonKey(ignore: true)
+  _$$AssignedVehicleImplCopyWith<_$AssignedVehicleImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

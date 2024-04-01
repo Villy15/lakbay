@@ -314,7 +314,8 @@ class _AccommodationBookingsDetailsState
                         child: const Text('Close')),
                     FilledButton(
                         onPressed: () {
-                          emergencyProcess(ref, context, booking);
+                          emergencyProcess(ref, context, 'Accommodation',
+                              booking: booking);
                         },
                         child: const Text('Continue')),
                   ],
@@ -613,6 +614,54 @@ class _AccommodationBookingsDetailsState
                                         }
                                       : null,
                             ),
+                            // If there are contributors, show them
+                            bookingTasks[taskIndex].contributorsNames != null &&
+                                    bookingTasks[taskIndex]
+                                        .contributorsNames!
+                                        .isNotEmpty
+                                ? ListTile(
+                                    leading: bookingTasks[taskIndex].status ==
+                                            'Pending'
+                                        ? const Text('Pending')
+                                        : Checkbox(
+                                            value: bookingTasks[taskIndex]
+                                                .complete,
+                                            onChanged: null,
+                                          ),
+                                    title: Text(
+                                      bookingTasks[taskIndex].name,
+                                      style: const TextStyle(
+                                        fontSize:
+                                            16, // Set your desired font size
+                                        // Add other styling as needed
+                                      ),
+                                    ),
+                                    trailing: IconButton(
+                                        onPressed: () {
+                                          showNotesDialog(
+                                              context, bookingTasks[taskIndex]);
+                                        },
+                                        icon:
+                                            const Icon(Icons.comment_outlined)),
+                                    subtitle: Text(
+                                      "Contributors: ${bookingTasks[taskIndex].contributorsNames?.join(", ")}",
+                                      style: TextStyle(
+                                        fontSize:
+                                            14, // Slightly smaller than the title
+                                        color: Colors.grey[
+                                            600], // Grey color for the subtitle
+                                        // You can add other styling as needed
+                                      ),
+                                    ),
+                                    onTap: bookingTasks[taskIndex].status !=
+                                            'Completed'
+                                        ? () {
+                                            showMarkAsDoneDialog(context,
+                                                bookingTasks[taskIndex]);
+                                          }
+                                        : null,
+                                  )
+                                : const SizedBox(),
                             ListTile(
                               leading: Checkbox(
                                   value:
@@ -656,7 +705,8 @@ class _AccommodationBookingsDetailsState
                                                 List<BookingTask>
                                                     updatedBookingTasks =
                                                     bookingTasks.toList(
-                                                        growable: true);
+                                                  growable: true,
+                                                );
                                                 updatedBookingTasks[taskIndex] =
                                                     bookingTasks[taskIndex]
                                                         .copyWith(
@@ -760,6 +810,45 @@ class _AccommodationBookingsDetailsState
                               endIndent: 20,
                               color: Colors.grey[400],
                             ),
+                            // FilledButton where I can contribute to the task
+                            bookingTasks[taskIndex].openContribution
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: FilledButton(
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      'Contribute to Task'),
+                                                  // Content where its a text Do you wanna contribute to this task?
+                                                  content: const Text(
+                                                      'Do you want to contribute to this task?'),
+                                                  actions: [
+                                                    FilledButton(
+                                                      onPressed: () {
+                                                        context.pop();
+                                                      },
+                                                      child:
+                                                          const Text('Cancel'),
+                                                    ),
+                                                    FilledButton(
+                                                      onPressed: () {
+                                                        contributeTask(
+                                                            bookingTasks[
+                                                                taskIndex]);
+                                                      },
+                                                      child:
+                                                          const Text('Confirm'),
+                                                    ),
+                                                  ],
+                                                );
+                                              });
+                                        },
+                                        child: const Text('Contribute')),
+                                  )
+                                : const SizedBox(),
                           ],
                         ),
                       );
@@ -772,6 +861,23 @@ class _AccommodationBookingsDetailsState
           ),
           loading: () => const Center(child: CircularProgressIndicator()),
         );
+  }
+
+  void contributeTask(BookingTask bookingTask) {
+    // Edit the task to make Open for Contribution false
+    BookingTask updatedBookingTask = bookingTask.copyWith(
+      openContribution: false,
+      contributorsIds: [ref.read(userProvider)!.uid],
+      contributorsNames: [ref.read(userProvider)!.name],
+    );
+
+    ref.read(listingControllerProvider.notifier).updateBookingTask(
+        context,
+        updatedBookingTask.listingId!,
+        updatedBookingTask,
+        "Task updated successfully!");
+
+    context.pop();
   }
 
   Future<dynamic> showMarkAsDoneDialog(
@@ -1253,6 +1359,8 @@ class _AccommodationBookingsDetailsState
                 ))
           ]),
           content: SizedBox(
+            width: MediaQuery.of(context).size.width /
+                1.5, // Set a fixed width for the ListView
             height: MediaQuery.of(context).size.height /
                 1.5, // Set a fixed height for the ListView
             child: Column(

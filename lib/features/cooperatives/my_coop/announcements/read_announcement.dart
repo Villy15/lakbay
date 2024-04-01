@@ -37,6 +37,7 @@ class _ReadAnnouncementState extends ConsumerState<ReadAnnouncement> {
         ),
         body: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _header(),
               const SizedBox(height: 8),

@@ -276,14 +276,14 @@ _$DepartureModelImpl _$$DepartureModelImplFromJson(Map<String, dynamic> json) =>
       passengers: (json['passengers'] as List<dynamic>)
           .map((e) => ListingBookings.fromJson(e as Map<String, dynamic>))
           .toList(),
-      vehicle: json['vehicle'] == null
-          ? null
-          : AvailableTransport.fromJson(
-              json['vehicle'] as Map<String, dynamic>),
+      vehicles: (json['vehicles'] as List<dynamic>?)
+          ?.map((e) => AssignedVehicle.fromJson(e as Map<String, dynamic>))
+          .toList(),
       arrival:
           const TimestampSerializer().fromJson(json['arrival'] as Timestamp?),
       departure:
           const TimestampSerializer().fromJson(json['departure'] as Timestamp?),
+      departureStatus: json['departureStatus'] as String?,
     );
 
 Map<String, dynamic> _$$DepartureModelImplToJson(
@@ -293,9 +293,29 @@ Map<String, dynamic> _$$DepartureModelImplToJson(
       'listingName': instance.listingName,
       'listingId': instance.listingId,
       'passengers': instance.passengers.map((e) => e.toJson()).toList(),
-      'vehicle': instance.vehicle?.toJson(),
+      'vehicles': instance.vehicles?.map((e) => e.toJson()).toList(),
       'arrival': const TimestampSerializer().toJson(instance.arrival),
       'departure': const TimestampSerializer().toJson(instance.departure),
+      'departureStatus': instance.departureStatus,
+    };
+
+_$AssignedVehicleImpl _$$AssignedVehicleImplFromJson(
+        Map<String, dynamic> json) =>
+    _$AssignedVehicleImpl(
+      vehicle: json['vehicle'] == null
+          ? null
+          : AvailableTransport.fromJson(
+              json['vehicle'] as Map<String, dynamic>),
+      passengers: (json['passengers'] as List<dynamic>?)
+          ?.map((e) => ListingBookings.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$AssignedVehicleImplToJson(
+        _$AssignedVehicleImpl instance) =>
+    <String, dynamic>{
+      'vehicle': instance.vehicle?.toJson(),
+      'passengers': instance.passengers?.map((e) => e.toJson()).toList(),
     };
 
 _$FoodServiceImpl _$$FoodServiceImplFromJson(Map<String, dynamic> json) =>

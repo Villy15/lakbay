@@ -113,6 +113,13 @@ final getBookingTasksByMemberId = StreamProvider.autoDispose
   return listingController.getBookingTasksByMemberId(memberId);
 });
 
+// getBookingTasksByContributorId
+final getBookingTasksByContributorId = StreamProvider.autoDispose
+    .family<List<BookingTask>, String>((ref, contributorId) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getBookingTasksByContributorId(contributorId);
+});
+
 // getBookingTaskByTaskId
 final getBookingTaskByTaskId = StreamProvider.autoDispose
     .family<BookingTask?, String>((ref, bookingTaskId) {
@@ -237,49 +244,47 @@ class ListingController extends StateNotifier<bool> {
     final selectedDate = _ref.read(selectedDateProvider);
     final planUid = _ref.read(currentPlanIdProvider);
     ListingBookings? updatedBooking;
-    result.fold(
-      (l) {
-        // Handle the error here
-        state = false;
-        context.pop;
-        showSnackBar(context, l.message);
-      },
-      (bookingUid) async {
-        updatedBooking = booking.copyWith(id: bookingUid);
+    result.fold((l) {
+      // Handle the error here
+      state = false;
+      context.pop;
+      showSnackBar(context, l.message);
+    }, (bookingUid) async {
+      updatedBooking = booking.copyWith(id: bookingUid);
 
-        state = false;
+      state = false;
 
-        sendNotification('Listing Booked: ${listing.title}',
-            'Dates: ${DateFormat('MMM d, H:mm').format(booking.startDate!)} - ${DateFormat('MMM d, H:mm').format(booking.endDate!)}');
+      sendNotification('Listing Booked: ${listing.title}',
+          'Dates: ${DateFormat('MMM d, H:mm').format(booking.startDate!)} - ${DateFormat('MMM d, H:mm').format(booking.endDate!)}');
 
-        booking.tasks?.forEach((element) async {
-          switch (booking.category) {
-            case 'Accommodation':
-              {
-                element = element.copyWith(
-                  roomId: booking.roomId,
-                  listingId: listing.uid,
-                  bookingId: bookingUid,
-                );
+      booking.tasks?.forEach((element) async {
+        switch (booking.category) {
+          case 'Accommodation':
+            {
+              element = element.copyWith(
+                roomId: booking.roomId,
+                listingId: listing.uid,
+                bookingId: bookingUid,
+              );
+              _ref
+                  .read(listingControllerProvider.notifier)
+                  .addBookingTask(context, listing.uid!, element);
+            }
+          case 'Transport':
+            {
+              element = element.copyWith(
+                listingId: listing.uid,
+                bookingId: bookingUid,
+              );
+              if (await _listingRepository
+                      .readBookingTasksByBookingId(listing.uid!, bookingUid)
+                      .isEmpty &&
+                  context.mounted) {
                 _ref
                     .read(listingControllerProvider.notifier)
                     .addBookingTask(context, listing.uid!, element);
               }
-            case 'Transport':
-              {
-                element = element.copyWith(
-                  listingId: listing.uid,
-                  bookingId: bookingUid,
-                );
-                if (await _listingRepository
-                        .readBookingTasksByBookingId(listing.uid!, bookingUid)
-                        .isEmpty &&
-                    context.mounted) {
-                  _ref
-                      .read(listingControllerProvider.notifier)
-                      .addBookingTask(context, listing.uid!, element);
-                }
-              }
+            }
 
             case 'Food':
             {
@@ -296,43 +301,55 @@ class ListingController extends StateNotifier<bool> {
                     .addBookingTask(context, listing.uid!, element);
               }
             }
+        }
+      });
+      if (booking.category == 'Transport') {
+        Query transportQuery = FirebaseFirestore.instance
+            .collectionGroup('availableTransport')
+            .where('listingId', isEqualTo: listing.uid);
+        final departures =
+            await _ref.read(getDeparturesByPropertiesProvider(query!).future);
+        final vehicles = await _ref
+            .read(getTransportByPropertiesProvider(transportQuery).future);
+        List<AssignedVehicle> filteredVehicles = [];
+        for (var vehicle in vehicles) {
+          if (vehicle.departureTimes!
+                  .contains(TimeOfDay.fromDateTime(booking.startDate!)) ==
+              true) {
+            filteredVehicles.add(AssignedVehicle(vehicle: vehicle));
           }
-        });
-        if (booking.category == 'Transport') {
-          final departures =
-              await _ref.read(getDeparturesByPropertiesProvider(query!).future);
-
-          debugPrint('departures: $departures');
-          if (departures.isEmpty) {
-            DepartureModel updatedDeparture = DepartureModel(
-                listingName: listing.title,
-                listingId: listing.uid,
-                passengers: [booking],
-                arrival: booking.endDate,
-                departure: booking.startDate);
-
+        }
+        debugPrint('departures: $departures');
+        if (departures.isEmpty) {
+          DepartureModel updatedDeparture = DepartureModel(
+            listingName: listing.title,
+            listingId: listing.uid,
+            passengers: [updatedBooking!],
+            arrival: updatedBooking!.endDate,
+            departure: updatedBooking!.startDate,
+            vehicles: filteredVehicles,
+          );
+          if (context.mounted) {
             _ref.read(listingControllerProvider.notifier).addDeparture(
-                // ignore: use_build_context_synchronously
-                context,
-                listing,
-                updatedBooking!,
-                updatedDeparture);
-          } else {
-            List<ListingBookings> currentPassengers = [];
-            for (var booking in departures.first.passengers) {
-              currentPassengers.add(booking);
-            }
+                context, listing, updatedBooking!, updatedDeparture);
+          }
+        } else {
+          List<ListingBookings> currentPassengers = [];
+          for (var booking in departures.first.passengers) {
             currentPassengers.add(booking);
-            DepartureModel updatedDeparture =
-                departures.first.copyWith(passengers: currentPassengers);
+          }
+          currentPassengers.add(booking);
+          DepartureModel updatedDeparture = departures.first.copyWith(
+              passengers: currentPassengers, departureStatus: 'Waiting');
+          if (context.mounted) {
             _ref
                 .read(listingControllerProvider.notifier)
-                // ignore: use_build_context_synchronously
                 .updateDeparture(context, updatedDeparture, '');
           }
         }
+      }
+      if (context.mounted) {
         _ref.read(salesControllerProvider.notifier).addSale(
-            // ignore: use_build_context_synchronously
             context,
             SaleModel(
               bookingId: bookingUid,
@@ -351,59 +368,62 @@ class ListingController extends StateNotifier<bool> {
               paymentOption: booking.paymentOption!,
               transactionType: booking.paymentOption!,
             ));
+      }
 
-        // check if the booking.startDate's time is set to 00:00:00 and if so, set it to booking.startTime
-        if (booking.startDate?.hour == 0 &&
-            booking.startDate?.minute == 0 &&
-            booking.startDate?.second == 0) {
-          DateTime mergedDate = DateTime(
-            booking.startDate!.year,
-            booking.startDate!.month,
-            booking.startDate!.day,
-            booking.startTime!.hour,
-            booking.startTime!.minute,
-          );
-
-          booking = booking.copyWith(startDate: mergedDate);
-        }
-
-        // check if the booking.endDate's time is set to 00:00:00 and if so, set it to booking.endTime
-        if (booking.endDate?.hour == 0 &&
-            booking.endDate?.minute == 0 &&
-            booking.endDate?.second == 0) {
-          DateTime mergedDate = DateTime(
-            booking.endDate!.year,
-            booking.endDate!.month,
-            booking.endDate!.day,
-            booking.endTime!.hour,
-            booking.endTime!.minute,
-          );
-
-          booking = booking.copyWith(endDate: mergedDate);
-        }
-
-        PlanActivity activity = PlanActivity(
-          // Create a random key for the activity
-          key: DateTime.now().millisecondsSinceEpoch.toString(),
-          listingId: listing.uid,
-          bookingId: bookingUid,
-          category: listing.category,
-          dateTime: selectedDate,
-          startTime: booking.startDate,
-          endTime: booking.endDate,
-          title: listing.title,
-          imageUrl: listing.images!.first.url,
-          description: listing.description,
+      // check if the booking.startDate's time is set to 00:00:00 and if so, set it to booking.startTime
+      if (booking.startDate?.hour == 0 &&
+          booking.startDate?.minute == 0 &&
+          booking.startDate?.second == 0) {
+        DateTime mergedDate = DateTime(
+          booking.startDate!.year,
+          booking.startDate!.month,
+          booking.startDate!.day,
+          booking.startTime!.hour,
+          booking.startTime!.minute,
         );
 
+        booking = booking.copyWith(startDate: mergedDate);
+      }
+
+      // check if the booking.endDate's time is set to 00:00:00 and if so, set it to booking.endTime
+      if (booking.endDate?.hour == 0 &&
+          booking.endDate?.minute == 0 &&
+          booking.endDate?.second == 0) {
+        DateTime mergedDate = DateTime(
+          booking.endDate!.year,
+          booking.endDate!.month,
+          booking.endDate!.day,
+          booking.endTime!.hour,
+          booking.endTime!.minute,
+        );
+
+        booking = booking.copyWith(endDate: mergedDate);
+      }
+
+      PlanActivity activity = PlanActivity(
+        // Create a random key for the activity
+        key: DateTime.now().millisecondsSinceEpoch.toString(),
+        listingId: listing.uid,
+        bookingId: bookingUid,
+        category: listing.category,
+        dateTime: selectedDate,
+        startTime: booking.startDate,
+        endTime: booking.endDate,
+        title: listing.title,
+        imageUrl: listing.images!.first.url,
+        description: listing.description,
+      );
+
+      if (context.mounted) {
         _ref
             .read(plansControllerProvider.notifier)
             .addActivityToPlan(planUid!, activity, context);
+
         context.pop();
         context.push('/market/${booking.category}/customer_receipt',
             extra: {'booking': updatedBooking, 'listing': listing});
-      },
-    );
+      }
+    });
   }
 
   void updateListing(BuildContext context, ListingModel listing) {
@@ -478,6 +498,12 @@ class ListingController extends StateNotifier<bool> {
   // Read bookingTasks by memberId
   Stream<List<BookingTask>> getBookingTasksByMemberId(String memberId) {
     return _listingRepository.readBookingTasksByMemberId(memberId);
+  }
+
+  // Read bookingTasks by contributorId
+  Stream<List<BookingTask>> getBookingTasksByContributorId(
+      String contributorId) {
+    return _listingRepository.readBookingTasksByContributorId(contributorId);
   }
 
   // Read bookingTasks by memberId

@@ -289,6 +289,20 @@ class ListingRepository {
     });
   }
 
+  Stream<List<BookingTask>> readBookingTasksByContributorId(String userId) {
+    Query query = FirebaseFirestore.instance.collectionGroup('bookingTasks');
+    return query
+        .where('contributorsIds', arrayContains: userId)
+        .snapshots()
+        .map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return BookingTask.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  // Read bookingtask by
+
 // read bookingtask by user id
   Stream<BookingTask?> readBookingTaskByTaskId(String bookingTaskId) {
     Query query = FirebaseFirestore.instance.collectionGroup('bookingTasks');
