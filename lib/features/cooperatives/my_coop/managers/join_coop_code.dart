@@ -291,7 +291,6 @@ class MemberListTile extends StatelessWidget {
         icon: const Icon(Icons.email),
         onPressed: () {
           // sendEmail(member.email, member.firstName, member.lastName, member.password, coop);
-          context.push('/get_location');
         },
       ),
       subtitle: Text(member.email),
