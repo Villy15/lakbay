@@ -167,7 +167,10 @@ class InboxPage extends ConsumerWidget {
                                 },
                                 title: Text(user.name),
                                 // Show the last message
-                                subtitle: Text(lastMessage(messages)!),
+                                subtitle: Text(
+                                  lastMessage(messages)!,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
 
                                 leading: CircleAvatar(
                                   radius: 20.0,

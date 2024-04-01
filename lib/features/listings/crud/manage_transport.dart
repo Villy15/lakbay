@@ -957,6 +957,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
 
     return ref.watch(getTransportByPropertiesProvider(query)).when(
         data: (List<AvailableTransport> vehicles) {
+          debugPrint('vehicles: $vehicles');
           return Stack(
             children: [
               ListView.builder(

@@ -143,6 +143,7 @@ onTapFindVehicle(
                     getDeparturesByPropertiesProvider((departureQuery)).future);
                 List<DepartureModel> todayDepartures = [];
                 List<AvailableTransport> filteredVehicles = [];
+                filteredVehicles.toList(growable: true);
                 if (departures.isNotEmpty) {
                   filteredVehicles = vehicles;
                 } else {
@@ -163,9 +164,10 @@ onTapFindVehicle(
                         .add(todayDeparture.vehicles!.first.vehicle!);
                   }
                 }
-
+                List<AvailableTransport> currentFilteredVehicles =
+                    List.from(filteredVehicles);
                 for (var departureVehicle in departureDetails.vehicles!) {
-                  for (var filteredVehicle in filteredVehicles) {
+                  for (var filteredVehicle in currentFilteredVehicles) {
                     if (filteredVehicle.vehicleNo ==
                         departureVehicle.vehicle!.vehicleNo) {
                       filteredVehicles.remove(filteredVehicle);

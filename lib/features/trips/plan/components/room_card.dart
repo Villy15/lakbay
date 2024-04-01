@@ -261,8 +261,6 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                           widget.bookings,
                                                           listing,
                                                           room);
-                                                      debugPrint(
-                                                          "This is the current user's phone number: ${currentUser!.phoneNo}");
                                                     } else {
                                                       emergencyBooking(context,
                                                           room, listing);
@@ -703,29 +701,28 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                               child: Column(
                                 children: [
                                   GestureDetector(
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.image,
-                                            color: Theme.of(context)
-                                                .iconTheme
-                                                .color),
-                                        const SizedBox(width: 15),
-                                        Expanded(
-                                          child: ImagePickerFormField(
-                                            imageUrl: profilePicLink,
-                                            initialValue: profilePicture,
-                                            onSaved: (value) {
-                                              this.setState(() {
-                                                profilePicture = value;
-                                                debugPrint(
-                                                    'this is the value: $profilePicture');
-                                              });
-                                            },
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ),
+                                      child: Row(
+                                    children: [
+                                      Icon(Icons.image,
+                                          color: Theme.of(context)
+                                              .iconTheme
+                                              .color),
+                                      const SizedBox(width: 15),
+                                      Expanded(
+                                        child: ImagePickerFormField(
+                                          imageUrl: profilePicLink,
+                                          initialValue: profilePicture,
+                                          onSaved: (value) {
+                                            this.setState(() {
+                                              profilePicture = value;
+                                              debugPrint(
+                                                  'this is the value: $profilePicture');
+                                            });
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  )),
                                   const SizedBox(height: 20),
                                   TextFormField(
                                       controller: emailController,
@@ -819,20 +816,31 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                       valueListenable: governmentIdNotifier,
                                       builder: (context, governmentId, child) {
                                         return governmentId == null
-                                            ? const Text('Upload a valid Government ID ')
-                                            : Text('Government ID selected: ${path.basename(governmentId.path)}');
+                                            ? const Text(
+                                                'Upload a valid Government ID ')
+                                            : Text(
+                                                'Government ID selected: ${path.basename(governmentId.path)}');
                                       },
                                     ),
                                     onTap: () async {
-                                      FilePickerResult? result = await FilePicker.platform.pickFiles(
+                                      FilePickerResult? result =
+                                          await FilePicker.platform.pickFiles(
                                         type: FileType.custom,
-                                        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc'],
+                                        allowedExtensions: [
+                                          'jpg',
+                                          'jpeg',
+                                          'png',
+                                          'pdf',
+                                          'doc'
+                                        ],
                                       );
 
                                       if (result != null) {
                                         this.setState(() {
-                                          governmentId = File(result.files.single.path!);
-                                          governmentIdNotifier.value = governmentId;
+                                          governmentId =
+                                              File(result.files.single.path!);
+                                          governmentIdNotifier.value =
+                                              governmentId;
                                         });
                                       }
                                     },
