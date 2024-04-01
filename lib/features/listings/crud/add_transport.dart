@@ -149,87 +149,84 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             ),
             onPressed: () {
               showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Submit Listing'),
-                    content: const Text(
-                        'Are you sure you want to submit this listing?'),
-                    actions: [
-                      FilledButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0)
-                          )
-                        ),
-                        child: const Text('Cancel'),
-                      ),
-                      FilledButton(
-                        onPressed: () {
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                        title: const Text('Submit Listing'),
+                        content: const Text(
+                            'Are you sure you want to submit this listing?'),
+                        actions: [
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
+                            child: const Text('Cancel'),
+                          ),
+                          FilledButton(
+                            onPressed: () {
+                              AvailableTransport transport = AvailableTransport(
+                                vehicleNo: vehicles,
+                                guests: guests,
+                                luggage: luggage,
+                                available: true,
+                                workingDays: workingDays,
+                                startTime: startDate,
+                                endTime: endDate,
+                                departureTimes: _departureTime.isEmpty
+                                    ? null
+                                    : _departureTime,
+                                // if travel time is empty, set to null
+                                priceByHour: _byHourFeeController.text.isEmpty
+                                    ? null
+                                    : num.parse(_byHourFeeController.text),
+                              );
 
-                          AvailableTransport transport = AvailableTransport(
-                            vehicleNo: vehicles,
-                            guests: guests,
-                            luggage: luggage,
-                            available: true,
-                            workingDays: workingDays,
-                            startTime: startDate,
-                            endTime: endDate,
-                            departureTimes: _departureTime.isEmpty ? null : _departureTime,
-                            // if travel time is empty, set to null
-                            priceByHour: _byHourFeeController.text.isEmpty
-                                ? null
-                                : num.parse(_byHourFeeController.text),
-                          );
+                              ListingModel listingModel = ListingModel(
+                                address: _addressController.text,
+                                category: widget.category,
+                                city: widget.coop.city,
+                                cooperative: ListingCooperative(
+                                    cooperativeId: widget.coop.uid!,
+                                    cooperativeName: widget.coop.name),
+                                duration: travelDuration,
+                                description: _descriptionController.text,
+                                driverIds: drivers.keys.toList(),
+                                driverNames: drivers.values.toList(),
+                                price: num.parse(_feeController.text),
+                                province: widget.coop.province,
+                                publisherId: ref.read(userProvider)!.uid,
+                                pickUp: _pickupController.text,
+                                destination: _destinationController.text,
+                                title: _titleController.text,
+                                fixedTasks: fixedTasks,
+                                type: type,
+                                publisherName: ref.read(userProvider)!.name,
+                                images: _images
+                                    ?.map((e) => ListingImages(path: e.path))
+                                    .toList(),
+                                availableTransport: transport,
+                                cancellationPeriod: num.parse(
+                                    _cancellationPeriodController.text),
+                                cancellationRate: num.parse(
+                                        (_cancellationRateController.text)) /
+                                    100,
+                              );
 
-                          ListingModel listingModel = ListingModel(
-                            address: _addressController.text,
-                            category: widget.category,
-                            city: widget.coop.city,
-                            cooperative: ListingCooperative(
-                                cooperativeId: widget.coop.uid!,
-                                cooperativeName: widget.coop.name),
-                            duration: travelDuration,
-                            description: _descriptionController.text,
-                            driverIds: drivers.keys.toList(),
-                            driverNames: drivers.values.toList(),
-                            price: num.parse(_feeController.text),
-                            province: widget.coop.province,
-                            publisherId: ref.read(userProvider)!.uid,
-                            pickUp: _pickupController.text,
-                            destination: _destinationController.text,
-                            title: _titleController.text,
-                            fixedTasks: fixedTasks,
-                            type: type,
-                            publisherName: ref.read(userProvider)!.name,
-                            images:
-                                _images?.map((e) => ListingImages(path: e.path)).toList(),
-                            availableTransport: transport,
-                            cancellationPeriod:
-                                num.parse(_cancellationPeriodController.text),
-                            cancellationRate:
-                                num.parse((_cancellationRateController.text)) / 100,
-                          );
-
-                          ref
-                              .read(saveListingProvider.notifier)
-                              .saveListingProvider(listingModel);
-                          submitAddListing(listingModel);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0)
-                          )
-                        ),
-                        child: const Text('Submit'),
-                      ),
-                    ]
-                  );
-                }
-              );
+                              ref
+                                  .read(saveListingProvider.notifier)
+                                  .saveListingProvider(listingModel);
+                              submitAddListing(listingModel);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
+                            child: const Text('Submit'),
+                          ),
+                        ]);
+                  });
             },
             child: Text(
               'Submit',
@@ -556,7 +553,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
     return SingleChildScrollView(
       child: StatefulBuilder(builder: (context, setState) {
         return SizedBox(
-          height: MediaQuery.sizeOf(context).height * .51,
+          height: MediaQuery.sizeOf(context).height * .70,
           width: MediaQuery.sizeOf(context).width * 1,
           child: Column(
             children: [
@@ -614,10 +611,10 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                           committeeName: committeeController.text,
                           coopUid: ref.watch(userProvider)!.currentCoop!,
                         )).future);
-          
+
                         members = members!
-                            .where(
-                                (member) => !assignedNames.contains(member.name))
+                            .where((member) =>
+                                !assignedNames.contains(member.name))
                             .toList();
                         if (context.mounted) {
                           return showModalBottomSheet(
@@ -654,10 +651,10 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                             onTap: () {
                                               setState(
                                                 () {
-                                                  assignedIds
-                                                      .add(members![index].uid!);
-                                                  assignedNames
-                                                      .add(members![index].name);
+                                                  assignedIds.add(
+                                                      members![index].uid!);
+                                                  assignedNames.add(
+                                                      members![index].name);
                                                 },
                                               );
                                               context.pop();
@@ -707,8 +704,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                               onPressed: () {
                                 setState(
                                   () {
-                                    assignedIds.remove(members![members!.indexWhere(
-                                            (element) =>
+                                    assignedIds.remove(members![members!
+                                            .indexWhere((element) =>
                                                 element.name ==
                                                 assignedNames[index])]
                                         .uid!);

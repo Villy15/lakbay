@@ -717,28 +717,28 @@ class _CustomerTransportationState
       const Divider(),
 
       // if the type is public, add the departure times
-      if (widget.listing.type == 'Public') ...[
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: DisplayText(
-            text: 'Departure Times: ',
-            lines: 1,
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 32.0),
-          child: Text(
-            widget.listing.availableTransport!.departureTimes!
-                .map((e) => e.format(context))
-                .join(', '),
-            style: const TextStyle(fontSize: 12),
-          ),
-        ),
-        const Divider(),
-      ],
+      // if (widget.listing.type == 'Public') ...[
+      // Padding(
+      //   padding: const EdgeInsets.only(left: 16.0),
+      //   child: DisplayText(
+      //     text: 'Departure Times: ',
+      //     lines: 1,
+      //     style: TextStyle(
+      //       fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
+      //     ),
+      //   ),
+      // ),
+      // // Padding(
+      // //   padding: const EdgeInsets.only(left: 32.0),
+      // //   child: Text(
+      // //     widget.listing.availableTransport!.departureTimes!
+      // //         .map((e) => e.format(context))
+      // //         .join(', '),
+      // //     style: const TextStyle(fontSize: 12),
+      // //   ),
+      // // ),
+      // const Divider(),
+      // ],
 
       ListTile(
         leading: SizedBox(

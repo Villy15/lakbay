@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
@@ -14,6 +17,7 @@ import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/models/user_model.dart';
 
 class BookingsAccomodationCustomer extends ConsumerStatefulWidget {
   final ListingModel listing;
@@ -34,6 +38,19 @@ class _BookingsAccomodationCustomerState
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
+  }
+
+  void createRoom(BuildContext context, String senderId, UserModel user) async {
+    // Create a room
+    final room = await FirebaseChatCore.instance.createRoom(
+      types.User(id: senderId),
+    );
+
+    // ignore: use_build_context_synchronously
+    context.push(
+      '/inbox/id/$senderId',
+      extra: room,
+    );
   }
 
   @override
@@ -73,7 +90,10 @@ class _BookingsAccomodationCustomerState
                   "message": {
                     "icon": Icons.chat_outlined,
                     "title": "Message Host",
-                    "action": () => context.push("/chat")
+                    "action": () {
+                      createRoom(context, widget.listing.publisherId,
+                          ref.watch(userProvider)!);
+                    }
                   },
                 };
 
