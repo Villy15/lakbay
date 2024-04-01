@@ -523,8 +523,24 @@ class _BookingsAccomodationCustomerState
         builder: (context) {
           return AlertDialog(
             title: const Text('Check Out'),
-            content: const Column(
-              children: [Text('')],
+            content: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.2,
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: const Column(
+                children: [
+                  Text(
+                      'You are about to check out of your accommodation. Please '
+                      'make sure you have packed all your belongings and have '
+                      'cleaned up the place before checking out.'),
+                  SizedBox(height: 20),
+                  Text(
+                    'Are you sure you want to check out? '
+                    'You will not be able to undo this action.',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.red),
+                  )
+                ],
+              ),
             ),
             actions: [
               FilledButton(
