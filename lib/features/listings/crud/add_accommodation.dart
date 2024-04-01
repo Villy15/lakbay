@@ -41,7 +41,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   // initial values
   String type = 'Nature-Based';
   int activeStep = 0;
-  int upperBound = 6;
+  int upperBound = 5;
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
@@ -312,10 +312,6 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
               Icons.policy,
               color: Theme.of(context).colorScheme.background,
             ),
-            Icon(
-              Icons.summarize_outlined,
-              color: Theme.of(context).colorScheme.background,
-            ),
           ],
 
           // activeStep property set to activeStep variable defined above.
@@ -379,7 +375,41 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              submitAddListing();
+              // show an alert dialog to ask if the user is ready to submit his listing
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Submit Listing'),
+                    content: const Text(
+                        'Are you sure you want to submit this listing?'),
+                    actions: [
+                      FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0)
+                          )
+                        ),
+                        child: const Text('Cancel'),
+                      ),
+                      FilledButton(
+                        onPressed: () {
+                          submitAddListing();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0)
+                          )
+                        ),
+                        child: const Text('Submit'),
+                      ),
+                    ]
+                  );
+                }
+              );
             },
             child: Text(
               'Submit',
@@ -1857,8 +1887,6 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
         return addFixedTasks(context);
       case 5:
         return addPolicies(context);
-      case 6:
-        return reviewListing(context);
 
       default:
         return chooseType(context);

@@ -14,8 +14,6 @@ import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/listing_provider.dart';
-import 'package:lakbay/features/location/map_repository.dart';
-import 'package:lakbay/features/tasks/widgets/today_task_card.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
@@ -38,7 +36,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   // stepper
   int activeStep = 0;
-  int upperBound = 8;
+  int upperBound = 7;
 
   // initial values
   String type = 'Public';
@@ -57,19 +55,14 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   List<bool> workingDays = List.filled(7, false);
   List<BookingTask>? fixedTasks = [];
   Map<String, String> drivers = {};
-  final String _addressDestination = '';
-  final String _addressPickup = '';
-  final String _addressLocation = '';
 
   List<AvailableTransport> availableTransports = [];
   List<File>? _images = [];
   int departures = 0;
-  final List<TextEditingController> _departureController = [];
   final List<TimeOfDay> _departureTime = [];
   bool _showByHourFeeField = false;
 
   // controllers
-  final TextEditingController _travelTimeController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _feeController = TextEditingController();
@@ -155,54 +148,88 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              AvailableTransport transport = AvailableTransport(
-                vehicleNo: vehicles,
-                guests: guests,
-                luggage: luggage,
-                available: true,
-                workingDays: workingDays,
-                startTime: startDate,
-                endTime: endDate,
-                departureTimes: _departureTime.isEmpty ? null : _departureTime,
-                // if travel time is empty, set to null
-                priceByHour: _byHourFeeController.text.isEmpty
-                    ? null
-                    : num.parse(_byHourFeeController.text),
-              );
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Submit Listing'),
+                    content: const Text(
+                        'Are you sure you want to submit this listing?'),
+                    actions: [
+                      FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0)
+                          )
+                        ),
+                        child: const Text('Cancel'),
+                      ),
+                      FilledButton(
+                        onPressed: () {
 
-              ListingModel listingModel = ListingModel(
-                address: _addressController.text,
-                category: widget.category,
-                city: widget.coop.city,
-                cooperative: ListingCooperative(
-                    cooperativeId: widget.coop.uid!,
-                    cooperativeName: widget.coop.name),
-                duration: travelDuration,
-                description: _descriptionController.text,
-                driverIds: drivers.keys.toList(),
-                driverNames: drivers.values.toList(),
-                price: num.parse(_feeController.text),
-                province: widget.coop.province,
-                publisherId: ref.read(userProvider)!.uid,
-                pickUp: _pickupController.text,
-                destination: _destinationController.text,
-                title: _titleController.text,
-                fixedTasks: fixedTasks,
-                type: type,
-                publisherName: ref.read(userProvider)!.name,
-                images:
-                    _images?.map((e) => ListingImages(path: e.path)).toList(),
-                availableTransport: transport,
-                cancellationPeriod:
-                    num.parse(_cancellationPeriodController.text),
-                cancellationRate:
-                    num.parse((_cancellationRateController.text)) / 100,
-              );
+                          AvailableTransport transport = AvailableTransport(
+                            vehicleNo: vehicles,
+                            guests: guests,
+                            luggage: luggage,
+                            available: true,
+                            workingDays: workingDays,
+                            startTime: startDate,
+                            endTime: endDate,
+                            departureTimes: _departureTime.isEmpty ? null : _departureTime,
+                            // if travel time is empty, set to null
+                            priceByHour: _byHourFeeController.text.isEmpty
+                                ? null
+                                : num.parse(_byHourFeeController.text),
+                          );
 
-              ref
-                  .read(saveListingProvider.notifier)
-                  .saveListingProvider(listingModel);
-              submitAddListing(listingModel);
+                          ListingModel listingModel = ListingModel(
+                            address: _addressController.text,
+                            category: widget.category,
+                            city: widget.coop.city,
+                            cooperative: ListingCooperative(
+                                cooperativeId: widget.coop.uid!,
+                                cooperativeName: widget.coop.name),
+                            duration: travelDuration,
+                            description: _descriptionController.text,
+                            driverIds: drivers.keys.toList(),
+                            driverNames: drivers.values.toList(),
+                            price: num.parse(_feeController.text),
+                            province: widget.coop.province,
+                            publisherId: ref.read(userProvider)!.uid,
+                            pickUp: _pickupController.text,
+                            destination: _destinationController.text,
+                            title: _titleController.text,
+                            fixedTasks: fixedTasks,
+                            type: type,
+                            publisherName: ref.read(userProvider)!.name,
+                            images:
+                                _images?.map((e) => ListingImages(path: e.path)).toList(),
+                            availableTransport: transport,
+                            cancellationPeriod:
+                                num.parse(_cancellationPeriodController.text),
+                            cancellationRate:
+                                num.parse((_cancellationRateController.text)) / 100,
+                          );
+
+                          ref
+                              .read(saveListingProvider.notifier)
+                              .saveListingProvider(listingModel);
+                          submitAddListing(listingModel);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0)
+                          )
+                        ),
+                        child: const Text('Submit'),
+                      ),
+                    ]
+                  );
+                }
+              );
             },
             child: Text(
               'Submit',
@@ -283,10 +310,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(Icons.policy, color: Theme.of(context).colorScheme.background),
-            Icon(
-              Icons.summarize_outlined,
-              color: Theme.of(context).colorScheme.background,
-            ),
           ],
 
           // activeStep property set to activeStep variable defined above.
@@ -532,199 +555,207 @@ class _AddTransportState extends ConsumerState<AddTransport> {
     List<CooperativeMembers>? members;
     return SingleChildScrollView(
       child: StatefulBuilder(builder: (context, setState) {
-        return Column(
-          children: [
-            Column(children: [
-              TextFormField(
-                maxLines: null,
-                controller: taskNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Task Name*',
-                  border: OutlineInputBorder(),
-                  floatingLabelBehavior: FloatingLabelBehavior
-                      .always, // Keep the label always visible
-                  hintText: "e.g., Clean the car",
+        return SizedBox(
+          height: MediaQuery.sizeOf(context).height * .51,
+          width: MediaQuery.sizeOf(context).width * 1,
+          child: Column(
+            children: [
+              Column(children: [
+                TextFormField(
+                  maxLines: null,
+                  controller: taskNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Task Name*',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., Clean the car",
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                controller: committeeController,
-                maxLines: 1,
-                decoration: const InputDecoration(
-                  labelText: 'Committee Assigned*',
-                  border: OutlineInputBorder(),
-                  floatingLabelBehavior: FloatingLabelBehavior
-                      .always, // Keep the label always visible
-                  suffixIcon:
-                      Icon(Icons.arrow_drop_down), // Dropdown arrow icon
+                const SizedBox(
+                  height: 10,
                 ),
-                readOnly: true,
-                enabled: false,
-                onTap: () {},
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Column(
-                children: [
-                  TextFormField(
-                    maxLines: 1,
-                    decoration: const InputDecoration(
-                        labelText: 'Members Assigned*',
-                        border: OutlineInputBorder(),
-                        floatingLabelBehavior: FloatingLabelBehavior
-                            .always, // Keep the label always visible
-                        suffixIcon: Icon(Icons.arrow_drop_down),
-                        hintText:
-                            "Press to select member" // Dropdown arrow icon
-                        ),
-                    readOnly: true,
-                    canRequestFocus: false,
-                    onTap: () async {
-                      members = await ref.read(
-                          getAllMembersInCommitteeProvider(CommitteeParams(
-                        committeeName: committeeController.text,
-                        coopUid: ref.watch(userProvider)!.currentCoop!,
-                      )).future);
-
-                      members = members!
-                          .where(
-                              (member) => !assignedNames.contains(member.name))
-                          .toList();
-                      if (context.mounted) {
-                        return showModalBottomSheet(
-                          context: context,
-                          builder: (builder) {
-                            return Container(
-                              padding: const EdgeInsets.all(
-                                  10.0), // Padding for overall container
-                              child: Column(
-                                children: [
-                                  // Optional: Add a title or header for the modal
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10.0),
-                                    child: Text(
-                                      "Members (${committeeController.text})",
-                                      style: const TextStyle(
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.bold,
+                TextFormField(
+                  controller: committeeController,
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    labelText: 'Committee Assigned*',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    suffixIcon:
+                        Icon(Icons.arrow_drop_down), // Dropdown arrow icon
+                  ),
+                  readOnly: true,
+                  enabled: false,
+                  onTap: () {},
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Column(
+                  children: [
+                    TextFormField(
+                      maxLines: 1,
+                      decoration: const InputDecoration(
+                          labelText: 'Members Assigned*',
+                          border: OutlineInputBorder(),
+                          floatingLabelBehavior: FloatingLabelBehavior
+                              .always, // Keep the label always visible
+                          suffixIcon: Icon(Icons.arrow_drop_down),
+                          hintText:
+                              "Press to select member" // Dropdown arrow icon
+                          ),
+                      readOnly: true,
+                      canRequestFocus: false,
+                      onTap: () async {
+                        members = await ref.read(
+                            getAllMembersInCommitteeProvider(CommitteeParams(
+                          committeeName: committeeController.text,
+                          coopUid: ref.watch(userProvider)!.currentCoop!,
+                        )).future);
+          
+                        members = members!
+                            .where(
+                                (member) => !assignedNames.contains(member.name))
+                            .toList();
+                        if (context.mounted) {
+                          return showModalBottomSheet(
+                            context: context,
+                            builder: (builder) {
+                              return Container(
+                                padding: const EdgeInsets.all(
+                                    10.0), // Padding for overall container
+                                child: Column(
+                                  children: [
+                                    // Optional: Add a title or header for the modal
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0),
+                                      child: Text(
+                                        "Members (${committeeController.text})",
+                                        style: const TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: ListView.builder(
-                                      itemCount: members!.length,
-                                      itemBuilder: (context, index) {
-                                        return ListTile(
-                                          title: Text(
-                                            members![index].name,
-                                            style: const TextStyle(
-                                                fontSize:
-                                                    16.0), // Adjust font size
-                                          ),
-                                          onTap: () {
-                                            setState(
-                                              () {
-                                                assignedIds
-                                                    .add(members![index].uid!);
-                                                assignedNames
-                                                    .add(members![index].name);
-                                              },
-                                            );
-                                            context.pop();
-                                          },
-                                          // Optional: Add trailing icons or actions
-                                        );
-                                      },
+                                    Expanded(
+                                      child: ListView.builder(
+                                        itemCount: members!.length,
+                                        itemBuilder: (context, index) {
+                                          return ListTile(
+                                            title: Text(
+                                              members![index].name,
+                                              style: const TextStyle(
+                                                  fontSize:
+                                                      16.0), // Adjust font size
+                                            ),
+                                            onTap: () {
+                                              setState(
+                                                () {
+                                                  assignedIds
+                                                      .add(members![index].uid!);
+                                                  assignedNames
+                                                      .add(members![index].name);
+                                                },
+                                              );
+                                              context.pop();
+                                            },
+                                            // Optional: Add trailing icons or actions
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height * .13,
+                      width: double.infinity,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: assignedNames.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            dense: true,
+                            contentPadding: const EdgeInsets.all(0),
+                            horizontalTitleGap: 8,
+                            leading: Text('[${index + 1}]'),
+                            title: Text(
+                              assignedNames[index],
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            );
-                          },
-                        );
-                      }
-                    },
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: assignedNames.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        dense: true,
-                        contentPadding: const EdgeInsets.all(0),
-                        horizontalTitleGap: 8,
-                        leading: Text('[${index + 1}]'),
-                        title: Text(
-                          assignedNames[index],
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.black,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(
-                            Icons.close,
-                            color: Colors.black,
-                            size: 16,
-                          ), // 'X' icon
-                          onPressed: () {
-                            setState(
-                              () {
-                                assignedIds.remove(members![members!.indexWhere(
-                                        (element) =>
-                                            element.name ==
-                                            assignedNames[index])]
-                                    .uid!);
-                                assignedNames.removeAt(index);
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.black,
+                                size: 16,
+                              ), // 'X' icon
+                              onPressed: () {
+                                setState(
+                                  () {
+                                    assignedIds.remove(members![members!.indexWhere(
+                                            (element) =>
+                                                element.name ==
+                                                assignedNames[index])]
+                                        .uid!);
+                                    assignedNames.removeAt(index);
+                                  },
+                                );
                               },
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  )
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ]),
+              const SizedBox(height: 65),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FilledButton(
+                      onPressed: () {
+                        context.pop();
+                      },
+                      child: const Text('Close')),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  FilledButton(
+                      onPressed: () {
+                        this.setState(() {
+                          fixedTasks?.add(BookingTask(
+                              listingName: _titleController.text,
+                              status: 'Incomplete',
+                              assignedIds: assignedIds,
+                              assignedNames: assignedNames,
+                              committee: committeeController.text,
+                              complete: false,
+                              openContribution: false,
+                              name: taskNameController.text));
+                        });
+                        context.pop();
+                      },
+                      child: const Text("Add Task")),
                 ],
               ),
-            ]),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FilledButton(
-                    onPressed: () {
-                      context.pop();
-                    },
-                    child: const Text('Close')),
-                const SizedBox(
-                  width: 10,
-                ),
-                FilledButton(
-                    onPressed: () {
-                      this.setState(() {
-                        fixedTasks?.add(BookingTask(
-                            listingName: _titleController.text,
-                            status: 'Incomplete',
-                            assignedIds: assignedIds,
-                            assignedNames: assignedNames,
-                            committee: committeeController.text,
-                            complete: false,
-                            openContribution: false,
-                            name: taskNameController.text));
-                      });
-                      context.pop();
-                    },
-                    child: const Text("Add Task")),
-              ],
-            ),
-          ],
+            ],
+          ),
         );
       }),
     );
@@ -1452,8 +1483,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         return addFixedTasks(context);
       case 7:
         return addPolicies(context);
-      case 8:
-        return reviewListing(context);
       default:
         return chooseType(context);
     }
@@ -1648,7 +1677,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             ),
           ),
           SizedBox(
-            height: MediaQuery.sizeOf(context).height * .15,
+            height: MediaQuery.sizeOf(context).height * .16,
+            width: MediaQuery.sizeOf(context).width * 4,
             child: departureTimes.isNotEmpty
                 ? ListView.builder(
                     shrinkWrap: true,
