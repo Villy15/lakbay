@@ -210,21 +210,19 @@ class _CustomerTransportCheckoutState
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (widget.booking.startDate ==
-                                      widget.booking.endDate) ...[
+                                  // if booking start date and time is the same as the end date and time
+
+                                  
+                                  if (_startDate.day ==
+                                      _endDate.day) ...[
                                     const Text('Date',
                                         style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold)),
                                     Text(DateFormat.yMMMd().format(_startDate)),
-                                    if (widget.booking.startTime != null) ...[
-                                      Text(_formatTimeOfDay(
-                                          widget.booking.startTime!)),
-
-                                      // compute thet travel time to startTime
-                                      Text(_formatTimeOfDay(
-                                          widget.booking.endTime!))
-                                    ]
+                                    Text(
+                                      '${DateFormat.jm().format(_startDate)} - ${DateFormat.jm().format(_endDate)}',
+                                    )
                                   ] else ...[
                                     Text(widget.booking.typeOfTrip!,
                                         style: const TextStyle(
