@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/location/map_repository.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -119,6 +123,12 @@ onTapFindVehicle(
             ),
             FilledButton(
               onPressed: () async {
+                final mapRepository = ref.read(mapRepositoryProvider);
+
+                final Position position = await _getCurrentLocation();
+                final List<Placemark> placemarks =
+                    await mapRepository.getAddressFromLatLng(
+                        position.latitude, position.longitude);
                 Query query = FirebaseFirestore.instance
                     .collectionGroup('availableTransport')
                     .where('listingId',
@@ -152,61 +162,135 @@ onTapFindVehicle(
                         .add(todayDeparture.vehicles!.first.vehicle!);
                   }
                 }
-
                 context.mounted
                     ? showDialog(
                         context: context,
                         builder: (context) {
                           return AlertDialog(
+                            contentPadding: const EdgeInsets.all(0),
                             title: const Text('Search Vehicle'),
                             content: Container(
-                              height: MediaQuery.of(context).size.height * 0.3,
+                              height: MediaQuery.of(context).size.height * 0.6,
                               width: MediaQuery.of(context).size.width,
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 15),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: filteredVehicles.length,
-                                    itemBuilder: (context, vehicleIndex) {
-                                      final vehicle =
-                                          filteredVehicles[vehicleIndex];
-                                      return ListTile(
-                                        dense: true,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 8),
-                                        horizontalTitleGap: 10,
-                                        title: Text(
-                                          "Vehicle No: ${vehicle.vehicleNo}",
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                        subtitle: Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .start, // Align content to the right
-                                          children: [
-                                            Text(
-                                              'Capacity: ${vehicle.guests} | ',
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w300),
-                                            ),
-                                            Text(
-                                              'Luggage: ${vehicle.luggage}',
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w300),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(
-                                            Icons.arrow_forward_ios_rounded),
-                                      );
-                                    },
-                                  ),
-                                ],
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.sizeOf(context).height *
+                                              .4,
+                                      width: MediaQuery.sizeOf(context).width,
+                                      child: MapWidget(
+                                          address: placemarks.first.street
+                                              .toString()),
+                                    ),
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount: filteredVehicles.length,
+                                      itemBuilder: (context, vehicleIndex) {
+                                        final vehicle =
+                                            filteredVehicles[vehicleIndex];
+                                        return ListTile(
+                                          onTap: () async {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                        "Request Rescue"),
+                                                    content: Text(
+                                                        'Request to be rescued by Vehicle No: ${vehicle.vehicleNo} at your current location'),
+                                                    actions: [
+                                                      FilledButton(
+                                                        onPressed: () {
+                                                          context.pop();
+                                                        },
+                                                        child:
+                                                            const Text('Close'),
+                                                      ),
+                                                      FilledButton(
+                                                          onPressed: () async {
+                                                            DepartureModel rescureDeparture = departureDetails.copyWith(
+                                                                destination:
+                                                                    departureDetails
+                                                                        .destination,
+                                                                pickUp:
+                                                                    placemarks
+                                                                        .first
+                                                                        .street,
+                                                                departure:
+                                                                    DateTime
+                                                                        .now(),
+                                                                departureStatus:
+                                                                    'Emergency');
+                                                            ListingModel
+                                                                listing =
+                                                                await ref.read(
+                                                                    getListingProvider(
+                                                                            rescureDeparture.listingId!)
+                                                                        .future);
+                                                            if (context
+                                                                .mounted) {
+                                                              ref
+                                                                  .read(listingControllerProvider
+                                                                      .notifier)
+                                                                  .addDeparture(
+                                                                      context,
+                                                                      listing,
+                                                                      rescureDeparture);
+                                                              context.pop();
+                                                            }
+                                                          },
+                                                          child: const Text(
+                                                              'Request'))
+                                                    ],
+                                                  );
+                                                }).then((value) {
+                                              context.pop();
+                                            });
+                                          },
+                                          dense: true,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 8),
+                                          horizontalTitleGap: 10,
+                                          title: Text(
+                                            "Vehicle No: ${vehicle.vehicleNo}",
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                          subtitle: Row(
+                                            mainAxisAlignment: MainAxisAlignment
+                                                .start, // Align content to the right
+                                            children: [
+                                              Text(
+                                                'Capacity: ${vehicle.guests} | ',
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w300),
+                                              ),
+                                              Text(
+                                                'Luggage: ${vehicle.luggage}',
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w300),
+                                              ),
+                                            ],
+                                          ),
+                                          trailing: const Icon(
+                                              Icons.arrow_forward_ios_rounded),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             actions: [
@@ -308,4 +392,28 @@ Future<dynamic> onTapFindRoomReplacement(
           ],
         );
       });
+}
+
+Future<Position> _getCurrentLocation() async {
+  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    throw Exception('Location services are disabled.');
+  }
+  LocationPermission permission = await Geolocator.checkPermission();
+
+  if (permission == LocationPermission.deniedForever) {
+    throw Exception(
+        'Location permissions are permantly denied, we cannot request permissions.');
+  }
+
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission != LocationPermission.whileInUse &&
+        permission != LocationPermission.always) {
+      throw Exception(
+          'Location permissions are denied (actual value: $permission).');
+    }
+  }
+
+  return await Geolocator.getCurrentPosition();
 }

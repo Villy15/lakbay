@@ -60,7 +60,7 @@ class MapWidgetState extends State<MapWidget> {
                 Circle(
                   circleId: const CircleId('circle_1'),
                   center: snapshot.data!,
-                  radius: 400,
+                  radius: 50,
                   fillColor:
                       Theme.of(context).colorScheme.primary.withOpacity(0.2),
                   strokeColor: Theme.of(context).colorScheme.primary,

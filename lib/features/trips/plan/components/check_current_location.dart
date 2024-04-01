@@ -20,83 +20,38 @@ class _CheckCurrentLocationState extends ConsumerState<CheckCurrentLocation> {
     // to store the longitude and latitude
     // store the address
     String address = '';
-    return Scaffold(
-      appBar: AppBar(
-          leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.of(context).pop();
-              }),
-          title: const Text('Check Current Location')),
-      body: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-        return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(children: <Widget>[
-              const Text('Check Current Location'),
-              ElevatedButton(
-                  onPressed: () async {
-                    final Position position = await _getCurrentLocation();
+    return Scaffold(body:
+        StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+      return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(children: <Widget>[
+            const Text('Check Current Location'),
+            ElevatedButton(
+                onPressed: () async {
+                  final Position position = await _getCurrentLocation();
+                  // print the latitude and longitude
+                  debugPrint('latitude: ${position.latitude}');
+                  debugPrint('longitude: ${position.longitude}');
 
-                    // print the latitude and longitude
-                    debugPrint('latitude: ${position.latitude}');
-                    debugPrint('longitude: ${position.longitude}');
+                  // convert the longitude and latitude to address
+                  final List<Placemark> placemarks =
+                      await mapRepository.getAddressFromLatLng(
+                          position.latitude, position.longitude);
 
-                    // convert the longitude and latitude to address
-                    final List<Placemark> placemarks = await mapRepository
-                        .getAddressFromLatLng(
-                            position.latitude, position.longitude);
+                  // print the address
+                  debugPrint('address: ${placemarks.first.street}');
 
-                    // print the address
-                    debugPrint('address: ${placemarks.first.street}');
-
-                    // store the address
-                    setState(() {
-                      address = placemarks.first.street.toString();
-                    });
-                  },
-                  child: const Text('Get Location')),
-              // display the map widget
-              const SizedBox(height: 10),
-              SizedBox(
-                  height: 400,
-                  child: MapWidget(address: address))
-            ]));
-      })
-      // body: Padding(
-      //     padding: const EdgeInsets.symmetric(horizontal: 10),
-      //     child: Column(children: <Widget>[
-      //       const Text('Check Current Location'),
-      //       ElevatedButton(
-      //           onPressed: () async {
-      //             final Position position = await _getCurrentLocation();
-
-      //             // print the latitude and longitude
-      //             debugPrint('latitude: ${position.latitude}');
-      //             debugPrint('longitude: ${position.longitude}');
-
-      //             // convert the longitude and latitude to address
-      //             final List<Placemark> placemarks = await mapRepository
-      //                 .getAddressFromLatLng(position.latitude, position.longitude);
-
-      //             // print the address
-      //             debugPrint('address: ${placemarks.first.street}');
-
-      //             // store the address
-      //             setState(() {
-      //               address = placemarks.first.street.toString();
-      //             });
-      //           },
-      //           child: const Text('Get Location')),
-      //       // display the map widget
-      //       const SizedBox(height: 10),
-      //       SizedBox(
-      //         height: 400,
-      //         child: MapWidget(address: address)
-      //       )
-
-      //     ])));
-    );
+                  // store the address
+                  setState(() {
+                    address = placemarks.first.street.toString();
+                  });
+                },
+                child: const Text('Get Location')),
+            // display the map widget
+            const SizedBox(height: 10),
+            SizedBox(height: 400, child: MapWidget(address: address))
+          ]));
+    }));
   }
 
   Future<Position> _getCurrentLocation() async {
