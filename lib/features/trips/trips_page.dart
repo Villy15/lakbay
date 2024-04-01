@@ -80,10 +80,16 @@ class _TripsPageState extends ConsumerState<TripsPage> {
             children: [
               ref.watch(readPlansByUserIdProvider(user?.uid ?? '')).when(
                     data: (plans) {
+                      List<PlanModel> filteredPlans = [];
+                      for (var plan in plans) {
+                        if (plan.tripStatus != 'Completed') {
+                          filteredPlans.add(plan);
+                        }
+                      }
                       // Make plans empty for testing
                       // plans = [];
 
-                      if (plans.isEmpty) {
+                      if (filteredPlans.isEmpty) {
                         return Padding(
                           // Use screen size to center the content
                           padding: EdgeInsets.only(

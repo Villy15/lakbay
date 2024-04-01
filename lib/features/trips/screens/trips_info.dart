@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/plan_model.dart';
 
@@ -141,7 +142,13 @@ class _TripsInfoState extends ConsumerState<TripsInfo> {
                   SizedBox(
                     width: MediaQuery.sizeOf(context).width / 1.2,
                     child: FilledButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        PlanModel updatedPlan =
+                            widget.plan.copyWith(tripStatus: 'Completed');
+                        ref
+                            .read(plansControllerProvider.notifier)
+                            .updatePlan(updatedPlan, context);
+                      },
                       child: const Text('Complete Trip'),
                     ),
                   ),
@@ -156,12 +163,17 @@ class _TripsInfoState extends ConsumerState<TripsInfo> {
                 children: [
                   const Icon(Icons.location_on),
                   const SizedBox(width: 8),
-                  Text(
-                    widget.plan.location,
-                    style: const TextStyle(
-                      fontSize: 16.0,
+                  Expanded(
+                    child: Text(
+                      widget.plan.location,
+                      style: const TextStyle(
+                        fontSize: 16.0,
+                      ),
+                      maxLines: 1, // Set maximum lines to 1
+                      overflow:
+                          TextOverflow.ellipsis, // Use ellipsis for overflow
                     ),
-                  ),
+                  )
                 ],
               ),
             ),

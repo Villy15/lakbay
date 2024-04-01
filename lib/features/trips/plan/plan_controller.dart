@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +17,11 @@ final readPlansByUserIdProvider =
     StreamProvider.autoDispose.family<List<PlanModel>, String>((ref, userId) {
   final planController = ref.watch(plansControllerProvider.notifier);
   return planController.readPlansByUserId(userId);
+});
+final getPlansByPropertiesProvider =
+    StreamProvider.autoDispose.family<List<PlanModel>, Query>((ref, query) {
+  final planController = ref.watch(plansControllerProvider.notifier);
+  return planController.getPlansByProperties(query);
 });
 
 final plansControllerProvider =
@@ -129,5 +135,9 @@ class PlanController extends StateNotifier<bool> {
   // Real all plans by user id
   Stream<List<PlanModel>> readPlansByUserId(String userId) {
     return _planRepository.readPlansByUserId(userId);
+  }
+
+  Stream<List<PlanModel>> getPlansByProperties(Query query) {
+    return _planRepository.readPlanByProperties(query);
   }
 }

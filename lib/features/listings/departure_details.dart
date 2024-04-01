@@ -215,14 +215,13 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                            DateFormat('E, MMM d').format(
-                                departureDetails.passengers.first.startDate!),
+                            DateFormat('E, MMM d')
+                                .format(departureDetails.departure!),
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w500)),
                         // departure time
                         Text(
-                          TimeOfDay.fromDateTime(
-                                  departureDetails.passengers.first.startDate!)
+                          TimeOfDay.fromDateTime(departureDetails.departure!)
                               .format(context),
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w300),
@@ -245,14 +244,13 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                         _displaySubHeader('Arrival'),
                         const SizedBox(height: 10),
                         Text(
-                            DateFormat('E, MMM d').format(
-                                departureDetails.passengers.first.endDate!),
+                            DateFormat('E, MMM d')
+                                .format(departureDetails.arrival!),
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w500)),
                         // Checkout time
                         Text(
-                          TimeOfDay.fromDateTime(
-                                  departureDetails.passengers.first.endDate!)
+                          TimeOfDay.fromDateTime(departureDetails.arrival!)
                               .format(context),
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w300),

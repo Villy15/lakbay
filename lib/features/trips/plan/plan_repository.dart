@@ -62,6 +62,15 @@ class PlanRepository {
     });
   }
 
+  Stream<List<PlanModel>> readPlanByProperties(Query query) {
+    return query.snapshots().map((querySnapshot) {
+      // Convert each document snapshot to a ListingBookings object
+      return querySnapshot.docs.map((doc) {
+        return PlanModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Read all plans
   Stream<List<PlanModel>> readPlans() {
     return _plans.snapshots().map((snapshot) {
