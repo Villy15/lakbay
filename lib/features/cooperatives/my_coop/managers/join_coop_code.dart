@@ -115,7 +115,7 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
         debugPrint('Member does not exist: ${member.email}');
         newMembers.add(member);
         debugPrint('New members: ${newMembers.toString()}');
-      }      
+      }
     }
 
     // check if the new members are stored
@@ -125,36 +125,31 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
       if (newMembers.isEmpty) {
         debugPrint('there are no new members');
         showSnackBar(
-          // ignore: use_build_context_synchronously
-          context, 
-          'There are no new members to add. Please check the CSV file and update it or select a new file.'
-        );
+            // ignore: use_build_context_synchronously
+            context,
+            'There are no new members to add. Please check the CSV file and update it or select a new file.');
         return;
-      }
-      else {
+      } else {
         ref.read(authControllerProvider.notifier).registerMembers(
-          // ignore: use_build_context_synchronously
-          context,
-          newMembers,
-          user?.currentCoop,
-        );
+              // ignore: use_build_context_synchronously
+              context,
+              newMembers,
+              user?.currentCoop,
+            );
 
         // send email to the new members
         sendEmail(newMembers, widget.coop, user!);
         // ignore: use_build_context_synchronously
         context.pop();
-        
       }
     } catch (e) {
       debugPrint('Error: $e');
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(authControllerProvider);
-    
 
     return PopScope(
       canPop: false,
@@ -240,11 +235,12 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
   }
 }
 
-Future<void> sendEmail(List<MemberData> newMembers, CooperativeModel coop, UserModel user) async {
+Future<void> sendEmail(
+    List<MemberData> newMembers, CooperativeModel coop, UserModel user) async {
   final mailtoLink = Mailto(
-    to: newMembers.map((e) => e.email).toList(),
-    subject: 'Welcome to Lakbay!',
-    body: 'Hello there! \n\n'
+      to: newMembers.map((e) => e.email).toList(),
+      subject: 'Welcome to Lakbay!',
+      body: 'Hello there! \n\n'
           'The ${coop.name} has partnered with Lakbay and its team for a better cooperative experience. \n\n'
           'To login, make sure to use the following credentials: \n\n'
           'Email: your current email (refer to the email that you received this message from) \n'
@@ -253,9 +249,8 @@ Future<void> sendEmail(List<MemberData> newMembers, CooperativeModel coop, UserM
           'If you have any questions or concerns, please do not hesitate to contact me. \n\n'
           'Thank you for your cooperation and welcome to the Lakbay App! \n\n'
           'Best regards, \n'
-          '${user.firstName} ${user.lastName} \n'
-          ' ${user.email}'
-  );
+          '${user.name} \n'
+          ' ${user.email}');
 
   // ignore: deprecated_member_use
   await launch('$mailtoLink');
