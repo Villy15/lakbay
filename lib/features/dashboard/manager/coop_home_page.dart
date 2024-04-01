@@ -1139,18 +1139,10 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                   .maybeWhen(
                       orElse: () => const Text("No announcements found"),
                       data: (announcements) {
-                        // Filter announcements that are within the last 7 days
-                        final updatedAnnouncements = announcements
-                            .where((announcement) =>
-                                DateTime.now()
-                                    .isBefore(announcement.timestamp!) &&
-                                DateTime.now()
-                                    .add(const Duration(days: 7))
-                                    .isAfter(announcement.timestamp!))
-                            .toList();
+                        // Filter announcements that are before and after
 
                         return Text(
-                          '${updatedAnnouncements.length} new announcements this week',
+                          '${announcements.length} new announcements this week',
                           style: const TextStyle(
                             fontSize: 12,
                           ),
