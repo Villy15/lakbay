@@ -1136,7 +1136,8 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
             ),
           ),
           SizedBox(
-            height: MediaQuery.sizeOf(context).height * .15,
+            height: MediaQuery.sizeOf(context).height * .16,
+            width: MediaQuery.sizeOf(context).width * 4,
             child: departureTimes.isNotEmpty
                 ? ListView.builder(
                     shrinkWrap: true,
