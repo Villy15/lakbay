@@ -138,6 +138,8 @@ class AvailableTransport with _$AvailableTransport {
 @freezed
 class DepartureModel with _$DepartureModel {
   factory DepartureModel({
+    String? pickUp,
+    String? destination,
     String? uid,
     String? listingName,
     String? listingId,
@@ -145,7 +147,7 @@ class DepartureModel with _$DepartureModel {
     List<AssignedVehicle>? vehicles,
     @TimestampSerializer() DateTime? arrival,
     @TimestampSerializer() DateTime? departure,
-    String? departureStatus, //Waiting, Completed, OnGoing, Cancelled
+    String? departureStatus, //Waiting, Completed, OnGoing, Cancelled, Emergency
   }) = _DepartureModel;
 
   factory DepartureModel.fromJson(Map<String, dynamic> json) =>

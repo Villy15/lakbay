@@ -194,8 +194,8 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
             width: double.infinity,
             height: MediaQuery.sizeOf(context).height * .4,
             child: TwoMarkerMapWidget(
-                destination: widget.listing.destination ?? '',
-                pickup: widget.listing.pickUp ?? ''),
+                destination: widget.departure.destination ?? '',
+                pickup: widget.departure.pickUp ?? ''),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),

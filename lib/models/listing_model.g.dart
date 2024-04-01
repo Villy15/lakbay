@@ -270,6 +270,8 @@ Map<String, dynamic> _$$AvailableTransportImplToJson(
 
 _$DepartureModelImpl _$$DepartureModelImplFromJson(Map<String, dynamic> json) =>
     _$DepartureModelImpl(
+      pickUp: json['pickUp'] as String?,
+      destination: json['destination'] as String?,
       uid: json['uid'] as String?,
       listingName: json['listingName'] as String?,
       listingId: json['listingId'] as String?,
@@ -289,6 +291,8 @@ _$DepartureModelImpl _$$DepartureModelImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$DepartureModelImplToJson(
         _$DepartureModelImpl instance) =>
     <String, dynamic>{
+      'pickUp': instance.pickUp,
+      'destination': instance.destination,
       'uid': instance.uid,
       'listingName': instance.listingName,
       'listingId': instance.listingId,

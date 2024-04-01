@@ -319,9 +319,10 @@ class ListingController extends StateNotifier<bool> {
             filteredVehicles.add(AssignedVehicle(vehicle: vehicle));
           }
         }
-        debugPrint('departures: $departures');
         if (departures.isEmpty) {
           DepartureModel updatedDeparture = DepartureModel(
+            pickUp: listing.pickUp,
+            destination: listing.destination,
             listingName: listing.title,
             listingId: listing.uid,
             passengers: [updatedBooking!],
@@ -330,8 +331,9 @@ class ListingController extends StateNotifier<bool> {
             vehicles: filteredVehicles,
           );
           if (context.mounted) {
-            _ref.read(listingControllerProvider.notifier).addDeparture(
-                context, listing, updatedBooking!, updatedDeparture);
+            _ref
+                .read(listingControllerProvider.notifier)
+                .addDeparture(context, listing, updatedDeparture);
           }
         } else {
           List<ListingBookings> currentPassengers = [];
@@ -646,7 +648,7 @@ class ListingController extends StateNotifier<bool> {
   }
 
   void addDeparture(BuildContext context, ListingModel listing,
-      ListingBookings booking, DepartureModel departure) async {
+      DepartureModel departure) async {
     state = true;
     final result = await _listingRepository.addDeparture(listing, departure);
 
