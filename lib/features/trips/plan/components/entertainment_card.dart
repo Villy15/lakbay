@@ -193,12 +193,14 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                                         ]);
                                   });
                             }
-                            final bookings = await ref.watch(
+                            else {
+                               if (context.mounted) {
+                                final bookings = await ref.watch(
                                 getAllBookingsProvider(listing.uid!).future);
                             String formattedCurrentDate =
                                 DateFormat('MMMM dd, yyyy').format(currentDate);
-                            if (context.mounted) {
                               showDialog(
+                                  // ignore: use_build_context_synchronously
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
@@ -326,6 +328,8 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                                     // });
                                   });
                             }
+                            }
+                           
                             // showConfirmBooking(transport, listing, DateTime.now(), DateTime.now(), , endTime, typeOfTrip);
                           },
                           style: ElevatedButton.styleFrom(

@@ -9,6 +9,7 @@ import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
@@ -173,23 +174,39 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
           ])),
       const SizedBox(height: 12),
       const Divider(),
-      ListTile(
-          leading: SizedBox(
-              height: 40,
-              width: 40,
-              child: DisplayImage(
-                  imageUrl:
-                      'cooperatives/${widget.listing.cooperative.cooperativeName}/download.jpg',
-                  height: 40,
-                  width: 40,
-                  radius: BorderRadius.circular(20))),
-          trailing: IconButton(
-              onPressed: () {
-                showSnackBar(context, 'Contact owner');
-              },
-              icon: const Icon(Icons.message_rounded)),
-          title: Text('Hosted by ${widget.listing.cooperative.cooperativeName}',
-              style: Theme.of(context).textTheme.labelLarge)),
+      ref
+              .watch(getCooperativeProvider(
+                  widget.listing.cooperative.cooperativeId))
+              .maybeWhen(
+                data: (coop) {
+                  return ListTile(
+                    leading: SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: DisplayImage(
+                          imageUrl: coop.imageUrl,
+                          height: 40,
+                          width: 40,
+                          radius: BorderRadius.circular(20)),
+                    ),
+                    // Contact owner
+                    trailing: IconButton(
+                      onPressed: () {
+                        // Show snackbar with reviews
+                        // createRoom(context, widget.listing.publisherId);
+                      },
+                      icon: const Icon(Icons.message_rounded),
+                    ),
+                    title: Text('Hosted by ${coop.name}',
+                        style: Theme.of(context).textTheme.labelLarge),
+                  );
+                },
+                orElse: () => const ListTile(
+                  leading: Icon(Icons.error),
+                  title: Text('Error'),
+                  subtitle: Text('Something went wrong'),
+                ),
+              ),
       const Divider(),
 
       // Add this to current trip

@@ -89,13 +89,23 @@ class CustomerTransportReceipt extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text('Pickup Point: '),
-                              Text('${listing.pickUp}')
+                              Flexible(
+                                child: Text(
+                                  '${listing.pickUp}',
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              )
                             ]),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text('Destination: '),
-                              Text('${listing.destination}')
+                              Flexible(
+                                child: Text(
+                                  '${listing.destination}',
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              )
                             ]),
                       ] else ...[
                         Row(

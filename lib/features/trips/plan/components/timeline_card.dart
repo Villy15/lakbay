@@ -385,7 +385,13 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
         'startValue': DateFormat('hh:mm a').format(booking.startDate!),
         'end': 'End',
         'endValue': DateFormat('hh:mm a').format(booking.endDate!),
-      }
+      },
+      'Food': {
+        'start': 'Reservation Time',
+        'startValue': DateFormat('hh:mm a').format(booking.startDate!),
+        'end': "Location",
+        'endValue': listing.address ?? '',
+      },
     };
     return Card(
       clipBehavior: Clip.hardEdge,
@@ -450,17 +456,21 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                         children: [
                           Text(
                             '${cardProperties[widget.activity.category]!['start']}:     ',
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 12,
                             ),
                           ),
-                          Text(
-                            cardProperties[widget.activity.category]![
-                                'startValue']!,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 12,
+                          Flexible(
+                            child: Text(
+                              cardProperties[widget.activity.category]![
+                                  'startValue']!,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ],
@@ -476,12 +486,15 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                               fontSize: 12,
                             ),
                           ),
-                          Text(
-                            cardProperties[widget.activity.category]![
-                                'endValue']!,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 12,
+                          Flexible(
+                            child: Text(
+                              cardProperties[widget.activity.category]![
+                                  'endValue']!,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ],

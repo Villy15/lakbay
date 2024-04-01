@@ -280,6 +280,22 @@ class ListingController extends StateNotifier<bool> {
                       .addBookingTask(context, listing.uid!, element);
                 }
               }
+
+            case 'Food':
+            {
+              element = element.copyWith(
+                listingId: listing.uid,
+                bookingId: bookingUid,
+              );
+              if (await _listingRepository
+                      .readBookingTasksByBookingId(listing.uid!, bookingUid)
+                      .isEmpty &&
+                  context.mounted) {
+                _ref
+                    .read(listingControllerProvider.notifier)
+                    .addBookingTask(context, listing.uid!, element);
+              }
+            }
           }
         });
         if (booking.category == 'Transport') {

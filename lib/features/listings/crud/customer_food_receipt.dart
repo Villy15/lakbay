@@ -81,22 +81,15 @@ class CustomerFoodReceipt extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Emergency Contact Name:"),
-                          Text(" ${booking.emergencyContactName}"),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Emergency Contact No.:"),
-                          Text(" ${booking.emergencyContactNo}"),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
                           const Text("Price:"),
                           Text(" ${booking.price}"),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Total Price:"),
+                          Text(" ${booking.totalPrice!.toStringAsFixed(2)}"),
                         ],
                       ),
                       Row(

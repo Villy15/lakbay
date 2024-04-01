@@ -175,11 +175,13 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                                           );
                                                         });
                                                   }
-                                                  showConfirmBooking(
-                                                      food.availableDeals!
-                                                          .first,
-                                                      listing,
-                                                      daysPlan.currentDay!);
+                                                  else {
+                                                    showConfirmBooking(
+                                                        food.availableDeals!
+                                                            .first,
+                                                        listing,
+                                                        daysPlan.currentDay!);
+                                                  }
                                                 },
                                                 child: const Text('Book Now'))
                                           ]);
@@ -208,7 +210,11 @@ class FoodCardState extends ConsumerState<FoodCard> {
         builder: (context) {
           num guests = 0;
           final user = ref.read(userProvider);
+          final currentPlanGuests = ref.read(currentPlanGuestsProvider);
+          guests = currentPlanGuests!;
 
+          TextEditingController guestsController =
+              TextEditingController(text: guests.toString());
           TextEditingController phoneNoController =
               TextEditingController(text: user?.phoneNo);
           TextEditingController timeController =
@@ -238,6 +244,7 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                   const EdgeInsets.symmetric(horizontal: 10),
                               child: Column(children: [
                                 TextFormField(
+                                    controller: guestsController,
                                     decoration: const InputDecoration(
                                         labelText: 'Number of Guests',
                                         border: OutlineInputBorder(),
