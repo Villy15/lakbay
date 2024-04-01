@@ -32,7 +32,8 @@ Future<dynamic> emergencyProcess(
         'Transport': {
           'There is no driver available': {
             'action': () {},
-            'subtitle': '',
+            'subtitle':
+                'Search through assigned drivers within your cooperative to find one capable and available',
           },
           'Vehicle broke down during transit': {
             'action': () => onTapFindVehicle(ref, context, departureDetails),
@@ -62,7 +63,7 @@ Future<dynamic> emergencyProcess(
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: const Text(
-                    "Select your preferred solution",
+                    "Select the appropriate solution",
                     style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -162,6 +163,15 @@ onTapFindVehicle(
                         .add(todayDeparture.vehicles!.first.vehicle!);
                   }
                 }
+
+                for (var departureVehicle in departureDetails.vehicles!) {
+                  for (var filteredVehicle in filteredVehicles) {
+                    if (filteredVehicle.vehicleNo ==
+                        departureVehicle.vehicle!.vehicleNo) {
+                      filteredVehicles.remove(filteredVehicle);
+                    }
+                  }
+                }
                 context.mounted
                     ? showDialog(
                         context: context,
@@ -187,108 +197,109 @@ onTapFindVehicle(
                                           address: placemarks.first.street
                                               .toString()),
                                     ),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount: filteredVehicles.length,
-                                      itemBuilder: (context, vehicleIndex) {
-                                        final vehicle =
-                                            filteredVehicles[vehicleIndex];
-                                        return ListTile(
-                                          onTap: () async {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: const Text(
-                                                        "Request Rescue"),
-                                                    content: Text(
-                                                        'Request to be rescued by Vehicle No: ${vehicle.vehicleNo} at your current location'),
-                                                    actions: [
-                                                      FilledButton(
-                                                        onPressed: () {
-                                                          context.pop();
-                                                        },
-                                                        child:
-                                                            const Text('Close'),
-                                                      ),
-                                                      FilledButton(
-                                                          onPressed: () async {
-                                                            DepartureModel rescureDeparture = departureDetails.copyWith(
-                                                                destination:
-                                                                    departureDetails
-                                                                        .destination,
-                                                                pickUp:
-                                                                    placemarks
-                                                                        .first
-                                                                        .street,
-                                                                departure:
-                                                                    DateTime
-                                                                        .now(),
-                                                                departureStatus:
-                                                                    'Emergency');
-                                                            ListingModel
-                                                                listing =
-                                                                await ref.read(
-                                                                    getListingProvider(
-                                                                            rescureDeparture.listingId!)
-                                                                        .future);
-                                                            if (context
-                                                                .mounted) {
-                                                              ref
-                                                                  .read(listingControllerProvider
-                                                                      .notifier)
-                                                                  .addDeparture(
-                                                                      context,
-                                                                      listing,
-                                                                      rescureDeparture);
-                                                              context.pop();
-                                                            }
-                                                          },
-                                                          child: const Text(
-                                                              'Request'))
-                                                    ],
-                                                  );
-                                                }).then((value) {
-                                              context.pop();
-                                            });
-                                          },
-                                          dense: true,
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 8),
-                                          horizontalTitleGap: 10,
-                                          title: Text(
-                                            "Vehicle No: ${vehicle.vehicleNo}",
-                                            style:
-                                                const TextStyle(fontSize: 14),
-                                          ),
-                                          subtitle: Row(
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .start, // Align content to the right
-                                            children: [
-                                              Text(
-                                                'Capacity: ${vehicle.guests} | ',
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                              Text(
-                                                'Luggage: ${vehicle.luggage}',
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                            ],
-                                          ),
-                                          trailing: const Icon(
-                                              Icons.arrow_forward_ios_rounded),
-                                        );
-                                      },
-                                    ),
+                                    filteredVehicles.isNotEmpty
+                                        ? ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount: filteredVehicles.length,
+                                            itemBuilder:
+                                                (context, vehicleIndex) {
+                                              final vehicle = filteredVehicles[
+                                                  vehicleIndex];
+                                              return ListTile(
+                                                onTap: () async {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              "Request Rescue"),
+                                                          content: Text(
+                                                              'Request to be rescued by Vehicle No: ${vehicle.vehicleNo} at your current location'),
+                                                          actions: [
+                                                            FilledButton(
+                                                              onPressed: () {
+                                                                context.pop();
+                                                              },
+                                                              child: const Text(
+                                                                  'Close'),
+                                                            ),
+                                                            FilledButton(
+                                                                onPressed:
+                                                                    () async {
+                                                                  DepartureModel rescureDeparture = departureDetails.copyWith(
+                                                                      destination:
+                                                                          departureDetails
+                                                                              .destination,
+                                                                      pickUp: placemarks
+                                                                          .first
+                                                                          .street,
+                                                                      departure:
+                                                                          DateTime
+                                                                              .now(),
+                                                                      departureStatus:
+                                                                          'Emergency');
+                                                                  ListingModel
+                                                                      listing =
+                                                                      await ref.read(
+                                                                          getListingProvider(rescureDeparture.listingId!)
+                                                                              .future);
+                                                                  if (context
+                                                                      .mounted) {
+                                                                    ref.read(listingControllerProvider.notifier).addDeparture(
+                                                                        context,
+                                                                        listing,
+                                                                        rescureDeparture);
+                                                                    context
+                                                                        .pop();
+                                                                  }
+                                                                },
+                                                                child: const Text(
+                                                                    'Request'))
+                                                          ],
+                                                        );
+                                                      }).then((value) {
+                                                    context.pop();
+                                                  });
+                                                },
+                                                dense: true,
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8),
+                                                horizontalTitleGap: 10,
+                                                title: Text(
+                                                  "Vehicle No: ${vehicle.vehicleNo}",
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                ),
+                                                subtitle: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .start, // Align content to the right
+                                                  children: [
+                                                    Text(
+                                                      'Capacity: ${vehicle.guests} | ',
+                                                      style: const TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w300),
+                                                    ),
+                                                    Text(
+                                                      'Luggage: ${vehicle.luggage}',
+                                                      style: const TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w300),
+                                                    ),
+                                                  ],
+                                                ),
+                                                trailing: const Icon(Icons
+                                                    .arrow_forward_ios_rounded),
+                                              );
+                                            },
+                                          )
+                                        : const Text('No Vehicles Available'),
                                   ],
                                 ),
                               ),
