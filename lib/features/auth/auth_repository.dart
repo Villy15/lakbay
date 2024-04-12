@@ -85,7 +85,8 @@ class AuthRepository {
   }
 
   // Sign in with email and password
-  FutureEither<UserModel> signIn({
+  // Sign in with email and password
+  Future<Either<Failure, UserModel>> signIn({
     required String email,
     required String password,
   }) async {
@@ -97,7 +98,11 @@ class AuthRepository {
 
       return right(userModel);
     } on FirebaseException catch (e) {
-      throw e.message!;
+      if (e.code == 'wrong-password') {
+        return left(Failure('The password is incorrect.'));
+      } else {
+        return left(Failure(e.message!));
+      }
     } catch (e) {
       return left(Failure(e.toString()));
     }
