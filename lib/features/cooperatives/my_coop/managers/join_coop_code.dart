@@ -1,22 +1,20 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
-import 'package:lakbay/core/constants/firebase_constants.dart';
-import 'package:lakbay/core/providers/firebase_providers.dart';
-import 'package:lakbay/core/util/utils.dart';
-import 'package:lakbay/models/user_model.dart';
-import 'package:mailto/mailto.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/constants/firebase_constants.dart';
+import 'package:lakbay/core/providers/firebase_providers.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/models/coop_model.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:lakbay/models/user_model.dart';
+import 'package:mailto/mailto.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class JoinCoopCodePage extends ConsumerStatefulWidget {
   final CooperativeModel coop;

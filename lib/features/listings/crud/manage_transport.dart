@@ -301,8 +301,8 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                   String formattedEndTime =
                       TimeOfDay.fromDateTime(bookings[index].endDate!)
                           .format(context);
-                  String formattedEndDate =
-                      DateFormat('MMMM dd').format(bookings[index].endDate!);
+                  // String formattedEndDate =
+                  //     DateFormat('MMMM dd').format(bookings[index].endDate!);
                   return Card(
                       elevation: 1.0,
                       margin: const EdgeInsets.all(8.0),
@@ -932,8 +932,8 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
 
   void showSelectDate(
       BuildContext context, List<ListingBookings> bookings, int index) {
-    DateTime startDate = DateTime.now();
-    DateTime endDate = DateTime.now();
+    // DateTime startDate = DateTime.now();
+    // DateTime endDate = DateTime.now();
 
     showDialog(
         context: context,
@@ -1279,8 +1279,8 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                   String formattedEndTime =
                       TimeOfDay.fromDateTime(departure.arrival!)
                           .format(context);
-                  String formattedEndDate =
-                      DateFormat('MMMM dd').format(departure.arrival!);
+                  // String formattedEndDate =
+                  //     DateFormat('MMMM dd').format(departure.arrival!);
                   return Card(
                       elevation: 1.0,
                       margin: const EdgeInsets.all(8.0),

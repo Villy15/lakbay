@@ -25,8 +25,8 @@ class CustomerFoodCheckout extends ConsumerStatefulWidget {
 class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
   late num _guestCount;
   late DateTime? _startDate;
-  late DateTime? _endDate;
-  late num _maxGuestCount;
+  // late DateTime? _endDate;
+  // late num _maxGuestCount;
   late ListingBookings updatedBooking;
   final String _paymentOption = "Full Payment";
   late num vatAmount;
@@ -39,9 +39,9 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
   void initState() {
     super.initState();
     _guestCount = widget.booking.guests;
-    _maxGuestCount = widget.foodService.guests;
+    // _maxGuestCount = widget.foodService.guests;
     _startDate = widget.booking.startDate;
-    _endDate = widget.booking.endDate;
+    // _endDate = widget.booking.endDate;
     updatedBooking = widget.booking;
     vatAmount = widget.booking.price * (vat - 1);
     debugPrint('booking price: ${widget.booking.price}');
@@ -102,13 +102,6 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
                                     fontSize: 20, fontWeight: FontWeight.bold)),
                           ])))
             ])));
-  }
-
-  String _formatTimeOfDay(TimeOfDay time) {
-    final now = DateTime.now();
-    final dt = DateTime(now.year, now.month, now.day, time.hour, time.minute);
-    final format = DateFormat.jm(); //"6:00 AM"
-    return format.format(dt);
   }
 
   Widget _tripDetails(BuildContext context) {
@@ -177,17 +170,19 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
                                     fontSize: 16, fontWeight: FontWeight.bold))
                           ]),
                       if (paymentMoreInfo == true)
-                        Container(
-                            child: Column(children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text('VAT (12%):',
-                                    style: TextStyle(fontSize: 12)),
-                                Text('₱${vatAmount.toStringAsFixed(2)}',
-                                    style: const TextStyle(fontSize: 16))
-                              ])
-                        ])),
+                        Column(
+                          children: [
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('VAT (12%):',
+                                      style: TextStyle(fontSize: 12)),
+                                  Text('₱${vatAmount.toStringAsFixed(2)}',
+                                      style: const TextStyle(fontSize: 16))
+                                ])
+                          ],
+                        ),
                       Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
@@ -283,43 +278,5 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
                           color: Theme.of(context).colorScheme.background,
                           fontSize: 16)))
             ])));
-  }
-
-  Widget _paymentMethod(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Pay with',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 70, // specify the width
-                    height: 40, // specify the height
-                    child: Image.asset('lib/core/images/paymaya.png'),
-                  ),
-                  Icon(Icons.payment,
-                      color: Theme.of(context).colorScheme.primary),
-                  // Add more payment method icons as needed
-                ],
-              ),
-              // FilledButton(
-              //   onPressed: () {
-              //     // Add your payment action here
-              //   },
-              //   child: const Text('Add Payment Method'),
-              // ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

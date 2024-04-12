@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -12,8 +11,6 @@ import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/trips/plan/plan_controller.dart';
-import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -39,29 +36,10 @@ class _ManageFoodState extends ConsumerState<ManageFood> {
     });
   }
 
-  AppBar _appBar(String title, BuildContext context) {
-    return AppBar(
-      title: Text(
-        title,
-        style: const TextStyle(
-          // fontFamily: 'Satisfy',
-          fontSize: 32.0,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      bottom: TabBar(
-        tabAlignment: TabAlignment.center,
-        labelPadding: EdgeInsets.zero,
-        isScrollable: true,
-        indicatorSize: TabBarIndicatorSize.label,
-        tabs: tabs,
-      ),
-    );
-  }
-
+  @override
   Widget build(BuildContext context) {
-    final planUid = ref.read(currentPlanIdProvider);
-    final isLoading = ref.watch(plansControllerProvider);
+    // final planUid = ref.read(currentPlanIdProvider);
+    // final isLoading = ref.watch(plansControllerProvider);
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
@@ -89,10 +67,7 @@ class _ManageFoodState extends ConsumerState<ManageFood> {
                       indicatorSize: TabBarIndicatorSize.label,
                       tabs: tabs,
                     )),
-                body: TabBarView(children: [
-                  bookings(),
-                  details()
-                ]))));
+                body: TabBarView(children: [bookings(), details()]))));
   }
 
   SingleChildScrollView details() {
@@ -276,14 +251,15 @@ class _ManageFoodState extends ConsumerState<ManageFood> {
               itemBuilder: ((context, index) {
                 final booking = bookings[index];
                 num needsContribution = 0;
-                String formattedStartDate =
-                    DateFormat('MMMM dd').format(bookings[index].startDate!);
+                // String formattedStartDate =
+                //     DateFormat('MMMM dd').format(bookings[index].startDate!);
 
                 ref
                     .watch(getBookingTasksByBookingId(
                         (booking.listingId, booking.id!)))
                     .when(
                         data: (List<BookingTask> bookingTasks) {
+                          // ignore: unused_local_variable
                           for (var bookingTask in bookingTasks) {
                             needsContribution = needsContribution + 1;
                           }
@@ -293,6 +269,7 @@ class _ManageFoodState extends ConsumerState<ManageFood> {
                               stackTrace: stackTrace.toString(),
                             ),
                         loading: () => const Loader());
+                return null;
               }));
         },
         error: (error, stackTrace) => Scaffold(

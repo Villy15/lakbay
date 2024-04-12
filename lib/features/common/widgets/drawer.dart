@@ -151,75 +151,35 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                       ? ref
                           .watch(getCooperativeProvider(user.currentCoop ?? ''))
                           .maybeWhen(
-                              data: (data) => GestureDetector(
+                              data: (data) => ListTile(
                                     onTap: () => {
-                                      // Show modal bottom sheet
                                       modalBottomSheetCooperative(context, user)
                                     },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        // Icon of cooperative
-                                        const Padding(
-                                          padding: EdgeInsets.only(left: 16.0),
-                                          child: Icon(Icons.group_outlined,
-                                              size: 20),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 16.0, right: 7.0),
-                                          child: Text(
-                                            data.name,
-                                            // Make it so that when the text is too long, it will be replaced with ellipsis
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                        // Arrow down
-                                        const Icon(Icons.arrow_drop_down),
-                                      ],
+                                    title: Text(data.name),
+                                    leading: CircleAvatar(
+                                      radius: 20.0,
+                                      backgroundImage: data.imageUrl != null &&
+                                              data.imageUrl != ''
+                                          ? NetworkImage(data.imageUrl!)
+                                          // Use placeholder image if user has no profile pic
+                                          : const AssetImage(
+                                                  'lib/core/images/default_profile_pic.jpg')
+                                              as ImageProvider,
+                                      backgroundColor: Colors.transparent,
                                     ),
+                                    trailing: const Icon(Icons.arrow_drop_down),
+                                    subtitle: user.role.isNotEmpty
+                                        ? Text(
+                                            user.role,
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey),
+                                          )
+                                        : null,
                                   ),
                               orElse: () => const SizedBox.shrink())
                       : const SizedBox.shrink(),
                   // Display user's role
-                  widget.user!.isCoopView ?? false
-                      ? Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                          child: Row(
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(left: 16.0),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.person_outline, size: 20),
-                                    // Text Role:
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Role: ',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Text(
-                                widget.user!.role,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : const SizedBox.shrink(),
 
                   const Padding(
                     padding: EdgeInsets.fromLTRB(28, 8, 28, 0),

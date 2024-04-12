@@ -559,7 +559,6 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                             height: 20), // Add some spacing
                                         ElevatedButton(
                                           // Make it larger
-                                          // TODO Add Payment Functionality
                                           onPressed: () {
                                             joinCooperative();
                                           },

@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 // import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 // import 'package:lakbay/features/common/widgets/display_image.dart';
@@ -12,7 +11,7 @@ import 'package:lakbay/models/listing_model.dart';
 
 class CustomerTouring extends ConsumerStatefulWidget {
   final ListingModel listing;
-  const CustomerTouring({Key? key, required this.listing}) : super(key: key);
+  const CustomerTouring({super.key, required this.listing});
 
   @override
   ConsumerState<CustomerTouring> createState() => _CustomerTouringState();
@@ -30,7 +29,7 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
   }
 
   @override
-   @override
+  @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
@@ -93,29 +92,25 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                   text:
                       "Location: ${widget.listing.province}, ${widget.listing.city}",
                   lines: 4,
-                  style: const TextStyle(
-                      fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
 
               Padding(
                 padding: const EdgeInsets.only(top: 5, left: 12.0),
                 child: DisplayText(
-                  text: "${widget.listing.type}", 
+                  text: "${widget.listing.type}",
                   lines: 1,
-                  style: const TextStyle(
-                      fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
 
-                Padding(
+              Padding(
                 padding: const EdgeInsets.only(top: 5, left: 12.0),
                 child: DisplayText(
-                  text:
-                      "Duration: ${widget.listing.duration!.hour.toString()}",
+                  text: "Duration: ${widget.listing.duration!.hour.toString()}",
                   lines: 1,
-                  style: const TextStyle(
-                      fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
 
@@ -138,8 +133,7 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                 child: DisplayText(
                   text: widget.listing.description,
                   lines: 4,
-                  style: const TextStyle(
-                       fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
 
@@ -185,17 +179,22 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   style: ButtonStyle(
-                    minimumSize: MaterialStateProperty.all<Size>(const Size(180, 45)),
+                    minimumSize:
+                        MaterialStateProperty.all<Size>(const Size(180, 45)),
                   ),
                   onPressed: () {
                     // Define opening and closing hours
                     final int openingHour = widget.listing.openingHours!.hour;
                     final int closingHour = widget.listing.closingHours!.hour;
-                    final int intervalDurationInHours = widget.listing.duration!.hour.toInt(); 
+                    final int intervalDurationInHours =
+                        widget.listing.duration!.hour.toInt();
 
                     List<Widget> availableTimes = [];
-                    for (int hour = openingHour; hour < closingHour; hour+= intervalDurationInHours) {
-                      String time = '${hour.toString().padLeft(2, '0')}:00'; // Start with the hour, set minutes to 00
+                    for (int hour = openingHour;
+                        hour < closingHour;
+                        hour += intervalDurationInHours) {
+                      String time =
+                          '${hour.toString().padLeft(2, '0')}:00'; // Start with the hour, set minutes to 00
                       availableTimes.add(
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -207,7 +206,8 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     // Calculate total price
-                                    num totalPrice = numberOfPersons * widget.listing.price!.toInt();
+                                    num totalPrice = numberOfPersons *
+                                        widget.listing.price!.toInt();
 
                                     return AlertDialog(
                                       title: Column(
@@ -218,18 +218,25 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                 },
-                                                icon: const Icon(Icons.arrow_back),
+                                                icon: const Icon(
+                                                    Icons.arrow_back),
                                               ),
-                                              const SizedBox(width: 8), // Add space between back button and title
+                                              const SizedBox(
+                                                  width:
+                                                      8), // Add space between back button and title
                                               const Text(
                                                 "Number of Persons",
-                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
                                             ],
                                           ),
                                           Text(
                                             "Selected Time: $time",
-                                            style: const TextStyle(fontSize: 14),
+                                            style:
+                                                const TextStyle(fontSize: 14),
                                           ), // Display the selected time
                                         ],
                                       ),
@@ -237,7 +244,8 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
                                               IconButton(
                                                 onPressed: () {
@@ -251,7 +259,8 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                                               ),
                                               Text(
                                                 numberOfPersons.toString(),
-                                                style: const TextStyle(fontSize: 20),
+                                                style: const TextStyle(
+                                                    fontSize: 20),
                                               ),
                                               IconButton(
                                                 onPressed: () {
@@ -263,26 +272,34 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                                               ),
                                             ],
                                           ),
-                                          const SizedBox(width: 550, height: 127,),
+                                          const SizedBox(
+                                            width: 550,
+                                            height: 127,
+                                          ),
                                           const Divider(),
                                           Text(
                                             'Total Price: ₱$totalPrice', // Display total price
-                                            style: const TextStyle(fontSize: 18),
+                                            style:
+                                                const TextStyle(fontSize: 18),
                                           ),
                                         ],
                                       ),
                                       actions: [
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Container(
                                               width: 250,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: Colors.white, // Border color
+                                                  color: Colors
+                                                      .white, // Border color
                                                   width: 5.0, // Border width
                                                 ),
-                                                borderRadius: BorderRadius.circular(30.0), // Border radius
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        30.0), // Border radius
                                               ),
                                               child: TextButton(
                                                 onPressed: () {
@@ -291,7 +308,9 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                                                 },
                                                 child: const Text(
                                                   "Confirm",
-                                                  style: TextStyle(color: Colors.green), // Text color
+                                                  style: TextStyle(
+                                                      color: Colors
+                                                          .green), // Text color
                                                 ),
                                               ),
                                             ),
@@ -303,11 +322,13 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                fixedSize: const Size(100, 36), // Adjust the width and height as needed
+                                fixedSize: const Size(100,
+                                    36), // Adjust the width and height as needed
                               ),
                               child: Text(time),
                             ),
-                            const SizedBox(width: 50), // Add space between button and text
+                            const SizedBox(
+                                width: 50), // Add space between button and text
                             Text(
                               'Slots : ${widget.listing.numberOfUnits}',
                               style: const TextStyle(fontSize: 12),
@@ -349,7 +370,6 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
                   child: const Text('Add to trip'),
                 ),
               ),
-
             ],
           ),
         ),

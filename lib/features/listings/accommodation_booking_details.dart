@@ -256,6 +256,7 @@ class _AccommodationBookingsDetailsState
                   title: const Text('Contact'),
                   content: ListTile(
                     onTap: () async {
+                      // ignore: deprecated_member_use
                       await launch("tel://${booking.emergencyContactNo}");
                     },
                     leading: const Icon(Icons.phone_rounded),
@@ -546,13 +547,6 @@ class _AccommodationBookingsDetailsState
   }
 
   Widget showTasks(ListingBookings booking) {
-    final user = ref.read(userProvider);
-    CooperativesJoined coop = user!.cooperativesJoined!.firstWhere(
-      (element) =>
-          element.cooperativeId ==
-          user.currentCoop, // Return null if no matching element is found
-    );
-
     return ref
         .watch(getBookingTasksByBookingId((booking.listingId, booking.id!)))
         .when(

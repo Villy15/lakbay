@@ -12,7 +12,6 @@ import 'package:lakbay/features/trips/app_coop.dart';
 import 'package:lakbay/features/trips/components/trip_card.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
-import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -39,26 +38,12 @@ class _TripsPageState extends ConsumerState<TripsPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // final user = ref.read(userProvider)!;
-
-    // // Temp user to edit user's cooperativesJoined.role to manager by finding its currentCoop
-    // final tempUser = user.copyWith(email: 'timothymendoza23@gmail.com');
-
-    // // Update the user's cooperativesJoined.role to manager
-    // ref.read(usersControllerProvider.notifier).editProfile(
-    //       context,
-    //       user.uid,
-    //       tempUser,
-    //     );
   }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
-
-    debugPrint('User: ${user?.isCoopView}');
 
     if (user?.isCoopView == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -81,15 +66,17 @@ class _TripsPageState extends ConsumerState<TripsPage> {
               ref.watch(readPlansByUserIdProvider(user?.uid ?? '')).when(
                     data: (plans) {
                       List<PlanModel> filteredPlans = [];
+                      List<PlanModel> pastPlans = [];
+
                       for (var plan in plans) {
                         if (plan.tripStatus != 'Completed') {
                           filteredPlans.add(plan);
+                        } else {
+                          pastPlans.add(plan);
                         }
                       }
-                      // Make plans empty for testing
-                      // plans = [];
 
-                      if (filteredPlans.isEmpty) {
+                      if (filteredPlans.isEmpty && pastPlans.isEmpty) {
                         return Padding(
                           // Use screen size to center the content
                           padding: EdgeInsets.only(
@@ -130,33 +117,27 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                             ),
                           ),
                         );
-                        // return Column(
-                        //   crossAxisAlignment: CrossAxisAlignment.start,
-                        //   children: [
-                        //     const Padding(
-                        //       padding: EdgeInsets.all(8.0),
-                        //       child: Text(
-                        //         'No Trips Yet',
-                        //         style: TextStyle(
-                        //           fontSize: 24,
-                        //           fontWeight: FontWeight.bold,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     // Let's create a new trip header
-                        //     const Padding(
-                        //       padding: EdgeInsets.all(8.0),
-                        //       child: Text(
-                        //         'Create a new trip to start planning your next adventure!',
-                        //         style: TextStyle(
-                        //           fontSize: 16,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     const SizedBox(height: 20),
-                        //     createNewTrip(),
-                        //   ],
-                        // );
+                      }
+
+                      if (filteredPlans.isEmpty && pastPlans.isNotEmpty) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Past Trips',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            listOngoingTrips(pastPlans),
+                            const SizedBox(height: 20),
+                            createNewTrip(),
+                          ],
+                        );
                       }
 
                       return Column(
@@ -172,37 +153,28 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                               ),
                             ),
                           ),
-                          listOngoingTrips(plans),
+                          listOngoingTrips(filteredPlans),
                           // Create a new Trip
-                          const SizedBox(height: 20),
                           createNewTrip(),
 
                           // Past Trips
 
                           const SizedBox(height: 20),
 
-                          // const Padding(
-                          //   padding: EdgeInsets.all(8.0),
-                          //   child: Text(
-                          //     'Past Trips',
-                          //     style: TextStyle(
-                          //       fontSize: 24,
-                          //       fontWeight: FontWeight.bold,
-                          //     ),
-                          //   ),
-                          // ),
+                          if (pastPlans.isNotEmpty) ...[
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Past Trips',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
 
-                          // ref
-                          //     .watch(readPlansByUserIdProvider(user?.uid ?? ''))
-                          //     .when(
-                          //       data: (plans) {
-                          //         return gridPastTrips(plans);
-                          //       },
-                          //       error: (error, stackTrace) => ErrorText(
-                          //           error: error.toString(),
-                          //           stackTrace: stackTrace.toString()),
-                          //       loading: () => const Loader(),
-                          //     ),
+                          gridPastTrips(pastPlans),
                         ],
                       );
                     },
@@ -436,14 +408,15 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                           ),
                         ],
                         // Card Title
-                        const Align(
+                        Align(
                           alignment: Alignment.centerLeft,
                           child: Padding(
-                            padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+                            padding:
+                                const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
                             child: Text(
-                              'Boracay Trip w Family', // 'Boracay Trip
+                              plan.name,
                               // plan.name,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),

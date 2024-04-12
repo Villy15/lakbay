@@ -3,22 +3,21 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 //import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:intl/intl.dart';
-import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/listings/widgets/image_picker_form_field.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
-import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/listing_model.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 enum IntervalOptions { paddedIntervals, fixedIntervals }
@@ -979,9 +978,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           readOnly: true,
           onTap: () async {
             await context.push('/select_location', extra: 'listing');
-          }
-        ),
-      
+          }),
 
       const SizedBox(height: 10),
 
@@ -1684,14 +1681,14 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   }
 
   Widget createScheduling(BuildContext context) {
-    AvailableDate availableDate = AvailableDate(
-        available: true, date: DateTime.now(), availableTimes: []);
-    TextEditingController availableDateController =
-        TextEditingController(text: '');
-    List<String> notes = [
-      'Selected working days will be the basis for making this Showing/Performance available for bookings.',
-    ];
-    int indexPadder = 3;
+    // AvailableDate availableDate = AvailableDate(
+    //     available: true, date: DateTime.now(), availableTimes: []);
+    // TextEditingController availableDateController =
+    //     TextEditingController(text: '');
+    // List<String> notes = [
+    //   'Selected working days will be the basis for making this Showing/Performance available for bookings.',
+    // ];
+    // int indexPadder = 3;
     return StatefulBuilder(builder: (context, setOption) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -1822,7 +1819,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                 ),
               ),
             ),
-            addNotes(notes),
+            // addNotes(notes),
           ],
         ),
       );

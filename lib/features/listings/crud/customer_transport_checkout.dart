@@ -28,8 +28,8 @@ class _CustomerTransportCheckoutState
   late num _guestCount;
   late DateTime _startDate;
   late DateTime _endDate;
-  late TimeOfDay? _startTime;
-  late TimeOfDay? _endTime;
+  // late TimeOfDay? _startTime;
+  // late TimeOfDay? _endTime;
   // ignore: unused_field
   late num _maxGuestCount;
   late ListingBookings updatedBooking;
@@ -49,8 +49,8 @@ class _CustomerTransportCheckoutState
     _maxGuestCount = widget.transport.guests;
     _startDate = widget.booking.startDate!;
     _endDate = widget.booking.endDate!;
-    _startTime = widget.booking.startTime;
-    _endTime = widget.booking.endTime;
+    // _startTime = widget.booking.startTime;
+    // _endTime = widget.booking.endTime;
     _priceByHour = widget.transport.priceByHour;
     updatedBooking = widget.booking;
     if (widget.booking.typeOfTrip == 'Public') {
@@ -212,9 +212,7 @@ class _CustomerTransportCheckoutState
                                 children: [
                                   // if booking start date and time is the same as the end date and time
 
-                                  
-                                  if (_startDate.day ==
-                                      _endDate.day) ...[
+                                  if (_startDate.day == _endDate.day) ...[
                                     const Text('Date',
                                         style: TextStyle(
                                             fontSize: 16,

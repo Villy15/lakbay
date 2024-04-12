@@ -62,7 +62,9 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
 
     // Dispose start and end date
     debugPrint('Disposing start and end date');
+    // ignore: avoid_ref_inside_state_dispose
     ref.read(eventStartDateProvider.notifier).clearStartDate();
+    // ignore: avoid_ref_inside_state_dispose
     ref.read(eventEndDateProvider.notifier).clearEndDate();
 
     super.dispose();

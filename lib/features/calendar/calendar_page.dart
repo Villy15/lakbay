@@ -247,7 +247,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                                 ),
                               );
                             },
-                            loading: () => const CircularProgressIndicator(),
+                            loading: () => const Loader(),
                             error: (error, stack) => ErrorText(
                               error: error.toString(),
                               stackTrace: stack.toString(),
@@ -265,7 +265,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                                 ),
                               );
                             },
-                            loading: () => const CircularProgressIndicator(),
+                            loading: () => const Loader(),
                             error: (error, stack) => ErrorText(
                               error: error.toString(),
                               stackTrace: stack.toString(),

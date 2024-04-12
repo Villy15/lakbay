@@ -6,8 +6,8 @@ class GeoCodingRepository {
     try {
       List<Location> locations = await locationFromAddress(address);
       return locations.first;
-    } on Exception catch (e) {
-      throw e;
+    } on Exception {
+      rethrow;
     }
   }
 }

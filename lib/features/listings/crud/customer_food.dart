@@ -2,7 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
@@ -175,38 +174,38 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
       const SizedBox(height: 12),
       const Divider(),
       ref
-              .watch(getCooperativeProvider(
-                  widget.listing.cooperative.cooperativeId))
-              .maybeWhen(
-                data: (coop) {
-                  return ListTile(
-                    leading: SizedBox(
+          .watch(
+              getCooperativeProvider(widget.listing.cooperative.cooperativeId))
+          .maybeWhen(
+            data: (coop) {
+              return ListTile(
+                leading: SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: DisplayImage(
+                      imageUrl: coop.imageUrl,
                       height: 40,
                       width: 40,
-                      child: DisplayImage(
-                          imageUrl: coop.imageUrl,
-                          height: 40,
-                          width: 40,
-                          radius: BorderRadius.circular(20)),
-                    ),
-                    // Contact owner
-                    trailing: IconButton(
-                      onPressed: () {
-                        // Show snackbar with reviews
-                        // createRoom(context, widget.listing.publisherId);
-                      },
-                      icon: const Icon(Icons.message_rounded),
-                    ),
-                    title: Text('Hosted by ${coop.name}',
-                        style: Theme.of(context).textTheme.labelLarge),
-                  );
-                },
-                orElse: () => const ListTile(
-                  leading: Icon(Icons.error),
-                  title: Text('Error'),
-                  subtitle: Text('Something went wrong'),
+                      radius: BorderRadius.circular(20)),
                 ),
-              ),
+                // Contact owner
+                trailing: IconButton(
+                  onPressed: () {
+                    // Show snackbar with reviews
+                    // createRoom(context, widget.listing.publisherId);
+                  },
+                  icon: const Icon(Icons.message_rounded),
+                ),
+                title: Text('Hosted by ${coop.name}',
+                    style: Theme.of(context).textTheme.labelLarge),
+              );
+            },
+            orElse: () => const ListTile(
+              leading: Icon(Icons.error),
+              title: Text('Error'),
+              subtitle: Text('Something went wrong'),
+            ),
+          ),
       const Divider(),
 
       // Add this to current trip

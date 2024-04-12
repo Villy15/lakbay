@@ -62,7 +62,7 @@ class _TripsAddTripState extends ConsumerState<TripsAddTrip> {
         activities: [],
       );
 
-      ref.read(plansControllerProvider.notifier).addPlan(plan, context);
+      ref.read(plansControllerProvider.notifier).addPlan(plan, context, ref);
     }
   }
 

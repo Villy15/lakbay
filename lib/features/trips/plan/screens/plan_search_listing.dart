@@ -78,7 +78,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   @override
   Widget build(BuildContext context) {
     final planLocation = ref.watch(planLocationProvider);
-    final planStartDate = ref.watch(planStartDateProvider);
+    // final planStartDate = ref.watch(planStartDateProvider);
     final planEndDate = ref.watch(planEndDateProvider);
     final daysPlan = ref.read(daysPlanProvider);
     final formattedCurrentDate =

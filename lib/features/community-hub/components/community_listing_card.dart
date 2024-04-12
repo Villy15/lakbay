@@ -35,8 +35,6 @@ class CommunityHubListingCard extends ConsumerWidget {
       });
     }
 
-    debugPrint('Total Tasks Need Contributions: $totalTasksNeedContributions');
-
     return totalTasksNeedContributions;
   }
 

@@ -104,6 +104,7 @@ class _AddListingState extends ConsumerState<AddListing> {
                   if (context.mounted) {
                     ref
                         .read(listingControllerProvider.notifier)
+                        // ignore: use_build_context_synchronously
                         .addListing(listing, context);
                   }
                 },

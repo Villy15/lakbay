@@ -45,3 +45,6 @@ app.*.map.json
 # Freezed related
 # **.freezed.dart
 # **.g.dart
+
+# Custom Lint Log
+custom_lint.log

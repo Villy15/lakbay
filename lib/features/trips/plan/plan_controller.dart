@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/trips/plan/plan_repository.dart';
 import 'package:lakbay/models/plan_model.dart';
 
@@ -45,7 +46,7 @@ class PlanController extends StateNotifier<bool> {
         _ref = ref,
         super(false);
 
-  void addPlan(PlanModel plan, BuildContext context) async {
+  void addPlan(PlanModel plan, BuildContext context, WidgetRef ref) async {
     state = true;
     final result = await _planRepository.addPlan(plan);
 
@@ -55,6 +56,7 @@ class PlanController extends StateNotifier<bool> {
       },
       (uid) {
         state = false;
+        ref.read(navBarVisibilityProvider.notifier).show();
         context.pop();
       },
     );

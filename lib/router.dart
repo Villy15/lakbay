@@ -60,7 +60,6 @@ import 'package:lakbay/features/listings/crud/customer_food_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_touring.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/departure_details.dart';
-//import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/listings/transportation_booking_details.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
@@ -97,7 +96,6 @@ import 'package:lakbay/models/task_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wiki_model.dart';
 
-// import 'package:lakbay/features/trips/trips_page.dart';
 typedef WidgetBuilderWithParams = Widget Function(
     BuildContext context, Map<String, String> pathParameters, dynamic extra);
 

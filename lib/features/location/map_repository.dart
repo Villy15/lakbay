@@ -44,7 +44,7 @@ class MapRepository {
     try {
       List<Location> locations = await locationFromAddress(address);
       return locations.first;
-    } on Exception catch (e) {
+    } on Exception {
       rethrow;
     }
   }
@@ -56,30 +56,30 @@ class MapRepository {
       List<Placemark> placemarks =
           await placemarkFromCoordinates(latitude, longitude);
       return placemarks;
-    } on Exception catch (e) {
+    } on Exception {
       rethrow;
     }
   }
 
   Future<List<String>> getPlacePredictions(String input) async {
-  const String apiKey = 'AIzaSyCZJI2SdZFSoFc_W3Ma9qWttKz_OVXe05I';
-  final String url =
-      'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$apiKey';
+    const String apiKey = 'AIzaSyCZJI2SdZFSoFc_W3Ma9qWttKz_OVXe05I';
+    final String url =
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$apiKey';
 
-  final response = await http.get(Uri.parse(url));
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
-    if (data['predictions'] is List) {
-      return data['predictions']
-          .map<String>((prediction) => prediction['description'].toString())
-          .toList();
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['predictions'] is List) {
+        return data['predictions']
+            .map<String>((prediction) => prediction['description'].toString())
+            .toList();
+      } else {
+        throw Exception('Predictions is not a list');
+      }
     } else {
-      throw Exception('Predictions is not a list');
+      throw Exception('Failed to load predictions');
     }
-  } else {
-    throw Exception('Failed to load predictions');
   }
-}
 }
 
 final mapRepositoryProvider = Provider((ref) {

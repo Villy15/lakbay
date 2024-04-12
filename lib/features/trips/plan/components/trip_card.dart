@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lakbay/models/listing_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/days_provider.dart';
@@ -9,8 +8,8 @@ import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/crud/customer_touring_checkout.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
+import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
-
 
 class TripCard extends ConsumerStatefulWidget {
   final String category;
@@ -157,6 +156,7 @@ class _TripCardState extends ConsumerState<TripCard> {
                                 getAllBookingsProvider(listing.uid!).future);
                             if (context.mounted) {
                               showDialog(
+                                  // ignore: use_build_context_synchronously
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(

@@ -4,21 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:lakbay/core/util/utils.dart';
-import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
-import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/emergency_process_dialog.dart';
 import 'package:lakbay/models/listing_model.dart';
-import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
-import 'package:lakbay/models/user_model.dart';
-import 'package:lakbay/models/wrappers/committee_params.dart';
 
 class DepartureDetails extends ConsumerStatefulWidget {
   final DepartureModel departure;
@@ -676,73 +670,73 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
     );
   }
 
-  Divider _displayDivider() {
-    return Divider(
-      thickness: 1.0,
-      indent: 20,
-      endIndent: 20,
-      color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
-    );
-  }
+  // Divider _displayDivider() {
+  //   return Divider(
+  //     thickness: 1.0,
+  //     indent: 20,
+  //     endIndent: 20,
+  //     color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+  //   );
+  // }
 
-  ListTile _displayGovId() {
-    return ListTile(
-      onTap: () {},
-      leading: const Icon(Icons.card_membership_rounded),
-      title: const Text(
-        'Customer Government ID',
-        style: TextStyle(
-          fontSize: 16, // Set your desired font size
-          // Add other styling as needed
-        ),
-      ),
-      // Arrow Trailing
-      trailing: const Icon(
-        Icons.arrow_forward_ios_rounded,
-        size: 20,
-      ),
-    );
-  }
+  // ListTile _displayGovId() {
+  //   return ListTile(
+  //     onTap: () {},
+  //     leading: const Icon(Icons.card_membership_rounded),
+  //     title: const Text(
+  //       'Customer Government ID',
+  //       style: TextStyle(
+  //         fontSize: 16, // Set your desired font size
+  //         // Add other styling as needed
+  //       ),
+  //     ),
+  //     // Arrow Trailing
+  //     trailing: const Icon(
+  //       Icons.arrow_forward_ios_rounded,
+  //       size: 20,
+  //     ),
+  //   );
+  // }
 
-  ListTile _userInformation(UserModel user, ListingBookings booking) {
-    return ListTile(
-      onTap: () {
-        // Show user profile
-      },
-      leading: CircleAvatar(
-        radius: 15.0,
-        backgroundImage: user.imageUrl != null && user.imageUrl != ''
-            ? NetworkImage(user.imageUrl!)
-            // Use placeholder image if user has no profile pic
-            : const AssetImage('lib/core/images/default_profile_pic.jpg')
-                as ImageProvider,
-      ),
-      // Contact owner
-      trailing: IconButton(
-        onPressed: () {
-          // Show snackbar with reviews
-          showSnackBar(context, 'Contact owner');
-        },
-        icon: const Icon(Icons.message_rounded),
-      ),
-      title: Text(
-        booking.customerName,
-        style: const TextStyle(
-            fontSize: 16, // Set your desired font size
-            fontWeight: FontWeight.w500
-            // Add other styling as needed
-            ),
-      ),
-      subtitle: const Text(
-        '1 month in lakbay',
-        style: TextStyle(
-          fontSize: 14, // Slightly smaller than the title
-          fontWeight: FontWeight.w300,
-          // You can add other styling as needed
-        ),
-      ),
-    );
-  }
+  // ListTile _userInformation(UserModel user, ListingBookings booking) {
+  //   return ListTile(
+  //     onTap: () {
+  //       // Show user profile
+  //     },
+  //     leading: CircleAvatar(
+  //       radius: 15.0,
+  //       backgroundImage: user.imageUrl != null && user.imageUrl != ''
+  //           ? NetworkImage(user.imageUrl!)
+  //           // Use placeholder image if user has no profile pic
+  //           : const AssetImage('lib/core/images/default_profile_pic.jpg')
+  //               as ImageProvider,
+  //     ),
+  //     // Contact owner
+  //     trailing: IconButton(
+  //       onPressed: () {
+  //         // Show snackbar with reviews
+  //         showSnackBar(context, 'Contact owner');
+  //       },
+  //       icon: const Icon(Icons.message_rounded),
+  //     ),
+  //     title: Text(
+  //       booking.customerName,
+  //       style: const TextStyle(
+  //           fontSize: 16, // Set your desired font size
+  //           fontWeight: FontWeight.w500
+  //           // Add other styling as needed
+  //           ),
+  //     ),
+  //     subtitle: const Text(
+  //       '1 month in lakbay',
+  //       style: TextStyle(
+  //         fontSize: 14, // Slightly smaller than the title
+  //         fontWeight: FontWeight.w300,
+  //         // You can add other styling as needed
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _displaySubtitleText(String text) {
     return Text(
