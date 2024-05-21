@@ -6,6 +6,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
+import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/wiki/wiki_controller.dart';
 import 'package:lakbay/models/wiki_model.dart';
 
@@ -422,8 +423,25 @@ class _WikiPageState extends ConsumerState<WikiPage> {
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              Text(wiki.description,
-                  maxLines: 3, overflow: TextOverflow.ellipsis),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      wiki.description,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  wiki.imageUrl != null
+                      ? DisplayImage(
+                          imageUrl: wiki.imageUrl,
+                          height: 80,
+                          width: 60,
+                          radius: const BorderRadius.all(Radius.circular(8.0)),
+                        )
+                      : const SizedBox(),
+                ],
+              ),
               const SizedBox(height: 24),
               // Elevated button that spands the width of the screen
               FilledButton.tonal(
