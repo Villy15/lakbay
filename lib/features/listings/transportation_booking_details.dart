@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -16,7 +15,6 @@ import 'package:lakbay/features/listings/widgets/emergency_process_dialog.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
-import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/committee_params.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -507,6 +505,7 @@ class _TransportationBookingsDetailsState
                   title: const Text('Contact'),
                   content: ListTile(
                     onTap: () async {
+                      // ignore: deprecated_member_use
                       await launch("tel://${booking.emergencyContactNo}");
                     },
                     leading: const Icon(Icons.phone_rounded),
@@ -1223,45 +1222,45 @@ class _TransportationBookingsDetailsState
     );
   }
 
-  ListTile _userInformation(UserModel user, ListingBookings booking) {
-    return ListTile(
-      onTap: () {
-        // Show user profile
-      },
-      leading: CircleAvatar(
-        radius: 15.0,
-        backgroundImage: user.imageUrl != null && user.imageUrl != ''
-            ? NetworkImage(user.imageUrl!)
-            // Use placeholder image if user has no profile pic
-            : const AssetImage('lib/core/images/default_profile_pic.jpg')
-                as ImageProvider,
-      ),
-      // Contact owner
-      trailing: IconButton(
-        onPressed: () {
-          // Show snackbar with reviews
-          showSnackBar(context, 'Contact owner');
-        },
-        icon: const Icon(Icons.message_rounded),
-      ),
-      title: Text(
-        booking.customerName,
-        style: const TextStyle(
-            fontSize: 16, // Set your desired font size
-            fontWeight: FontWeight.w500
-            // Add other styling as needed
-            ),
-      ),
-      subtitle: const Text(
-        '1 month in lakbay',
-        style: TextStyle(
-          fontSize: 14, // Slightly smaller than the title
-          fontWeight: FontWeight.w300,
-          // You can add other styling as needed
-        ),
-      ),
-    );
-  }
+  // ListTile _userInformation(UserModel user, ListingBookings booking) {
+  //   return ListTile(
+  //     onTap: () {
+  //       // Show user profile
+  //     },
+  //     leading: CircleAvatar(
+  //       radius: 15.0,
+  //       backgroundImage: user.imageUrl != null && user.imageUrl != ''
+  //           ? NetworkImage(user.imageUrl!)
+  //           // Use placeholder image if user has no profile pic
+  //           : const AssetImage('lib/core/images/default_profile_pic.jpg')
+  //               as ImageProvider,
+  //     ),
+  //     // Contact owner
+  //     trailing: IconButton(
+  //       onPressed: () {
+  //         // Show snackbar with reviews
+  //         showSnackBar(context, 'Contact owner');
+  //       },
+  //       icon: const Icon(Icons.message_rounded),
+  //     ),
+  //     title: Text(
+  //       booking.customerName,
+  //       style: const TextStyle(
+  //           fontSize: 16, // Set your desired font size
+  //           fontWeight: FontWeight.w500
+  //           // Add other styling as needed
+  //           ),
+  //     ),
+  //     subtitle: const Text(
+  //       '1 month in lakbay',
+  //       style: TextStyle(
+  //         fontSize: 14, // Slightly smaller than the title
+  //         fontWeight: FontWeight.w300,
+  //         // You can add other styling as needed
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _displaySubtitleText(String text) {
     return Text(

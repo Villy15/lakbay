@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:lakbay/core/constants/firebase_constants.dart';
@@ -56,9 +55,7 @@ class CoopsRepository {
 
   // Read community by uid
   Stream<CooperativeModel> readCoop(String uid) {
-    debugPrint('Reading coop: $uid');
     return _communities.doc(uid).snapshots().map((snapshot) {
-      debugPrint('Snapshot: ${snapshot.data()}');
       return CooperativeModel.fromJson(snapshot.data() as Map<String, dynamic>);
     });
   }
@@ -407,8 +404,6 @@ class CoopsRepository {
 
   // Read a vote in votes subcollection
   Stream<CoopVote> readVote(String coopId, String uid) {
-    debugPrint('Reading vote: $uid');
-    debugPrint('CoopId: $coopId');
     return votes(coopId).doc(uid).snapshots().map((snapshot) {
       return CoopVote.fromJson(snapshot.data() as Map<String, dynamic>);
     });

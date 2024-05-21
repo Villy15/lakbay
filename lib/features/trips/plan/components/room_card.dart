@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:lakbay/core/providers/days_provider.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
@@ -20,9 +19,9 @@ import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/rooms_params.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class RoomCard extends ConsumerStatefulWidget {
   final String category;
@@ -58,10 +57,10 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     final guests = ref.read(currentPlanGuestsProvider) ?? widget.guests;
     final startDate = ref.read(planStartDateProvider) ?? widget.startDate;
     final endDate = ref.read(planEndDateProvider) ?? widget.endDate;
-    final daysPlan = ref.read(daysPlanProvider);
+    // final daysPlan = ref.read(daysPlanProvider);
 
     final currentUser = ref.read(userProvider);
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    // final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     List<String> unavailableRoomUids =
         getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
     return ref
@@ -909,6 +908,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                       debugPrint('this is user: $user');
 
                                       // close dialog
+                                      // ignore: use_build_context_synchronously
                                       Navigator.of(context).pop();
                                       this.setState(() {
                                         user = user;
@@ -943,6 +943,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        // ignore: unused_local_variable
         num guests = 0;
         String? guestNum = room.guests.toString();
         debugPrint('this is the room number of guests: $guestNum');

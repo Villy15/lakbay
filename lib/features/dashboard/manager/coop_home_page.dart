@@ -886,8 +886,6 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                         return const Text("No events found");
                       }
 
-                      debugPrint('Events: $events');
-
                       // Filter events that you have joined
                       events = events
                           .where((event) => event.members.contains(user.uid))
@@ -1021,8 +1019,6 @@ class _TodayPageState extends ConsumerState<TodayPage> {
       totalTasksNeedContributions += booking.tasksNeedContributions;
     }
 
-    debugPrint('Total Tasks Need Contributions: $totalTasksNeedContributions');
-
     return totalTasksNeedContributions;
   }
 
@@ -1126,7 +1122,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
               const Text(
                 'Announcements',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),

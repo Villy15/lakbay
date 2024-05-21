@@ -492,7 +492,6 @@ class _ReadVoteState extends ConsumerState<ReadVote> {
   }
 
   // void check who does not vote yet
-  //TODO implement consumer to this
   void showMembersNotVoting(List<CooperativeMembers>? members) {
     // Get the list of members who have not voted
     showModalBottomSheet(

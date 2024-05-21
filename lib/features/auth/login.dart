@@ -57,10 +57,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(authControllerProvider);
+    double mqheight = MediaQuery.of(context).size.height;
+    double mqwidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
+        alignment: Alignment.center,
         children: <Widget>[
           Container(
             decoration: const BoxDecoration(
@@ -70,36 +73,34 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
             ),
           ),
-          Positioned(
-            top: MediaQuery.of(context).size.height / 12,
-            left: MediaQuery.of(context).size.width / 12,
-            right: MediaQuery.of(context).size.width / 12,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    greetingText(),
-                    SizedBox(height: MediaQuery.of(context).size.height / 15),
-                    if (isLoading) ...[
-                      const Loader(),
-                      const SizedBox(height: 429),
-                    ] else ...[
-                      emailTextField(),
-                      SizedBox(height: MediaQuery.of(context).size.height / 25),
-                      passwordTextField(),
-                      SizedBox(height: MediaQuery.of(context).size.height / 25),
-                      loginButton(),
-                      SizedBox(height: MediaQuery.of(context).size.height / 30),
-                      loginWithText(),
-                      SizedBox(height: MediaQuery.of(context).size.height / 30),
-                      loginOptions(),
-                      SizedBox(height: MediaQuery.of(context).size.height / 25),
-                    ],
-                    extraFunctions(),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: mqwidth * 0.1,
+              vertical: mqheight * 0.1,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  greetingText(),
+                  SizedBox(height: mqheight * 0.05),
+                  if (isLoading) ...[
+                    const Loader(),
+                    SizedBox(height: mqheight * 0.5),
+                  ] else ...[
+                    emailTextField(),
+                    SizedBox(height: mqheight * 0.025),
+                    passwordTextField(),
+                    SizedBox(height: mqheight * 0.025),
+                    loginButton(),
+                    SizedBox(height: mqheight * 0.05),
+                    loginWithText(),
+                    SizedBox(height: mqheight * 0.025),
+                    loginOptions(),
+                    SizedBox(height: mqheight * 0.075),
                   ],
-                ),
+                  extraFunctions(),
+                ],
               ),
             ),
           ),
@@ -211,7 +212,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       onPressed: () {
         login();
       },
-      child: const Text("Login"),
+      child: const Text(
+        "Login",
+      ),
     );
   }
 
@@ -254,7 +257,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   TextFormField emailTextField() {
     return TextFormField(
       controller: _emailController,
-      style: const TextStyle(color: Colors.black),
       decoration: const InputDecoration(
         fillColor: Colors.white54,
         filled: true,

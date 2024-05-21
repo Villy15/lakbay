@@ -13,7 +13,6 @@ import 'package:lakbay/features/trips/app_coop.dart';
 import 'package:lakbay/features/trips/components/trip_card.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
-import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -40,19 +39,7 @@ class _PlanPageState extends ConsumerState<PlanPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // final user = ref.read(userProvider)!;
-
-    // // Temp user to edit user's cooperativesJoined.role to manager by finding its currentCoop
-    // final tempUser = user.copyWith(email: 'timothymendoza23@gmail.com');
-
-    // // Update the user's cooperativesJoined.role to manager
-    // ref.read(usersControllerProvider.notifier).editProfile(
-    //       context,
-    //       user.uid,
-    //       tempUser,
-    //     );
   }
 
   @override
@@ -61,8 +48,6 @@ class _PlanPageState extends ConsumerState<PlanPage> {
     Query query = FirebaseFirestore.instance
         .collectionGroup('plans')
         .where('tripStatus', isEqualTo: 'Completed');
-
-    debugPrint('User: ${user?.isCoopView}');
 
     if (user?.isCoopView == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -75,7 +60,7 @@ class _PlanPageState extends ConsumerState<PlanPage> {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Tara! Lakbay!', user: user),
+      appBar: CustomAppBar(title: 'Explore', user: user),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

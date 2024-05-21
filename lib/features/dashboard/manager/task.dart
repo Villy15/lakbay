@@ -956,8 +956,6 @@ class _TodayPageState extends ConsumerState<TodayPage> {
       totalTasksNeedContributions += booking.tasksNeedContributions;
     }
 
-    debugPrint('Total Tasks Need Contributions: $totalTasksNeedContributions');
-
     return totalTasksNeedContributions;
   }
 

@@ -519,7 +519,7 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
                 const Text(
                   'Listings Created',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

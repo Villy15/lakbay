@@ -5,17 +5,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
-import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/listing_model.dart';
 
 enum IntervalOptions { paddedIntervals, fixedIntervals }
 
@@ -39,7 +39,7 @@ class _AddTourState extends ConsumerState<AddTour> {
   // Initial values
   String type = 'Day Trip';
   num guests = 0;
-  IntervalOptions? _selectedIntervalOption; // Default value
+  // IntervalOptions? _selectedIntervalOption; // Default value
   List<AvailableTime> availableTimes = [];
   Map<String, bool> workingDays = {
     'Monday': false,
@@ -69,7 +69,7 @@ class _AddTourState extends ConsumerState<AddTour> {
       TextEditingController(text: 'Eastwood City');
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
-  final TextEditingController _durationController = TextEditingController();
+  // final TextEditingController _durationController = TextEditingController();
   final TextEditingController _guestInfoController = TextEditingController();
   String mapAddress = "";
   List<File>? _images;
@@ -148,18 +148,17 @@ class _AddTourState extends ConsumerState<AddTour> {
                     }).toList(),
                   );
 
-                debugPrint(listing.toString());
-                if (mounted) {
-                  ref.read(listingLocationProvider.notifier).clearLocation();
-                  ref
-                      .read(listingControllerProvider.notifier)
-                      .addListing(listing, context);
-                }
-              },
-            ));
+                  debugPrint(listing.toString());
+                  if (mounted) {
+                    ref.read(listingLocationProvider.notifier).clearLocation();
+                    ref
+                        .read(listingControllerProvider.notifier)
+                        .addListing(listing, context);
+                  }
+                },
+              ));
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -848,8 +847,7 @@ class _AddTourState extends ConsumerState<AddTour> {
           readOnly: true,
           onTap: () async {
             await context.push('/select_location', extra: 'listing');
-          }
-        ),
+          }),
 
       const SizedBox(height: 10),
 

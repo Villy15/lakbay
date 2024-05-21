@@ -15,6 +15,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final scaffoldKey = ref.watch(scaffoldKeyProvider);
 
     return AppBar(
+      scrolledUnderElevation: 0,
       title: Text(
         title,
         style: title == 'Tara! Lakbay!'

@@ -390,7 +390,7 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
         'start': 'Reservation Time',
         'startValue': DateFormat('hh:mm a').format(booking.startDate!),
         'end': "Location",
-        'endValue': listing.address ?? '',
+        'endValue': listing.address,
       },
     };
     return Card(

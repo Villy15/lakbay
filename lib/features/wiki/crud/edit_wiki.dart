@@ -80,8 +80,8 @@ class _EditWikiPageState extends ConsumerState<EditWikiPage> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
 
-                    final imagePath =
-                        'wikis/${_nameController.text}/${_image?.path.split('/').last ?? ''}';
+                    // final imagePath =
+                    //     'wikis/${_nameController.text}/${_image?.path.split('/').last ?? ''}';
 
                     // // Process data.
                     // var updatedWiki = widget.wiki.copyWith(

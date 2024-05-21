@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/location/map_repository.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 
@@ -47,7 +46,8 @@ class _SelectLocationState extends ConsumerState<SelectLocation> {
                   try {
                     final newPredictions =
                         await mapRepository.getPlacePredictions(value);
-                    ref.read(predictionsProvider.notifier).state = newPredictions;
+                    ref.read(predictionsProvider.notifier).state =
+                        newPredictions;
                     debugPrint('predictions: $newPredictions');
                   } catch (e) {
                     debugPrint('Failed to load predictions: $e');
@@ -66,23 +66,28 @@ class _SelectLocationState extends ConsumerState<SelectLocation> {
                       // if the user is in the plan page, set the location
                       switch (widget.page) {
                         case 'plan':
-                          final planLocation = ref.read(planLocationProvider.notifier);
+                          final planLocation =
+                              ref.read(planLocationProvider.notifier);
                           planLocation.setLocation(predictions[index]);
                           break;
                         case 'listing':
-                          final listingLocation = ref.read(listingLocationProvider.notifier);
+                          final listingLocation =
+                              ref.read(listingLocationProvider.notifier);
                           listingLocation.setLocation(predictions[index]);
                           break;
                         case 'destination':
-                          final destinationLocation = ref.read(destinationLocationProvider.notifier);
+                          final destinationLocation =
+                              ref.read(destinationLocationProvider.notifier);
                           destinationLocation.setLocation(predictions[index]);
                           break;
                         case 'pickup':
-                          final pickupPointLocation = ref.read(pickupPointLocationProvider.notifier);
+                          final pickupPointLocation =
+                              ref.read(pickupPointLocationProvider.notifier);
                           pickupPointLocation.setLocation(predictions[index]);
                           break;
                         default:
-                        final planLocation = ref.read(planLocationProvider.notifier);
+                          final planLocation =
+                              ref.read(planLocationProvider.notifier);
                           planLocation.setLocation(predictions[index]);
                           break;
                       }
@@ -93,7 +98,6 @@ class _SelectLocationState extends ConsumerState<SelectLocation> {
                 },
               ),
             ),
-        
           ],
         ),
       ),

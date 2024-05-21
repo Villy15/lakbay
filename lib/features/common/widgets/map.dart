@@ -13,18 +13,14 @@ class MapWidget extends StatefulWidget {
 }
 
 class MapWidgetState extends State<MapWidget> {
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
   final StreamController<GoogleMapController> _mapController =
       StreamController<GoogleMapController>.broadcast();
-  GoogleMapController? _latestController;
 
   @override
   void initState() {
     super.initState();
     _mapController.stream.listen((GoogleMapController controller) {
       // do something with the controller
-      _latestController = controller;
     });
   }
 

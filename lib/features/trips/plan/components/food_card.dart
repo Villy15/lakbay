@@ -174,8 +174,7 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                                             ],
                                                           );
                                                         });
-                                                  }
-                                                  else {
+                                                  } else {
                                                     showConfirmBooking(
                                                         food.availableDeals!
                                                             .first,
@@ -281,78 +280,21 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                         .then((time) {
                                       if (time != null) {
                                         // check if time is within the open hours / working time
-                                        if (listing.availableDeals!.first
-                                                    .startTime !=
-                                                null &&
-                                            listing.availableDeals!.first
-                                                    .endTime !=
-                                                null) {
-                                          // compare time to the open hours
-                                          debugPrint(
-                                              'Opening Hour: ${listing.availableDeals!.first.startTime}');
-                                          debugPrint(
-                                              'Closing Hour: ${listing.availableDeals!.first.endTime}');
+                                        // compare time to the open hours
+                                        debugPrint(
+                                            'Opening Hour: ${listing.availableDeals!.first.startTime}');
+                                        debugPrint(
+                                            'Closing Hour: ${listing.availableDeals!.first.endTime}');
 
-                                          debugPrint(
-                                              "User's chosen time: $time");
-                                          // compare the hours and minutes of the time to start time and end time
-                                          if (time.hour <
-                                                  listing.availableDeals!.first
-                                                      .startTime!.hour ||
-                                              time.hour >
-                                                  listing.availableDeals!.first
-                                                      .endTime!.hour) {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: const Text(
-                                                        'Invalid Time'),
-                                                    content: const Text(
-                                                        'The time you have chosen is not within the working hours of the listing.'),
-                                                    actions: [
-                                                      TextButton(
-                                                          onPressed: () {
-                                                            context.pop();
-                                                          },
-                                                          child:
-                                                              const Text('OK'))
-                                                    ],
-                                                  );
-                                                });
-                                            return;
-                                          } else if (time.hour ==
-                                                  listing.availableDeals!.first
-                                                      .startTime!.hour &&
-                                              time.minute <
-                                                  listing.availableDeals!.first
-                                                      .startTime!.minute) {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: const Text(
-                                                        'Invalid Time'),
-                                                    content: const Text(
-                                                        'The time you have chosen is not within the working hours of the listing.'),
-                                                    actions: [
-                                                      TextButton(
-                                                          onPressed: () {
-                                                            context.pop();
-                                                          },
-                                                          child:
-                                                              const Text('OK'))
-                                                    ],
-                                                  );
-                                                });
-                                            return;
-                                          } else if (time.hour ==
-                                                  listing.availableDeals!.first
-                                                      .endTime!.hour &&
-                                              time.minute >
-                                                  listing.availableDeals!.first
-                                                      .endTime!.minute) {
-                                            showDialog(
+                                        debugPrint("User's chosen time: $time");
+                                        // compare the hours and minutes of the time to start time and end time
+                                        if (time.hour <
+                                                listing.availableDeals!.first
+                                                    .startTime.hour ||
+                                            time.hour >
+                                                listing.availableDeals!.first
+                                                    .endTime.hour) {
+                                          showDialog(
                                               context: context,
                                               builder: (context) {
                                                 return AlertDialog(
@@ -368,10 +310,57 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                                         child: const Text('OK'))
                                                   ],
                                                 );
-                                              },
-                                            );
-                                            return;
-                                          }
+                                              });
+                                          return;
+                                        } else if (time.hour ==
+                                                listing.availableDeals!.first
+                                                    .startTime.hour &&
+                                            time.minute <
+                                                listing.availableDeals!.first
+                                                    .startTime.minute) {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      'Invalid Time'),
+                                                  content: const Text(
+                                                      'The time you have chosen is not within the working hours of the listing.'),
+                                                  actions: [
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          context.pop();
+                                                        },
+                                                        child: const Text('OK'))
+                                                  ],
+                                                );
+                                              });
+                                          return;
+                                        } else if (time.hour ==
+                                                listing.availableDeals!.first
+                                                    .endTime.hour &&
+                                            time.minute >
+                                                listing.availableDeals!.first
+                                                    .endTime.minute) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title:
+                                                    const Text('Invalid Time'),
+                                                content: const Text(
+                                                    'The time you have chosen is not within the working hours of the listing.'),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        context.pop();
+                                                      },
+                                                      child: const Text('OK'))
+                                                ],
+                                              );
+                                            },
+                                          );
+                                          return;
                                         }
                                         setState(() {
                                           // set the time to the textfield
@@ -556,29 +545,28 @@ class FoodCardState extends ConsumerState<FoodCard> {
                               child: Column(
                                 children: [
                                   GestureDetector(
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.image,
-                                            color: Theme.of(context)
-                                                .iconTheme
-                                                .color),
-                                        const SizedBox(width: 15),
-                                        Expanded(
-                                          child: ImagePickerFormField(
-                                            imageUrl: profilePicLink,
-                                            initialValue: profilePicture,
-                                            onSaved: (value) {
-                                              this.setState(() {
-                                                profilePicture = value;
-                                                debugPrint(
-                                                    'this is the value: $profilePicture');
-                                              });
-                                            },
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ),
+                                      child: Row(
+                                    children: [
+                                      Icon(Icons.image,
+                                          color: Theme.of(context)
+                                              .iconTheme
+                                              .color),
+                                      const SizedBox(width: 15),
+                                      Expanded(
+                                        child: ImagePickerFormField(
+                                          imageUrl: profilePicLink,
+                                          initialValue: profilePicture,
+                                          onSaved: (value) {
+                                            this.setState(() {
+                                              profilePicture = value;
+                                              debugPrint(
+                                                  'this is the value: $profilePicture');
+                                            });
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  )),
                                   const SizedBox(height: 20),
                                   TextFormField(
                                       controller: emailController,
@@ -672,20 +660,31 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                       valueListenable: governmentIdNotifier,
                                       builder: (context, governmentId, child) {
                                         return governmentId == null
-                                            ? const Text('Upload a valid Government ID ')
-                                            : Text('Government ID selected: ${path.basename(governmentId.path)}');
+                                            ? const Text(
+                                                'Upload a valid Government ID ')
+                                            : Text(
+                                                'Government ID selected: ${path.basename(governmentId.path)}');
                                       },
                                     ),
                                     onTap: () async {
-                                      FilePickerResult? result = await FilePicker.platform.pickFiles(
+                                      FilePickerResult? result =
+                                          await FilePicker.platform.pickFiles(
                                         type: FileType.custom,
-                                        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc'],
+                                        allowedExtensions: [
+                                          'jpg',
+                                          'jpeg',
+                                          'png',
+                                          'pdf',
+                                          'doc'
+                                        ],
                                       );
 
                                       if (result != null) {
                                         this.setState(() {
-                                          governmentId = File(result.files.single.path!);
-                                          governmentIdNotifier.value = governmentId;
+                                          governmentId =
+                                              File(result.files.single.path!);
+                                          governmentIdNotifier.value =
+                                              governmentId;
                                         });
                                       }
                                     },
@@ -754,6 +753,7 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                       debugPrint('this is user: $user');
 
                                       // close dialog
+                                      // ignore: use_build_context_synchronously
                                       Navigator.of(context).pop();
                                       this.setState(() {
                                         user = user;

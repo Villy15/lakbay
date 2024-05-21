@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/features/announcements/announcements_page.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
 import 'package:lakbay/features/bookings/bookings_page.dart';
@@ -45,6 +46,7 @@ import 'package:lakbay/features/events/crud/join_event.dart';
 import 'package:lakbay/features/events/crud/read_event.dart';
 import 'package:lakbay/features/events/events_page.dart';
 import 'package:lakbay/features/explore/customer_home_page.dart';
+import 'package:lakbay/features/goals/goals_page.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/inbox/read_inbox.dart';
 import 'package:lakbay/features/listings/accommodation_booking_details.dart';
@@ -60,7 +62,6 @@ import 'package:lakbay/features/listings/crud/customer_food_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_touring.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/departure_details.dart';
-//import 'package:lakbay/features/listings/listings_page.dart';
 import 'package:lakbay/features/listings/transportation_booking_details.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
@@ -82,6 +83,7 @@ import 'package:lakbay/features/trips/screens/trips_details.dart';
 import 'package:lakbay/features/trips/screens/trips_edit_trip.dart';
 import 'package:lakbay/features/trips/screens/trips_info.dart';
 import 'package:lakbay/features/trips/trips_page.dart';
+import 'package:lakbay/features/votes/vote_page.dart';
 import 'package:lakbay/features/wiki/crud/add_wiki.dart';
 import 'package:lakbay/features/wiki/crud/edit_wiki.dart';
 import 'package:lakbay/features/wiki/crud/read_wiki.dart';
@@ -97,7 +99,6 @@ import 'package:lakbay/models/task_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wiki_model.dart';
 
-// import 'package:lakbay/features/trips/trips_page.dart';
 typedef WidgetBuilderWithParams = Widget Function(
     BuildContext context, Map<String, String> pathParameters, dynamic extra);
 
@@ -912,6 +913,42 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     name: 'read_member',
                   ),
                 ],
+              ),
+
+              //Goals
+              GoRoute(
+                path: '/votes',
+                pageBuilder: (context, state) =>
+                    buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child: const VotePage(),
+                  transitionType: SharedAxisTransitionType.vertical,
+                ),
+              ),
+
+              //Goals
+              GoRoute(
+                path: '/goals',
+                pageBuilder: (context, state) =>
+                    buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child: const GoalsPage(),
+                  transitionType: SharedAxisTransitionType.vertical,
+                ),
+              ),
+
+              //Announcements
+              GoRoute(
+                path: '/announcements',
+                pageBuilder: (context, state) =>
+                    buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child: const AnnouncementsPage(),
+                  transitionType: SharedAxisTransitionType.vertical,
+                ),
               ),
 
               //Wiki

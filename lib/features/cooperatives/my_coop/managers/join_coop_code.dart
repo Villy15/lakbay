@@ -1,22 +1,19 @@
+import 'dart:convert';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
-import 'package:lakbay/core/constants/firebase_constants.dart';
-import 'package:lakbay/core/providers/firebase_providers.dart';
-import 'package:lakbay/core/util/utils.dart';
-import 'package:lakbay/models/user_model.dart';
-import 'package:mailto/mailto.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import 'package:lakbay/core/constants/firebase_constants.dart';
+import 'package:lakbay/core/providers/firebase_providers.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/models/coop_model.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class JoinCoopCodePage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -138,7 +135,7 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
             );
 
         // send email to the new members
-        sendEmail(newMembers, widget.coop, user!);
+        sendEmail(newMembers, widget.coop);
         // ignore: use_build_context_synchronously
         context.pop();
       }
@@ -235,26 +232,56 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
   }
 }
 
+// use the Google Cloud Function of sending email
 Future<void> sendEmail(
-    List<MemberData> newMembers, CooperativeModel coop, UserModel user) async {
-  final mailtoLink = Mailto(
-      to: newMembers.map((e) => e.email).toList(),
-      subject: 'Welcome to Lakbay!',
-      body: 'Hello there! \n\n'
-          'The ${coop.name} has partnered with Lakbay and its team for a better cooperative experience. \n\n'
-          'To login, make sure to use the following credentials: \n\n'
-          'Email: your current email (refer to the email that you received this message from) \n'
-          'Password: password \n\n'
-          'It is advised to reset your password after logging in to avoid any security issues. \n\n'
-          'If you have any questions or concerns, please do not hesitate to contact me. \n\n'
-          'Thank you for your cooperation and welcome to the Lakbay App! \n\n'
-          'Best regards, \n'
-          '${user.name} \n'
-          ' ${user.email}');
+    List<MemberData> newMembers, CooperativeModel coop) async {
+  final response = await http.post(
+    Uri.parse('https://us-central1-lakbay-cd97e.cloudfunctions.net/sendEmail'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode({
+      'newMembers': newMembers
+          .map((e) => {
+                'email': e.email,
+                'password': e.password,
+                'firstName': e.firstName,
+                'lastName': e.lastName
+              })
+          .toList(),
+      'coop': coop.name,
+    }),
+  );
 
-  // ignore: deprecated_member_use
-  await launch('$mailtoLink');
+  if (response.statusCode == 200) {
+    debugPrint('Email sent successfully');
+  } else {
+    debugPrint('these are the new members ${newMembers.toString()}');
+    debugPrint('this is the coop name ${coop.name}');
+    debugPrint('Failed to send email. Response: ${response.body}');
+  }
 }
+
+// Future<void> sendEmail(
+//     List<MemberData> newMembers, CooperativeModel coop, UserModel user) async {
+//   final mailtoLink = Mailto(
+//       to: newMembers.map((e) => e.email).toList(),
+//       subject: 'Welcome to Lakbay!',
+//       body: 'Hello there! \n\n'
+//           'The ${coop.name} has partnered with Lakbay and its team for a better cooperative experience. \n\n'
+//           'To login, make sure to use the following credentials: \n\n'
+//           'Email: your current email (refer to the email that you received this message from) \n'
+//           'Password: password \n\n'
+//           'It is advised to reset your password after logging in to avoid any security issues. \n\n'
+//           'If you have any questions or concerns, please do not hesitate to contact me. \n\n'
+//           'Thank you for your cooperation and welcome to the Lakbay App! \n\n'
+//           'Best regards, \n'
+//           '${user.name} \n'
+//           ' ${user.email}');
+
+//   // ignore: deprecated_member_use
+//   await launch('$mailtoLink');
+// }
 
 class MemberData {
   final String email;

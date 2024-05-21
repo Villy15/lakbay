@@ -1,8 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +15,6 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_checkout.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
-import 'package:lakbay/features/location/map_repository.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
@@ -36,7 +36,7 @@ class TransportCard extends ConsumerStatefulWidget {
 class _TransportCardState extends ConsumerState<TransportCard> {
   @override
   Widget build(BuildContext context) {
-    final guests = ref.read(currentPlanGuestsProvider);
+    // final guests = ref.read(currentPlanGuestsProvider);
     final startDate = ref.read(planStartDateProvider);
     final endDate = ref.read(planEndDateProvider);
     final daysPlan = ref.read(daysPlanProvider);
@@ -288,9 +288,16 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                           }
 
                                           if (transport.type == 'Public') {
-                                            var sortedKeys = timeSlots.keys.toList()..sort((a, b) {
-                                              return a.hour.compareTo(b.hour) != 0 ? a.hour.compareTo(b.hour) : a.minute.compareTo(b.minute);
-                                            });
+                                            var sortedKeys = timeSlots.keys
+                                                .toList()
+                                              ..sort((a, b) {
+                                                return a.hour.compareTo(
+                                                            b.hour) !=
+                                                        0
+                                                    ? a.hour.compareTo(b.hour)
+                                                    : a.minute
+                                                        .compareTo(b.minute);
+                                              });
                                             if (context.mounted) {
                                               showDialog(
                                                   context: context,
@@ -314,12 +321,15 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                                           context)
                                                                       .width /
                                                                   1.5,
-                                                          child: SingleChildScrollView(
+                                                          child:
+                                                              SingleChildScrollView(
                                                             child: Column(
-                                                                children: sortedKeys
-                                                                    .map((key) {
+                                                                children:
+                                                                    sortedKeys.map(
+                                                                        (key) {
                                                               num passengers =
-                                                                  timeSlots[key]!;
+                                                                  timeSlots[
+                                                                      key]!;
                                                               DateTime dateTimeSlot = DateTime(
                                                                   daysPlan
                                                                       .currentDay!
@@ -335,7 +345,8 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                               List<ListingBookings>
                                                                   bookingsCopy =
                                                                   bookings;
-                                                              Map<DateTime?, num>
+                                                              Map<DateTime?,
+                                                                      num>
                                                                   deptTimeAndGuests =
                                                                   {
                                                                 dateTimeSlot:
@@ -348,7 +359,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                                           'yyyy-MM-dd')
                                                                       .format(daysPlan
                                                                           .currentDay!);
-                                                            
+
                                                               for (ListingBookings booking
                                                                   in bookingsCopy) {
                                                                 DateTime
@@ -361,12 +372,12 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                                             'yyyy-MM-dd')
                                                                         .format(
                                                                             bookingStartDate);
-                                                            
+
                                                                 // check the formattedCurrentDate and the formattedDate if they are the same
                                                                 if (formattedCurrentDate ==
                                                                     formattedDate) {
                                                                   // remove duplicates of departure time, and get the total number of guests for each departure time
-                                                            
+
                                                                   if (deptTimeAndGuests
                                                                       .containsKey(
                                                                           bookingStartDate)) {
@@ -475,7 +486,6 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                               }
                                             }
                                             if (flag) {
-                                              // ignore: use_build_context_synchronously
                                               showDialog(
                                                   context: context,
                                                   builder: (context) {
@@ -494,7 +504,6 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                     );
                                                   });
                                             } else {
-                                              // ignore: use_build_context_synchronously
                                               showDialog(
                                                   context: context,
                                                   builder: (context) {
@@ -992,7 +1001,6 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                               });
 
                           if (time != null) {
-                            // ignore: use_build_context_synchronously
                             startTimeController!.text = time.format(context);
                             startTime = time;
                           }
@@ -1020,7 +1028,6 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                               });
 
                           if (time != null) {
-                            // ignore: use_build_context_synchronously
                             endTimeController!.text = time.format(context);
                             endTime = time;
                           }
@@ -1128,7 +1135,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
     File? profilePicture;
     String? profilePicLink = user.profilePic;
     File? governmentId;
-    String? governmentIdLink = user.governmentId;
+    // String? governmentIdLink = user.governmentId;
     ValueNotifier<File?> governmentIdNotifier = ValueNotifier<File?>(null);
     final TextEditingController firstNameController =
         TextEditingController(text: user.firstName ?? '');

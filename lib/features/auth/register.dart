@@ -50,10 +50,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(authControllerProvider);
+    double mqheight = MediaQuery.of(context).size.height;
+    double mqwidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
+        alignment: Alignment.center,
         children: <Widget>[
           Container(
             decoration: const BoxDecoration(
@@ -63,34 +66,32 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               ),
             ),
           ),
-          Positioned(
-            top: MediaQuery.of(context).size.height / 14,
-            left: MediaQuery.of(context).size.width / 12,
-            right: MediaQuery.of(context).size.width / 12,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    greetingText(),
-                    const SizedBox(height: 80),
-                    if (isLoading) ...[
-                      const Loader(),
-                      const SizedBox(height: 429),
-                    ] else ...[
-                      emailTextField(),
-                      const SizedBox(height: 20),
-                      passwordTextField(),
-                      const SizedBox(height: 20),
-                      confirmPasswordTextField(),
-                      const SizedBox(height: 20),
-                      registerButton(),
-                      const SizedBox(height: 140),
-                    ],
-                    extraFunctions(),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: mqwidth * 0.1,
+              vertical: mqheight * 0.1,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  greetingText(),
+                  SizedBox(height: mqheight * 0.05),
+                  if (isLoading) ...[
+                    const Loader(),
+                    SizedBox(height: mqheight * 0.5),
+                  ] else ...[
+                    emailTextField(),
+                    SizedBox(height: mqheight * 0.025),
+                    passwordTextField(),
+                    SizedBox(height: mqheight * 0.025),
+                    confirmPasswordTextField(),
+                    SizedBox(height: mqheight * 0.025),
+                    registerButton(),
+                    SizedBox(height: mqheight * 0.2),
                   ],
-                ),
+                  extraFunctions(),
+                ],
               ),
             ),
           ),

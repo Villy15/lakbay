@@ -65,22 +65,19 @@ class _AddAnnouncementState extends ConsumerState<AddAnnouncement> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(coopsControllerProvider);
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.95,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Add Announcement'),
-          leading: IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              ref.read(navBarVisibilityProvider.notifier).show();
-              context.pop(widget.parentContext);
-            },
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Add Announcement'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            ref.read(navBarVisibilityProvider.notifier).show();
+            context.pop(widget.parentContext);
+          },
         ),
-        bottomNavigationBar: _bottomNavBar(context),
-        body: isLoading ? const Loader() : _body(),
       ),
+      bottomNavigationBar: _bottomNavBar(context),
+      body: isLoading ? const Loader() : _body(),
     );
   }
 
