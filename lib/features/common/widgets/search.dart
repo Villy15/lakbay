@@ -14,13 +14,13 @@ class CustomSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SearchBar(
       surfaceTintColor: MaterialStateProperty.all<Color>(
-        Theme.of(context).colorScheme.background),
+          Theme.of(context).colorScheme.background),
       hintText: hintText,
       onTap: onTap,
       onChanged: (value) {},
       elevation: const MaterialStatePropertyAll<double>(2.5),
       padding: const MaterialStatePropertyAll<EdgeInsets>(
-        EdgeInsets.symmetric(horizontal: 16.0)),
+          EdgeInsets.symmetric(horizontal: 16.0)),
       leading: const Icon(Icons.search),
     );
   }

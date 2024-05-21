@@ -58,7 +58,7 @@ class _AddWikiPageState extends ConsumerState<AddWikiPage> {
       canPop: false,
       onPopInvoked: (bool didPop) {
         context.pop();
-        ref.read(navBarVisibilityProvider.notifier).show();
+        // ref.read(navBarVisibilityProvider.notifier).show();
       },
       child: Scaffold(
           appBar: AppBar(title: const Text('Add Wiki')),
@@ -70,7 +70,7 @@ class _AddWikiPageState extends ConsumerState<AddWikiPage> {
                 TextButton(
                   onPressed: () {
                     context.pop();
-                    ref.read(navBarVisibilityProvider.notifier).show();
+                    // ref.read(navBarVisibilityProvider.notifier).show();
                   },
                   child: const Text('Cancel'),
                 ),
