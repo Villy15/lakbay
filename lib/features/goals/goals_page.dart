@@ -7,17 +7,21 @@ import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
-import 'package:lakbay/features/wiki/wiki_controller.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
+import 'package:lakbay/features/cooperatives/my_coop/components/goal_card.dart';
+import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/subcollections/coop_goals_model.dart';
 import 'package:lakbay/models/wiki_model.dart';
 
-class WikiPage extends ConsumerStatefulWidget {
-  const WikiPage({super.key});
+class GoalsPage extends ConsumerStatefulWidget {
+  const GoalsPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _WikiPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _GoalsPageState();
 }
 
-enum SortOption { newest, mostVotes }
+enum SortOption { newest }
 
 // State Notifier Provider
 final sortOptionProvider =
@@ -25,7 +29,7 @@ final sortOptionProvider =
   (ref) => SortOptionNotifier(),
 );
 
-class _WikiPageState extends ConsumerState<WikiPage> {
+class _GoalsPageState extends ConsumerState<GoalsPage> {
   /*
     ROUTES DEFINITION
   */
@@ -33,8 +37,19 @@ class _WikiPageState extends ConsumerState<WikiPage> {
     context.push("/wiki/$wikiId");
   }
 
-  void navigateToAddWiki(BuildContext context) {
-    context.push("/add_wiki");
+  void addAnnouncement(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return AddAnnouncement(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
   }
 
   @override
@@ -50,9 +65,8 @@ class _WikiPageState extends ConsumerState<WikiPage> {
   */
 
   List<Tag> availableTags = [
-    Tag('Discussion', false),
-    Tag('Issue', false),
-    Tag('Advice', false),
+    Tag('Member Participation', false),
+    Tag('Economic Development', false),
   ];
 
   bool _isSearching = false;
@@ -61,6 +75,9 @@ class _WikiPageState extends ConsumerState<WikiPage> {
   @override
   Widget build(BuildContext context) {
     final sortOption = ref.watch(sortOptionProvider);
+    final user = ref.watch(userProvider)!;
+    final coop =
+        ref.watch(getCooperativeProvider(user.currentCoop!)).asData?.value;
 
     return PopScope(
       canPop: false,
@@ -72,49 +89,43 @@ class _WikiPageState extends ConsumerState<WikiPage> {
         appBar: _appBar(),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: ref.watch(getAllWikiProvider).when(
-                data: (wikis) {
-                  // wikis = [];
-                  if (wikis.isEmpty) {
+          child: ref.watch(getAllGoalsProvider(user.currentCoop!)).when(
+                data: (List<CoopGoals> data) {
+                  if (data.isEmpty) {
                     return emptyWikis();
                   }
 
                   // Filter wikis based on search query
-                  final searchedWikis = wikis
-                      .where((wiki) => wiki.title
+                  final searchedData = data
+                      .where((data) => data.title!
                           .toLowerCase()
                           .contains(_searchQuery.toLowerCase()))
                       .toList();
 
-                  if (searchedWikis.isEmpty) {
+                  if (searchedData.isEmpty) {
                     return emptyWikis();
                   }
 
                   // Filter wikis based on selected tags only if any tag is selected
-                  final filteredWikis =
+                  final filteredData =
                       availableTags.where((tag) => tag.isSelected).isEmpty
-                          ? searchedWikis
-                          : searchedWikis
-                              .where((wiki) => availableTags
+                          ? searchedData
+                          : searchedData
+                              .where((data) => availableTags
                                   .where((tag) => tag.isSelected)
                                   .map((tag) => tag.name)
-                                  .contains(wiki.tag))
+                                  .contains(data.category ?? data))
                               .toList();
 
                   // Sort wikis based on selected sort option
                   if (sortOption == SortOption.newest) {
-                    filteredWikis
-                        .sort((a, b) => b.createdAt.compareTo(a.createdAt));
+                    filteredData
+                        .sort((a, b) => b.targetDate!.compareTo(a.targetDate!));
 
                     debugPrint('Sorted by newest');
-                  } else if (sortOption == SortOption.mostVotes) {
-                    filteredWikis
-                        .sort((a, b) => b.votes?.compareTo(a.votes ?? 0) ?? 0);
-
-                    debugPrint('Sorted by most votes');
                   }
 
-                  if (filteredWikis.isEmpty) {
+                  if (filteredData.isEmpty) {
                     return Column(
                       children: [
                         sortAndTags(),
@@ -132,11 +143,12 @@ class _WikiPageState extends ConsumerState<WikiPage> {
                         ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: filteredWikis.length * 2,
+                          itemCount: filteredData.length,
                           itemBuilder: (context, index) {
-                            final wiki =
-                                filteredWikis[index % filteredWikis.length];
-                            return wikiCard(wiki);
+                            final goal = filteredData[index];
+                            return GoalCard(
+                              goal: goal,
+                            );
                           },
                         ),
                       ],
@@ -150,7 +162,7 @@ class _WikiPageState extends ConsumerState<WikiPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            navigateToAddWiki(context);
+            addAnnouncement(context, coop!);
           },
           child: const Icon(Icons.add),
         ),
@@ -180,7 +192,7 @@ class _WikiPageState extends ConsumerState<WikiPage> {
                 ),
               ),
             )
-          : const Text('Wikis'),
+          : const Text('Coop Goals'),
       actions: [
         IconButton(
           onPressed: () {
@@ -226,7 +238,6 @@ class _WikiPageState extends ConsumerState<WikiPage> {
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
             ),
             const SizedBox(width: 12),
-
             Wrap(
               spacing: 8.0, // gap between adjacent chips
               runSpacing: 4.0, // gap between lines
@@ -291,10 +302,8 @@ class _WikiPageState extends ConsumerState<WikiPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Column(
                     children: [
-                      radioListTile(context, "Newest", true, false,
+                      radioListTile(context, "Newest", true, true,
                           SortOption.newest, setState),
-                      radioListTile(context, "Most Votes", false, true,
-                          SortOption.mostVotes, setState),
                     ],
                   ),
                 ),
@@ -591,7 +600,7 @@ class Tag {
 
 // State Notifiers
 class SortOptionNotifier extends StateNotifier<SortOption> {
-  SortOptionNotifier() : super(SortOption.mostVotes);
+  SortOptionNotifier() : super(SortOption.newest);
 
   void setSortOption(SortOption option) {
     state = option;

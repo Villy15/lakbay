@@ -89,195 +89,243 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.background,
       child: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                _profile(context, user),
+
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(28, 8, 28, 0),
+                  child: Divider(),
+                ),
+
+                //Go to customer home
+
+                _functions(context),
+              ],
+            ),
+            _logout(context)
+          ],
+        ),
+      ),
+    );
+  }
+
+  Column _logout(BuildContext context) {
+    return Column(
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(28, 0, 28, 0),
+          child: Divider(),
+        ),
+        // Add logout button
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
+          child: ListTile(
+            title: const Text('Logout'),
+            leading: const Icon(Icons.logout),
+            trailing: IconButton(
+                onPressed: () => toggleTheme(ref),
+                icon: Icon(Theme.of(context).brightness == Brightness.light
+                    ? Icons.dark_mode_outlined
+                    : Icons.dark_mode_rounded)),
+            onTap: () => logout(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _functions(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.38,
+      child: Scrollbar(
+        trackVisibility: true,
+        thumbVisibility: true,
+        radius: const Radius.circular(10),
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            ListTile(
+              title: const Text('My Profile'),
+              leading: const Icon(Icons.person),
+              onTap: () => {
+                widget.user!.isCoopView ?? false
+                    ? viewMyProfileCoop()
+                    : viewMyProfileCustomer()
+              },
+            ),
+
+            // View Current Cooperative
+            widget.user!.isCoopView ?? false
+                ? const SizedBox.shrink()
+                : ListTile(
+                    title: const Text('View Current Cooperative'),
+                    leading: const Icon(Icons.group),
+                    onTap: () => {viewCurrentCooperative(ref)},
+                  ),
+
+            widget.user!.isCoopView ?? false
+                ? const SizedBox.shrink()
+                : ListTile(
+                    title: const Text('Register a Cooperative'),
+                    leading: const Icon(Icons.group_add),
+                    onTap: () => registerCooperative(ref),
+                  ),
+            // Add Cooperative Dashboard
+            widget.user!.isCoopView ?? false
+                ? ListTile(
+                    title: const Text('Cooperative Dashboard'),
+                    leading: const Icon(Icons.dashboard),
+                    onTap: () => {
+                      context.pop(),
+                      context.push(
+                          '/my_coop/dashboard/${widget.user?.currentCoop}'),
+                    },
+                  )
+                : const SizedBox.shrink(),
+
+            // Wiki Page
+
+            widget.user!.isCoopView ?? false
+                ? ListTile(
+                    title: const Text('Wiki'),
+                    leading: const Icon(Icons.book_outlined),
+                    onTap: () => {
+                      context.pop(),
+                      context.push('/wiki'),
+                    },
+                  )
+                : const SizedBox.shrink(),
+
+            widget.user!.isCoopView ?? false
+                ? ListTile(
+                    title: const Text('Announcements'),
+                    leading: const Icon(Icons.announcement_outlined),
+                    onTap: () => {
+                      context.pop(),
+                      context.push('/announcements'),
+                    },
+                  )
+                : const SizedBox.shrink(),
+
+            widget.user!.isCoopView ?? false
+                ? ListTile(
+                    title: const Text('Coop Goals'),
+                    leading: const Icon(Icons.emoji_events_outlined),
+                    onTap: () => {
+                      context.pop(),
+                      context.push('/goals'),
+                    },
+                  )
+                : const SizedBox.shrink(),
+
+            // votes
+            widget.user!.isCoopView ?? false
+                ? ListTile(
+                    title: const Text('Votes'),
+                    leading: const Icon(Icons.how_to_vote_outlined),
+                    onTap: () => {
+                      context.pop(),
+                      context.push('/votes'),
+                    },
+                  )
+                : const SizedBox.shrink(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Column _profile(BuildContext context, UserModel user) {
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 70.0,
+          backgroundImage:
+              widget.user?.profilePic != null && widget.user?.profilePic != ''
+                  ? NetworkImage(widget.user!.profilePic)
+                  : null,
+          backgroundColor: Theme.of(context).colorScheme.onBackground,
+          child:
+              widget.user?.profilePic == null || widget.user?.profilePic == ''
+                  ? Text(
+                      widget.user?.name[0].toUpperCase() ?? 'L',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.background,
+                        fontSize: 40,
+                      ),
+                    )
+                  : null,
+        ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () => {
+            // Show modal bottom sheet
+            modalBottomSheet(context, user)
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                children: [
-                  CircleAvatar(
-                    radius: 70.0,
-                    backgroundImage: widget.user?.profilePic != null &&
-                            widget.user?.profilePic != ''
-                        ? NetworkImage(widget.user!.profilePic)
-                        : null,
-                    backgroundColor: Theme.of(context).colorScheme.onBackground,
-                    child: widget.user?.profilePic == null ||
-                            widget.user?.profilePic == ''
-                        ? Text(
-                            widget.user?.name[0].toUpperCase() ?? 'L',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.background,
-                              fontSize: 40,
-                            ),
-                          )
-                        : null,
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  widget.user!.name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
                   ),
-                  const SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: () => {
-                      // Show modal bottom sheet
-                      modalBottomSheet(context, user)
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0),
-                          child: Text(
-                            widget.user!.name,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        // Arrow down
-                        const Icon(Icons.arrow_drop_down),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  // Switch View Button show if the user is a member of a cooperative
-                  user.cooperativesJoined?.isNotEmpty ?? false
-                      ? switchViewButton(
-                          context,
-                          widget.user!.isCoopView ?? false,
-                        )
-                      : const SizedBox.shrink(),
-                  const SizedBox(height: 10),
-                  // Current cooperative dropdown
-                  user.isCoopView ?? false
-                      ? ref
-                          .watch(getCooperativeProvider(user.currentCoop ?? ''))
-                          .maybeWhen(
-                              data: (data) => ListTile(
-                                    onTap: () => {
-                                      modalBottomSheetCooperative(context, user)
-                                    },
-                                    title: Text(data.name),
-                                    leading: CircleAvatar(
-                                      radius: 20.0,
-                                      backgroundImage: data.imageUrl != null &&
-                                              data.imageUrl != ''
-                                          ? NetworkImage(data.imageUrl!)
-                                          // Use placeholder image if user has no profile pic
-                                          : const AssetImage(
-                                                  'lib/core/images/default_profile_pic.jpg')
-                                              as ImageProvider,
-                                      backgroundColor: Colors.transparent,
-                                    ),
-                                    trailing: const Icon(Icons.arrow_drop_down),
-                                    subtitle: user.role.isNotEmpty
-                                        ? Text(
-                                            user.role,
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey),
-                                          )
-                                        : null,
-                                  ),
-                              orElse: () => const SizedBox.shrink())
-                      : const SizedBox.shrink(),
-                  // Display user's role
-
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(28, 8, 28, 0),
-                    child: Divider(),
-                  ),
-
-                  //Go to customer home
-
-                  // View customer profile
-                  ListTile(
-                    title: const Text('My Profile'),
-                    leading: const Icon(Icons.person),
-                    onTap: () => {
-                      widget.user!.isCoopView ?? false
-                          ? viewMyProfileCoop()
-                          : viewMyProfileCustomer()
-                    },
-                  ),
-
-                  //View customer bookings
-                  // widget.user!.isCoopView ?? false
-                  //     ? const SizedBox.shrink()
-                  //     : ListTile(
-                  //         title: const Text('Bookings'),
-                  //         leading: const Icon(Icons.book),
-                  //         onTap: () => {viewBookings(ref)},
-                  //       ),
-
-                  // View Current Cooperative
-                  widget.user!.isCoopView ?? false
-                      ? const SizedBox.shrink()
-                      : ListTile(
-                          title: const Text('View Current Cooperative'),
-                          leading: const Icon(Icons.group),
-                          onTap: () => {viewCurrentCooperative(ref)},
-                        ),
-
-                  widget.user!.isCoopView ?? false
-                      ? const SizedBox.shrink()
-                      : ListTile(
-                          title: const Text('Register a Cooperative'),
-                          leading: const Icon(Icons.group_add),
-                          onTap: () => registerCooperative(ref),
-                        ),
-                  // Add Cooperative Dashboard
-                  widget.user!.isCoopView ?? false
-                      ? ListTile(
-                          title: const Text('Cooperative Dashboard'),
-                          leading: const Icon(Icons.dashboard),
-                          onTap: () => {
-                            context.pop(),
-                            context.push(
-                                '/my_coop/dashboard/${widget.user?.currentCoop}'),
-                          },
-                        )
-                      : const SizedBox.shrink(),
-
-                  // Wiki Page
-
-                  widget.user!.isCoopView ?? false
-                      ? ListTile(
-                          title: const Text('Wiki'),
-                          leading: const Icon(Icons.book_outlined),
-                          onTap: () => {
-                            context.pop(),
-                            context.push('/wiki'),
-                          },
-                        )
-                      : const SizedBox.shrink(),
-                ],
+                ),
               ),
-              Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(28, 0, 28, 0),
-                    child: Divider(),
-                  ),
-                  // Add logout button
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
-                    child: ListTile(
-                      title: const Text('Logout'),
-                      leading: const Icon(Icons.logout),
-                      trailing: IconButton(
-                          onPressed: () => toggleTheme(ref),
-                          icon: Icon(
-                              Theme.of(context).brightness == Brightness.light
-                                  ? Icons.dark_mode_outlined
-                                  : Icons.dark_mode_rounded)),
-                      onTap: () => logout(),
-                    ),
-                  ),
-                ],
-              )
+              // Arrow down
+              const Icon(Icons.arrow_drop_down),
             ],
           ),
         ),
-      ),
+        const SizedBox(height: 10),
+        // Switch View Button show if the user is a member of a cooperative
+        user.cooperativesJoined?.isNotEmpty ?? false
+            ? switchViewButton(
+                context,
+                widget.user!.isCoopView ?? false,
+              )
+            : const SizedBox.shrink(),
+        const SizedBox(height: 10),
+        // Current cooperative dropdown
+        user.isCoopView ?? false
+            ? ref
+                .watch(getCooperativeProvider(user.currentCoop ?? ''))
+                .maybeWhen(
+                    data: (data) => ListTile(
+                          onTap: () =>
+                              {modalBottomSheetCooperative(context, user)},
+                          title: Text(data.name),
+                          leading: CircleAvatar(
+                            radius: 20.0,
+                            backgroundImage: data.imageUrl != null &&
+                                    data.imageUrl != ''
+                                ? NetworkImage(data.imageUrl!)
+                                // Use placeholder image if user has no profile pic
+                                : const AssetImage(
+                                        'lib/core/images/default_profile_pic.jpg')
+                                    as ImageProvider,
+                            backgroundColor: Colors.transparent,
+                          ),
+                          trailing: const Icon(Icons.arrow_drop_down),
+                          subtitle: user.role.isNotEmpty
+                              ? Text(
+                                  user.role,
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.grey),
+                                )
+                              : null,
+                        ),
+                    orElse: () => const SizedBox.shrink())
+            : const SizedBox.shrink(),
+        // Display user's role
+      ],
     );
   }
 

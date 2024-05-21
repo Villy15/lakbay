@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:lakbay/core/constants/firebase_constants.dart';
 import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/util/utils.dart';
@@ -13,10 +14,6 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/models/coop_model.dart';
-import 'package:lakbay/models/user_model.dart';
-import 'package:mailto/mailto.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
 
 class JoinCoopCodePage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -236,15 +233,22 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
 }
 
 // use the Google Cloud Function of sending email
-Future<void> sendEmail(List<MemberData> newMembers, CooperativeModel coop) async {
+Future<void> sendEmail(
+    List<MemberData> newMembers, CooperativeModel coop) async {
   final response = await http.post(
-    Uri.parse(
-        'https://us-central1-lakbay-cd97e.cloudfunctions.net/sendEmail'),
+    Uri.parse('https://us-central1-lakbay-cd97e.cloudfunctions.net/sendEmail'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
     body: jsonEncode({
-      'newMembers': newMembers.map((e) => {'email': e.email, 'password': e.password, 'firstName': e.firstName, 'lastName': e.lastName}).toList(),
+      'newMembers': newMembers
+          .map((e) => {
+                'email': e.email,
+                'password': e.password,
+                'firstName': e.firstName,
+                'lastName': e.lastName
+              })
+          .toList(),
       'coop': coop.name,
     }),
   );
