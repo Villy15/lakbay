@@ -20,6 +20,7 @@ class ListingModel with _$ListingModel {
     @TimeOfDayConverter() TimeOfDay? checkOut,
     required String city,
     num? cancellationPeriod,
+    num? downpaymentPeriod,
     required ListingCooperative cooperative,
     required String description,
     List<String>? driverNames,

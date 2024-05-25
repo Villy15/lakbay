@@ -26,6 +26,7 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           json['checkOut'], const TimeOfDayConverter().fromJson),
       city: json['city'] as String,
       cancellationPeriod: json['cancellationPeriod'] as num?,
+      downpaymentPeriod: json['downpaymentPeriod'] as num?,
       cooperative: ListingCooperative.fromJson(
           json['cooperative'] as Map<String, dynamic>),
       description: json['description'] as String,
@@ -103,6 +104,7 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
           instance.checkOut, const TimeOfDayConverter().toJson),
       'city': instance.city,
       'cancellationPeriod': instance.cancellationPeriod,
+      'downpaymentPeriod': instance.downpaymentPeriod,
       'cooperative': instance.cooperative.toJson(),
       'description': instance.description,
       'driverNames': instance.driverNames,

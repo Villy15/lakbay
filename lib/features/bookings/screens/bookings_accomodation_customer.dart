@@ -32,12 +32,17 @@ class BookingsAccomodationCustomer extends ConsumerStatefulWidget {
 
 class _BookingsAccomodationCustomerState
     extends ConsumerState<BookingsAccomodationCustomer> {
+  late num balance;
+  late String balanceDueDate;
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
+    balance = widget.booking.totalPrice! - widget.booking.amountPaid!;
+    balanceDueDate = DateFormat("MMM d").format(widget.booking.startDate!
+        .subtract(Duration(days: widget.listing.downpaymentPeriod!.toInt())));
   }
 
   void createRoom(BuildContext context, String senderId, UserModel user) async {
@@ -136,11 +141,12 @@ class _BookingsAccomodationCustomerState
                               "Downpayment" &&
                           booking.paymentStatus == "Partially Paid")
                       ? BottomAppBar(
-                          height: MediaQuery.sizeOf(context).height / 7.5,
+                          height: MediaQuery.sizeOf(context).height / 6,
                           surfaceTintColor: Colors.transparent,
-                          child: Row(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Text("Balance due on $balanceDueDate"),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.8,
                                 child: FilledButton(
@@ -155,9 +161,9 @@ class _BookingsAccomodationCustomerState
                                           8.0), // Adjust the value as needed
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Pay Balance',
-                                    style: TextStyle(fontSize: 14),
+                                  child: Text(
+                                    'Pay Balance: ₱$balance',
+                                    style: const TextStyle(fontSize: 14),
                                   ),
                                 ),
                               ),
@@ -586,11 +592,10 @@ class _BookingsAccomodationCustomerState
     return showDialog(
         context: context,
         builder: (context) {
-          final amountDue = booking.totalPrice! - booking.amountPaid!;
           Map<String, num> paymentDetails = {
             'Amount Paid: ': (0 - booking.amountPaid!),
             'Total Amount: ': booking.totalPrice!,
-            'Amount Due': amountDue,
+            'Amount Due': balance,
           };
           return Dialog.fullscreen(
               child: Scaffold(
@@ -614,7 +619,7 @@ class _BookingsAccomodationCustomerState
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: FilledButton(
                         onPressed: () =>
-                            onTapPayBalance(context, booking, amountDue)
+                            onTapPayBalance(context, booking, balance)
                                 .then((value) {
                           showSnackBar(context, 'Payment Successfull');
                           context.pop();

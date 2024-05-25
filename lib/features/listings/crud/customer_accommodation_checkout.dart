@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
@@ -35,11 +36,12 @@ class _CustomerAccomodationCheckoutState
   num vat = 1.12;
   late num _maxGuestCount;
   late ListingBookings updatedBooking;
-  PaymentOption _selectedPaymentOption =
-      PaymentOption.downpayment; // Default value
+  late PaymentOption _selectedPaymentOption; // Default value
   late num vatAmount;
   late num downpaymentAmount;
   late num amountDue;
+
+  late bool validDownpayment;
   @override
   void initState() {
     super.initState();
@@ -53,6 +55,14 @@ class _CustomerAccomodationCheckoutState
         (widget.booking.price * _nights) * widget.listing.downpaymentRate!;
     vatAmount = downpaymentAmount * (vat - 1);
     amountDue = vatAmount + downpaymentAmount;
+
+    validDownpayment = _startDate.difference(DateTime.now()).inDays >
+            widget.listing.cancellationPeriod! ||
+        _startDate.difference(DateTime.now()).inDays >
+            widget.listing.downpaymentPeriod!;
+    _selectedPaymentOption = validDownpayment == true
+        ? PaymentOption.downpayment
+        : PaymentOption.fullPayment;
   }
 
   @override
@@ -351,22 +361,24 @@ class _CustomerAccomodationCheckoutState
               const SizedBox(height: 10),
 
               // Radio buttons for payment options
-              RadioListTile<PaymentOption>(
-                title: const Text('Downpayment'),
-                value: PaymentOption.downpayment,
-                groupValue: _selectedPaymentOption,
-                onChanged: (PaymentOption? value) {
-                  setState(() {
-                    _selectedPaymentOption = value!;
-                    downpaymentAmount = (widget.booking.price * _nights) *
-                        widget.listing.downpaymentRate!;
-                    vatAmount = (downpaymentAmount) * (vat - 1);
-                    amountDue = vatAmount + downpaymentAmount;
-                  });
-                },
-              ),
-              if (_selectedPaymentOption.name == "downpayment")
-                paymentOptionDetails(vatAmount, downpaymentAmount, amountDue),
+              if (validDownpayment == true) ...[
+                RadioListTile<PaymentOption>(
+                  title: const Text('Downpayment'),
+                  value: PaymentOption.downpayment,
+                  groupValue: _selectedPaymentOption,
+                  onChanged: (PaymentOption? value) {
+                    setState(() {
+                      _selectedPaymentOption = value!;
+                      downpaymentAmount = (widget.booking.price * _nights) *
+                          widget.listing.downpaymentRate!;
+                      vatAmount = (downpaymentAmount) * (vat - 1);
+                      amountDue = vatAmount + downpaymentAmount;
+                    });
+                  },
+                ),
+                if (_selectedPaymentOption.name == "downpayment")
+                  paymentOptionDetails(vatAmount, downpaymentAmount, amountDue),
+              ],
 
               RadioListTile<PaymentOption>(
                 title: const Text('Full Payment'),

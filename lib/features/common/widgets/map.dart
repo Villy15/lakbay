@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -43,6 +45,11 @@ class MapWidgetState extends State<MapWidget> {
           return ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: GoogleMap(
+              zoomControlsEnabled: false,
+              gestureRecognizers: {
+                Factory<OneSequenceGestureRecognizer>(
+                    () => EagerGestureRecognizer())
+              },
               markers: {
                 Marker(
                   markerId: const MarkerId('marker_1'),
@@ -56,7 +63,7 @@ class MapWidgetState extends State<MapWidget> {
                 Circle(
                   circleId: const CircleId('circle_1'),
                   center: snapshot.data!,
-                  radius: 50,
+                  radius: 10,
                   fillColor:
                       Theme.of(context).colorScheme.primary.withOpacity(0.2),
                   strokeColor: Theme.of(context).colorScheme.primary,
@@ -69,7 +76,7 @@ class MapWidgetState extends State<MapWidget> {
               myLocationButtonEnabled: true,
               initialCameraPosition: CameraPosition(
                 target: snapshot.data!,
-                zoom: 14.4746,
+                zoom: 12,
               ),
               onMapCreated: (GoogleMapController controller) {
                 _mapController.add(controller);
@@ -102,8 +109,12 @@ class MapWidgetState extends State<MapWidget> {
 class TwoMarkerMapWidget extends StatefulWidget {
   final String pickup;
   final String destination;
+  final bool? radius;
   const TwoMarkerMapWidget(
-      {super.key, required this.pickup, required this.destination});
+      {super.key,
+      required this.pickup,
+      required this.destination,
+      this.radius});
 
   @override
   State<TwoMarkerMapWidget> createState() => TwoMarkerMapWidgetState();
@@ -144,8 +155,15 @@ class TwoMarkerMapWidgetState extends State<TwoMarkerMapWidget> {
           return Text('Error: ${snapshot.error}');
         } else {
           return ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: widget.radius == true
+                ? BorderRadius.circular(20)
+                : BorderRadius.circular(0),
             child: GoogleMap(
+              zoomControlsEnabled: false,
+              gestureRecognizers: {
+                Factory<OneSequenceGestureRecognizer>(
+                    () => EagerGestureRecognizer())
+              },
               markers: {
                 Marker(
                   markerId: const MarkerId('Pickup'),
@@ -166,7 +184,7 @@ class TwoMarkerMapWidgetState extends State<TwoMarkerMapWidget> {
                 Circle(
                   circleId: const CircleId('pickup'),
                   center: snapshot.data!['pickup']!,
-                  radius: 100,
+                  radius: 10,
                   fillColor:
                       Theme.of(context).colorScheme.primary.withOpacity(0.2),
                   strokeColor: Theme.of(context).colorScheme.primary,
@@ -175,7 +193,7 @@ class TwoMarkerMapWidgetState extends State<TwoMarkerMapWidget> {
                 Circle(
                   circleId: const CircleId('destination'),
                   center: snapshot.data!['destination']!,
-                  radius: 100,
+                  radius: 10,
                   fillColor:
                       Theme.of(context).colorScheme.primary.withOpacity(0.2),
                   strokeColor: Theme.of(context).colorScheme.primary,
@@ -188,7 +206,7 @@ class TwoMarkerMapWidgetState extends State<TwoMarkerMapWidget> {
               myLocationButtonEnabled: true,
               initialCameraPosition: CameraPosition(
                 target: centerPoint ?? const LatLng(0, 0),
-                zoom: 14.4746,
+                zoom: 12,
               ),
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);

@@ -32,6 +32,7 @@ mixin _$ListingModel {
   TimeOfDay? get checkOut => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
   num? get cancellationPeriod => throw _privateConstructorUsedError;
+  num? get downpaymentPeriod => throw _privateConstructorUsedError;
   ListingCooperative get cooperative => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   List<String>? get driverNames => throw _privateConstructorUsedError;
@@ -96,6 +97,7 @@ abstract class $ListingModelCopyWith<$Res> {
       @TimeOfDayConverter() TimeOfDay? checkOut,
       String city,
       num? cancellationPeriod,
+      num? downpaymentPeriod,
       ListingCooperative cooperative,
       String description,
       List<String>? driverNames,
@@ -156,6 +158,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? checkOut = freezed,
     Object? city = null,
     Object? cancellationPeriod = freezed,
+    Object? downpaymentPeriod = freezed,
     Object? cooperative = null,
     Object? description = null,
     Object? driverNames = freezed,
@@ -229,6 +232,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
       cancellationPeriod: freezed == cancellationPeriod
           ? _value.cancellationPeriod
           : cancellationPeriod // ignore: cast_nullable_to_non_nullable
+              as num?,
+      downpaymentPeriod: freezed == downpaymentPeriod
+          ? _value.downpaymentPeriod
+          : downpaymentPeriod // ignore: cast_nullable_to_non_nullable
               as num?,
       cooperative: null == cooperative
           ? _value.cooperative
@@ -402,6 +409,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       @TimeOfDayConverter() TimeOfDay? checkOut,
       String city,
       num? cancellationPeriod,
+      num? downpaymentPeriod,
       ListingCooperative cooperative,
       String description,
       List<String>? driverNames,
@@ -462,6 +470,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? checkOut = freezed,
     Object? city = null,
     Object? cancellationPeriod = freezed,
+    Object? downpaymentPeriod = freezed,
     Object? cooperative = null,
     Object? description = null,
     Object? driverNames = freezed,
@@ -535,6 +544,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
       cancellationPeriod: freezed == cancellationPeriod
           ? _value.cancellationPeriod
           : cancellationPeriod // ignore: cast_nullable_to_non_nullable
+              as num?,
+      downpaymentPeriod: freezed == downpaymentPeriod
+          ? _value.downpaymentPeriod
+          : downpaymentPeriod // ignore: cast_nullable_to_non_nullable
               as num?,
       cooperative: null == cooperative
           ? _value.cooperative
@@ -682,6 +695,7 @@ class _$ListingModelImpl implements _ListingModel {
       @TimeOfDayConverter() this.checkOut,
       required this.city,
       this.cancellationPeriod,
+      this.downpaymentPeriod,
       required this.cooperative,
       required this.description,
       final List<String>? driverNames,
@@ -776,6 +790,8 @@ class _$ListingModelImpl implements _ListingModel {
   final String city;
   @override
   final num? cancellationPeriod;
+  @override
+  final num? downpaymentPeriod;
   @override
   final ListingCooperative cooperative;
   @override
@@ -924,7 +940,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableTimes: $availableTimes, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, driverNames: $driverNames, driverIds: $driverIds, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, duration: $duration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, pickUp: $pickUp, destination: $destination, guestInfo: $guestInfo, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, availableDays: $availableDays, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableTables: $availableTables, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableTimes: $availableTimes, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, downpaymentPeriod: $downpaymentPeriod, cooperative: $cooperative, description: $description, driverNames: $driverNames, driverIds: $driverIds, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, duration: $duration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, pickUp: $pickUp, destination: $destination, guestInfo: $guestInfo, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, availableDays: $availableDays, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableTables: $availableTables, uid: $uid)';
   }
 
   @override
@@ -949,6 +965,8 @@ class _$ListingModelImpl implements _ListingModel {
             (identical(other.city, city) || other.city == city) &&
             (identical(other.cancellationPeriod, cancellationPeriod) ||
                 other.cancellationPeriod == cancellationPeriod) &&
+            (identical(other.downpaymentPeriod, downpaymentPeriod) ||
+                other.downpaymentPeriod == downpaymentPeriod) &&
             (identical(other.cooperative, cooperative) ||
                 other.cooperative == cooperative) &&
             (identical(other.description, description) ||
@@ -1020,6 +1038,7 @@ class _$ListingModelImpl implements _ListingModel {
         checkOut,
         city,
         cancellationPeriod,
+        downpaymentPeriod,
         cooperative,
         description,
         const DeepCollectionEquality().hash(_driverNames),
@@ -1080,6 +1099,7 @@ abstract class _ListingModel implements ListingModel {
       @TimeOfDayConverter() final TimeOfDay? checkOut,
       required final String city,
       final num? cancellationPeriod,
+      final num? downpaymentPeriod,
       required final ListingCooperative cooperative,
       required final String description,
       final List<String>? driverNames,
@@ -1138,6 +1158,8 @@ abstract class _ListingModel implements ListingModel {
   String get city;
   @override
   num? get cancellationPeriod;
+  @override
+  num? get downpaymentPeriod;
   @override
   ListingCooperative get cooperative;
   @override

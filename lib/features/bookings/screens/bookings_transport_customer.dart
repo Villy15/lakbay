@@ -10,6 +10,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
+import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
@@ -135,12 +136,15 @@ class _BookingsTransportCustomerState
                                           booking.bookingStatus == "Cancelled"
                                               ? 0.5
                                               : 0.0)),
-                                  child: ImageSlider(
-                                      images: imageUrls,
-                                      height:
-                                          MediaQuery.sizeOf(context).height / 2,
-                                      width: double.infinity,
-                                      radius: BorderRadius.circular(0))),
+                                  child: SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.5,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: TwoMarkerMapWidget(
+                                      pickup: widget.listing.pickUp!,
+                                      destination: widget.listing.destination!,
+                                    ),
+                                  )),
                               Padding(
                                 padding:
                                     const EdgeInsets.only(top: 70.0, left: 30),
@@ -274,9 +278,14 @@ class _BookingsTransportCustomerState
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w500)),
-                                        if (booking.paymentOption ==
-                                            'Full Payment')
-                                          const Text('Cancell')
+                                        if (booking.bookingStatus !=
+                                                'Cancelled' &&
+                                            booking.bookingStatus !=
+                                                'Completed')
+                                          Text(
+                                              'Cancellation before ${DateFormat('MMM d, HH:mm a').format(booking.endDate!.subtract(const Duration(days: 5)))}'
+                                              ' entitles you to a refund amount of ₱${(booking.amountPaid!).toStringAsFixed(2)}\n'
+                                              'Cancellation after stated date entitles you to a refund amount of ₱${(booking.amountPaid! - (booking.amountPaid! * widget.listing.cancellationRate!)).toStringAsFixed(2)}')
                                       ])),
 
                             ...reservationActions.entries.map((entry) {
@@ -310,31 +319,6 @@ class _BookingsTransportCustomerState
                             const Padding(
                                 padding: EdgeInsets.only(
                                     left: 15, right: 15, top: 20),
-                                child: Text('Getting There',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold))),
-
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.location_on_outlined),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    '${widget.listing.city}, ${widget.listing.province}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 15, right: 15, top: 20),
                                 child: Text("Hosted By",
                                     style: TextStyle(
                                         fontSize: 20,
@@ -352,14 +336,6 @@ class _BookingsTransportCustomerState
                                           fontSize: 16,
                                           fontWeight: FontWeight.normal))
                                 ])),
-
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 15, right: 15, top: 20),
-                                child: Text("Payment Information",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold))),
                           ])));
                 },
                 error: (error, stackTrace) =>
