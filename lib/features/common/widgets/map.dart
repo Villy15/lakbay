@@ -54,9 +54,9 @@ class MapWidgetState extends State<MapWidget> {
                 Marker(
                   markerId: const MarkerId('marker_1'),
                   position: snapshot.data!,
-                  infoWindow: InfoWindow(
-                    title: widget.address,
-                  ),
+                  // infoWindow: InfoWindow(
+                  //   title: widget.address,
+                  // ),
                 ),
               },
               circles: {
@@ -168,16 +168,16 @@ class TwoMarkerMapWidgetState extends State<TwoMarkerMapWidget> {
                 Marker(
                   markerId: const MarkerId('Pickup'),
                   position: snapshot.data!['pickup']!,
-                  infoWindow: InfoWindow(
-                    title: widget.pickup,
-                  ),
+                  // infoWindow: InfoWindow(
+                  //   title: widget.pickup,
+                  // ),
                 ),
                 Marker(
                   markerId: const MarkerId('Destination'),
                   position: snapshot.data!['destination']!,
-                  infoWindow: InfoWindow(
-                    title: widget.destination,
-                  ),
+                  // infoWindow: InfoWindow(
+                  //   title: widget.destination,
+                  // ),
                 ),
               },
               circles: {

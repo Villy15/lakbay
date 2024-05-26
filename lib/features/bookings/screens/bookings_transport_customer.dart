@@ -35,6 +35,14 @@ class BookingsTransportCustomer extends ConsumerStatefulWidget {
 
 class _BookingsTransportCustomerState
     extends ConsumerState<BookingsTransportCustomer> {
+  late String departureTime;
+  late String departureDate;
+  late String departureLocation;
+  late String arrivalTime;
+  late String arrivalDate;
+  late String arrivalLocation;
+  late String vehicleNo;
+  late String driverName;
   @override
   void initState() {
     super.initState();
@@ -59,6 +67,12 @@ class _BookingsTransportCustomerState
   @override
   Widget build(BuildContext context) {
     debugPrint('File Name: booking_transport_customer.dart');
+    departureTime = widget.booking.startTime!.format(context);
+    departureDate = DateFormat('E, MMM d').format(widget.booking.startDate!);
+    departureLocation = widget.listing.pickUp!;
+    arrivalTime = (widget.booking.endTime!).format(context);
+    arrivalDate = DateFormat('E, MMM d').format(widget.booking.endDate!);
+    arrivalLocation = widget.listing.destination!;
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
@@ -165,71 +179,100 @@ class _BookingsTransportCustomerState
                             ]),
 
                             Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0, vertical: 20),
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                            padding:
-                                                const EdgeInsets.only(left: 10),
-                                            child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(widget.listing.title,
-                                                      style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  const SizedBox(height: 5),
-                                                  // put the date here
-                                                  Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        const Icon(
-                                                            Icons
-                                                                .calendar_today,
-                                                            size: 20),
-                                                        const SizedBox(
-                                                            width: 5),
-                                                        Text(
-                                                            // format the date that does not include the time
-                                                            "Booked Date: ${DateFormat('MMMM d, yyyy').format(widget.booking.startDate!)}",
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        16))
-                                                      ]),
-                                                  const SizedBox(height: 10),
-                                                  if (widget
-                                                          .booking.typeOfTrip ==
-                                                      'Public')
-                                                    Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          const Icon(
-                                                              Icons
-                                                                  .schedule_outlined,
-                                                              size: 20),
-                                                          const SizedBox(
-                                                              width: 5),
-                                                          Text(
-                                                              // format the startTime
-                                                              "Departure Time: ${widget.booking.startTime!.format(context)}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          16))
-                                                        ]),
-                                                ])),
-                                      )
-                                    ])),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 20),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'Departure',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(departureDate,
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500)),
+                                          // Checkin time
+                                          Text(
+                                            departureTime,
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w300),
+                                          ),
+                                          Text(
+                                            departureLocation,
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w200),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  // Container(
+                                  //   height:
+                                  //       MediaQuery.sizeOf(context).height / 7.5,
+                                  //   width: 1,
+                                  //   color: Colors
+                                  //       .grey, // Choose the color of the line
+                                  // ),
+                                  const VerticalDivider(
+                                    color: Colors.grey,
+                                    thickness: 5,
+                                    width: 10,
+                                    indent: 0,
+                                    endIndent: 0,
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'Arrival',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(arrivalDate,
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500)),
+                                          // Checkout time
+                                          Text(
+                                            arrivalTime,
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w300),
+                                          ),
+                                          Text(
+                                            arrivalLocation,
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w200),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
                             ...generalActions.entries.map((entry) {
                               final generalAction = entry.value;
                               return Column(children: [

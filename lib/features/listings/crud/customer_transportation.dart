@@ -549,6 +549,21 @@ class _CustomerTransportationState
                   width: double.infinity,
                   child: FilledButton(
                       onPressed: () {
+                        var convertedEndDate = DateTime(
+                                endDate.year,
+                                endDate.month,
+                                endDate.day,
+                                departureTime!.hour,
+                                departureTime.minute)
+                            .add(Duration(
+                                hours: listing.duration!.hour,
+                                minutes: listing.duration!.minute));
+                        var convertedStartDate = DateTime(
+                            startDate.year,
+                            startDate.month,
+                            startDate.day,
+                            departureTime.hour,
+                            departureTime.minute);
                         final currentTrip = ref.read(currentTripProvider);
                         ListingBookings booking = ListingBookings(
                             tripUid: currentTrip!.uid!,
@@ -559,23 +574,10 @@ class _CustomerTransportationState
                             bookingStatus: "Reserved",
                             price: listing.price!,
                             category: "Transport",
-                            startDate: DateTime(
-                                startDate.year,
-                                startDate.month,
-                                startDate.day,
-                                departureTime!.hour,
-                                departureTime.minute),
-                            endDate: DateTime(
-                                    endDate.year,
-                                    endDate.month,
-                                    endDate.day,
-                                    departureTime.hour,
-                                    departureTime.minute)
-                                .add(Duration(
-                                    hours: listing.duration!.hour,
-                                    minutes: listing.duration!.minute)),
+                            startDate: convertedStartDate,
+                            endDate: convertedEndDate,
                             startTime: departureTime,
-                            endTime: departureTime,
+                            endTime: TimeOfDay.fromDateTime(convertedEndDate),
                             email: "",
                             governmentId:
                                 "https://firebasestorage.googleapis.com/v0/b/lakbay-cd97e.appspot.com/o/users%2FTimothy%20Mendoza%2Fimages%20(3).jpg?alt=media&token=36ab03ef-0880-4487-822e-1eb512a73ea0",
@@ -589,7 +591,6 @@ class _CustomerTransportationState
                             needsContributions: false,
                             tasks: listing.fixedTasks,
                             typeOfTrip: typeOfTrip);
-
                         showDialog(
                             context: context,
                             builder: (context) {

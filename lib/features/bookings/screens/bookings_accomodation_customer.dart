@@ -276,11 +276,18 @@ class _BookingsAccomodationCustomerState
                                 ),
                               ),
                             ),
-                            Container(
-                              height: MediaQuery.sizeOf(context).height / 7.5,
-                              width: 1,
-                              color:
-                                  Colors.grey, // Choose the color of the line
+                            // Container(
+                            //   height: MediaQuery.sizeOf(context).height / 7.5,
+                            //   width: 1,
+                            //   color:
+                            //       Colors.grey, // Choose the color of the line
+                            // ),
+                            const VerticalDivider(
+                              color: Colors.grey,
+                              thickness: 5,
+                              width: 10,
+                              indent: 0,
+                              endIndent: 0,
                             ),
                             Expanded(
                               child: Container(
