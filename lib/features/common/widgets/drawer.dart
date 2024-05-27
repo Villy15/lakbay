@@ -69,6 +69,11 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
     context.push('/my_coop/functions/members/${widget.user?.uid}');
   }
 
+  void viewAnswerCustomerSurvey() {
+    context.pop();
+    context.push('/surveys/customer');
+  }
+
   @override
   Widget build(BuildContext context) {
     return ref.watch(getUserDataProvider(widget.user!.uid)).when(
@@ -185,7 +190,13 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                           '/my_coop/dashboard/${widget.user?.currentCoop}'),
                     },
                   )
-                : const SizedBox.shrink(),
+                : ListTile(
+                    title: const Text('Customer Survey'),
+                    leading: const Icon(Icons.question_answer),
+                    onTap: () => {
+                      viewAnswerCustomerSurvey(),
+                    },
+                  ),
 
             // Wiki Page
 
