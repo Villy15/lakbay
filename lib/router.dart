@@ -67,6 +67,7 @@ import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
 import 'package:lakbay/features/profile/my_dashboard.dart';
 import 'package:lakbay/features/profile/profile_customer_page.dart';
+import 'package:lakbay/features/survey/coop_sustainability_page.dart';
 import 'package:lakbay/features/survey/customer_survey.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/tasks/event_tasks_edit.dart';
@@ -1016,6 +1017,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   state: state,
                   child:
                       const CustomerSurveyPage(), // Replace with your actual AddWikiPage widget
+                  transitionType: SharedAxisTransitionType.vertical,
+                ),
+              ),
+
+              // Customer Survey
+              GoRoute(
+                path: '/surveys/coop',
+                pageBuilder: (context, state) =>
+                    buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child:
+                      const CoopSustainabilityPage(), // Replace with your actual AddWikiPage widget
                   transitionType: SharedAxisTransitionType.vertical,
                 ),
               ),

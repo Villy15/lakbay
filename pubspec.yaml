@@ -70,6 +70,7 @@ dependencies:
   mime: ^1.0.4
   open_filex: ^4.3.4
   path_provider: ^2.1.1
+  pdf: ^3.10.8
   qr_flutter: ^4.1.0
   shared_preferences: ^2.2.2
   syncfusion_flutter_charts: ^24.1.47+2
@@ -85,7 +86,6 @@ dev_dependencies:
   freezed: ^2.4.5
   json_serializable: ^6.7.1
   riverpod_lint: ^2.3.10
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -113,6 +113,10 @@ flutter:
     - family: Satisfy
       fonts:
         - asset: lib/core/fonts/Satisfy-Regular.ttf
+    - family: OpenSans
+      fonts:
+        - asset: lib/core/fonts/OpenSans-Regular.ttf
+        - asset: lib/core/fonts/OpenSans-Bold.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

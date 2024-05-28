@@ -244,6 +244,18 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                     },
                   )
                 : const SizedBox.shrink(),
+
+            // Sustainability
+            widget.user!.isCoopView ?? false
+                ? ListTile(
+                    title: const Text('Sustainability Report'),
+                    leading: const Icon(Icons.eco_outlined),
+                    onTap: () => {
+                      context.pop(),
+                      context.push('/surveys/coop'),
+                    },
+                  )
+                : const SizedBox.shrink(),
           ],
         ),
       ),
