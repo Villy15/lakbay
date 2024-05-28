@@ -75,53 +75,6 @@ class _CoopDashboardState extends ConsumerState<CoopDashboard> {
                 return false;
               }).toList();
 
-              //       data: (listings) {
-              //         if (listings.isEmpty) {
-              //           return const SizedBox.shrink();
-              //         }
-              //         int totalBookingsForUserListings = 0;
-
-              //         for (final listing in listings) {
-              //           if (listing.publisherName == user.name) {
-              //             ref
-              //                 .watch(getAllBookingsProvider(listing.uid!))
-              //                 .when(
-              //                   data: (List<ListingBookings> bookings) {
-              //                     for (final booking in bookings) {
-              //                       totalBookingsForUserListings++;
-              //                     }
-              //                   },
-              //                   error: (error, stackTrace) => ErrorText(
-              //                     error: error.toString(),
-              //                     stackTrace: stackTrace.toString(),
-              //                   ),
-              //                   loading: () => const Loader(),
-              //                 );
-              //           }
-              //         }
-
-              //         return Column(
-              //           children: [
-              //             const SizedBox(height: 16),
-              //             Center(
-              //               child: Text(
-              //                 "Current points: $totalBookingsForUserListings",
-              //                 style: const TextStyle(
-              //                   fontSize: 20,
-              //                   fontWeight: FontWeight.bold,
-              //                 ),
-              //               ),
-              //             ),
-              //           ],
-              //         );
-              //       },
-              //       error: (error, stackTrace) => ErrorText(
-              //         error: error.toString(),
-              //         stackTrace: stackTrace.toString(),
-              //       ),
-              //       loading: () => const Loader(),
-              //     ),
-
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ListView(
