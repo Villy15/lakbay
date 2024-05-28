@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'survey_customer_model.dart';
+part of 'customer_survey_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,12 +14,17 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-CustomerSurvey _$CustomerSurveyFromJson(Map<String, dynamic> json) {
-  return _CustomerSurvey.fromJson(json);
+CustomerSurveyModel _$CustomerSurveyModelFromJson(Map<String, dynamic> json) {
+  return _CustomerSurveyModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$CustomerSurvey {
+mixin _$CustomerSurveyModel {
+  String? get uid => throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError;
+  String? get surveyType => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get dateCreated => throw _privateConstructorUsedError;
   String get age => throw _privateConstructorUsedError;
   String get gender => throw _privateConstructorUsedError;
   String get countryOfOrigin => throw _privateConstructorUsedError;
@@ -57,18 +62,22 @@ mixin _$CustomerSurvey {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $CustomerSurveyCopyWith<CustomerSurvey> get copyWith =>
+  $CustomerSurveyModelCopyWith<CustomerSurveyModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $CustomerSurveyCopyWith<$Res> {
-  factory $CustomerSurveyCopyWith(
-          CustomerSurvey value, $Res Function(CustomerSurvey) then) =
-      _$CustomerSurveyCopyWithImpl<$Res, CustomerSurvey>;
+abstract class $CustomerSurveyModelCopyWith<$Res> {
+  factory $CustomerSurveyModelCopyWith(
+          CustomerSurveyModel value, $Res Function(CustomerSurveyModel) then) =
+      _$CustomerSurveyModelCopyWithImpl<$Res, CustomerSurveyModel>;
   @useResult
   $Res call(
-      {String age,
+      {String? uid,
+      String userId,
+      String? surveyType,
+      @TimestampSerializer() DateTime? dateCreated,
+      String age,
       String gender,
       String countryOfOrigin,
       String purposeOfVisit,
@@ -92,9 +101,9 @@ abstract class $CustomerSurveyCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$CustomerSurveyCopyWithImpl<$Res, $Val extends CustomerSurvey>
-    implements $CustomerSurveyCopyWith<$Res> {
-  _$CustomerSurveyCopyWithImpl(this._value, this._then);
+class _$CustomerSurveyModelCopyWithImpl<$Res, $Val extends CustomerSurveyModel>
+    implements $CustomerSurveyModelCopyWith<$Res> {
+  _$CustomerSurveyModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -104,6 +113,10 @@ class _$CustomerSurveyCopyWithImpl<$Res, $Val extends CustomerSurvey>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
+    Object? userId = null,
+    Object? surveyType = freezed,
+    Object? dateCreated = freezed,
     Object? age = null,
     Object? gender = null,
     Object? countryOfOrigin = null,
@@ -127,6 +140,22 @@ class _$CustomerSurveyCopyWithImpl<$Res, $Val extends CustomerSurvey>
     Object? futureConsiderationsForSustainableTravel = null,
   }) {
     return _then(_value.copyWith(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      surveyType: freezed == surveyType
+          ? _value.surveyType
+          : surveyType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dateCreated: freezed == dateCreated
+          ? _value.dateCreated
+          : dateCreated // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       age: null == age
           ? _value.age
           : age // ignore: cast_nullable_to_non_nullable
@@ -227,15 +256,19 @@ class _$CustomerSurveyCopyWithImpl<$Res, $Val extends CustomerSurvey>
 }
 
 /// @nodoc
-abstract class _$$CustomerSurveyImplCopyWith<$Res>
-    implements $CustomerSurveyCopyWith<$Res> {
-  factory _$$CustomerSurveyImplCopyWith(_$CustomerSurveyImpl value,
-          $Res Function(_$CustomerSurveyImpl) then) =
-      __$$CustomerSurveyImplCopyWithImpl<$Res>;
+abstract class _$$CustomerSurveyModelImplCopyWith<$Res>
+    implements $CustomerSurveyModelCopyWith<$Res> {
+  factory _$$CustomerSurveyModelImplCopyWith(_$CustomerSurveyModelImpl value,
+          $Res Function(_$CustomerSurveyModelImpl) then) =
+      __$$CustomerSurveyModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {String age,
+      {String? uid,
+      String userId,
+      String? surveyType,
+      @TimestampSerializer() DateTime? dateCreated,
+      String age,
       String gender,
       String countryOfOrigin,
       String purposeOfVisit,
@@ -259,16 +292,20 @@ abstract class _$$CustomerSurveyImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$CustomerSurveyImplCopyWithImpl<$Res>
-    extends _$CustomerSurveyCopyWithImpl<$Res, _$CustomerSurveyImpl>
-    implements _$$CustomerSurveyImplCopyWith<$Res> {
-  __$$CustomerSurveyImplCopyWithImpl(
-      _$CustomerSurveyImpl _value, $Res Function(_$CustomerSurveyImpl) _then)
+class __$$CustomerSurveyModelImplCopyWithImpl<$Res>
+    extends _$CustomerSurveyModelCopyWithImpl<$Res, _$CustomerSurveyModelImpl>
+    implements _$$CustomerSurveyModelImplCopyWith<$Res> {
+  __$$CustomerSurveyModelImplCopyWithImpl(_$CustomerSurveyModelImpl _value,
+      $Res Function(_$CustomerSurveyModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
+    Object? userId = null,
+    Object? surveyType = freezed,
+    Object? dateCreated = freezed,
     Object? age = null,
     Object? gender = null,
     Object? countryOfOrigin = null,
@@ -291,7 +328,23 @@ class __$$CustomerSurveyImplCopyWithImpl<$Res>
     Object? adjustmentsMadeToTravelPlansToSupportSustainability = null,
     Object? futureConsiderationsForSustainableTravel = null,
   }) {
-    return _then(_$CustomerSurveyImpl(
+    return _then(_$CustomerSurveyModelImpl(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      surveyType: freezed == surveyType
+          ? _value.surveyType
+          : surveyType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dateCreated: freezed == dateCreated
+          ? _value.dateCreated
+          : dateCreated // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       age: null == age
           ? _value.age
           : age // ignore: cast_nullable_to_non_nullable
@@ -393,9 +446,13 @@ class __$$CustomerSurveyImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$CustomerSurveyImpl implements _CustomerSurvey {
-  _$CustomerSurveyImpl(
-      {required this.age,
+class _$CustomerSurveyModelImpl implements _CustomerSurveyModel {
+  _$CustomerSurveyModelImpl(
+      {this.uid,
+      required this.userId,
+      this.surveyType,
+      @TimestampSerializer() this.dateCreated,
+      required this.age,
       required this.gender,
       required this.countryOfOrigin,
       required this.purposeOfVisit,
@@ -419,9 +476,18 @@ class _$CustomerSurveyImpl implements _CustomerSurvey {
       : _actionsTakenToReduceEnvironmentalImpact =
             actionsTakenToReduceEnvironmentalImpact;
 
-  factory _$CustomerSurveyImpl.fromJson(Map<String, dynamic> json) =>
-      _$$CustomerSurveyImplFromJson(json);
+  factory _$CustomerSurveyModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CustomerSurveyModelImplFromJson(json);
 
+  @override
+  final String? uid;
+  @override
+  final String userId;
+  @override
+  final String? surveyType;
+  @override
+  @TimestampSerializer()
+  final DateTime? dateCreated;
   @override
   final String age;
   @override
@@ -474,14 +540,20 @@ class _$CustomerSurveyImpl implements _CustomerSurvey {
 
   @override
   String toString() {
-    return 'CustomerSurvey(age: $age, gender: $gender, countryOfOrigin: $countryOfOrigin, purposeOfVisit: $purposeOfVisit, typeOfAccommodation: $typeOfAccommodation, modeOfTransportation: $modeOfTransportation, frequencyOfVisit: $frequencyOfVisit, averageDailySpending: $averageDailySpending, purchasesOfLocalProductsAndServices: $purchasesOfLocalProductsAndServices, engagementWithLocalBusinesses: $engagementWithLocalBusinesses, awarenessOfLocalEnvironmentalGuidelines: $awarenessOfLocalEnvironmentalGuidelines, participationInEcoFriendlyActivities: $participationInEcoFriendlyActivities, observationsOnEnvironmentalPracticesOfVisitedPlaces: $observationsOnEnvironmentalPracticesOfVisitedPlaces, actionsTakenToReduceEnvironmentalImpact: $actionsTakenToReduceEnvironmentalImpact, interactionWithLocalCommunities: $interactionWithLocalCommunities, participationInLocalCulturalEventsAndActivities: $participationInLocalCulturalEventsAndActivities, respectForLocalCustomsAndTraditions: $respectForLocalCustomsAndTraditions, perceptionOfImpactOnLocalCommunity: $perceptionOfImpactOnLocalCommunity, willingnessToPayMoreForSustainableOptions: $willingnessToPayMoreForSustainableOptions, adjustmentsMadeToTravelPlansToSupportSustainability: $adjustmentsMadeToTravelPlansToSupportSustainability, futureConsiderationsForSustainableTravel: $futureConsiderationsForSustainableTravel)';
+    return 'CustomerSurveyModel(uid: $uid, userId: $userId, surveyType: $surveyType, dateCreated: $dateCreated, age: $age, gender: $gender, countryOfOrigin: $countryOfOrigin, purposeOfVisit: $purposeOfVisit, typeOfAccommodation: $typeOfAccommodation, modeOfTransportation: $modeOfTransportation, frequencyOfVisit: $frequencyOfVisit, averageDailySpending: $averageDailySpending, purchasesOfLocalProductsAndServices: $purchasesOfLocalProductsAndServices, engagementWithLocalBusinesses: $engagementWithLocalBusinesses, awarenessOfLocalEnvironmentalGuidelines: $awarenessOfLocalEnvironmentalGuidelines, participationInEcoFriendlyActivities: $participationInEcoFriendlyActivities, observationsOnEnvironmentalPracticesOfVisitedPlaces: $observationsOnEnvironmentalPracticesOfVisitedPlaces, actionsTakenToReduceEnvironmentalImpact: $actionsTakenToReduceEnvironmentalImpact, interactionWithLocalCommunities: $interactionWithLocalCommunities, participationInLocalCulturalEventsAndActivities: $participationInLocalCulturalEventsAndActivities, respectForLocalCustomsAndTraditions: $respectForLocalCustomsAndTraditions, perceptionOfImpactOnLocalCommunity: $perceptionOfImpactOnLocalCommunity, willingnessToPayMoreForSustainableOptions: $willingnessToPayMoreForSustainableOptions, adjustmentsMadeToTravelPlansToSupportSustainability: $adjustmentsMadeToTravelPlansToSupportSustainability, futureConsiderationsForSustainableTravel: $futureConsiderationsForSustainableTravel)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CustomerSurveyImpl &&
+            other is _$CustomerSurveyModelImpl &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.surveyType, surveyType) ||
+                other.surveyType == surveyType) &&
+            (identical(other.dateCreated, dateCreated) ||
+                other.dateCreated == dateCreated) &&
             (identical(other.age, age) || other.age == age) &&
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.countryOfOrigin, countryOfOrigin) ||
@@ -535,6 +607,10 @@ class _$CustomerSurveyImpl implements _CustomerSurvey {
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
+        uid,
+        userId,
+        surveyType,
+        dateCreated,
         age,
         gender,
         countryOfOrigin,
@@ -562,21 +638,25 @@ class _$CustomerSurveyImpl implements _CustomerSurvey {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$CustomerSurveyImplCopyWith<_$CustomerSurveyImpl> get copyWith =>
-      __$$CustomerSurveyImplCopyWithImpl<_$CustomerSurveyImpl>(
+  _$$CustomerSurveyModelImplCopyWith<_$CustomerSurveyModelImpl> get copyWith =>
+      __$$CustomerSurveyModelImplCopyWithImpl<_$CustomerSurveyModelImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CustomerSurveyImplToJson(
+    return _$$CustomerSurveyModelImplToJson(
       this,
     );
   }
 }
 
-abstract class _CustomerSurvey implements CustomerSurvey {
-  factory _CustomerSurvey(
-      {required final String age,
+abstract class _CustomerSurveyModel implements CustomerSurveyModel {
+  factory _CustomerSurveyModel(
+      {final String? uid,
+      required final String userId,
+      final String? surveyType,
+      @TimestampSerializer() final DateTime? dateCreated,
+      required final String age,
       required final String gender,
       required final String countryOfOrigin,
       required final String purposeOfVisit,
@@ -597,11 +677,20 @@ abstract class _CustomerSurvey implements CustomerSurvey {
       required final String willingnessToPayMoreForSustainableOptions,
       required final String adjustmentsMadeToTravelPlansToSupportSustainability,
       required final String
-          futureConsiderationsForSustainableTravel}) = _$CustomerSurveyImpl;
+          futureConsiderationsForSustainableTravel}) = _$CustomerSurveyModelImpl;
 
-  factory _CustomerSurvey.fromJson(Map<String, dynamic> json) =
-      _$CustomerSurveyImpl.fromJson;
+  factory _CustomerSurveyModel.fromJson(Map<String, dynamic> json) =
+      _$CustomerSurveyModelImpl.fromJson;
 
+  @override
+  String? get uid;
+  @override
+  String get userId;
+  @override
+  String? get surveyType;
+  @override
+  @TimestampSerializer()
+  DateTime? get dateCreated;
   @override
   String get age;
   @override
@@ -646,6 +735,6 @@ abstract class _CustomerSurvey implements CustomerSurvey {
   String get futureConsiderationsForSustainableTravel;
   @override
   @JsonKey(ignore: true)
-  _$$CustomerSurveyImplCopyWith<_$CustomerSurveyImpl> get copyWith =>
+  _$$CustomerSurveyModelImplCopyWith<_$CustomerSurveyModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

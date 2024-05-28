@@ -5,8 +5,7 @@ import 'package:lakbay/core/constants/firebase_constants.dart';
 import 'package:lakbay/core/failure.dart';
 import 'package:lakbay/core/providers/firebase_providers.dart';
 import 'package:lakbay/core/typdef.dart';
-import 'package:lakbay/models/subcollections/survey_customer_model.dart';
-import 'package:lakbay/models/survey_model.dart';
+import 'package:lakbay/models/customer_survey_model.dart';
 
 final surveyRepositoryProvider = Provider((ref) {
   return SurveyRepository(firestore: ref.watch(firestoreProvider));
@@ -19,10 +18,10 @@ class SurveyRepository {
   }) : _firestore = firestore;
 
   // Add an survey
-  FutureEither<String> addSurvey(SurveyModel survey) async {
+  FutureEither<String> addSurvey(CustomerSurveyModel survey) async {
     try {
       // Generate a new document ID
-      var doc = _surveys.doc();
+      var doc = _customerSurveys.doc();
 
       // Update the uid of the survey
       survey = survey.copyWith(uid: doc.id);
@@ -38,44 +37,23 @@ class SurveyRepository {
     }
   }
 
-  FutureEither<String> addCustomerSurvey(
-      String coopId, CustomerSurvey survey) async {
-    try {
-      // Generate a new document ID
-      var doc = customerSurvey(coopId).doc();
-
-      await doc.set(survey.toJson());
-
-      return right("Success");
-    } on FirebaseException catch (e) {
-      throw e.message!;
-    } catch (e) {
-      return left(Failure(e.toString()));
-    }
-  }
-
   // Read all events
-  Stream<List<SurveyModel>> readSurveys() {
-    return _surveys.snapshots().map((snapshot) {
+  Stream<List<CustomerSurveyModel>> readSurveys() {
+    return _customerSurveys.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return SurveyModel.fromJson(doc.data() as Map<String, dynamic>);
+        return CustomerSurveyModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
   }
 
   // Read event by uid
-  Stream<SurveyModel> readSurvey(String uid) {
-    return _surveys.doc(uid).snapshots().map((snapshot) {
-      return SurveyModel.fromJson(snapshot.data() as Map<String, dynamic>);
+  Stream<CustomerSurveyModel> readSurvey(String uid) {
+    return _customerSurveys.doc(uid).snapshots().map((snapshot) {
+      return CustomerSurveyModel.fromJson(
+          snapshot.data() as Map<String, dynamic>);
     });
   }
 
-  CollectionReference get _surveys =>
-      _firestore.collection(FirebaseConstants.surveyCollection);
-
-  CollectionReference customerSurvey(String surveyId) {
-    return _surveys
-        .doc(surveyId)
-        .collection(FirebaseConstants.customerSurveyCollection);
-  }
+  CollectionReference get _customerSurveys =>
+      _firestore.collection(FirebaseConstants.customerSurveysCollection);
 }

@@ -4,16 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/survey/survey_repository.dart';
-import 'package:lakbay/models/subcollections/survey_customer_model.dart';
-import 'package:lakbay/models/survey_model.dart';
+import 'package:lakbay/models/customer_survey_model.dart';
 
 final getSurveyProvider =
-    StreamProvider.autoDispose.family<SurveyModel, String>((ref, uid) {
+    StreamProvider.autoDispose.family<CustomerSurveyModel, String>((ref, uid) {
   final surveyController = ref.watch(surveysControllerProvider.notifier);
   return surveyController.getSurvey(uid);
 });
 
-final getAllSurveysProvider = StreamProvider<List<SurveyModel>>((ref) {
+final getAllSurveysProvider = StreamProvider<List<CustomerSurveyModel>>((ref) {
   final surveyController = ref.watch(surveysControllerProvider.notifier);
   return surveyController.getAllSurveys();
 });
@@ -38,12 +37,11 @@ class SurveyController extends StateNotifier<bool> {
         _ref = ref,
         super(false);
 
-  Stream<List<SurveyModel>> getAllSurveys() {
+  Stream<List<CustomerSurveyModel>> getAllSurveys() {
     return _surveysRepository.readSurveys();
   }
 
-  void addSurvey(SurveyModel survey, CustomerSurvey customerSurvey,
-      BuildContext context) async {
+  void addSurvey(CustomerSurveyModel survey, BuildContext context) async {
     final result = await _surveysRepository.addSurvey(survey);
 
     result.fold(
@@ -53,30 +51,14 @@ class SurveyController extends StateNotifier<bool> {
       },
       (surveyUid) {
         state = false;
-        addCustomerSurvey(surveyUid, customerSurvey, context);
-      },
-    );
-  }
-
-  void addCustomerSurvey(
-      String coopId, CustomerSurvey survey, BuildContext context) async {
-    final result = await _surveysRepository.addCustomerSurvey(coopId, survey);
-
-    result.fold(
-      (failure) {
-        state = false;
-        showSnackBar(context, failure.message);
-      },
-      (message) {
-        state = false;
-        showSnackBar(context, 'Customer Survey done!');
-        context.pop();
         _ref.read(navBarVisibilityProvider.notifier).show();
+        context.pop();
+        showSnackBar(context, 'Survey added successfully');
       },
     );
   }
 
-  Stream<SurveyModel> getSurvey(String uid) {
+  Stream<CustomerSurveyModel> getSurvey(String uid) {
     return _surveysRepository.readSurvey(uid);
   }
 }

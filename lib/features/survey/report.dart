@@ -41,7 +41,7 @@ Future<Uint8List> generateReport() async {
       .map((e) => e[2] as num)
       .reduce((value, element) => value + element);
 
-  const baseColor = PdfColors.cyan;
+  const baseColor = PdfColors.orange;
 
   // Create a PDF document.
   final document = pw.Document();
@@ -187,7 +187,7 @@ Future<Uint8List> generateReport() async {
         // Page layout
         return pw.Column(
           children: [
-            pw.Text('Budget Report',
+            pw.Text('Sustainability Report',
                 style: const pw.TextStyle(
                   color: baseColor,
                   fontSize: 40,

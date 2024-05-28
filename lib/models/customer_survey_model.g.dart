@@ -1,13 +1,19 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'survey_customer_model.dart';
+part of 'customer_survey_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$CustomerSurveyImpl _$$CustomerSurveyImplFromJson(Map<String, dynamic> json) =>
-    _$CustomerSurveyImpl(
+_$CustomerSurveyModelImpl _$$CustomerSurveyModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CustomerSurveyModelImpl(
+      uid: json['uid'] as String?,
+      userId: json['userId'] as String,
+      surveyType: json['surveyType'] as String?,
+      dateCreated: const TimestampSerializer()
+          .fromJson(json['dateCreated'] as Timestamp?),
       age: json['age'] as String,
       gender: json['gender'] as String,
       countryOfOrigin: json['countryOfOrigin'] as String,
@@ -46,9 +52,13 @@ _$CustomerSurveyImpl _$$CustomerSurveyImplFromJson(Map<String, dynamic> json) =>
           json['futureConsiderationsForSustainableTravel'] as String,
     );
 
-Map<String, dynamic> _$$CustomerSurveyImplToJson(
-        _$CustomerSurveyImpl instance) =>
+Map<String, dynamic> _$$CustomerSurveyModelImplToJson(
+        _$CustomerSurveyModelImpl instance) =>
     <String, dynamic>{
+      'uid': instance.uid,
+      'userId': instance.userId,
+      'surveyType': instance.surveyType,
+      'dateCreated': const TimestampSerializer().toJson(instance.dateCreated),
       'age': instance.age,
       'gender': instance.gender,
       'countryOfOrigin': instance.countryOfOrigin,

@@ -1,11 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:lakbay/core/util/utils.dart';
 
-part 'survey_customer_model.freezed.dart';
-part 'survey_customer_model.g.dart';
+part 'customer_survey_model.freezed.dart';
+part 'customer_survey_model.g.dart';
 
 @freezed
-class CustomerSurvey with _$CustomerSurvey {
-  factory CustomerSurvey({
+class CustomerSurveyModel with _$CustomerSurveyModel {
+  factory CustomerSurveyModel({
+    String? uid,
+    required String userId,
+    String? surveyType,
+    @TimestampSerializer() DateTime? dateCreated,
     required String age,
     required String gender,
     required String countryOfOrigin,
@@ -27,8 +33,8 @@ class CustomerSurvey with _$CustomerSurvey {
     required String willingnessToPayMoreForSustainableOptions,
     required String adjustmentsMadeToTravelPlansToSupportSustainability,
     required String futureConsiderationsForSustainableTravel,
-  }) = _CustomerSurvey;
+  }) = _CustomerSurveyModel;
 
-  factory CustomerSurvey.fromJson(Map<String, dynamic> json) =>
-      _$CustomerSurveyFromJson(json);
+  factory CustomerSurveyModel.fromJson(Map<String, dynamic> json) =>
+      _$CustomerSurveyModelFromJson(json);
 }

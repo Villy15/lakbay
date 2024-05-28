@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/survey/survey_controller.dart';
-import 'package:lakbay/models/subcollections/survey_customer_model.dart';
-import 'package:lakbay/models/survey_model.dart';
+import 'package:lakbay/models/customer_survey_model.dart';
 
 class CustomerSurveyPage extends ConsumerStatefulWidget {
   const CustomerSurveyPage({super.key});
@@ -158,13 +157,10 @@ class _CustomerSurveyPageState extends ConsumerState<CustomerSurveyPage> {
     // Handle form submission
     final user = ref.read(userProvider);
 
-    var survey = SurveyModel(
+    var survey = CustomerSurveyModel(
       userId: user!.uid,
       surveyType: 'Customer',
       dateCreated: DateTime.now(),
-    );
-
-    var customerSurvey = CustomerSurvey(
       age: selectedOptions[0]!,
       gender: selectedOptions[1]!,
       countryOfOrigin: selectedOptions[2]!,
@@ -190,9 +186,7 @@ class _CustomerSurveyPageState extends ConsumerState<CustomerSurveyPage> {
     );
 
     debugPrint(survey.toString());
-    ref
-        .read(surveysControllerProvider.notifier)
-        .addSurvey(survey, customerSurvey, context);
+    ref.read(surveysControllerProvider.notifier).addSurvey(survey, context);
   }
 
   @override
