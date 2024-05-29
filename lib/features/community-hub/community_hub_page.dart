@@ -42,6 +42,13 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
     );
   }
 
+  List<Tag> avalableEventTags = [
+    Tag('Community Engagement', false),
+    Tag('Seminar', false),
+    Tag('General Assembly', false),
+    Tag('Training and Education', false),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
@@ -129,19 +136,80 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
               );
             }
 
-            return ListView.builder(
-              itemCount: events.length,
-              itemBuilder: (context, index) {
-                final event = events[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: CommunityHubEventsCard(event: event),
-                );
-              },
+            // Filter events based on selected tags only if any tag is selected
+            final filteredEvents =
+                avalableEventTags.where((tag) => tag.isSelected).isEmpty
+                    ? events
+                    : events
+                        .where((event) => avalableEventTags
+                            .where((tag) => tag.isSelected)
+                            .map((tag) => tag.name)
+                            .contains(event.eventType))
+                        .toList();
+
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  eventTags(),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: filteredEvents.length,
+                    itemBuilder: (context, index) {
+                      final event = filteredEvents[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: CommunityHubEventsCard(event: event),
+                      );
+                    },
+                  ),
+                ],
+              ),
             );
           },
           orElse: () => const SizedBox.shrink(),
         );
+  }
+
+  SingleChildScrollView eventTags() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Row(
+          children: [
+            Wrap(
+              spacing: 8.0, // gap between adjacent chips
+              runSpacing: 4.0, // gap between lines
+              children: List<Widget>.generate(
+                avalableEventTags.length,
+                (int index) {
+                  return avalableEventTags[index].isSelected
+                      ? FilledButton(
+                          onPressed: () {
+                            setState(() {
+                              avalableEventTags[index].isSelected =
+                                  !avalableEventTags[index].isSelected;
+                            });
+                          },
+                          child: Text(avalableEventTags[index].name),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              avalableEventTags[index].isSelected =
+                                  !avalableEventTags[index].isSelected;
+                            });
+                          },
+                          child: Text(avalableEventTags[index].name),
+                        );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _listings() {
@@ -362,4 +430,11 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
       ],
     );
   }
+}
+
+class Tag {
+  final String name;
+  bool isSelected;
+
+  Tag(this.name, this.isSelected);
 }
