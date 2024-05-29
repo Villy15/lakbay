@@ -57,10 +57,16 @@ class _WikiPageState extends ConsumerState<WikiPage> {
 
   bool _isSearching = false;
   String _searchQuery = '';
+  bool _isAllCoopsWiki = false;
 
   @override
   Widget build(BuildContext context) {
     final sortOption = ref.watch(sortOptionProvider);
+    final user = ref.watch(userProvider);
+
+    final provider = _isAllCoopsWiki
+        ? getAllWikiProvider
+        : getWikiByCoopIdProvider(user!.currentCoop!);
 
     return PopScope(
       canPop: false,
@@ -72,7 +78,7 @@ class _WikiPageState extends ConsumerState<WikiPage> {
         appBar: _appBar(),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: ref.watch(getAllWikiProvider).when(
+          child: ref.watch(provider).when(
                 data: (wikis) {
                   // wikis = [];
                   if (wikis.isEmpty) {
@@ -180,8 +186,27 @@ class _WikiPageState extends ConsumerState<WikiPage> {
                 ),
               ),
             )
-          : const Text('Wikis'),
+          : _isAllCoopsWiki
+              ? const Text('All Coops Wiki', style: TextStyle(fontSize: 20))
+              : const Text('Wiki'),
       actions: [
+        // Switch to All Cooperatives Wiki
+        _isSearching
+            ? const SizedBox()
+            : TextButton(
+                onPressed: () {
+                  setState(() {
+                    _isAllCoopsWiki = !_isAllCoopsWiki;
+                  });
+                },
+                child: Text(
+                  _isAllCoopsWiki ? 'My Coop' : 'All Coops',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+
         IconButton(
           onPressed: () {
             setState(() {

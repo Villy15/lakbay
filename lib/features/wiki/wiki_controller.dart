@@ -11,6 +11,12 @@ final getAllWikiProvider = StreamProvider<List<WikiModel>>((ref) {
   return wikiController.getAllWikis();
 });
 
+final getWikiByCoopIdProvider =
+    StreamProvider.family<List<WikiModel>, String>((ref, coopId) {
+  final wikiController = ref.watch(wikiControllerProvider.notifier);
+  return wikiController.getWikisByCoopId(coopId);
+});
+
 final getWikiProvider =
     StreamProvider.autoDispose.family<WikiModel, String>((ref, uid) {
   final wikiController = ref.watch(wikiControllerProvider.notifier);
@@ -39,6 +45,11 @@ class WikiController extends StateNotifier<bool> {
 
   Stream<List<WikiModel>> getAllWikis() {
     return _wikiRepository.readWikis();
+  }
+
+  // Stream all wikis by coopid
+  Stream<List<WikiModel>> getWikisByCoopId(String coopId) {
+    return _wikiRepository.readWikisByCoopId(coopId);
   }
 
   void addWiki(WikiModel wiki, BuildContext context) async {
