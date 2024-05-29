@@ -1,8 +1,9 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
-import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/events/events_repository.dart';
 import 'package:lakbay/models/event_model.dart';
 
@@ -63,8 +64,9 @@ class EventController extends StateNotifier<bool> {
       (eventUid) {
         state = false;
         showSnackBar(context, 'Event added successfully');
-        context.pop();
-        _ref.read(navBarVisibilityProvider.notifier).show();
+        // context.pop();
+        // _ref.read(navBarVisibilityProvider.notifier).show();
+        context.pushReplacement("/my_coop/event/$eventUid");
       },
     );
   }
