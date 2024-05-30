@@ -144,10 +144,15 @@ class DepartureModel with _$DepartureModel {
     String? uid,
     String? listingName,
     String? listingId,
+    String? driverName,
+    String? driverId,
+    AssignedVehicle? departingVehicle,
     required List<ListingBookings> passengers,
     List<AssignedVehicle>? vehicles,
     @TimestampSerializer() DateTime? arrival,
+    @TimestampSerializer() DateTime? arrived,
     @TimestampSerializer() DateTime? departure,
+    @TimestampSerializer() DateTime? departed,
     String? departureStatus, //Waiting, Completed, OnGoing, Cancelled, Emergency
   }) = _DepartureModel;
 

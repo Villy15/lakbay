@@ -134,6 +134,20 @@ class ListingRepository {
     }
   }
 
+  // delete a booking in bookingss subcollection
+  FutureEither<String> deleteBooking(
+      String listingId, ListingBookings booking) async {
+    try {
+      await bookings(listingId).doc(booking.id).delete();
+
+      return right(booking.id!);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
 // Update
   FutureVoid updateBooking(String listingId, ListingBookings booking) async {
     try {

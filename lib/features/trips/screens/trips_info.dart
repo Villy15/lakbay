@@ -16,6 +16,34 @@ class TripsInfo extends ConsumerStatefulWidget {
 }
 
 class _TripsInfoState extends ConsumerState<TripsInfo> {
+  void onDeleteTrip() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Delete Trip"),
+            content: const Text("You are about to delete your planned trip."),
+            actions: [
+              FilledButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: const Text('Close')),
+              FilledButton(
+                  onPressed: () {
+                    ref
+                        .read(plansControllerProvider.notifier)
+                        .deletePlan(widget.plan, context);
+                    context.pop();
+                    context.pop();
+                    context.pop();
+                  },
+                  child: const Text('Continue')),
+            ],
+          );
+        });
+  }
+
   void onEditTrip() {
     ref.read(planLocationProvider.notifier).setLocation(widget.plan.location);
     ref
@@ -107,7 +135,9 @@ class _TripsInfoState extends ConsumerState<TripsInfo> {
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              onDeleteTrip();
+                            },
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),

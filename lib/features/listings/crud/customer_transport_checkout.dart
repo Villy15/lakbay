@@ -392,7 +392,7 @@ class _CustomerTransportCheckoutState
               const SizedBox(height: 20),
               FilledButton(
                   style: FilledButton.styleFrom(
-                      backgroundColor: Colors.orange.shade700,
+                      backgroundColor: Theme.of(context).primaryColor,
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10))),

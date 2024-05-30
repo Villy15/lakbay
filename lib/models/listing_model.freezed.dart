@@ -2484,12 +2484,19 @@ mixin _$DepartureModel {
   String? get uid => throw _privateConstructorUsedError;
   String? get listingName => throw _privateConstructorUsedError;
   String? get listingId => throw _privateConstructorUsedError;
+  String? get driverName => throw _privateConstructorUsedError;
+  String? get driverId => throw _privateConstructorUsedError;
+  AssignedVehicle? get departingVehicle => throw _privateConstructorUsedError;
   List<ListingBookings> get passengers => throw _privateConstructorUsedError;
   List<AssignedVehicle>? get vehicles => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get arrival => throw _privateConstructorUsedError;
   @TimestampSerializer()
+  DateTime? get arrived => throw _privateConstructorUsedError;
+  @TimestampSerializer()
   DateTime? get departure => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get departed => throw _privateConstructorUsedError;
   String? get departureStatus => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -2510,11 +2517,18 @@ abstract class $DepartureModelCopyWith<$Res> {
       String? uid,
       String? listingName,
       String? listingId,
+      String? driverName,
+      String? driverId,
+      AssignedVehicle? departingVehicle,
       List<ListingBookings> passengers,
       List<AssignedVehicle>? vehicles,
       @TimestampSerializer() DateTime? arrival,
+      @TimestampSerializer() DateTime? arrived,
       @TimestampSerializer() DateTime? departure,
+      @TimestampSerializer() DateTime? departed,
       String? departureStatus});
+
+  $AssignedVehicleCopyWith<$Res>? get departingVehicle;
 }
 
 /// @nodoc
@@ -2535,10 +2549,15 @@ class _$DepartureModelCopyWithImpl<$Res, $Val extends DepartureModel>
     Object? uid = freezed,
     Object? listingName = freezed,
     Object? listingId = freezed,
+    Object? driverName = freezed,
+    Object? driverId = freezed,
+    Object? departingVehicle = freezed,
     Object? passengers = null,
     Object? vehicles = freezed,
     Object? arrival = freezed,
+    Object? arrived = freezed,
     Object? departure = freezed,
+    Object? departed = freezed,
     Object? departureStatus = freezed,
   }) {
     return _then(_value.copyWith(
@@ -2562,6 +2581,18 @@ class _$DepartureModelCopyWithImpl<$Res, $Val extends DepartureModel>
           ? _value.listingId
           : listingId // ignore: cast_nullable_to_non_nullable
               as String?,
+      driverName: freezed == driverName
+          ? _value.driverName
+          : driverName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      driverId: freezed == driverId
+          ? _value.driverId
+          : driverId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      departingVehicle: freezed == departingVehicle
+          ? _value.departingVehicle
+          : departingVehicle // ignore: cast_nullable_to_non_nullable
+              as AssignedVehicle?,
       passengers: null == passengers
           ? _value.passengers
           : passengers // ignore: cast_nullable_to_non_nullable
@@ -2574,15 +2605,35 @@ class _$DepartureModelCopyWithImpl<$Res, $Val extends DepartureModel>
           ? _value.arrival
           : arrival // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      arrived: freezed == arrived
+          ? _value.arrived
+          : arrived // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       departure: freezed == departure
           ? _value.departure
           : departure // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      departed: freezed == departed
+          ? _value.departed
+          : departed // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       departureStatus: freezed == departureStatus
           ? _value.departureStatus
           : departureStatus // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $AssignedVehicleCopyWith<$Res>? get departingVehicle {
+    if (_value.departingVehicle == null) {
+      return null;
+    }
+
+    return $AssignedVehicleCopyWith<$Res>(_value.departingVehicle!, (value) {
+      return _then(_value.copyWith(departingVehicle: value) as $Val);
+    });
   }
 }
 
@@ -2600,11 +2651,19 @@ abstract class _$$DepartureModelImplCopyWith<$Res>
       String? uid,
       String? listingName,
       String? listingId,
+      String? driverName,
+      String? driverId,
+      AssignedVehicle? departingVehicle,
       List<ListingBookings> passengers,
       List<AssignedVehicle>? vehicles,
       @TimestampSerializer() DateTime? arrival,
+      @TimestampSerializer() DateTime? arrived,
       @TimestampSerializer() DateTime? departure,
+      @TimestampSerializer() DateTime? departed,
       String? departureStatus});
+
+  @override
+  $AssignedVehicleCopyWith<$Res>? get departingVehicle;
 }
 
 /// @nodoc
@@ -2623,10 +2682,15 @@ class __$$DepartureModelImplCopyWithImpl<$Res>
     Object? uid = freezed,
     Object? listingName = freezed,
     Object? listingId = freezed,
+    Object? driverName = freezed,
+    Object? driverId = freezed,
+    Object? departingVehicle = freezed,
     Object? passengers = null,
     Object? vehicles = freezed,
     Object? arrival = freezed,
+    Object? arrived = freezed,
     Object? departure = freezed,
+    Object? departed = freezed,
     Object? departureStatus = freezed,
   }) {
     return _then(_$DepartureModelImpl(
@@ -2650,6 +2714,18 @@ class __$$DepartureModelImplCopyWithImpl<$Res>
           ? _value.listingId
           : listingId // ignore: cast_nullable_to_non_nullable
               as String?,
+      driverName: freezed == driverName
+          ? _value.driverName
+          : driverName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      driverId: freezed == driverId
+          ? _value.driverId
+          : driverId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      departingVehicle: freezed == departingVehicle
+          ? _value.departingVehicle
+          : departingVehicle // ignore: cast_nullable_to_non_nullable
+              as AssignedVehicle?,
       passengers: null == passengers
           ? _value._passengers
           : passengers // ignore: cast_nullable_to_non_nullable
@@ -2662,9 +2738,17 @@ class __$$DepartureModelImplCopyWithImpl<$Res>
           ? _value.arrival
           : arrival // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      arrived: freezed == arrived
+          ? _value.arrived
+          : arrived // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       departure: freezed == departure
           ? _value.departure
           : departure // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      departed: freezed == departed
+          ? _value.departed
+          : departed // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       departureStatus: freezed == departureStatus
           ? _value.departureStatus
@@ -2683,10 +2767,15 @@ class _$DepartureModelImpl implements _DepartureModel {
       this.uid,
       this.listingName,
       this.listingId,
+      this.driverName,
+      this.driverId,
+      this.departingVehicle,
       required final List<ListingBookings> passengers,
       final List<AssignedVehicle>? vehicles,
       @TimestampSerializer() this.arrival,
+      @TimestampSerializer() this.arrived,
       @TimestampSerializer() this.departure,
+      @TimestampSerializer() this.departed,
       this.departureStatus})
       : _passengers = passengers,
         _vehicles = vehicles;
@@ -2704,6 +2793,12 @@ class _$DepartureModelImpl implements _DepartureModel {
   final String? listingName;
   @override
   final String? listingId;
+  @override
+  final String? driverName;
+  @override
+  final String? driverId;
+  @override
+  final AssignedVehicle? departingVehicle;
   final List<ListingBookings> _passengers;
   @override
   List<ListingBookings> get passengers {
@@ -2727,13 +2822,19 @@ class _$DepartureModelImpl implements _DepartureModel {
   final DateTime? arrival;
   @override
   @TimestampSerializer()
+  final DateTime? arrived;
+  @override
+  @TimestampSerializer()
   final DateTime? departure;
+  @override
+  @TimestampSerializer()
+  final DateTime? departed;
   @override
   final String? departureStatus;
 
   @override
   String toString() {
-    return 'DepartureModel(pickUp: $pickUp, destination: $destination, uid: $uid, listingName: $listingName, listingId: $listingId, passengers: $passengers, vehicles: $vehicles, arrival: $arrival, departure: $departure, departureStatus: $departureStatus)';
+    return 'DepartureModel(pickUp: $pickUp, destination: $destination, uid: $uid, listingName: $listingName, listingId: $listingId, driverName: $driverName, driverId: $driverId, departingVehicle: $departingVehicle, passengers: $passengers, vehicles: $vehicles, arrival: $arrival, arrived: $arrived, departure: $departure, departed: $departed, departureStatus: $departureStatus)';
   }
 
   @override
@@ -2749,12 +2850,21 @@ class _$DepartureModelImpl implements _DepartureModel {
                 other.listingName == listingName) &&
             (identical(other.listingId, listingId) ||
                 other.listingId == listingId) &&
+            (identical(other.driverName, driverName) ||
+                other.driverName == driverName) &&
+            (identical(other.driverId, driverId) ||
+                other.driverId == driverId) &&
+            (identical(other.departingVehicle, departingVehicle) ||
+                other.departingVehicle == departingVehicle) &&
             const DeepCollectionEquality()
                 .equals(other._passengers, _passengers) &&
             const DeepCollectionEquality().equals(other._vehicles, _vehicles) &&
             (identical(other.arrival, arrival) || other.arrival == arrival) &&
+            (identical(other.arrived, arrived) || other.arrived == arrived) &&
             (identical(other.departure, departure) ||
                 other.departure == departure) &&
+            (identical(other.departed, departed) ||
+                other.departed == departed) &&
             (identical(other.departureStatus, departureStatus) ||
                 other.departureStatus == departureStatus));
   }
@@ -2768,10 +2878,15 @@ class _$DepartureModelImpl implements _DepartureModel {
       uid,
       listingName,
       listingId,
+      driverName,
+      driverId,
+      departingVehicle,
       const DeepCollectionEquality().hash(_passengers),
       const DeepCollectionEquality().hash(_vehicles),
       arrival,
+      arrived,
       departure,
+      departed,
       departureStatus);
 
   @JsonKey(ignore: true)
@@ -2796,10 +2911,15 @@ abstract class _DepartureModel implements DepartureModel {
       final String? uid,
       final String? listingName,
       final String? listingId,
+      final String? driverName,
+      final String? driverId,
+      final AssignedVehicle? departingVehicle,
       required final List<ListingBookings> passengers,
       final List<AssignedVehicle>? vehicles,
       @TimestampSerializer() final DateTime? arrival,
+      @TimestampSerializer() final DateTime? arrived,
       @TimestampSerializer() final DateTime? departure,
+      @TimestampSerializer() final DateTime? departed,
       final String? departureStatus}) = _$DepartureModelImpl;
 
   factory _DepartureModel.fromJson(Map<String, dynamic> json) =
@@ -2816,6 +2936,12 @@ abstract class _DepartureModel implements DepartureModel {
   @override
   String? get listingId;
   @override
+  String? get driverName;
+  @override
+  String? get driverId;
+  @override
+  AssignedVehicle? get departingVehicle;
+  @override
   List<ListingBookings> get passengers;
   @override
   List<AssignedVehicle>? get vehicles;
@@ -2824,7 +2950,13 @@ abstract class _DepartureModel implements DepartureModel {
   DateTime? get arrival;
   @override
   @TimestampSerializer()
+  DateTime? get arrived;
+  @override
+  @TimestampSerializer()
   DateTime? get departure;
+  @override
+  @TimestampSerializer()
+  DateTime? get departed;
   @override
   String? get departureStatus;
   @override

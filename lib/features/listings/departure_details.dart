@@ -13,6 +13,7 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/emergency_process_dialog.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:slider_button/slider_button.dart';
 
 class DepartureDetails extends ConsumerStatefulWidget {
   final DepartureModel departure;
@@ -79,6 +80,17 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
             child: Scaffold(
               resizeToAvoidBottomInset: true,
               appBar: _appBar("Departure Details", context),
+              bottomNavigationBar: ["Waiting, OnGoing"]
+                      .contains(departureDetails.departureStatus)
+                  ? BottomAppBar(
+                      height: MediaQuery.sizeOf(context).height / 8,
+                      surfaceTintColor: Colors.transparent,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: getDepartureStatus(),
+                      ),
+                    )
+                  : null,
               body: StatefulBuilder(
                 builder: (context, setState) {
                   return TabBarView(
@@ -90,6 +102,147 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                 },
               ),
             )));
+  }
+
+  Widget? getDepartureStatus() {
+    switch (departureDetails.departureStatus) {
+      case "Waiting":
+        return Center(
+          child: SliderButton(
+            width: 300,
+            radius: 10,
+            alignLabel: const Alignment(.2, 0),
+            buttonColor: Theme.of(context).colorScheme.background,
+            backgroundColor: Theme.of(context).primaryColor,
+            highlightedColor: Theme.of(context).primaryColor,
+            baseColor: Theme.of(context).colorScheme.background,
+            action: () async {
+              setState(() {
+                departureDetails = departureDetails.copyWith(
+                    departed: DateTime.now(), departureStatus: "OnGoing");
+              });
+              ref
+                  .read(listingControllerProvider.notifier)
+                  .updateDeparture(context, departureDetails, "");
+              return false;
+            },
+            label: const Text(
+              "Embark",
+              style: TextStyle(
+                color: Color(0xff4a4a4a),
+                fontWeight: FontWeight.w500,
+                fontSize: 22,
+              ),
+            ),
+            icon: Center(
+                child: Icon(
+              Icons.directions_bus_outlined,
+              color: Theme.of(context).primaryColor,
+              size: 30.0,
+            )),
+          ),
+        );
+      case "OnGoing":
+        return Center(
+          child: SliderButton(
+            width: 300,
+            radius: 10,
+            alignLabel: const Alignment(.2, 0),
+            buttonColor: Theme.of(context).colorScheme.background,
+            backgroundColor: Theme.of(context).primaryColor,
+            highlightedColor: Theme.of(context).primaryColor,
+            baseColor: Theme.of(context).colorScheme.background,
+            action: () async {
+              setState(() {
+                departureDetails = departureDetails.copyWith(
+                    arrived: DateTime.now(), departureStatus: "Completed");
+              });
+              ref
+                  .read(listingControllerProvider.notifier)
+                  .updateDeparture(context, departureDetails, "");
+              return false;
+            },
+            label: const Text(
+              "Disembark",
+              style: TextStyle(
+                color: Color(0xff4a4a4a),
+                fontWeight: FontWeight.w500,
+                fontSize: 22,
+              ),
+            ),
+            icon: Center(
+                child: Icon(
+              Icons.directions_bus_outlined,
+              color: Theme.of(context).primaryColor,
+              size: 30.0,
+            )),
+          ),
+        );
+      case "Completed":
+        return null;
+      case "Cancelled":
+        return null;
+      case "Emergency":
+        return Center(
+          child: SliderButton(
+            width: 300,
+            radius: 10,
+            alignLabel: const Alignment(.2, 0),
+            buttonColor: Theme.of(context).colorScheme.background,
+            backgroundColor: Theme.of(context).primaryColor,
+            highlightedColor: Theme.of(context).primaryColor,
+            baseColor: Theme.of(context).colorScheme.background,
+            action: () async {
+              // Do something here OnSlide
+              return false;
+            },
+            label: const Text(
+              "",
+              style: TextStyle(
+                color: Color(0xff4a4a4a),
+                fontWeight: FontWeight.w500,
+                fontSize: 22,
+              ),
+            ),
+            icon: Center(
+                child: Icon(
+              Icons.directions_bus_outlined,
+              color: Theme.of(context).primaryColor,
+              size: 30.0,
+            )),
+          ),
+        );
+      default:
+        return Center(
+          child: SliderButton(
+            width: 300,
+            radius: 10,
+            alignLabel: const Alignment(.2, 0),
+            buttonColor: Theme.of(context).colorScheme.background,
+            backgroundColor: Theme.of(context).primaryColor,
+            highlightedColor: Theme.of(context).primaryColor,
+            baseColor: Theme.of(context).colorScheme.background,
+            action: () async {
+              // Do something here OnSlide
+              return false;
+            },
+            label: const Text(
+              "Embark",
+              style: TextStyle(
+                color: Color(0xff4a4a4a),
+                fontWeight: FontWeight.w500,
+                fontSize: 22,
+              ),
+            ),
+            icon: Center(
+                child: Icon(
+              Icons.directions_bus_outlined,
+              color: Theme.of(context).primaryColor,
+              size: 30.0,
+            )),
+          ),
+        );
+    }
   }
 
   AppBar _appBar(String title, BuildContext context) {
@@ -184,13 +337,41 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: double.infinity,
-            height: MediaQuery.sizeOf(context).height * .4,
-            child: TwoMarkerMapWidget(
-                destination: widget.departure.destination ?? '',
-                pickup: widget.departure.pickUp ?? ''),
-          ),
+          Stack(children: [
+            Container(
+              foregroundDecoration: BoxDecoration(
+                  color: Colors.black.withOpacity(
+                      (departureDetails.departureStatus == "Cancelled" ||
+                              departureDetails.departureStatus == "Completed")
+                          ? 0.5
+                          : 0.0)),
+              child: SizedBox(
+                width: double.infinity,
+                height: MediaQuery.sizeOf(context).height * .4,
+                child: TwoMarkerMapWidget(
+                    destination: widget.departure.destination ?? '',
+                    pickup: widget.departure.pickUp ?? ''),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 60.0, left: 30),
+              child: Row(
+                children: [
+                  Flexible(
+                      child: Text(
+                          departureDetails.departureStatus == 'Cancelled'
+                              ? "Your Departure Has Been Cancelled"
+                              : departureDetails.departureStatus == "Completed"
+                                  ? "Your Departure Has Been Completed"
+                                  : '',
+                          style: const TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white))),
+                ],
+              ),
+            )
+          ]),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
             child: Row(
@@ -220,14 +401,24 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w300),
                         ),
+                        const SizedBox(height: 10),
+
+                        // departed time
+                        Text(
+                          ('Departed: ${departureDetails.departed != null ? TimeOfDay.fromDateTime(departureDetails.departed!).format(context) : ""}'),
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w300),
+                        ),
                       ],
                     ),
                   ),
                 ),
-                Container(
-                  height: MediaQuery.sizeOf(context).height / 7.5,
-                  width: 1,
-                  color: Colors.grey, // Choose the color of the line
+                const VerticalDivider(
+                  color: Colors.grey,
+                  thickness: 5,
+                  width: 10,
+                  indent: 0,
+                  endIndent: 0,
                 ),
                 Expanded(
                   child: Container(
@@ -246,6 +437,14 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                         Text(
                           TimeOfDay.fromDateTime(departureDetails.arrival!)
                               .format(context),
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w300),
+                        ),
+                        const SizedBox(height: 10),
+
+                        // departed time
+                        Text(
+                          ('Arrived: ${departureDetails.arrived != null ? TimeOfDay.fromDateTime(departureDetails.arrived!).format(context) : ""}'),
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w300),
                         ),
@@ -359,6 +558,13 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                         width: 1,
                                         color: Colors.grey),
                                     InkWell(
+                                      onTap: ["Waiting"].contains(
+                                              departureDetails.departureStatus!)
+                                          ? () async {
+                                              selectPassengerDialog(
+                                                  context, vehicle);
+                                            }
+                                          : null,
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 4),
@@ -371,9 +577,6 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                         child: _displaySubtitleText(
                                             'Passengers: ${passengerCount[vehicle.vehicleNo]}'),
                                       ),
-                                      onTap: () async {
-                                        selectPassengerDialog(context, vehicle);
-                                      },
                                     ),
                                   ],
                                 ),
@@ -386,38 +589,41 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                       ),
                       loading: () => const Loader(),
                     ),
-                const SizedBox(height: 10),
-                ...generalActions.entries.map((entry) {
-                  final generalAction = entry.value;
-                  return Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.only(
-                          left: 15,
-                          right: 15,
-                        ), // Adjust the padding as needed
-                        child: const Divider(
-                          color: Colors.grey,
-                          height: 1.0,
+                if (!["Cancelled", "Completed"]
+                    .contains(departureDetails.departureStatus)) ...[
+                  const SizedBox(height: 10),
+                  ...generalActions.entries.map((entry) {
+                    final generalAction = entry.value;
+                    return Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(
+                            left: 15,
+                            right: 15,
+                          ), // Adjust the padding as needed
+                          child: const Divider(
+                            color: Colors.grey,
+                            height: 1.0,
+                          ),
                         ),
-                      ),
-                      ListTile(
-                        leading: Icon(
-                          generalAction['icon'],
-                          size: 20,
+                        ListTile(
+                          leading: Icon(
+                            generalAction['icon'],
+                            size: 20,
+                          ),
+                          title: Text(generalAction['title'],
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w400)),
+                          onTap: generalAction["action"],
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 16,
+                          ),
                         ),
-                        title: Text(generalAction['title'],
-                            style: const TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w400)),
-                        onTap: generalAction["action"],
-                        trailing: const Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 16,
-                        ),
-                      ),
-                    ],
-                  );
-                }),
+                      ],
+                    );
+                  })
+                ],
                 const SizedBox(height: 10),
               ],
             ),

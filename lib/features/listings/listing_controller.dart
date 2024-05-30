@@ -286,7 +286,7 @@ class ListingController extends StateNotifier<bool> {
               }
             }
 
-            case 'Food':
+          case 'Food':
             {
               element = element.copyWith(
                 listingId: listing.uid,
@@ -321,6 +321,7 @@ class ListingController extends StateNotifier<bool> {
         }
         if (departures.isEmpty) {
           DepartureModel updatedDeparture = DepartureModel(
+            departureStatus: "Waiting",
             pickUp: listing.pickUp,
             destination: listing.destination,
             listingName: listing.title,
@@ -426,6 +427,21 @@ class ListingController extends StateNotifier<bool> {
             extra: {'booking': updatedBooking, 'listing': listing});
       }
     });
+  }
+
+  void deleteBooking(ListingBookings booking, BuildContext context) async {
+    state = true;
+    final result =
+        await _listingRepository.deleteBooking(booking.listingId, booking);
+
+    result.fold(
+      (failure) {
+        state = false;
+      },
+      (uid) {
+        state = false;
+      },
+    );
   }
 
   void updateListing(BuildContext context, ListingModel listing) {
