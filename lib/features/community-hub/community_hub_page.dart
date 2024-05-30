@@ -42,6 +42,21 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
     );
   }
 
+  List<Tag> avalableEventTags = [
+    Tag('Community Engagement', false),
+    Tag('Seminar', false),
+    Tag('General Assembly', false),
+    Tag('Training and Education', false),
+  ];
+
+  List<Tag> availableListingsTags = [
+    Tag('Accommodation', false),
+    Tag('Transport', false),
+    Tag('Entertainment', false),
+    Tag('Food ', false),
+    Tag('Tour ', false),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
@@ -129,19 +144,121 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
               );
             }
 
-            return ListView.builder(
-              itemCount: events.length,
-              itemBuilder: (context, index) {
-                final event = events[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: CommunityHubEventsCard(event: event),
-                );
-              },
+            // Filter events based on selected tags only if any tag is selected
+            final filteredEvents =
+                avalableEventTags.where((tag) => tag.isSelected).isEmpty
+                    ? events
+                    : events
+                        .where((event) => avalableEventTags
+                            .where((tag) => tag.isSelected)
+                            .map((tag) => tag.name)
+                            .contains(event.eventType))
+                        .toList();
+
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  eventTags(),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: filteredEvents.length,
+                    itemBuilder: (context, index) {
+                      final event = filteredEvents[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: CommunityHubEventsCard(event: event),
+                      );
+                    },
+                  ),
+                ],
+              ),
             );
           },
           orElse: () => const SizedBox.shrink(),
         );
+  }
+
+  SingleChildScrollView listingTags() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Row(
+          children: [
+            Wrap(
+              spacing: 8.0, // gap between adjacent chips
+              runSpacing: 4.0, // gap between lines
+              children: List<Widget>.generate(
+                availableListingsTags.length,
+                (int index) {
+                  return availableListingsTags[index].isSelected
+                      ? FilledButton(
+                          onPressed: () {
+                            setState(() {
+                              availableListingsTags[index].isSelected =
+                                  !availableListingsTags[index].isSelected;
+                            });
+                          },
+                          child: Text(availableListingsTags[index].name),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              availableListingsTags[index].isSelected =
+                                  !availableListingsTags[index].isSelected;
+                            });
+                          },
+                          child: Text(availableListingsTags[index].name),
+                        );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  SingleChildScrollView eventTags() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Row(
+          children: [
+            Wrap(
+              spacing: 8.0, // gap between adjacent chips
+              runSpacing: 4.0, // gap between lines
+              children: List<Widget>.generate(
+                avalableEventTags.length,
+                (int index) {
+                  return avalableEventTags[index].isSelected
+                      ? FilledButton(
+                          onPressed: () {
+                            setState(() {
+                              avalableEventTags[index].isSelected =
+                                  !avalableEventTags[index].isSelected;
+                            });
+                          },
+                          child: Text(avalableEventTags[index].name),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              avalableEventTags[index].isSelected =
+                                  !avalableEventTags[index].isSelected;
+                            });
+                          },
+                          child: Text(avalableEventTags[index].name),
+                        );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _listings() {
@@ -194,27 +311,48 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
               return bBookings.length.compareTo(aBookings.length);
             });
 
-            return ListView.builder(
-              itemCount: listings.length,
-              itemBuilder: (context, index) {
-                final listing = listings[index];
+            // Filter listings based on selected tags only if any tag is selected
+            final filteredListings =
+                availableListingsTags.where((tag) => tag.isSelected).isEmpty
+                    ? listings
+                    : listings
+                        .where((listing) => availableListingsTags
+                            .where((tag) => tag.isSelected)
+                            .map((tag) => tag.name)
+                            .contains(listing.category))
+                        .toList();
 
-                return ref
-                    .watch(getAllBookingsProvider(listing.uid!))
-                    .maybeWhen(
-                      data: (List<ListingBookings> bookings) {
-                        // Order the listings based on the number of bookings per listings
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0),
-                          child: CommunityHubListingCard(
-                            listing: listing,
-                            bookings: bookings,
-                          ),
-                        );
-                      },
-                      orElse: () => const SizedBox.shrink(),
-                    );
-              },
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  listingTags(),
+                  ListView.builder(
+                    itemCount: filteredListings.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final listing = filteredListings[index];
+
+                      return ref
+                          .watch(getAllBookingsProvider(listing.uid!))
+                          .maybeWhen(
+                            data: (List<ListingBookings> bookings) {
+                              // Order the listings based on the number of bookings per listings
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                child: CommunityHubListingCard(
+                                  listing: listing,
+                                  bookings: bookings,
+                                ),
+                              );
+                            },
+                            orElse: () => const SizedBox.shrink(),
+                          );
+                    },
+                  ),
+                ],
+              ),
             );
           },
           orElse: () => const SizedBox.shrink(),
@@ -362,4 +500,11 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
       ],
     );
   }
+}
+
+class Tag {
+  final String name;
+  bool isSelected;
+
+  Tag(this.name, this.isSelected);
 }

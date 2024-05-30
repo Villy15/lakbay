@@ -4,6 +4,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/announcements/announcements_page.dart';
+import 'package:lakbay/features/assets/assets_page.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
 import 'package:lakbay/features/bookings/bookings_page.dart';
@@ -67,6 +68,8 @@ import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
 import 'package:lakbay/features/profile/my_dashboard.dart';
 import 'package:lakbay/features/profile/profile_customer_page.dart';
+import 'package:lakbay/features/survey/coop_sustainability_page.dart';
+import 'package:lakbay/features/survey/customer_survey.dart';
 import 'package:lakbay/features/tasks/event_tasks_add.dart';
 import 'package:lakbay/features/tasks/event_tasks_edit.dart';
 import 'package:lakbay/features/tasks/event_tasks_read.dart';
@@ -1004,6 +1007,45 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     transitionType: SharedAxisTransitionType.vertical,
                   );
                 },
+              ),
+
+              // Customer Survey
+              GoRoute(
+                path: '/surveys/customer',
+                pageBuilder: (context, state) =>
+                    buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child:
+                      const CustomerSurveyPage(), // Replace with your actual AddWikiPage widget
+                  transitionType: SharedAxisTransitionType.vertical,
+                ),
+              ),
+
+              // Customer Survey
+              GoRoute(
+                path: '/surveys/coop',
+                pageBuilder: (context, state) =>
+                    buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child:
+                      const CoopSustainabilityPage(), // Replace with your actual AddWikiPage widget
+                  transitionType: SharedAxisTransitionType.vertical,
+                ),
+              ),
+
+              // Customer Survey
+              GoRoute(
+                path: '/assets',
+                pageBuilder: (context, state) =>
+                    buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child:
+                      const AssetsPage(), // Replace with your actual AddWikiPage widget
+                  transitionType: SharedAxisTransitionType.vertical,
+                ),
               ),
             ])
       ],

@@ -69,6 +69,11 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
     context.push('/my_coop/functions/members/${widget.user?.uid}');
   }
 
+  void viewAnswerCustomerSurvey() {
+    context.pop();
+    context.push('/surveys/customer');
+  }
+
   @override
   Widget build(BuildContext context) {
     return ref.watch(getUserDataProvider(widget.user!.uid)).when(
@@ -185,7 +190,13 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                           '/my_coop/dashboard/${widget.user?.currentCoop}'),
                     },
                   )
-                : const SizedBox.shrink(),
+                : ListTile(
+                    title: const Text('Customer Survey'),
+                    leading: const Icon(Icons.question_answer),
+                    onTap: () => {
+                      viewAnswerCustomerSurvey(),
+                    },
+                  ),
 
             // Wiki Page
 
@@ -230,6 +241,30 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                     onTap: () => {
                       context.pop(),
                       context.push('/votes'),
+                    },
+                  )
+                : const SizedBox.shrink(),
+
+            // Sustainability
+            widget.user!.isCoopView ?? false
+                ? ListTile(
+                    title: const Text('Sustainability Report'),
+                    leading: const Icon(Icons.eco_outlined),
+                    onTap: () => {
+                      context.pop(),
+                      context.push('/surveys/coop'),
+                    },
+                  )
+                : const SizedBox.shrink(),
+
+            // Assets
+            widget.user!.isCoopView ?? false
+                ? ListTile(
+                    title: const Text('Assets'),
+                    leading: const Icon(Icons.car_rental_outlined),
+                    onTap: () => {
+                      context.pop(),
+                      context.push('/assets'),
                     },
                   )
                 : const SizedBox.shrink(),
