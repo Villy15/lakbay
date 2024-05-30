@@ -4,6 +4,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/announcements/announcements_page.dart';
+import 'package:lakbay/features/assets/assets_page.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/auth/login_or_register.dart';
 import 'package:lakbay/features/bookings/bookings_page.dart';
@@ -1030,6 +1031,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   state: state,
                   child:
                       const CoopSustainabilityPage(), // Replace with your actual AddWikiPage widget
+                  transitionType: SharedAxisTransitionType.vertical,
+                ),
+              ),
+
+              // Customer Survey
+              GoRoute(
+                path: '/assets',
+                pageBuilder: (context, state) =>
+                    buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child:
+                      const AssetsPage(), // Replace with your actual AddWikiPage widget
                   transitionType: SharedAxisTransitionType.vertical,
                 ),
               ),
