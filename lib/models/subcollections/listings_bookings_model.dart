@@ -35,6 +35,7 @@ class ListingBookings with _$ListingBookings {
     required num price,
     String? roomId,
     num? vehicleNo,
+    String? vehicleUid,
     String? roomUid,
     @TimestampSerializer() DateTime? selectedDate,
     String? selectedTime,
@@ -47,6 +48,8 @@ class ListingBookings with _$ListingBookings {
     String? typeOfTrip,
     @TimeOfDayConverter() TimeOfDay? startTime,
     @TimeOfDayConverter() TimeOfDay? endTime,
+    @TimestampSerializer() DateTime? serviceStart,
+    @TimestampSerializer() DateTime? serviceComplete,
   }) = _ListingBookings;
 
   factory ListingBookings.fromJson(Map<String, dynamic> json) =>

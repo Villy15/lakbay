@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
-import 'package:lakbay/features/common/widgets/image_slider.dart';
+import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
@@ -34,6 +34,14 @@ class BookingsTransportCustomer extends ConsumerStatefulWidget {
 
 class _BookingsTransportCustomerState
     extends ConsumerState<BookingsTransportCustomer> {
+  late String departureTime;
+  late String departureDate;
+  late String departureLocation;
+  late String arrivalTime;
+  late String arrivalDate;
+  late String arrivalLocation;
+  late String vehicleNo;
+  late String driverName;
   @override
   void initState() {
     super.initState();
@@ -58,6 +66,12 @@ class _BookingsTransportCustomerState
   @override
   Widget build(BuildContext context) {
     debugPrint('File Name: booking_transport_customer.dart');
+    departureTime = widget.booking.startTime!.format(context);
+    departureDate = DateFormat('E, MMM d').format(widget.booking.startDate!);
+    departureLocation = widget.listing.pickUp!;
+    arrivalTime = (widget.booking.endTime!).format(context);
+    arrivalDate = DateFormat('E, MMM d').format(widget.booking.endDate!);
+    arrivalLocation = widget.listing.destination!;
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
@@ -135,12 +149,15 @@ class _BookingsTransportCustomerState
                                           booking.bookingStatus == "Cancelled"
                                               ? 0.5
                                               : 0.0)),
-                                  child: ImageSlider(
-                                      images: imageUrls,
-                                      height:
-                                          MediaQuery.sizeOf(context).height / 2,
-                                      width: double.infinity,
-                                      radius: BorderRadius.circular(0))),
+                                  child: SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.5,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: TwoMarkerMapWidget(
+                                      pickup: widget.listing.pickUp!,
+                                      destination: widget.listing.destination!,
+                                    ),
+                                  )),
                               Padding(
                                 padding:
                                     const EdgeInsets.only(top: 70.0, left: 30),
@@ -161,71 +178,100 @@ class _BookingsTransportCustomerState
                             ]),
 
                             Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0, vertical: 20),
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                            padding:
-                                                const EdgeInsets.only(left: 10),
-                                            child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(widget.listing.title,
-                                                      style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  const SizedBox(height: 5),
-                                                  // put the date here
-                                                  Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        const Icon(
-                                                            Icons
-                                                                .calendar_today,
-                                                            size: 20),
-                                                        const SizedBox(
-                                                            width: 5),
-                                                        Text(
-                                                            // format the date that does not include the time
-                                                            "Booked Date: ${DateFormat('MMMM d, yyyy').format(widget.booking.startDate!)}",
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        16))
-                                                      ]),
-                                                  const SizedBox(height: 10),
-                                                  if (widget
-                                                          .booking.typeOfTrip ==
-                                                      'Public')
-                                                    Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          const Icon(
-                                                              Icons
-                                                                  .schedule_outlined,
-                                                              size: 20),
-                                                          const SizedBox(
-                                                              width: 5),
-                                                          Text(
-                                                              // format the startTime
-                                                              "Departure Time: ${widget.booking.startTime!.format(context)}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          16))
-                                                        ]),
-                                                ])),
-                                      )
-                                    ])),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 20),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'Departure',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(departureDate,
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500)),
+                                          // Checkin time
+                                          Text(
+                                            departureTime,
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w300),
+                                          ),
+                                          Text(
+                                            departureLocation,
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w200),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  // Container(
+                                  //   height:
+                                  //       MediaQuery.sizeOf(context).height / 7.5,
+                                  //   width: 1,
+                                  //   color: Colors
+                                  //       .grey, // Choose the color of the line
+                                  // ),
+                                  const VerticalDivider(
+                                    color: Colors.grey,
+                                    thickness: 5,
+                                    width: 10,
+                                    indent: 0,
+                                    endIndent: 0,
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'Arrival',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(arrivalDate,
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500)),
+                                          // Checkout time
+                                          Text(
+                                            arrivalTime,
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w300),
+                                          ),
+                                          Text(
+                                            arrivalLocation,
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w200),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
                             ...generalActions.entries.map((entry) {
                               final generalAction = entry.value;
                               return Column(children: [
@@ -274,9 +320,14 @@ class _BookingsTransportCustomerState
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w500)),
-                                        if (booking.paymentOption ==
-                                            'Full Payment')
-                                          const Text('Cancell')
+                                        if (booking.bookingStatus !=
+                                                'Cancelled' &&
+                                            booking.bookingStatus !=
+                                                'Completed')
+                                          Text(
+                                              'Cancellation before ${DateFormat('MMM d, HH:mm a').format(booking.endDate!.subtract(const Duration(days: 5)))}'
+                                              ' entitles you to a refund amount of ₱${(booking.amountPaid!).toStringAsFixed(2)}\n'
+                                              'Cancellation after stated date entitles you to a refund amount of ₱${(booking.amountPaid! - (booking.amountPaid! * widget.listing.cancellationRate!)).toStringAsFixed(2)}')
                                       ])),
 
                             ...reservationActions.entries.map((entry) {
@@ -310,31 +361,6 @@ class _BookingsTransportCustomerState
                             const Padding(
                                 padding: EdgeInsets.only(
                                     left: 15, right: 15, top: 20),
-                                child: Text('Getting There',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold))),
-
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.location_on_outlined),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    '${widget.listing.city}, ${widget.listing.province}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 15, right: 15, top: 20),
                                 child: Text("Hosted By",
                                     style: TextStyle(
                                         fontSize: 20,
@@ -352,14 +378,6 @@ class _BookingsTransportCustomerState
                                           fontSize: 16,
                                           fontWeight: FontWeight.normal))
                                 ])),
-
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 15, right: 15, top: 20),
-                                child: Text("Payment Information",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold))),
                           ])));
                 },
                 error: (error, stackTrace) =>

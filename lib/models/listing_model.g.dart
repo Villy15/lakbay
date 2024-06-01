@@ -26,6 +26,7 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
           json['checkOut'], const TimeOfDayConverter().fromJson),
       city: json['city'] as String,
       cancellationPeriod: json['cancellationPeriod'] as num?,
+      downpaymentPeriod: json['downpaymentPeriod'] as num?,
       cooperative: ListingCooperative.fromJson(
           json['cooperative'] as Map<String, dynamic>),
       description: json['description'] as String,
@@ -103,6 +104,7 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
           instance.checkOut, const TimeOfDayConverter().toJson),
       'city': instance.city,
       'cancellationPeriod': instance.cancellationPeriod,
+      'downpaymentPeriod': instance.downpaymentPeriod,
       'cooperative': instance.cooperative.toJson(),
       'description': instance.description,
       'driverNames': instance.driverNames,
@@ -275,6 +277,12 @@ _$DepartureModelImpl _$$DepartureModelImplFromJson(Map<String, dynamic> json) =>
       uid: json['uid'] as String?,
       listingName: json['listingName'] as String?,
       listingId: json['listingId'] as String?,
+      driverName: json['driverName'] as String?,
+      driverId: json['driverId'] as String?,
+      departingVehicle: json['departingVehicle'] == null
+          ? null
+          : AssignedVehicle.fromJson(
+              json['departingVehicle'] as Map<String, dynamic>),
       passengers: (json['passengers'] as List<dynamic>)
           .map((e) => ListingBookings.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -283,8 +291,12 @@ _$DepartureModelImpl _$$DepartureModelImplFromJson(Map<String, dynamic> json) =>
           .toList(),
       arrival:
           const TimestampSerializer().fromJson(json['arrival'] as Timestamp?),
+      arrived:
+          const TimestampSerializer().fromJson(json['arrived'] as Timestamp?),
       departure:
           const TimestampSerializer().fromJson(json['departure'] as Timestamp?),
+      departed:
+          const TimestampSerializer().fromJson(json['departed'] as Timestamp?),
       departureStatus: json['departureStatus'] as String?,
     );
 
@@ -296,10 +308,15 @@ Map<String, dynamic> _$$DepartureModelImplToJson(
       'uid': instance.uid,
       'listingName': instance.listingName,
       'listingId': instance.listingId,
+      'driverName': instance.driverName,
+      'driverId': instance.driverId,
+      'departingVehicle': instance.departingVehicle?.toJson(),
       'passengers': instance.passengers.map((e) => e.toJson()).toList(),
       'vehicles': instance.vehicles?.map((e) => e.toJson()).toList(),
       'arrival': const TimestampSerializer().toJson(instance.arrival),
+      'arrived': const TimestampSerializer().toJson(instance.arrived),
       'departure': const TimestampSerializer().toJson(instance.departure),
+      'departed': const TimestampSerializer().toJson(instance.departed),
       'departureStatus': instance.departureStatus,
     };
 

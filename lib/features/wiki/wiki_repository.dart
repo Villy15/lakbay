@@ -39,6 +39,18 @@ class WikiRepository {
     });
   }
 
+  // Read all wikis by a coopid
+  Stream<List<WikiModel>> readWikisByCoopId(String coopId) {
+    return _wikis
+        .where('coopId', isEqualTo: coopId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return WikiModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   Stream<WikiModel> readWiki(String uid) {
     return _wikis.doc(uid).snapshots().map((snapshot) {
       return WikiModel.fromJson(snapshot.data() as Map<String, dynamic>);

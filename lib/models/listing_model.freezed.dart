@@ -32,6 +32,7 @@ mixin _$ListingModel {
   TimeOfDay? get checkOut => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
   num? get cancellationPeriod => throw _privateConstructorUsedError;
+  num? get downpaymentPeriod => throw _privateConstructorUsedError;
   ListingCooperative get cooperative => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   List<String>? get driverNames => throw _privateConstructorUsedError;
@@ -96,6 +97,7 @@ abstract class $ListingModelCopyWith<$Res> {
       @TimeOfDayConverter() TimeOfDay? checkOut,
       String city,
       num? cancellationPeriod,
+      num? downpaymentPeriod,
       ListingCooperative cooperative,
       String description,
       List<String>? driverNames,
@@ -156,6 +158,7 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
     Object? checkOut = freezed,
     Object? city = null,
     Object? cancellationPeriod = freezed,
+    Object? downpaymentPeriod = freezed,
     Object? cooperative = null,
     Object? description = null,
     Object? driverNames = freezed,
@@ -229,6 +232,10 @@ class _$ListingModelCopyWithImpl<$Res, $Val extends ListingModel>
       cancellationPeriod: freezed == cancellationPeriod
           ? _value.cancellationPeriod
           : cancellationPeriod // ignore: cast_nullable_to_non_nullable
+              as num?,
+      downpaymentPeriod: freezed == downpaymentPeriod
+          ? _value.downpaymentPeriod
+          : downpaymentPeriod // ignore: cast_nullable_to_non_nullable
               as num?,
       cooperative: null == cooperative
           ? _value.cooperative
@@ -402,6 +409,7 @@ abstract class _$$ListingModelImplCopyWith<$Res>
       @TimeOfDayConverter() TimeOfDay? checkOut,
       String city,
       num? cancellationPeriod,
+      num? downpaymentPeriod,
       ListingCooperative cooperative,
       String description,
       List<String>? driverNames,
@@ -462,6 +470,7 @@ class __$$ListingModelImplCopyWithImpl<$Res>
     Object? checkOut = freezed,
     Object? city = null,
     Object? cancellationPeriod = freezed,
+    Object? downpaymentPeriod = freezed,
     Object? cooperative = null,
     Object? description = null,
     Object? driverNames = freezed,
@@ -535,6 +544,10 @@ class __$$ListingModelImplCopyWithImpl<$Res>
       cancellationPeriod: freezed == cancellationPeriod
           ? _value.cancellationPeriod
           : cancellationPeriod // ignore: cast_nullable_to_non_nullable
+              as num?,
+      downpaymentPeriod: freezed == downpaymentPeriod
+          ? _value.downpaymentPeriod
+          : downpaymentPeriod // ignore: cast_nullable_to_non_nullable
               as num?,
       cooperative: null == cooperative
           ? _value.cooperative
@@ -682,6 +695,7 @@ class _$ListingModelImpl implements _ListingModel {
       @TimeOfDayConverter() this.checkOut,
       required this.city,
       this.cancellationPeriod,
+      this.downpaymentPeriod,
       required this.cooperative,
       required this.description,
       final List<String>? driverNames,
@@ -776,6 +790,8 @@ class _$ListingModelImpl implements _ListingModel {
   final String city;
   @override
   final num? cancellationPeriod;
+  @override
+  final num? downpaymentPeriod;
   @override
   final ListingCooperative cooperative;
   @override
@@ -924,7 +940,7 @@ class _$ListingModelImpl implements _ListingModel {
 
   @override
   String toString() {
-    return 'ListingModel(address: $address, availableDates: $availableDates, availableTimes: $availableTimes, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, cooperative: $cooperative, description: $description, driverNames: $driverNames, driverIds: $driverIds, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, duration: $duration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, pickUp: $pickUp, destination: $destination, guestInfo: $guestInfo, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, availableDays: $availableDays, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableTables: $availableTables, uid: $uid)';
+    return 'ListingModel(address: $address, availableDates: $availableDates, availableTimes: $availableTimes, availableRooms: $availableRooms, category: $category, cancellationRate: $cancellationRate, checkIn: $checkIn, checkOut: $checkOut, city: $city, cancellationPeriod: $cancellationPeriod, downpaymentPeriod: $downpaymentPeriod, cooperative: $cooperative, description: $description, driverNames: $driverNames, driverIds: $driverIds, downpaymentRate: $downpaymentRate, fixedCancellationRate: $fixedCancellationRate, images: $images, isPublished: $isPublished, listingCosts: $listingCosts, numberOfUnits: $numberOfUnits, openingHours: $openingHours, closingHours: $closingHours, duration: $duration, pax: $pax, price: $price, province: $province, publisherId: $publisherId, publisherName: $publisherName, pickUp: $pickUp, destination: $destination, guestInfo: $guestInfo, rating: $rating, fixedTasks: $fixedTasks, timestamp: $timestamp, availableDays: $availableDays, title: $title, type: $type, availableDeals: $availableDeals, menuImgs: $menuImgs, availableTransport: $availableTransport, availableTables: $availableTables, uid: $uid)';
   }
 
   @override
@@ -949,6 +965,8 @@ class _$ListingModelImpl implements _ListingModel {
             (identical(other.city, city) || other.city == city) &&
             (identical(other.cancellationPeriod, cancellationPeriod) ||
                 other.cancellationPeriod == cancellationPeriod) &&
+            (identical(other.downpaymentPeriod, downpaymentPeriod) ||
+                other.downpaymentPeriod == downpaymentPeriod) &&
             (identical(other.cooperative, cooperative) ||
                 other.cooperative == cooperative) &&
             (identical(other.description, description) ||
@@ -1020,6 +1038,7 @@ class _$ListingModelImpl implements _ListingModel {
         checkOut,
         city,
         cancellationPeriod,
+        downpaymentPeriod,
         cooperative,
         description,
         const DeepCollectionEquality().hash(_driverNames),
@@ -1080,6 +1099,7 @@ abstract class _ListingModel implements ListingModel {
       @TimeOfDayConverter() final TimeOfDay? checkOut,
       required final String city,
       final num? cancellationPeriod,
+      final num? downpaymentPeriod,
       required final ListingCooperative cooperative,
       required final String description,
       final List<String>? driverNames,
@@ -1138,6 +1158,8 @@ abstract class _ListingModel implements ListingModel {
   String get city;
   @override
   num? get cancellationPeriod;
+  @override
+  num? get downpaymentPeriod;
   @override
   ListingCooperative get cooperative;
   @override
@@ -2462,12 +2484,19 @@ mixin _$DepartureModel {
   String? get uid => throw _privateConstructorUsedError;
   String? get listingName => throw _privateConstructorUsedError;
   String? get listingId => throw _privateConstructorUsedError;
+  String? get driverName => throw _privateConstructorUsedError;
+  String? get driverId => throw _privateConstructorUsedError;
+  AssignedVehicle? get departingVehicle => throw _privateConstructorUsedError;
   List<ListingBookings> get passengers => throw _privateConstructorUsedError;
   List<AssignedVehicle>? get vehicles => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get arrival => throw _privateConstructorUsedError;
   @TimestampSerializer()
+  DateTime? get arrived => throw _privateConstructorUsedError;
+  @TimestampSerializer()
   DateTime? get departure => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get departed => throw _privateConstructorUsedError;
   String? get departureStatus => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -2488,11 +2517,18 @@ abstract class $DepartureModelCopyWith<$Res> {
       String? uid,
       String? listingName,
       String? listingId,
+      String? driverName,
+      String? driverId,
+      AssignedVehicle? departingVehicle,
       List<ListingBookings> passengers,
       List<AssignedVehicle>? vehicles,
       @TimestampSerializer() DateTime? arrival,
+      @TimestampSerializer() DateTime? arrived,
       @TimestampSerializer() DateTime? departure,
+      @TimestampSerializer() DateTime? departed,
       String? departureStatus});
+
+  $AssignedVehicleCopyWith<$Res>? get departingVehicle;
 }
 
 /// @nodoc
@@ -2513,10 +2549,15 @@ class _$DepartureModelCopyWithImpl<$Res, $Val extends DepartureModel>
     Object? uid = freezed,
     Object? listingName = freezed,
     Object? listingId = freezed,
+    Object? driverName = freezed,
+    Object? driverId = freezed,
+    Object? departingVehicle = freezed,
     Object? passengers = null,
     Object? vehicles = freezed,
     Object? arrival = freezed,
+    Object? arrived = freezed,
     Object? departure = freezed,
+    Object? departed = freezed,
     Object? departureStatus = freezed,
   }) {
     return _then(_value.copyWith(
@@ -2540,6 +2581,18 @@ class _$DepartureModelCopyWithImpl<$Res, $Val extends DepartureModel>
           ? _value.listingId
           : listingId // ignore: cast_nullable_to_non_nullable
               as String?,
+      driverName: freezed == driverName
+          ? _value.driverName
+          : driverName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      driverId: freezed == driverId
+          ? _value.driverId
+          : driverId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      departingVehicle: freezed == departingVehicle
+          ? _value.departingVehicle
+          : departingVehicle // ignore: cast_nullable_to_non_nullable
+              as AssignedVehicle?,
       passengers: null == passengers
           ? _value.passengers
           : passengers // ignore: cast_nullable_to_non_nullable
@@ -2552,15 +2605,35 @@ class _$DepartureModelCopyWithImpl<$Res, $Val extends DepartureModel>
           ? _value.arrival
           : arrival // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      arrived: freezed == arrived
+          ? _value.arrived
+          : arrived // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       departure: freezed == departure
           ? _value.departure
           : departure // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      departed: freezed == departed
+          ? _value.departed
+          : departed // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       departureStatus: freezed == departureStatus
           ? _value.departureStatus
           : departureStatus // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $AssignedVehicleCopyWith<$Res>? get departingVehicle {
+    if (_value.departingVehicle == null) {
+      return null;
+    }
+
+    return $AssignedVehicleCopyWith<$Res>(_value.departingVehicle!, (value) {
+      return _then(_value.copyWith(departingVehicle: value) as $Val);
+    });
   }
 }
 
@@ -2578,11 +2651,19 @@ abstract class _$$DepartureModelImplCopyWith<$Res>
       String? uid,
       String? listingName,
       String? listingId,
+      String? driverName,
+      String? driverId,
+      AssignedVehicle? departingVehicle,
       List<ListingBookings> passengers,
       List<AssignedVehicle>? vehicles,
       @TimestampSerializer() DateTime? arrival,
+      @TimestampSerializer() DateTime? arrived,
       @TimestampSerializer() DateTime? departure,
+      @TimestampSerializer() DateTime? departed,
       String? departureStatus});
+
+  @override
+  $AssignedVehicleCopyWith<$Res>? get departingVehicle;
 }
 
 /// @nodoc
@@ -2601,10 +2682,15 @@ class __$$DepartureModelImplCopyWithImpl<$Res>
     Object? uid = freezed,
     Object? listingName = freezed,
     Object? listingId = freezed,
+    Object? driverName = freezed,
+    Object? driverId = freezed,
+    Object? departingVehicle = freezed,
     Object? passengers = null,
     Object? vehicles = freezed,
     Object? arrival = freezed,
+    Object? arrived = freezed,
     Object? departure = freezed,
+    Object? departed = freezed,
     Object? departureStatus = freezed,
   }) {
     return _then(_$DepartureModelImpl(
@@ -2628,6 +2714,18 @@ class __$$DepartureModelImplCopyWithImpl<$Res>
           ? _value.listingId
           : listingId // ignore: cast_nullable_to_non_nullable
               as String?,
+      driverName: freezed == driverName
+          ? _value.driverName
+          : driverName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      driverId: freezed == driverId
+          ? _value.driverId
+          : driverId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      departingVehicle: freezed == departingVehicle
+          ? _value.departingVehicle
+          : departingVehicle // ignore: cast_nullable_to_non_nullable
+              as AssignedVehicle?,
       passengers: null == passengers
           ? _value._passengers
           : passengers // ignore: cast_nullable_to_non_nullable
@@ -2640,9 +2738,17 @@ class __$$DepartureModelImplCopyWithImpl<$Res>
           ? _value.arrival
           : arrival // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      arrived: freezed == arrived
+          ? _value.arrived
+          : arrived // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       departure: freezed == departure
           ? _value.departure
           : departure // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      departed: freezed == departed
+          ? _value.departed
+          : departed // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       departureStatus: freezed == departureStatus
           ? _value.departureStatus
@@ -2661,10 +2767,15 @@ class _$DepartureModelImpl implements _DepartureModel {
       this.uid,
       this.listingName,
       this.listingId,
+      this.driverName,
+      this.driverId,
+      this.departingVehicle,
       required final List<ListingBookings> passengers,
       final List<AssignedVehicle>? vehicles,
       @TimestampSerializer() this.arrival,
+      @TimestampSerializer() this.arrived,
       @TimestampSerializer() this.departure,
+      @TimestampSerializer() this.departed,
       this.departureStatus})
       : _passengers = passengers,
         _vehicles = vehicles;
@@ -2682,6 +2793,12 @@ class _$DepartureModelImpl implements _DepartureModel {
   final String? listingName;
   @override
   final String? listingId;
+  @override
+  final String? driverName;
+  @override
+  final String? driverId;
+  @override
+  final AssignedVehicle? departingVehicle;
   final List<ListingBookings> _passengers;
   @override
   List<ListingBookings> get passengers {
@@ -2705,13 +2822,19 @@ class _$DepartureModelImpl implements _DepartureModel {
   final DateTime? arrival;
   @override
   @TimestampSerializer()
+  final DateTime? arrived;
+  @override
+  @TimestampSerializer()
   final DateTime? departure;
+  @override
+  @TimestampSerializer()
+  final DateTime? departed;
   @override
   final String? departureStatus;
 
   @override
   String toString() {
-    return 'DepartureModel(pickUp: $pickUp, destination: $destination, uid: $uid, listingName: $listingName, listingId: $listingId, passengers: $passengers, vehicles: $vehicles, arrival: $arrival, departure: $departure, departureStatus: $departureStatus)';
+    return 'DepartureModel(pickUp: $pickUp, destination: $destination, uid: $uid, listingName: $listingName, listingId: $listingId, driverName: $driverName, driverId: $driverId, departingVehicle: $departingVehicle, passengers: $passengers, vehicles: $vehicles, arrival: $arrival, arrived: $arrived, departure: $departure, departed: $departed, departureStatus: $departureStatus)';
   }
 
   @override
@@ -2727,12 +2850,21 @@ class _$DepartureModelImpl implements _DepartureModel {
                 other.listingName == listingName) &&
             (identical(other.listingId, listingId) ||
                 other.listingId == listingId) &&
+            (identical(other.driverName, driverName) ||
+                other.driverName == driverName) &&
+            (identical(other.driverId, driverId) ||
+                other.driverId == driverId) &&
+            (identical(other.departingVehicle, departingVehicle) ||
+                other.departingVehicle == departingVehicle) &&
             const DeepCollectionEquality()
                 .equals(other._passengers, _passengers) &&
             const DeepCollectionEquality().equals(other._vehicles, _vehicles) &&
             (identical(other.arrival, arrival) || other.arrival == arrival) &&
+            (identical(other.arrived, arrived) || other.arrived == arrived) &&
             (identical(other.departure, departure) ||
                 other.departure == departure) &&
+            (identical(other.departed, departed) ||
+                other.departed == departed) &&
             (identical(other.departureStatus, departureStatus) ||
                 other.departureStatus == departureStatus));
   }
@@ -2746,10 +2878,15 @@ class _$DepartureModelImpl implements _DepartureModel {
       uid,
       listingName,
       listingId,
+      driverName,
+      driverId,
+      departingVehicle,
       const DeepCollectionEquality().hash(_passengers),
       const DeepCollectionEquality().hash(_vehicles),
       arrival,
+      arrived,
       departure,
+      departed,
       departureStatus);
 
   @JsonKey(ignore: true)
@@ -2774,10 +2911,15 @@ abstract class _DepartureModel implements DepartureModel {
       final String? uid,
       final String? listingName,
       final String? listingId,
+      final String? driverName,
+      final String? driverId,
+      final AssignedVehicle? departingVehicle,
       required final List<ListingBookings> passengers,
       final List<AssignedVehicle>? vehicles,
       @TimestampSerializer() final DateTime? arrival,
+      @TimestampSerializer() final DateTime? arrived,
       @TimestampSerializer() final DateTime? departure,
+      @TimestampSerializer() final DateTime? departed,
       final String? departureStatus}) = _$DepartureModelImpl;
 
   factory _DepartureModel.fromJson(Map<String, dynamic> json) =
@@ -2794,6 +2936,12 @@ abstract class _DepartureModel implements DepartureModel {
   @override
   String? get listingId;
   @override
+  String? get driverName;
+  @override
+  String? get driverId;
+  @override
+  AssignedVehicle? get departingVehicle;
+  @override
   List<ListingBookings> get passengers;
   @override
   List<AssignedVehicle>? get vehicles;
@@ -2802,7 +2950,13 @@ abstract class _DepartureModel implements DepartureModel {
   DateTime? get arrival;
   @override
   @TimestampSerializer()
+  DateTime? get arrived;
+  @override
+  @TimestampSerializer()
   DateTime? get departure;
+  @override
+  @TimestampSerializer()
+  DateTime? get departed;
   @override
   String? get departureStatus;
   @override

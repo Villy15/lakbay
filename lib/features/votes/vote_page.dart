@@ -2,22 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
-import 'package:lakbay/features/wiki/wiki_controller.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
+import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/wiki_model.dart';
 
-class WikiPage extends ConsumerStatefulWidget {
-  const WikiPage({super.key});
+class VotePage extends ConsumerStatefulWidget {
+  const VotePage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _WikiPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _VotePageState();
 }
 
-enum SortOption { newest, mostVotes }
+enum SortOption { newest }
 
 // State Notifier Provider
 final sortOptionProvider =
@@ -25,7 +29,7 @@ final sortOptionProvider =
   (ref) => SortOptionNotifier(),
 );
 
-class _WikiPageState extends ConsumerState<WikiPage> {
+class _VotePageState extends ConsumerState<VotePage> {
   /*
     ROUTES DEFINITION
   */
@@ -33,8 +37,19 @@ class _WikiPageState extends ConsumerState<WikiPage> {
     context.push("/wiki/$wikiId");
   }
 
-  void navigateToAddWiki(BuildContext context) {
-    context.push("/add_wiki");
+  void addAnnouncement(BuildContext context, CooperativeModel coop) {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        return AddAnnouncement(
+          parentContext: context,
+          coop: coop,
+        );
+      },
+    );
   }
 
   @override
@@ -49,24 +64,15 @@ class _WikiPageState extends ConsumerState<WikiPage> {
     VARIABLE DEFINITION
   */
 
-  List<Tag> availableTags = [
-    Tag('Discussion', false),
-    Tag('Issue', false),
-    Tag('Advice', false),
-  ];
-
   bool _isSearching = false;
   String _searchQuery = '';
-  bool _isAllCoopsWiki = false;
 
   @override
   Widget build(BuildContext context) {
     final sortOption = ref.watch(sortOptionProvider);
-    final user = ref.watch(userProvider);
-
-    final provider = _isAllCoopsWiki
-        ? getAllWikiProvider
-        : getWikiByCoopIdProvider(user!.currentCoop!);
+    final user = ref.watch(userProvider)!;
+    final coop =
+        ref.watch(getCooperativeProvider(user.currentCoop!)).asData?.value;
 
     return PopScope(
       canPop: false,
@@ -78,56 +84,28 @@ class _WikiPageState extends ConsumerState<WikiPage> {
         appBar: _appBar(),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: ref.watch(provider).when(
-                data: (wikis) {
-                  // wikis = [];
-                  if (wikis.isEmpty) {
+          child: ref.watch(getAllVotesProvider(user.currentCoop!)).when(
+                data: (List<CoopVote> data) {
+                  if (data.isEmpty) {
                     return emptyWikis();
                   }
 
                   // Filter wikis based on search query
-                  final searchedWikis = wikis
-                      .where((wiki) => wiki.title
+                  final searchedData = data
+                      .where((data) => data.position!
                           .toLowerCase()
                           .contains(_searchQuery.toLowerCase()))
                       .toList();
 
-                  if (searchedWikis.isEmpty) {
+                  if (searchedData.isEmpty) {
                     return emptyWikis();
                   }
 
-                  // Filter wikis based on selected tags only if any tag is selected
-                  final filteredWikis =
-                      availableTags.where((tag) => tag.isSelected).isEmpty
-                          ? searchedWikis
-                          : searchedWikis
-                              .where((wiki) => availableTags
-                                  .where((tag) => tag.isSelected)
-                                  .map((tag) => tag.name)
-                                  .contains(wiki.tag))
-                              .toList();
-
                   // Sort wikis based on selected sort option
                   if (sortOption == SortOption.newest) {
-                    filteredWikis
-                        .sort((a, b) => b.createdAt.compareTo(a.createdAt));
+                    data.sort((a, b) => b.dueDate!.compareTo(a.dueDate!));
 
                     debugPrint('Sorted by newest');
-                  } else if (sortOption == SortOption.mostVotes) {
-                    filteredWikis
-                        .sort((a, b) => b.votes?.compareTo(a.votes ?? 0) ?? 0);
-
-                    debugPrint('Sorted by most votes');
-                  }
-
-                  if (filteredWikis.isEmpty) {
-                    return Column(
-                      children: [
-                        sortAndTags(),
-                        const SizedBox(height: 200),
-                        emptyWikis(),
-                      ],
-                    );
                   }
 
                   return SingleChildScrollView(
@@ -138,11 +116,12 @@ class _WikiPageState extends ConsumerState<WikiPage> {
                         ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: filteredWikis.length * 2,
+                          itemCount: data.length,
                           itemBuilder: (context, index) {
-                            final wiki =
-                                filteredWikis[index % filteredWikis.length];
-                            return wikiCard(wiki);
+                            final vote = data[index];
+                            return ListVote(
+                              vote: vote,
+                            );
                           },
                         ),
                       ],
@@ -156,7 +135,7 @@ class _WikiPageState extends ConsumerState<WikiPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            navigateToAddWiki(context);
+            addAnnouncement(context, coop!);
           },
           child: const Icon(Icons.add),
         ),
@@ -186,27 +165,8 @@ class _WikiPageState extends ConsumerState<WikiPage> {
                 ),
               ),
             )
-          : _isAllCoopsWiki
-              ? const Text('All Coops Wiki', style: TextStyle(fontSize: 20))
-              : const Text('Wiki'),
+          : const Text('Coop Votes'),
       actions: [
-        // Switch to All Cooperatives Wiki
-        _isSearching
-            ? const SizedBox()
-            : TextButton(
-                onPressed: () {
-                  setState(() {
-                    _isAllCoopsWiki = !_isAllCoopsWiki;
-                  });
-                },
-                child: Text(
-                  _isAllCoopsWiki ? 'My Coop' : 'All Coops',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
-
         IconButton(
           onPressed: () {
             setState(() {
@@ -222,66 +182,26 @@ class _WikiPageState extends ConsumerState<WikiPage> {
     );
   }
 
-  SingleChildScrollView sortAndTags() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Row(
-          children: [
-            FilledButton(
-              onPressed: () {
-                showModalSortBy();
-              },
-              child: const Row(
-                children: [
-                  Icon(Icons.sort_outlined, size: 20),
-                  SizedBox(width: 4),
-                  Text(
-                    "Sort by",
-                  ),
-                ],
-              ),
+  Widget sortAndTags() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Row(
+        children: [
+          FilledButton(
+            onPressed: () {
+              showModalSortBy();
+            },
+            child: const Row(
+              children: [
+                Icon(Icons.sort_outlined, size: 20),
+                SizedBox(width: 4),
+                Text(
+                  "Sort by",
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            // Divider
-            Container(
-              height: 20,
-              width: 1,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-            ),
-            const SizedBox(width: 12),
-
-            Wrap(
-              spacing: 8.0, // gap between adjacent chips
-              runSpacing: 4.0, // gap between lines
-              children: List<Widget>.generate(
-                availableTags.length,
-                (int index) {
-                  return availableTags[index].isSelected
-                      ? FilledButton(
-                          onPressed: () {
-                            setState(() {
-                              availableTags[index].isSelected =
-                                  !availableTags[index].isSelected;
-                            });
-                          },
-                          child: Text(availableTags[index].name),
-                        )
-                      : ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              availableTags[index].isSelected =
-                                  !availableTags[index].isSelected;
-                            });
-                          },
-                          child: Text(availableTags[index].name),
-                        );
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -316,10 +236,8 @@ class _WikiPageState extends ConsumerState<WikiPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Column(
                     children: [
-                      radioListTile(context, "Newest", true, false,
+                      radioListTile(context, "Newest", true, true,
                           SortOption.newest, setState),
-                      radioListTile(context, "Most Votes", false, true,
-                          SortOption.mostVotes, setState),
                     ],
                   ),
                 ),
@@ -616,9 +534,54 @@ class Tag {
 
 // State Notifiers
 class SortOptionNotifier extends StateNotifier<SortOption> {
-  SortOptionNotifier() : super(SortOption.mostVotes);
+  SortOptionNotifier() : super(SortOption.newest);
 
   void setSortOption(SortOption option) {
     state = option;
+  }
+}
+
+class ListVote extends StatelessWidget {
+  const ListVote({
+    super.key,
+    required this.vote,
+  });
+
+  final CoopVote vote;
+
+  void readVote(BuildContext context) {
+    context.pushNamed(
+      'read_vote',
+      extra: vote,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        vote.position!,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      subtitle: Text(
+        'Due: ${DateFormat.yMMMd().format(vote.dueDate!)}',
+      ),
+      // Trailing FilledButton Vote
+      trailing: FilledButton(
+        onPressed: () {
+          readVote(context);
+          // Vote
+        },
+        child: const Text('Vote'),
+      ),
+
+      onTap: () {
+        readVote(context);
+        // Navigate to vote details
+      },
+    );
   }
 }

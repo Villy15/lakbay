@@ -70,6 +70,8 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
       TextEditingController();
   final TextEditingController _cancellationPeriodController =
       TextEditingController();
+  final TextEditingController _downpaymentPeriodController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -141,6 +143,8 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                         num.parse((_cancellationRateController.text)) / 100,
                     cancellationPeriod:
                         num.parse((_cancellationPeriodController.text)),
+                    downpaymentPeriod:
+                        num.parse((_downpaymentPeriodController.text)),
                   );
                   listing = await processRoomImages(listing);
                   listing = listing.copyWith(
@@ -352,8 +356,8 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
 
       // Next
       if (activeStep != upperBound) ...[
-        ElevatedButton(
-            style: ElevatedButton.styleFrom(
+        FilledButton(
+            style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
@@ -377,39 +381,33 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
             onPressed: () {
               // show an alert dialog to ask if the user is ready to submit his listing
               showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Submit Listing'),
-                    content: const Text(
-                        'Are you sure you want to submit this listing?'),
-                    actions: [
-                      FilledButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0)
-                          )
-                        ),
-                        child: const Text('Cancel'),
-                      ),
-                      FilledButton(
-                        onPressed: () {
-                          submitAddListing();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0)
-                          )
-                        ),
-                        child: const Text('Submit'),
-                      ),
-                    ]
-                  );
-                }
-              );
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                        title: const Text('Submit Listing'),
+                        content: const Text(
+                            'Are you sure you want to submit this listing?'),
+                        actions: [
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: FilledButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
+                            child: const Text('Cancel'),
+                          ),
+                          FilledButton(
+                            onPressed: () {
+                              submitAddListing();
+                            },
+                            style: FilledButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
+                            child: const Text('Submit'),
+                          ),
+                        ]);
+                  });
             },
             child: Text(
               'Submit',
@@ -701,7 +699,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                     );
                   });
             },
-            style: ElevatedButton.styleFrom(
+            style: FilledButton.styleFrom(
               padding:
                   const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
               shape: RoundedRectangleBorder(
@@ -1151,37 +1149,48 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                         SizedBox(
                           height: MediaQuery.sizeOf(context).height / 30,
                         ),
-                        ElevatedButton(
-                            onPressed: () {
-                              AvailableRoom room = AvailableRoom(
-                                  available: true,
-                                  images: images.map((image) {
-                                    final imagePath =
-                                        'listings/${widget.coop.name}/${image.path.split('/').last}';
-                                    return ListingImages(
-                                      path: imagePath,
-                                    );
-                                  }).toList(),
-                                  roomId: roomIdController.text,
-                                  bathrooms: bathrooms,
-                                  bedrooms: bedrooms,
-                                  beds: beds,
-                                  guests: guests,
-                                  price: num.parse(priceController.text));
-                              this.setState(() {
-                                int index = availableRooms.indexWhere(
-                                    (element) =>
-                                        element.roomId ==
-                                        roomIdController.text);
-                                if (index == -1) {
-                                  availableRooms.add(room);
-                                } else {
-                                  availableRooms[index] = room;
-                                }
-                              });
-                              context.pop();
-                            },
-                            child: const Text("Confirm"))
+                        SizedBox(
+                          width: MediaQuery.sizeOf(context).width * .8,
+                          child: FilledButton(
+                              onPressed: () {
+                                AvailableRoom room = AvailableRoom(
+                                    available: true,
+                                    images: images.map((image) {
+                                      final imagePath =
+                                          'listings/${widget.coop.name}/${image.path.split('/').last}';
+                                      return ListingImages(
+                                        path: imagePath,
+                                      );
+                                    }).toList(),
+                                    roomId: roomIdController.text,
+                                    bathrooms: bathrooms,
+                                    bedrooms: bedrooms,
+                                    beds: beds,
+                                    guests: guests,
+                                    price: num.parse(priceController.text));
+                                this.setState(() {
+                                  int index = availableRooms.indexWhere(
+                                      (element) =>
+                                          element.roomId ==
+                                          roomIdController.text);
+                                  if (index == -1) {
+                                    availableRooms.add(room);
+                                  } else {
+                                    availableRooms[index] = room;
+                                  }
+                                });
+                                context.pop();
+                              },
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12.0, horizontal: 24.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      8.0), // Adjust the border radius as needed
+                                ),
+                              ),
+                              child: const Text("Confirm")),
+                        )
                       ])),
             ),
           ),
@@ -1206,9 +1215,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
           readOnly: true,
           onTap: () async {
             await context.push('/select_location', extra: 'listing');
-          }
-        ),
-      
+          }),
 
       const SizedBox(height: 10),
 
@@ -1239,7 +1246,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                     );
                   });
             },
-            style: ElevatedButton.styleFrom(
+            style: FilledButton.styleFrom(
               padding:
                   const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
               shape: RoundedRectangleBorder(
@@ -1258,128 +1265,24 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: fixedTasks?.length,
             itemBuilder: ((context, taskIndex) {
-              return Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Colors.black, width: 1), // Border color
-                    borderRadius: BorderRadius.circular(
-                        6), // Border radius for rounded corners
+              return ListTile(
+                title: Text("Task: ${fixedTasks![taskIndex].name}"),
+                isThreeLine: true,
+                subtitle: Text(
+                    "Assigned: ${fixedTasks![taskIndex].assignedNames.join(', ')}"),
+                trailing: IconButton(
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.black,
+                    size: 25,
                   ),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.only(left: 5.0, right: 5, bottom: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Spacer(),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.close,
-                                color: Colors.black,
-                                size: 25,
-                              ), // 'X' icon
-                              onPressed: () {
-                                setState(() {
-                                  fixedTasks?.remove(fixedTasks?[taskIndex]);
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment
-                              .start, // Aligns children at the start of the cross axis
-                          children: [
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Task: ",
-                                style: TextStyle(
-                                  fontSize:
-                                      16, // Ensure this matches the font size of the other text
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 10.0),
-                                child: DisplayText(
-                                  text: fixedTasks![taskIndex].name,
-                                  lines: 3,
-                                  style: const TextStyle(
-                                    fontSize: 16, // Adjust text style
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Assigned: ",
-                                style: TextStyle(
-                                  fontSize:
-                                      16, // Ensure this matches the font size of the other text
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2, // 2 items per row
-                                    crossAxisSpacing:
-                                        1.5, // Space between cards horizontally
-                                    mainAxisSpacing: 1.5,
-                                    mainAxisExtent: MediaQuery.sizeOf(context)
-                                            .height /
-                                        20, // Space between cards vertically
-                                  ),
-                                  itemCount: fixedTasks![taskIndex]
-                                      .assignedNames
-                                      .length,
-                                  itemBuilder: (context, assignedIndex) {
-                                    return Container(
-                                        alignment: Alignment.centerLeft,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color:
-                                                  Colors.grey), // Border color
-                                          borderRadius: BorderRadius.circular(
-                                              4), // Border radius for rounded corners
-                                        ),
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10.0),
-                                          child: Text(
-                                            fixedTasks![taskIndex]
-                                                    .assignedNames[
-                                                assignedIndex], // Replace with the name from your data
-                                            style: const TextStyle(
-                                              fontSize: 14, // Adjust text style
-                                              overflow: TextOverflow
-                                                  .ellipsis, // Handle long text
-                                            ),
-                                          ),
-                                        ));
-                                  }),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ));
+                  onPressed: () {
+                    setState(() {
+                      fixedTasks?.remove(fixedTasks?[taskIndex]);
+                    });
+                  },
+                ),
+              );
             })),
         if (fixedTasks!.isEmpty)
           SizedBox(
@@ -1548,58 +1451,54 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, // 2 items per row
                         crossAxisSpacing:
-                            1.5, // Space between cards horizontally
-                        mainAxisSpacing: 1.5,
+                            0, // No space between cards horizontally
+                        mainAxisSpacing: 0, // No space between cards vertically
                         mainAxisExtent: MediaQuery.sizeOf(context).height /
-                            8, // Space between cards vertically
+                            16, // Height of each card
                       ),
                       itemCount: assignedNames
                           .length, // Replace with the length of your data
                       itemBuilder: (context, index) {
                         return Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.grey), // Border color
-                              borderRadius: BorderRadius.circular(
-                                  4), // Border radius for rounded corners
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 10.0),
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.close,
-                                      color: Colors.black,
-                                      size: 16,
-                                    ), // 'X' icon
-                                    onPressed: () {
-                                      setState(
-                                        () {
-                                          assignedIds.remove(members![members!
-                                                  .indexWhere((element) =>
-                                                      element.name ==
-                                                      assignedNames[index])]
-                                              .uid!);
-                                          assignedNames.removeAt(index);
-                                        },
-                                      );
-                                    },
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      assignedNames[
-                                          index], // Replace with the name from your data
-                                      style: const TextStyle(
-                                        fontSize: 14, // Adjust text style
-                                        overflow: TextOverflow
-                                            .ellipsis, // Handle long text
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors
+                                    .transparent), // Optional: to add a border or change the color
+                          ),
+                          child: ListTile(
+                            horizontalTitleGap: 0,
+                            contentPadding:
+                                EdgeInsets.zero, // Remove default padding
+                            title: Text(
+                              assignedNames[
+                                  index], // Replace with the name from your data
+                              style: const TextStyle(
+                                fontSize: 14, // Adjust text style
+                                overflow:
+                                    TextOverflow.ellipsis, // Handle long text
                               ),
-                            ));
+                            ),
+                            leading: IconButton(
+                              padding:
+                                  EdgeInsets.zero, // Remove default padding
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.black,
+                                size: 16,
+                              ), // 'X' icon
+                              onPressed: () {
+                                setState(() {
+                                  assignedIds.remove(members![members!
+                                          .indexWhere((element) =>
+                                              element.name ==
+                                              assignedNames[index])]
+                                      .uid!);
+                                  assignedNames.removeAt(index);
+                                });
+                              },
+                            ),
+                          ),
+                        );
                       },
                     )
                   ],
@@ -1608,22 +1507,34 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
             ),
           ),
           const Spacer(),
-          ElevatedButton(
-              onPressed: () {
-                this.setState(() {
-                  fixedTasks?.add(BookingTask(
-                      listingName: _titleController.text,
-                      status: 'Incomplete',
-                      assignedIds: assignedIds,
-                      assignedNames: assignedNames,
-                      committee: committeeController.text,
-                      complete: false,
-                      openContribution: false,
-                      name: taskNameController.text));
-                });
-                context.pop();
-              },
-              child: const Text("Add Task")),
+          Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            width: MediaQuery.sizeOf(context).width * .8,
+            child: FilledButton(
+                onPressed: () {
+                  this.setState(() {
+                    fixedTasks?.add(BookingTask(
+                        listingName: _titleController.text,
+                        status: 'Incomplete',
+                        assignedIds: assignedIds,
+                        assignedNames: assignedNames,
+                        committee: committeeController.text,
+                        complete: false,
+                        openContribution: false,
+                        name: taskNameController.text));
+                  });
+                  context.pop();
+                },
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 24.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        8.0), // Adjust the border radius as needed
+                  ),
+                ),
+                child: const Text("Add Task")),
+          ),
         ],
       );
     });
@@ -1633,8 +1544,9 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
     List<String> notes = [
       "Downpayment Rate: The necessary amount to be paid by a customer in order to book and reserve the service.",
       "Cancellation Rate: The amount that would not be refunded in the situation that a customer cancels their booking.",
-      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel or pay the full amount in the case for a downpayment. Otherwise their booking will be cancelled",
-      "Customers booking passed the cancellation period would be required to pay the downpayment or full amount upon checkout."
+      "Downpayment Period: This refers to the number of days before the scheduled booking, that a customer must pay their balance on the situation that they aren't yet fully paid. Otherwise their booking will be cancelled.",
+      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel or pay the full amount in the case for a downpayment and still receive a return. Otherwise their booking will be cancelled",
+      "Customers booking passed the downpayment and/or cancellation period would be required to pay the full amount upon checkout."
     ];
     return Column(
       children: [
@@ -1680,21 +1592,48 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
         const SizedBox(
           height: 10,
         ),
-        TextFormField(
-          controller: _cancellationPeriodController,
-          maxLines: 1,
-          keyboardType: TextInputType.number, // For numeric input
-          decoration: const InputDecoration(
-              labelText:
-                  'Cancellation Period (Day/s)*', // Indicate it's a percentage
-              border: OutlineInputBorder(),
-              floatingLabelBehavior:
-                  FloatingLabelBehavior.always, // Keep the label always visible
-              hintText: "e.g., 5 Days before the booked date",
-              suffixText: "Day/s"),
-          onTap: () {
-            // Handle tap if needed, e.g., showing a dialog to select a percentage
-          },
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _downpaymentPeriodController,
+                maxLines: 1,
+                keyboardType: TextInputType.number, // For numeric input
+                decoration: const InputDecoration(
+                    labelText:
+                        'Downpayment Period (Day/s)*', // Indicate it's a percentage
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 5 Days before the booked date",
+                    suffixText: "Day/s"),
+                onTap: () {
+                  // Handle tap if needed, e.g., showing a dialog to select a percentage
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: TextFormField(
+                controller: _cancellationPeriodController,
+                maxLines: 1,
+                keyboardType: TextInputType.number, // For numeric input
+                decoration: const InputDecoration(
+                    labelText:
+                        'Cancellation Period (Day/s)*', // Indicate it's a percentage
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "e.g., 5 Days before the booked date",
+                    suffixText: "Day/s"),
+                onTap: () {
+                  // Handle tap if needed, e.g., showing a dialog to select a percentage
+                },
+              ),
+            ),
+          ],
         ),
         addNotes(notes),
       ],

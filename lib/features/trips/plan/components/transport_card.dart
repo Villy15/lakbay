@@ -1429,25 +1429,13 @@ class _TransportCardState extends ConsumerState<TransportCard> {
       TimeOfDay? startTime,
       TimeOfDay? endTime) async {
     final currentTrip = ref.read(currentTripProvider);
-    DateFormat('MMMM dd, yyyy').format(startDate);
-    DateFormat('MMMM dd, yyyy').format(endDate);
-    // final query = FirebaseFirestore.instance
-    //     .collectionGroup(
-    //         'bookings') // Perform collection group query for 'bookings'
-    //     .where('category', isEqualTo: 'Transport')
-    //     .where('bookingStatus', isEqualTo: "Reserved")
-    //     .where('listingId', isEqualTo: listing.uid);
 
-    // List<ListingBookings> todaysBookings =
-    //     await ref.read(getBookingsByPropertiesProvider(query).future);
-    // todaysBookings = todaysBookings.where((booking) {
-    //   // Assuming 'startDate' is a DateTime property in 'ListingBookings'
-    //   return booking.startDate!.year == startDate.year &&
-    //       booking.startDate!.month == startDate.month &&
-    //       booking.startDate!.day == startDate.day;
-    // }).toList();
-
-    // debugPrint('todaysbookings: $todaysBookings');
+    var convertedEndDate = DateTime(endDate.year, endDate.month, endDate.day,
+            departureTime!.hour, departureTime.minute)
+        .add(Duration(
+            hours: listing.duration!.hour, minutes: listing.duration!.minute));
+    var convertedStartDate = DateTime(startDate.year, startDate.month,
+        startDate.day, departureTime.hour, departureTime.minute);
     ListingBookings booking = ListingBookings(
         tripUid: currentTrip!.uid!,
         tripName: currentTrip.name,
@@ -1457,15 +1445,10 @@ class _TransportCardState extends ConsumerState<TransportCard> {
         bookingStatus: "Reserved",
         price: listing.price!,
         category: "Transport",
-        startDate: DateTime(startDate.year, startDate.month, startDate.day,
-            departureTime!.hour, departureTime.minute),
-        endDate: DateTime(endDate.year, endDate.month, endDate.day,
-                departureTime.hour, departureTime.minute)
-            .add(Duration(
-                hours: listing.duration!.hour,
-                minutes: listing.duration!.minute)),
+        startDate: convertedStartDate,
+        endDate: convertedEndDate,
         startTime: departureTime,
-        endTime: departureTime,
+        endTime: TimeOfDay.fromDateTime(convertedEndDate),
         email: user.email!,
         governmentId: user.governmentId!,
         guests: guests,

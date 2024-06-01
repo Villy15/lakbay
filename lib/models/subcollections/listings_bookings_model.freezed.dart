@@ -47,6 +47,7 @@ mixin _$ListingBookings {
   num get price => throw _privateConstructorUsedError;
   String? get roomId => throw _privateConstructorUsedError;
   num? get vehicleNo => throw _privateConstructorUsedError;
+  String? get vehicleUid => throw _privateConstructorUsedError;
   String? get roomUid => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get selectedDate => throw _privateConstructorUsedError;
@@ -63,6 +64,10 @@ mixin _$ListingBookings {
   TimeOfDay? get startTime => throw _privateConstructorUsedError;
   @TimeOfDayConverter()
   TimeOfDay? get endTime => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get serviceStart => throw _privateConstructorUsedError;
+  @TimestampSerializer()
+  DateTime? get serviceComplete => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -101,6 +106,7 @@ abstract class $ListingBookingsCopyWith<$Res> {
       num price,
       String? roomId,
       num? vehicleNo,
+      String? vehicleUid,
       String? roomUid,
       @TimestampSerializer() DateTime? selectedDate,
       String? selectedTime,
@@ -111,7 +117,9 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String tripName,
       String? typeOfTrip,
       @TimeOfDayConverter() TimeOfDay? startTime,
-      @TimeOfDayConverter() TimeOfDay? endTime});
+      @TimeOfDayConverter() TimeOfDay? endTime,
+      @TimestampSerializer() DateTime? serviceStart,
+      @TimestampSerializer() DateTime? serviceComplete});
 }
 
 /// @nodoc
@@ -151,6 +159,7 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? price = null,
     Object? roomId = freezed,
     Object? vehicleNo = freezed,
+    Object? vehicleUid = freezed,
     Object? roomUid = freezed,
     Object? selectedDate = freezed,
     Object? selectedTime = freezed,
@@ -162,6 +171,8 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? typeOfTrip = freezed,
     Object? startTime = freezed,
     Object? endTime = freezed,
+    Object? serviceStart = freezed,
+    Object? serviceComplete = freezed,
   }) {
     return _then(_value.copyWith(
       amountPaid: freezed == amountPaid
@@ -260,6 +271,10 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.vehicleNo
           : vehicleNo // ignore: cast_nullable_to_non_nullable
               as num?,
+      vehicleUid: freezed == vehicleUid
+          ? _value.vehicleUid
+          : vehicleUid // ignore: cast_nullable_to_non_nullable
+              as String?,
       roomUid: freezed == roomUid
           ? _value.roomUid
           : roomUid // ignore: cast_nullable_to_non_nullable
@@ -304,6 +319,14 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay?,
+      serviceStart: freezed == serviceStart
+          ? _value.serviceStart
+          : serviceStart // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      serviceComplete: freezed == serviceComplete
+          ? _value.serviceComplete
+          : serviceComplete // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -341,6 +364,7 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       num price,
       String? roomId,
       num? vehicleNo,
+      String? vehicleUid,
       String? roomUid,
       @TimestampSerializer() DateTime? selectedDate,
       String? selectedTime,
@@ -351,7 +375,9 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String tripName,
       String? typeOfTrip,
       @TimeOfDayConverter() TimeOfDay? startTime,
-      @TimeOfDayConverter() TimeOfDay? endTime});
+      @TimeOfDayConverter() TimeOfDay? endTime,
+      @TimestampSerializer() DateTime? serviceStart,
+      @TimestampSerializer() DateTime? serviceComplete});
 }
 
 /// @nodoc
@@ -389,6 +415,7 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? price = null,
     Object? roomId = freezed,
     Object? vehicleNo = freezed,
+    Object? vehicleUid = freezed,
     Object? roomUid = freezed,
     Object? selectedDate = freezed,
     Object? selectedTime = freezed,
@@ -400,6 +427,8 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? typeOfTrip = freezed,
     Object? startTime = freezed,
     Object? endTime = freezed,
+    Object? serviceStart = freezed,
+    Object? serviceComplete = freezed,
   }) {
     return _then(_$ListingBookingsImpl(
       amountPaid: freezed == amountPaid
@@ -498,6 +527,10 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.vehicleNo
           : vehicleNo // ignore: cast_nullable_to_non_nullable
               as num?,
+      vehicleUid: freezed == vehicleUid
+          ? _value.vehicleUid
+          : vehicleUid // ignore: cast_nullable_to_non_nullable
+              as String?,
       roomUid: freezed == roomUid
           ? _value.roomUid
           : roomUid // ignore: cast_nullable_to_non_nullable
@@ -542,6 +575,14 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay?,
+      serviceStart: freezed == serviceStart
+          ? _value.serviceStart
+          : serviceStart // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      serviceComplete: freezed == serviceComplete
+          ? _value.serviceComplete
+          : serviceComplete // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -574,6 +615,7 @@ class _$ListingBookingsImpl extends _ListingBookings {
       required this.price,
       this.roomId,
       this.vehicleNo,
+      this.vehicleUid,
       this.roomUid,
       @TimestampSerializer() this.selectedDate,
       this.selectedTime,
@@ -584,7 +626,9 @@ class _$ListingBookingsImpl extends _ListingBookings {
       required this.tripName,
       this.typeOfTrip,
       @TimeOfDayConverter() this.startTime,
-      @TimeOfDayConverter() this.endTime})
+      @TimeOfDayConverter() this.endTime,
+      @TimestampSerializer() this.serviceStart,
+      @TimestampSerializer() this.serviceComplete})
       : _expenses = expenses,
         _tasks = tasks,
         super._();
@@ -660,6 +704,8 @@ class _$ListingBookingsImpl extends _ListingBookings {
   @override
   final num? vehicleNo;
   @override
+  final String? vehicleUid;
+  @override
   final String? roomUid;
   @override
   @TimestampSerializer()
@@ -686,10 +732,16 @@ class _$ListingBookingsImpl extends _ListingBookings {
   @override
   @TimeOfDayConverter()
   final TimeOfDay? endTime;
+  @override
+  @TimestampSerializer()
+  final DateTime? serviceStart;
+  @override
+  @TimestampSerializer()
+  final DateTime? serviceComplete;
 
   @override
   String toString() {
-    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, cooperativeId: $cooperativeId, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, paymentStatus: $paymentStatus, price: $price, roomId: $roomId, vehicleNo: $vehicleNo, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, tripUid: $tripUid, tripName: $tripName, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, cooperativeId: $cooperativeId, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, paymentStatus: $paymentStatus, price: $price, roomId: $roomId, vehicleNo: $vehicleNo, vehicleUid: $vehicleUid, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, tripUid: $tripUid, tripName: $tripName, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime, serviceStart: $serviceStart, serviceComplete: $serviceComplete)';
   }
 
   @override
@@ -736,6 +788,8 @@ class _$ListingBookingsImpl extends _ListingBookings {
             (identical(other.roomId, roomId) || other.roomId == roomId) &&
             (identical(other.vehicleNo, vehicleNo) ||
                 other.vehicleNo == vehicleNo) &&
+            (identical(other.vehicleUid, vehicleUid) ||
+                other.vehicleUid == vehicleUid) &&
             (identical(other.roomUid, roomUid) || other.roomUid == roomUid) &&
             (identical(other.selectedDate, selectedDate) ||
                 other.selectedDate == selectedDate) &&
@@ -754,7 +808,11 @@ class _$ListingBookingsImpl extends _ListingBookings {
                 other.typeOfTrip == typeOfTrip) &&
             (identical(other.startTime, startTime) ||
                 other.startTime == startTime) &&
-            (identical(other.endTime, endTime) || other.endTime == endTime));
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            (identical(other.serviceStart, serviceStart) ||
+                other.serviceStart == serviceStart) &&
+            (identical(other.serviceComplete, serviceComplete) ||
+                other.serviceComplete == serviceComplete));
   }
 
   @JsonKey(ignore: true)
@@ -785,6 +843,7 @@ class _$ListingBookingsImpl extends _ListingBookings {
         price,
         roomId,
         vehicleNo,
+        vehicleUid,
         roomUid,
         selectedDate,
         selectedTime,
@@ -795,7 +854,9 @@ class _$ListingBookingsImpl extends _ListingBookings {
         tripName,
         typeOfTrip,
         startTime,
-        endTime
+        endTime,
+        serviceStart,
+        serviceComplete
       ]);
 
   @JsonKey(ignore: true)
@@ -815,41 +876,45 @@ class _$ListingBookingsImpl extends _ListingBookings {
 
 abstract class _ListingBookings extends ListingBookings {
   factory _ListingBookings(
-      {final num? amountPaid,
-      required final String customerId,
-      required final String customerName,
-      required final String customerPhoneNo,
-      required final String category,
-      required final String email,
-      final String? cooperativeId,
-      final String? emergencyContactName,
-      final String? emergencyContactNo,
-      @TimestampSerializer() final DateTime? endDate,
-      final List<Expense>? expenses,
-      final List<BookingTask>? tasks,
-      required final String governmentId,
-      required final num guests,
-      required final String listingId,
-      required final String listingTitle,
-      final num? luggage,
-      final String? id,
-      required final bool needsContributions,
-      final String? paymentOption,
-      final String? paymentStatus,
-      required final num price,
-      final String? roomId,
-      final num? vehicleNo,
-      final String? roomUid,
-      @TimestampSerializer() final DateTime? selectedDate,
-      final String? selectedTime,
-      @TimestampSerializer() final DateTime? startDate,
-      required final String bookingStatus,
-      final num? totalPrice,
-      required final String tripUid,
-      required final String tripName,
-      final String? typeOfTrip,
-      @TimeOfDayConverter() final TimeOfDay? startTime,
-      @TimeOfDayConverter() final TimeOfDay? endTime}) = _$ListingBookingsImpl;
+          {final num? amountPaid,
+          required final String customerId,
+          required final String customerName,
+          required final String customerPhoneNo,
+          required final String category,
+          required final String email,
+          final String? cooperativeId,
+          final String? emergencyContactName,
+          final String? emergencyContactNo,
+          @TimestampSerializer() final DateTime? endDate,
+          final List<Expense>? expenses,
+          final List<BookingTask>? tasks,
+          required final String governmentId,
+          required final num guests,
+          required final String listingId,
+          required final String listingTitle,
+          final num? luggage,
+          final String? id,
+          required final bool needsContributions,
+          final String? paymentOption,
+          final String? paymentStatus,
+          required final num price,
+          final String? roomId,
+          final num? vehicleNo,
+          final String? vehicleUid,
+          final String? roomUid,
+          @TimestampSerializer() final DateTime? selectedDate,
+          final String? selectedTime,
+          @TimestampSerializer() final DateTime? startDate,
+          required final String bookingStatus,
+          final num? totalPrice,
+          required final String tripUid,
+          required final String tripName,
+          final String? typeOfTrip,
+          @TimeOfDayConverter() final TimeOfDay? startTime,
+          @TimeOfDayConverter() final TimeOfDay? endTime,
+          @TimestampSerializer() final DateTime? serviceStart,
+          @TimestampSerializer() final DateTime? serviceComplete}) =
+      _$ListingBookingsImpl;
   _ListingBookings._() : super._();
 
   factory _ListingBookings.fromJson(Map<String, dynamic> json) =
@@ -905,6 +970,8 @@ abstract class _ListingBookings extends ListingBookings {
   @override
   num? get vehicleNo;
   @override
+  String? get vehicleUid;
+  @override
   String? get roomUid;
   @override
   @TimestampSerializer()
@@ -930,6 +997,12 @@ abstract class _ListingBookings extends ListingBookings {
   @override
   @TimeOfDayConverter()
   TimeOfDay? get endTime;
+  @override
+  @TimestampSerializer()
+  DateTime? get serviceStart;
+  @override
+  @TimestampSerializer()
+  DateTime? get serviceComplete;
   @override
   @JsonKey(ignore: true)
   _$$ListingBookingsImplCopyWith<_$ListingBookingsImpl> get copyWith =>

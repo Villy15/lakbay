@@ -62,6 +62,21 @@ class PlanController extends StateNotifier<bool> {
     );
   }
 
+  void deletePlan(PlanModel plan, BuildContext context) async {
+    state = true;
+    final result = await _planRepository.deletePlanByUid(plan.uid!);
+
+    result.fold(
+      (failure) {
+        state = false;
+      },
+      (uid) {
+        state = false;
+        context.pop();
+      },
+    );
+  }
+
   // Update plan by uid
   void updatePlan(PlanModel plan, BuildContext context,
       [bool? shouldPop]) async {

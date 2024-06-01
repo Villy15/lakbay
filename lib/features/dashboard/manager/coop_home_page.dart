@@ -629,6 +629,11 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                           .toList()
                         ..sort((a, b) => a.startDate!.compareTo(b.startDate!));
 
+                      // Take the first 5 bookings
+                      if (updatedBookings.length > 5) {
+                        updatedBookings.length = 5;
+                      }
+
                       return ListView.separated(
                         itemCount: updatedBookings.length,
                         shrinkWrap: true,

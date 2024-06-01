@@ -348,26 +348,48 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                   ),
                                 ])),
                         Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: SizedBox(
-                              width: MediaQuery.sizeOf(context).width * .5,
-                              child: FilledButton(
-                                  onPressed: () {
-                                    context.push(
-                                      '/market/${bookings[index].category.toLowerCase()}/booking_details',
-                                      extra: {
-                                        'booking': bookings[index],
-                                        'listing': widget.listing
+                            padding: const EdgeInsets.only(
+                                bottom: 10, left: 10, right: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: FilledButton(
+                                      onPressed: () async {
+                                        ref
+                                            .read(listingControllerProvider
+                                                .notifier)
+                                            .deleteBooking(
+                                                bookings[index], context);
                                       },
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          4.0), // Adjust the radius as needed
-                                    ),
-                                  ),
-                                  child: const Text('Booking Details')),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              4.0), // Adjust the radius as needed
+                                        ),
+                                      ),
+                                      child: const Text('Delete')),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: FilledButton(
+                                      onPressed: () {
+                                        context.push(
+                                          '/market/${bookings[index].category.toLowerCase()}/booking_details',
+                                          extra: {
+                                            'booking': bookings[index],
+                                            'listing': widget.listing
+                                          },
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              4.0), // Adjust the radius as needed
+                                        ),
+                                      ),
+                                      child: const Text('Booking Details')),
+                                ),
+                              ],
                             ))
                       ]));
                 }));
