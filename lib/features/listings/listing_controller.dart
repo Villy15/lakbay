@@ -254,8 +254,8 @@ class ListingController extends StateNotifier<bool> {
 
       state = false;
 
-      sendNotification('Listing Booked: ${listing.title}',
-          'Dates: ${DateFormat('MMM d, H:mm').format(booking.startDate!)} - ${DateFormat('MMM d, H:mm').format(booking.endDate!)}');
+      // sendNotification('Listing Booked: ${listing.title}',
+      //     'Dates: ${DateFormat('MMM d, H:mm').format(booking.startDate!)} - ${DateFormat('MMM d, H:mm').format(booking.endDate!)}');
 
       booking.tasks?.forEach((element) async {
         switch (booking.category) {

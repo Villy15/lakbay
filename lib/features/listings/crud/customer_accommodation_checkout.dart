@@ -1,3 +1,4 @@
+import 'dart:convert';
 // import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:http/http.dart' as http;
 
 enum PaymentOption { downpayment, fullPayment }
 
@@ -68,6 +70,7 @@ class _CustomerAccomodationCheckoutState
             // _paymentMethod(context),
             _listingRules(context),
             _confirmPay(context),
+            Text('This is the publisher ID: ${widget.listing.publisherId}')
           ],
         ),
       ),
@@ -97,7 +100,7 @@ class _CustomerAccomodationCheckoutState
                 ),
               ),
               // Color
-              onPressed: () {
+              onPressed: () async {
                 String paymentOption;
                 String paymentStatus;
                 num totalPrice = (updatedBooking.price * _nights) * vat * 1;
@@ -119,6 +122,10 @@ class _CustomerAccomodationCheckoutState
                 ref
                     .read(listingControllerProvider.notifier)
                     .addBooking(updatedBooking, widget.listing, context);
+
+                // sending a notification
+                await notifyPaymentUser(updatedBooking);
+                await notifyPublisher(widget.listing, updatedBooking);
               },
               child: Text('Confirm and Pay',
                   style: TextStyle(
@@ -129,6 +136,80 @@ class _CustomerAccomodationCheckoutState
         ),
       ),
     );
+  }
+
+  Future<void> notifyPublisher(ListingModel listingModel, ListingBookings updatedBookings) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://us-central1-lakbay-cd97e.cloudfunctions.net/notifyPublisherListing'),
+        headers: <String, String> {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic> {
+          'publisherInfo' : {
+            'publisherTitle': listingModel.title,
+            'publisherName': listingModel.publisherName,
+            'publisherId': listingModel.publisherId
+          },
+
+          'userInfo' : {
+            'email' : updatedBookings.email,
+            'name' : updatedBookings.customerName,
+            'userId' : updatedBookings.customerId
+          },
+
+          'bookingDetails' : {
+            'bookingStartDate' : updatedBookings.startDate?.toIso8601String(),
+            'bookingEndDate' : updatedBookings.endDate?.toIso8601String(),
+            'amountPaid' : updatedBookings.amountPaid,
+            'paymentOption' : updatedBookings.paymentOption,
+            'paymentStatus' : updatedBookings.paymentStatus,
+          }
+        })
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('Notification sent successfully. This is the response: ${response.body}');
+      } else {
+        debugPrint('Failed to send notification. This is the response: ${response.body}');
+      }
+    } catch(e) {
+      debugPrint('This is the error: $e');
+    }
+  }
+
+  Future<void> notifyPaymentUser(ListingBookings updatedBooking) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://us-central1-lakbay-cd97e.cloudfunctions.net/notifyUserPaymentListing'),
+        headers: <String, String> {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'userInfo' : {
+            'email' : updatedBooking.email,
+            'name' : updatedBooking.customerName,
+            'userId' : updatedBooking.customerId
+          },
+          'bookingDetails' : {
+            'bookingStartDate' : updatedBooking.startDate?.toIso8601String(),
+            'bookingEndDate' : updatedBooking.endDate?.toIso8601String(),
+            'amountPaid' : updatedBooking.amountPaid,
+            'paymentOption' : updatedBooking.paymentOption,
+            'paymentStatus' : updatedBooking.paymentStatus,
+            'listingName' : updatedBooking.listingTitle
+          },
+        }) 
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('Notification sent successfully. This is the response: ${response.body}');
+      } else {
+        debugPrint('Failed to send notification. This is the response: ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('This is the error: $e');
+    }
   }
 
   Widget _listingRules(BuildContext context) {

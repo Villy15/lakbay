@@ -48,3 +48,6 @@ app.*.map.json
 
 # Custom Lint Log
 custom_lint.log
+
+# Service Key 
+lakbay-cd97e-firebase-adminsdk-ac02e-2154ee2051.json

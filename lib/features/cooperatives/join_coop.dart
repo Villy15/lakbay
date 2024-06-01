@@ -13,6 +13,10 @@ import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:lakbay/models/coop_member_roles_model.dart';
+import 'package:lakbay/features/cooperatives/coop_member_roles_repository.dart';
+import 'package:lakbay/features/cooperatives/coop_members_roles_controller.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class JoinCoopPage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -41,6 +45,16 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
 
   File? _validId;
   File? _birthCertificate;
+
+  // test values of member roles -> important ones being driver and tour guide for now
+  List<String> availableMemberRoles = [
+    'Driver',
+    'Tour Guide',
+    'Cooperative App Admin',
+    'Conductor',
+    'Accountant',
+  ];
+  List<String> _selectedRoles = [];
 
   @override
   void initState() {
@@ -83,6 +97,12 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
       civilStatus: _civilStatus.text,
     );
 
+    final coopMemberRoles = CoopMemberRoles(
+      coopId: widget.coop.uid!,
+      memberId: userUid.uid,
+      rolesSelected: _selectedRoles,
+    );
+
     ref
         .read(usersControllerProvider.notifier)
         .editProfileFromJoiningCoop(context, userUid.uid, updatedUser);
@@ -90,6 +110,11 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
     ref
         .read(coopsControllerProvider.notifier)
         .joinCooperative(updatedCoop, context);
+
+    // add it to the collection of member role
+    ref
+        .read(coopMemberRolesControllerProvider.notifier)
+        .addMemberRole(coopMemberRoles, context);
   }
 
   @override
@@ -356,7 +381,65 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                 ),
 
                                 const SizedBox(height: 20),
+                                
+                                const Text(
+                                  'Member Role/s',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold
+                                  )
+                                ),
 
+                                Text(
+                                  'Please select the role/s you want to apply for',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground
+                                        .withOpacity(0.6),
+                                  )
+                                ),
+
+                                const SizedBox(height: 10),
+
+                                // Member Roles
+                                MultiSelectDialogField(
+                                  items: availableMemberRoles.map((role) => MultiSelectItem<String> (role, role)).toList(),
+                                  title: const Text('Roles'),
+                                  selectedColor: Theme.of(context).colorScheme.primary,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(Radius.circular(40)),
+                                    border: Border.all(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      width: 2
+                                    ),
+                                  ),
+                                  buttonIcon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Theme.of(context).colorScheme.primary
+                                  ),
+                                  buttonText: Text(
+                                    'Select Roles',
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.primary
+                                    )
+                                  ),
+                                  onConfirm: (values) {
+                                    setState(() {
+                                      _selectedRoles = values;
+                                    });
+                                  },
+
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please select at least one role';
+                                    }
+                                    return null;
+                                  },
+                                ),
+
+                                const SizedBox(height: 20),
                                 const Text(
                                   'Documents',
                                   style: TextStyle(
@@ -364,6 +447,7 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+
 
                                 // Subtext
                                 Text(

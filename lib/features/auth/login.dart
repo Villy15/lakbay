@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
@@ -18,6 +23,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool _obscureText = true;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -30,11 +38,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
 
-      ref.read(authControllerProvider.notifier).signInWithEmailAndPassword(
+      await ref.read(authControllerProvider.notifier).signInWithEmailAndPassword(
             context: context,
             email: email,
             password: password,
           );
+      
+      //user successfully signed in
+      final token = await _fcm.getToken();
+      if (token != null) {
+        debugPrint('this is the token when user logs in:: $token');
+        saveDeviceToken(token);
+      }
     }
   }
 
@@ -278,4 +293,33 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       },
     );
   }
+
+  // get the token, then save it to the database for the current user
+  Future<void> saveDeviceToken(String token) async {
+    // get current user
+    final user = FirebaseAuth.instance.currentUser;
+    debugPrint('saving!!!!!');
+    // better security here
+    if (user != null) {
+      // get the token for this device
+      final fcmToken = await _fcm.getToken();
+
+      // save it to Firestore
+      if (fcmToken != null) {
+        final tokens = _db
+            .collection('users')
+            .doc(user.uid)
+            .collection('tokens')
+            .doc(fcmToken);
+
+        await tokens.set({
+          'token': fcmToken,
+          'createdAt': FieldValue.serverTimestamp(), // optional
+          'platform': Platform.operatingSystem // optional
+        });
+      }
+    }
+  }
 }
+
+

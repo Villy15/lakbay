@@ -13,9 +13,6 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/models/coop_model.dart';
-import 'package:lakbay/models/user_model.dart';
-import 'package:mailto/mailto.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
 class JoinCoopCodePage extends ConsumerStatefulWidget {
