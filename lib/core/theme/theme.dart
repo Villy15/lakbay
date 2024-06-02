@@ -62,6 +62,11 @@ class Pallete {
       shadowColor: black,
       color: Colors.white,
     ),
+
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      selectedLabelStyle: TextStyle(fontSize: 12.0),
+      unselectedLabelStyle: TextStyle(fontSize: 10.0),
+    ),
   );
 
   // Dark mode app theme

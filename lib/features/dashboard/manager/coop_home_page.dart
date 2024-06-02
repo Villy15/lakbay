@@ -652,7 +652,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                                     listing: listing,
                                   );
                                 },
-                                loading: () => const Loader(),
+                                loading: () => const SizedBox.shrink(),
                                 error: (error, stack) => ErrorText(
                                   error: error.toString(),
                                   stackTrace: stack.toString(),
@@ -661,7 +661,7 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                         },
                       );
                     },
-                    loading: () => const Loader(),
+                    loading: () => const SizedBox.shrink(),
                     error: (error, stack) => ErrorText(
                       error: error.toString(),
                       stackTrace: stack.toString(),
