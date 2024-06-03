@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
@@ -275,15 +276,15 @@ class ListingController extends StateNotifier<bool> {
 
       // ADD NOTIFICATION FOR CUSTOMER BOOKING
       final customerNotif = NotificationsModel(
-        title: 'Payment Succesful!',
-        listingId: listing.uid,
-        message: "You have successfully booked ${listing.title}. It is from ${booking.startDate} - ${booking.endDate}",
-        ownerId: _ref.read(userProvider)!.uid,
-        isToAllMembers: false,
-        type: 'listing',
-        createdAt: DateTime.now()
-      );
-      
+          title: 'Payment Succesful!',
+          listingId: listing.uid,
+          message:
+              "You have successfully booked ${listing.title}. It is from ${DateFormat('MMMM d').format(booking.startDate!)} - ${DateFormat('MMMM d, y').format(booking.endDate!)}",
+          ownerId: _ref.read(userProvider)!.uid,
+          isToAllMembers: false,
+          type: 'listing',
+          createdAt: DateTime.now());
+
       booking.tasks?.forEach((element) async {
         switch (booking.category) {
           case 'Accommodation':
