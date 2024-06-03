@@ -155,6 +155,12 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
             label: 'Coops',
           ),
         ],
+
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.notifications_outlined),
+          activeIcon: Icon(Icons.notifications),
+          label: 'Notifs',
+        ),
       ],
     );
   }
@@ -199,6 +205,9 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         } else {
           context.go('/coops');
         }
+        break;
+      case 5:
+        context.go('/notifications');
         break;
     }
   }

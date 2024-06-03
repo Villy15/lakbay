@@ -11,6 +11,7 @@ class FirebaseConstants {
   static const coopMemberRolesCollection = 'coopMemberRoles';
   static const surveyCollection = 'surveys';
   static const customerSurveysCollection = 'customerSurveys';
+  static const notificationsCollection = 'notifications';
 
   // Subcollections
   // Survey Subcollections
