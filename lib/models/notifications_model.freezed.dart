@@ -21,7 +21,7 @@ NotificationsModel _$NotificationsModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$NotificationsModel {
   String? get uid => throw _privateConstructorUsedError;
-  String get ownerId => throw _privateConstructorUsedError;
+  String? get ownerId => throw _privateConstructorUsedError;
   String? get userId => throw _privateConstructorUsedError;
   String? get coopId => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
@@ -34,6 +34,7 @@ mixin _$NotificationsModel {
   @TimestampSerializer()
   DateTime? get createdAt => throw _privateConstructorUsedError;
   String? get routePath => throw _privateConstructorUsedError;
+  bool? get isToAllMembers => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -49,7 +50,7 @@ abstract class $NotificationsModelCopyWith<$Res> {
   @useResult
   $Res call(
       {String? uid,
-      String ownerId,
+      String? ownerId,
       String? userId,
       String? coopId,
       String? message,
@@ -60,7 +61,8 @@ abstract class $NotificationsModelCopyWith<$Res> {
       bool? isTapped,
       String? type,
       @TimestampSerializer() DateTime? createdAt,
-      String? routePath});
+      String? routePath,
+      bool? isToAllMembers});
 }
 
 /// @nodoc
@@ -77,7 +79,7 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
   @override
   $Res call({
     Object? uid = freezed,
-    Object? ownerId = null,
+    Object? ownerId = freezed,
     Object? userId = freezed,
     Object? coopId = freezed,
     Object? message = freezed,
@@ -89,16 +91,17 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
     Object? type = freezed,
     Object? createdAt = freezed,
     Object? routePath = freezed,
+    Object? isToAllMembers = freezed,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String?,
-      ownerId: null == ownerId
+      ownerId: freezed == ownerId
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       userId: freezed == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
@@ -143,6 +146,10 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
           ? _value.routePath
           : routePath // ignore: cast_nullable_to_non_nullable
               as String?,
+      isToAllMembers: freezed == isToAllMembers
+          ? _value.isToAllMembers
+          : isToAllMembers // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -157,7 +164,7 @@ abstract class _$$NotificationsModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {String? uid,
-      String ownerId,
+      String? ownerId,
       String? userId,
       String? coopId,
       String? message,
@@ -168,7 +175,8 @@ abstract class _$$NotificationsModelImplCopyWith<$Res>
       bool? isTapped,
       String? type,
       @TimestampSerializer() DateTime? createdAt,
-      String? routePath});
+      String? routePath,
+      bool? isToAllMembers});
 }
 
 /// @nodoc
@@ -183,7 +191,7 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? uid = freezed,
-    Object? ownerId = null,
+    Object? ownerId = freezed,
     Object? userId = freezed,
     Object? coopId = freezed,
     Object? message = freezed,
@@ -195,16 +203,17 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
     Object? type = freezed,
     Object? createdAt = freezed,
     Object? routePath = freezed,
+    Object? isToAllMembers = freezed,
   }) {
     return _then(_$NotificationsModelImpl(
       uid: freezed == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String?,
-      ownerId: null == ownerId
+      ownerId: freezed == ownerId
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       userId: freezed == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
@@ -249,6 +258,10 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
           ? _value.routePath
           : routePath // ignore: cast_nullable_to_non_nullable
               as String?,
+      isToAllMembers: freezed == isToAllMembers
+          ? _value.isToAllMembers
+          : isToAllMembers // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -258,7 +271,7 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
 class _$NotificationsModelImpl implements _NotificationsModel {
   _$NotificationsModelImpl(
       {this.uid,
-      required this.ownerId,
+      this.ownerId,
       this.userId,
       this.coopId,
       this.message,
@@ -269,7 +282,8 @@ class _$NotificationsModelImpl implements _NotificationsModel {
       this.isTapped = false,
       this.type,
       @TimestampSerializer() this.createdAt,
-      this.routePath});
+      this.routePath,
+      this.isToAllMembers = false});
 
   factory _$NotificationsModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$NotificationsModelImplFromJson(json);
@@ -277,7 +291,7 @@ class _$NotificationsModelImpl implements _NotificationsModel {
   @override
   final String? uid;
   @override
-  final String ownerId;
+  final String? ownerId;
   @override
   final String? userId;
   @override
@@ -302,10 +316,13 @@ class _$NotificationsModelImpl implements _NotificationsModel {
   final DateTime? createdAt;
   @override
   final String? routePath;
+  @override
+  @JsonKey()
+  final bool? isToAllMembers;
 
   @override
   String toString() {
-    return 'NotificationsModel(uid: $uid, ownerId: $ownerId, userId: $userId, coopId: $coopId, message: $message, title: $title, listingId: $listingId, eventId: $eventId, bookingId: $bookingId, isTapped: $isTapped, type: $type, createdAt: $createdAt, routePath: $routePath)';
+    return 'NotificationsModel(uid: $uid, ownerId: $ownerId, userId: $userId, coopId: $coopId, message: $message, title: $title, listingId: $listingId, eventId: $eventId, bookingId: $bookingId, isTapped: $isTapped, type: $type, createdAt: $createdAt, routePath: $routePath, isToAllMembers: $isToAllMembers)';
   }
 
   @override
@@ -330,7 +347,9 @@ class _$NotificationsModelImpl implements _NotificationsModel {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.routePath, routePath) ||
-                other.routePath == routePath));
+                other.routePath == routePath) &&
+            (identical(other.isToAllMembers, isToAllMembers) ||
+                other.isToAllMembers == isToAllMembers));
   }
 
   @JsonKey(ignore: true)
@@ -349,7 +368,8 @@ class _$NotificationsModelImpl implements _NotificationsModel {
       isTapped,
       type,
       createdAt,
-      routePath);
+      routePath,
+      isToAllMembers);
 
   @JsonKey(ignore: true)
   @override
@@ -369,7 +389,7 @@ class _$NotificationsModelImpl implements _NotificationsModel {
 abstract class _NotificationsModel implements NotificationsModel {
   factory _NotificationsModel(
       {final String? uid,
-      required final String ownerId,
+      final String? ownerId,
       final String? userId,
       final String? coopId,
       final String? message,
@@ -380,7 +400,8 @@ abstract class _NotificationsModel implements NotificationsModel {
       final bool? isTapped,
       final String? type,
       @TimestampSerializer() final DateTime? createdAt,
-      final String? routePath}) = _$NotificationsModelImpl;
+      final String? routePath,
+      final bool? isToAllMembers}) = _$NotificationsModelImpl;
 
   factory _NotificationsModel.fromJson(Map<String, dynamic> json) =
       _$NotificationsModelImpl.fromJson;
@@ -388,7 +409,7 @@ abstract class _NotificationsModel implements NotificationsModel {
   @override
   String? get uid;
   @override
-  String get ownerId;
+  String? get ownerId;
   @override
   String? get userId;
   @override
@@ -412,6 +433,8 @@ abstract class _NotificationsModel implements NotificationsModel {
   DateTime? get createdAt;
   @override
   String? get routePath;
+  @override
+  bool? get isToAllMembers;
   @override
   @JsonKey(ignore: true)
   _$$NotificationsModelImplCopyWith<_$NotificationsModelImpl> get copyWith =>

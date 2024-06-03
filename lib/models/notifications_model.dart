@@ -9,7 +9,7 @@ part 'notifications_model.g.dart';
 class NotificationsModel with _$NotificationsModel {
   factory NotificationsModel({
     String? uid,
-    required String ownerId,
+    String? ownerId,
     String? userId,
     String? coopId,
     String? message,
@@ -21,6 +21,7 @@ class NotificationsModel with _$NotificationsModel {
     String? type,
     @TimestampSerializer() DateTime? createdAt,
     String? routePath,
+    @Default(false) bool? isToAllMembers,
   }) = _NotificationsModel;
 
   factory NotificationsModel.fromJson(Map<String, dynamic> json) =>

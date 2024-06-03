@@ -10,7 +10,7 @@ _$NotificationsModelImpl _$$NotificationsModelImplFromJson(
         Map<String, dynamic> json) =>
     _$NotificationsModelImpl(
       uid: json['uid'] as String?,
-      ownerId: json['ownerId'] as String,
+      ownerId: json['ownerId'] as String?,
       userId: json['userId'] as String?,
       coopId: json['coopId'] as String?,
       message: json['message'] as String?,
@@ -23,6 +23,7 @@ _$NotificationsModelImpl _$$NotificationsModelImplFromJson(
       createdAt:
           const TimestampSerializer().fromJson(json['createdAt'] as Timestamp?),
       routePath: json['routePath'] as String?,
+      isToAllMembers: json['isToAllMembers'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$NotificationsModelImplToJson(
@@ -41,4 +42,5 @@ Map<String, dynamic> _$$NotificationsModelImplToJson(
       'type': instance.type,
       'createdAt': const TimestampSerializer().toJson(instance.createdAt),
       'routePath': instance.routePath,
+      'isToAllMembers': instance.isToAllMembers,
     };

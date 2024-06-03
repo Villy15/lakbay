@@ -30,6 +30,15 @@ class NotificationsRepository {
     });
   }
 
+  // Read all notifs
+  Stream<List<NotificationsModel>> readAllNotifications() {
+    return _notifications.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return NotificationsModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // Add a new notif
   FutureEither<String> addNotification(NotificationsModel notif) async {
     try {

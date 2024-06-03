@@ -29,19 +29,21 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       appBar: AppBar(
         title: const Text('Notifications'),
       ),
-      body: ref.watch(getNotificationsByOwnerIdProvider(user!.uid)).when(
+      body: ref.watch(getAllNotificationsProvider).when(
             data: (notifications) {
               // Create temp data
               notifications = [
                 NotificationsModel(
                   uid: '1',
-                  title: 'Iwahori Multipurpose Cooperative',
+                  title: 'Payment Successful',
                   ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
                   coopId: "lenkp0ga5MTluKUM25AH",
-                  message: 'You have a pending balance: Php 1000.',
+                  message:
+                      'You have a pending balance: Php 1000. Please pay. Iwahori Multiasdasd',
                   isTapped: false,
                   type: "coop",
                   createdAt: DateTime(2024, 6, 3, 12, 30, 0),
+                  isToAllMembers: false,
                 ),
                 NotificationsModel(
                   uid: '1',
@@ -53,6 +55,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   isTapped: false,
                   type: "coop_announcement",
                   createdAt: DateTime(2024, 6, 3, 12, 30, 0),
+                  isToAllMembers: true,
                 ),
                 // Assigned Task
                 NotificationsModel(
@@ -66,6 +69,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   type: "listing",
                   bookingId: '1OLHTBacUZJPeH3hpvrb',
                   createdAt: DateTime(2024, 6, 2, 12, 30, 0),
+                  isToAllMembers: true,
                 ),
                 NotificationsModel(
                   uid: '1',
@@ -78,6 +82,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   type: "listing",
                   bookingId: '1OLHTBacUZJPeH3hpvrb',
                   createdAt: DateTime(2024, 6, 2, 12, 30, 0),
+                  isToAllMembers: false,
                 ),
                 NotificationsModel(
                   uid: '1',
@@ -90,12 +95,21 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   eventId: 'xzAcUJEbtYUXuIi1xdny',
                   type: "event",
                   createdAt: DateTime(2024, 5, 1, 12, 30, 0),
+                  isToAllMembers: false,
                 ),
               ];
 
               if (notifications.isEmpty) {
                 return emptyNotifs();
               }
+
+              // Filter notifications by if isToAllMembers is true and ownerId is the user's id
+              notifications = notifications
+                  .where(
+                    (notif) =>
+                        notif.isToAllMembers! || notif.ownerId == user?.uid,
+                  )
+                  .toList();
 
               final now = DateTime.now();
               final today = DateTime(now.year, now.month, now.day);
