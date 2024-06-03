@@ -416,7 +416,7 @@ class _CustomerTransportCheckoutState
                                 Timestamp.fromDate(updatedBooking.startDate!));
 
                     ref.read(listingControllerProvider.notifier).addBooking(
-                        updatedBooking, widget.listing, context,
+                        ref, updatedBooking, widget.listing, context,
                         query: query);
                     // Navigator.pop(context);
 

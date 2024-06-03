@@ -129,11 +129,11 @@ class _CustomerAccomodationCheckoutState
                 });
                 ref
                     .read(listingControllerProvider.notifier)
-                    .addBooking(updatedBooking, widget.listing, context);
+                    .addBooking(ref, updatedBooking, widget.listing, context);
 
                 // sending a notification
-                await notifyPaymentUser(updatedBooking);
-                await notifyPublisher(widget.listing, updatedBooking);
+                // await notifyPaymentUser(updatedBooking);
+                // await notifyPublisher(widget.listing, updatedBooking);
               },
               child: Text('Confirm and Pay',
                   style: TextStyle(

@@ -120,7 +120,7 @@ class _CustomerAccomodationCheckoutState
                 });
                 ref
                     .read(listingControllerProvider.notifier)
-                    .addBooking(updatedBooking, widget.listing, context);
+                    .addBooking(ref, updatedBooking, widget.listing, context);
                 // context.pop();
                 // context.pop();
                 // context.pop();
