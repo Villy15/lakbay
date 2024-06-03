@@ -16,10 +16,12 @@ _$NotificationsModelImpl _$$NotificationsModelImplFromJson(
       message: json['message'] as String?,
       listingId: json['listingId'] as String?,
       eventId: json['eventId'] as String?,
+      bookingId: json['bookingId'] as String?,
       isTapped: json['isTapped'] as bool? ?? false,
       type: json['type'] as String?,
       createdAt:
           const TimestampSerializer().fromJson(json['createdAt'] as Timestamp?),
+      routePath: json['routePath'] as String?,
     );
 
 Map<String, dynamic> _$$NotificationsModelImplToJson(
@@ -32,7 +34,9 @@ Map<String, dynamic> _$$NotificationsModelImplToJson(
       'message': instance.message,
       'listingId': instance.listingId,
       'eventId': instance.eventId,
+      'bookingId': instance.bookingId,
       'isTapped': instance.isTapped,
       'type': instance.type,
       'createdAt': const TimestampSerializer().toJson(instance.createdAt),
+      'routePath': instance.routePath,
     };

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
@@ -35,55 +37,40 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   uid: '1',
                   ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
                   coopId: "lenkp0ga5MTluKUM25AH",
-                  message: 'You have a pending balance of Php 1000.',
+                  message: 'You have a pending balance: Php 1000.',
                   isTapped: false,
                   type: "coop",
                   createdAt: DateTime(2024, 6, 3, 12, 30, 0),
                 ),
+                // Assigned Task
                 NotificationsModel(
                   uid: '1',
                   ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
                   coopId: "lenkp0ga5MTluKUM25AH",
-                  message: 'You have a pending balance of Php 1000.',
-                  isTapped: false,
-                  type: "coop",
-                  createdAt: DateTime(2024, 6, 3, 12, 30, 0),
-                ),
-                NotificationsModel(
-                  uid: '1',
-                  ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
-                  coopId: "lenkp0ga5MTluKUM25AH",
-                  message: 'A booking is made on on June 1 - June 3, 2021.',
+                  message: 'A booking is made: June 1 - June 3, 2021.',
                   isTapped: true,
                   listingId: '942oLXTg0K7T8qGJ97KM',
                   type: "listing",
+                  bookingId: '1OLHTBacUZJPeH3hpvrb',
                   createdAt: DateTime(2024, 6, 2, 12, 30, 0),
                 ),
                 NotificationsModel(
                   uid: '1',
                   ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
                   coopId: "lenkp0ga5MTluKUM25AH",
-                  message: 'A booking is made on on June 1 - June 3, 2021.',
+                  message: 'You have a new task: Clean the room',
                   isTapped: true,
                   listingId: '942oLXTg0K7T8qGJ97KM',
                   type: "listing",
+                  bookingId: '1OLHTBacUZJPeH3hpvrb',
                   createdAt: DateTime(2024, 6, 2, 12, 30, 0),
                 ),
                 NotificationsModel(
                   uid: '1',
                   ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
                   coopId: "lenkp0ga5MTluKUM25AH",
-                  message: 'You have a pending task to complete.',
-                  isTapped: true,
-                  eventId: 'xzAcUJEbtYUXuIi1xdny',
-                  type: "event",
-                  createdAt: DateTime(2024, 5, 1, 12, 30, 0),
-                ),
-                NotificationsModel(
-                  uid: '1',
-                  ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
-                  coopId: "lenkp0ga5MTluKUM25AH",
-                  message: 'You have a pending task to complete.',
+                  message:
+                      'You have a pending task to complete: Create PPT Presentation',
                   isTapped: true,
                   eventId: 'xzAcUJEbtYUXuIi1xdny',
                   type: "event",
@@ -167,6 +154,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     String title;
     String message = notif.message!;
     bool isTapped = notif.isTapped!;
+    VoidCallback onTap;
 
     switch (notif.type) {
       case 'listing':
@@ -174,18 +162,44 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             ref.watch(getListingProvider(notif.listingId!)).asData?.value;
         leadingWidget = notifAvatar(listing?.images?[0].url ?? '');
         title = listing?.title ?? '';
+
+        final booking = ref
+            .watch(getBookingByIdProvider((notif.listingId!, notif.bookingId!)))
+            .asData
+            ?.value;
+
+        // onTap
+        onTap = () {
+          context.push(
+            '/market/${booking?.category}/booking_details',
+            extra: {'booking': booking, 'listing': listing},
+          ).whenComplete(
+            () => ref.read(navBarVisibilityProvider.notifier).show(),
+          );
+        };
+
         break;
       case 'coop':
         final coop =
             ref.watch(getCooperativeProvider(notif.coopId!)).asData?.value;
         leadingWidget = notifAvatar(coop?.imageUrl ?? '');
         title = coop?.name ?? '';
+
+        // Define onTap for 'coop' case
+        onTap = () {
+          // Add your navigation code here
+        };
         break;
       case 'event':
         final event =
             ref.watch(getEventsProvider(notif.eventId!)).asData?.value;
         leadingWidget = notifAvatar(event?.imageUrl ?? '');
         title = event?.name ?? '';
+
+        // Define onTap for 'coop' case
+        onTap = () {
+          // Add your navigation code here
+        };
         break;
       default:
         leadingWidget = const CircleAvatar(
@@ -193,6 +207,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           backgroundColor: Colors.transparent,
         );
         title = '';
+        onTap = () {}; // Default onTap
     }
 
     return _createListTile(
@@ -200,6 +215,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       message: message,
       leading: leadingWidget,
       isTapped: isTapped,
+      onTap: onTap,
     );
   }
 
@@ -207,9 +223,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       {required String title,
       required String message,
       required Widget leading,
-      required bool isTapped}) {
+      required bool isTapped,
+      required VoidCallback onTap}) {
     return ListTile(
-      onTap: () => {},
+      onTap: onTap,
       leading: leading,
       tileColor: isTapped
           ? Theme.of(context).colorScheme.background
@@ -220,7 +237,19 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           fontWeight: FontWeight.w600,
         ),
       ),
-      subtitle: Text(message),
+      subtitle: RichText(
+        text: TextSpan(
+          text: '${message.split(': ')[0]}: ',
+          style: DefaultTextStyle.of(context).style,
+          children: <TextSpan>[
+            TextSpan(
+              text:
+                  message.split(': ').length > 1 ? message.split(': ')[1] : '',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

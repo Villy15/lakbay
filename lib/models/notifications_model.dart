@@ -15,9 +15,11 @@ class NotificationsModel with _$NotificationsModel {
     String? message,
     String? listingId,
     String? eventId,
+    String? bookingId,
     @Default(false) bool? isTapped,
     String? type,
     @TimestampSerializer() DateTime? createdAt,
+    String? routePath,
   }) = _NotificationsModel;
 
   factory NotificationsModel.fromJson(Map<String, dynamic> json) =>
