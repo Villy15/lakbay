@@ -38,7 +38,16 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   message: 'You have a pending balance of Php 1000.',
                   isTapped: false,
                   type: "coop",
-                  createdAt: DateTime(2024, 5, 1),
+                  createdAt: DateTime(2024, 6, 3, 12, 30, 0),
+                ),
+                NotificationsModel(
+                  uid: '1',
+                  ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
+                  coopId: "lenkp0ga5MTluKUM25AH",
+                  message: 'You have a pending balance of Php 1000.',
+                  isTapped: false,
+                  type: "coop",
+                  createdAt: DateTime(2024, 6, 3, 12, 30, 0),
                 ),
                 NotificationsModel(
                   uid: '1',
@@ -48,7 +57,17 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   isTapped: true,
                   listingId: '942oLXTg0K7T8qGJ97KM',
                   type: "listing",
-                  createdAt: DateTime(2024, 5, 1),
+                  createdAt: DateTime(2024, 6, 2, 12, 30, 0),
+                ),
+                NotificationsModel(
+                  uid: '1',
+                  ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
+                  coopId: "lenkp0ga5MTluKUM25AH",
+                  message: 'A booking is made on on June 1 - June 3, 2021.',
+                  isTapped: true,
+                  listingId: '942oLXTg0K7T8qGJ97KM',
+                  type: "listing",
+                  createdAt: DateTime(2024, 6, 2, 12, 30, 0),
                 ),
                 NotificationsModel(
                   uid: '1',
@@ -58,7 +77,17 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   isTapped: true,
                   eventId: 'xzAcUJEbtYUXuIi1xdny',
                   type: "event",
-                  createdAt: DateTime(2024, 5, 1),
+                  createdAt: DateTime(2024, 5, 1, 12, 30, 0),
+                ),
+                NotificationsModel(
+                  uid: '1',
+                  ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
+                  coopId: "lenkp0ga5MTluKUM25AH",
+                  message: 'You have a pending task to complete.',
+                  isTapped: true,
+                  eventId: 'xzAcUJEbtYUXuIi1xdny',
+                  type: "event",
+                  createdAt: DateTime(2024, 5, 1, 12, 30, 0),
                 ),
               ];
 
@@ -66,26 +95,26 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 return emptyNotifs();
               }
 
-              final today = DateTime.now();
-              final yesterday =
-                  today.subtract(const Duration(days: 1, milliseconds: 1));
-              final last7Days =
-                  today.subtract(const Duration(days: 7, milliseconds: 1));
-              final last30Days =
-                  today.subtract(const Duration(days: 30, milliseconds: 1));
+              final now = DateTime.now();
+              final today = DateTime(now.year, now.month, now.day);
+              final endOfYesterday = DateTime(now.year, now.month, now.day)
+                  .subtract(const Duration(milliseconds: 1));
+              final startOfYesterday =
+                  endOfYesterday.subtract(const Duration(days: 1));
+              final last30Days = today.subtract(const Duration(days: 30));
 
               final todayNotifs = notifications
-                  .where((notif) => notif.createdAt!.isAfter(yesterday))
+                  .where((notif) => notif.createdAt!.isAfter(endOfYesterday))
                   .toList();
               final yesterdayNotifs = notifications
                   .where((notif) =>
-                      notif.createdAt!.isAfter(last7Days) &&
+                      notif.createdAt!.isAfter(startOfYesterday) &&
                       notif.createdAt!.isBefore(today))
                   .toList();
               final last7DaysNotifs = notifications
                   .where((notif) =>
                       notif.createdAt!.isAfter(last30Days) &&
-                      notif.createdAt!.isBefore(yesterday))
+                      notif.createdAt!.isBefore(startOfYesterday))
                   .toList();
               final last30DaysNotifs = notifications
                   .where((notif) => notif.createdAt!.isBefore(last30Days))
@@ -195,10 +224,11 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     );
   }
 
-  CircleAvatar notifAvatar(String imageUrl) {
+  CircleAvatar notifAvatar(String? imageUrl) {
     return CircleAvatar(
       radius: 30.0,
-      backgroundImage: NetworkImage(imageUrl),
+      backgroundImage:
+          imageUrl != '' && imageUrl != null ? NetworkImage(imageUrl) : null,
       backgroundColor: Theme.of(context).colorScheme.onBackground,
     );
   }
