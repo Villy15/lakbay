@@ -258,6 +258,7 @@ class ListingController extends StateNotifier<bool> {
       final notif = NotificationsModel(
         title: listing.title,
         listingId: listing.uid,
+        bookingId: bookingUid,
         message: "A booking is made: ${booking.startDate} - ${booking.endDate}",
         coopId: listing.cooperative.cooperativeId,
         ownerId: listing.publisherId,
@@ -277,6 +278,7 @@ class ListingController extends StateNotifier<bool> {
       final customerNotif = NotificationsModel(
         title: 'Payment Succesful!',
         listingId: listing.uid,
+        bookingId: bookingUid,
         message: "You have successfully booked ${listing.title}. It is from ${booking.startDate} - ${booking.endDate}",
         ownerId: _ref.read(userProvider)!.uid,
         isToAllMembers: false,
