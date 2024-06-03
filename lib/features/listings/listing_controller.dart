@@ -257,6 +257,7 @@ class ListingController extends StateNotifier<bool> {
       // ADD NOTIFICATION
       final notif = NotificationsModel(
         title: listing.title,
+        listingId: listing.uid,
         message: "A booking is made: ${booking.startDate} - ${booking.endDate}",
         coopId: listing.cooperative.cooperativeId,
         isToAllMembers: true,
