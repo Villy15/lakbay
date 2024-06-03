@@ -185,6 +185,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     VoidCallback onTap;
 
     switch (notif.type) {
+      /**
+       * LISTING = IF A BOOKING IS MADE
+       */
       case 'listing':
         final listing =
             ref.watch(getListingProvider(notif.listingId!)).asData?.value;
@@ -206,6 +209,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         };
 
         break;
+      /**
+       * COOP = IF A COOP ACTIVITY TASK NEEDS TO BE DONE
+       */
       case 'coop':
         final coop =
             ref.watch(getCooperativeProvider(notif.coopId!)).asData?.value;
@@ -216,6 +222,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           // Add your navigation code here
         };
         break;
+
+      /**
+       * COOP_ANNOUNCEMENT = IF A COOP ANNOUNCEMENT IS MADE
+       */
       case 'coop_announcement':
         final coop =
             ref.watch(getCooperativeProvider(notif.coopId!)).asData?.value;
@@ -226,6 +236,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           // Add your navigation code here
         };
         break;
+      /**
+       * EVENT = IF A COOP EVENT TASK SHOULD BE DONE 
+       */
       case 'event':
         final event =
             ref.watch(getEventsProvider(notif.eventId!)).asData?.value;

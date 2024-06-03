@@ -65,11 +65,7 @@ class NotificationsController extends StateNotifier<bool> {
       (notifUid) {
         state = false;
 
-        if (notif.isToAllMembers!) {
-          // SEND NOTIFICATION TO ALL MEMBERS
-          cloudNotification(notif.title!, notif.message!, 'all');
-        } else {
-          // SEND NOTIFICATION TO SPECIFIC MEMBER
+        if (notif.isToAllMembers! == false) {
           cloudNotification(notif.title!, notif.message!, notif.ownerId!);
         }
       },
