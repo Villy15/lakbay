@@ -32,72 +32,72 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       body: ref.watch(getAllNotificationsProvider).when(
             data: (notifications) {
               // Create temp data
-              notifications = [
-                NotificationsModel(
-                  uid: '1',
-                  title: 'Payment Successful',
-                  ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
-                  coopId: "lenkp0ga5MTluKUM25AH",
-                  message:
-                      'You have a pending balance: Php 1000. Please pay. Iwahori Multiasdasd',
-                  isTapped: false,
-                  type: "coop",
-                  createdAt: DateTime(2024, 6, 3, 12, 30, 0),
-                  isToAllMembers: false,
-                ),
-                NotificationsModel(
-                  uid: '1',
-                  title: 'Iwahori Multipurpose Cooperative',
-                  ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
-                  coopId: "lenkp0ga5MTluKUM25AH",
-                  message:
-                      'A new announcement is made: Notifce of Upcoming Election for Coop board Members',
-                  isTapped: false,
-                  type: "coop_announcement",
-                  createdAt: DateTime(2024, 6, 3, 12, 30, 0),
-                  isToAllMembers: true,
-                ),
-                // Assigned Task
-                NotificationsModel(
-                  uid: '1',
-                  title: 'Hotel lakbay',
-                  ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
-                  coopId: "lenkp0ga5MTluKUM25AH",
-                  message: 'A booking is made: June 1 - June 3, 2021.',
-                  isTapped: true,
-                  listingId: '942oLXTg0K7T8qGJ97KM',
-                  type: "listing",
-                  bookingId: '1OLHTBacUZJPeH3hpvrb',
-                  createdAt: DateTime(2024, 6, 2, 12, 30, 0),
-                  isToAllMembers: true,
-                ),
-                NotificationsModel(
-                  uid: '1',
-                  ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
-                  title: 'Hotel lakbay',
-                  coopId: "lenkp0ga5MTluKUM25AH",
-                  message: 'You have a new task: Clean the room',
-                  isTapped: true,
-                  listingId: '942oLXTg0K7T8qGJ97KM',
-                  type: "listing",
-                  bookingId: '1OLHTBacUZJPeH3hpvrb',
-                  createdAt: DateTime(2024, 6, 2, 12, 30, 0),
-                  isToAllMembers: false,
-                ),
-                NotificationsModel(
-                  uid: '1',
-                  title: 'Pre Membership Seminar',
-                  ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
-                  coopId: "lenkp0ga5MTluKUM25AH",
-                  message:
-                      'You have a pending task to complete: Create PPT Presentation',
-                  isTapped: true,
-                  eventId: 'xzAcUJEbtYUXuIi1xdny',
-                  type: "event",
-                  createdAt: DateTime(2024, 5, 1, 12, 30, 0),
-                  isToAllMembers: false,
-                ),
-              ];
+              // notifications = [
+              //   NotificationsModel(
+              //     uid: '1',
+              //     title: 'Payment Successful',
+              //     ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
+              //     coopId: "lenkp0ga5MTluKUM25AH",
+              //     message:
+              //         'You have a pending balance: Php 1000. Please pay. Iwahori Multiasdasd',
+              //     isTapped: false,
+              //     type: "coop",
+              //     createdAt: DateTime(2024, 6, 3, 12, 30, 0),
+              //     isToAllMembers: false,
+              //   ),
+              //   NotificationsModel(
+              //     uid: '1',
+              //     title: 'Iwahori Multipurpose Cooperative',
+              //     ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
+              //     coopId: "lenkp0ga5MTluKUM25AH",
+              //     message:
+              //         'A new announcement is made: Notifce of Upcoming Election for Coop board Members',
+              //     isTapped: false,
+              //     type: "coop_announcement",
+              //     createdAt: DateTime(2024, 6, 3, 12, 30, 0),
+              //     isToAllMembers: true,
+              //   ),
+              //   // Assigned Task
+              //   NotificationsModel(
+              //     uid: '1',
+              //     title: 'Hotel lakbay',
+              //     ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
+              //     coopId: "lenkp0ga5MTluKUM25AH",
+              //     message: 'A booking is made: June 1 - June 3, 2021.',
+              //     isTapped: true,
+              //     listingId: '942oLXTg0K7T8qGJ97KM',
+              //     type: "listing",
+              //     bookingId: '1OLHTBacUZJPeH3hpvrb',
+              //     createdAt: DateTime(2024, 6, 2, 12, 30, 0),
+              //     isToAllMembers: true,
+              //   ),
+              //   NotificationsModel(
+              //     uid: '1',
+              //     ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
+              //     title: 'Hotel lakbay',
+              //     coopId: "lenkp0ga5MTluKUM25AH",
+              //     message: 'You have a new task: Clean the room',
+              //     isTapped: true,
+              //     listingId: '942oLXTg0K7T8qGJ97KM',
+              //     type: "listing",
+              //     bookingId: '1OLHTBacUZJPeH3hpvrb',
+              //     createdAt: DateTime(2024, 6, 2, 12, 30, 0),
+              //     isToAllMembers: false,
+              //   ),
+              //   NotificationsModel(
+              //     uid: '1',
+              //     title: 'Pre Membership Seminar',
+              //     ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
+              //     coopId: "lenkp0ga5MTluKUM25AH",
+              //     message:
+              //         'You have a pending task to complete: Create PPT Presentation',
+              //     isTapped: true,
+              //     eventId: 'xzAcUJEbtYUXuIi1xdny',
+              //     type: "event",
+              //     createdAt: DateTime(2024, 5, 1, 12, 30, 0),
+              //     isToAllMembers: false,
+              //   ),
+              // ];
 
               if (notifications.isEmpty) {
                 return emptyNotifs();
