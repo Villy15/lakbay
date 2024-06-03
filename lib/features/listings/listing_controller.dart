@@ -277,15 +277,15 @@ class ListingController extends StateNotifier<bool> {
 
       // ADD NOTIFICATION FOR CUSTOMER BOOKING
       final customerNotif = NotificationsModel(
-        title: 'Payment Succesful!',
-        listingId: listing.uid,
-        bookingId: bookingUid,
-        message: "You have successfully booked ${listing.title}. It is from ${booking.startDate} - ${booking.endDate}",
-        ownerId: _ref.read(userProvider)!.uid,
-        isToAllMembers: false,
-        type: 'listing',
-        createdAt: DateTime.now()
-      );
+          title: 'Payment Succesful!',
+          listingId: listing.uid,
+          bookingId: bookingUid,
+          message:
+              "You have successfully booked ${listing.title}. It is from ${DateFormat('MMMM d').format(booking.startDate!)} - ${DateFormat('MMMM d, y').format(booking.endDate!)}",
+          ownerId: _ref.read(userProvider)!.uid,
+          isToAllMembers: false,
+          type: 'listing',
+          createdAt: DateTime.now());
 
       ref
           .read(notificationControllerProvider.notifier)
