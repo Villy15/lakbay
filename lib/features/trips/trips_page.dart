@@ -143,12 +143,24 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Welcome, ${user!.firstName}!",
+                              // bold and large
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+
                           const Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
                               'Ongoing Trips',
                               style: TextStyle(
-                                fontSize: 24,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -167,7 +179,7 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                               child: Text(
                                 'Past Trips',
                                 style: TextStyle(
-                                  fontSize: 24,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

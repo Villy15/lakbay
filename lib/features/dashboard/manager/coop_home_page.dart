@@ -629,9 +629,9 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                           .toList()
                         ..sort((a, b) => a.startDate!.compareTo(b.startDate!));
 
-                      // Take the first 5 bookings
-                      if (updatedBookings.length > 5) {
-                        updatedBookings.length = 5;
+                      // Take the first 3 bookings
+                      if (updatedBookings.length > 3) {
+                        updatedBookings.length = 3;
                       }
 
                       return ListView.separated(
@@ -895,6 +895,11 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                       events = events
                           .where((event) => event.members.contains(user.uid))
                           .toList();
+
+                      // Make the lenght of the list to be 3
+                      if (events.length > 3) {
+                        events.length = 3;
+                      }
 
                       return ListView.builder(
                         itemCount: events.length,

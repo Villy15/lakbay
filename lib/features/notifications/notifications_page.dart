@@ -35,6 +35,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
               notifications = [
                 NotificationsModel(
                   uid: '1',
+                  title: 'Iwahori Multipurpose Cooperative',
                   ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
                   coopId: "lenkp0ga5MTluKUM25AH",
                   message: 'You have a pending balance: Php 1000.',
@@ -42,9 +43,21 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   type: "coop",
                   createdAt: DateTime(2024, 6, 3, 12, 30, 0),
                 ),
+                NotificationsModel(
+                  uid: '1',
+                  title: 'Iwahori Multipurpose Cooperative',
+                  ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
+                  coopId: "lenkp0ga5MTluKUM25AH",
+                  message:
+                      'A new announcement is made: Notifce of Upcoming Election for Coop board Members',
+                  isTapped: false,
+                  type: "coop_announcement",
+                  createdAt: DateTime(2024, 6, 3, 12, 30, 0),
+                ),
                 // Assigned Task
                 NotificationsModel(
                   uid: '1',
+                  title: 'Hotel lakbay',
                   ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
                   coopId: "lenkp0ga5MTluKUM25AH",
                   message: 'A booking is made: June 1 - June 3, 2021.',
@@ -57,6 +70,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 NotificationsModel(
                   uid: '1',
                   ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
+                  title: 'Hotel lakbay',
                   coopId: "lenkp0ga5MTluKUM25AH",
                   message: 'You have a new task: Clean the room',
                   isTapped: true,
@@ -67,6 +81,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 ),
                 NotificationsModel(
                   uid: '1',
+                  title: 'Pre Membership Seminar',
                   ownerId: 'mW8eJarptUUlP6gYxFB1JM1i21q2',
                   coopId: "lenkp0ga5MTluKUM25AH",
                   message:
@@ -151,7 +166,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
   Widget _listTileNotifs(NotificationsModel notif) {
     Widget leadingWidget;
-    String title;
     String message = notif.message!;
     bool isTapped = notif.isTapped!;
     VoidCallback onTap;
@@ -161,7 +175,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         final listing =
             ref.watch(getListingProvider(notif.listingId!)).asData?.value;
         leadingWidget = notifAvatar(listing?.images?[0].url ?? '');
-        title = listing?.title ?? '';
 
         final booking = ref
             .watch(getBookingByIdProvider((notif.listingId!, notif.bookingId!)))
@@ -183,7 +196,16 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         final coop =
             ref.watch(getCooperativeProvider(notif.coopId!)).asData?.value;
         leadingWidget = notifAvatar(coop?.imageUrl ?? '');
-        title = coop?.name ?? '';
+
+        // Define onTap for 'coop' case
+        onTap = () {
+          // Add your navigation code here
+        };
+        break;
+      case 'coop_announcement':
+        final coop =
+            ref.watch(getCooperativeProvider(notif.coopId!)).asData?.value;
+        leadingWidget = notifAvatar(coop?.imageUrl ?? '');
 
         // Define onTap for 'coop' case
         onTap = () {
@@ -194,7 +216,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         final event =
             ref.watch(getEventsProvider(notif.eventId!)).asData?.value;
         leadingWidget = notifAvatar(event?.imageUrl ?? '');
-        title = event?.name ?? '';
 
         // Define onTap for 'coop' case
         onTap = () {
@@ -206,12 +227,11 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           radius: 30.0,
           backgroundColor: Colors.transparent,
         );
-        title = '';
         onTap = () {}; // Default onTap
     }
 
     return _createListTile(
-      title: title,
+      title: notif.title!,
       message: message,
       leading: leadingWidget,
       isTapped: isTapped,

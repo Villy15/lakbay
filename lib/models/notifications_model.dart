@@ -13,6 +13,7 @@ class NotificationsModel with _$NotificationsModel {
     String? userId,
     String? coopId,
     String? message,
+    String? title,
     String? listingId,
     String? eventId,
     String? bookingId,

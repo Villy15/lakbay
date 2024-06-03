@@ -25,6 +25,7 @@ mixin _$NotificationsModel {
   String? get userId => throw _privateConstructorUsedError;
   String? get coopId => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
+  String? get title => throw _privateConstructorUsedError;
   String? get listingId => throw _privateConstructorUsedError;
   String? get eventId => throw _privateConstructorUsedError;
   String? get bookingId => throw _privateConstructorUsedError;
@@ -52,6 +53,7 @@ abstract class $NotificationsModelCopyWith<$Res> {
       String? userId,
       String? coopId,
       String? message,
+      String? title,
       String? listingId,
       String? eventId,
       String? bookingId,
@@ -79,6 +81,7 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
     Object? userId = freezed,
     Object? coopId = freezed,
     Object? message = freezed,
+    Object? title = freezed,
     Object? listingId = freezed,
     Object? eventId = freezed,
     Object? bookingId = freezed,
@@ -107,6 +110,10 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
               as String?,
       listingId: freezed == listingId
           ? _value.listingId
@@ -154,6 +161,7 @@ abstract class _$$NotificationsModelImplCopyWith<$Res>
       String? userId,
       String? coopId,
       String? message,
+      String? title,
       String? listingId,
       String? eventId,
       String? bookingId,
@@ -179,6 +187,7 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
     Object? userId = freezed,
     Object? coopId = freezed,
     Object? message = freezed,
+    Object? title = freezed,
     Object? listingId = freezed,
     Object? eventId = freezed,
     Object? bookingId = freezed,
@@ -207,6 +216,10 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
               as String?,
       listingId: freezed == listingId
           ? _value.listingId
@@ -249,6 +262,7 @@ class _$NotificationsModelImpl implements _NotificationsModel {
       this.userId,
       this.coopId,
       this.message,
+      this.title,
       this.listingId,
       this.eventId,
       this.bookingId,
@@ -271,6 +285,8 @@ class _$NotificationsModelImpl implements _NotificationsModel {
   @override
   final String? message;
   @override
+  final String? title;
+  @override
   final String? listingId;
   @override
   final String? eventId;
@@ -289,7 +305,7 @@ class _$NotificationsModelImpl implements _NotificationsModel {
 
   @override
   String toString() {
-    return 'NotificationsModel(uid: $uid, ownerId: $ownerId, userId: $userId, coopId: $coopId, message: $message, listingId: $listingId, eventId: $eventId, bookingId: $bookingId, isTapped: $isTapped, type: $type, createdAt: $createdAt, routePath: $routePath)';
+    return 'NotificationsModel(uid: $uid, ownerId: $ownerId, userId: $userId, coopId: $coopId, message: $message, title: $title, listingId: $listingId, eventId: $eventId, bookingId: $bookingId, isTapped: $isTapped, type: $type, createdAt: $createdAt, routePath: $routePath)';
   }
 
   @override
@@ -302,6 +318,7 @@ class _$NotificationsModelImpl implements _NotificationsModel {
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.coopId, coopId) || other.coopId == coopId) &&
             (identical(other.message, message) || other.message == message) &&
+            (identical(other.title, title) || other.title == title) &&
             (identical(other.listingId, listingId) ||
                 other.listingId == listingId) &&
             (identical(other.eventId, eventId) || other.eventId == eventId) &&
@@ -325,6 +342,7 @@ class _$NotificationsModelImpl implements _NotificationsModel {
       userId,
       coopId,
       message,
+      title,
       listingId,
       eventId,
       bookingId,
@@ -355,6 +373,7 @@ abstract class _NotificationsModel implements NotificationsModel {
       final String? userId,
       final String? coopId,
       final String? message,
+      final String? title,
       final String? listingId,
       final String? eventId,
       final String? bookingId,
@@ -376,6 +395,8 @@ abstract class _NotificationsModel implements NotificationsModel {
   String? get coopId;
   @override
   String? get message;
+  @override
+  String? get title;
   @override
   String? get listingId;
   @override
