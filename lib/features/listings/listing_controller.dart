@@ -260,7 +260,8 @@ class ListingController extends StateNotifier<bool> {
         listingId: listing.uid,
         message: "A booking is made: ${booking.startDate} - ${booking.endDate}",
         coopId: listing.cooperative.cooperativeId,
-        isToAllMembers: true,
+        ownerId: listing.publisherId,
+        isToAllMembers: false,
         type: 'listing',
         createdAt: DateTime.now(),
       );
@@ -272,6 +273,17 @@ class ListingController extends StateNotifier<bool> {
       // sendNotification('Listing Booked: ${listing.title}',
       //     'Dates: ${DateFormat('MMM d, H:mm').format(booking.startDate!)} - ${DateFormat('MMM d, H:mm').format(booking.endDate!)}');
 
+      // ADD NOTIFICATION FOR CUSTOMER BOOKING
+      final customerNotif = NotificationsModel(
+        title: 'Payment Succesful!',
+        listingId: listing.uid,
+        message: "You have successfully booked ${listing.title}. It is from ${booking.startDate} - ${booking.endDate}",
+        ownerId: _ref.read(userProvider)!.uid,
+        isToAllMembers: false,
+        type: 'listing',
+        createdAt: DateTime.now()
+      );
+      
       booking.tasks?.forEach((element) async {
         switch (booking.category) {
           case 'Accommodation':

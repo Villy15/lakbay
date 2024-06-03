@@ -271,8 +271,9 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
                       );
                     });
 
-                    ref.read(listingControllerProvider.notifier).addBooking(
-                        ref, updatedBooking, widget.listing, context);
+                    ref
+                        .read(listingControllerProvider.notifier)
+                        .addBooking(ref, updatedBooking, widget.listing, context);
                     // Navigator.pop(context);
 
                     // sending notification

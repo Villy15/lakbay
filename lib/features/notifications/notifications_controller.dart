@@ -66,6 +66,7 @@ class NotificationsController extends StateNotifier<bool> {
         state = false;
 
         if (notif.isToAllMembers! == false) {
+          debugPrint('Hello');
           cloudNotification(notif.title!, notif.message!, notif.ownerId!);
         }
       },
@@ -75,9 +76,10 @@ class NotificationsController extends StateNotifier<bool> {
   Future<void> cloudNotification(
       String title, String message, String ownerId) async {
     try {
+      debugPrint('hi!');
       final response = await http.post(
           Uri.parse(
-              'https://us-central1-lakbay-cd97e.cloudfunctions.net/notifyUserPaymentListing'),
+              'https://us-central1-lakbay-cd97e.cloudfunctions.net/notifyUsers'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -85,7 +87,7 @@ class NotificationsController extends StateNotifier<bool> {
             'notification': {
               'notificationTitle': title,
               'notificationMessage': message,
-              'userId': ownerId,
+              'publisherId': ownerId,
             },
           }));
 

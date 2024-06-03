@@ -116,45 +116,45 @@ exports.sendEmail = functions.https.onRequest((req, res) => {
 
 // This is for notifying the users of their respective transactions
 // the transactions can be found through the bookings subcollection under listings collection, specifically listings/bookings/{bookingId}
-exports.notifyUserPaymentListing = functions.https.onRequest(async (req, res) =>  {
-  const notification = req.body.notification;
+// exports.notifyUserPaymentListing = functions.https.onRequest(async (req, res) =>  {
+//   const notification = req.body.notification;
 
-  // extract the contents of notification
-  const notificationTitle = notification.notificationTitle;
-  const notificationMessage = notification.notificationMessage;
-  const userId = notification.userId;
+//   // extract the contents of notification
+//   const notificationTitle = notification.notificationTitle;
+//   const notificationMessage = notification.notificationMessage;
+//   const userId = notification.userId;
 
-  // create the payload
-  const payload = {
-    notification: {
-      title: notificationTitle,
-      body: notificationMessage
-    }
-  };
+//   // create the payload
+//   const payload = {
+//     notification: {
+//       title: notificationTitle,
+//       body: notificationMessage
+//     }
+//   };
 
-  const tokensCollection = await admin.firestore().collection('users').doc(userId).collection('tokens').get();
+//   const tokensCollection = await admin.firestore().collection('users').doc(userId).collection('tokens').get();
 
-  const tokens = tokensCollection.docs.map(doc => doc.data().token);
+//   const tokens = tokensCollection.docs.map(doc => doc.data().token);
 
-  const message = {
-    notification: payload.notification,
-    tokens: tokens
-  };
+//   const message = {
+//     notification: payload.notification,
+//     tokens: tokens
+//   };
 
-  return admin.messaging().sendMulticast(message)
-  .then((response) => {
-    console.log('Successfully sent message:', response);
-    console.log('Results:', response.responses);
-    res.status(200).send("Notification sent! This is the response and message tokens: " + response + " " + message.tokens);
-  }).catch((error) => {
-    console.log('Error sending message:', error);
-    res.status(500).send("Error sending message.  This is the error message: " + error);
-  });
-});
+//   return admin.messaging().sendMulticast(message)
+//   .then((response) => {
+//     console.log('Successfully sent message:', response);
+//     console.log('Results:', response.responses);
+//     res.status(200).send("Notification sent! This is the response and message tokens: " + response + " " + message.tokens);
+//   }).catch((error) => {
+//     console.log('Error sending message:', error);
+//     res.status(500).send("Error sending message.  This is the error message: " + error);
+//   });
+// });
 
 // this is to notify the publisher of the listing that a user has booked their listing. The notification can be sent
 // via the app. when terminated or backgrounded, the notification will be sent via the notification tray
-exports.notifyPublisherListing = functions.https.onRequest(async (req, res) => {
+exports.notifyUsers = functions.https.onRequest(async (req, res) => {
   const notification = req.body.notification;
 
   // extract the contents of notification:
@@ -208,53 +208,53 @@ exports.notifyPublisherListing = functions.https.onRequest(async (req, res) => {
 
 
 // // this is to notify the user that they have cancelled their booking for the listing
-exports.notifyUserCancelledBooking = functions.https.onRequest(async (req, res) => { 
-  const userInfo = req.body.userInfo;
-  const bookingDetails = req.body.bookingDetails;
-  const listingDetails = req.body.listingDetails;
+// exports.notifyUserCancelledBooking = functions.https.onRequest(async (req, res) => { 
+//   const userInfo = req.body.userInfo;
+//   const bookingDetails = req.body.bookingDetails;
+//   const listingDetails = req.body.listingDetails;
 
-  // extract the contents of userInfo
-  const userEmail = userInfo.email;
-  const userName = userInfo.name;
-  const userId = userInfo.userId ;
+//   // extract the contents of userInfo
+//   const userEmail = userInfo.email;
+//   const userName = userInfo.name;
+//   const userId = userInfo.userId ;
 
-  // extract the contents of bookingDetails
-  const bookingStartDate = bookingDetails.bookingStartDate;
-  const bookingEndDate = bookingDetails.bookingEndDate;
-  const amountPaid = bookingDetails.amountPaid;
-  const paymentOption = bookingDetails.paymentOption;
-  const paymentStatus = bookingDetails.paymentStatus;
-  const listingTitle = bookingDetails.listingTitle;
+//   // extract the contents of bookingDetails
+//   const bookingStartDate = bookingDetails.bookingStartDate;
+//   const bookingEndDate = bookingDetails.bookingEndDate;
+//   const amountPaid = bookingDetails.amountPaid;
+//   const paymentOption = bookingDetails.paymentOption;
+//   const paymentStatus = bookingDetails.paymentStatus;
+//   const listingTitle = bookingDetails.listingTitle;
 
-  // extract the contents of listingDetails == important ones
-  const cancellationRate = listingDetails.cancellationRate;
+//   // extract the contents of listingDetails == important ones
+//   const cancellationRate = listingDetails.cancellationRate;
 
-  // convert the cancellation rate to a numerical value
-  const cancellationRateNum = parseFloat(cancellationRate);
+//   // convert the cancellation rate to a numerical value
+//   const cancellationRateNum = parseFloat(cancellationRate);
 
-  // calculate the refund amount
-  const refundAmount = amountPaid * cancellationRateNum;
+//   // calculate the refund amount
+//   const refundAmount = amountPaid * cancellationRateNum;
 
-  // create the payload
+//   // create the payload
 
-  const tokensCollection = await admin.firestore().collection('users').doc(userId).collection('tokens').get();
+//   const tokensCollection = await admin.firestore().collection('users').doc(userId).collection('tokens').get();
 
-  const tokens = tokensCollection.docs.map(doc => doc.data().token);
+//   const tokens = tokensCollection.docs.map(doc => doc.data().token);
 
-  const message = {
-    notification: payload.notification,
-    tokens: tokens
-  };
+//   const message = {
+//     notification: payload.notification,
+//     tokens: tokens
+//   };
 
-  return admin.messaging().sendMulticast(message).then((response) => {
-    console.log('Successfully sent message:', response);
-    res.status(200).send("Notification sent! This is the response: " + response);
-  }
-  ).catch((error) => {
-    console.log('Error sending message:', error);
-    res.status(500).send("Error sending message.  This is the error message: " + error);
-  });
-});
+//   return admin.messaging().sendMulticast(message).then((response) => {
+//     console.log('Successfully sent message:', response);
+//     res.status(200).send("Notification sent! This is the response: " + response);
+//   }
+//   ).catch((error) => {
+//     console.log('Error sending message:', error);
+//     res.status(500).send("Error sending message.  This is the error message: " + error);
+//   });
+// });
 
 // // this is to notify the publisher that the user who booked their listing has cancelled their booking
 // exports.notifyPublisherCancelledBooking = functions.https.onRequest(async (req, res) => {
