@@ -283,7 +283,11 @@ class ListingController extends StateNotifier<bool> {
         type: 'listing',
         createdAt: DateTime.now()
       );
-      
+
+      ref
+          .read(notificationControllerProvider.notifier)
+          .addNotification(customerNotif, context);
+
       booking.tasks?.forEach((element) async {
         switch (booking.category) {
           case 'Accommodation':
