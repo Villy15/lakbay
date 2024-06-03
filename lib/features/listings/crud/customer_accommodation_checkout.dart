@@ -78,8 +78,7 @@ class _CustomerAccomodationCheckoutState
             _priceDetails(context),
             // _paymentMethod(context),
             _listingRules(context),
-            _confirmPay(context),
-            Text('This is the publisher ID: ${widget.listing.publisherId}')
+            _confirmPay(context)
           ],
         ),
       ),
@@ -155,25 +154,11 @@ class _CustomerAccomodationCheckoutState
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic> {
-          'publisherInfo' : {
-            'publisherTitle': listingModel.title,
-            'publisherName': listingModel.publisherName,
-            'publisherId': listingModel.publisherId
+          'notification': {
+            'notificationTitle': 'New Booking!',
+            'notificationMessage': 'Hi, ${listingModel.publisherName}! You have a new booking for your listing: ${listingModel.title}.\n\nCheck your dashboard for more details.',
+            'publisherId': listingModel.publisherId,
           },
-
-          'userInfo' : {
-            'email' : updatedBookings.email,
-            'name' : updatedBookings.customerName,
-            'userId' : updatedBookings.customerId
-          },
-
-          'bookingDetails' : {
-            'bookingStartDate' : updatedBookings.startDate?.toIso8601String(),
-            'bookingEndDate' : updatedBookings.endDate?.toIso8601String(),
-            'amountPaid' : updatedBookings.amountPaid,
-            'paymentOption' : updatedBookings.paymentOption,
-            'paymentStatus' : updatedBookings.paymentStatus,
-          }
         })
       );
 
@@ -195,18 +180,13 @@ class _CustomerAccomodationCheckoutState
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          'userInfo' : {
-            'email' : updatedBooking.email,
-            'name' : updatedBooking.customerName,
-            'userId' : updatedBooking.customerId
-          },
-          'bookingDetails' : {
-            'bookingStartDate' : updatedBooking.startDate?.toIso8601String(),
-            'bookingEndDate' : updatedBooking.endDate?.toIso8601String(),
-            'amountPaid' : updatedBooking.amountPaid,
-            'paymentOption' : updatedBooking.paymentOption,
-            'paymentStatus' : updatedBooking.paymentStatus,
-            'listingName' : updatedBooking.listingTitle
+          'notification': {
+            'notificationTitle': 'Payment Successful!',
+            // if the paymentOption is downPayment, then the message will be different
+            'notificationMessage': updatedBooking.paymentOption == 'Downpayment' ? 
+              'Hi, ${updatedBooking.customerName}! Your downpayment for ${updatedBooking.listingTitle} has been successfully processed.\n\nPlease settle the remaining balance before your check-in date.' :
+              'Hi, ${updatedBooking.customerName}! Your payment for ${updatedBooking.listingTitle} has been successfully processed.',
+            'userId': updatedBooking.customerId,
           },
         }) 
       );

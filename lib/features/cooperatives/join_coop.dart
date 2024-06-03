@@ -14,7 +14,6 @@ import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/coop_member_roles_model.dart';
-import 'package:lakbay/features/cooperatives/coop_member_roles_repository.dart';
 import 'package:lakbay/features/cooperatives/coop_members_roles_controller.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 

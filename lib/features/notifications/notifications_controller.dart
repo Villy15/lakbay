@@ -46,8 +46,9 @@ class NotificationsController extends StateNotifier<bool> {
         state = false;
         showSnackBar(context, failure.message);
       },
-      (wikiUid) {
+      (notifUid) {
         state = false;
+        // ADD NOTIFICATION TO LIST
       },
     );
   }
