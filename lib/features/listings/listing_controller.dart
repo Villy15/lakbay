@@ -259,6 +259,7 @@ class ListingController extends StateNotifier<bool> {
       final notif = NotificationsModel(
         title: listing.title,
         listingId: listing.uid,
+        bookingId: bookingUid,
         message: "A booking is made: ${booking.startDate} - ${booking.endDate}",
         coopId: listing.cooperative.cooperativeId,
         ownerId: listing.publisherId,
@@ -276,14 +277,19 @@ class ListingController extends StateNotifier<bool> {
 
       // ADD NOTIFICATION FOR CUSTOMER BOOKING
       final customerNotif = NotificationsModel(
-          title: 'Payment Succesful!',
-          listingId: listing.uid,
-          message:
-              "You have successfully booked ${listing.title}. It is from ${DateFormat('MMMM d').format(booking.startDate!)} - ${DateFormat('MMMM d, y').format(booking.endDate!)}",
-          ownerId: _ref.read(userProvider)!.uid,
-          isToAllMembers: false,
-          type: 'listing',
-          createdAt: DateTime.now());
+        title: 'Payment Succesful!',
+        listingId: listing.uid,
+        bookingId: bookingUid,
+        message: "You have successfully booked ${listing.title}. It is from ${booking.startDate} - ${booking.endDate}",
+        ownerId: _ref.read(userProvider)!.uid,
+        isToAllMembers: false,
+        type: 'listing',
+        createdAt: DateTime.now()
+      );
+
+      ref
+          .read(notificationControllerProvider.notifier)
+          .addNotification(customerNotif, context);
 
       booking.tasks?.forEach((element) async {
         switch (booking.category) {
