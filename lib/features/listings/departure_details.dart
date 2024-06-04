@@ -30,6 +30,7 @@ class DepartureDetails extends ConsumerStatefulWidget {
 
 late DepartureModel departureDetails;
 Map<num, num> passengerCount = {};
+late Widget map;
 
 class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
   List<SizedBox> tabs = [
@@ -44,6 +45,9 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
     departureDetails = widget.departure;
+    map = TwoMarkerMapWidget(
+        destination: widget.departure.destination ?? '',
+        pickup: widget.departure.pickUp ?? '');
   }
 
   @override
@@ -80,7 +84,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
             child: Scaffold(
               resizeToAvoidBottomInset: true,
               appBar: _appBar("Departure Details", context),
-              bottomNavigationBar: ["Waiting, OnGoing"]
+              bottomNavigationBar: ["Waiting", "OnGoing"]
                       .contains(departureDetails.departureStatus)
                   ? BottomAppBar(
                       height: MediaQuery.sizeOf(context).height / 8,
@@ -104,7 +108,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
             )));
   }
 
-  Widget? getDepartureStatus() {
+  Widget getDepartureStatus() {
     switch (departureDetails.departureStatus) {
       case "Waiting":
         return Center(
@@ -117,9 +121,23 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
             highlightedColor: Theme.of(context).primaryColor,
             baseColor: Theme.of(context).colorScheme.background,
             action: () async {
+              var updatedPassengers = departureDetails.passengers.toList();
+
+              for (var i = 0; i < departureDetails.passengers.length; i++) {
+                if (departureDetails.passengers[i].vehicleNo != null) {
+                  ListingBookings booking = departureDetails.passengers[i];
+                  ListingBookings updatedBooking =
+                      booking.copyWith(serviceStart: DateTime.now());
+                  updatedPassengers[i] = updatedBooking;
+                  ref.read(listingControllerProvider.notifier).updateBooking(
+                      context, booking.listingId, updatedBooking, "");
+                }
+              }
               setState(() {
                 departureDetails = departureDetails.copyWith(
-                    departed: DateTime.now(), departureStatus: "OnGoing");
+                    departed: DateTime.now(),
+                    departureStatus: "OnGoing",
+                    passengers: updatedPassengers);
               });
               ref
                   .read(listingControllerProvider.notifier)
@@ -153,9 +171,27 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
             highlightedColor: Theme.of(context).primaryColor,
             baseColor: Theme.of(context).colorScheme.background,
             action: () async {
+              var updatedPassengers = departureDetails.passengers.toList();
+
+              for (var i = 0; i < departureDetails.passengers.length; i++) {
+                if (departureDetails.passengers[i].vehicleNo != null) {
+                  ListingBookings booking = departureDetails.passengers[i];
+
+                  ListingBookings updatedBooking = booking.copyWith(
+                      serviceComplete: DateTime.now(),
+                      bookingStatus: "Completed");
+                  updatedPassengers[i] = updatedBooking;
+
+                  ref.read(listingControllerProvider.notifier).updateBooking(
+                      context, booking.listingId, updatedBooking, "");
+                }
+              }
+
               setState(() {
                 departureDetails = departureDetails.copyWith(
-                    arrived: DateTime.now(), departureStatus: "Completed");
+                    arrived: DateTime.now(),
+                    departureStatus: "Completed",
+                    passengers: updatedPassengers);
               });
               ref
                   .read(listingControllerProvider.notifier)
@@ -164,40 +200,6 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
             },
             label: const Text(
               "Disembark",
-              style: TextStyle(
-                color: Color(0xff4a4a4a),
-                fontWeight: FontWeight.w500,
-                fontSize: 22,
-              ),
-            ),
-            icon: Center(
-                child: Icon(
-              Icons.directions_bus_outlined,
-              color: Theme.of(context).primaryColor,
-              size: 30.0,
-            )),
-          ),
-        );
-      case "Completed":
-        return null;
-      case "Cancelled":
-        return null;
-      case "Emergency":
-        return Center(
-          child: SliderButton(
-            width: 300,
-            radius: 10,
-            alignLabel: const Alignment(.2, 0),
-            buttonColor: Theme.of(context).colorScheme.background,
-            backgroundColor: Theme.of(context).primaryColor,
-            highlightedColor: Theme.of(context).primaryColor,
-            baseColor: Theme.of(context).colorScheme.background,
-            action: () async {
-              // Do something here OnSlide
-              return false;
-            },
-            label: const Text(
-              "",
               style: TextStyle(
                 color: Color(0xff4a4a4a),
                 fontWeight: FontWeight.w500,
@@ -348,9 +350,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
               child: SizedBox(
                 width: double.infinity,
                 height: MediaQuery.sizeOf(context).height * .4,
-                child: TwoMarkerMapWidget(
-                    destination: widget.departure.destination ?? '',
-                    pickup: widget.departure.pickUp ?? ''),
+                child: map,
               ),
             ),
             Padding(
@@ -364,10 +364,11 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                               : departureDetails.departureStatus == "Completed"
                                   ? "Your Departure Has Been Completed"
                                   : '',
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white))),
+                              color:
+                                  Theme.of(context).colorScheme.background))),
                 ],
               ),
             )
@@ -723,8 +724,8 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                             listingControllerProvider.notifier)
                                         .updateDeparture(
                                             context, updatedDeparture, '');
-                                    ListingBookings updatedBooking = booking
-                                        .copyWith(vehicleNo: vehicle.vehicleNo);
+                                    ListingBookings updatedBooking =
+                                        booking.copyWith(vehicleNo: null);
                                     ref
                                         .read(
                                             listingControllerProvider.notifier)

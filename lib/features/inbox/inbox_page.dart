@@ -351,13 +351,6 @@ class InboxPage extends ConsumerWidget {
           child: Flexible(child: Text('Individual')),
         ),
       ),
-      const SizedBox(
-        width: 100.0,
-        child: Tab(
-          icon: Icon(Icons.people),
-          child: Flexible(child: Text('Groups')),
-        ),
-      ),
     ];
 
     return PreferredSize(

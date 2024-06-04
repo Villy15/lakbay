@@ -144,12 +144,11 @@ final getRoomByIdProvider = StreamProvider.autoDispose
 });
 
 // getRoomByPropertiesProvider
-final getRoomByPropertiesProvider = StreamProvider.autoDispose
-    .family<List<AvailableRoom>, RoomsParams>((ref, params) {
+final getRoomByPropertiesProvider =
+    StreamProvider.autoDispose.family<List<AvailableRoom>, Query>((ref, query) {
   final listingController = ref.watch(listingControllerProvider.notifier);
 
-  return listingController.getRoomByProperties(
-      params.unavailableRoomUids, params.guests);
+  return listingController.getRoomByProperties(query);
 });
 
 // getRoomByPropertiesProvider
@@ -620,9 +619,8 @@ class ListingController extends StateNotifier<bool> {
   }
 
   // Read room by customer properties
-  Stream<List<AvailableRoom>> getRoomByProperties(
-      List<String> unavailableRoomIds, num guests) {
-    return _listingRepository.readRoomByProperties(unavailableRoomIds, guests);
+  Stream<List<AvailableRoom>> getRoomByProperties(query) {
+    return _listingRepository.readRoomByProperties(query);
   }
 
   void addTransport(BuildContext context, ListingModel listing,
@@ -676,6 +674,22 @@ class ListingController extends StateNotifier<bool> {
         showSnackBar(context, l.message);
       },
       (departureUid) async {
+        state = false;
+      },
+    );
+  }
+
+  void deleteDeparture(
+      String listingId, DepartureModel departure, BuildContext context) async {
+    state = true;
+    final result =
+        await _listingRepository.deleteDeparture(listingId, departure);
+
+    result.fold(
+      (failure) {
+        state = false;
+      },
+      (uid) {
         state = false;
       },
     );

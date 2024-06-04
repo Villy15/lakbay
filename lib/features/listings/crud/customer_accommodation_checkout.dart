@@ -120,6 +120,12 @@ class _CustomerAccomodationCheckoutState
                 }
                 setState(() {
                   updatedBooking = updatedBooking.copyWith(
+                      serviceStart: DateTime(
+                          DateTime.now().year,
+                          DateTime.now().month,
+                          DateTime.now().day,
+                          widget.listing.checkIn!.hour,
+                          widget.listing.checkIn!.minute),
                       paymentOption: paymentOption,
                       paymentStatus: paymentStatus,
                       totalPrice: num.parse(totalPrice.toStringAsFixed(2)),
