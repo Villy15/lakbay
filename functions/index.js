@@ -36,6 +36,9 @@ const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
 const cors = require("cors")({origin: true});
 const {google} = require("googleapis");
+const { topic } = require("firebase-functions/v1/pubsub");
+const serviceAccountKey = JSON.parse(Buffer.from(functions.config().service_account.key, 'base64').toString());
+
 
 const OAuth2 = google.auth.OAuth2;
 
@@ -53,7 +56,10 @@ const accessToken = oauth2Client.getAccessToken();
 
 const gmailEmail = functions.config().gmail.email;
 
-admin.initializeApp();
+admin.initializeApp(
+
+  {credential: admin.credential.cert(serviceAccountKey)}
+);
 
 const smtpTransport = nodemailer.createTransport({
   service: "gmail",
@@ -108,4 +114,159 @@ exports.sendEmail = functions.https.onRequest((req, res) => {
   });
 });
 
+// This is for notifying the users of their respective transactions
+// the transactions can be found through the bookings subcollection under listings collection, specifically listings/bookings/{bookingId}
+// exports.notifyUserPaymentListing = functions.https.onRequest(async (req, res) =>  {
+//   const notification = req.body.notification;
 
+//   // extract the contents of notification
+//   const notificationTitle = notification.notificationTitle;
+//   const notificationMessage = notification.notificationMessage;
+//   const userId = notification.userId;
+
+//   // create the payload
+//   const payload = {
+//     notification: {
+//       title: notificationTitle,
+//       body: notificationMessage
+//     }
+//   };
+
+//   const tokensCollection = await admin.firestore().collection('users').doc(userId).collection('tokens').get();
+
+//   const tokens = tokensCollection.docs.map(doc => doc.data().token);
+
+//   const message = {
+//     notification: payload.notification,
+//     tokens: tokens
+//   };
+
+//   return admin.messaging().sendMulticast(message)
+//   .then((response) => {
+//     console.log('Successfully sent message:', response);
+//     console.log('Results:', response.responses);
+//     res.status(200).send("Notification sent! This is the response and message tokens: " + response + " " + message.tokens);
+//   }).catch((error) => {
+//     console.log('Error sending message:', error);
+//     res.status(500).send("Error sending message.  This is the error message: " + error);
+//   });
+// });
+
+// this is to notify the publisher of the listing that a user has booked their listing. The notification can be sent
+// via the app. when terminated or backgrounded, the notification will be sent via the notification tray
+exports.notifyUsers = functions.https.onRequest(async (req, res) => {
+  const notification = req.body.notification;
+
+  // extract the contents of notification:
+  const notificationTitle = notification.notificationTitle;
+  const notificationMessage = notification.notificationMessage;
+  const publisherId = notification.publisherId;
+
+  // create the payload
+  const payload = {
+    notification: {
+      title: notificationTitle,
+      body: notificationMessage
+    }
+  };
+
+  const tokensCollection = await admin.firestore().collection('users').doc(publisherId).collection('tokens').get();
+
+  const tokens = tokensCollection.docs.map(doc => doc.data().token);
+
+  const message = {
+    notification: payload.notification,
+    tokens: tokens
+  }
+
+  return admin.messaging().sendMulticast(message)
+  .then((response) => {
+    console.log('Successfully sent message:', response);
+    res.status(200).send("Notification sent! This is the response: " + response);
+  }).catch((error) => {
+    console.log('Errosr sending message:', error);
+    res.status(500).send("Error sending message.  This is the error message: " + error);
+  })
+});
+
+
+// comment out for a while, since there will be more changes for the notifications --> incorporation of a new page dedicated for notifications
+
+// // this is to notify the user that they have a pending balance for their booking due to the downpayment rate
+// // notify the user every day due to having a short downpayment period
+// // exports.notifyUserPendingBalance = functions.https.onRequest(async (req, res) => {
+
+// // });
+
+// exports.notifyUserPendingBalance = functions.pubsub.schedule('every 24 hours').onRun(async (context) => {
+//   // get the firestore database under listings/bookings
+//   // on bookings, there are the following fields: 
+//     // paymentOption, paymentStatus, amountPaid, totalPrice
+//   // on listings, there are the following fields:
+//     // downpaymentRate, duration, cancellationRate, cancellationPeriod
+// });
+
+
+// // this is to notify the user that they have cancelled their booking for the listing
+// exports.notifyUserCancelledBooking = functions.https.onRequest(async (req, res) => { 
+//   const userInfo = req.body.userInfo;
+//   const bookingDetails = req.body.bookingDetails;
+//   const listingDetails = req.body.listingDetails;
+
+//   // extract the contents of userInfo
+//   const userEmail = userInfo.email;
+//   const userName = userInfo.name;
+//   const userId = userInfo.userId ;
+
+//   // extract the contents of bookingDetails
+//   const bookingStartDate = bookingDetails.bookingStartDate;
+//   const bookingEndDate = bookingDetails.bookingEndDate;
+//   const amountPaid = bookingDetails.amountPaid;
+//   const paymentOption = bookingDetails.paymentOption;
+//   const paymentStatus = bookingDetails.paymentStatus;
+//   const listingTitle = bookingDetails.listingTitle;
+
+//   // extract the contents of listingDetails == important ones
+//   const cancellationRate = listingDetails.cancellationRate;
+
+//   // convert the cancellation rate to a numerical value
+//   const cancellationRateNum = parseFloat(cancellationRate);
+
+//   // calculate the refund amount
+//   const refundAmount = amountPaid * cancellationRateNum;
+
+//   // create the payload
+
+//   const tokensCollection = await admin.firestore().collection('users').doc(userId).collection('tokens').get();
+
+//   const tokens = tokensCollection.docs.map(doc => doc.data().token);
+
+//   const message = {
+//     notification: payload.notification,
+//     tokens: tokens
+//   };
+
+//   return admin.messaging().sendMulticast(message).then((response) => {
+//     console.log('Successfully sent message:', response);
+//     res.status(200).send("Notification sent! This is the response: " + response);
+//   }
+//   ).catch((error) => {
+//     console.log('Error sending message:', error);
+//     res.status(500).send("Error sending message.  This is the error message: " + error);
+//   });
+// });
+
+// // this is to notify the publisher that the user who booked their listing has cancelled their booking
+// exports.notifyPublisherCancelledBooking = functions.https.onRequest(async (req, res) => {
+
+// });
+
+// // this is to notify cooperative users that have been assigned to the publisher's listing of their task/s
+// exports.notifyCoopMemberTasks = functions.https.onRequest(async (req, res) => {
+
+// });
+
+// // this is to notify the users when there is chat activity in the chatroom
+// exports.notifyChatActivity = functions.https.onRequest(async (req, res) => {
+
+// });

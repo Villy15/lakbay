@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:lakbay/core/firebase_notif_api.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/listings/listing_repository.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -235,8 +236,8 @@ class ListingController extends StateNotifier<bool> {
     );
   }
 
-  void addBooking(
-      ListingBookings booking, ListingModel listing, BuildContext context,
+  void addBooking(WidgetRef ref, ListingBookings booking, ListingModel listing,
+      BuildContext context,
       {Query? query}) async {
     state = true;
     final result = await _listingRepository.addBooking(listing.uid!, booking);
@@ -253,8 +254,41 @@ class ListingController extends StateNotifier<bool> {
 
       state = false;
 
-      sendNotification('Listing Booked: ${listing.title}',
-          'Dates: ${DateFormat('MMM d, H:mm').format(booking.startDate!)} - ${DateFormat('MMM d, H:mm').format(booking.endDate!)}');
+      // ADD NOTIFICATION
+      final notif = NotificationsModel(
+        title: listing.title,
+        listingId: listing.uid,
+        bookingId: bookingUid,
+        message: "A booking is made: ${booking.startDate} - ${booking.endDate}",
+        coopId: listing.cooperative.cooperativeId,
+        ownerId: listing.publisherId,
+        isToAllMembers: false,
+        type: 'listing',
+        createdAt: DateTime.now(),
+      );
+
+      ref
+          .read(notificationControllerProvider.notifier)
+          .addNotification(notif, context);
+
+      // sendNotification('Listing Booked: ${listing.title}',
+      //     'Dates: ${DateFormat('MMM d, H:mm').format(booking.startDate!)} - ${DateFormat('MMM d, H:mm').format(booking.endDate!)}');
+
+      // ADD NOTIFICATION FOR CUSTOMER BOOKING
+      final customerNotif = NotificationsModel(
+          title: 'Payment Succesful!',
+          listingId: listing.uid,
+          bookingId: bookingUid,
+          message:
+              "You have successfully booked ${listing.title}. It is from ${DateFormat('MMMM d').format(booking.startDate!)} - ${DateFormat('MMMM d, y').format(booking.endDate!)}",
+          ownerId: _ref.read(userProvider)!.uid,
+          isToAllMembers: false,
+          type: 'listing',
+          createdAt: DateTime.now());
+
+      ref
+          .read(notificationControllerProvider.notifier)
+          .addNotification(customerNotif, context);
 
       booking.tasks?.forEach((element) async {
         switch (booking.category) {

@@ -5,8 +5,10 @@ import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_repository.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 import 'package:lakbay/models/subcollections/coop_goals_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
@@ -583,7 +585,7 @@ class CoopsController extends StateNotifier<bool> {
 
   // Add announcement
   void addAnnouncement(String coopUid, CoopAnnouncements coopAnnouncement,
-      BuildContext context) {
+      BuildContext context, WidgetRef ref) {
     state = true;
     _coopsRepository.addAnnouncement(coopUid, coopAnnouncement).then((result) {
       result.fold(
@@ -598,6 +600,21 @@ class CoopsController extends StateNotifier<bool> {
           showSnackBar(context, 'Announcement added successfully');
           context.pop();
           _ref.read(navBarVisibilityProvider.notifier).show();
+
+          // add notification
+          final notif = NotificationsModel(
+            title:
+                ref.watch(getCooperativeProvider(coopUid)).asData?.value.name,
+            message: "A new announcement is made: ${coopAnnouncement.title}",
+            coopId: coopUid,
+            isToAllMembers: true,
+            type: 'coop_announcement',
+            createdAt: DateTime.now(),
+          );
+
+          ref
+              .read(notificationControllerProvider.notifier)
+              .addNotification(notif, context);
         },
       );
     });

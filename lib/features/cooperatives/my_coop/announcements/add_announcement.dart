@@ -58,6 +58,7 @@ class _AddAnnouncementState extends ConsumerState<AddAnnouncement> {
             widget.coop.uid!,
             announcement,
             context,
+            ref,
           );
     }
   }

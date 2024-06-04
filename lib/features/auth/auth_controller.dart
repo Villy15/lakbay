@@ -65,7 +65,7 @@ class AuthController extends StateNotifier<bool> {
   }
 
   // signInWithEmailAndPassword
-  void signInWithEmailAndPassword({
+  Future<void> signInWithEmailAndPassword({
     required BuildContext context,
     required String email,
     required String password,

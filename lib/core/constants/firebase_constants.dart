@@ -8,8 +8,10 @@ class FirebaseConstants {
   static const salesCollection = 'sales';
   static const wikisCollection = 'wikis';
   static const plansCollection = 'plans';
+  static const coopMemberRolesCollection = 'coopMemberRoles';
   static const surveyCollection = 'surveys';
   static const customerSurveysCollection = 'customerSurveys';
+  static const notificationsCollection = 'notifications';
 
   // Subcollections
   // Survey Subcollections

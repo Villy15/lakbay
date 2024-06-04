@@ -54,7 +54,7 @@ class _EditEventTaskState extends ConsumerState<EditEventTask> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Event Task'),
+        title: const Text('Edit Event Task'),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(

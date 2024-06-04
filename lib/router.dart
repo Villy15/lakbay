@@ -65,6 +65,7 @@ import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/departure_details.dart';
 import 'package:lakbay/features/listings/transportation_booking_details.dart';
 import 'package:lakbay/features/market/market_page.dart';
+import 'package:lakbay/features/notifications/notifications_page.dart';
 import 'package:lakbay/features/profile/crud/edit_profile.dart';
 import 'package:lakbay/features/profile/my_dashboard.dart';
 import 'package:lakbay/features/profile/profile_customer_page.dart';
@@ -1044,6 +1045,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   state: state,
                   child:
                       const AssetsPage(), // Replace with your actual AddWikiPage widget
+                  transitionType: SharedAxisTransitionType.vertical,
+                ),
+              ),
+
+              // Customer Survey
+              GoRoute(
+                path: '/notifications',
+                pageBuilder: (context, state) =>
+                    buildPageWithSharedAxisTransition<void>(
+                  context: context,
+                  state: state,
+                  child:
+                      const NotificationsPage(), // Replace with your actual AddWikiPage widget
                   transitionType: SharedAxisTransitionType.vertical,
                 ),
               ),
