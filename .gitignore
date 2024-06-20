@@ -51,3 +51,6 @@ custom_lint.log
 
 # Service Key 
 lakbay-cd97e-firebase-adminsdk-ac02e-2154ee2051.json
+
+# Functions node_modules
+node_modules/
