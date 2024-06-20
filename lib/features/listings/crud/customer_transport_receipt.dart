@@ -15,176 +15,177 @@ class CustomerTransportReceipt extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-        body: SingleChildScrollView(
-            child: Container(
-                margin: EdgeInsets.only(
-                    top: MediaQuery.sizeOf(context).height / 10),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey[300]!, width: 2.0),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 7,
-                          offset: const Offset(0, 3))
+        body: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: SingleChildScrollView(
+          child: Container(
+              margin:
+                  EdgeInsets.only(top: MediaQuery.sizeOf(context).height / 10),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey[300]!, width: 2.0),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 7,
+                        offset: const Offset(0, 3))
+                  ],
+                  borderRadius: BorderRadius.circular(8)),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Booking Successful!'),
+                    const Text('Booking Information'),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Booking Ref No: '),
+                          Text('${booking.id}')
+                        ]),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Trip Name: '),
+                          Text(booking.tripName)
+                        ]),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Payment Option: '),
+                          Text('${booking.paymentOption}')
+                        ]),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Status: '),
+                          Text(booking.bookingStatus)
+                        ]),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Listing Title: '),
+                          Text(listing.title)
+                        ]),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Trip: '),
+                          Text('${booking.typeOfTrip}')
+                        ]),
+                    if (booking.typeOfTrip == 'Public') ...[
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Booked Date: '),
+                            Text(_formatDatetime(booking.startDate!))
+                          ]),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Departure Time: '),
+                            Text(_formatTimeOfDay(booking.startTime!))
+                          ]),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Pickup Point: '),
+                            Flexible(
+                                child: Text(
+                              '${listing.pickUp}',
+                              overflow: TextOverflow.ellipsis,
+                            ))
+                          ]),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Destination: '),
+                            Flexible(
+                                child: Text(
+                              '${listing.destination}',
+                              overflow: TextOverflow.ellipsis,
+                            ))
+                          ]),
+                    ] else ...[
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Booked First Date: '),
+                            Text(_formatDatetime(booking.startDate!))
+                          ]),
                     ],
-                    borderRadius: BorderRadius.circular(8)),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Booking Successful!'),
-                      const Text('Booking Information'),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Booking Ref No: '),
-                            Text('${booking.id}')
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Trip Name: '),
-                            Text(booking.tripName)
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Payment Option: '),
-                            Text('${booking.paymentOption}')
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Status: '),
-                            Text(booking.bookingStatus)
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Listing Title: '),
-                            Text(listing.title)
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Trip: '),
-                            Text('${booking.typeOfTrip}')
-                          ]),
-                      if (booking.typeOfTrip == 'Public') ...[
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Booked Date: '),
-                              Text(_formatDatetime(booking.startDate!))
-                            ]),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Departure Time: '),
-                              Text(_formatTimeOfDay(booking.startTime!))
-                            ]),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Pickup Point: '),
-                              Flexible(
-                                child: Text(
-                                  '${listing.pickUp}',
-                                  overflow: TextOverflow.ellipsis,
-                                )
-                              )
-                            ]),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Destination: '),
-                              Flexible(
-                                child: Text(
-                                  '${listing.destination}',
-                                  overflow: TextOverflow.ellipsis,
-                                )
-                              )
-                            ]),
-                      ] else ...[
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Booked First Date: '),
-                              Text(_formatDatetime(booking.startDate!))
-                            ]),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Guests: '),
+                          Text('${booking.guests}')
+                        ]),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Customer Name: '),
+                          Text(booking.customerName)
+                        ]),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Customer No.:"),
+                        Text(" ${booking.customerPhoneNo}"),
                       ],
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Guests: '),
-                            Text('${booking.guests}')
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Customer Name: '),
-                            Text(booking.customerName)
-                          ]),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Customer No.:"),
-                          Text(" ${booking.customerPhoneNo}"),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Emergency Contact Name:"),
-                          Text(" ${booking.emergencyContactName}"),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Emergency Contact No.:"),
-                          Text(" ${booking.emergencyContactNo}"),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Price:"),
-                          Text(" ${booking.price}"),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Amount Paid:"),
-                          Text(" ${booking.amountPaid!.toStringAsFixed(2)}"),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Amount Due:"),
-                          Text(
-                              " ${(booking.totalPrice! - booking.amountPaid!).toStringAsFixed(2)}"),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: FilledButton(
-                            onPressed: () {
-                              ref
-                                  .read(parentStateProvider.notifier)
-                                  .setState(true);
-                              context.pop();
-                            },
-                            child: const Text("Close")),
-                      )
-                    ]))));
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Emergency Contact Name:"),
+                        Text(" ${booking.emergencyContactName}"),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Emergency Contact No.:"),
+                        Text(" ${booking.emergencyContactNo}"),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Price:"),
+                        Text(" ${booking.price}"),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Amount Paid:"),
+                        Text(" ${booking.amountPaid!.toStringAsFixed(2)}"),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Amount Due:"),
+                        Text(
+                            " ${(booking.totalPrice! - booking.amountPaid!).toStringAsFixed(2)}"),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                          onPressed: () {
+                            ref
+                                .read(parentStateProvider.notifier)
+                                .setState(true);
+                            context.pop();
+                          },
+                          child: const Text("Close")),
+                    )
+                  ]))),
+    ));
   }
 
   String _formatTimeOfDay(TimeOfDay time) {

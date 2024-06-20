@@ -272,16 +272,19 @@ class _BookingsAccomodationCustomerState
                                           fontSize: 14,
                                           fontWeight: FontWeight.w300),
                                     ),
+                                    const SizedBox(height: 10),
+
+                                    // checked in time
+                                    Text(
+                                      ('Checked In: ${booking.serviceStart != null ? TimeOfDay.fromDateTime(booking.serviceStart!).format(context) : ""}'),
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300),
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
-                            // Container(
-                            //   height: MediaQuery.sizeOf(context).height / 7.5,
-                            //   width: 1,
-                            //   color:
-                            //       Colors.grey, // Choose the color of the line
-                            // ),
                             const VerticalDivider(
                               color: Colors.grey,
                               thickness: 5,
@@ -311,6 +314,15 @@ class _BookingsAccomodationCustomerState
                                     // Checkout time
                                     Text(
                                       widget.listing.checkOut!.format(context),
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                    const SizedBox(height: 10),
+
+                                    // check out time
+                                    Text(
+                                      ('Checked Out: ${booking.serviceComplete != null ? TimeOfDay.fromDateTime(booking.serviceComplete!).format(context) : ""}'),
                                       style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w300),
@@ -583,8 +595,9 @@ class _BookingsAccomodationCustomerState
                   child: const Text('Back')),
               FilledButton(
                   onPressed: () {
-                    ListingBookings updatedBooking =
-                        booking.copyWith(bookingStatus: 'Completed');
+                    ListingBookings updatedBooking = booking.copyWith(
+                        bookingStatus: 'Completed',
+                        serviceComplete: DateTime.now());
                     ref.read(listingControllerProvider.notifier).updateBooking(
                         context, updatedBooking.listingId, updatedBooking, "");
                     context.pop();

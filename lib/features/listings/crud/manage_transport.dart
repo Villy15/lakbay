@@ -1348,26 +1348,53 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                                   ),
                                 ])),
                         Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: SizedBox(
-                              width: MediaQuery.sizeOf(context).width * .5,
-                              child: FilledButton(
-                                  onPressed: () {
-                                    context.push(
-                                      '/market/${'transport'}/departure_details',
-                                      extra: {
-                                        'departure': departure,
-                                        'listing': widget.listing
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: FilledButton(
+                                      onPressed: () async {
+                                        ref
+                                            .read(listingControllerProvider
+                                                .notifier)
+                                            .deleteDeparture(
+                                                widget.listing.uid!,
+                                                departures[index],
+                                                context);
                                       },
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          4.0), // Adjust the radius as needed
-                                    ),
-                                  ),
-                                  child: const Text('Departure Details')),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              4.0), // Adjust the radius as needed
+                                        ),
+                                      ),
+                                      child: const Text('Delete')),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: FilledButton(
+                                      onPressed: () {
+                                        context.push(
+                                          '/market/${'transport'}/departure_details',
+                                          extra: {
+                                            'departure': departure,
+                                            'listing': widget.listing
+                                          },
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              4.0), // Adjust the radius as needed
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Departure Details',
+                                        textAlign: TextAlign.center,
+                                      )),
+                                ),
+                              ],
                             ))
                       ]));
                 }));

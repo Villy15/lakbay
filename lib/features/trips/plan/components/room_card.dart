@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/core/util/accommodation_utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -32,6 +34,7 @@ class RoomCard extends ConsumerStatefulWidget {
   final num? guests;
   final DateTime? startDate;
   final DateTime? endDate;
+  final Query? query;
   const RoomCard(
       {super.key,
       required this.category,
@@ -40,7 +43,8 @@ class RoomCard extends ConsumerStatefulWidget {
       this.reason,
       this.guests,
       this.startDate,
-      this.endDate});
+      this.endDate,
+      this.query});
 
   @override
   ConsumerState<RoomCard> createState() => _RoomCardState();
@@ -63,10 +67,13 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     // final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     List<String> unavailableRoomUids =
         getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
-    return ref
-        .watch(getRoomByPropertiesProvider(RoomsParams(
-            unavailableRoomUids: unavailableRoomUids, guests: guests!)))
-        .when(
+    Query query = widget.query ??
+        FirebaseFirestore.instance.collectionGroup('availableRooms');
+    if (unavailableRoomUids.isNotEmpty) {
+      query = query.where('uid', whereNotIn: unavailableRoomUids);
+    }
+
+    return ref.watch(getRoomByPropertiesProvider(query)).when(
           data: (List<AvailableRoom> rooms) {
             if (rooms.isNotEmpty) {
               return SizedBox(
@@ -543,64 +550,6 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     }
 
     return allDates;
-  }
-
-  List<String> getUnavailableRoomUids(
-      List<ListingBookings> bookings, DateTime startDate, DateTime endDate) {
-    List<String> unavailableRoomUids = [];
-    Map<String, List<DateTime>> rooms = {};
-
-// Put all the dates booked under a certain room uid in map with its corresponding value being a list of all the dates
-    for (ListingBookings booking in bookings) {
-      DateTime currentDate = booking.startDate!;
-      if (_isDateInRange(currentDate, startDate, booking.endDate!) == true) {
-        while ((currentDate.isBefore(booking.endDate!))) {
-          if (rooms.containsKey(booking.roomUid)) {
-            rooms[booking.roomUid!]!.add(currentDate);
-          } else {
-            rooms[booking.roomUid!] = [currentDate];
-          }
-          // Move to the next day
-          currentDate = currentDate.add(const Duration(days: 1));
-        }
-        // Sort the list of dates for the room UID
-        rooms[booking.roomUid!]!.sort();
-      }
-    }
-
-// for each room in the map, you check if there is a date overlap, trying to find if there is any availability that fits your desired plan dates
-
-    rooms.forEach((roomUid, dateList) {
-      if (isDateOverlap(startDate, endDate, dateList) == true) {
-        unavailableRoomUids.add(roomUid);
-      }
-    });
-    return unavailableRoomUids;
-  }
-
-  bool isDateOverlap(
-      DateTime startDate, DateTime endDate, List<DateTime> dateList) {
-    // Loop through each date in the list
-    for (DateTime date in dateList) {
-      // debugPrint('dateList: $dateList');
-      // debugPrint('startDate: $startDate');
-      // debugPrint('endDate: $endDate');
-      // Check if the current date falls within the range
-      if (_isDateInRange(date, startDate, endDate) == false) {
-        return false;
-      }
-    }
-    if (dateList.first.difference(startDate).inDays >= 1 ||
-        endDate.difference(dateList.last).inDays >= 1) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  bool _isDateInRange(DateTime date, DateTime planStart, DateTime planEnd) {
-    return date.isAfter(planStart.subtract(const Duration(days: 1))) &&
-        date.isBefore(planEnd.add(const Duration(days: 1)));
   }
 
   Future<UserModel> submitUpdateProfile(

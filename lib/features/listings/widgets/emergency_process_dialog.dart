@@ -359,6 +359,10 @@ Future<dynamic> onTapFindRoomReplacement(
                 final bookings = await ref
                     .watch(getBookingsByPropertiesProvider((query)).future);
 
+                Query secondQuery = FirebaseFirestore.instance
+                    .collectionGroup('availableRooms')
+                    .where('listingId', isEqualTo: booking.listingId);
+
                 context.mounted
                     ? showDialog(
                         context: context,
@@ -387,7 +391,8 @@ Future<dynamic> onTapFindRoomReplacement(
                                     reason: 'emergency',
                                     guests: booking.guests,
                                     startDate: booking.startDate,
-                                    endDate: booking.endDate),
+                                    endDate: booking.endDate,
+                                    query: secondQuery),
                               ),
                             ),
                           ));

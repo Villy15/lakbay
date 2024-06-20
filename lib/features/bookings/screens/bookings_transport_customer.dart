@@ -35,8 +35,10 @@ class BookingsTransportCustomer extends ConsumerStatefulWidget {
 class _BookingsTransportCustomerState
     extends ConsumerState<BookingsTransportCustomer> {
   late String departureTime;
+  late String departed;
   late String departureDate;
   late String departureLocation;
+  late String arrived;
   late String arrivalTime;
   late String arrivalDate;
   late String arrivalLocation;
@@ -67,11 +69,20 @@ class _BookingsTransportCustomerState
   Widget build(BuildContext context) {
     debugPrint('File Name: booking_transport_customer.dart');
     departureTime = widget.booking.startTime!.format(context);
+    departed = widget.booking.serviceStart != null
+        ? DateFormat('h:mm a').format(widget.booking.serviceStart!)
+        : "";
     departureDate = DateFormat('E, MMM d').format(widget.booking.startDate!);
     departureLocation = widget.listing.pickUp!;
     arrivalTime = (widget.booking.endTime!).format(context);
+    arrived = widget.booking.serviceComplete != null
+        ? DateFormat('h:mm a').format(widget.booking.serviceComplete!)
+        : "";
     arrivalDate = DateFormat('E, MMM d').format(widget.booking.endDate!);
     arrivalLocation = widget.listing.destination!;
+    vehicleNo = widget.booking.vehicleNo != null
+        ? widget.booking.vehicleNo.toString()
+        : "Not Set";
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
@@ -176,7 +187,6 @@ class _BookingsTransportCustomerState
                                 ),
                               )
                             ]),
-
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8.0, vertical: 20),
@@ -214,18 +224,17 @@ class _BookingsTransportCustomerState
                                             style: const TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w200),
-                                          )
+                                          ),
+                                          Text(
+                                            ('Vehicle No: $vehicleNo'),
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w300),
+                                          ),
                                         ],
                                       ),
                                     ),
                                   ),
-                                  // Container(
-                                  //   height:
-                                  //       MediaQuery.sizeOf(context).height / 7.5,
-                                  //   width: 1,
-                                  //   color: Colors
-                                  //       .grey, // Choose the color of the line
-                                  // ),
                                   const VerticalDivider(
                                     color: Colors.grey,
                                     thickness: 5,
@@ -263,8 +272,48 @@ class _BookingsTransportCustomerState
                                             style: const TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w200),
-                                          )
+                                          ),
                                         ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Text(
+                                        ('Departed: $departed'),
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w300),
+                                      ),
+                                    ),
+                                  ),
+                                  const VerticalDivider(
+                                    color: Colors.grey,
+                                    thickness: 5,
+                                    width: 10,
+                                    indent: 0,
+                                    endIndent: 0,
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Text(
+                                        ('Arrived: $arrived'),
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w300),
                                       ),
                                     ),
                                   ),

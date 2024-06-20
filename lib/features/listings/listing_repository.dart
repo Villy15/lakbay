@@ -134,7 +134,7 @@ class ListingRepository {
     }
   }
 
-  // delete a booking in bookingss subcollection
+  // delete a booking in bookings subcollection
   FutureEither<String> deleteBooking(
       String listingId, ListingBookings booking) async {
     try {
@@ -390,13 +390,7 @@ class ListingRepository {
   }
 
   // Read room by properties
-  Stream<List<AvailableRoom>> readRoomByProperties(
-      List<String> unavailableRoomIds, num guests) {
-    Query query = FirebaseFirestore.instance.collectionGroup('availableRooms');
-
-    if (unavailableRoomIds.isNotEmpty) {
-      query = query.where('uid', whereNotIn: unavailableRoomIds);
-    }
+  Stream<List<AvailableRoom>> readRoomByProperties(Query query) {
     return query.snapshots().map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
         return AvailableRoom.fromJson(doc.data()! as Map<String, dynamic>);
@@ -495,6 +489,19 @@ class ListingRepository {
 
       // Return the uid of the newly added entertainment
       return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureEither<String> deleteDeparture(
+      String listingId, DepartureModel departure) async {
+    try {
+      await departureCollection(listingId).doc(departure.uid!).delete();
+
+      return right(departure.uid!);
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
