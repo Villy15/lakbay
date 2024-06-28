@@ -38,7 +38,7 @@ const cors = require("cors")({origin: true});
 const {google} = require("googleapis");
 const { topic } = require("firebase-functions/v1/pubsub");
 const serviceAccountKey = JSON.parse(Buffer.from(functions.config().service_account.key, 'base64').toString());
-
+const fetch = require('node-fetch');
 
 const OAuth2 = google.auth.OAuth2;
 
@@ -114,44 +114,6 @@ exports.sendEmail = functions.https.onRequest((req, res) => {
   });
 });
 
-// This is for notifying the users of their respective transactions
-// the transactions can be found through the bookings subcollection under listings collection, specifically listings/bookings/{bookingId}
-// exports.notifyUserPaymentListing = functions.https.onRequest(async (req, res) =>  {
-//   const notification = req.body.notification;
-
-//   // extract the contents of notification
-//   const notificationTitle = notification.notificationTitle;
-//   const notificationMessage = notification.notificationMessage;
-//   const userId = notification.userId;
-
-//   // create the payload
-//   const payload = {
-//     notification: {
-//       title: notificationTitle,
-//       body: notificationMessage
-//     }
-//   };
-
-//   const tokensCollection = await admin.firestore().collection('users').doc(userId).collection('tokens').get();
-
-//   const tokens = tokensCollection.docs.map(doc => doc.data().token);
-
-//   const message = {
-//     notification: payload.notification,
-//     tokens: tokens
-//   };
-
-//   return admin.messaging().sendMulticast(message)
-//   .then((response) => {
-//     console.log('Successfully sent message:', response);
-//     console.log('Results:', response.responses);
-//     res.status(200).send("Notification sent! This is the response and message tokens: " + response + " " + message.tokens);
-//   }).catch((error) => {
-//     console.log('Error sending message:', error);
-//     res.status(500).send("Error sending message.  This is the error message: " + error);
-//   });
-// });
-
 // this is to notify the publisher of the listing that a user has booked their listing. The notification can be sent
 // via the app. when terminated or backgrounded, the notification will be sent via the notification tray
 exports.notifyUsers = functions.https.onRequest(async (req, res) => {
@@ -189,84 +151,198 @@ exports.notifyUsers = functions.https.onRequest(async (req, res) => {
   })
 });
 
+exports.notifyUserPendingBalance = functions.pubsub.schedule('every 24 hours').onRun(async (context) => {
+  const bookingsCollection = admin.firestore().collection('listings').doc('bookings').get();
 
-// comment out for a while, since there will be more changes for the notifications --> incorporation of a new page dedicated for notifications
+  const bookings = bookingsCollection.docs.map(doc => doc.data());
 
-// // this is to notify the user that they have a pending balance for their booking due to the downpayment rate
-// // notify the user every day due to having a short downpayment period
-// // exports.notifyUserPendingBalance = functions.https.onRequest(async (req, res) => {
+  bookings.forEach(async booking => {
+    const paymentOption = booking.paymentOption;
+    const paymentStatus = booking.paymentStatus;
+    const amountPaid = booking.amountPaid;
+    const totalPrice = booking.totalPrice;
 
-// // });
+    const listingCollection = admin.firestore().collection('listings').doc(booking.listingId).get();
 
-// exports.notifyUserPendingBalance = functions.pubsub.schedule('every 24 hours').onRun(async (context) => {
-//   // get the firestore database under listings/bookings
-//   // on bookings, there are the following fields: 
-//     // paymentOption, paymentStatus, amountPaid, totalPrice
-//   // on listings, there are the following fields:
-//     // downpaymentRate, duration, cancellationRate, cancellationPeriod
-// });
+    const listing = listingCollection.docs.map(doc => doc.data());
 
+    const downpaymentRate = listing.downpaymentRate;
+    const duration = listing.duration;
 
-// // this is to notify the user that they have cancelled their booking for the listing
-// exports.notifyUserCancelledBooking = functions.https.onRequest(async (req, res) => { 
-//   const userInfo = req.body.userInfo;
-//   const bookingDetails = req.body.bookingDetails;
-//   const listingDetails = req.body.listingDetails;
+    if (paymentOption === "Downpayment" && paymentStatus === "Pending") {
+      const downpaymentRateNum = parseFloat(downpaymentRate);
+      const downpaymentAmount = totalPrice * downpaymentRateNum;
 
-//   // extract the contents of userInfo
-//   const userEmail = userInfo.email;
-//   const userName = userInfo.name;
-//   const userId = userInfo.userId ;
+      if (amountPaid < downpaymentAmount) {
+        const userId = booking.userId;
 
-//   // extract the contents of bookingDetails
-//   const bookingStartDate = bookingDetails.bookingStartDate;
-//   const bookingEndDate = bookingDetails.bookingEndDate;
-//   const amountPaid = bookingDetails.amountPaid;
-//   const paymentOption = bookingDetails.paymentOption;
-//   const paymentStatus = bookingDetails.paymentStatus;
-//   const listingTitle = bookingDetails.listingTitle;
+        const notification = {
+          notificationTitle: "Pending Balance",
+          notificationMessage: "You have a pending balance for your booking. Please settle the downpayment amount within the given period to avoid any issues.",
+          userId: userId
+        }
 
-//   // extract the contents of listingDetails == important ones
-//   const cancellationRate = listingDetails.cancellationRate;
+        const payload = {
+          notification: {
+            title: notification.notificationTitle,
+            body: notification.notificationMessage
+          }
+        };
 
-//   // convert the cancellation rate to a numerical value
-//   const cancellationRateNum = parseFloat(cancellationRate);
+        const tokensCollection = await admin.firestore().collection('users').doc(userId).collection('tokens').get();
 
-//   // calculate the refund amount
-//   const refundAmount = amountPaid * cancellationRateNum;
+        const tokens = tokensCollection.docs.map(doc => doc.data().token);
 
-//   // create the payload
+        const message = {
+          notification: payload.notification,
+          tokens: tokens
+        };
 
-//   const tokensCollection = await admin.firestore().collection('users').doc(userId).collection('tokens').get();
+        return admin.messaging().sendMulticast(message)
+        .then((response) => {
+          console.log('Successfully sent message:', response);
+          console.log('Results:', response.responses);
+          res.status(200).send("Notification sent! This is the response and message tokens: " + response + " " + message.tokens);
+        }).catch((error) => {
+          console.log('Error sending message:', error);
+          res.status(500).send("Error sending message.  This is the error message: " + error);
+        });
+      }
+    }
+  });
+});
 
-//   const tokens = tokensCollection.docs.map(doc => doc.data().token);
-
-//   const message = {
-//     notification: payload.notification,
-//     tokens: tokens
+// integration of PayMaya API for payment processing
+// exports.payWithPaymaya = functions.https.onRequest(async (req, res) => {
+//   const url = 'https://pg-sandbox.paymaya.com/payments/v1/payment-tokens';
+//   const headers = {
+//     'Content-Type': 'application/json',
+//     'Authorization': 'Basic ' + functions.config().paymaya.secret_key
 //   };
 
-//   return admin.messaging().sendMulticast(message).then((response) => {
-//     console.log('Successfully sent message:', response);
-//     res.status(200).send("Notification sent! This is the response: " + response);
-//   }
-//   ).catch((error) => {
-//     console.log('Error sending message:', error);
-//     res.status(500).send("Error sending message.  This is the error message: " + error);
+//   const body = JSON.stringify({
+//     // payment details such as cardNumber, cardType, csv, expiryMonth, expiryYear, and totalAmount
 //   });
+
+//   const response = await axios.post(url, body, {headers: headers});
+
+//   if (response.ok) {
+//     const jsonResponse = await response.json();
+//     const paymentToken = jsonResponse.paymentTokenId;
+//     const redirectUrl = jsonResponse.redirectUrl;
+
+//     // Send the paymentToken and redirectUrl back to the Flutter app
+//     res.json({paymentToken, redirectUrl});  
+//   }
+//   else {
+//     console.error('Request failed with status: ', response.status);
+//     res.status(500).send('Failed to create payment token.');
+//   }
+
+  
 // });
 
-// // this is to notify the publisher that the user who booked their listing has cancelled their booking
-// exports.notifyPublisherCancelledBooking = functions.https.onRequest(async (req, res) => {
 
-// });
+// PayMaya API with checkout 
+exports.payWithPaymayaCheckout = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
 
-// // this is to notify cooperative users that have been assigned to the publisher's listing of their task/s
-// exports.notifyCoopMemberTasks = functions.https.onRequest(async (req, res) => {
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    res.end();
+    return;
+  }
+  
+  const url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
+  const secretKey = functions.config().paymaya.public_key;
+  const encodedSecretKey = Buffer.from(secretKey + ":").toString('base64');
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Basic ' + encodedSecretKey
+  };
 
-// });
+  const payment = req.body.payment;
+  const card = req.body.card;
+  const userDetails = req.body.userDetails;
+  const listingDetails = req.body.listingDetails;
+  const redirectUrls = req.body.redirectUrls;
 
-// // this is to notify the users when there is chat activity in the chatroom
-// exports.notifyChatActivity = functions.https.onRequest(async (req, res) => {
+  // extract the payment details
+  const totalPrice = payment.totalPrice;
+  const paymentOption = payment.paymentOption;
 
-// });
+  // extract the user details
+  const [firstName, lastName] = userDetails.name.split(' ');
+  const phoneNumber = userDetails.phone;
+
+  // extract the card details
+  const cardNumber = card.cardNumber;
+  const expiryMonth = card.expiryMonth;
+  const expiryYear = card.expiryYear;
+  const cvv = card.cvv;
+
+  // extract the listing details
+  const listingName = listingDetails.listingTitle;
+  
+
+  const body = JSON.stringify({
+    // payment details such as totalAmount, buyer, items, and redirectUrl
+    authorizationType: "NORMAL",
+    totalAmount: {
+      value: parseFloat(totalPrice).toFixed(2),
+      currency: 'PHP',
+      details: { discount: 0, serviceCharge: 0, shippingFee: 0, tax: 0, subtotal: totalPrice }
+    },
+    buyer: {
+      firstName: firstName,
+      lastName: lastName,
+      contact: {
+        phone: phoneNumber
+      }
+    },
+    items: [{
+      name: listingName,
+      quantity: 1,
+      totalAmount: {
+        value: parseFloat(totalPrice).toFixed(2),
+        details: { discount: 0, unitPrice: totalPrice }
+      }
+    }],
+
+    redirectUrl: {
+      success: redirectUrls.success,
+      failure: redirectUrls.failure,
+      cancel: redirectUrls.cancel
+    },
+    requestReferenceNumber: listingDetails.listingId
+  });
+
+  console.log('Request Headers:', headers);
+  console.log('Request Body:', body);
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: body
+    });
+
+    const data = await response.json();
+    console.log('Success:', data);
+    
+    if (data.checkoutId) {
+      // redirect the user to the PayMaya payment page
+      res.status(200).json({statusCode: 303, redirectUrl: data.redirectUrl});
+    }
+    else {
+      console.error('Error:', data);
+      res.status(500).send('Failed to create checkout. Here is the data: ' + JSON.stringify(data));
+    }
+  } catch (e) {
+    console.error('Error:', e);
+    res.status(500).send('Failed to create checkout. Error: ' + e);
+  }
+
+});

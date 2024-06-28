@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 // import 'package:cooptourism/core/theme/dark_theme.dart';
@@ -9,7 +10,10 @@ import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/payments/payment_web_view.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:uni_links/uni_links.dart';
 
 enum PaymentOption { downpayment, fullPayment }
 
@@ -43,6 +47,8 @@ class _CustomerAccomodationCheckoutState
   late num downpaymentAmount;
   late num amountDue;
 
+  StreamSubscription? _sub;
+
   late bool validDownpayment;
   @override
   void initState() {
@@ -65,6 +71,65 @@ class _CustomerAccomodationCheckoutState
     _selectedPaymentOption = validDownpayment == true
         ? PaymentOption.downpayment
         : PaymentOption.fullPayment;
+
+    initUniLinks();
+  }
+  
+  void initUniLinks() async {
+    _sub = getUriLinksStream().listen((Uri? uri) {
+      if (uri != null) {
+        handleUri(uri);
+      }
+    }, onError: (err) {
+      debugPrint('Failed to get latest link: $err.');
+    });
+  }
+
+
+  @override
+  void dispose() {
+    if (_sub != null) {
+      _sub!.cancel();
+      _sub = null;
+    }
+    super.dispose();
+  }
+
+  void handleUri(Uri uri) {
+    switch(uri.path) {
+      case '/payment-success': 
+        // handle payment success
+        // show a toast message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Payment successful!'),
+            duration: Duration(seconds: 5),
+          ),
+        );
+        // close the launch url
+
+        break;
+      case '/payment-failure':
+        // handle payment failure
+        // show a toast message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Payment failed!'),
+            duration: Duration(seconds: 5),
+          ),
+        );
+        break;
+      case '/payment-cancel':
+        // handle payment cancelled
+        // show a toast message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Payment cancelled!'),
+            duration: Duration(seconds: 5),
+          ),
+        );
+        break;
+    }
   }
 
   @override
@@ -79,7 +144,7 @@ class _CustomerAccomodationCheckoutState
             _priceDetails(context),
             // _paymentMethod(context),
             _listingRules(context),
-            _confirmPay(context)
+            _confirmPay(context),
           ],
         ),
       ),
@@ -87,6 +152,7 @@ class _CustomerAccomodationCheckoutState
   }
 
   Widget _confirmPay(BuildContext context) {
+    bool paymentSuccessful;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -134,13 +200,18 @@ class _CustomerAccomodationCheckoutState
                       totalPrice: num.parse(totalPrice.toStringAsFixed(2)),
                       amountPaid: num.parse(amountDue.toStringAsFixed(2)));
                 });
-                ref
+
+                paymentSuccessful = await payWithPaymaya(updatedBooking);
+
+                if (paymentSuccessful) {
+                  ref
                     .read(listingControllerProvider.notifier)
                     .addBooking(ref, updatedBooking, widget.listing, context);
+                }
+                
 
-                // sending a notification
-                // await notifyPaymentUser(updatedBooking);
-                // await notifyPublisher(widget.listing, updatedBooking);
+                
+
               },
               child: Text('Confirm and Pay',
                   style: TextStyle(
@@ -152,6 +223,77 @@ class _CustomerAccomodationCheckoutState
       ),
     );
   }
+
+
+  // Calling the PayMaya API for checkout payment
+  Future<bool> payWithPaymaya(ListingBookings listingBookings) async {
+    final response = await http.post(
+      Uri.parse('https://us-central1-lakbay-cd97e.cloudfunctions.net/payWithPaymayaCheckout'),
+      headers: <String, String> {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic> {
+        'payment': {
+          'paymentOption': _selectedPaymentOption.name,
+          'totalPrice': amountDue,
+        },
+        'card': {
+          'cardNumber': '4123450131001381',
+          'expMonth': '12',
+          'expYear': '2025',
+          'cvv': '123',
+          'cardType': 'VISA',
+          'billingAddress': {
+            'line1': '6F Launchpad',
+            'line2': 'Reliance Street',
+            'city': 'Mandaluyong',
+            'state': 'Metro Manila',
+            'zipCode': '1552',
+            'countryCode': 'PH'
+          }
+        },
+        'userDetails': {
+          'name': listingBookings.customerName,
+          'phone': listingBookings.customerPhoneNo,
+        },
+        'listingDetails': {
+          'listingId': listingBookings.listingId,
+          'listingTitle': listingBookings.listingTitle,
+        },
+        'redirectUrls' : {
+          'success': 'https://lakbay.com/payment-success',
+          'failure': 'https://lakbay.com/payment-failure',
+          'cancel': 'https://lakbay.com/payment-cancel',
+        }
+      }),
+    );
+
+    Map<String, dynamic> responseBody = jsonDecode(response.body);
+    int statusCode = responseBody['statusCode'];
+    String redirectUrl = responseBody['redirectUrl'];
+    Uri uri = Uri.parse(redirectUrl);
+
+    if (statusCode == 303) {
+      debugPrint('Processing checkout. This is the response: $responseBody');
+      debugPrint('Redirecting to PayMaya checkout page...');
+
+      // run launchUrl if want to test the payment since paymentWebView is in-progress
+      launchUrl(uri);
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => PaymentWebView(uri: uri),
+      //   ),
+      // );
+      // if successful, return true
+      return true;
+    }
+    else {
+      debugPrint('Failed to process checkout. This is the response: $responseBody');
+      return false;
+    }
+  }
+
 
   Future<void> notifyPublisher(
       ListingModel listingModel, ListingBookings updatedBookings) async {
