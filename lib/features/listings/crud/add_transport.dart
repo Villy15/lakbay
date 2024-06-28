@@ -21,6 +21,8 @@ import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/wrappers/committee_params.dart';
 
+enum CancelPolicy { fixedCancelRate, percentageCancelRate }
+
 class AddTransport extends ConsumerStatefulWidget {
   final CooperativeModel coop;
   final String category;
@@ -70,10 +72,12 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
   final TextEditingController _pickupController = TextEditingController();
+
   final TextEditingController _cancellationRateController =
       TextEditingController();
   final TextEditingController _cancellationPeriodController =
       TextEditingController();
+  CancelPolicy _selectedCancel = CancelPolicy.fixedCancelRate; // Default value
 
   @override
   Widget build(BuildContext context) {
@@ -210,9 +214,13 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                 availableTransport: transport,
                                 cancellationPeriod: num.parse(
                                     _cancellationPeriodController.text),
-                                cancellationRate: num.parse(
-                                        (_cancellationRateController.text)) /
-                                    100,
+                                cancellationRate: _selectedCancel ==
+                                        CancelPolicy.fixedCancelRate
+                                    ? num.parse(
+                                        (_cancellationRateController.text))
+                                    : num.parse((_cancellationRateController
+                                            .text)) /
+                                        100,
                               );
 
                               ref
@@ -481,19 +489,13 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             itemCount: fixedTasks?.length,
             itemBuilder: ((context, taskIndex) {
               return ListTile(
-                title: DisplayText(
-                  text: 'Task: ${fixedTasks![taskIndex].name}',
-                  lines: 3,
-                  style: const TextStyle(
-                    fontSize: 16, // Adjust text style
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                leading: Text("[${taskIndex + 1}]. "),
+                title: Text(fixedTasks![taskIndex].name),
                 trailing: IconButton(
                   icon: const Icon(
                     Icons.close,
                     color: Colors.black,
-                    size: 16,
+                    size: 20,
                   ), // 'X' icon
                   onPressed: () {
                     setState(
@@ -503,32 +505,32 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                     );
                   },
                 ),
-                subtitle: SizedBox(
-                  height: MediaQuery.sizeOf(context).height * .03,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: fixedTasks?[taskIndex].assignedNames.length ?? 0,
-                    itemBuilder: (context, nameIndex) {
-                      return nameIndex == 0
-                          ? Text(
-                              'Assigned: ${fixedTasks?[taskIndex].assignedNames[nameIndex]}, ',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            )
-                          : Text(
-                              '${fixedTasks?[taskIndex].assignedNames[nameIndex]}, ',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            );
-                    },
-                  ),
-                ),
+                // subtitle: SizedBox(
+                //   height: MediaQuery.sizeOf(context).height * .03,
+                //   child: ListView.builder(
+                //     shrinkWrap: true,
+                //     physics: const NeverScrollableScrollPhysics(),
+                //     scrollDirection: Axis.horizontal,
+                //     itemCount: fixedTasks?[taskIndex].assignedNames.length ?? 0,
+                //     itemBuilder: (context, nameIndex) {
+                //       return nameIndex == 0
+                //           ? Text(
+                //               'Assigned: ${fixedTasks?[taskIndex].assignedNames[nameIndex]}, ',
+                //               style: const TextStyle(
+                //                 fontSize: 12,
+                //                 fontWeight: FontWeight.w300,
+                //               ),
+                //             )
+                //           : Text(
+                //               '${fixedTasks?[taskIndex].assignedNames[nameIndex]}, ',
+                //               style: const TextStyle(
+                //                 fontSize: 12,
+                //                 fontWeight: FontWeight.w300,
+                //               ),
+                //             );
+                //     },
+                //   ),
+                // ),
               );
             })),
         if (fixedTasks!.isEmpty)
@@ -590,136 +592,136 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 const SizedBox(
                   height: 10,
                 ),
-                Column(
-                  children: [
-                    TextFormField(
-                      maxLines: 1,
-                      decoration: const InputDecoration(
-                          labelText: 'Members Assigned*',
-                          border: OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior
-                              .always, // Keep the label always visible
-                          suffixIcon: Icon(Icons.arrow_drop_down),
-                          hintText:
-                              "Press to select member" // Dropdown arrow icon
-                          ),
-                      readOnly: true,
-                      canRequestFocus: false,
-                      onTap: () async {
-                        members = await ref.read(
-                            getAllMembersInCommitteeProvider(CommitteeParams(
-                          committeeName: committeeController.text,
-                          coopUid: ref.watch(userProvider)!.currentCoop!,
-                        )).future);
+                // Column(
+                //   children: [
+                //     TextFormField(
+                //       maxLines: 1,
+                //       decoration: const InputDecoration(
+                //           labelText: 'Members Assigned*',
+                //           border: OutlineInputBorder(),
+                //           floatingLabelBehavior: FloatingLabelBehavior
+                //               .always, // Keep the label always visible
+                //           suffixIcon: Icon(Icons.arrow_drop_down),
+                //           hintText:
+                //               "Press to select member" // Dropdown arrow icon
+                //           ),
+                //       readOnly: true,
+                //       canRequestFocus: false,
+                //       onTap: () async {
+                //         members = await ref.read(
+                //             getAllMembersInCommitteeProvider(CommitteeParams(
+                //           committeeName: committeeController.text,
+                //           coopUid: ref.watch(userProvider)!.currentCoop!,
+                //         )).future);
 
-                        members = members!
-                            .where((member) =>
-                                !assignedNames.contains(member.name))
-                            .toList();
-                        if (context.mounted) {
-                          return showModalBottomSheet(
-                            context: context,
-                            builder: (builder) {
-                              return Container(
-                                padding: const EdgeInsets.all(
-                                    10.0), // Padding for overall container
-                                child: Column(
-                                  children: [
-                                    // Optional: Add a title or header for the modal
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10.0),
-                                      child: Text(
-                                        "Members (${committeeController.text})",
-                                        style: const TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: members!.length,
-                                        itemBuilder: (context, index) {
-                                          return ListTile(
-                                            title: Text(
-                                              members![index].name,
-                                              style: const TextStyle(
-                                                  fontSize:
-                                                      16.0), // Adjust font size
-                                            ),
-                                            onTap: () {
-                                              setState(
-                                                () {
-                                                  assignedIds.add(
-                                                      members![index].uid!);
-                                                  assignedNames.add(
-                                                      members![index].name);
-                                                },
-                                              );
-                                              context.pop();
-                                            },
-                                            // Optional: Add trailing icons or actions
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.sizeOf(context).height * .13,
-                      width: double.infinity,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: assignedNames.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            dense: true,
-                            contentPadding: const EdgeInsets.all(0),
-                            horizontalTitleGap: 8,
-                            leading: Text('[${index + 1}]'),
-                            title: Text(
-                              assignedNames[index],
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            trailing: IconButton(
-                              icon: const Icon(
-                                Icons.close,
-                                color: Colors.black,
-                                size: 16,
-                              ), // 'X' icon
-                              onPressed: () {
-                                setState(
-                                  () {
-                                    assignedIds.remove(members![members!
-                                            .indexWhere((element) =>
-                                                element.name ==
-                                                assignedNames[index])]
-                                        .uid!);
-                                    assignedNames.removeAt(index);
-                                  },
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                  ],
-                ),
+                //         members = members!
+                //             .where((member) =>
+                //                 !assignedNames.contains(member.name))
+                //             .toList();
+                //         if (context.mounted) {
+                //           return showModalBottomSheet(
+                //             context: context,
+                //             builder: (builder) {
+                //               return Container(
+                //                 padding: const EdgeInsets.all(
+                //                     10.0), // Padding for overall container
+                //                 child: Column(
+                //                   children: [
+                //                     // Optional: Add a title or header for the modal
+                //                     Padding(
+                //                       padding: const EdgeInsets.symmetric(
+                //                           vertical: 10.0),
+                //                       child: Text(
+                //                         "Members (${committeeController.text})",
+                //                         style: const TextStyle(
+                //                           fontSize: 18.0,
+                //                           fontWeight: FontWeight.bold,
+                //                         ),
+                //                       ),
+                //                     ),
+                //                     Expanded(
+                //                       child: ListView.builder(
+                //                         itemCount: members!.length,
+                //                         itemBuilder: (context, index) {
+                //                           return ListTile(
+                //                             title: Text(
+                //                               members![index].name,
+                //                               style: const TextStyle(
+                //                                   fontSize:
+                //                                       16.0), // Adjust font size
+                //                             ),
+                //                             onTap: () {
+                //                               setState(
+                //                                 () {
+                //                                   assignedIds.add(
+                //                                       members![index].uid!);
+                //                                   assignedNames.add(
+                //                                       members![index].name);
+                //                                 },
+                //                               );
+                //                               context.pop();
+                //                             },
+                //                             // Optional: Add trailing icons or actions
+                //                           );
+                //                         },
+                //                       ),
+                //                     ),
+                //                   ],
+                //                 ),
+                //               );
+                //             },
+                //           );
+                //         }
+                //       },
+                //     ),
+                //     const SizedBox(
+                //       height: 5,
+                //     ),
+                //     SizedBox(
+                //       height: MediaQuery.sizeOf(context).height * .13,
+                //       width: double.infinity,
+                //       child: ListView.builder(
+                //         shrinkWrap: true,
+                //         itemCount: assignedNames.length,
+                //         itemBuilder: (context, index) {
+                //           return ListTile(
+                //             dense: true,
+                //             contentPadding: const EdgeInsets.all(0),
+                //             horizontalTitleGap: 8,
+                //             leading: Text('[${index + 1}]'),
+                //             title: Text(
+                //               assignedNames[index],
+                //               style: const TextStyle(
+                //                 fontSize: 14,
+                //                 color: Colors.black,
+                //                 overflow: TextOverflow.ellipsis,
+                //               ),
+                //             ),
+                //             trailing: IconButton(
+                //               icon: const Icon(
+                //                 Icons.close,
+                //                 color: Colors.black,
+                //                 size: 16,
+                //               ), // 'X' icon
+                //               onPressed: () {
+                //                 setState(
+                //                   () {
+                //                     assignedIds.remove(members![members!
+                //                             .indexWhere((element) =>
+                //                                 element.name ==
+                //                                 assignedNames[index])]
+                //                         .uid!);
+                //                     assignedNames.removeAt(index);
+                //                   },
+                //                 );
+                //               },
+                //             ),
+                //           );
+                //         },
+                //       ),
+                //     )
+                //   ],
+                // ),
               ]),
               const SizedBox(height: 65),
               Row(
@@ -766,44 +768,134 @@ class _AddTransportState extends ConsumerState<AddTransport> {
     ];
     return Column(
       children: [
-        Row(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: TextFormField(
-                controller: _cancellationRateController,
-                maxLines: 1,
-                decoration: const InputDecoration(
-                    labelText: 'Cancellation Rate (%)*',
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    hintText: "e.g., 5",
-                    suffixText: "%"),
-                onTap: () {},
-              ),
-            )
+            const Text('Cancellation',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+
+            // Radio buttons for payment options
+            Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<CancelPolicy>(
+                    title: const Text('Fixed Rate'),
+                    value: CancelPolicy.fixedCancelRate,
+                    groupValue: _selectedCancel,
+                    onChanged: (CancelPolicy? value) {
+                      setState(() {
+                        _selectedCancel = value!;
+                      });
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<CancelPolicy>(
+                    title: const Text('Percent Rate'),
+                    value: CancelPolicy.percentageCancelRate,
+                    groupValue: _selectedCancel,
+                    onChanged: (CancelPolicy? value) {
+                      setState(() {
+                        _selectedCancel = value!;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+            if (_selectedCancel == CancelPolicy.fixedCancelRate) ...[
+              rendFixedCancelRate(),
+            ],
+
+            if (_selectedCancel == CancelPolicy.percentageCancelRate) ...[
+              rendPercentageCancelRate(),
+            ],
           ],
         ),
-        const SizedBox(
-          height: 10,
-        ),
-        TextFormField(
-          controller: _cancellationPeriodController,
-          maxLines: 1,
-          keyboardType: TextInputType.number, // For numeric input
-          decoration: const InputDecoration(
-              labelText:
-                  'Cancellation Period (Day/s)*', // Indicate it's a percentage
-              border: OutlineInputBorder(),
-              floatingLabelBehavior:
-                  FloatingLabelBehavior.always, // Keep the label always visible
-              hintText: "e.g., 5 Days before the booked date",
-              suffixText: "Day/s"),
-          onTap: () {
-            // Handle tap if needed, e.g., showing a dialog to select a percentage
-          },
-        ),
         addNotes(notes),
+      ],
+    );
+  }
+
+  Row rendPercentageCancelRate() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationRateController,
+            maxLines: 1,
+            decoration: const InputDecoration(
+                labelText: 'Percentage Rate',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5",
+                suffixText: "%"),
+            onTap: () {},
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationPeriodController,
+            maxLines: 1,
+            keyboardType: TextInputType.number, // For numeric input
+            decoration: const InputDecoration(
+                labelText: 'Cancellation Period', // Indicate it's a percentage
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5 Days before the booked date",
+                suffixText: "Day/s"),
+            onTap: () {
+              // Handle tap if needed, e.g., showing a dialog to select a percentage
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row rendFixedCancelRate() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationRateController,
+            maxLines: 1,
+            decoration: const InputDecoration(
+                labelText: 'Fixed Rate',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5",
+                suffixText: "₱"),
+            onTap: () {},
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationPeriodController,
+            maxLines: 1,
+            keyboardType: TextInputType.number, // For numeric input
+            decoration: const InputDecoration(
+                labelText: 'Cancellation Period', // Indicate it's a percentage
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5 Days before the booked date",
+                suffixText: "Day/s"),
+            onTap: () {
+              // Handle tap if needed, e.g., showing a dialog to select a percentage
+            },
+          ),
+        ),
       ],
     );
   }

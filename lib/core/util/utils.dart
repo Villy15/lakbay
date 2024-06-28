@@ -63,3 +63,42 @@ class TimestampSerializer implements JsonConverter<DateTime?, Timestamp?> {
     return dateTime != null ? Timestamp.fromDate(dateTime) : null;
   }
 }
+
+String capitalize(String text) {
+  return text[0].toUpperCase() + text.substring(1);
+}
+
+String deCapitalize(String text) {
+  return text.toLowerCase();
+}
+
+class BiWeightText extends StatelessWidget {
+  final String title;
+  final String content;
+  const BiWeightText({super.key, required this.title, required this.content});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          TextSpan(
+            text: content,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight:
+                  FontWeight.normal, // Different font weight for user.name
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

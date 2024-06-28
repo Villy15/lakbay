@@ -35,6 +35,8 @@ mixin _$CooperativeModel {
   num? get membershipDividends => throw _privateConstructorUsedError;
   num? get shareCapital => throw _privateConstructorUsedError;
   num? get minimumMemberShareCount => throw _privateConstructorUsedError;
+  Map<String, TourismJobs?>? get tourismJobs =>
+      throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get dateCreated => throw _privateConstructorUsedError;
   ValidityStatus? get validityStatus => throw _privateConstructorUsedError;
@@ -68,6 +70,7 @@ abstract class $CooperativeModelCopyWith<$Res> {
       num? membershipDividends,
       num? shareCapital,
       num? minimumMemberShareCount,
+      Map<String, TourismJobs?>? tourismJobs,
       @TimestampSerializer() DateTime? dateCreated,
       ValidityStatus? validityStatus,
       ValidationFiles? validationFiles});
@@ -104,6 +107,7 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
     Object? membershipDividends = freezed,
     Object? shareCapital = freezed,
     Object? minimumMemberShareCount = freezed,
+    Object? tourismJobs = freezed,
     Object? dateCreated = freezed,
     Object? validityStatus = freezed,
     Object? validationFiles = freezed,
@@ -169,6 +173,10 @@ class _$CooperativeModelCopyWithImpl<$Res, $Val extends CooperativeModel>
           ? _value.minimumMemberShareCount
           : minimumMemberShareCount // ignore: cast_nullable_to_non_nullable
               as num?,
+      tourismJobs: freezed == tourismJobs
+          ? _value.tourismJobs
+          : tourismJobs // ignore: cast_nullable_to_non_nullable
+              as Map<String, TourismJobs?>?,
       dateCreated: freezed == dateCreated
           ? _value.dateCreated
           : dateCreated // ignore: cast_nullable_to_non_nullable
@@ -233,6 +241,7 @@ abstract class _$$CooperativeModelImplCopyWith<$Res>
       num? membershipDividends,
       num? shareCapital,
       num? minimumMemberShareCount,
+      Map<String, TourismJobs?>? tourismJobs,
       @TimestampSerializer() DateTime? dateCreated,
       ValidityStatus? validityStatus,
       ValidationFiles? validationFiles});
@@ -269,6 +278,7 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
     Object? membershipDividends = freezed,
     Object? shareCapital = freezed,
     Object? minimumMemberShareCount = freezed,
+    Object? tourismJobs = freezed,
     Object? dateCreated = freezed,
     Object? validityStatus = freezed,
     Object? validationFiles = freezed,
@@ -334,6 +344,10 @@ class __$$CooperativeModelImplCopyWithImpl<$Res>
           ? _value.minimumMemberShareCount
           : minimumMemberShareCount // ignore: cast_nullable_to_non_nullable
               as num?,
+      tourismJobs: freezed == tourismJobs
+          ? _value._tourismJobs
+          : tourismJobs // ignore: cast_nullable_to_non_nullable
+              as Map<String, TourismJobs?>?,
       dateCreated: freezed == dateCreated
           ? _value.dateCreated
           : dateCreated // ignore: cast_nullable_to_non_nullable
@@ -369,11 +383,13 @@ class _$CooperativeModelImpl implements _CooperativeModel {
       this.membershipDividends,
       this.shareCapital,
       this.minimumMemberShareCount,
+      final Map<String, TourismJobs?>? tourismJobs,
       @TimestampSerializer() this.dateCreated,
       this.validityStatus,
       this.validationFiles})
       : _members = members,
-        _managers = managers;
+        _managers = managers,
+        _tourismJobs = tourismJobs;
 
   factory _$CooperativeModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$CooperativeModelImplFromJson(json);
@@ -420,6 +436,16 @@ class _$CooperativeModelImpl implements _CooperativeModel {
   final num? shareCapital;
   @override
   final num? minimumMemberShareCount;
+  final Map<String, TourismJobs?>? _tourismJobs;
+  @override
+  Map<String, TourismJobs?>? get tourismJobs {
+    final value = _tourismJobs;
+    if (value == null) return null;
+    if (_tourismJobs is EqualUnmodifiableMapView) return _tourismJobs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
   @override
   @TimestampSerializer()
   final DateTime? dateCreated;
@@ -430,7 +456,7 @@ class _$CooperativeModelImpl implements _CooperativeModel {
 
   @override
   String toString() {
-    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers, membershipFee: $membershipFee, membershipDividends: $membershipDividends, shareCapital: $shareCapital, minimumMemberShareCount: $minimumMemberShareCount, dateCreated: $dateCreated, validityStatus: $validityStatus, validationFiles: $validationFiles)';
+    return 'CooperativeModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, code: $code, members: $members, managers: $managers, membershipFee: $membershipFee, membershipDividends: $membershipDividends, shareCapital: $shareCapital, minimumMemberShareCount: $minimumMemberShareCount, tourismJobs: $tourismJobs, dateCreated: $dateCreated, validityStatus: $validityStatus, validationFiles: $validationFiles)';
   }
 
   @override
@@ -462,6 +488,8 @@ class _$CooperativeModelImpl implements _CooperativeModel {
             (identical(
                     other.minimumMemberShareCount, minimumMemberShareCount) ||
                 other.minimumMemberShareCount == minimumMemberShareCount) &&
+            const DeepCollectionEquality()
+                .equals(other._tourismJobs, _tourismJobs) &&
             (identical(other.dateCreated, dateCreated) ||
                 other.dateCreated == dateCreated) &&
             (identical(other.validityStatus, validityStatus) ||
@@ -472,26 +500,28 @@ class _$CooperativeModelImpl implements _CooperativeModel {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      uid,
-      name,
-      description,
-      address,
-      city,
-      province,
-      imagePath,
-      imageUrl,
-      code,
-      const DeepCollectionEquality().hash(_members),
-      const DeepCollectionEquality().hash(_managers),
-      membershipFee,
-      membershipDividends,
-      shareCapital,
-      minimumMemberShareCount,
-      dateCreated,
-      validityStatus,
-      validationFiles);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        uid,
+        name,
+        description,
+        address,
+        city,
+        province,
+        imagePath,
+        imageUrl,
+        code,
+        const DeepCollectionEquality().hash(_members),
+        const DeepCollectionEquality().hash(_managers),
+        membershipFee,
+        membershipDividends,
+        shareCapital,
+        minimumMemberShareCount,
+        const DeepCollectionEquality().hash(_tourismJobs),
+        dateCreated,
+        validityStatus,
+        validationFiles
+      ]);
 
   @JsonKey(ignore: true)
   @override
@@ -525,6 +555,7 @@ abstract class _CooperativeModel implements CooperativeModel {
       final num? membershipDividends,
       final num? shareCapital,
       final num? minimumMemberShareCount,
+      final Map<String, TourismJobs?>? tourismJobs,
       @TimestampSerializer() final DateTime? dateCreated,
       final ValidityStatus? validityStatus,
       final ValidationFiles? validationFiles}) = _$CooperativeModelImpl;
@@ -562,6 +593,8 @@ abstract class _CooperativeModel implements CooperativeModel {
   num? get shareCapital;
   @override
   num? get minimumMemberShareCount;
+  @override
+  Map<String, TourismJobs?>? get tourismJobs;
   @override
   @TimestampSerializer()
   DateTime? get dateCreated;
@@ -959,5 +992,295 @@ abstract class _ValidityStatus implements ValidityStatus {
   @override
   @JsonKey(ignore: true)
   _$$ValidityStatusImplCopyWith<_$ValidityStatusImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+TourismJobs _$TourismJobsFromJson(Map<String, dynamic> json) {
+  return _TourismJobs.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TourismJobs {
+  List<Job>? get jobs => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $TourismJobsCopyWith<TourismJobs> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TourismJobsCopyWith<$Res> {
+  factory $TourismJobsCopyWith(
+          TourismJobs value, $Res Function(TourismJobs) then) =
+      _$TourismJobsCopyWithImpl<$Res, TourismJobs>;
+  @useResult
+  $Res call({List<Job>? jobs});
+}
+
+/// @nodoc
+class _$TourismJobsCopyWithImpl<$Res, $Val extends TourismJobs>
+    implements $TourismJobsCopyWith<$Res> {
+  _$TourismJobsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? jobs = freezed,
+  }) {
+    return _then(_value.copyWith(
+      jobs: freezed == jobs
+          ? _value.jobs
+          : jobs // ignore: cast_nullable_to_non_nullable
+              as List<Job>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TourismJobsImplCopyWith<$Res>
+    implements $TourismJobsCopyWith<$Res> {
+  factory _$$TourismJobsImplCopyWith(
+          _$TourismJobsImpl value, $Res Function(_$TourismJobsImpl) then) =
+      __$$TourismJobsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<Job>? jobs});
+}
+
+/// @nodoc
+class __$$TourismJobsImplCopyWithImpl<$Res>
+    extends _$TourismJobsCopyWithImpl<$Res, _$TourismJobsImpl>
+    implements _$$TourismJobsImplCopyWith<$Res> {
+  __$$TourismJobsImplCopyWithImpl(
+      _$TourismJobsImpl _value, $Res Function(_$TourismJobsImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? jobs = freezed,
+  }) {
+    return _then(_$TourismJobsImpl(
+      jobs: freezed == jobs
+          ? _value._jobs
+          : jobs // ignore: cast_nullable_to_non_nullable
+              as List<Job>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TourismJobsImpl implements _TourismJobs {
+  _$TourismJobsImpl({final List<Job>? jobs}) : _jobs = jobs;
+
+  factory _$TourismJobsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TourismJobsImplFromJson(json);
+
+  final List<Job>? _jobs;
+  @override
+  List<Job>? get jobs {
+    final value = _jobs;
+    if (value == null) return null;
+    if (_jobs is EqualUnmodifiableListView) return _jobs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'TourismJobs(jobs: $jobs)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TourismJobsImpl &&
+            const DeepCollectionEquality().equals(other._jobs, _jobs));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_jobs));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TourismJobsImplCopyWith<_$TourismJobsImpl> get copyWith =>
+      __$$TourismJobsImplCopyWithImpl<_$TourismJobsImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TourismJobsImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _TourismJobs implements TourismJobs {
+  factory _TourismJobs({final List<Job>? jobs}) = _$TourismJobsImpl;
+
+  factory _TourismJobs.fromJson(Map<String, dynamic> json) =
+      _$TourismJobsImpl.fromJson;
+
+  @override
+  List<Job>? get jobs;
+  @override
+  @JsonKey(ignore: true)
+  _$$TourismJobsImplCopyWith<_$TourismJobsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Job _$JobFromJson(Map<String, dynamic> json) {
+  return _Job.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Job {
+  String? get jobTitle => throw _privateConstructorUsedError;
+  bool? get searching => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $JobCopyWith<Job> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $JobCopyWith<$Res> {
+  factory $JobCopyWith(Job value, $Res Function(Job) then) =
+      _$JobCopyWithImpl<$Res, Job>;
+  @useResult
+  $Res call({String? jobTitle, bool? searching});
+}
+
+/// @nodoc
+class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
+  _$JobCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? jobTitle = freezed,
+    Object? searching = freezed,
+  }) {
+    return _then(_value.copyWith(
+      jobTitle: freezed == jobTitle
+          ? _value.jobTitle
+          : jobTitle // ignore: cast_nullable_to_non_nullable
+              as String?,
+      searching: freezed == searching
+          ? _value.searching
+          : searching // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$JobImplCopyWith<$Res> implements $JobCopyWith<$Res> {
+  factory _$$JobImplCopyWith(_$JobImpl value, $Res Function(_$JobImpl) then) =
+      __$$JobImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? jobTitle, bool? searching});
+}
+
+/// @nodoc
+class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
+    implements _$$JobImplCopyWith<$Res> {
+  __$$JobImplCopyWithImpl(_$JobImpl _value, $Res Function(_$JobImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? jobTitle = freezed,
+    Object? searching = freezed,
+  }) {
+    return _then(_$JobImpl(
+      jobTitle: freezed == jobTitle
+          ? _value.jobTitle
+          : jobTitle // ignore: cast_nullable_to_non_nullable
+              as String?,
+      searching: freezed == searching
+          ? _value.searching
+          : searching // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$JobImpl implements _Job {
+  _$JobImpl({this.jobTitle, this.searching});
+
+  factory _$JobImpl.fromJson(Map<String, dynamic> json) =>
+      _$$JobImplFromJson(json);
+
+  @override
+  final String? jobTitle;
+  @override
+  final bool? searching;
+
+  @override
+  String toString() {
+    return 'Job(jobTitle: $jobTitle, searching: $searching)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$JobImpl &&
+            (identical(other.jobTitle, jobTitle) ||
+                other.jobTitle == jobTitle) &&
+            (identical(other.searching, searching) ||
+                other.searching == searching));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, jobTitle, searching);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$JobImplCopyWith<_$JobImpl> get copyWith =>
+      __$$JobImplCopyWithImpl<_$JobImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$JobImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Job implements Job {
+  factory _Job({final String? jobTitle, final bool? searching}) = _$JobImpl;
+
+  factory _Job.fromJson(Map<String, dynamic> json) = _$JobImpl.fromJson;
+
+  @override
+  String? get jobTitle;
+  @override
+  bool? get searching;
+  @override
+  @JsonKey(ignore: true)
+  _$$JobImplCopyWith<_$JobImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

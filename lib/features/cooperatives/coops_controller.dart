@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +17,7 @@ import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
 import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/committee_params.dart';
+import 'package:lakbay/models/wrappers/join_coop_params.dart';
 
 // Get all cooperatives provider
 final getAllCooperativesProvider = StreamProvider((ref) {
@@ -123,6 +125,13 @@ final getVoteProvider =
     StreamProvider.autoDispose.family<CoopVote, String>((ref, voteUid) {
   final coopsController = ref.watch(coopsControllerProvider.notifier);
   return coopsController.getVote(ref.read(userProvider)!.currentCoop!, voteUid);
+});
+
+final getApplicationByProperties = StreamProvider.autoDispose
+    .family<List<JoinCoopParams>, Query>((ref, query) {
+  final applicationController = ref.watch(coopsControllerProvider.notifier);
+
+  return applicationController.getApplicationByProperties(query);
 });
 
 class CoopsController extends StateNotifier<bool> {
@@ -460,6 +469,27 @@ class CoopsController extends StateNotifier<bool> {
     );
   }
 
+  void updateCoop(String coopUid, CooperativeModel updatedCoop,
+      BuildContext context) async {
+    state = true;
+    final result = await _coopsRepository.updateCoop(updatedCoop);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) {
+        // Handle the success here
+        state = false;
+        showSnackBar(context, 'Jobs updated successfully');
+        context.pop();
+        // _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
+  }
+
   // Update Member
   void updateMember(String coopUid, String memberUid,
       CooperativeMembers coopMember, BuildContext context) async {
@@ -706,5 +736,74 @@ class CoopsController extends StateNotifier<bool> {
         },
       );
     });
+  }
+
+  ///////////////////////////////////////////////////////////////////APPLICATIONS\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  Stream<List<JoinCoopParams>> getApplicationByProperties(query) {
+    return _coopsRepository.readApplicationsByProperties(query);
+  }
+
+  void addApplication(
+      String coopUid, JoinCoopParams application, BuildContext context) {
+    state = true;
+    _coopsRepository.addApplication(coopUid, application).then((result) {
+      result.fold(
+        (l) {
+          // Handle the error here
+          state = false;
+          showSnackBar(context, l.message);
+        },
+        (r) {
+          // Handle the success here
+          state = false;
+          showSnackBar(context, 'Application Submitted');
+          context.pop(true);
+          _ref.read(navBarVisibilityProvider.notifier).show();
+        },
+      );
+    });
+  }
+
+  void editApplication(
+      JoinCoopParams updatedApplication, BuildContext context) {
+    state = true;
+    _coopsRepository.updateApplication(updatedApplication).then((result) {
+      result.fold(
+        (l) {
+          // Handle the error here
+          state = false;
+          showSnackBar(context, l.message);
+        },
+        (r) {
+          // Handle the success here
+          state = false;
+          showSnackBar(context, 'Applicaiotn updated successfully');
+          context.pop();
+        },
+      );
+    });
+  }
+
+  void deleteApplication(
+      String coopUid, String applicationUid, BuildContext context) async {
+    state = true;
+    final result =
+        await _coopsRepository.deleteApplication(coopUid, applicationUid);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) {
+        // Handle the success here
+        state = false;
+        showSnackBar(context, 'Application removed successfully');
+        // context.pop();
+        // _ref.read(navBarVisibilityProvider.notifier).show();
+      },
+    );
   }
 }

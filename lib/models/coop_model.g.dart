@@ -26,6 +26,10 @@ _$CooperativeModelImpl _$$CooperativeModelImplFromJson(
       membershipDividends: json['membershipDividends'] as num?,
       shareCapital: json['shareCapital'] as num?,
       minimumMemberShareCount: json['minimumMemberShareCount'] as num?,
+      tourismJobs: (json['tourismJobs'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k,
+            e == null ? null : TourismJobs.fromJson(e as Map<String, dynamic>)),
+      ),
       dateCreated: const TimestampSerializer()
           .fromJson(json['dateCreated'] as Timestamp?),
       validityStatus: json['validityStatus'] == null
@@ -56,6 +60,8 @@ Map<String, dynamic> _$$CooperativeModelImplToJson(
       'membershipDividends': instance.membershipDividends,
       'shareCapital': instance.shareCapital,
       'minimumMemberShareCount': instance.minimumMemberShareCount,
+      'tourismJobs':
+          instance.tourismJobs?.map((k, e) => MapEntry(k, e?.toJson())),
       'dateCreated': const TimestampSerializer().toJson(instance.dateCreated),
       'validityStatus': instance.validityStatus?.toJson(),
       'validationFiles': instance.validationFiles?.toJson(),
@@ -94,4 +100,26 @@ Map<String, dynamic> _$$ValidityStatusImplToJson(
       'status': instance.status,
       'dateValidated':
           const TimestampSerializer().toJson(instance.dateValidated),
+    };
+
+_$TourismJobsImpl _$$TourismJobsImplFromJson(Map<String, dynamic> json) =>
+    _$TourismJobsImpl(
+      jobs: (json['jobs'] as List<dynamic>?)
+          ?.map((e) => Job.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$TourismJobsImplToJson(_$TourismJobsImpl instance) =>
+    <String, dynamic>{
+      'jobs': instance.jobs?.map((e) => e.toJson()).toList(),
+    };
+
+_$JobImpl _$$JobImplFromJson(Map<String, dynamic> json) => _$JobImpl(
+      jobTitle: json['jobTitle'] as String?,
+      searching: json['searching'] as bool?,
+    );
+
+Map<String, dynamic> _$$JobImplToJson(_$JobImpl instance) => <String, dynamic>{
+      'jobTitle': instance.jobTitle,
+      'searching': instance.searching,
     };
