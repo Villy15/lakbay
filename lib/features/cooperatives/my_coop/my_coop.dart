@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -32,10 +33,11 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   late List<CoopAnnouncements> coopAnnouncements;
   late List<CoopGoals> coopGoals;
   late List<CoopVote> coopVotes;
-
+  late final UserModel user;
   @override
   void initState() {
     super.initState();
+    user = ref.read(userProvider)!;
     coopAnnouncements = [
       // CoopAnnouncements(
       //   title:
@@ -199,6 +201,20 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         ),
       ),
     ),
+    const SizedBox(
+      width: 150.0,
+      child: Tab(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Recommend a election icon
+            Icon(Icons.account_tree_rounded),
+            SizedBox(width: 4.0),
+            Text('Applications'),
+          ],
+        ),
+      ),
+    ),
   ];
 
   @override
@@ -229,6 +245,8 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                         _coopGoals(),
 
                         _coopVotes(),
+
+                        _coopApplications(),
                       ],
                     ),
                   ),
@@ -407,6 +425,55 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
 
                 return AnnouncementCard(
                   announcement: announcement,
+                );
+              },
+            );
+          },
+          error: (error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString()),
+          loading: () => const Loader(),
+        );
+  }
+
+  Widget _coopApplications() {
+    Query query = FirebaseFirestore.instance
+        .collection("cooperatives")
+        .doc(widget.coopId)
+        .collection("applications");
+    // .where("status", isEqualTo: "pending");
+    return ref.watch(getApplicationByProperties(query)).when(
+          data: (applications) {
+            if (applications.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'lib/core/images/SleepingCatFromGlitch.svg',
+                      height: 100, // Adjust height as desired
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'No Applications yet!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: applications.length,
+              itemBuilder: (context, index) {
+                final application = applications[index];
+
+                return ListTile(
+                  title: Text(application.name!),
                 );
               },
             );

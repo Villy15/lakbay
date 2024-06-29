@@ -36,6 +36,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
   List<SizedBox> tabs = [
     const SizedBox(width: 100.0, child: Tab(child: Text('Details'))),
     const SizedBox(width: 100.0, child: Tab(child: Text('Passengers'))),
+    const SizedBox(width: 100.0, child: Tab(child: Text('Expenses'))),
   ];
 
   @override

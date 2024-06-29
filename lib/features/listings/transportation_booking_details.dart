@@ -9,6 +9,7 @@ import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
+import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/emergency_process_dialog.dart';
@@ -36,8 +37,8 @@ class _TransportationBookingsDetailsState
     extends ConsumerState<TransportationBookingsDetails> {
   List<SizedBox> tabs = [
     const SizedBox(width: 100.0, child: Tab(child: Text('Details'))),
-    const SizedBox(width: 100.0, child: Tab(child: Text('Tasks'))),
-    const SizedBox(width: 100.0, child: Tab(child: Text('Expenses'))),
+    // const SizedBox(width: 100.0, child: Tab(child: Text('Tasks'))),
+    // const SizedBox(width: 100.0, child: Tab(child: Text('Expenses'))),
   ];
   late ListingBookings modifiableBooking;
   @override
@@ -77,53 +78,53 @@ class _TransportationBookingsDetailsState
                             return TabBarView(
                               children: [
                                 showDetails(context, widget.booking),
-                                showTasks(booking),
-                                expenses(),
+                                // showTasks(booking),
+                                // expenses(),
                               ],
                             );
                           },
                         ),
-                        bottomNavigationBar: BottomAppBar(
-                            surfaceTintColor: Colors.white,
-                            height: 90,
-                            child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                      child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: FilledButton(
-                                              style: ButtonStyle(
-                                                minimumSize:
-                                                    MaterialStateProperty.all<
-                                                        Size>(
-                                                  const Size(100, 45),
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                showAddTaskDialog(
-                                                    context, booking);
-                                              },
-                                              child: const Text('Add Task')))),
-                                  Flexible(
-                                      child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: FilledButton(
-                                              style: ButtonStyle(
-                                                minimumSize:
-                                                    MaterialStateProperty.all<
-                                                        Size>(
-                                                  const Size(100, 45),
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                showAddExpenseDialog(
-                                                    context, booking);
-                                              },
-                                              child:
-                                                  const Text('Add Expense'))))
-                                ])),
+                        // bottomNavigationBar: BottomAppBar(
+                        //     surfaceTintColor: Colors.white,
+                        //     height: 90,
+                        //     child: Row(
+                        //         mainAxisAlignment:
+                        //             MainAxisAlignment.spaceBetween,
+                        //         children: [
+                        //           Flexible(
+                        //               child: Padding(
+                        //                   padding: const EdgeInsets.all(8.0),
+                        //                   child: FilledButton(
+                        //                       style: ButtonStyle(
+                        //                         minimumSize:
+                        //                             MaterialStateProperty.all<
+                        //                                 Size>(
+                        //                           const Size(100, 45),
+                        //                         ),
+                        //                       ),
+                        //                       onPressed: () {
+                        //                         showAddTaskDialog(
+                        //                             context, booking);
+                        //                       },
+                        //                       child: const Text('Add Task')))),
+                        //           Flexible(
+                        //               child: Padding(
+                        //                   padding: const EdgeInsets.all(8.0),
+                        //                   child: FilledButton(
+                        //                       style: ButtonStyle(
+                        //                         minimumSize:
+                        //                             MaterialStateProperty.all<
+                        //                                 Size>(
+                        //                           const Size(100, 45),
+                        //                         ),
+                        //                       ),
+                        //                       onPressed: () {
+                        //                         showAddExpenseDialog(
+                        //                             context, booking);
+                        //                       },
+                        //                       child:
+                        //                           const Text('Add Expense'))))
+                        //         ])),
                       );
                     },
                     error: ((error, stackTrace) =>
@@ -578,11 +579,18 @@ class _TransportationBookingsDetailsState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: double.infinity,
-            height: MediaQuery.sizeOf(context).height * .4,
-            child: const Placeholder(),
-          ),
+          Container(
+              foregroundDecoration: BoxDecoration(
+                  color: Colors.black.withOpacity(
+                      booking.bookingStatus == "Cancelled" ? 0.5 : 0.0)),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.5,
+                width: MediaQuery.of(context).size.width,
+                child: TwoMarkerMapWidget(
+                  pickup: widget.listing.pickUp!,
+                  destination: widget.listing.destination!,
+                ),
+              )),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
             child: Row(
@@ -698,25 +706,6 @@ class _TransportationBookingsDetailsState
                     ],
                   );
                 }),
-                const SizedBox(height: 10),
-                _displaySubHeader("Booking Details"),
-                // ref.watch(getUserDataProvider(booking.customerId)).maybeWhen(
-                //       data: (user) {
-                //         return _userInformation(user, booking);
-                //       },
-                //       orElse: () =>
-                //           const Center(child: CircularProgressIndicator()),
-                //     ),
-                // No of Guests
-                const SizedBox(height: 10),
-
-                _displayDivider(),
-                const SizedBox(height: 10),
-
-                _displaySubHeader("Additional Information"),
-                const SizedBox(height: 10),
-                // Government ID
-                _displayGovId(),
               ],
             ),
           ),

@@ -10,9 +10,11 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
+import 'package:lakbay/features/common/widgets/bottom_nav.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
+import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_checkout.dart';
@@ -62,7 +64,8 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
       ),
     ),
   ];
-
+  BottomAppBar? bottomAppBar = const BottomAppBar();
+  int currentTab = 0;
   @override
   void initState() {
     super.initState();
@@ -93,6 +96,11 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                           style: const TextStyle(
                               fontSize: 24.0, fontWeight: FontWeight.bold)),
                   bottom: TabBar(
+                    onTap: (tab) {
+                      setState(() {
+                        currentTab = tab;
+                      });
+                    },
                     tabAlignment: TabAlignment.center,
                     labelPadding: EdgeInsets.zero,
                     isScrollable: true,
@@ -100,6 +108,14 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                     tabs: tabs,
                   ),
                 ),
+                bottomNavigationBar: currentTab == 2
+                    ? BottomAppBar(
+                        child: FilledButton(
+                          onPressed: () {},
+                          child: const Text('Edit Listing'),
+                        ),
+                      )
+                    : null,
                 body: TabBarView(
                   children: [
                     departures(),
@@ -116,12 +132,17 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
 
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      ImageSlider(
-          images: imageUrls,
-          height: MediaQuery.sizeOf(context).height * .4,
-          width: MediaQuery.sizeOf(context).width,
-          radius: BorderRadius.zero),
-
+      Container(
+          foregroundDecoration:
+              BoxDecoration(color: Colors.black.withOpacity(0.0)),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.5,
+            width: MediaQuery.of(context).size.width,
+            child: TwoMarkerMapWidget(
+              pickup: widget.listing.pickUp!,
+              destination: widget.listing.destination!,
+            ),
+          )),
       Padding(
         padding: const EdgeInsets.only(left: 10.0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -215,7 +236,6 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
         ]),
       ),
       const Divider(),
-
       ref
           .watch(
               getCooperativeProvider(widget.listing.cooperative.cooperativeId))
@@ -249,37 +269,6 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
               subtitle: Text('Something went wrong'),
             ),
           ),
-
-      // this box is so that the edit listing doesn't cover any content
-      SizedBox(
-        height: MediaQuery.sizeOf(context).height / 35,
-      ),
-      const Divider(),
-      Container(
-        margin: const EdgeInsets.only(bottom: 0, right: 0),
-        child: Align(
-          alignment: Alignment.bottomRight,
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-            ),
-            child: FilledButton(
-              onPressed: () {
-                // Handle button tap here
-                // Perform action when 'Edit Listing' button is tapped
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(4.0), // Adjust the radius as needed
-                ),
-              ),
-              child: const Text('Edit Listing'),
-            ),
-          ),
-        ),
-      ),
     ]));
   }
 
@@ -979,98 +968,104 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
 
     return ref.watch(getTransportByPropertiesProvider(query)).when(
         data: (List<AvailableTransport> vehicles) {
-          debugPrint('vehicles: $vehicles');
           return Stack(
             children: [
-              ListView.builder(
-                  // physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: vehicles.length,
-                  itemBuilder: ((context, index) {
-                    final vehicle = vehicles[index];
-                    return Card(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text('[${index + 1}]'),
-                              const SizedBox(
-                                width: 20,
+              vehicles.isEmpty
+                  ? SizedBox(
+                      height: MediaQuery.sizeOf(context).height / 4,
+                      width: double.infinity,
+                      child: const Center(child: Text("No Vehicles Added")))
+                  : ListView.builder(
+                      // physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: vehicles.length,
+                      itemBuilder: ((context, index) {
+                        final vehicle = vehicles[index];
+                        List<TimeOfDay> sortedTimes =
+                            vehicle.departureTimes?.toList(growable: true) ??
+                                [];
+                        sortedTimes.sort((a, b) {
+                          return a.hour.compareTo(b.hour) == 0
+                              ? a.minute.compareTo(b.minute)
+                              : a.hour.compareTo(b.hour);
+                        });
+                        return Column(
+                          children: [
+                            ListTile(
+                              title: Text('Vehicle No: ${index + 1}'),
+                              subtitle: Text(
+                                'Capacity: ${vehicle.guests} | Luggage: ${vehicle.luggage}',
                               ),
-                              Text(
-                                "Vehicle No: ${vehicle.vehicleNo}",
-                                style: const TextStyle(fontSize: 14),
+                              trailing: InkWell(
+                                child: const Icon(Icons.more_time_rounded),
+                                onTap: () async {
+                                  var time =
+                                      const TimeOfDay(hour: 8, minute: 30);
+                                  final TimeOfDay? pickedTime =
+                                      await showTimePicker(
+                                    context: context,
+                                    initialTime: time,
+                                    initialEntryMode:
+                                        TimePickerEntryMode.inputOnly,
+                                    builder:
+                                        (BuildContext context, Widget? child) {
+                                      return MediaQuery(
+                                        data: MediaQuery.of(context).copyWith(
+                                            alwaysUse24HourFormat: false),
+                                        child: child!,
+                                      );
+                                    },
+                                  );
+                                  if (pickedTime != null) {
+                                    var departureTimes =
+                                        vehicle.departureTimes ?? [];
+                                    if (departureTimes.contains(pickedTime)) {
+                                    } else {
+                                      var updatedDepartureTimes =
+                                          departureTimes.toList(growable: true);
+                                      updatedDepartureTimes.add(pickedTime);
+                                      var updatedTransport = vehicle.copyWith(
+                                          departureTimes:
+                                              updatedDepartureTimes);
+                                      ref
+                                          .read(listingControllerProvider
+                                              .notifier)
+                                          .updateTransport(
+                                              context, updatedTransport, "");
+                                    }
+                                  }
+                                },
                               ),
-                              SizedBox(
-                                width: MediaQuery.sizeOf(context).width * .3,
-                              ),
-                            ],
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(
-                                left: MediaQuery.sizeOf(context).width * .1),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Capacity: ${vehicle.guests} | ',
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w300),
-                                ),
-                                Text(
-                                  'Luggage: ${vehicle.luggage}',
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w300),
-                                ),
-                              ],
                             ),
-                          ),
-                          vehicles.isEmpty
-                              ? SizedBox(
-                                  height: MediaQuery.sizeOf(context).height / 4,
-                                  width: double.infinity,
-                                  child: const Center(
-                                      child: Text("No Vehicles Added")))
-                              : Container(
-                                  padding: EdgeInsets.only(
-                                      left: MediaQuery.sizeOf(context).width *
-                                          .1),
-                                  child: Wrap(
-                                    direction: Axis.horizontal,
-                                    spacing:
-                                        8, // Adjust the spacing between items as needed
-                                    runSpacing:
-                                        8, // Adjust the run spacing (vertical spacing) as needed
-                                    children: List.generate(
-                                      vehicle.departureTimes!.length,
-                                      (index) {
-                                        return Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            border:
-                                                Border.all(color: Colors.grey),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          child: Text(
-                                            vehicle.departureTimes![index]
-                                                .format(context),
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w300),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                )
-                        ],
-                      ),
-                    );
-                  })),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: sortedTimes.map((time) {
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        time.format(context),
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w300),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      })),
               Container(
                 margin: const EdgeInsets.only(bottom: 25, right: 25),
                 child: Align(
@@ -1276,6 +1271,11 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
   }
 
   Widget departures() {
+    if (currentTab == 0) {
+      setState(() {
+        bottomAppBar = null;
+      });
+    }
     Query query = FirebaseFirestore.instance
         .collectionGroup('departures')
         .where('listingId', isEqualTo: widget.listing.uid!);
