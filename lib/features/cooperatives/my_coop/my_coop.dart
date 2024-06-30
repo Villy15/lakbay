@@ -569,8 +569,10 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                     ]),
                     Text(
                       application.name!,
-                      style: const TextStyle(
-                          fontSize: 22, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0),
@@ -592,20 +594,24 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                           ]),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       "Applying",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                     ListTile(
                       title: Text(application.role!),
                       subtitle: Text(application.committee!),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       "Documents",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                     ListView.builder(
                         shrinkWrap: true,
