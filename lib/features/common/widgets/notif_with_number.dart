@@ -32,7 +32,13 @@ class _NotificationWithBadgeIconState extends ConsumerState<NotificationWithBadg
       ),
       data: (notificationList) {
         final notificationCount = notificationList.where((notification) => !(notification.isRead)).length;
-        return badges.Badge(
+        if (notificationCount == 0) {
+          debugPrint("the notif count is : $notificationCount");
+          return const Icon(Icons.notifications_none_outlined); 
+        }
+        else {
+          debugPrint("the notif count is : $notificationCount");
+          return badges.Badge(
           position: badges.BadgePosition.topEnd(top: -9,),
           badgeContent: Text(
             notificationCount.toString(),
@@ -46,6 +52,8 @@ class _NotificationWithBadgeIconState extends ConsumerState<NotificationWithBadg
             Icons.notifications_none_outlined
           ),
         );
+        }
+        
       },
     );
   }
