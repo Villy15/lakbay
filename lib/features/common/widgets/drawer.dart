@@ -94,25 +94,27 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.background,
       child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                _profile(context, user),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  _profile(context, user),
 
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(28, 8, 28, 0),
-                  child: Divider(),
-                ),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(28, 8, 28, 0),
+                    child: Divider(),
+                  ),
 
-                //Go to customer home
+                  //Go to customer home
 
-                _functions(context),
-              ],
-            ),
-            _logout(context)
-          ],
+                  _functions(context),
+                ],
+              ),
+              _logout(context)
+            ],
+          ),
         ),
       ),
     );

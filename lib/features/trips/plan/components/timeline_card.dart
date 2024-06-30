@@ -317,50 +317,51 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                 return Text('Error: $error');
               },
             ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Delete Activity
-            IconButton(
-              onPressed: () => deleteActivity(),
-              icon: const Icon(
-                Icons.delete_outline,
+        if (widget.plan.tripStatus != "Completed")
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Delete Activity
+              IconButton(
+                onPressed: () => deleteActivity(),
+                icon: const Icon(
+                  Icons.delete_outline,
+                ),
               ),
-            ),
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () => addStartTime(),
-                  icon: const Icon(
-                    Icons.timer_outlined,
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () => addStartTime(),
+                    icon: const Icon(
+                      Icons.timer_outlined,
+                    ),
                   ),
-                ),
-                // Set Duration
-                IconButton(
-                  onPressed: widget.activity.startTime != null
-                      ? () => addEndTime()
-                      : null,
-                  icon: const Icon(
-                    Icons.timelapse_outlined,
+                  // Set Duration
+                  IconButton(
+                    onPressed: widget.activity.startTime != null
+                        ? () => addEndTime()
+                        : null,
+                    icon: const Icon(
+                      Icons.timelapse_outlined,
+                    ),
                   ),
-                ),
-                // Manage expenses
-                IconButton(
-                  onPressed: () => addExpense(),
-                  icon: const Icon(
-                    Icons.attach_money,
+                  // Manage expenses
+                  IconButton(
+                    onPressed: () => addExpense(),
+                    icon: const Icon(
+                      Icons.attach_money,
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () => addCheckList(),
-                  icon: const Icon(
-                    Icons.checklist_outlined,
+                  IconButton(
+                    onPressed: () => addCheckList(),
+                    icon: const Icon(
+                      Icons.checklist_outlined,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        )
+                ],
+              ),
+            ],
+          )
       ],
     );
   }
