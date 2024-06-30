@@ -684,7 +684,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
             onPressed: () async {
               JoinCoopParams updatedApplication = application;
               updatedApplication =
-                  updatedApplication.copyWith(status: "Accepted");
+                  updatedApplication.copyWith(status: "accepted");
               CooperativeMembersRole memberRole = CooperativeMembersRole(
                   role: updatedApplication.role,
                   committeeName: updatedApplication.committee,
@@ -726,7 +726,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
             onPressed: () async {
               JoinCoopParams updatedApplication = application;
               updatedApplication =
-                  updatedApplication.copyWith(status: "Rejected");
+                  updatedApplication.copyWith(status: "rejected");
               ref
                   .read(coopsControllerProvider.notifier)
                   .editApplication(updatedApplication, context);
