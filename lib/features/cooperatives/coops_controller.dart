@@ -779,7 +779,6 @@ class CoopsController extends StateNotifier<bool> {
           // Handle the success here
           state = false;
           showSnackBar(context, 'Applicaiotn updated successfully');
-          context.pop();
         },
       );
     });
