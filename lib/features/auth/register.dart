@@ -67,31 +67,34 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: mqwidth * 0.1,
-              vertical: mqheight * 0.1,
+            padding: EdgeInsets.only(
+              left: mqwidth * 0.1,
+              right: mqwidth * 0.1,
+              top: mqheight * 0.1,
             ),
             child: Form(
               key: _formKey,
-              child: Column(
-                children: [
-                  greetingText(),
-                  SizedBox(height: mqheight * 0.05),
-                  if (isLoading) ...[
-                    const Loader(),
-                    SizedBox(height: mqheight * 0.5),
-                  ] else ...[
-                    emailTextField(),
-                    SizedBox(height: mqheight * 0.025),
-                    passwordTextField(),
-                    SizedBox(height: mqheight * 0.025),
-                    confirmPasswordTextField(),
-                    SizedBox(height: mqheight * 0.025),
-                    registerButton(),
-                    SizedBox(height: mqheight * 0.2),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    greetingText(),
+                    SizedBox(height: mqheight * 0.05),
+                    if (isLoading) ...[
+                      const Loader(),
+                      SizedBox(height: mqheight * 0.5),
+                    ] else ...[
+                      emailTextField(),
+                      SizedBox(height: mqheight * 0.025),
+                      passwordTextField(),
+                      SizedBox(height: mqheight * 0.025),
+                      confirmPasswordTextField(),
+                      SizedBox(height: mqheight * 0.025),
+                      registerButton(),
+                      SizedBox(height: mqheight * 0.075),
+                    ],
+                    extraFunctions(),
                   ],
-                  extraFunctions(),
-                ],
+                ),
               ),
             ),
           ),

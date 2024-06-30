@@ -161,9 +161,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(title,
-                            style: const TextStyle(
-                                fontSize: 18)),
+                        child:
+                            Text(title, style: const TextStyle(fontSize: 18)),
                       ),
                       ...groupNotifs.map((notif) => _listTileNotifs(notif)),
                     ],

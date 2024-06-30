@@ -150,7 +150,7 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
       height: MediaQuery.of(context).size.height * 0.38,
       child: Scrollbar(
         trackVisibility: true,
-        thumbVisibility: true,
+        // thumbVisibility: true,
         radius: const Radius.circular(10),
         child: ListView(
           shrinkWrap: true,

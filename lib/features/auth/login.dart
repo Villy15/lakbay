@@ -26,7 +26,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
-
   void _togglePasswordVisibility() {
     setState(() {
       _obscureText = !_obscureText;
@@ -38,12 +37,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
 
-      await ref.read(authControllerProvider.notifier).signInWithEmailAndPassword(
+      await ref
+          .read(authControllerProvider.notifier)
+          .signInWithEmailAndPassword(
             context: context,
             email: email,
             password: password,
           );
-      
+
       //user successfully signed in
       final token = await _fcm.getToken();
       if (token != null) {
@@ -89,33 +90,36 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: mqwidth * 0.1,
-              vertical: mqheight * 0.1,
+            padding: EdgeInsets.only(
+              left: mqwidth * 0.1,
+              right: mqwidth * 0.1,
+              top: mqheight * 0.1,
             ),
             child: Form(
               key: _formKey,
-              child: Column(
-                children: [
-                  greetingText(),
-                  SizedBox(height: mqheight * 0.05),
-                  if (isLoading) ...[
-                    const Loader(),
-                    SizedBox(height: mqheight * 0.5),
-                  ] else ...[
-                    emailTextField(),
-                    SizedBox(height: mqheight * 0.025),
-                    passwordTextField(),
-                    SizedBox(height: mqheight * 0.025),
-                    loginButton(),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    greetingText(),
                     SizedBox(height: mqheight * 0.05),
-                    loginWithText(),
-                    SizedBox(height: mqheight * 0.025),
-                    loginOptions(),
-                    SizedBox(height: mqheight * 0.075),
+                    if (isLoading) ...[
+                      const Loader(),
+                      SizedBox(height: mqheight * 0.5),
+                    ] else ...[
+                      emailTextField(),
+                      SizedBox(height: mqheight * 0.025),
+                      passwordTextField(),
+                      SizedBox(height: mqheight * 0.025),
+                      loginButton(),
+                      SizedBox(height: mqheight * 0.05),
+                      loginWithText(),
+                      SizedBox(height: mqheight * 0.025),
+                      loginOptions(),
+                      SizedBox(height: mqheight * 0.025),
+                    ],
+                    extraFunctions(),
                   ],
-                  extraFunctions(),
-                ],
+                ),
               ),
             ),
           ),
@@ -321,5 +325,3 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
   }
 }
-
-
