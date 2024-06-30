@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
@@ -61,7 +62,27 @@ List<Map> tourismTypes = [
     }
   }
 ];
-late Map<String, TourismJobs?>? tourismJobs;
+List<String> requiredFilesList = [
+  "Resume/CV",
+  "Application Letter",
+  "Transcript of Records",
+  "Diploma",
+  "Certificate of Employment",
+  "NBI Clearance",
+  "Police Clearance",
+  "Barangay Clearance",
+  "Birth Certificate",
+  "SSS ID",
+  "PhilHealth ID",
+  "Pag-IBIG ID",
+  "TIN ID",
+  "2x2 or Passport-sized Photos",
+  "Medical Certificate",
+  "Training Certificates",
+  "Professional License",
+  "Recommendation Letters"
+];
+Map<String, TourismJobs?>? tourismJobs = {};
 
 class _AddJobsState extends ConsumerState<AddJobs> {
   // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< INITIALIZE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -116,7 +137,6 @@ class _AddJobsState extends ConsumerState<AddJobs> {
   // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RENDER UI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   @override
   Widget build(BuildContext context) {
-    debugPrint("$tourismJobs");
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.95,
       child: Scaffold(
@@ -244,17 +264,34 @@ class _AddJobsState extends ConsumerState<AddJobs> {
                           itemBuilder: (context, index) {
                             final job = jobList[index];
                             return ListTile(
-                                contentPadding:
-                                    const EdgeInsets.symmetric(horizontal: 48),
-                                dense: true,
-                                leading: Text("[${index + 1}]"),
-                                trailing: InkWell(
-                                  child: const Icon(Icons.remove),
-                                  onTap: () {
-                                    handleJobRemove(key, index);
-                                  },
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 36),
+                              dense: true,
+                              trailing: SizedBox(
+                                width: 60, // Adjust width as needed
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    InkWell(
+                                      child: const Icon(Icons.remove),
+                                      onTap: () {
+                                        handleJobRemove(key, index);
+                                      },
+                                    ),
+                                    const SizedBox(
+                                        width: 8), // Space between icons
+                                    InkWell(
+                                      child: const Icon(
+                                          Icons.folder_copy_outlined),
+                                      onTap: () {
+                                        requiredFiles(context, key, job, index);
+                                      },
+                                    ),
+                                  ],
                                 ),
-                                title: Text(job.jobTitle!));
+                              ),
+                              title: Text(job.jobTitle!),
+                            );
                           },
                         )
                     ],
@@ -263,6 +300,198 @@ class _AddJobsState extends ConsumerState<AddJobs> {
           ],
         ),
       )),
+    );
+  }
+
+  Future<dynamic> requiredFiles(
+      BuildContext context, String key, Job job, int index) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        Job updatedJob = Job.fromJson(job.toJson());
+        List<Job> updatedJobs = [...tourismJobs?[key]?.jobs ?? []];
+        return StatefulBuilder(builder: (context, setFiles) {
+          return AlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Required Files"),
+                IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        List<String?> requiredFiles =
+                            updatedJob.requiredFiles?.toList(growable: true) ??
+                                [];
+                        return StatefulBuilder(builder: (context, setSelected) {
+                          return AlertDialog(
+                            title: const Text("Selected Files"),
+                            content: ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: requiredFiles.length,
+                                itemBuilder: ((context, fileIndex) {
+                                  var fName = requiredFiles[fileIndex] ?? "";
+                                  return ListTile(
+                                    leading: Text('${fileIndex + 1}'),
+                                    title: Text(fName),
+                                    trailing: InkWell(
+                                        child: const Icon(Icons.close),
+                                        onTap: () {
+                                          setSelected(() {
+                                            setFiles(() {
+                                              requiredFiles.removeAt(fileIndex);
+                                              updatedJob = updatedJob.copyWith(
+                                                  requiredFiles: requiredFiles);
+                                              updatedJobs[index] = updatedJob;
+                                              setState(() {
+                                                tourismJobs?[key] =
+                                                    tourismJobs?[key]?.copyWith(
+                                                        jobs: updatedJobs);
+                                              });
+                                            });
+                                          });
+                                        }),
+                                  );
+                                })),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  context.pop();
+                                },
+                                child: const Text("Close"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  requiredDocument(context, key, index, job,
+                                      setSelected, requiredFiles);
+                                },
+                                child: const Text("Add"),
+                              ),
+                            ],
+                          );
+                        });
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.folder_open),
+                ),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                children: requiredFilesList.map((file) {
+                  return ListTile(
+                    dense: true,
+                    leading: Transform.scale(
+                      scale: 0.8, // Smaller checkbox size
+                      child: Checkbox(
+                        value:
+                            updatedJob.requiredFiles?.contains(file) ?? false,
+                        onChanged: (bool? value) {
+                          var updatedRequiredFiles = updatedJob.requiredFiles
+                                  ?.toList(growable: true) ??
+                              [];
+                          if (value == true) {
+                            setFiles(() {
+                              updatedRequiredFiles.add(file);
+                              updatedJob = updatedJob.copyWith(
+                                  requiredFiles: updatedRequiredFiles);
+                              updatedJobs[index] = updatedJob;
+                              setState(() {
+                                tourismJobs?[key] = tourismJobs?[key]
+                                    ?.copyWith(jobs: updatedJobs);
+                              });
+                            });
+                          } else {
+                            setFiles(() {
+                              updatedRequiredFiles
+                                  .removeWhere((element) => element == file);
+                              updatedJob = updatedJob.copyWith(
+                                  requiredFiles: updatedRequiredFiles);
+                              updatedJobs[index] = updatedJob;
+                              setState(() {
+                                tourismJobs?[key] = tourismJobs?[key]
+                                    ?.copyWith(jobs: updatedJobs);
+                              });
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                    title: Text(
+                      file,
+                      style: const TextStyle(fontSize: 14), // Adjust font size
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Close"),
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
+  Future<dynamic> requiredDocument(BuildContext context, String key, int index,
+      Job job, StateSetter setSelected, List<String?> requiredFiles) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String textValue = ''; // State variable to hold text field value
+
+        return AlertDialog(
+          scrollable: true,
+          title: const Text('Required Document'),
+          content: Column(
+            children: [
+              TextField(
+                onChanged: (value) {
+                  textValue = value; // Update textValue on change
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Document Name',
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setSelected(() {
+                  List<Job> updatedJobs = [...tourismJobs?[key]?.jobs ?? []];
+                  Job updatedJob = Job.fromJson(job.toJson());
+                  requiredFiles.add(textValue);
+                  updatedJob =
+                      updatedJob.copyWith(requiredFiles: requiredFiles);
+                  updatedJobs[index] = updatedJob;
+                  setState(() {
+                    tourismJobs?[key] =
+                        tourismJobs?[key]?.copyWith(jobs: updatedJobs);
+                  });
+                });
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -1147,6 +1147,7 @@ Job _$JobFromJson(Map<String, dynamic> json) {
 mixin _$Job {
   String? get jobTitle => throw _privateConstructorUsedError;
   bool? get searching => throw _privateConstructorUsedError;
+  List<String?>? get requiredFiles => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1158,7 +1159,7 @@ abstract class $JobCopyWith<$Res> {
   factory $JobCopyWith(Job value, $Res Function(Job) then) =
       _$JobCopyWithImpl<$Res, Job>;
   @useResult
-  $Res call({String? jobTitle, bool? searching});
+  $Res call({String? jobTitle, bool? searching, List<String?>? requiredFiles});
 }
 
 /// @nodoc
@@ -1175,6 +1176,7 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
   $Res call({
     Object? jobTitle = freezed,
     Object? searching = freezed,
+    Object? requiredFiles = freezed,
   }) {
     return _then(_value.copyWith(
       jobTitle: freezed == jobTitle
@@ -1185,6 +1187,10 @@ class _$JobCopyWithImpl<$Res, $Val extends Job> implements $JobCopyWith<$Res> {
           ? _value.searching
           : searching // ignore: cast_nullable_to_non_nullable
               as bool?,
+      requiredFiles: freezed == requiredFiles
+          ? _value.requiredFiles
+          : requiredFiles // ignore: cast_nullable_to_non_nullable
+              as List<String?>?,
     ) as $Val);
   }
 }
@@ -1195,7 +1201,7 @@ abstract class _$$JobImplCopyWith<$Res> implements $JobCopyWith<$Res> {
       __$$JobImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? jobTitle, bool? searching});
+  $Res call({String? jobTitle, bool? searching, List<String?>? requiredFiles});
 }
 
 /// @nodoc
@@ -1209,6 +1215,7 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
   $Res call({
     Object? jobTitle = freezed,
     Object? searching = freezed,
+    Object? requiredFiles = freezed,
   }) {
     return _then(_$JobImpl(
       jobTitle: freezed == jobTitle
@@ -1219,6 +1226,10 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
           ? _value.searching
           : searching // ignore: cast_nullable_to_non_nullable
               as bool?,
+      requiredFiles: freezed == requiredFiles
+          ? _value._requiredFiles
+          : requiredFiles // ignore: cast_nullable_to_non_nullable
+              as List<String?>?,
     ));
   }
 }
@@ -1226,7 +1237,8 @@ class __$$JobImplCopyWithImpl<$Res> extends _$JobCopyWithImpl<$Res, _$JobImpl>
 /// @nodoc
 @JsonSerializable()
 class _$JobImpl implements _Job {
-  _$JobImpl({this.jobTitle, this.searching});
+  _$JobImpl({this.jobTitle, this.searching, final List<String?>? requiredFiles})
+      : _requiredFiles = requiredFiles;
 
   factory _$JobImpl.fromJson(Map<String, dynamic> json) =>
       _$$JobImplFromJson(json);
@@ -1235,10 +1247,19 @@ class _$JobImpl implements _Job {
   final String? jobTitle;
   @override
   final bool? searching;
+  final List<String?>? _requiredFiles;
+  @override
+  List<String?>? get requiredFiles {
+    final value = _requiredFiles;
+    if (value == null) return null;
+    if (_requiredFiles is EqualUnmodifiableListView) return _requiredFiles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'Job(jobTitle: $jobTitle, searching: $searching)';
+    return 'Job(jobTitle: $jobTitle, searching: $searching, requiredFiles: $requiredFiles)';
   }
 
   @override
@@ -1249,12 +1270,15 @@ class _$JobImpl implements _Job {
             (identical(other.jobTitle, jobTitle) ||
                 other.jobTitle == jobTitle) &&
             (identical(other.searching, searching) ||
-                other.searching == searching));
+                other.searching == searching) &&
+            const DeepCollectionEquality()
+                .equals(other._requiredFiles, _requiredFiles));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, jobTitle, searching);
+  int get hashCode => Object.hash(runtimeType, jobTitle, searching,
+      const DeepCollectionEquality().hash(_requiredFiles));
 
   @JsonKey(ignore: true)
   @override
@@ -1271,7 +1295,10 @@ class _$JobImpl implements _Job {
 }
 
 abstract class _Job implements Job {
-  factory _Job({final String? jobTitle, final bool? searching}) = _$JobImpl;
+  factory _Job(
+      {final String? jobTitle,
+      final bool? searching,
+      final List<String?>? requiredFiles}) = _$JobImpl;
 
   factory _Job.fromJson(Map<String, dynamic> json) = _$JobImpl.fromJson;
 
@@ -1279,6 +1306,8 @@ abstract class _Job implements Job {
   String? get jobTitle;
   @override
   bool? get searching;
+  @override
+  List<String?>? get requiredFiles;
   @override
   @JsonKey(ignore: true)
   _$$JobImplCopyWith<_$JobImpl> get copyWith =>

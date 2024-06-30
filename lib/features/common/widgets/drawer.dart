@@ -301,7 +301,7 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
         GestureDetector(
           onTap: () => {
             // Show modal bottom sheet
-            modalBottomSheet(context, user)
+            // modalBottomSheet(context, user)
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -317,7 +317,7 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                 ),
               ),
               // Arrow down
-              const Icon(Icons.arrow_drop_down),
+              // const Icon(Icons.arrow_drop_down),
             ],
           ),
         ),
