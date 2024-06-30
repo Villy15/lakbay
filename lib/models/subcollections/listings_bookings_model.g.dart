@@ -58,6 +58,8 @@ _$ListingBookingsImpl _$$ListingBookingsImplFromJson(
           .fromJson(json['serviceStart'] as Timestamp?),
       serviceComplete: const TimestampSerializer()
           .fromJson(json['serviceComplete'] as Timestamp?),
+      createdAt:
+          const TimestampSerializer().fromJson(json['createdAt'] as Timestamp?),
     );
 
 Map<String, dynamic> _$$ListingBookingsImplToJson(
@@ -104,6 +106,7 @@ Map<String, dynamic> _$$ListingBookingsImplToJson(
       'serviceStart': const TimestampSerializer().toJson(instance.serviceStart),
       'serviceComplete':
           const TimestampSerializer().toJson(instance.serviceComplete),
+      'createdAt': const TimestampSerializer().toJson(instance.createdAt),
     };
 
 Value? _$JsonConverterFromJson<Json, Value>(

@@ -259,12 +259,13 @@ class ListingController extends StateNotifier<bool> {
         title: listing.title,
         listingId: listing.uid,
         bookingId: bookingUid,
-        message: "A booking is made: ${booking.startDate} - ${booking.endDate}",
+        message: "A booking is made: ${DateFormat('MMMM d, h:mm a').format(booking.startDate!)} - ${DateFormat('MMMM d, h:mm a').format(booking.endDate!)}.",
         coopId: listing.cooperative.cooperativeId,
         ownerId: listing.publisherId,
         isToAllMembers: false,
         type: 'listing',
         createdAt: DateTime.now(),
+        isRead: false
       );
 
       ref
@@ -276,7 +277,7 @@ class ListingController extends StateNotifier<bool> {
 
       // ADD NOTIFICATION FOR CUSTOMER BOOKING
       final customerNotif = NotificationsModel(
-          title: 'Payment Succesful!',
+          title: 'Payment Successful!',
           listingId: listing.uid,
           bookingId: bookingUid,
           message:
@@ -284,7 +285,9 @@ class ListingController extends StateNotifier<bool> {
           ownerId: _ref.read(userProvider)!.uid,
           isToAllMembers: false,
           type: 'listing',
-          createdAt: DateTime.now());
+          createdAt: DateTime.now(),
+          isRead: false,
+        );
 
       ref
           .read(notificationControllerProvider.notifier)

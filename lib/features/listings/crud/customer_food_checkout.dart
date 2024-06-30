@@ -8,6 +8,7 @@ import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/payments/payment_with_paymaya.dart';
 
 class CustomerFoodCheckout extends ConsumerStatefulWidget {
   final ListingModel listing;
@@ -268,16 +269,11 @@ class _CustomerFoodCheckoutState extends ConsumerState<CustomerFoodCheckout> {
                         paymentOption: _paymentOption,
                         totalPrice: num.parse(amountTotal.toStringAsFixed(2)),
                         amountPaid: num.parse(amountTotal.toStringAsFixed(2)),
+                        createdAt: DateTime.now()
                       );
                     });
 
-                    ref.read(listingControllerProvider.notifier).addBooking(
-                        ref, updatedBooking, widget.listing, context);
-                    // Navigator.pop(context);
-
-                    // sending notification
-                    await notifyPaymentUser(updatedBooking);
-                    await notifyPublisher(widget.listing, updatedBooking);
+                    await payWithPaymaya(updatedBooking, widget.listing, ref, context, _paymentOption, amountTotal, null);
                   },
                   child: Text('Confirm and Pay',
                       style: TextStyle(

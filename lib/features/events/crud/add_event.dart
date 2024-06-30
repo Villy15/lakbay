@@ -11,9 +11,11 @@ import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/events/events_providers.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 //import 'package:lakbay/features/events/events_repository.dart';
 import 'package:lakbay/models/event_model.dart';
+import 'package:lakbay/models/notifications_model.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class AddEventPage extends ConsumerStatefulWidget {
@@ -327,7 +329,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
 
               // Save Button
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
 
@@ -371,6 +373,19 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                               },
                             ));
                   }
+
+                  final eventNotif = NotificationsModel(
+                    title: 'New Event',
+                    message: 'A new event has been added to ${widget.coop.name}.',
+                    type: 'event',
+                    isToAllMembers: true,
+                    coopId: widget.coop.uid,
+                    createdAt: DateTime.now(),
+                    isRead: false,
+                  );
+                  ref 
+                      .read(notificationControllerProvider.notifier)
+                      .addNotification(eventNotif, context);
                 },
                 child: const Text('Submit'),
               ),

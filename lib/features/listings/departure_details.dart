@@ -11,7 +11,9 @@ import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/emergency_process_dialog.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:slider_button/slider_button.dart';
 
@@ -182,8 +184,24 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                       bookingStatus: "Completed");
                   updatedPassengers[i] = updatedBooking;
 
+                  final disembarkNotif = NotificationsModel(
+                    title: 'You have arrived!',
+                    message: 'You have successfully arrived at your destination. Thank you for using Lakbay!',
+                    ownerId: updatedBooking.customerId,
+                    bookingId: updatedBooking.id,
+                    listingId: updatedBooking.listingId,
+                    isToAllMembers: false,
+                    type: 'listing',
+                    createdAt: DateTime.now(),
+                    isRead: false
+                  );
+
                   ref.read(listingControllerProvider.notifier).updateBooking(
                       context, booking.listingId, updatedBooking, "");
+
+                  ref
+                      .read(notificationControllerProvider.notifier)
+                      .addNotification(disembarkNotif, context);
                 }
               }
 
@@ -563,7 +581,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                               departureDetails.departureStatus!)
                                           ? () async {
                                               selectPassengerDialog(
-                                                  context, vehicle);
+                                                  context, vehicle, widget.listing);
                                             }
                                           : null,
                                       child: Container(
@@ -635,7 +653,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
   }
 
   Future<dynamic> selectPassengerDialog(
-      BuildContext context, AvailableTransport vehicle) {
+      BuildContext context, AvailableTransport vehicle, ListingModel listing) {
     List<ListingBookings> boardedPassengers = [];
     List<ListingBookings> notBoardedPassengers = [];
     for (var booking in departureDetails.passengers) {
@@ -677,7 +695,8 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                               itemBuilder: (context, boardedIndex) {
                                 final booking = boardedPassengers[boardedIndex];
                                 return InkWell(
-                                  onTap: () {
+                                  onTap: () async {
+                                    debugPrint('This is your booking ID: ${booking.id}');
                                     ListingBookings updatedPassenger =
                                         booking.copyWith(vehicleNo: null);
                                     setPassengers(() {
@@ -685,6 +704,31 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                           .add(updatedPassenger);
                                       boardedPassengers.remove(booking);
                                     });
+
+                                    debugPrint('This is the final booking for not boarded user: ${updatedPassenger.id}');
+
+                                    // send a notif when the user has been removed from the boarded list
+                                    final notBoardedUserNotif = NotificationsModel(
+                                      title: 'Boarding Cancelled!',
+                                      message: 'You have been removed from the boarded list for your trip to ${departureDetails.destination}.',
+                                      ownerId: updatedPassenger.customerId,
+                                      bookingId: updatedPassenger.id,
+                                      listingId: updatedPassenger.listingId,
+                                      isToAllMembers: false,
+                                      type: 'listing',
+                                      createdAt: DateTime.now(),
+                                      isRead: false
+                                    );
+
+                                    try {
+                                      await ref
+                                        .read(notificationControllerProvider.notifier)
+                                        .addNotification(notBoardedUserNotif, context);
+                                      debugPrint('successfully added the notification for the user!');
+                                    } catch (e) {
+                                      debugPrint('This is the error when storing the notifs: $e');
+                                    }
+                                    
 
                                     List<AssignedVehicle>
                                         updatedAssignedVehicles = [];
@@ -723,6 +767,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                         .read(
                                             listingControllerProvider.notifier)
                                         .updateDeparture(
+                                            // ignore: use_build_context_synchronously
                                             context, updatedDeparture, '');
                                     ListingBookings updatedBooking =
                                         booking.copyWith(vehicleNo: null);
@@ -730,6 +775,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                         .read(
                                             listingControllerProvider.notifier)
                                         .updateBooking(
+                                            // ignore: use_build_context_synchronously
                                             context,
                                             booking.listingId,
                                             updatedBooking,
@@ -776,13 +822,40 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                 final booking =
                                     notBoardedPassengers[notBoardedIndex];
                                 return InkWell(
-                                  onTap: () {
+                                  onTap: () async {
+                                    debugPrint('This is your booking ID for boarding: ${booking.id}');
                                     ListingBookings updatedPassenger = booking
                                         .copyWith(vehicleNo: vehicle.vehicleNo);
                                     setPassengers(() {
                                       boardedPassengers.add(updatedPassenger);
                                       notBoardedPassengers.remove(booking);
                                     });
+
+                                    debugPrint('This is the final booking for not boarded user: ${updatedPassenger.id}');
+
+                                    // send a notif when the user has been added to the boarded list
+                                    final boardedNotif = NotificationsModel(
+                                      title: 'You have been boarded!',
+                                      message: 'You have been successfully boarded for your trip to '
+                                          '${departureDetails.destination} with Vehicle No. ${vehicle.vehicleNo}. Enjoy your trip!',
+                                      ownerId: updatedPassenger.customerId,
+                                      bookingId: updatedPassenger.id,
+                                      listingId: updatedPassenger.listingId,
+                                      isToAllMembers: false,
+                                      type: 'listing',
+                                      createdAt: DateTime.now(),
+                                      isRead: false
+                                    );
+
+                                    try {
+                                      await ref
+                                        .read(notificationControllerProvider.notifier)
+                                        .addNotification(boardedNotif, context);
+                                    } catch (e) {
+                                      debugPrint('This is the error when storing the notifs: $e');
+                                    }
+
+                                    
                                     List<AssignedVehicle>
                                         updatedAssignedVehicles = [];
                                     AssignedVehicle updatedAssignedVehicle =
@@ -820,6 +893,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                         .read(
                                             listingControllerProvider.notifier)
                                         .updateDeparture(
+                                            // ignore: use_build_context_synchronously
                                             context, updatedDeparture, '');
                                     ListingBookings updatedBooking = booking
                                         .copyWith(vehicleNo: vehicle.vehicleNo);
@@ -827,6 +901,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                         .read(
                                             listingControllerProvider.notifier)
                                         .updateBooking(
+                                            // ignore: use_build_context_synchronously
                                             context,
                                             booking.listingId,
                                             updatedBooking,

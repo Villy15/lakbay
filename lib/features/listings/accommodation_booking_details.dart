@@ -12,7 +12,9 @@ import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/inbox/inbox_page.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/emergency_process_dialog.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -1227,6 +1229,10 @@ class _AccommodationBookingsDetailsState
                                             "Tasks Updated");
                                   }
                                   taskNameController.dispose;
+
+                                  // use sendTaskNotification to send a notification to the assigned members
+                                  sendTaskNotification(
+                                      context, ref, assignedIds, taskNameController.text);
                                 },
                                 style: FilledButton.styleFrom(
                                   shape: RoundedRectangleBorder(
@@ -1245,6 +1251,26 @@ class _AccommodationBookingsDetailsState
             }),
           );
         });
+  }
+
+  Future<void> sendTaskNotification(BuildContext context, WidgetRef ref, List<String> assignedIds, String taskName) async {
+    for (String userId in assignedIds) {
+      final taskNotif = NotificationsModel(
+        title: 'New Task!',
+        message: 'You have been added to do the task: $taskName. Navigate to the booking under tasks to view more details.',
+        ownerId: userId,
+        bookingId: widget.booking.id!,
+        listingId: widget.listing.uid!,
+        type: 'task',
+        isToAllMembers: false,
+        createdAt: DateTime.now(),
+        isRead: false
+      );
+
+      await ref
+          .read(notificationControllerProvider.notifier)
+          .addNotification(taskNotif, context);
+    }
   }
 
   @override

@@ -610,6 +610,7 @@ class CoopsController extends StateNotifier<bool> {
             isToAllMembers: true,
             type: 'coop_announcement',
             createdAt: DateTime.now(),
+            isRead: false
           );
 
           ref

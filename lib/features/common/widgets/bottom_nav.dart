@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:lakbay/features/common/widgets/notif_with_number.dart';
 
 class BottomNavBar extends ConsumerStatefulWidget {
   final UserModel? user;
@@ -156,9 +158,9 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
           ),
         ],
 
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.notifications_outlined),
-          activeIcon: Icon(Icons.notifications),
+        BottomNavigationBarItem(
+          icon: NotificationWithBadgeIcon(user: widget.user),
+          activeIcon: const Icon(Icons.notifications),
           label: 'Notifs',
         ),
       ],
@@ -207,6 +209,8 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         }
         break;
       case 5:
+        // call the markAllNotificationsAsRead function
+        ref.read(notificationControllerProvider.notifier).markAllNotificationsAsRead(widget.user!.uid);
         context.go('/notifications');
         break;
     }

@@ -12,9 +12,11 @@ import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -663,6 +665,17 @@ class _BookingsTransportCustomerState
         amountPaid: booking.amountPaid! * widget.listing.cancellationRate!,
         bookingStatus: "Cancelled",
         paymentStatus: "Cancelled");
+    final transportUserCancelNotif = NotificationsModel(
+      title: "Booking Reservation Cancelled!",
+      message:
+          "Your booking for ${widget.listing.title} has been cancelled. You will receive a refund of ₱${booking.amountPaid! * widget.listing.cancellationRate!}",
+      type: 'listing',
+      bookingId: booking.id,
+      listingId: booking.listingId,
+      ownerId: booking.customerId,
+      createdAt: DateTime.now(),
+      isRead: false,
+    );
     final sale = await ref.read(getSaleByBookingIdProvider(booking.id!).future);
     SaleModel updatedSale = sale.copyWith(
         transactionType: "Cancellation",
@@ -678,6 +691,9 @@ class _BookingsTransportCustomerState
       ref.read(salesControllerProvider.notifier).updateSale(
           context, updatedSale,
           booking: updatedBooking, trip: updatedTrip);
+      ref.read(notificationControllerProvider.notifier).addNotification(
+        transportUserCancelNotif, context
+      );
     }
   }
 }

@@ -163,7 +163,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(title,
                             style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
+                                fontSize: 18)),
                       ),
                       ...groupNotifs.map((notif) => _listTileNotifs(notif)),
                     ],
@@ -182,6 +182,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     Widget leadingWidget;
     String message = notif.message!;
     bool isTapped = notif.isTapped!;
+    bool isRead = notif.isRead;
     VoidCallback onTap;
 
     switch (notif.type) {
@@ -261,7 +262,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       title: notif.title!,
       message: message,
       leading: leadingWidget,
-      isTapped: isTapped,
+      isRead: isRead,
       onTap: onTap,
     );
   }
@@ -270,12 +271,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       {required String title,
       required String message,
       required Widget leading,
-      required bool isTapped,
+      required bool isRead,
       required VoidCallback onTap}) {
     return ListTile(
       onTap: onTap,
       leading: leading,
-      tileColor: isTapped
+      tileColor: isRead
           ? Theme.of(context).colorScheme.background
           : Theme.of(context).colorScheme.primary.withOpacity(0.1),
       title: Text(
@@ -292,7 +293,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             TextSpan(
               text:
                   message.split(': ').length > 1 ? message.split(': ')[1] : '',
-              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),

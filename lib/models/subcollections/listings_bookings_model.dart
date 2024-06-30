@@ -50,6 +50,7 @@ class ListingBookings with _$ListingBookings {
     @TimeOfDayConverter() TimeOfDay? endTime,
     @TimestampSerializer() DateTime? serviceStart,
     @TimestampSerializer() DateTime? serviceComplete,
+    @TimestampSerializer() DateTime? createdAt,
   }) = _ListingBookings;
 
   factory ListingBookings.fromJson(Map<String, dynamic> json) =>

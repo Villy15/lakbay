@@ -9,6 +9,7 @@ import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
+import 'package:lakbay/payments/payment_with_paymaya.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 enum PaymentOption { downpayment, fullPayment }
@@ -116,18 +117,11 @@ class _CustomerAccomodationCheckoutState
                       paymentOption: paymentOption,
                       paymentStatus: paymentStatus,
                       totalPrice: num.parse(totalPrice.toStringAsFixed(2)),
-                      amountPaid: num.parse(amountDue.toStringAsFixed(2)));
+                      amountPaid: num.parse(amountDue.toStringAsFixed(2)),
+                      createdAt: DateTime.now()
+                      );
                 });
-                ref
-                    .read(listingControllerProvider.notifier)
-                    .addBooking(ref, updatedBooking, widget.listing, context);
-                // context.pop();
-                // context.pop();
-                // context.pop();
-
-                // sending notifications
-                await notifyPublisher(widget.listing, updatedBooking);
-                await notifyPaymentUser(updatedBooking);
+                await payWithPaymaya(updatedBooking, widget.listing, ref, context, paymentOption, amountDue, null);
               },
               child: Text('Confirm and Pay',
                   style: TextStyle(

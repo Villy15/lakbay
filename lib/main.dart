@@ -10,7 +10,9 @@ import 'package:lakbay/core/theme/theme.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/firebase_options.dart';
+import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/router.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -58,6 +60,7 @@ void main() async {
   // await FirebaseApi().initNotifications();
 
   FirebaseMessaging.onBackgroundMessage(_backgroundMessageHandler);
+
 
   runApp(const ProviderScope(child: MyApp()));
 }

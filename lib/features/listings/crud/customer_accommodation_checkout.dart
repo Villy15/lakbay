@@ -4,6 +4,7 @@ import 'dart:convert';
 // import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
@@ -11,8 +12,8 @@ import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/payments/payment_web_view.dart';
+import 'package:lakbay/payments/payment_with_paymaya.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:uni_links/uni_links.dart';
 
 enum PaymentOption { downpayment, fullPayment }
@@ -95,42 +96,24 @@ class _CustomerAccomodationCheckoutState
     super.dispose();
   }
 
-  void handleUri(Uri uri) {
-    switch(uri.path) {
-      case '/payment-success': 
-        // handle payment success
-        // show a toast message
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Payment successful!'),
-            duration: Duration(seconds: 5),
-          ),
-        );
-        // close the launch url
-
-        break;
-      case '/payment-failure':
-        // handle payment failure
-        // show a toast message
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Payment failed!'),
-            duration: Duration(seconds: 5),
-          ),
-        );
-        break;
-      case '/payment-cancel':
-        // handle payment cancelled
-        // show a toast message
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Payment cancelled!'),
-            duration: Duration(seconds: 5),
-          ),
-        );
-        break;
-    }
+  Future<bool> handleUri(Uri uri) async {
+  switch(uri.path) {
+    case '/payment-success': 
+      // Assuming some asynchronous operation to validate payment
+      // For immediate return, you can just return true;
+      return true;
+      
+    case '/payment-failure':
+      return false;
+      
+    case '/payment-cancel':
+      return false;
+      
+    default:
+      // Handle unknown cases
+      return false;
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -198,16 +181,11 @@ class _CustomerAccomodationCheckoutState
                       paymentOption: paymentOption,
                       paymentStatus: paymentStatus,
                       totalPrice: num.parse(totalPrice.toStringAsFixed(2)),
-                      amountPaid: num.parse(amountDue.toStringAsFixed(2)));
+                      amountPaid: num.parse(amountDue.toStringAsFixed(2)),
+                      createdAt: DateTime.now());
                 });
 
-                paymentSuccessful = await payWithPaymaya(updatedBooking);
-
-                if (paymentSuccessful) {
-                  ref
-                    .read(listingControllerProvider.notifier)
-                    .addBooking(ref, updatedBooking, widget.listing, context);
-                }
+                await payWithPaymaya(updatedBooking, widget.listing, ref, context, _selectedPaymentOption.name, amountDue, null);
                 
 
                 
@@ -223,76 +201,105 @@ class _CustomerAccomodationCheckoutState
       ),
     );
   }
+  
+
 
 
   // Calling the PayMaya API for checkout payment
-  Future<bool> payWithPaymaya(ListingBookings listingBookings) async {
-    final response = await http.post(
-      Uri.parse('https://us-central1-lakbay-cd97e.cloudfunctions.net/payWithPaymayaCheckout'),
-      headers: <String, String> {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic> {
-        'payment': {
-          'paymentOption': _selectedPaymentOption.name,
-          'totalPrice': amountDue,
-        },
-        'card': {
-          'cardNumber': '4123450131001381',
-          'expMonth': '12',
-          'expYear': '2025',
-          'cvv': '123',
-          'cardType': 'VISA',
-          'billingAddress': {
-            'line1': '6F Launchpad',
-            'line2': 'Reliance Street',
-            'city': 'Mandaluyong',
-            'state': 'Metro Manila',
-            'zipCode': '1552',
-            'countryCode': 'PH'
-          }
-        },
-        'userDetails': {
-          'name': listingBookings.customerName,
-          'phone': listingBookings.customerPhoneNo,
-        },
-        'listingDetails': {
-          'listingId': listingBookings.listingId,
-          'listingTitle': listingBookings.listingTitle,
-        },
-        'redirectUrls' : {
-          'success': 'https://lakbay.com/payment-success',
-          'failure': 'https://lakbay.com/payment-failure',
-          'cancel': 'https://lakbay.com/payment-cancel',
-        }
-      }),
-    );
+  // Future<void> payWithPaymaya(ListingBookings listingBookings, WidgetRef ref, BuildContext context) async {
+  //   final response = await http.post(
+  //     Uri.parse('https://us-central1-lakbay-cd97e.cloudfunctions.net/payWithPaymayaCheckout'),
+  //     headers: <String, String> {
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //     },
+  //     body: jsonEncode(<String, dynamic> {
+  //       'payment': {
+  //         'paymentOption': _selectedPaymentOption.name,
+  //         'totalPrice': amountDue,
+  //       },
+  //       'card': {
+  //         'cardNumber': '4123450131001381',
+  //         'expMonth': '12',
+  //         'expYear': '2025',
+  //         'cvv': '123',
+  //         'cardType': 'VISA',
+  //         'billingAddress': {
+  //           'line1': '6F Launchpad',
+  //           'line2': 'Reliance Street',
+  //           'city': 'Mandaluyong',
+  //           'state': 'Metro Manila',
+  //           'zipCode': '1552',
+  //           'countryCode': 'PH'
+  //         }
+  //       },
+  //       'userDetails': {
+  //         'name': listingBookings.customerName,
+  //         'phone': listingBookings.customerPhoneNo,
+  //       },
+  //       'listingDetails': {
+  //         'listingId': listingBookings.listingId,
+  //         'listingTitle': listingBookings.listingTitle,
+  //       },
+  //       'redirectUrls' : {
+  //         'success': 'https://lakbay.com/payment-success',
+  //         'failure': 'https://lakbay.com/payment-failure',
+  //         'cancel': 'https://lakbay.com/payment-cancel',
+  //       }
+  //     }),
+  //   );
 
-    Map<String, dynamic> responseBody = jsonDecode(response.body);
-    int statusCode = responseBody['statusCode'];
-    String redirectUrl = responseBody['redirectUrl'];
-    Uri uri = Uri.parse(redirectUrl);
+  //   Map<String, dynamic> responseBody = jsonDecode(response.body);
+  //   int statusCode = responseBody['statusCode'];
+  //   String redirectUrl = responseBody['redirectUrl'];
+  //   Uri uri = Uri.parse(redirectUrl);
 
-    if (statusCode == 303) {
-      debugPrint('Processing checkout. This is the response: $responseBody');
-      debugPrint('Redirecting to PayMaya checkout page...');
+  //   if (statusCode == 303) {
+  //     debugPrint('Processing checkout. This is the response: $responseBody');
+  //     debugPrint('Redirecting to PayMaya checkout page...');
 
-      // run launchUrl if want to test the payment since paymentWebView is in-progress
-      launchUrl(uri);
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => PaymentWebView(uri: uri),
-      //   ),
-      // );
-      // if successful, return true
-      return true;
-    }
-    else {
-      debugPrint('Failed to process checkout. This is the response: $responseBody');
-      return false;
-    }
-  }
+  //     // run launchUrl if want to test the payment since paymentWebView is in-progress
+  //     // launchUrl(uri);
+
+  //     // GoRouter.of(context).go('/payment-web-view', arguments: uri);
+  //     final bool paymentResult = await Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => PaymentWebView(uri: uri),
+  //       ),
+  //     );
+
+  //     if (paymentResult) {
+  //       debugPrint('The payment was successful!!!');
+  //       // Update the booking status to 'Confirmed'
+  //       ref
+  //           .read(listingControllerProvider.notifier)
+  //           // ignore: use_build_context_synchronously
+  //           .addBooking(ref, updatedBooking, widget.listing, context);
+  //       // show snackbar
+  //       // ignore: use_build_context_synchronously
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('Payment successful!'),
+  //           backgroundColor: Colors.green,
+  //         ),
+  //       );
+  //     }
+  //     else {
+  //       debugPrint('Payment was unsuccessful. Either cancelled or cannot be processed. Try again later.');
+  //       // show snackbar
+  //       // ignore: use_build_context_synchronously
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('Payment was unsuccessful. Either cancelled or cannot be processed. Try again later.'),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //   }
+  //   else {
+  //     debugPrint('Failed to process checkout. This is the response: $responseBody');
+  //   }
+  // }
 
 
   Future<void> notifyPublisher(

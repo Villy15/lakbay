@@ -22,6 +22,7 @@ class NotificationsModel with _$NotificationsModel {
     @TimestampSerializer() DateTime? createdAt,
     String? routePath,
     @Default(false) bool? isToAllMembers,
+    required bool isRead,
   }) = _NotificationsModel;
 
   factory NotificationsModel.fromJson(Map<String, dynamic> json) =>

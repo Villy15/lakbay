@@ -24,6 +24,7 @@ _$NotificationsModelImpl _$$NotificationsModelImplFromJson(
           const TimestampSerializer().fromJson(json['createdAt'] as Timestamp?),
       routePath: json['routePath'] as String?,
       isToAllMembers: json['isToAllMembers'] as bool? ?? false,
+      isRead: json['isRead'] as bool,
     );
 
 Map<String, dynamic> _$$NotificationsModelImplToJson(
@@ -43,4 +44,5 @@ Map<String, dynamic> _$$NotificationsModelImplToJson(
       'createdAt': const TimestampSerializer().toJson(instance.createdAt),
       'routePath': instance.routePath,
       'isToAllMembers': instance.isToAllMembers,
+      'isRead': instance.isRead,
     };

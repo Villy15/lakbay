@@ -35,6 +35,7 @@ mixin _$NotificationsModel {
   DateTime? get createdAt => throw _privateConstructorUsedError;
   String? get routePath => throw _privateConstructorUsedError;
   bool? get isToAllMembers => throw _privateConstructorUsedError;
+  bool get isRead => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -62,7 +63,8 @@ abstract class $NotificationsModelCopyWith<$Res> {
       String? type,
       @TimestampSerializer() DateTime? createdAt,
       String? routePath,
-      bool? isToAllMembers});
+      bool? isToAllMembers,
+      bool isRead});
 }
 
 /// @nodoc
@@ -92,6 +94,7 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
     Object? createdAt = freezed,
     Object? routePath = freezed,
     Object? isToAllMembers = freezed,
+    Object? isRead = null,
   }) {
     return _then(_value.copyWith(
       uid: freezed == uid
@@ -150,6 +153,10 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
           ? _value.isToAllMembers
           : isToAllMembers // ignore: cast_nullable_to_non_nullable
               as bool?,
+      isRead: null == isRead
+          ? _value.isRead
+          : isRead // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -176,7 +183,8 @@ abstract class _$$NotificationsModelImplCopyWith<$Res>
       String? type,
       @TimestampSerializer() DateTime? createdAt,
       String? routePath,
-      bool? isToAllMembers});
+      bool? isToAllMembers,
+      bool isRead});
 }
 
 /// @nodoc
@@ -204,6 +212,7 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
     Object? createdAt = freezed,
     Object? routePath = freezed,
     Object? isToAllMembers = freezed,
+    Object? isRead = null,
   }) {
     return _then(_$NotificationsModelImpl(
       uid: freezed == uid
@@ -262,6 +271,10 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
           ? _value.isToAllMembers
           : isToAllMembers // ignore: cast_nullable_to_non_nullable
               as bool?,
+      isRead: null == isRead
+          ? _value.isRead
+          : isRead // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -283,7 +296,8 @@ class _$NotificationsModelImpl implements _NotificationsModel {
       this.type,
       @TimestampSerializer() this.createdAt,
       this.routePath,
-      this.isToAllMembers = false});
+      this.isToAllMembers = false,
+      required this.isRead});
 
   factory _$NotificationsModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$NotificationsModelImplFromJson(json);
@@ -319,10 +333,12 @@ class _$NotificationsModelImpl implements _NotificationsModel {
   @override
   @JsonKey()
   final bool? isToAllMembers;
+  @override
+  final bool isRead;
 
   @override
   String toString() {
-    return 'NotificationsModel(uid: $uid, ownerId: $ownerId, userId: $userId, coopId: $coopId, message: $message, title: $title, listingId: $listingId, eventId: $eventId, bookingId: $bookingId, isTapped: $isTapped, type: $type, createdAt: $createdAt, routePath: $routePath, isToAllMembers: $isToAllMembers)';
+    return 'NotificationsModel(uid: $uid, ownerId: $ownerId, userId: $userId, coopId: $coopId, message: $message, title: $title, listingId: $listingId, eventId: $eventId, bookingId: $bookingId, isTapped: $isTapped, type: $type, createdAt: $createdAt, routePath: $routePath, isToAllMembers: $isToAllMembers, isRead: $isRead)';
   }
 
   @override
@@ -349,7 +365,8 @@ class _$NotificationsModelImpl implements _NotificationsModel {
             (identical(other.routePath, routePath) ||
                 other.routePath == routePath) &&
             (identical(other.isToAllMembers, isToAllMembers) ||
-                other.isToAllMembers == isToAllMembers));
+                other.isToAllMembers == isToAllMembers) &&
+            (identical(other.isRead, isRead) || other.isRead == isRead));
   }
 
   @JsonKey(ignore: true)
@@ -369,7 +386,8 @@ class _$NotificationsModelImpl implements _NotificationsModel {
       type,
       createdAt,
       routePath,
-      isToAllMembers);
+      isToAllMembers,
+      isRead);
 
   @JsonKey(ignore: true)
   @override
@@ -401,7 +419,8 @@ abstract class _NotificationsModel implements NotificationsModel {
       final String? type,
       @TimestampSerializer() final DateTime? createdAt,
       final String? routePath,
-      final bool? isToAllMembers}) = _$NotificationsModelImpl;
+      final bool? isToAllMembers,
+      required final bool isRead}) = _$NotificationsModelImpl;
 
   factory _NotificationsModel.fromJson(Map<String, dynamic> json) =
       _$NotificationsModelImpl.fromJson;
@@ -435,6 +454,8 @@ abstract class _NotificationsModel implements NotificationsModel {
   String? get routePath;
   @override
   bool? get isToAllMembers;
+  @override
+  bool get isRead;
   @override
   @JsonKey(ignore: true)
   _$$NotificationsModelImplCopyWith<_$NotificationsModelImpl> get copyWith =>

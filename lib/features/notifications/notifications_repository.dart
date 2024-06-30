@@ -30,6 +30,13 @@ class NotificationsRepository {
     });
   }
 
+  Future<void> markAllNotificationsAsRead(String ownerId) async {
+    final notifs = await _notifications.where('ownerId', isEqualTo: ownerId).get();
+    for (var notif in notifs.docs) {
+      await notif.reference.update({'isRead': true});
+    }
+  }
+
   // Read all notifs
   Stream<List<NotificationsModel>> readAllNotifications() {
     return _notifications.snapshots().map((snapshot) {

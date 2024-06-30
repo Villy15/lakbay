@@ -54,7 +54,11 @@ class NotificationsController extends StateNotifier<bool> {
     return _notificationsRepository.readAllNotifications();
   }
 
-  void addNotification(NotificationsModel notif, BuildContext context) async {
+  Future<void> markAllNotificationsAsRead(String ownerId) async {
+    await _notificationsRepository.markAllNotificationsAsRead(ownerId);
+  }
+
+  Future<void> addNotification(NotificationsModel notif, BuildContext context) async {
     final result = await _notificationsRepository.addNotification(notif);
 
     result.fold(

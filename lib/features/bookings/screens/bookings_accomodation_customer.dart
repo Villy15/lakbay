@@ -11,13 +11,16 @@ import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/features/sales/sales_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:lakbay/payments/payment_with_paymaya.dart';
 
 class BookingsAccomodationCustomer extends ConsumerStatefulWidget {
   final ListingModel listing;
@@ -641,8 +644,7 @@ class _BookingsAccomodationCustomerState
                         onPressed: () =>
                             onTapPayBalance(context, booking, balance)
                                 .then((value) {
-                          showSnackBar(context, 'Payment Successfull');
-                          context.pop();
+                                  context.pop();
                         }),
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -716,14 +718,16 @@ class _BookingsAccomodationCustomerState
 
   Future<dynamic> onTapPayBalance(
       context, ListingBookings booking, num amountDue) async {
-    final updatedBooking = booking.copyWith(
-        amountPaid: amountDue + booking.amountPaid!,
-        paymentStatus: "Fully Paid");
-    final sale = await ref.read(getSaleByBookingIdProvider(booking.id!).future);
-    SaleModel updatedSale = sale.copyWith(transactionType: "Full Payment");
-    ref
-        .read(salesControllerProvider.notifier)
-        .updateSale(context, updatedSale, booking: updatedBooking);
+    
+    await payWithPaymaya(booking, widget.listing, ref, context, 'Downpayment', amountDue, null);
+    // final updatedBooking = booking.copyWith(
+    //     amountPaid: amountDue + booking.amountPaid!,
+    //     paymentStatus: "Fully Paid");
+    // final sale = await ref.read(getSaleByBookingIdProvider(booking.id!).future);
+    // SaleModel updatedSale = sale.copyWith(transactionType: "Full Payment");
+    // ref
+    //     .read(salesControllerProvider.notifier)
+    //     .updateSale(context, updatedSale, booking: updatedBooking);
   }
 
   Future<dynamic> cancelBookingProcess(
@@ -954,6 +958,17 @@ class _BookingsAccomodationCustomerState
         amountPaid: booking.amountPaid! * widget.listing.cancellationRate!,
         bookingStatus: "Cancelled",
         paymentStatus: "Cancelled");
+    final accommodationUserCancelNotif = NotificationsModel(
+      title: "Booking Reservation Cancelled!",
+      message:
+          "Your booking for ${widget.listing.title} has been cancelled. You will receive a refund of ₱${booking.amountPaid! * widget.listing.cancellationRate!}",
+      type: 'listing',
+      bookingId: booking.id,
+      listingId: booking.listingId,
+      ownerId: booking.customerId,
+      createdAt: DateTime.now(),
+      isRead: false,
+    );
     final sale = await ref.read(getSaleByBookingIdProvider(booking.id!).future);
     SaleModel updatedSale = sale.copyWith(
         transactionType: "Cancellation",
@@ -968,6 +983,9 @@ class _BookingsAccomodationCustomerState
       ref.read(salesControllerProvider.notifier).updateSale(
           context, updatedSale,
           booking: updatedBooking, trip: updatedTrip);
+      ref.read(notificationControllerProvider.notifier).addNotification(
+        accommodationUserCancelNotif, context
+      );
     }
   }
 }

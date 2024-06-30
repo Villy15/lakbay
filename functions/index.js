@@ -151,97 +151,124 @@ exports.notifyUsers = functions.https.onRequest(async (req, res) => {
   })
 });
 
-exports.notifyUserPendingBalance = functions.pubsub.schedule('every 24 hours').onRun(async (context) => {
-  const bookingsCollection = admin.firestore().collection('listings').doc('bookings').get();
+exports.userPendingBalance = functions.pubsub.schedule('00 00 * * *') // set to midnight
+  .timeZone('Asia/Manila')
+  .onRun(async (context) => {
+  const listingsSnapshot = await admin.firestore().collection('listings').get();
+  const now = new Date();
 
-  const bookings = bookingsCollection.docs.map(doc => doc.data());
+  for (const listingDoc of listingsSnapshot.docs) {
+    // get the id of the current listing
+    const listingId = listingDoc.id;
+    // fetch all bookings for the current listing
+    const bookingsSnapshot = await admin.firestore()
+          .collection('listings/' + listingId + '/bookings')
+          .where('paymentStatus', '==', 'Partially Paid')
+          .where('paymentOption', '==', 'Downpayment')
+          .get();
+          
+    for (const bookingDoc of bookingsSnapshot.docs) {
+      const booking = { id: bookingDoc.id, ...bookingDoc.data() };
 
-  bookings.forEach(async booking => {
-    const paymentOption = booking.paymentOption;
-    const paymentStatus = booking.paymentStatus;
-    const amountPaid = booking.amountPaid;
-    const totalPrice = booking.totalPrice;
+      const downpaymentDeadline = new Date(booking.startDate.toDate().getTime() - (listingDoc.data().downpaymentPeriod * 24 * 60 * 60 * 1000));
 
-    const listingCollection = admin.firestore().collection('listings').doc(booking.listingId).get();
-
-    const listing = listingCollection.docs.map(doc => doc.data());
-
-    const downpaymentRate = listing.downpaymentRate;
-    const duration = listing.duration;
-
-    if (paymentOption === "Downpayment" && paymentStatus === "Pending") {
-      const downpaymentRateNum = parseFloat(downpaymentRate);
-      const downpaymentAmount = totalPrice * downpaymentRateNum;
-
-      if (amountPaid < downpaymentAmount) {
-        const userId = booking.userId;
-
+      // if the current date is after the downpayment deadline, then notify the user that the booking has been cancelled
+      if (now > downpaymentDeadline) {
+        await admin.firestore().collection('listings').doc(listingId)
+                .collection('bookings')
+                .doc(booking.id)
+                .update({
+                  bookingStatus: 'Cancelled',
+                  paymentStatus: 'Cancelled',
+                  amountPaid: booking.amountPaid * listingDoc.data().cancellationRate
+                });
+        
+        await admin.firestore()
+                .collection('sales')
+                .where('bookingId', '==', booking.id)
+                .update({
+                  transactionType: 'Cancellation',
+                  amount: booking.amountPaid * listingDoc.data().cancellationRate
+                });
+        
+        // send notification to user
         const notification = {
-          notificationTitle: "Pending Balance",
-          notificationMessage: "You have a pending balance for your booking. Please settle the downpayment amount within the given period to avoid any issues.",
-          userId: userId
+          title: 'Booking Cancelled!',
+          message: 'Your booking has been cancelled due to non-payment of the downpayment within the given period.',
+          ownerId: booking.customerId,
+          bookingId: booking.id,
+          listingId: listingId,
+          isToAllMembers: false,
+          type: 'listing',
+          createdAt: new Date(),
+          isRead: false
         }
 
-        const payload = {
-          notification: {
-            title: notification.notificationTitle,
-            body: notification.notificationMessage
-          }
-        };
+        const tokensSnapshot = await admin.firestore().collection('users').doc(booking.customerId).collection('tokens').get();
+        const tokens = tokensSnapshot.docs.map(doc => doc.data().token);
 
-        const tokensCollection = await admin.firestore().collection('users').doc(userId).collection('tokens').get();
+        if (tokens.length > 0) {
+          const message = {
+            notification: {
+              title: notification.title,
+              body: notification.message
+            },
+            tokens: tokens
+          };
 
-        const tokens = tokensCollection.docs.map(doc => doc.data().token);
+          // sends notification
+          admin.messaging().sendMulticast(message)
+            .then((response) => {
+              console.log('Successfully sent message:', response);
+            }).catch((error) => {
+              console.log('Error sending message: ', error);
+            })
+        }
 
-        const message = {
-          notification: payload.notification,
-          tokens: tokens
-        };
+        await admin.firestore().collection('notifications').add(notification);
+      }
 
-        return admin.messaging().sendMulticast(message)
-        .then((response) => {
-          console.log('Successfully sent message:', response);
-          console.log('Results:', response.responses);
-          res.status(200).send("Notification sent! This is the response and message tokens: " + response + " " + message.tokens);
-        }).catch((error) => {
-          console.log('Error sending message:', error);
-          res.status(500).send("Error sending message.  This is the error message: " + error);
-        });
+      // if the current date is before the downpayment deadline, then notify the user that the downpayment is still pending
+      else if (now < downpaymentDeadline) {
+        const notification = {
+          title: 'Pending Downpayment',
+          message: 'You have a pending downpayment for your booking. Please settle the downpayment amount within the given period to avoid any issues.',
+          ownerId: booking.customerId,
+          bookingId: booking.id,
+          listingId: listingId,
+          isToAllMembers: false,
+          type: 'listing',
+          createdAt: new Date(),
+          isRead: false
+        }
+
+        const tokensSnapshot = await admin.firestore().collection('users').doc(booking.customerId).collection('tokens').get();
+        const tokens = tokensSnapshot.docs.map(doc => doc.data().token);
+
+        if (tokens.length > 0) {
+          const message = {
+            notification: {
+              title: notification.title,
+              body: notification.message
+            },
+            tokens: tokens
+          };
+
+          // sends notification
+          admin.messaging().sendMulticast(message)
+            .then((response) => {
+              console.log('Successfully sent message:', response);
+            }).catch((error) => {
+              console.log('Error sending message: ', error);
+            })
+        }
+
+        await admin.firestore().collection('notifications').add(notification);
       }
     }
-  });
+
+  }
 });
-
-// integration of PayMaya API for payment processing
-// exports.payWithPaymaya = functions.https.onRequest(async (req, res) => {
-//   const url = 'https://pg-sandbox.paymaya.com/payments/v1/payment-tokens';
-//   const headers = {
-//     'Content-Type': 'application/json',
-//     'Authorization': 'Basic ' + functions.config().paymaya.secret_key
-//   };
-
-//   const body = JSON.stringify({
-//     // payment details such as cardNumber, cardType, csv, expiryMonth, expiryYear, and totalAmount
-//   });
-
-//   const response = await axios.post(url, body, {headers: headers});
-
-//   if (response.ok) {
-//     const jsonResponse = await response.json();
-//     const paymentToken = jsonResponse.paymentTokenId;
-//     const redirectUrl = jsonResponse.redirectUrl;
-
-//     // Send the paymentToken and redirectUrl back to the Flutter app
-//     res.json({paymentToken, redirectUrl});  
-//   }
-//   else {
-//     console.error('Request failed with status: ', response.status);
-//     res.status(500).send('Failed to create payment token.');
-//   }
-
-  
-// });
-
 
 // PayMaya API with checkout 
 exports.payWithPaymayaCheckout = functions.https.onRequest(async (req, res) => {
@@ -344,5 +371,32 @@ exports.payWithPaymayaCheckout = functions.https.onRequest(async (req, res) => {
     console.error('Error:', e);
     res.status(500).send('Failed to create checkout. Error: ' + e);
   }
+
+});
+
+// PayMaya API to refund the user
+exports.refundPayment = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    res.end();
+    return;
+  }
+
+  const checkoutId = req.body.checkoutId;
+  const totalAmount = req.body.totalAmount;
+
+  const url = `https://pg-sandbox.paymaya.com/checkout/v1/checkouts/${checkoutId}/refunds`;
+  const secretKey = functions.config().paymaya.public_key;
+  const encodedSecretKey = Buffer.from(secretKey + ":").toString('base64');
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Basic ' + encodedSecretKey
+  };
+
+
 
 });
