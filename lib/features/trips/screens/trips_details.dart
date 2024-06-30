@@ -237,46 +237,50 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
               ),
             ],
           ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-            child: Row(
-              children: [
-                const SizedBox(width: 16.0),
-                const Icon(Icons.add),
-                const SizedBox(width: 8.0),
-                InkWell(
-                  onTap: () {
-                    onTapActivity(
-                      thisDay,
-                      plan,
-                    );
-                  },
-                  child: DottedBorder(
-                    borderType: BorderType.RRect,
-                    radius: const Radius.circular(12),
-                    padding: const EdgeInsets.all(6),
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(12)),
-                      child: SizedBox(
-                        height: 70,
-                        // max width
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: const Center(
-                          child: Text(
-                            'Add Activity',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
+          if (plan.tripStatus != "Completed")
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+              child: Row(
+                children: [
+                  const SizedBox(width: 16.0),
+                  const Icon(Icons.add),
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        onTapActivity(
+                          thisDay,
+                          plan,
+                        );
+                      },
+                      child: DottedBorder(
+                        borderType: BorderType.RRect,
+                        radius: const Radius.circular(12),
+                        padding: const EdgeInsets.all(6),
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12)),
+                          child: SizedBox(
+                            height: 70,
+                            // max width
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            child: const Center(
+                              child: Text(
+                                'Add Activity',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                )
-              ],
-            ),
-          )
+                  )
+                ],
+              ),
+            )
         ],
       ),
     );
@@ -342,20 +346,23 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
               ),
             );
           } else {
-            return InkWell(
-              onTap: () => (),
-              child: const SizedBox(
-                width: 100,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add), // Plus icon
-                    Text("Add Day"),
-                  ],
+            if (plan.tripStatus != "Completed") {
+              return InkWell(
+                onTap: () => (),
+                child: const SizedBox(
+                  width: 100,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add), // Plus icon
+                      Text("Add Day"),
+                    ],
+                  ),
                 ),
-              ),
-            );
+              );
+            }
           }
+          return null;
         },
       ),
     );
@@ -387,12 +394,14 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
         ),
         actions: [
           // Details
-          IconButton(
-            onPressed: () {
-              onTapInfo(plan);
-            },
-            icon: const Icon(Icons.info),
-          ),
+          plan.tripStatus != "Completed"
+              ? IconButton(
+                  onPressed: () {
+                    onTapInfo(plan);
+                  },
+                  icon: const Icon(Icons.info),
+                )
+              : Container(),
         ],
         // Add icon on the right side of the app bar of a person,
         bottom: TabBar(

@@ -56,34 +56,31 @@ class AnnouncementCard extends StatelessWidget {
                   maxLines: 3, overflow: TextOverflow.ellipsis),
               const SizedBox(height: 24),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  FilledButton(
-                    onPressed: () => {},
-                    child: const Text('Read more'),
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.calendar_today, size: 16),
-                      const SizedBox(width: 4),
-                      // Posted on
+                  const Icon(Icons.calendar_today, size: 16),
+                  const SizedBox(width: 4),
+                  // Posted on
 
-                      Text(
-                        'Posted on ${DateFormat.yMMMd().format(
-                          announcement.timestamp ?? DateTime.now(),
-                        )}.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.6),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'Posted on ${DateFormat.yMMMd().format(
+                      announcement.timestamp ?? DateTime.now(),
+                    )}.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
+                    ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 12),
+
+              FilledButton(
+                onPressed: () => {},
+                child: const Text('Read more'),
               ),
             ],
           ),

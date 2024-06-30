@@ -12,6 +12,7 @@ import 'package:lakbay/models/subcollections/coop_goals_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_privileges_model.dart';
 import 'package:lakbay/models/subcollections/coop_vote_model.dart';
+import 'package:lakbay/models/wrappers/join_coop_params.dart';
 
 final coopsRepositoryProvider = Provider((ref) {
   return CoopsRepository(firestore: ref.watch(firestoreProvider));
@@ -302,7 +303,7 @@ class CoopsRepository {
     }
   }
 
-  // ANNOUNCEMENTS
+  ///////////////////////////////////////////////////////////////////ANNOUNCEMENTS\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   // Add an announcement in announcements subcollection
   FutureEither<String> addAnnouncement(
@@ -335,7 +336,8 @@ class CoopsRepository {
     });
   }
 
-  // GOALS
+  ///////////////////////////////////////////////////////////////////GOALS\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
   // Add a goal in goals subcollection
   FutureEither<String> addGoal(String coopId, CoopGoals coopGoal) async {
     try {
@@ -421,6 +423,69 @@ class CoopsRepository {
     try {
       return right(
           await votes(coopId).doc(coopVote.uid).update(coopVote.toJson()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  ///////////////////////////////////////////////////////////////////APPLICATIONS\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  CollectionReference applications(String coopId) {
+    return _communities
+        .doc(coopId)
+        .collection(FirebaseConstants.applicationsSubcollections);
+  }
+
+  FutureEither<String> addApplication(
+      String coopId, JoinCoopParams application) async {
+    try {
+      // Generate a new document ID
+      var doc = applications(coopId).doc();
+
+      // Update the uid of the cooperative
+      application = application.copyWith(uid: doc.id);
+
+      // Add the cooperative to the database
+      await doc.set(application.toJson());
+
+      // Return the uid of the newly added cooperative
+      return right(doc.id);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  // Read room by properties
+  Stream<List<JoinCoopParams>> readApplicationsByProperties(Query query) {
+    return query.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return JoinCoopParams.fromJson(doc.data()! as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  FutureEither<String> deleteApplication(
+      String coopId, String applicationUid) async {
+    try {
+      await applications(coopId).doc(applicationUid).delete();
+
+      return right(applicationUid);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureVoid updateApplication(JoinCoopParams application) async {
+    try {
+      return right(await applications(application.coopId!)
+          .doc(application.uid!)
+          .update(application.toJson()));
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {

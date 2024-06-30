@@ -83,36 +83,34 @@ class GoalCard extends StatelessWidget {
               //     ),
               //   ],
               // ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  FilledButton(
-                    onPressed: () => {},
-                    child: const Text('Read more'),
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.calendar_today, size: 16),
-                      const SizedBox(width: 4),
-                      // Posted on
-
-                      Text(
-                        'Target Date: ${DateFormat.yMMMd().format(
-                          goal.targetDate ?? DateTime.now(),
-                        )}.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.6),
-                        ),
-                      ),
-                    ],
+                  const Icon(Icons.calendar_today, size: 16),
+                  const SizedBox(width: 4),
+                  // Posted on
+                  Text(
+                    'Target Date: ${DateFormat.yMMMd().format(
+                      goal.targetDate ?? DateTime.now(),
+                    )}.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
+                    ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 16),
+
+              FilledButton(
+                onPressed: () {
+                  // Handle onPressed action
+                },
+                child: const Text('Read more'),
               ),
             ],
           ),

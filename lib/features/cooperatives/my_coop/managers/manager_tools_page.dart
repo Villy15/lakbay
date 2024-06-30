@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/cooperatives/my_coop/announcements/add_announcement.dart';
 import 'package:lakbay/features/cooperatives/my_coop/goals/add_goal.dart';
+import 'package:lakbay/features/cooperatives/my_coop/managers/add_jobs.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_dvidends.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_member_fee.dart';
 import 'package:lakbay/features/cooperatives/my_coop/managers/manage_share_capital.dart';
@@ -81,12 +82,26 @@ class ManagerToolsPage extends ConsumerWidget {
   }
 
   void addVote(BuildContext context, CooperativeModel coop) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return SizedBox(
+            child: Dialog.fullscreen(
+                child: AddVote(
+              parentContext: context,
+              coop: coop,
+            )),
+          );
+        });
+  }
+
+  void addJobs(BuildContext context, CooperativeModel coop) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       isDismissible: true,
       builder: (BuildContext context) {
-        return AddVote(
+        return AddJobs(
           parentContext: context,
           coop: coop,
         );
@@ -180,6 +195,17 @@ class ManagerToolsPage extends ConsumerWidget {
             title: const Text('Add Election Vote'),
             onTap: () => {
               addVote(
+                context,
+                coop,
+              )
+            },
+          ),
+      // Add Job Roles
+      'Add Job Roles': () => ListTile(
+            leading: const Icon(Icons.groups_2_outlined),
+            title: const Text('Add Tourism Jobs'),
+            onTap: () => {
+              addJobs(
                 context,
                 coop,
               )

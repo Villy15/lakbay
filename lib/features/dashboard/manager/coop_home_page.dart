@@ -571,14 +571,14 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                 children: [
                   SizedBox(
                     // Width / 2
-                    height: 95,
+                    height: MediaQuery.sizeOf(context).height / 5.5,
                     width: MediaQuery.of(context).size.width / 2 - 24,
                     child: announcementCard(),
                   ),
                   const SizedBox(width: 8),
                   SizedBox(
                     // Width / 2
-                    height: 95,
+                    height: MediaQuery.sizeOf(context).height / 5.5,
                     width: MediaQuery.of(context).size.width / 2 - 24,
                     child: voteCard(),
                   ),
@@ -594,13 +594,13 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                 children: [
                   SizedBox(
                       // Width / 2
-                      height: 95,
+                      height: MediaQuery.sizeOf(context).height / 5.5,
                       width: MediaQuery.of(context).size.width / 2 - 24,
                       child: goalCard()),
                   const SizedBox(width: 8),
                   SizedBox(
                     // Width / 2
-                    height: 95,
+                    height: MediaQuery.sizeOf(context).height / 5.5,
                     width: MediaQuery.of(context).size.width / 2 - 24,
                     child: contributeCard(),
                   ),
@@ -1137,23 +1137,22 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                 ),
               ),
               const SizedBox(height: 8),
-
-              // 2 new announcements this week
-              ref
-                  .watch(getAllAnnouncementsProvider(
-                      ref.watch(userProvider)!.currentCoop!))
-                  .maybeWhen(
+              Flexible(
+                child: ref
+                    .watch(getAllAnnouncementsProvider(
+                        ref.watch(userProvider)!.currentCoop!))
+                    .maybeWhen(
                       orElse: () => const Text("No announcements found"),
                       data: (announcements) {
-                        // Filter announcements that are before and after
-
                         return Text(
                           '${announcements.length} new announcements this week',
                           style: const TextStyle(
                             fontSize: 12,
                           ),
                         );
-                      }),
+                      },
+                    ),
+              ),
             ],
           ),
         ),

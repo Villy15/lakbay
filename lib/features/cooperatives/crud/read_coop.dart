@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,7 @@ import 'package:lakbay/features/listings/widgets/listing_card.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:lakbay/models/wrappers/join_coop_params.dart';
 
 class ReadCoopPage extends ConsumerStatefulWidget {
   final String coopId;
@@ -22,6 +24,37 @@ class ReadCoopPage extends ConsumerStatefulWidget {
 }
 
 class _ReadCoopPageState extends ConsumerState<ReadCoopPage> {
+  late final UserModel user;
+  bool applicationPending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    user = ref.read(userProvider)!;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    checkPending();
+  }
+
+  void checkPending() async {
+    Query query = FirebaseFirestore.instance
+        .collection("cooperatives")
+        .doc(widget.coopId)
+        .collection("applications")
+        .where('userUid', isEqualTo: user.uid)
+        .where("status", isEqualTo: "pending");
+    final List<JoinCoopParams> application =
+        await ref.watch(getApplicationByProperties(query).future);
+
+    debugPrint("application: $application");
+    setState(() {
+      applicationPending = application.isNotEmpty;
+    });
+  }
+
   void viewMembers(BuildContext context, CooperativeModel coop) {
     context.pushNamed(
       'coop_members',
@@ -51,11 +84,15 @@ class _ReadCoopPageState extends ConsumerState<ReadCoopPage> {
     );
   }
 
-  void joinCoop(BuildContext context, CooperativeModel coop) {
-    context.pushNamed(
+  void joinCoop(BuildContext context, CooperativeModel coop) async {
+    final result = await context.pushNamed(
       'join_coop',
       extra: coop,
     );
+
+    if (result == true) {
+      checkPending();
+    }
   }
 
   void joinCoopWithCode(BuildContext context, CooperativeModel coop) {
@@ -94,10 +131,10 @@ class _ReadCoopPageState extends ConsumerState<ReadCoopPage> {
     ),
   ];
 
+  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RENDER UI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
-
     return ref.watch(getCooperativeProvider(widget.coopId)).when(
           data: (CooperativeModel coop) {
             return DefaultTabController(
@@ -189,53 +226,68 @@ class _ReadCoopPageState extends ConsumerState<ReadCoopPage> {
                     ),
                     radius: 35,
                   ),
-                  OutlinedButton(
-                    onPressed: () {
-                      if (coop.members.contains(user?.uid)) {
-                        showSnackBar(context, "Switch to Coop View to leave");
-                      } else {
-                        // showDialog(
-                        //     context: context,
-                        //     builder: (context) {
-                        //       return AlertDialog(
-                        //         title: const Text('Join Cooperative'),
-                        //         content: const Text(
-                        //             'Are you already a member of this cooperetive?'),
-                        //         actions: [
-                        //           // Cancel
-                        //           TextButton(
-                        //             onPressed: () {
-                        //               context.pop();
-                        //               joinCoop(context, coop);
-                        //             },
-                        //             child: const Text('No'),
-                        //           ),
-                        //           TextButton(
-                        //             onPressed: () {
-                        //               context.pop();
-                        //               joinCoopWithCode(context, coop);
-                        //             },
-                        //             child: const Text('Yes'),
-                        //           ),
-                        //         ],
-                        //       );
-                        //     });
+                  applicationPending == true
+                      ? OutlinedButton(
+                          onPressed: null,
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 25,
+                            ),
+                          ),
+                          child: const Text("Pending"))
+                      : OutlinedButton(
+                          onPressed: () {
+                            if (coop.members.contains(user?.uid)) {
+                              showSnackBar(
+                                  context, "Switch to Coop View to leave");
+                            } else {
+                              // showDialog(
+                              //     context: context,
+                              //     builder: (context) {
+                              //       return AlertDialog(
+                              //         title: const Text('Join Cooperative'),
+                              //         content: const Text(
+                              //             'Are you already a member of this cooperetive?'),
+                              //         actions: [
+                              //           // Cancel
+                              //           TextButton(
+                              //             onPressed: () {
+                              //               context.pop();
+                              //               joinCoop(context, coop);
+                              //             },
+                              //             child: const Text('No'),
+                              //           ),
+                              //           TextButton(
+                              //             onPressed: () {
+                              //               context.pop();
+                              //               joinCoopWithCode(context, coop);
+                              //             },
+                              //             child: const Text('Yes'),
+                              //           ),
+                              //         ],
+                              //       );
+                              //     });
 
-                        joinCoop(context, coop);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 25,
-                      ),
-                    ),
-                    child: Text(
-                      coop.members.contains(user?.uid) ? 'Joined' : 'Join',
-                    ),
-                  ),
+                              joinCoop(context, coop);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 25,
+                            ),
+                          ),
+                          child: Text(
+                            coop.members.contains(user?.uid)
+                                ? 'Joined'
+                                : 'Join',
+                          ),
+                        ),
                 ],
               ),
               const SizedBox(height: 5),

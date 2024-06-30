@@ -6,16 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
-import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/coop_member_roles_model.dart';
-import 'package:lakbay/features/cooperatives/coop_members_roles_controller.dart';
-import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:lakbay/models/wrappers/join_coop_params.dart';
 
 class JoinCoopPage extends ConsumerStatefulWidget {
   final CooperativeModel coop;
@@ -28,9 +28,10 @@ class JoinCoopPage extends ConsumerStatefulWidget {
 }
 
 class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< STATE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-  File? _image;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late final UserModel user;
   final _lastName = TextEditingController();
   final _firstName = TextEditingController();
   final _middleName = TextEditingController();
@@ -42,8 +43,14 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
   final _nationality = TextEditingController();
   final _civilStatus = TextEditingController();
 
+  TextEditingController committeeController = TextEditingController(text: "");
+  TextEditingController jobController = TextEditingController(text: "");
+
+  List<ReqFile> reqFiles = [];
   File? _validId;
   File? _birthCertificate;
+
+  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< INITIALIZE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   // test values of member roles -> important ones being driver and tour guide for now
   List<String> availableMemberRoles = [
@@ -53,7 +60,8 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
     'Conductor',
     'Accountant',
   ];
-  List<String> _selectedRoles = [];
+  final List<String> _selectedRoles = [];
+  late Map<String, TourismJobs?>? tourismJobs;
 
   @override
   void initState() {
@@ -61,9 +69,11 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
     Future.delayed(Duration.zero, () {
       ref.read(navBarVisibilityProvider.notifier).hide();
     });
-
-    // Set initial values
+    user = ref.read(userProvider)!;
+    tourismJobs = widget.coop.tourismJobs;
   }
+
+  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< FUNCTIONS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   @override
   void dispose() {
@@ -72,19 +82,66 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
     super.dispose();
   }
 
-  void joinCooperative() {
+  void joinCooperative() async {
+    List<File> files = [_validId!, _birthCertificate!];
+    List<String> fileTypes = ["Valid ID", "Birth Certificate"];
+
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
     }
 
-    final userUid = ref.read(userProvider);
     // Add user to members in Coop
+
+    for (int i = 0; i < files.length; i++) {
+      var file = files[i];
+      final String fileName = _validId!.path.split('/').last;
+      final String path = "cooperatives/$fileName";
+      await ref
+          .read(storageRepositoryProvider)
+          .storeFile(
+            path: path,
+            id: fileName,
+            file: file,
+          )
+          .then((value) => value.fold(
+                (failure) => debugPrint(
+                  'Failed to upload file: $failure',
+                ),
+                (fileUrl) {
+                  ReqFile reqFile = ReqFile(
+                      fileName: fileName,
+                      fileTitle: fileTypes[i],
+                      path: path,
+                      url: fileUrl);
+                  setState(() {
+                    reqFiles.add(reqFile);
+                  });
+                },
+              ));
+    }
+
     var updatedCoop = widget.coop.copyWith(
-      members: [...widget.coop.members, userUid!.uid],
+      members: [...widget.coop.members, user.uid],
+    );
+
+    JoinCoopParams application = JoinCoopParams(
+      coopId: updatedCoop.uid,
+      name: user.name,
+      userUid: user.uid,
+      timestamp: DateTime.now(),
+      age: user.age,
+      gender: user.gender,
+      religion: user.religion,
+      nationality: user.nationality,
+      civilStatus: user.civilStatus,
+      committee: committeeController.text,
+      role: jobController.text,
+      status: "pending", //pending, rejected, completed
+      reqFiles: reqFiles,
     );
 
     // Update user from the fields
-    final updatedUser = userUid.copyWith(
+    final updatedUser = user.copyWith(
       lastName: _lastName.text,
       firstName: _firstName.text,
       middleName: _middleName.text,
@@ -98,23 +155,28 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
 
     final coopMemberRoles = CoopMemberRoles(
       coopId: widget.coop.uid!,
-      memberId: userUid.uid,
+      memberId: user.uid,
       rolesSelected: _selectedRoles,
     );
 
     ref
-        .read(usersControllerProvider.notifier)
-        .editProfileFromJoiningCoop(context, userUid.uid, updatedUser);
-    // Update coop
-    ref
         .read(coopsControllerProvider.notifier)
-        .joinCooperative(updatedCoop, context);
+        .addApplication(updatedCoop.uid!, application, context);
+    // ref
+    //     .read(usersControllerProvider.notifier)
+    //     .editProfileFromJoiningCoop(context, user.uid, updatedUser);
+    // // Update coop
+    // ref
+    //     .read(coopsControllerProvider.notifier)
+    //     .joinCooperative(updatedCoop, context);
 
-    // add it to the collection of member role
-    ref
-        .read(coopMemberRolesControllerProvider.notifier)
-        .addMemberRole(coopMemberRoles, context);
+    // // add it to the collection of member role
+    // ref
+    //     .read(coopMemberRolesControllerProvider.notifier)
+    //     .addMemberRole(coopMemberRoles, context);
   }
+
+  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RENDER UI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   @override
   Widget build(BuildContext context) {
@@ -134,579 +196,525 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
       },
       child: Scaffold(
         appBar: AppBar(title: const Text('Join Cooperative')),
-        // bottomNavigationBar: BottomAppBar(
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       // If isMember is true, add an input where he can input the code
-
-        //       // Cancel Button
-        //       TextButton(
-        //         onPressed: () {
-        //           context.pop();
-        //           ref.read(navBarVisibilityProvider.notifier).show();
-        //         },
-        //         child: const Text('Cancel'),
-        //       ),
-
-        //       // Save Button
-        //       TextButton(
-        //         onPressed: () {
-        //           if (_formKey.currentState!.validate()) {
-        //             _formKey.currentState!.save();
-
-        //             // // Check if code is correct
-        //             // if (_codeController.text == widget.coop.code) {
-        //             //   // Join Cooperative
-        //             joinCooperative();
-        //             // } else {
-        //             //   // Show error
-        //             //   ScaffoldMessenger.of(context).showSnackBar(
-        //             //     const SnackBar(
-        //             //       content: Text('Invalid Code'),
-        //             //     ),
-        //             //   );
-        //             // }
-        //           }
-        //         },
-        //         child: const Text('Submit'),
-        //       ),
-        //     ],
-        //   ),
-        // ),
         body: isLoading
             ? const Loader()
             : SingleChildScrollView(
                 child: Form(
                   key: _formKey,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
-                    child: ref.watch(getUserDataProvider(user!.uid)).maybeWhen(
-                          data: (userData) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Personal Information',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Personal Information',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          // Subtext
+                          Text(
+                            'This information will be given to the cooperative',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onBackground
+                                  .withOpacity(0.6),
+                            ),
+                          ),
+
+                          // const SizedBox(height: 20),
+                          // _buildImage(context, userData),
+
+                          const SizedBox(height: 20),
+
+                          Row(
+                            children: [
+                              Text(
+                                "${user!.name} · ",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-
-                                // Subtext
-                                Text(
-                                  'Please provide your personal information',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground
-                                        .withOpacity(0.6),
-                                  ),
+                              ),
+                              Text(
+                                "${user.gender} · ",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-
-                                const SizedBox(height: 20),
-
-                                _buildImage(context, userData),
-
-                                const SizedBox(height: 20),
-
-                                // Full Name
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: TextFormField(
-                                        controller: _lastName,
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          labelText: 'Last Name*',
-                                          icon: Icon(Icons.person),
-                                          helperText: '*required',
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter your last name';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      flex: 1,
-                                      child: TextFormField(
-                                        controller: _firstName,
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          labelText: 'First Name*',
-                                          helperText: '*required',
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter your first name';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                  ],
+                              ),
+                              Text(
+                                "${user.civilStatus}",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
+                              ),
+                            ],
+                          ),
 
-                                const SizedBox(height: 10),
-
-                                // Middle Name
-                                TextFormField(
-                                  controller: _middleName,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    icon: Icon(Icons.person,
-                                        color: Colors.transparent),
-                                    labelText: 'Middle Name',
-                                    helperText: 'optional',
-                                  ),
+                          Row(
+                            children: [
+                              Text(
+                                "${DateFormat('MMMM d, yyyy').format(user.birthDate!)} · ",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-
-                                const SizedBox(height: 10),
-
-                                // Birth Date
-                                TextFormField(
-                                  controller: _birthDate != null
-                                      ? TextEditingController(
-                                          text: DateFormat('yyyy-MM-dd')
-                                              .format(_birthDate!),
-                                        )
-                                      : null,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: 'Birth Date',
-                                    icon: Icon(Icons.calendar_today),
-                                    helperText: 'optional',
-                                  ),
-                                  onTap: () async {
-                                    final date = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(1900),
-                                      lastDate: DateTime.now(),
-                                    );
-
-                                    if (date != null) {
-                                      setState(() {
-                                        _birthDate = date;
-                                      });
-                                    }
-                                  },
+                              ),
+                              Text(
+                                user.age.toString(),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-
-                                const SizedBox(height: 10),
-
-                                // Age and Gender inside row
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: TextFormField(
-                                        controller: _age,
-                                        // number
-                                        keyboardType: TextInputType.number,
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          icon: Icon(Icons.person,
-                                              color: Colors.transparent),
-                                          labelText: 'Age*',
-                                          helperText: '*required',
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      flex: 1,
-                                      child: TextFormField(
-                                        controller: _gender,
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          labelText: 'Gender',
-                                          helperText: 'optional*',
-                                        ),
-                                      ),
-                                    )
-                                  ],
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "${user.nationality} · ",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-
-                                const SizedBox(height: 10),
-
-                                // religion
-                                TextFormField(
-                                  controller: _religion,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    icon: Icon(Icons.person,
-                                        color: Colors.transparent),
-                                    labelText: 'Religion',
-                                    helperText: 'optional',
-                                  ),
+                              ),
+                              Text(
+                                "${user.religion}",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
+                              ),
+                            ],
+                          ),
 
-                                const SizedBox(height: 10),
+                          const SizedBox(height: 20),
 
-                                // Nationality
-                                // religion
-                                TextFormField(
-                                  controller: _nationality,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    icon: Icon(Icons.flag),
-                                    labelText: 'Nationality',
-                                    helperText: 'optional',
-                                  ),
+                          const Text('Member Role',
+                              style: TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.bold)),
+
+                          Text('Please select the role you want to apply for',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onBackground
+                                    .withOpacity(0.6),
+                              )),
+
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: committeeController,
+                            maxLines: 1,
+                            decoration: const InputDecoration(
+                                labelText: 'Tourism Committee',
+                                border: OutlineInputBorder(),
+                                floatingLabelBehavior: FloatingLabelBehavior
+                                    .always, // Keep the label always visible
+                                suffixIcon: Icon(Icons.arrow_drop_down),
+                                hintText:
+                                    "Press to select a committee" // Dropdown arrow icon
                                 ),
-
-                                const SizedBox(height: 10),
-
-                                // Civil Status
-                                TextFormField(
-                                  controller: _civilStatus,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    icon: Icon(Icons.person_outline_outlined),
-                                    labelText: 'Civil Status',
-                                    helperText: 'optional',
-                                  ),
-                                ),
-
-                                const SizedBox(height: 20),
-                                
-                                const Text(
-                                  'Member Role/s',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold
-                                  )
-                                ),
-
-                                Text(
-                                  'Please select the role/s you want to apply for',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground
-                                        .withOpacity(0.6),
-                                  )
-                                ),
-
-                                const SizedBox(height: 10),
-
-                                // Member Roles
-                                MultiSelectDialogField(
-                                  items: availableMemberRoles.map((role) => MultiSelectItem<String> (role, role)).toList(),
-                                  title: const Text('Roles'),
-                                  selectedColor: Theme.of(context).colorScheme.primary,
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(Radius.circular(40)),
-                                    border: Border.all(
-                                      color: Theme.of(context).colorScheme.primary,
-                                      width: 2
-                                    ),
-                                  ),
-                                  buttonIcon: Icon(
-                                    Icons.arrow_drop_down,
-                                    color: Theme.of(context).colorScheme.primary
-                                  ),
-                                  buttonText: Text(
-                                    'Select Roles',
-                                    style: TextStyle(
-                                      color: Theme.of(context).colorScheme.primary
-                                    )
-                                  ),
-                                  onConfirm: (values) {
-                                    setState(() {
-                                      _selectedRoles = values;
-                                    });
-                                  },
-
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please select at least one role';
-                                    }
-                                    return null;
-                                  },
-                                ),
-
-                                const SizedBox(height: 20),
-                                const Text(
-                                  'Documents',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-
-
-                                // Subtext
-                                Text(
-                                  'Please provide the following documents',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground
-                                        .withOpacity(0.6),
-                                  ),
-                                ),
-
-                                // Valid ID
-                                const SizedBox(height: 20),
-                                ListTile(
-                                  onTap: () async {
-                                    FilePickerResult? result =
-                                        await FilePicker.platform.pickFiles(
-                                      type: FileType.custom,
-                                      allowedExtensions: [
-                                        'pdf'
-                                      ], // specify the allowed extensions
-                                    );
-
-                                    if (result != null) {
-                                      setState(() {
-                                        _validId =
-                                            File(result.files.single.path!);
-                                      });
-                                    }
-                                  },
-                                  title: const Text('Valid ID'),
-                                  subtitle: _validId != null
-                                      // File name
-                                      ? Text(
-                                          'PDF selected: ${_validId!.path.split('/').last}')
-                                      : const Text('Select a PDF file'),
-                                  trailing:
-                                      const Icon(Icons.file_copy_outlined),
-                                ),
-
-                                const SizedBox(height: 10),
-
-                                // Valid IDs are as follow:
-                                Text(
-                                  'Valid IDs are as follow: ',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground
-                                        .withOpacity(0.6),
-                                  ),
-                                ),
-
-                                // Valid IDs
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('1. Passport'),
-                                      Text('2. Driver\'s License'),
-                                      Text('3. SSS ID'),
-                                      Text('4. GSIS ID'),
-                                      Text('5. PRC ID'),
-                                    ],
-                                  ),
-                                ),
-
-                                // Birth Certificate
-                                const SizedBox(height: 20),
-                                ListTile(
-                                  onTap: () async {
-                                    FilePickerResult? result =
-                                        await FilePicker.platform.pickFiles(
-                                      type: FileType.custom,
-                                      allowedExtensions: [
-                                        'pdf'
-                                      ], // specify the allowed extensions
-                                    );
-
-                                    if (result != null) {
-                                      setState(() {
-                                        _birthCertificate =
-                                            File(result.files.single.path!);
-                                      });
-                                    }
-                                  },
-                                  title: const Text('Birth Certificate'),
-                                  subtitle: _birthCertificate != null
-                                      ? Text(
-                                          'PDF selected: ${_birthCertificate!.path.split('/').last}')
-                                      : const Text('Select a PDF file'),
-                                  trailing:
-                                      const Icon(Icons.file_copy_outlined),
-                                ),
-
-                                const SizedBox(height: 10),
-
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0, vertical: 24.0),
+                            readOnly: true,
+                            canRequestFocus: false,
+                            onTap: () async {
+                              if (context.mounted) {
+                                return showModalBottomSheet(
+                                  context: context,
+                                  builder: (builder) {
+                                    return Container(
+                                      padding: const EdgeInsets.all(
+                                          10.0), // Padding for overall container
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
                                         children: [
-                                          const Text('Pay with',
+                                          // Optional: Add a title or header for the modal
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10.0),
+                                            child: Text(
+                                              "Tourism Committees",
                                               style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold)),
-                                          const SizedBox(height: 10),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              SizedBox(
-                                                width: 70, // specify the width
-                                                height:
-                                                    40, // specify the height
-                                                child: Image.asset(
-                                                    "lib/core/images/paymaya.png"),
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                              Icon(Icons.payment,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary),
-                                              // Add more payment method icons as needed
-                                            ],
+                                            ),
                                           ),
-
-                                          const SizedBox(height: 10),
-
-                                          // Payment Instructions
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text('Total',
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              Text(
-                                                  '₱${widget.coop.membershipFee?.toStringAsFixed(2)}',
-                                                  style: const TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                            ],
-                                          ),
-
-                                          // Details of Payment Label
-                                          const SizedBox(height: 10),
-                                          const Text('Details of Payment',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold)),
-
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text("Membership Fee"),
-                                              Text(
-                                                  '₱${widget.coop.membershipFee?.toStringAsFixed(2)}'),
-                                            ],
+                                          Expanded(
+                                            child: ListView.builder(
+                                              itemCount:
+                                                  tourismJobs?.keys.length,
+                                              itemBuilder: (context, keyIndex) {
+                                                String? key = tourismJobs?.keys
+                                                    .elementAt(keyIndex);
+                                                return ListTile(
+                                                  title: Text(
+                                                    capitalize(key!),
+                                                    style: const TextStyle(
+                                                        fontSize:
+                                                            16.0), // Adjust font size
+                                                  ),
+                                                  onTap: () {
+                                                    setState(() {
+                                                      committeeController.text =
+                                                          capitalize(key);
+                                                      context.pop();
+                                                    });
+                                                  },
+                                                );
+                                              },
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    ),
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (committeeController.text != "")
+                            TextFormField(
+                              controller: jobController,
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                  labelText: '${committeeController.text} Job',
+                                  border: const OutlineInputBorder(),
+                                  floatingLabelBehavior: FloatingLabelBehavior
+                                      .always, // Keep the label always visible
+                                  suffixIcon: const Icon(Icons.arrow_drop_down),
+                                  hintText:
+                                      "Press to select a job" // Dropdown arrow icon
                                   ),
-                                ),
-
-                                const SizedBox(height: 20),
-
-                                Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      children: [
-                                        const Text(
-                                          'By confirming below, you agree to our terms and conditions, and privacy policy.',
-                                          style: TextStyle(fontSize: 16),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        const SizedBox(
-                                            height: 20), // Add some spacing
-                                        ElevatedButton(
-                                          // Make it larger
-                                          onPressed: () {
-                                            joinCooperative();
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            // Color
-                                            backgroundColor:
-                                                Colors.orange.shade700,
-                                            minimumSize:
-                                                const Size(double.infinity, 50),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
+                              readOnly: true,
+                              canRequestFocus: false,
+                              onTap: () async {
+                                if (context.mounted) {
+                                  return showModalBottomSheet(
+                                    context: context,
+                                    builder: (builder) {
+                                      final committee = deCapitalize(
+                                          committeeController.text);
+                                      return Container(
+                                        padding: const EdgeInsets.all(
+                                            10.0), // Padding for overall container
+                                        child: Column(
+                                          children: [
+                                            // Optional: Add a title or header for the modal
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 10.0),
+                                              child: Text(
+                                                "${committeeController.text} Jobs",
+                                                style: const TextStyle(
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          // Color
-                                          child: Text(
-                                              'Confirm and Join Cooperative',
-                                              style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .background,
-                                                  fontSize: 16)),
+                                            Expanded(
+                                              child: ListView.builder(
+                                                itemCount:
+                                                    tourismJobs?[committee]
+                                                        ?.jobs
+                                                        ?.length,
+                                                itemBuilder:
+                                                    (context, jobIndex) {
+                                                  Job job =
+                                                      tourismJobs![committee]!
+                                                          .jobs![jobIndex];
+                                                  return ListTile(
+                                                    title: Text(
+                                                      job.jobTitle!,
+                                                      style: const TextStyle(
+                                                          fontSize:
+                                                              16.0), // Adjust font size
+                                                    ),
+                                                    onTap: () {
+                                                      setState(() {
+                                                        jobController.text =
+                                                            job.jobTitle!;
+                                                        context.pop();
+                                                      });
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
                                         ),
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                            ),
+
+                          const SizedBox(height: 20),
+                          const Text(
+                            'Documents',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          // Subtext
+                          Text(
+                            'Please provide the following documents.',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onBackground
+                                  .withOpacity(0.6),
+                            ),
+                          ),
+
+                          // Valid IDs are as follow:
+                          Text(
+                            'Valid IDs are as follow: ',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onBackground
+                                  .withOpacity(0.6),
+                            ),
+                          ),
+
+                          // Valid IDs
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('1. Passport'),
+                                Text('2. Driver\'s License'),
+                                Text('3. SSS ID'),
+                                Text('4. GSIS ID'),
+                                Text('5. PRC ID'),
+                              ],
+                            ),
+                          ),
+
+                          // Valid ID
+
+                          ListTile(
+                            onTap: () async {
+                              FilePickerResult? result =
+                                  await FilePicker.platform.pickFiles(
+                                type: FileType.custom,
+                                allowedExtensions: [
+                                  'pdf'
+                                ], // specify the allowed extensions
+                              );
+
+                              if (result != null) {
+                                final File file =
+                                    File(result.files.single.path!);
+                                setState(() {
+                                  _validId = file;
+                                });
+                              }
+                            },
+                            title: const Text('Valid ID'),
+                            subtitle: _validId != null
+                                // File name
+                                ? Text(
+                                    'PDF selected: ${_validId!.path.split('/').last}')
+                                : const Text('Select a PDF file'),
+                            trailing: const Icon(Icons.file_copy_outlined),
+                          ),
+
+                          // Birth Certificate
+                          ListTile(
+                            onTap: () async {
+                              FilePickerResult? result =
+                                  await FilePicker.platform.pickFiles(
+                                type: FileType.custom,
+                                allowedExtensions: [
+                                  'pdf'
+                                ], // specify the allowed extensions
+                              );
+
+                              if (result != null) {
+                                setState(() {
+                                  _birthCertificate =
+                                      File(result.files.single.path!);
+                                });
+                              }
+                            },
+                            title: const Text('Birth Certificate'),
+                            subtitle: _birthCertificate != null
+                                ? Text(
+                                    'PDF selected: ${_birthCertificate!.path.split('/').last}')
+                                : const Text('Select a PDF file'),
+                            trailing: const Icon(Icons.file_copy_outlined),
+                          ),
+
+                          const SizedBox(height: 10),
+
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 24.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('Pay with',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 10),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                          width: 70, // specify the width
+                                          height: 40, // specify the height
+                                          child: Image.asset(
+                                              "lib/core/images/paymaya.png"),
+                                        ),
+                                        Icon(Icons.payment,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                        // Add more payment method icons as needed
                                       ],
                                     ),
+
+                                    const SizedBox(height: 10),
+
+                                    // Payment Instructions
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text('Total',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold)),
+                                        Text(
+                                            '₱${widget.coop.membershipFee?.toStringAsFixed(2)}',
+                                            style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+
+                                    // Details of Payment Label
+                                    const SizedBox(height: 10),
+                                    const Text('Details of Payment',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold)),
+
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text("Membership Fee"),
+                                        Text(
+                                            '₱${widget.coop.membershipFee?.toStringAsFixed(2)}'),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  const Text(
+                                    'By confirming below, you agree to our terms and conditions, and privacy policy.',
+                                    style: TextStyle(fontSize: 16),
+                                    textAlign: TextAlign.center,
                                   ),
-                                )
-                              ],
-                            );
-                          },
-                          orElse: () => const SizedBox(),
-                        ),
-                  ),
+                                  const SizedBox(
+                                      height: 20), // Add some spacing
+                                  ElevatedButton(
+                                    // Make it larger
+                                    onPressed: () {
+                                      joinCooperative();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      // Color
+                                      backgroundColor: Colors.orange.shade700,
+                                      minimumSize:
+                                          const Size(double.infinity, 50),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    // Color
+                                    child: Text('Confirm and Join Cooperative',
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .background,
+                                            fontSize: 16)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      )),
                 ),
               ),
       ),
     );
   }
 
-  GestureDetector _buildImage(BuildContext context, UserModel userData) {
-    return GestureDetector(
-      child: Row(
-        children: [
-          Icon(Icons.image, color: Theme.of(context).iconTheme.color),
-          const SizedBox(
-              width: 15), // Add some spacing between the icon and the container
-          Expanded(
-            child: ImagePickerFormField(
-              imageUrl: userData.profilePic,
-              initialValue: _image,
-              onSaved: (File? file) {
-                _image = file;
-              },
-              // validator: (File? file) {
-              //   if (file == null) {
-              //     return 'Please select an image';
-              //   }
-              //   return null;
-              // },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // GestureDetector _buildImage(BuildContext context, UserModel userData) {
+  //   return GestureDetector(
+  //     child: Row(
+  //       children: [
+  //         Icon(Icons.image, color: Theme.of(context).iconTheme.color),
+  //         const SizedBox(
+  //             width: 15), // Add some spacing between the icon and the container
+  //         Expanded(
+  //           child: ImagePickerFormField(
+  //             imageUrl: userData.profilePic,
+  //             initialValue: _image,
+  //             onSaved: (File? file) {
+  //               _image = file;
+  //             },
+  //             // validator: (File? file) {
+  //             //   if (file == null) {
+  //             //     return 'Please select an image';
+  //             //   }
+  //             //   return null;
+  //             // },
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class ImagePickerFormField extends FormField<File> {

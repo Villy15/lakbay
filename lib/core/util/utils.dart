@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
 
 void showSnackBar(BuildContext context, String text) {
   ScaffoldMessenger.of(context)
@@ -62,4 +66,63 @@ class TimestampSerializer implements JsonConverter<DateTime?, Timestamp?> {
   Timestamp? toJson(DateTime? dateTime) {
     return dateTime != null ? Timestamp.fromDate(dateTime) : null;
   }
+}
+
+String capitalize(String text) {
+  return text[0].toUpperCase() + text.substring(1);
+}
+
+String deCapitalize(String text) {
+  return text.toLowerCase();
+}
+
+class BiWeightText extends StatelessWidget {
+  final String title;
+  final String content;
+  const BiWeightText({super.key, required this.title, required this.content});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          TextSpan(
+            text: content,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight:
+                  FontWeight.normal, // Different font weight for user.name
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Future<File> createFileOfPdfUrl(String getUrl) async {
+  Completer<File> completer = Completer();
+  try {
+    final url = getUrl;
+    final filename = url.substring(url.lastIndexOf("/") + 1);
+    var request = await HttpClient().getUrl(Uri.parse(url));
+    var response = await request.close();
+    var bytes = await consolidateHttpClientResponseBytes(response);
+    var dir = await getApplicationDocumentsDirectory();
+    File file = File("${dir.path}/$filename");
+
+    await file.writeAsBytes(bytes, flush: true);
+    completer.complete(file);
+  } catch (e) {
+    throw Exception('Error parsing asset file!');
+  }
+
+  return completer.future;
 }

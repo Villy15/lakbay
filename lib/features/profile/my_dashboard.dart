@@ -360,7 +360,7 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
   Widget eventsContributed(int eventsContributeCount) {
     return SizedBox(
       // Width / 2
-      height: 95,
+      height: MediaQuery.sizeOf(context).height / 5.5,
       width: MediaQuery.of(context).size.width / 2 - 24,
       child: Card(
         surfaceTintColor: Colors.yellow.withOpacity(0.1),
@@ -398,7 +398,7 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
   Widget listingsContributed(int listingsContributeCount) {
     return SizedBox(
       // Width / 2
-      height: 95,
+      height: MediaQuery.sizeOf(context).height / 5,
       width: MediaQuery.of(context).size.width / 2 - 24,
       child: Card(
         surfaceTintColor: Colors.blue.withOpacity(0.1),
@@ -467,7 +467,7 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
   Widget listingsBooked(int sales) {
     return SizedBox(
       // Width / 2
-      height: 95,
+      height: MediaQuery.sizeOf(context).height / 5,
       width: MediaQuery.of(context).size.width / 2 - 24,
       child: Card(
         surfaceTintColor: Colors.red.withOpacity(0.1),
@@ -505,7 +505,7 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
   Widget listingsCreated(int sales) {
     return SizedBox(
       // Width / 2
-      height: 95,
+      height: MediaQuery.sizeOf(context).height / 5,
       width: MediaQuery.of(context).size.width / 2 - 24,
       child: Card(
         surfaceTintColor: Colors.green.withOpacity(0.1),

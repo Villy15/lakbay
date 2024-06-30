@@ -23,6 +23,7 @@ class CooperativeModel with _$CooperativeModel {
     num? membershipDividends,
     num? shareCapital,
     num? minimumMemberShareCount,
+    Map<String, TourismJobs?>? tourismJobs,
     @TimestampSerializer() DateTime? dateCreated,
     ValidityStatus? validityStatus,
     ValidationFiles? validationFiles,
@@ -55,4 +56,24 @@ class ValidityStatus with _$ValidityStatus {
 
   factory ValidityStatus.fromJson(Map<String, dynamic> json) =>
       _$ValidityStatusFromJson(json);
+}
+
+@freezed
+class TourismJobs with _$TourismJobs {
+  factory TourismJobs({
+    List<Job>? jobs,
+  }) = _TourismJobs;
+
+  factory TourismJobs.fromJson(Map<String, dynamic> json) =>
+      _$TourismJobsFromJson(json);
+}
+
+@freezed
+class Job with _$Job {
+  factory Job({
+    String? jobTitle,
+    bool? searching,
+  }) = _Job;
+
+  factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
 }

@@ -682,6 +682,22 @@ class ListingController extends StateNotifier<bool> {
     );
   }
 
+  void updateTransport(
+      BuildContext context, AvailableTransport transport, String message) {
+    state = true;
+    _listingRepository.updateTransport(transport).then((result) {
+      state = false;
+      result.fold(
+        (l) => showSnackBar(context, l.message),
+        (r) {
+          if (message.isNotEmpty) {
+            showSnackBar(context, message);
+          }
+        },
+      );
+    });
+  }
+
   // Read transport by customer properties
   Stream<List<AvailableTransport>> getTransportByProperties(Query query) {
     return _listingRepository.readTransportByProperties(query);

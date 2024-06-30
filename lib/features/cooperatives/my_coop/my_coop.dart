@@ -1,8 +1,15 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
@@ -17,8 +24,12 @@ import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 import 'package:lakbay/models/subcollections/coop_goals_model.dart';
+import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:lakbay/models/wrappers/join_coop_params.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class MyCoopPage extends ConsumerStatefulWidget {
   final String coopId;
@@ -28,14 +39,22 @@ class MyCoopPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _MyCoopPageState();
 }
 
+//PDF Config
+String remotePdfPath = "";
+final Completer<PDFViewController> controller = Completer<PDFViewController>();
+int? totalPages = 0;
+int? currentPage = 0;
+bool isReady = false;
+
 class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   late List<CoopAnnouncements> coopAnnouncements;
   late List<CoopGoals> coopGoals;
   late List<CoopVote> coopVotes;
-
+  late final UserModel user;
   @override
   void initState() {
     super.initState();
+    user = ref.read(userProvider)!;
     coopAnnouncements = [
       // CoopAnnouncements(
       //   title:
@@ -199,6 +218,20 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         ),
       ),
     ),
+    const SizedBox(
+      width: 150.0,
+      child: Tab(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Recommend a election icon
+            Icon(Icons.account_tree_rounded),
+            SizedBox(width: 4.0),
+            Text('Applications'),
+          ],
+        ),
+      ),
+    ),
   ];
 
   @override
@@ -229,6 +262,8 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                         _coopGoals(),
 
                         _coopVotes(),
+
+                        _coopApplications(),
                       ],
                     ),
                   ),
@@ -415,6 +450,299 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
               error: error.toString(), stackTrace: stackTrace.toString()),
           loading: () => const Loader(),
         );
+  }
+
+  Widget _coopApplications() {
+    Query query = FirebaseFirestore.instance
+        .collection("cooperatives")
+        .doc(widget.coopId)
+        .collection("applications");
+    // .where("status", isEqualTo: "pending");
+    return ref.watch(getApplicationByProperties(query)).when(
+          data: (applications) {
+            if (applications.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'lib/core/images/SleepingCatFromGlitch.svg',
+                      height: 100, // Adjust height as desired
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'No Applications yet!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: applications.length,
+              itemBuilder: (context, index) {
+                final application = applications[index];
+
+                return ListTile(
+                  leading: Text(
+                    "${index + 1}",
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  title: Text(
+                    application.name!,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  subtitle: Text(application.role!),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  trailing: SizedBox(
+                    width: 100,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          child: const Icon(Icons.cancel_outlined, size: 20),
+                          onTap: () {
+                            onReject(context, application);
+                          },
+                        ),
+                        InkWell(
+                          child:
+                              const Icon(Icons.check_circle_outlined, size: 20),
+                          onTap: () {
+                            onAccept(context, application);
+                          },
+                        ),
+                        InkWell(
+                          child: const Icon(Icons.file_open_outlined, size: 20),
+                          onTap: () {
+                            onViewApplication(context, application);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+          error: (error, stackTrace) => ErrorText(
+              error: error.toString(), stackTrace: stackTrace.toString()),
+          loading: () => const Loader(),
+        );
+  }
+
+  Future<dynamic> onViewApplication(
+      BuildContext context, JoinCoopParams application) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false, // User must tap button to close the dialog
+        builder: (BuildContext context) {
+          return Dialog.fullscreen(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                      IconButton(
+                        color: Theme.of(context).colorScheme.primary,
+                        iconSize: 30,
+                        onPressed: () {
+                          context.pop();
+                        },
+                        icon: const Icon(Icons.arrow_back),
+                      ),
+                      Text(
+                        'Application Details',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ]),
+                    Text(
+                      application.name!,
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            BiWeightText(
+                                title: "Age: ",
+                                content: application.age!.toString()),
+                            BiWeightText(
+                                title: "Nationality: : ",
+                                content: application.nationality!),
+                            BiWeightText(
+                                title: "Civil Status: : ",
+                                content: application.civilStatus!),
+                            BiWeightText(
+                                title: "Religion: ",
+                                content: application.religion!),
+                          ]),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "Applying",
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                    ListTile(
+                      title: Text(application.role!),
+                      subtitle: Text(application.committee!),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "Documents",
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: application.reqFiles!.length,
+                        itemBuilder: (context, index) {
+                          var file = application.reqFiles![index];
+                          return ListTile(
+                            title: Text(file.fileTitle!),
+                            subtitle: Text(file.fileName!),
+                            trailing: const InkWell(
+                                child: Icon(Icons.file_open_outlined)),
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    createFileOfPdfUrl(file.url!).then((value) {
+                                      setState(() {
+                                        remotePdfPath = value.path;
+                                      });
+                                    });
+                                    return Dialog.fullscreen(
+                                      child: PDFView(
+                                        filePath: remotePdfPath,
+                                        swipeHorizontal: true,
+                                        enableSwipe: true,
+                                        autoSpacing: false,
+                                        pageFling: true,
+                                        pageSnap: true,
+                                        defaultPage: currentPage!,
+                                        fitPolicy: FitPolicy.BOTH,
+                                        preventLinkNavigation:
+                                            false, // if set to true the link is handled in flutter
+                                        onRender: (pages) {
+                                          setState(() {
+                                            totalPages = pages;
+                                            isReady = true;
+                                          });
+                                        },
+                                        onViewCreated: (PDFViewController
+                                            pdfViewController) {
+                                          controller
+                                              .complete(pdfViewController);
+                                        },
+                                        onPageChanged: (int? page, int? total) {
+                                          setState(() {
+                                            currentPage = page;
+                                          });
+                                        },
+                                      ),
+                                    );
+                                  });
+                            },
+                          );
+                        })
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<dynamic> onAccept(BuildContext context, JoinCoopParams application) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Approve'),
+        content: const Text('Do you want to approve this application?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () async {
+              JoinCoopParams updatedApplication = application;
+              updatedApplication =
+                  updatedApplication.copyWith(status: "accepted");
+              CooperativeMembersRole memberRole = CooperativeMembersRole(
+                  role: updatedApplication.role,
+                  committeeName: updatedApplication.committee,
+                  timestamp: DateTime.now());
+              CooperativeMembers newMember = CooperativeMembers(
+                  uid: application.uid!,
+                  name: updatedApplication.name!,
+                  committees: [memberRole],
+                  isManager: false,
+                  timestamp: DateTime.now());
+              ref
+                  .read(coopsControllerProvider.notifier)
+                  .editApplication(updatedApplication, context);
+              ref
+                  .read(coopsControllerProvider.notifier)
+                  .addMember(updatedApplication.uid!, newMember, context);
+
+              context.pop();
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<dynamic> onReject(BuildContext context, JoinCoopParams application) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reject'),
+        content: const Text('Do you want to reject this application?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () async {
+              JoinCoopParams updatedApplication = application;
+              updatedApplication =
+                  updatedApplication.copyWith(status: "rejected");
+              ref
+                  .read(coopsControllerProvider.notifier)
+                  .editApplication(updatedApplication, context);
+              context.pop();
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
   }
 
   // Build Events

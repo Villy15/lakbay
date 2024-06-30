@@ -23,6 +23,10 @@ import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/wrappers/committee_params.dart';
 
+enum DownpaymentPolicy { fixedDownRate, percentageDownRate }
+
+enum CancelPolicy { fixedCancelRate, percentageCancelRate }
+
 class AddAccommodation extends ConsumerStatefulWidget {
   final CooperativeModel coop;
   final String category;
@@ -72,6 +76,10 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
       TextEditingController();
   final TextEditingController _downpaymentPeriodController =
       TextEditingController();
+
+  DownpaymentPolicy _selectedDownpayment =
+      DownpaymentPolicy.fixedDownRate; // Default value
+  CancelPolicy _selectedCancel = CancelPolicy.fixedCancelRate; // Default value
 
   @override
   void initState() {
@@ -137,10 +145,14 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                     title: _titleController.text,
                     type: type,
                     fixedTasks: fixedTasks,
-                    downpaymentRate:
-                        num.parse((_downpaymentRateController.text)) / 100,
-                    cancellationRate:
-                        num.parse((_cancellationRateController.text)) / 100,
+                    downpaymentRate: _selectedDownpayment ==
+                            DownpaymentPolicy.fixedDownRate
+                        ? num.parse((_downpaymentRateController.text))
+                        : num.parse((_downpaymentRateController.text)) / 100,
+                    cancellationRate: _selectedCancel ==
+                            CancelPolicy.fixedCancelRate
+                        ? num.parse((_cancellationRateController.text))
+                        : num.parse((_cancellationRateController.text)) / 100,
                     cancellationPeriod:
                         num.parse((_cancellationPeriodController.text)),
                     downpaymentPeriod:
@@ -1266,15 +1278,22 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
             itemCount: fixedTasks?.length,
             itemBuilder: ((context, taskIndex) {
               return ListTile(
-                title: Text("Task: ${fixedTasks![taskIndex].name}"),
-                isThreeLine: true,
-                subtitle: Text(
-                    "Assigned: ${fixedTasks![taskIndex].assignedNames.join(', ')}"),
+                dense: true,
+                leading: Text("[${taskIndex + 1}]."),
+                title: DisplayText(
+                  text: fixedTasks![taskIndex].name,
+                  lines: 3,
+                  style: const TextStyle(
+                    fontSize: 14, // Adjust text style
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                // isThreeLine: true,
                 trailing: IconButton(
                   icon: const Icon(
                     Icons.close,
                     color: Colors.black,
-                    size: 25,
+                    size: 20,
                   ),
                   onPressed: () {
                     setState(() {
@@ -1360,149 +1379,149 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                 const SizedBox(
                   height: 10,
                 ),
-                Column(
-                  children: [
-                    TextFormField(
-                      maxLines: 1,
-                      decoration: const InputDecoration(
-                          labelText: 'Members Assigned*',
-                          border: OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior
-                              .always, // Keep the label always visible
-                          suffixIcon: Icon(Icons.arrow_drop_down),
-                          hintText:
-                              "Press to select member" // Dropdown arrow icon
-                          ),
-                      readOnly: true,
-                      canRequestFocus: false,
-                      onTap: () async {
-                        members = await ref.read(
-                            getAllMembersInCommitteeProvider(CommitteeParams(
-                          committeeName: committeeController.text,
-                          coopUid: ref.watch(userProvider)!.currentCoop!,
-                        )).future);
+                // Column(
+                //   children: [
+                //     TextFormField(
+                //       maxLines: 1,
+                //       decoration: const InputDecoration(
+                //           labelText: 'Members Assigned*',
+                //           border: OutlineInputBorder(),
+                //           floatingLabelBehavior: FloatingLabelBehavior
+                //               .always, // Keep the label always visible
+                //           suffixIcon: Icon(Icons.arrow_drop_down),
+                //           hintText:
+                //               "Press to select member" // Dropdown arrow icon
+                //           ),
+                //       readOnly: true,
+                //       canRequestFocus: false,
+                //       onTap: () async {
+                //         members = await ref.read(
+                //             getAllMembersInCommitteeProvider(CommitteeParams(
+                //           committeeName: committeeController.text,
+                //           coopUid: ref.watch(userProvider)!.currentCoop!,
+                //         )).future);
 
-                        members = members!
-                            .where((member) =>
-                                !assignedNames.contains(member.name))
-                            .toList();
-                        if (context.mounted) {
-                          return showModalBottomSheet(
-                            context: context,
-                            builder: (builder) {
-                              return Container(
-                                padding: const EdgeInsets.all(
-                                    10.0), // Padding for overall container
-                                child: Column(
-                                  children: [
-                                    // Optional: Add a title or header for the modal
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10.0),
-                                      child: Text(
-                                        "Members (${committeeController.text})",
-                                        style: const TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: members!.length,
-                                        itemBuilder: (context, index) {
-                                          return ListTile(
-                                            title: Text(
-                                              members![index].name,
-                                              style: const TextStyle(
-                                                  fontSize:
-                                                      16.0), // Adjust font size
-                                            ),
-                                            onTap: () {
-                                              setState(
-                                                () {
-                                                  assignedIds.add(
-                                                      members![index].uid!);
-                                                  assignedNames.add(
-                                                      members![index].name);
-                                                },
-                                              );
-                                              context.pop();
-                                            },
-                                            // Optional: Add trailing icons or actions
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // 2 items per row
-                        crossAxisSpacing:
-                            0, // No space between cards horizontally
-                        mainAxisSpacing: 0, // No space between cards vertically
-                        mainAxisExtent: MediaQuery.sizeOf(context).height /
-                            16, // Height of each card
-                      ),
-                      itemCount: assignedNames
-                          .length, // Replace with the length of your data
-                      itemBuilder: (context, index) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors
-                                    .transparent), // Optional: to add a border or change the color
-                          ),
-                          child: ListTile(
-                            horizontalTitleGap: 0,
-                            contentPadding:
-                                EdgeInsets.zero, // Remove default padding
-                            title: Text(
-                              assignedNames[
-                                  index], // Replace with the name from your data
-                              style: const TextStyle(
-                                fontSize: 14, // Adjust text style
-                                overflow:
-                                    TextOverflow.ellipsis, // Handle long text
-                              ),
-                            ),
-                            leading: IconButton(
-                              padding:
-                                  EdgeInsets.zero, // Remove default padding
-                              icon: const Icon(
-                                Icons.close,
-                                color: Colors.black,
-                                size: 16,
-                              ), // 'X' icon
-                              onPressed: () {
-                                setState(() {
-                                  assignedIds.remove(members![members!
-                                          .indexWhere((element) =>
-                                              element.name ==
-                                              assignedNames[index])]
-                                      .uid!);
-                                  assignedNames.removeAt(index);
-                                });
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  ],
-                ),
+                //         members = members!
+                //             .where((member) =>
+                //                 !assignedNames.contains(member.name))
+                //             .toList();
+                //         if (context.mounted) {
+                //           return showModalBottomSheet(
+                //             context: context,
+                //             builder: (builder) {
+                //               return Container(
+                //                 padding: const EdgeInsets.all(
+                //                     10.0), // Padding for overall container
+                //                 child: Column(
+                //                   children: [
+                //                     // Optional: Add a title or header for the modal
+                //                     Padding(
+                //                       padding: const EdgeInsets.symmetric(
+                //                           vertical: 10.0),
+                //                       child: Text(
+                //                         "Members (${committeeController.text})",
+                //                         style: const TextStyle(
+                //                           fontSize: 18.0,
+                //                           fontWeight: FontWeight.bold,
+                //                         ),
+                //                       ),
+                //                     ),
+                //                     Expanded(
+                //                       child: ListView.builder(
+                //                         itemCount: members!.length,
+                //                         itemBuilder: (context, index) {
+                //                           return ListTile(
+                //                             title: Text(
+                //                               members![index].name,
+                //                               style: const TextStyle(
+                //                                   fontSize:
+                //                                       16.0), // Adjust font size
+                //                             ),
+                //                             onTap: () {
+                //                               setState(
+                //                                 () {
+                //                                   assignedIds.add(
+                //                                       members![index].uid!);
+                //                                   assignedNames.add(
+                //                                       members![index].name);
+                //                                 },
+                //                               );
+                //                               context.pop();
+                //                             },
+                //                             // Optional: Add trailing icons or actions
+                //                           );
+                //                         },
+                //                       ),
+                //                     ),
+                //                   ],
+                //                 ),
+                //               );
+                //             },
+                //           );
+                //         }
+                //       },
+                //     ),
+                //     const SizedBox(
+                //       height: 5,
+                //     ),
+                //     GridView.builder(
+                //       physics: const NeverScrollableScrollPhysics(),
+                //       shrinkWrap: true,
+                //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                //         crossAxisCount: 2, // 2 items per row
+                //         crossAxisSpacing:
+                //             0, // No space between cards horizontally
+                //         mainAxisSpacing: 0, // No space between cards vertically
+                //         mainAxisExtent: MediaQuery.sizeOf(context).height /
+                //             16, // Height of each card
+                //       ),
+                //       itemCount: assignedNames
+                //           .length, // Replace with the length of your data
+                //       itemBuilder: (context, index) {
+                //         return Container(
+                //           decoration: BoxDecoration(
+                //             border: Border.all(
+                //                 color: Colors
+                //                     .transparent), // Optional: to add a border or change the color
+                //           ),
+                //           child: ListTile(
+                //             horizontalTitleGap: 0,
+                //             contentPadding:
+                //                 EdgeInsets.zero, // Remove default padding
+                //             title: Text(
+                //               assignedNames[
+                //                   index], // Replace with the name from your data
+                //               style: const TextStyle(
+                //                 fontSize: 14, // Adjust text style
+                //                 overflow:
+                //                     TextOverflow.ellipsis, // Handle long text
+                //               ),
+                //             ),
+                //             leading: IconButton(
+                //               padding:
+                //                   EdgeInsets.zero, // Remove default padding
+                //               icon: const Icon(
+                //                 Icons.close,
+                //                 color: Colors.black,
+                //                 size: 16,
+                //               ), // 'X' icon
+                //               onPressed: () {
+                //                 setState(() {
+                //                   assignedIds.remove(members![members!
+                //                           .indexWhere((element) =>
+                //                               element.name ==
+                //                               assignedNames[index])]
+                //                       .uid!);
+                //                   assignedNames.removeAt(index);
+                //                 });
+                //               },
+                //             ),
+                //           ),
+                //         );
+                //       },
+                //     )
+                //   ],
+                // ),
               ]),
             ),
           ),
@@ -1550,92 +1569,271 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
     ];
     return Column(
       children: [
-        Row(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: TextFormField(
-                controller: _downpaymentRateController,
-                maxLines: 1,
-                keyboardType: TextInputType.number, // For numeric input
-                decoration: const InputDecoration(
-                    labelText:
-                        'Downpayment Rate (%)*', // Indicate it's a percentage
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    hintText: "e.g., 20",
-                    suffixText: "%"),
-                onTap: () {
-                  // Handle tap if needed, e.g., showing a dialog to select a percentage
-                },
-              ),
+            const Text('Downpayment',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+
+            // Radio buttons for payment options
+            Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<DownpaymentPolicy>(
+                    title: const Text('Fixed Rate'),
+                    value: DownpaymentPolicy.fixedDownRate,
+                    groupValue: _selectedDownpayment,
+                    onChanged: (DownpaymentPolicy? value) {
+                      setState(() {
+                        _selectedDownpayment = value!;
+                      });
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<DownpaymentPolicy>(
+                    title: const Text('Percent Rate'),
+                    value: DownpaymentPolicy.percentageDownRate,
+                    groupValue: _selectedDownpayment,
+                    onChanged: (DownpaymentPolicy? value) {
+                      setState(() {
+                        _selectedDownpayment = value!;
+                      });
+                    },
+                  ),
+                )
+              ],
             ),
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: TextFormField(
-                controller: _cancellationRateController,
-                maxLines: 1,
-                decoration: const InputDecoration(
-                    labelText: 'Cancellation Rate (%)*',
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    hintText: "e.g., 5",
-                    suffixText: "%"),
-                onTap: () {},
-              ),
-            )
+            if (_selectedDownpayment == DownpaymentPolicy.fixedDownRate) ...[
+              rendFixedDownRate(),
+            ],
+
+            if (_selectedDownpayment ==
+                DownpaymentPolicy.percentageDownRate) ...[
+              rendPercentageDownRate(),
+            ],
           ],
         ),
         const SizedBox(
           height: 10,
         ),
-        Row(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: TextFormField(
-                controller: _downpaymentPeriodController,
-                maxLines: 1,
-                keyboardType: TextInputType.number, // For numeric input
-                decoration: const InputDecoration(
-                    labelText:
-                        'Downpayment Period (Day/s)*', // Indicate it's a percentage
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    hintText: "e.g., 5 Days before the booked date",
-                    suffixText: "Day/s"),
-                onTap: () {
-                  // Handle tap if needed, e.g., showing a dialog to select a percentage
-                },
-              ),
+            const Text('Cancellation',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+
+            // Radio buttons for payment options
+            Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<CancelPolicy>(
+                    title: const Text('Fixed Rate'),
+                    value: CancelPolicy.fixedCancelRate,
+                    groupValue: _selectedCancel,
+                    onChanged: (CancelPolicy? value) {
+                      setState(() {
+                        _selectedCancel = value!;
+                      });
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<CancelPolicy>(
+                    title: const Text('Percent Rate'),
+                    value: CancelPolicy.percentageCancelRate,
+                    groupValue: _selectedCancel,
+                    onChanged: (CancelPolicy? value) {
+                      setState(() {
+                        _selectedCancel = value!;
+                      });
+                    },
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: TextFormField(
-                controller: _cancellationPeriodController,
-                maxLines: 1,
-                keyboardType: TextInputType.number, // For numeric input
-                decoration: const InputDecoration(
-                    labelText:
-                        'Cancellation Period (Day/s)*', // Indicate it's a percentage
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    hintText: "e.g., 5 Days before the booked date",
-                    suffixText: "Day/s"),
-                onTap: () {
-                  // Handle tap if needed, e.g., showing a dialog to select a percentage
-                },
-              ),
-            ),
+            if (_selectedCancel == CancelPolicy.fixedCancelRate) ...[
+              rendFixedCancelRate(),
+            ],
+
+            if (_selectedCancel == CancelPolicy.percentageCancelRate) ...[
+              rendPercentageCancelRate(),
+            ],
           ],
         ),
         addNotes(notes),
+      ],
+    );
+  }
+
+  Row rendPercentageCancelRate() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationRateController,
+            maxLines: 1,
+            decoration: const InputDecoration(
+                labelText: 'Fixed Rate',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5",
+                suffixText: "%"),
+            onTap: () {},
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationPeriodController,
+            maxLines: 1,
+            keyboardType: TextInputType.number, // For numeric input
+            decoration: const InputDecoration(
+                labelText: 'Cancellation Period', // Indicate it's a percentage
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5 Days before the booked date",
+                suffixText: "Day/s"),
+            onTap: () {
+              // Handle tap if needed, e.g., showing a dialog to select a percentage
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row rendFixedCancelRate() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationRateController,
+            maxLines: 1,
+            decoration: const InputDecoration(
+                labelText: 'Fixed Rate',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5",
+                suffixText: "₱"),
+            onTap: () {},
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationPeriodController,
+            maxLines: 1,
+            keyboardType: TextInputType.number, // For numeric input
+            decoration: const InputDecoration(
+                labelText: 'Cancellation Period', // Indicate it's a percentage
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5 Days before the booked date",
+                suffixText: "Day/s"),
+            onTap: () {
+              // Handle tap if needed, e.g., showing a dialog to select a percentage
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row rendPercentageDownRate() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _downpaymentRateController,
+            maxLines: 1,
+            keyboardType: TextInputType.number, // For numeric input
+            decoration: const InputDecoration(
+                labelText: 'Percentage Rate', // Indicate it's a percentage
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 20",
+                suffixText: "%"),
+            onTap: () {
+              // Handle tap if needed, e.g., showing a dialog to select a percentage
+            },
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: TextFormField(
+            controller: _downpaymentPeriodController,
+            maxLines: 1,
+            keyboardType: TextInputType.number, // For numeric input
+            decoration: const InputDecoration(
+                labelText: 'Downpayment Period', // Indicate it's a percentage
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5 Days before the booked date",
+                suffixText: "Day/s"),
+            onTap: () {
+              // Handle tap if needed, e.g., showing a dialog to select a percentage
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row rendFixedDownRate() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _downpaymentRateController,
+            maxLines: 1,
+            keyboardType: TextInputType.number, // For numeric input
+            decoration: const InputDecoration(
+                labelText: 'Fixed Rate', // Indicate it's a percentage
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 20",
+                suffixText: "₱"),
+            onTap: () {
+              // Handle tap if needed, e.g., showing a dialog to select a percentage
+            },
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: TextFormField(
+            controller: _downpaymentPeriodController,
+            maxLines: 1,
+            keyboardType: TextInputType.number, // For numeric input
+            decoration: const InputDecoration(
+                labelText: 'Downpayment Period', // Indicate it's a percentage
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5 Days before the booked date",
+                suffixText: "Day/s"),
+            onTap: () {
+              // Handle tap if needed, e.g., showing a dialog to select a percentage
+            },
+          ),
+        ),
       ],
     );
   }

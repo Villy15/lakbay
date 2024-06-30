@@ -9,6 +9,7 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
+import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_receipt.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/notifications/notifications_controller.dart';
@@ -497,18 +498,9 @@ class _BookingsAccomodationCustomerState
                       // Getting There Address
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.location_on_outlined),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${widget.listing.city}, ${widget.listing.province}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ],
+                        child: SizedBox(
+                          height: MediaQuery.sizeOf(context).height / 5,
+                          child: MapWidget(address: widget.listing.address),
                         ),
                       ),
 
