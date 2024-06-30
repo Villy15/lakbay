@@ -112,6 +112,13 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                     ? BottomAppBar(
                         child: FilledButton(
                           onPressed: () {},
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Adjust the value as needed
+                            ),
+                          ),
                           child: const Text('Edit Listing'),
                         ),
                       )

@@ -425,9 +425,12 @@ class _AccommodationBookingsDetailsState
                     height: MediaQuery.sizeOf(context).height * .05,
                     width: 1,
                     color: Colors.grey),
-                _displaySubtitleText(booking.amountPaid != booking.totalPrice
-                    ? 'Due: ₱${(booking.totalPrice!.toInt() - booking.amountPaid!.toInt())}'
-                    : 'Due: Fully Paid'),
+                booking.bookingStatus == "Reserved"
+                    ? _displaySubtitleText(booking.amountPaid !=
+                            booking.totalPrice
+                        ? 'Due: ₱${(booking.totalPrice!.toInt() - booking.amountPaid!.toInt())}'
+                        : 'Paid')
+                    : _displaySubtitleText(booking.bookingStatus),
               ],
             ),
             const SizedBox(height: 10),
@@ -1231,8 +1234,8 @@ class _AccommodationBookingsDetailsState
                                   taskNameController.dispose;
 
                                   // use sendTaskNotification to send a notification to the assigned members
-                                  sendTaskNotification(
-                                      context, ref, assignedIds, taskNameController.text);
+                                  sendTaskNotification(context, ref,
+                                      assignedIds, taskNameController.text);
                                 },
                                 style: FilledButton.styleFrom(
                                   shape: RoundedRectangleBorder(
@@ -1253,19 +1256,20 @@ class _AccommodationBookingsDetailsState
         });
   }
 
-  Future<void> sendTaskNotification(BuildContext context, WidgetRef ref, List<String> assignedIds, String taskName) async {
+  Future<void> sendTaskNotification(BuildContext context, WidgetRef ref,
+      List<String> assignedIds, String taskName) async {
     for (String userId in assignedIds) {
       final taskNotif = NotificationsModel(
-        title: 'New Task!',
-        message: 'You have been added to do the task: $taskName. Navigate to the booking under tasks to view more details.',
-        ownerId: userId,
-        bookingId: widget.booking.id!,
-        listingId: widget.listing.uid!,
-        type: 'task',
-        isToAllMembers: false,
-        createdAt: DateTime.now(),
-        isRead: false
-      );
+          title: 'New Task!',
+          message:
+              'You have been added to do the task: $taskName. Navigate to the booking under tasks to view more details.',
+          ownerId: userId,
+          bookingId: widget.booking.id!,
+          listingId: widget.listing.uid!,
+          type: 'task',
+          isToAllMembers: false,
+          createdAt: DateTime.now(),
+          isRead: false);
 
       await ref
           .read(notificationControllerProvider.notifier)
