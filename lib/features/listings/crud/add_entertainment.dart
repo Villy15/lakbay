@@ -345,7 +345,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             return addRentalDetails(context);
           case 'Watching/Performances':
             return addWatchingPerformancesDetails(context);
-          case 'Activities':
+          case 'Activities/Tours':
             return addActivitiesDetails(context);
           default:
             return addRentalDetails(context);
@@ -360,7 +360,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             return calculateIntervals(context);
           case 'Watching/Performances':
             return createScheduling(context);
-          case 'Activities':
+          case 'Activities/Tours':
             return addActivitiesDetails(context);
           default:
             return addRentalDetails(context);
@@ -1445,7 +1445,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     List<Map<String, dynamic>> types = [
       {'name': 'Rentals', 'icon': Icons.sailing},
       {'name': 'Watching/Performances', 'icon': Icons.theater_comedy},
-      {'name': 'Activities', 'icon': Icons.directions_walk},
+      {'name': 'Activities/Tours', 'icon': Icons.directions_walk},
     ];
 
     return Column(
@@ -1545,7 +1545,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             return 'Intervals and Availability';
           case 'Watching/Performances':
             return "Scheduling";
-          case 'Activities':
+          case 'Activities/Tours':
             return '';
           default:
             return 'Intervals and Availability';
