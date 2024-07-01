@@ -327,34 +327,38 @@ class _AddJobsState extends ConsumerState<AddJobs> {
                         return StatefulBuilder(builder: (context, setSelected) {
                           return AlertDialog(
                             title: const Text("Selected Files"),
-                            content: ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: requiredFiles.length,
-                                itemBuilder: ((context, fileIndex) {
-                                  var fName = requiredFiles[fileIndex] ?? "";
-                                  return ListTile(
-                                    leading: Text('${fileIndex + 1}'),
-                                    title: Text(fName),
-                                    trailing: InkWell(
-                                        child: const Icon(Icons.close),
-                                        onTap: () {
-                                          setSelected(() {
-                                            setFiles(() {
-                                              requiredFiles.removeAt(fileIndex);
-                                              updatedJob = updatedJob.copyWith(
-                                                  requiredFiles: requiredFiles);
-                                              updatedJobs[index] = updatedJob;
-                                              setState(() {
-                                                tourismJobs?[key] =
-                                                    tourismJobs?[key]?.copyWith(
-                                                        jobs: updatedJobs);
+                            content: SizedBox(
+                              height: MediaQuery.of(context).size.height / 2,
+                              width: MediaQuery.of(context).size.width,
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: requiredFiles.length,
+                                  itemBuilder: ((context, fileIndex) {
+                                    var fName = requiredFiles[fileIndex] ?? "";
+                                    return ListTile(
+                                      leading: Text('${fileIndex + 1}'),
+                                      title: Text(fName),
+                                      trailing: InkWell(
+                                          child: const Icon(Icons.close),
+                                          onTap: () {
+                                            setSelected(() {
+                                              setFiles(() {
+                                                requiredFiles.removeAt(fileIndex);
+                                                updatedJob = updatedJob.copyWith(
+                                                    requiredFiles: requiredFiles);
+                                                updatedJobs[index] = updatedJob;
+                                                setState(() {
+                                                  tourismJobs?[key] =
+                                                      tourismJobs?[key]?.copyWith(
+                                                          jobs: updatedJobs);
+                                                });
                                               });
                                             });
-                                          });
-                                        }),
-                                  );
-                                })),
+                                          }),
+                                    );
+                                  })),
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () {
