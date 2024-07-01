@@ -720,15 +720,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     },
                     name: 'add_entertainment',
                   ),
-                  buildSubRoute(
-                    'tour',
-                    (context, pathParameters, extra) {
-                      CooperativeModel coop = extra as CooperativeModel;
+                  // buildSubRoute(
+                  //   'tour',
+                  //   (context, pathParameters, extra) {
+                  //     CooperativeModel coop = extra as CooperativeModel;
 
-                      return AddTour(coop: coop, category: 'Tour');
-                    },
-                    name: 'add_tour',
-                  ),
+                  //     return AddTour(coop: coop, category: 'Tour');
+                  //   },
+                  //   name: 'add_tour',
+                  // ),
                 ],
               ),
 

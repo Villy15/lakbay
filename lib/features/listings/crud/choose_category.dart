@@ -53,7 +53,7 @@ class _ChooseCategoryState extends ConsumerState<ChooseCategory> {
     List<Map<String, dynamic>> categories = [
       {'name': 'Accommodation', 'icon': Icons.hotel_outlined},
       {'name': 'Transport', 'icon': Icons.directions_bus_outlined},
-      {'name': 'Tour', 'icon': Icons.map_outlined},
+      // {'name': 'Tour', 'icon': Icons.map_outlined},
       {'name': 'Food', 'icon': Icons.restaurant_outlined},
       {'name': 'Entertainment', 'icon': Icons.movie_creation_outlined},
     ];
@@ -99,9 +99,9 @@ class _ChooseCategoryState extends ConsumerState<ChooseCategory> {
                     context.pushNamed('add_transport', extra: widget.coop);
                     break;
 
-                  case 'Tour':
-                    context.pushNamed('add_tour', extra: widget.coop);
-                    break;
+                  // case 'Tour':
+                  //   context.pushNamed('add_tour', extra: widget.coop);
+                  //   break;
                 }
               },
               child: Column(
