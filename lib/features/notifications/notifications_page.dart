@@ -29,7 +29,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       appBar: AppBar(
         title: const Text('Notifications'),
       ),
-      body: ref.watch(getAllNotificationsProvider).when(
+      body: ref.watch(getNotificationsByOwnerIdProvider(user!.uid)).when(
             data: (notifications) {
               // Create temp data
               // notifications = [
@@ -107,7 +107,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
               notifications = notifications
                   .where(
                     (notif) =>
-                        notif.isToAllMembers! || notif.ownerId == user?.uid,
+                        notif.isToAllMembers! || notif.ownerId == user.uid,
                   )
                   .toList();
 

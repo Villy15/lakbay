@@ -182,14 +182,23 @@ exports.userPendingBalance = functions.pubsub.schedule('00 00 * * *') // set to 
                   paymentStatus: 'Cancelled',
                   amountPaid: booking.amountPaid * listingDoc.data().cancellationRate
                 });
-        
+        // Assuming booking.id is unique and directly corresponds to a single sale document
+        const salesQuerySnapshot = await admin.firestore()
+        .collection('sales')
+        .where('bookingId', '==', booking.id)
+        .get();
+
+        if (!salesQuerySnapshot.empty) {
+        const saleDoc = salesQuerySnapshot.docs[0]; // Get the first document since bookingId is unique
+
         await admin.firestore()
-                .collection('sales')
-                .where('bookingId', '==', booking.id)
-                .update({
-                  transactionType: 'Cancellation',
-                  amount: booking.amountPaid * listingDoc.data().cancellationRate
-                });
+            .collection('sales')
+            .doc(saleDoc.id) // Use the document ID to directly access the sale document
+            .update({
+                transactionType: 'Cancellation',
+                amount: booking.amountPaid * listingDoc.data().cancellationRate
+            });
+        }
         
         // send notification to user
         const notification = {
