@@ -19,9 +19,11 @@ import 'package:lakbay/features/cooperatives/my_coop/components/announcement_car
 import 'package:lakbay/features/cooperatives/my_coop/components/goal_card.dart';
 import 'package:lakbay/features/events/widgets/event_card.dart';
 import 'package:lakbay/features/listings/widgets/listing_card.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
 import 'package:lakbay/models/subcollections/coop_goals_model.dart';
 import 'package:lakbay/models/subcollections/coop_members_model.dart';
@@ -263,7 +265,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
 
                         _coopVotes(),
 
-                        _coopApplications(),
+                        _coopApplications(coop.name),
                       ],
                     ),
                   ),
@@ -452,7 +454,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         );
   }
 
-  Widget _coopApplications() {
+  Widget _coopApplications(String coopName) {
     Query query = FirebaseFirestore.instance
         .collection("cooperatives")
         .doc(widget.coopId)
@@ -508,14 +510,14 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                         InkWell(
                           child: const Icon(Icons.cancel_outlined, size: 20),
                           onTap: () {
-                            onReject(context, application);
+                            onReject(context, application, coopName);
                           },
                         ),
                         InkWell(
                           child:
                               const Icon(Icons.check_circle_outlined, size: 20),
                           onTap: () {
-                            onAccept(context, application);
+                            onAccept(context, application, coopName);
                           },
                         ),
                         InkWell(
@@ -675,7 +677,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         });
   }
 
-  Future<dynamic> onAccept(BuildContext context, JoinCoopParams application) {
+  Future<dynamic> onAccept(BuildContext context, JoinCoopParams application, String coopName) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -701,12 +703,27 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                   committees: [memberRole],
                   isManager: false,
                   timestamp: DateTime.now());
+
+              NotificationsModel acceptedCoopNotif = NotificationsModel(
+                title: 'Application Accepted!',
+                message:
+                    'Your application to join $coopName has been accepted!',
+                ownerId: application.userUid,
+                coopId: widget.coopId,
+                isToAllMembers: false,
+                type: 'coop',
+                createdAt: DateTime.now(),
+                isRead: false);
               ref
                   .read(coopsControllerProvider.notifier)
                   .editApplication(updatedApplication, context);
               ref
                   .read(coopsControllerProvider.notifier)
                   .addMember(updatedApplication.uid!, newMember, context);
+              
+              ref
+                  .read(notificationControllerProvider.notifier)
+                  .addNotification(acceptedCoopNotif, context);
 
               context.pop();
             },
@@ -717,7 +734,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
     );
   }
 
-  Future<dynamic> onReject(BuildContext context, JoinCoopParams application) {
+  Future<dynamic> onReject(BuildContext context, JoinCoopParams application, String coopName) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -731,11 +748,27 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
           TextButton(
             onPressed: () async {
               JoinCoopParams updatedApplication = application;
+              NotificationsModel rejectCoopNotif = NotificationsModel(
+                title: 'Application Rejected!',
+                message:
+                    'Your application to join $coopName has been rejected!',
+                ownerId: application.userUid,
+                coopId: widget.coopId,
+                isToAllMembers: false,
+                type: 'coop',
+                createdAt: DateTime.now(),
+                isRead: false);
               updatedApplication =
                   updatedApplication.copyWith(status: "rejected");
               ref
                   .read(coopsControllerProvider.notifier)
                   .editApplication(updatedApplication, context);
+
+              ref 
+                  .read(notificationControllerProvider.notifier)
+                  .addNotification(rejectCoopNotif, context);
+
+              
               context.pop();
             },
             child: const Text('Yes'),
