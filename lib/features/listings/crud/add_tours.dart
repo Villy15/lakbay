@@ -253,8 +253,8 @@ class _AddTourState extends ConsumerState<AddTour> {
         return addListingPhotos(context);
       case 4:
         return addGuestInfo(context);
-      case 5:
-        return reviewListing(context);
+      // case 5:
+      //   return reviewListing(context);
       default:
         return chooseType(context);
     }
@@ -1140,7 +1140,34 @@ class _AddTourState extends ConsumerState<AddTour> {
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              submitAddListing();
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                        title: const Text('Submit Listing'),
+                        content: const Text(
+                            'Are you sure you want to submit this listing?'),
+                        actions: [
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: FilledButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
+                            child: const Text('Cancel'),
+                          ),
+                          FilledButton(
+                            onPressed: () {
+                              submitAddListing();
+                            },
+                            style: FilledButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
+                            child: const Text('Submit'),
+                          ),
+                        ]);
+                  });
             },
             child: Text(
               'Submit',
