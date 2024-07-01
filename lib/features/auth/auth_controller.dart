@@ -102,9 +102,12 @@ class AuthController extends StateNotifier<bool> {
       email: email,
       password: password,
     );
+
+    user.fold((l) => showSnackBar(context, l.message), (userModel) {
+      _ref.read(userProvider.notifier).setUser(userModel);
+    });
+
     state = false; // false for loading
-    user.fold((l) => showSnackBar(context, l.message),
-        (userModel) => _ref.read(userProvider.notifier).setUser(userModel));
   }
 
   Stream<UserModel> getUserData(String uid) {
