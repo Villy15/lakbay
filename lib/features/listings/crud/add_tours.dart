@@ -1012,7 +1012,7 @@ class _AddTourState extends ConsumerState<AddTour> {
   Widget chooseType(BuildContext context) {
     List<Map<String, dynamic>> types = [
       {'name': 'Day Trip', 'icon': Icons.directions_car},
-      {'name': 'Multi-Day Tour', 'icon': Icons.airplanemode_active},
+      // {'name': 'Multi-Day Tour', 'icon': Icons.airplanemode_active},
     ];
 
     return Column(
