@@ -84,9 +84,21 @@ class AuthController extends StateNotifier<bool> {
     required BuildContext context,
     required String email,
     required String password,
+    required String firstName,
+    required String lastName,
+    required DateTime birthDate,
+    required String nationality,
+    required String civilStatus,
+    required String religion,
   }) async {
     state = true; // true for loading
     final user = await _authRepository.register(
+      firstName: firstName,
+      lastName: lastName,
+      birthDate: birthDate,
+      nationality: nationality,
+      civilStatus: civilStatus,
+      religion: religion,
       email: email,
       password: password,
     );
