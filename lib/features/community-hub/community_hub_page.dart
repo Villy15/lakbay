@@ -200,6 +200,12 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
                                   !availableListingsTags[index].isSelected;
                             });
                           },
+                          style: FilledButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Adjust the value as needed
+                            ),
+                          ),
                           child: Text(availableListingsTags[index].name),
                         )
                       : ElevatedButton(
@@ -209,6 +215,12 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
                                   !availableListingsTags[index].isSelected;
                             });
                           },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Adjust the value as needed
+                            ),
+                          ),
                           child: Text(availableListingsTags[index].name),
                         );
                 },
