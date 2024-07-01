@@ -640,7 +640,7 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
                     // Location
                     DisplayText(
                       text:
-                          "Location: ${widget.listing.province}, ${widget.listing.city}",
+                          "Location: ${widget.listing.address}, ${widget.listing.city} ${widget.listing.province}",
                       lines: 4,
                       style: TextStyle(
                         fontSize:
