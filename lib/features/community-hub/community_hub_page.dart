@@ -53,7 +53,7 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
     Tag('Accommodation', false),
     Tag('Transport', false),
     Tag('Entertainment', false),
-    Tag('Food ', false),
+    Tag('Food', false),
     Tag('Tour ', false),
   ];
 
