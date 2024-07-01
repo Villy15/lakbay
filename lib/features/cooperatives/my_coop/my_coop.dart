@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,8 +28,6 @@ import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/join_coop_params.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 
 class MyCoopPage extends ConsumerStatefulWidget {
   final String coopId;
@@ -251,6 +247,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                     return [
                       sliverAppBar(coop),
                       // sliverPaddingHeader(coop, user, context),
+
                       sliverAppBarHeaderWithTabs(coop, user, context),
                     ];
                   },
@@ -677,7 +674,8 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         });
   }
 
-  Future<dynamic> onAccept(BuildContext context, JoinCoopParams application, String coopName) {
+  Future<dynamic> onAccept(
+      BuildContext context, JoinCoopParams application, String coopName) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -705,22 +703,22 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                   timestamp: DateTime.now());
 
               NotificationsModel acceptedCoopNotif = NotificationsModel(
-                title: 'Application Accepted!',
-                message:
-                    'Your application to join $coopName has been accepted!',
-                ownerId: application.userUid,
-                coopId: widget.coopId,
-                isToAllMembers: false,
-                type: 'coop',
-                createdAt: DateTime.now(),
-                isRead: false);
+                  title: 'Application Accepted!',
+                  message:
+                      'Your application to join $coopName has been accepted!',
+                  ownerId: application.userUid,
+                  coopId: widget.coopId,
+                  isToAllMembers: false,
+                  type: 'coop',
+                  createdAt: DateTime.now(),
+                  isRead: false);
               ref
                   .read(coopsControllerProvider.notifier)
                   .editApplication(updatedApplication, context);
               ref
                   .read(coopsControllerProvider.notifier)
                   .addMember(updatedApplication.uid!, newMember, context);
-              
+
               ref
                   .read(notificationControllerProvider.notifier)
                   .addNotification(acceptedCoopNotif, context);
@@ -734,7 +732,8 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
     );
   }
 
-  Future<dynamic> onReject(BuildContext context, JoinCoopParams application, String coopName) {
+  Future<dynamic> onReject(
+      BuildContext context, JoinCoopParams application, String coopName) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -749,26 +748,25 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
             onPressed: () async {
               JoinCoopParams updatedApplication = application;
               NotificationsModel rejectCoopNotif = NotificationsModel(
-                title: 'Application Rejected!',
-                message:
-                    'Your application to join $coopName has been rejected!',
-                ownerId: application.userUid,
-                coopId: widget.coopId,
-                isToAllMembers: false,
-                type: 'coop',
-                createdAt: DateTime.now(),
-                isRead: false);
+                  title: 'Application Rejected!',
+                  message:
+                      'Your application to join $coopName has been rejected!',
+                  ownerId: application.userUid,
+                  coopId: widget.coopId,
+                  isToAllMembers: false,
+                  type: 'coop',
+                  createdAt: DateTime.now(),
+                  isRead: false);
               updatedApplication =
                   updatedApplication.copyWith(status: "rejected");
               ref
                   .read(coopsControllerProvider.notifier)
                   .editApplication(updatedApplication, context);
 
-              ref 
+              ref
                   .read(notificationControllerProvider.notifier)
                   .addNotification(rejectCoopNotif, context);
 
-              
               context.pop();
             },
             child: const Text('Yes'),
