@@ -72,7 +72,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     double mqwidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: Stack(
         alignment: Alignment.center,
         children: [
