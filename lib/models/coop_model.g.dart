@@ -117,9 +117,13 @@ Map<String, dynamic> _$$TourismJobsImplToJson(_$TourismJobsImpl instance) =>
 _$JobImpl _$$JobImplFromJson(Map<String, dynamic> json) => _$JobImpl(
       jobTitle: json['jobTitle'] as String?,
       searching: json['searching'] as bool?,
+      requiredFiles: (json['requiredFiles'] as List<dynamic>?)
+          ?.map((e) => e as String?)
+          .toList(),
     );
 
 Map<String, dynamic> _$$JobImplToJson(_$JobImpl instance) => <String, dynamic>{
       'jobTitle': instance.jobTitle,
       'searching': instance.searching,
+      'requiredFiles': instance.requiredFiles,
     };

@@ -112,6 +112,12 @@ class AuthRepository {
   FutureEither<UserModel> register({
     required String email,
     required String password,
+    required String firstName,
+    required String lastName,
+    required DateTime birthDate,
+    required String nationality,
+    required String civilStatus,
+    required String religion,
   }) async {
     try {
       UserCredential userCredential = await _auth
@@ -119,7 +125,14 @@ class AuthRepository {
 
       UserModel userModel = UserModel(
         uid: userCredential.user?.uid ?? "",
-        name: userCredential.user?.displayName ?? "Lakbay User",
+        name: userCredential.user?.displayName ?? '$firstName $lastName',
+        firstName: firstName,
+        lastName: lastName,
+        birthDate: birthDate,
+        age: DateTime.now().difference(birthDate).inDays ~/ 365,
+        nationality: nationality,
+        religion: religion,
+        civilStatus: civilStatus,
         profilePic: '',
         isAuthenticated: true,
         email: email,

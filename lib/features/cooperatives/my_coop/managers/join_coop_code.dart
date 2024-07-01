@@ -160,71 +160,73 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
             ? const Loader()
             : Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Align(
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.upload_file,
-                        size: 100,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'Upload CSV File',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Align(
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.upload_file,
+                          size: 100,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      _csvFile != null
-                          ? _csvFile!.path.split('/').last
-                          : 'No file selected',
-                    ),
-                    const SizedBox(height: 20),
-                    extractedMembers.isNotEmpty
-                        ? const SizedBox.shrink()
-                        : ElevatedButton(
-                            onPressed: _selectCSVFile,
-                            child: const Text('Select CSV File'),
+                      const SizedBox(height: 20),
+                      const Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Upload CSV File',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
-                    SizedBox(
-                      height: 300,
-                      child: extractedMembers.isNotEmpty
-                          ? ListView.builder(
-                              itemCount: extractedMembers.length,
-                              itemBuilder: (context, index) => MemberListTile(
-                                member: extractedMembers[index],
-                                coop: widget.coop,
-                              ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        _csvFile != null
+                            ? _csvFile!.path.split('/').last
+                            : 'No file selected',
+                      ),
+                      const SizedBox(height: 20),
+                      extractedMembers.isNotEmpty
+                          ? const SizedBox.shrink()
+                          : ElevatedButton(
+                              onPressed: _selectCSVFile,
+                              child: const Text('Select CSV File'),
+                            ),
+                      SizedBox(
+                        height: 300,
+                        child: extractedMembers.isNotEmpty
+                            ? ListView.builder(
+                                itemCount: extractedMembers.length,
+                                itemBuilder: (context, index) => MemberListTile(
+                                  member: extractedMembers[index],
+                                  coop: widget.coop,
+                                ),
+                              )
+                            : const Text('No members extracted yet'),
+                      ),
+                      const SizedBox(height: 20),
+                      extractedMembers.isNotEmpty
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: _selectCSVFile,
+                                  child: const Text('Reselect File'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    addMembers();
+                                  },
+                                  child: const Text('Add Members'),
+                                ),
+                              ],
                             )
-                          : const Text('No members extracted yet'),
-                    ),
-                    const SizedBox(height: 20),
-                    extractedMembers.isNotEmpty
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ElevatedButton(
-                                onPressed: _selectCSVFile,
-                                child: const Text('Reselect File'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  addMembers();
-                                },
-                                child: const Text('Add Members'),
-                              ),
-                            ],
-                          )
-                        : const SizedBox.shrink(),
-                  ],
+                          : const SizedBox.shrink(),
+                    ],
+                  ),
                 ),
               ),
       ),

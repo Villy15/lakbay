@@ -86,33 +86,49 @@ class _ReadEventPageState extends ConsumerState<ReadEventPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextButton(
-                          onPressed: () {
-                            showSnackBar(context, 'Contribute Event');
-                          },
-                          child: const Text('Contribute Event'),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: FilledButton(
-                          // Make it wider
-                          style: ButtonStyle(
-                            minimumSize: MaterialStateProperty.all<Size>(
-                                const Size(180, 45)),
-                          ),
-                          onPressed: () {
-                            isMember
-                                ? checkDetails(context, event)
-                                : joinEvent(context, event);
-                          },
-                          child: Text(
-                            isMember ? 'Check Event Details' : 'Join Event',
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextButton(
+                            onPressed: () {
+                              showSnackBar(context, 'Contribute Event');
+                            },
+                            child: const Text('Contribute Event'),
                           ),
                         ),
                       ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: FilledButton(
+                            // Make it wider
+                            style: ButtonStyle(
+                              minimumSize: MaterialStateProperty.all<Size>(
+                                  const Size(180, 45)),
+                              padding:
+                                  MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                              ),
+                            ),
+                            onPressed: () {
+                              isMember
+                                  ? checkDetails(context, event)
+                                  : joinEvent(context, event);
+                            },
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                isMember ? 'Check Event Details' : 'Join Event',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),

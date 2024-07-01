@@ -73,6 +73,7 @@ class Job with _$Job {
   factory Job({
     String? jobTitle,
     bool? searching,
+    List<String?>? requiredFiles,
   }) = _Job;
 
   factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);

@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
-import 'package:lakbay/features/auth/auth_repository.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/app_bar.dart';
@@ -114,13 +113,6 @@ class _TripsPageState extends ConsumerState<TripsPage> {
                                 ),
                                 const SizedBox(height: 20),
                                 createNewTrip(),
-                                TextButton(
-                                    onPressed: () {
-                                      ref
-                                          .read(authControllerProvider.notifier)
-                                          .logout();
-                                    },
-                                    child: const Text("Logout"))
                               ],
                             ),
                           ),

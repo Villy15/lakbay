@@ -1,7 +1,5 @@
-import 'dart:ffi';
-
-import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -13,47 +11,48 @@ class NotificationWithBadgeIcon extends ConsumerStatefulWidget {
     required this.user,
   });
 
-  @override 
-  ConsumerState<NotificationWithBadgeIcon> createState() => _NotificationWithBadgeIconState();
+  @override
+  ConsumerState<NotificationWithBadgeIcon> createState() =>
+      _NotificationWithBadgeIconState();
 }
 
-class _NotificationWithBadgeIconState extends ConsumerState<NotificationWithBadgeIcon> {
-  @override 
+class _NotificationWithBadgeIconState
+    extends ConsumerState<NotificationWithBadgeIcon> {
+  @override
   Widget build(BuildContext context) {
-    final notifications = ref.watch(getNotificationsByOwnerIdProvider(widget.user!.uid));
+    final notifications =
+        ref.watch(getNotificationsByOwnerIdProvider(widget.user?.uid ?? ""));
+
     return notifications.when(
       loading: () => badges.Badge(
         badgeContent: const CircularProgressIndicator(),
         child: const Icon(Icons.notifications),
       ),
-      error:(error, stackTrace) => badges.Badge(
+      error: (error, stackTrace) => badges.Badge(
         badgeContent: const Icon(Icons.error),
         child: const Icon(Icons.notifications),
       ),
       data: (notificationList) {
-        final notificationCount = notificationList.where((notification) => !(notification.isRead)).length;
+        final notificationCount = notificationList
+            .where((notification) => !(notification.isRead))
+            .length;
         if (notificationCount == 0) {
           debugPrint("the notif count is : $notificationCount");
-          return const Icon(Icons.notifications_none_outlined); 
-        }
-        else {
+          return const Icon(Icons.notifications_none_outlined);
+        } else {
           debugPrint("the notif count is : $notificationCount");
           return badges.Badge(
-          position: badges.BadgePosition.topEnd(top: -9,),
-          badgeContent: Text(
-            notificationCount.toString(),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 7
+            position: badges.BadgePosition.topEnd(
+              top: -9,
             ),
-            selectionColor: Colors.red,
-          ),
-          child: const Icon(
-            Icons.notifications_none_outlined
-          ),
-        );
+            badgeContent: Text(
+              notificationCount.toString(),
+              style: const TextStyle(color: Colors.white, fontSize: 7),
+              selectionColor: Colors.red,
+            ),
+            child: const Icon(Icons.notifications_none_outlined),
+          );
         }
-        
       },
     );
   }

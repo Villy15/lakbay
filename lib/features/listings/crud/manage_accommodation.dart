@@ -55,6 +55,9 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
       ),
     ),
   ];
+
+  int currentTab = 0;
+
   @override
   void initState() {
     super.initState();
@@ -74,6 +77,11 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
         ),
       ),
       bottom: TabBar(
+        onTap: (tab) {
+          setState(() {
+            currentTab = tab;
+          });
+        },
         tabAlignment: TabAlignment.center,
         labelPadding: EdgeInsets.zero,
         isScrollable: true,
@@ -708,42 +716,7 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
                       subtitle: Text('Something went wrong'),
                     ),
                   ),
-
-              // this box is so that the edit listing doesn't cover any content
-              SizedBox(
-                height: MediaQuery.sizeOf(context).height / 10,
-              )
             ],
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(bottom: 0, right: 0),
-          child: Align(
-            alignment: Alignment.bottomRight,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
-              child: FilledButton(
-                onPressed: () {
-                  // Handle button tap here
-                  // Perform action when 'Edit Listing' button is tapped
-                },
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all<Size>(
-                    const Size(double.infinity, 45),
-                  ),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    const RoundedRectangleBorder(
-                      borderRadius: BorderRadius
-                          .zero, // Zero out the border radius to make it flat at the bottom
-                    ),
-                  ),
-                ),
-                child: const Text('Edit Listing'),
-              ),
-            ),
           ),
         ),
       ],
@@ -1026,6 +999,21 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
             resizeToAvoidBottomInset: true,
             // Add appbar with back button
             appBar: _appBar(widget.listing.title, context),
+            bottomNavigationBar: currentTab == 1
+                ? BottomAppBar(
+                    child: FilledButton(
+                      onPressed: () {},
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              8.0), // Adjust the value as needed
+                        ),
+                      ),
+                      child: const Text('Edit Listing'),
+                    ),
+                  )
+                : null,
             body: TabBarView(
               children: [
                 bookings(),

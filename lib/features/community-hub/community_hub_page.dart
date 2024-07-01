@@ -200,6 +200,12 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
                                   !availableListingsTags[index].isSelected;
                             });
                           },
+                          style: FilledButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Adjust the value as needed
+                            ),
+                          ),
                           child: Text(availableListingsTags[index].name),
                         )
                       : ElevatedButton(
@@ -209,6 +215,12 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
                                   !availableListingsTags[index].isSelected;
                             });
                           },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Adjust the value as needed
+                            ),
+                          ),
                           child: Text(availableListingsTags[index].name),
                         );
                 },
@@ -441,6 +453,8 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
 
     if (user!.isManager) {
       return SpeedDial(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.background,
         icon: Icons.more_vert,
         activeIcon: Icons.close,
         renderOverlay: false,
