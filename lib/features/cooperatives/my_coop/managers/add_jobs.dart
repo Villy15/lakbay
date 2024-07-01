@@ -103,7 +103,8 @@ class _AddJobsState extends ConsumerState<AddJobs> {
   void initCoop() async {
     final CooperativeModel pulledCoop =
         await ref.read(getCooperativeProvider(widget.coop.uid!).future);
-    tourismJobs = Map.from(pulledCoop.tourismJobs ?? {});
+    tourismJobs =
+        Map.from(pulledCoop.tourismJobs ?? widget.coop.tourismJobs ?? {});
   }
 
   void onSubmit() {
