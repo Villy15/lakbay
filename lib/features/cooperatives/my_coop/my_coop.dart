@@ -286,36 +286,39 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
     return ref.watch(getAllVotesProvider(widget.coopId)).when(
           data: (data) {
             if (data.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      'lib/core/images/SleepingCatFromGlitch.svg',
-                      height: 100, // Adjust height as desired
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'No votes yet!',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+              return SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'lib/core/images/SleepingCatFromGlitch.svg',
+                        height: MediaQuery.sizeOf(context).height /
+                            10, // Adjust height as desired
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Check back later or create your own in the',
-                      style: TextStyle(
-                        fontSize: 16,
+                      const SizedBox(height: 20),
+                      const Text(
+                        'No votes yet!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    const Text(
-                      'Manager Tools section.',
-                      style: TextStyle(
-                        fontSize: 16,
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Check back later or create your own in the',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                  ],
+                      const Text(
+                        'Manager Tools section.',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
@@ -341,36 +344,39 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
           data: (data) {
             if (data.isEmpty) {
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      'lib/core/images/SleepingCatFromGlitch.svg',
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'lib/core/images/SleepingCatFromGlitch.svg',
 
-                      height: 100, // Adjust height as desired
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'No goals yet!',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                        height: MediaQuery.sizeOf(context).height /
+                            10, // Adjust height as desired
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Set goals for your cooperative in the',
-                      style: TextStyle(
-                        fontSize: 16,
+                      const SizedBox(height: 20),
+                      const Text(
+                        'No goals yet!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    const Text(
-                      'Manager Tools section.',
-                      style: TextStyle(
-                        fontSize: 16,
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Set goals for your cooperative in the',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                  ],
+                      const Text(
+                        'Manager Tools section.',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
@@ -399,35 +405,38 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
           data: (coopAnnouncements) {
             if (coopAnnouncements.isEmpty) {
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      'lib/core/images/SleepingCatFromGlitch.svg',
-                      height: 100, // Adjust height as desired
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'No announcements yet!',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'lib/core/images/SleepingCatFromGlitch.svg',
+                        height: MediaQuery.sizeOf(context).height /
+                            10, // Adjust height as desired
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Check back later or create your own in the',
-                      style: TextStyle(
-                        fontSize: 16,
+                      const SizedBox(height: 20),
+                      const Text(
+                        'No announcements yet!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    const Text(
-                      'Manager Tools section.',
-                      style: TextStyle(
-                        fontSize: 16,
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Check back later or create your own in the',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                  ],
+                      const Text(
+                        'Manager Tools section.',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
@@ -461,22 +470,25 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
           data: (applications) {
             if (applications.isEmpty) {
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      'lib/core/images/SleepingCatFromGlitch.svg',
-                      height: 100, // Adjust height as desired
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'No Applications yet!',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'lib/core/images/SleepingCatFromGlitch.svg',
+                        height: MediaQuery.sizeOf(context).height /
+                            10, // Adjust height as desired
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      const Text(
+                        'No Applications yet!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
@@ -824,7 +836,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   SliverAppBar sliverAppBarHeaderWithTabs(
       CooperativeModel coop, UserModel? user, BuildContext context) {
     return SliverAppBar(
-      expandedHeight: 200,
+      expandedHeight: MediaQuery.sizeOf(context).height / 2.5,
       pinned: true,
       collapsedHeight: kToolbarHeight,
       floating: true,
@@ -1088,7 +1100,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
 
   SliverAppBar sliverAppBar(CooperativeModel coop) {
     return SliverAppBar(
-      expandedHeight: 100,
+      expandedHeight: MediaQuery.sizeOf(context).height / 5,
       collapsedHeight: kToolbarHeight,
       pinned: true,
       floating: true,
@@ -1097,7 +1109,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
         builder: (BuildContext context, BoxConstraints constraints) {
           // Calculate the percentage of the expanded height
           double percent = ((constraints.maxHeight - kToolbarHeight) /
-              (100 - kToolbarHeight));
+              ((MediaQuery.sizeOf(context).height / 10) - kToolbarHeight));
           return FlexibleSpaceBar(
             titlePadding: const EdgeInsets.fromLTRB(16, 40, 16, 0),
             title: percent < 0.8 // Show title when the appBar is 50% collapsed
