@@ -214,10 +214,10 @@ class _AddTourState extends ConsumerState<AddTour> {
               Icons.question_mark_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
-            Icon(
-              Icons.summarize_outlined,
-              color: Theme.of(context).colorScheme.background,
-            ),
+            // Icon(
+            //   Icons.summarize_outlined,
+            //   color: Theme.of(context).colorScheme.background,
+            // ),
           ],
 
           // activeStep property set to activeStep variable defined above.
@@ -242,8 +242,8 @@ class _AddTourState extends ConsumerState<AddTour> {
         switch (type) {
           case 'Day Trip':
             return addDayTourDetails(context);
-          case 'Multi-Day Tour':
-            return addDayTourDetails(context);
+          // case 'Multi-Day Tour':
+          //   return addDayTourDetails(context);
           default:
             return addDayTourDetails(context);
         }
