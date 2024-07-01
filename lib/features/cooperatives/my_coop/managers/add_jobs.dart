@@ -93,18 +93,17 @@ class _AddJobsState extends ConsumerState<AddJobs> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(navBarVisibilityProvider.notifier).hide();
+    Future.delayed(Duration.zero, () {
+      initCoop();
     });
-    initCoop();
   }
 
   void initCoop() async {
     final CooperativeModel pulledCoop =
         await ref.read(getCooperativeProvider(widget.coop.uid!).future);
-    tourismJobs =
-        Map.from(pulledCoop.tourismJobs ?? widget.coop.tourismJobs ?? {});
+    setState(() {
+      tourismJobs = Map.from(pulledCoop.tourismJobs ?? {});
+    });
   }
 
   void onSubmit() {
