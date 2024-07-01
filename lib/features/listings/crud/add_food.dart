@@ -198,7 +198,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
     ];
     return Column(
       children: [
-        ElevatedButton(
+        FilledButton(
             onPressed: () {
               showDialog(
                   context: context,
@@ -208,6 +208,11 @@ class _AddFoodState extends ConsumerState<AddFood> {
                     );
                   });
             },
+            style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(8.0), // Adjust the value as needed
+            )),
             child: const Text("Add Task")),
         const SizedBox(
           height: 10,
@@ -562,7 +567,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
             ),
           ),
           const Spacer(),
-          ElevatedButton(
+          FilledButton(
               onPressed: () {
                 this.setState(() {
                   fixedTasks?.add(BookingTask(
@@ -577,6 +582,11 @@ class _AddFoodState extends ConsumerState<AddFood> {
                 });
                 context.pop();
               },
+              style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(8.0), // Adjust the value as needed
+              )),
               child: const Text("Add Task")),
         ],
       );
@@ -777,8 +787,8 @@ class _AddFoodState extends ConsumerState<AddFood> {
 
       // Next
       if (activeStep != upperBound) ...[
-        ElevatedButton(
-            style: ElevatedButton.styleFrom(
+        FilledButton(
+            style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
@@ -1136,7 +1146,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
           }),
       const SizedBox(height: 10),
       Center(
-          child: ElevatedButton(
+          child: FilledButton(
               onPressed: () {
                 setState(() {
                   tables++;
@@ -1145,6 +1155,11 @@ class _AddFoodState extends ConsumerState<AddFood> {
                       .add([TextEditingController(), TextEditingController()]);
                 });
               },
+              style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(8.0), // Adjust the value as needed
+              )),
               child: const Text('Add Table'))),
       const Text(
         'Working Hours',
@@ -1164,7 +1179,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Column(children: [
           const Text('Start Time'),
-          ElevatedButton(
+          FilledButton(
               onPressed: () async {
                 final TimeOfDay? time = await showTimePicker(
                     context: context,
@@ -1182,6 +1197,11 @@ class _AddFoodState extends ConsumerState<AddFood> {
                   });
                 }
               },
+              style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(8.0), // Adjust the value as needed
+              )),
               // ignore: unnecessary_null_comparison
               child: Text(startDate == null
                   ? 'Select Time'
@@ -1192,7 +1212,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
         Column(children: [
           const Text('End Time'),
           const SizedBox(height: 5),
-          ElevatedButton(
+          FilledButton(
               onPressed: () async {
                 final TimeOfDay? time = await showTimePicker(
                     context: context,
@@ -1210,6 +1230,11 @@ class _AddFoodState extends ConsumerState<AddFood> {
                   });
                 }
               },
+              style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(8.0), // Adjust the value as needed
+              )),
               // ignore: unnecessary_null_comparison
               child: Text(endDate == null
                   ? 'Select Time'
@@ -1298,7 +1323,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                 ]));
           })),
       Center(
-        child: ElevatedButton(
+        child: FilledButton(
           onPressed: () {
             showModalBottomSheet(
                 context: context,
@@ -1308,6 +1333,11 @@ class _AddFoodState extends ConsumerState<AddFood> {
                       dealImgs, _dealNameController, guests);
                 });
           },
+          style: FilledButton.styleFrom(
+              shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(8.0), // Adjust the value as needed
+          )),
           child: const Text('Add Deal'),
         ),
       ),
@@ -1452,7 +1482,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                           })
                     ])),
                 const SizedBox(height: 30),
-                ElevatedButton(
+                FilledButton(
                   onPressed: () {
                     // _tableControllers
                     debugPrint(
@@ -1499,6 +1529,11 @@ class _AddFoodState extends ConsumerState<AddFood> {
                     });
                     context.pop();
                   },
+                  style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        8.0), // Adjust the value as needed
+                  )),
                   child: const Text('Confirm'),
                 )
               ]));
