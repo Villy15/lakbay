@@ -453,6 +453,8 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
 
     if (user!.isManager) {
       return SpeedDial(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.background,
         icon: Icons.more_vert,
         activeIcon: Icons.close,
         renderOverlay: false,
