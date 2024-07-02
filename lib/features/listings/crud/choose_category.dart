@@ -74,7 +74,7 @@ class _ChooseCategoryState extends ConsumerState<ChooseCategory> {
           shrinkWrap: true,
           itemCount: categories.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
+            crossAxisCount: 2,
             childAspectRatio: 1.0,
           ),
           itemBuilder: (context, index) {
@@ -115,11 +115,13 @@ class _ChooseCategoryState extends ConsumerState<ChooseCategory> {
                         color: Theme.of(context).colorScheme.primary),
                   ),
                   const SizedBox(height: 8.0),
-                  Text(
-                    category['name'],
-                    style: TextStyle(
-                        fontSize: 15.0,
-                        color: Theme.of(context).colorScheme.primary),
+                  Flexible(
+                    child: Text(
+                      category['name'],
+                      style: TextStyle(
+                          fontSize: 15.0,
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
                   ),
                 ],
               ),

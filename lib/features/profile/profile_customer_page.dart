@@ -91,28 +91,26 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         'No emergency contact provided'),
                   ),
               'Government ID': () => ListTile(
-                    leading: const Icon(Icons.credit_card),
-                    title: const Text('Government ID'),
-                    subtitle: userModel.governmentId == null ||
-                            userModel.governmentId == ''
-                        ? const Text('No government ID provided')
-                        : const Text('View Government ID'),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                    ),
-                    onTap: () async {
-                      // view the government ID here
-                      showModalBottomSheet(
+                  leading: const Icon(Icons.credit_card),
+                  title: const Text('Government ID'),
+                  subtitle: userModel.governmentId == null ||
+                          userModel.governmentId == ''
+                      ? const Text('No government ID provided')
+                      : const Text('View Government ID'),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                  ),
+                  onTap: () async {
+                    // view the government ID here
+                    showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         isDismissible: true,
                         builder: (context) {
                           return ViewPdf(url: userModel.governmentId!);
-                        } 
-                      );
-                    }
-                  ),
+                        });
+                  }),
             };
 
             Map<String, Function> documents = {
@@ -245,19 +243,19 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   AppBar _appBar(UserModel user) {
     return AppBar(
       title: const Text('Profile Page'),
-      actions: [
-        TextButton(
-          onPressed: () {
-            editProfile(user);
-          },
-          child: const Text(
-            'Edit',
-            style: TextStyle(
-              fontSize: 16,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-        ),
+      actions: const [
+        // TextButton(
+        //   onPressed: () {
+        //     editProfile(user);
+        //   },
+        //   child: const Text(
+        //     'Edit',
+        //     style: TextStyle(
+        //       fontSize: 16,
+        //       decoration: TextDecoration.underline,
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
