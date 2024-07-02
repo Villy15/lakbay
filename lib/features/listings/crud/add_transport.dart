@@ -387,7 +387,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   Widget chooseType(BuildContext context) {
     List<Map<String, dynamic>> types = [
       {'name': 'Public', 'icon': Icons.car_rental_sharp},
-      {'name': 'Private', 'icon': Icons.car_rental_outlined}
+      // {'name': 'Private', 'icon': Icons.car_rental_outlined}
     ];
 
     return Column(

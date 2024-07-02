@@ -473,7 +473,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
         return 'Review Listing';
 
       default:
-        return 'Choose Type';
+        return 'Add Details';
     }
   }
 
@@ -2026,7 +2026,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
         return addPolicies(context);
 
       default:
-        return chooseType(context);
+        return addDetails(context);
     }
   }
 }
