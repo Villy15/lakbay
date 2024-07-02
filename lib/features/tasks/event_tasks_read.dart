@@ -149,6 +149,7 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
   }
 
   Column taskCheckList(BuildContext context, TaskModel task) {
+    final user = ref.watch(userProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -192,6 +193,10 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
               ),
               child: CheckboxListTile(
                 title: Text(item.title),
+                // Subtitle for Assigned To
+                subtitle: item.assignedTo != null
+                    ? Text("Completed by: ${item.assignedTo}")
+                    : null,
                 value: item.isDone,
                 onChanged: (value) {
                   ref.read(tasksControllerProvider.notifier).updateTask(
@@ -199,7 +204,11 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
                         task.copyWith(
                           checkList: task.checkList!
                               .map((e) => e == item
-                                  ? item.copyWith(isDone: value ?? false)
+                                  ? item.copyWith(
+                                      isDone: value ?? false,
+                                      assignedTo: value == true
+                                          ? user!.name
+                                          : null) // Update or remove assignedTo based on checkbox value
                                   : e)
                               .toList(),
                         ),
