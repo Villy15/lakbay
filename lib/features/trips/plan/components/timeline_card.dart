@@ -319,32 +319,36 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
             ),
         if (widget.plan.tripStatus != "Completed")
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               // Delete Activity
-              IconButton(
-                onPressed: () => deleteActivity(),
-                icon: const Icon(
-                  Icons.delete_outline,
+              if (widget.activity.bookingId == null)
+                IconButton(
+                  onPressed: () => deleteActivity(),
+                  icon: const Icon(
+                    Icons.delete_outline,
+                  ),
                 ),
-              ),
+
               Row(
                 children: [
-                  IconButton(
-                    onPressed: () => addStartTime(),
-                    icon: const Icon(
-                      Icons.timer_outlined,
+                  if (widget.activity.bookingId == null)
+                    IconButton(
+                      onPressed: () => addStartTime(),
+                      icon: const Icon(
+                        Icons.timer_outlined,
+                      ),
                     ),
-                  ),
                   // Set Duration
-                  IconButton(
-                    onPressed: widget.activity.startTime != null
-                        ? () => addEndTime()
-                        : null,
-                    icon: const Icon(
-                      Icons.timelapse_outlined,
+                  if (widget.activity.bookingId == null)
+                    IconButton(
+                      onPressed: widget.activity.startTime != null
+                          ? () => addEndTime()
+                          : null,
+                      icon: const Icon(
+                        Icons.timelapse_outlined,
+                      ),
                     ),
-                  ),
                   // Manage expenses
                   IconButton(
                     onPressed: () => addExpense(),

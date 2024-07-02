@@ -204,7 +204,7 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
     List<Map<String, dynamic>> categories = [
       {'name': 'Accommodation', 'icon': Icons.hotel_outlined},
       {'name': 'Transport', 'icon': Icons.directions_bus_outlined},
-      {'name': 'Tour', 'icon': Icons.map_outlined},
+      // {'name': 'Tour', 'icon': Icons.map_outlined},
       {'name': 'Food', 'icon': Icons.restaurant_outlined},
       {'name': 'Entertainment', 'icon': Icons.movie_creation_outlined},
     ];
@@ -240,10 +240,10 @@ class _PlanAddActivityState extends ConsumerState<PlanAddActivity> {
 
                 break;
 
-              case 'Tour':
-                context.push('/plan/add_activity/search_listing/tour');
+              // case 'Tour':
+              //   context.push('/plan/add_activity/search_listing/tour');
 
-                break;
+              // break;
             }
           },
           child: Column(
