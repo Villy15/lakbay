@@ -1053,93 +1053,93 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         //         ),
         //       );
         //     }),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: MediaQuery.sizeOf(context).width * .5,
-              child: FilledButton(
-                  onPressed: () async {
-                    List<String> assignedNames = [];
-                    List<CooperativeMembers>? members;
-                    TextEditingController committeeController =
-                        TextEditingController(text: 'Tourism');
-                    members = await ref
-                        .read(getAllMembersInCommitteeProvider(CommitteeParams(
-                      committeeName: committeeController.text,
-                      coopUid: ref.watch(userProvider)!.currentCoop!,
-                    )).future);
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     SizedBox(
+        //       width: MediaQuery.sizeOf(context).width * .5,
+        //       child: FilledButton(
+        //           onPressed: () async {
+        //             List<String> assignedNames = [];
+        //             List<CooperativeMembers>? members;
+        //             TextEditingController committeeController =
+        //                 TextEditingController(text: 'Tourism');
+        //             members = await ref
+        //                 .read(getAllMembersInCommitteeProvider(CommitteeParams(
+        //               committeeName: committeeController.text,
+        //               coopUid: ref.watch(userProvider)!.currentCoop!,
+        //             )).future);
 
-                    members = members!
-                        .where(
-                            (member) => !drivers.values.contains(member.name))
-                        .toList();
-                    if (context.mounted) {
-                      return showModalBottomSheet(
-                        context: context,
-                        builder: (builder) {
-                          return Container(
-                            padding: const EdgeInsets.all(
-                                10.0), // Padding for overall container
-                            child: Column(
-                              children: [
-                                // Optional: Add a title or header for the modal
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0),
-                                  child: Text(
-                                    "Members (${committeeController.text})",
-                                    style: const TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: ListView.builder(
-                                    itemCount: members!.length,
-                                    itemBuilder: (context, index) {
-                                      return ListTile(
-                                        title: Text(
-                                          members![index].name,
-                                          style: const TextStyle(
-                                              fontSize:
-                                                  16.0), // Adjust font size
-                                        ),
-                                        onTap: () {
-                                          setState(() {
-                                            drivers[members![index].uid!] =
-                                                members[index]
-                                                    .name; // Add to the map
-                                            assignedNames
-                                                .add(members[index].name);
-                                          });
-                                          Navigator.pop(
-                                              context); // Use Navigator.pop to close the bottom sheet
-                                        },
+        //             members = members!
+        //                 .where(
+        //                     (member) => !drivers.values.contains(member.name))
+        //                 .toList();
+        //             if (context.mounted) {
+        //               return showModalBottomSheet(
+        //                 context: context,
+        //                 builder: (builder) {
+        //                   return Container(
+        //                     padding: const EdgeInsets.all(
+        //                         10.0), // Padding for overall container
+        //                     child: Column(
+        //                       children: [
+        //                         // Optional: Add a title or header for the modal
+        //                         Padding(
+        //                           padding: const EdgeInsets.symmetric(
+        //                               vertical: 10.0),
+        //                           child: Text(
+        //                             "Members (${committeeController.text})",
+        //                             style: const TextStyle(
+        //                               fontSize: 18.0,
+        //                               fontWeight: FontWeight.bold,
+        //                             ),
+        //                           ),
+        //                         ),
+        //                         Expanded(
+        //                           child: ListView.builder(
+        //                             itemCount: members!.length,
+        //                             itemBuilder: (context, index) {
+        //                               return ListTile(
+        //                                 title: Text(
+        //                                   members![index].name,
+        //                                   style: const TextStyle(
+        //                                       fontSize:
+        //                                           16.0), // Adjust font size
+        //                                 ),
+        //                                 onTap: () {
+        //                                   setState(() {
+        //                                     drivers[members![index].uid!] =
+        //                                         members[index]
+        //                                             .name; // Add to the map
+        //                                     assignedNames
+        //                                         .add(members[index].name);
+        //                                   });
+        //                                   Navigator.pop(
+        //                                       context); // Use Navigator.pop to close the bottom sheet
+        //                                 },
 
-                                        // Optional: Add trailing icons or actions
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          4.0), // Adjust the radius as needed
-                    ),
-                  ),
-                  child: const Text('Add Driver')),
-            ),
-          ],
-        ),
+        //                                 // Optional: Add trailing icons or actions
+        //                               );
+        //                             },
+        //                           ),
+        //                         ),
+        //                       ],
+        //                     ),
+        //                   );
+        //                 },
+        //               );
+        //             }
+        //           },
+        //           style: FilledButton.styleFrom(
+        //             shape: RoundedRectangleBorder(
+        //               borderRadius: BorderRadius.circular(
+        //                   4.0), // Adjust the radius as needed
+        //             ),
+        //           ),
+        //           child: const Text('Add Driver')),
+        //     ),
+        //   ],
+        // ),
         addNotes(notes),
       ],
     );
