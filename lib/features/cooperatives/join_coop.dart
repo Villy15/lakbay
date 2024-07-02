@@ -85,16 +85,13 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
   }
 
   void joinCooperative() async {
-    List<File> files = [_validId!, _birthCertificate!];
-    List<String> fileTypes = ["Valid ID", "Birth Certificate"];
-
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
     }
 
-    for (int i = 0; i < files.length; i++) {
-      var file = files[i];
-      final String fileName = _validId!.path.split('/').last;
+    for (int i = 0; i < documents!.length; i++) {
+      var file = documents![i];
+      final String fileName = file!.path.split('/').last;
       final String path = "cooperatives/$fileName";
       await ref
           .read(storageRepositoryProvider)
@@ -110,7 +107,7 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                 (fileUrl) {
                   ReqFile reqFile = ReqFile(
                       fileName: fileName,
-                      fileTitle: fileTypes[i],
+                      fileTitle: reqFilesList![i],
                       path: path,
                       url: fileUrl);
                   setState(() {
