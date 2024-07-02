@@ -477,6 +477,7 @@ TaskCheckList _$TaskCheckListFromJson(Map<String, dynamic> json) {
 mixin _$TaskCheckList {
   String get title => throw _privateConstructorUsedError;
   bool get isDone => throw _privateConstructorUsedError;
+  String? get assignedTo => throw _privateConstructorUsedError;
   String? get proofUrl => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -491,7 +492,7 @@ abstract class $TaskCheckListCopyWith<$Res> {
           TaskCheckList value, $Res Function(TaskCheckList) then) =
       _$TaskCheckListCopyWithImpl<$Res, TaskCheckList>;
   @useResult
-  $Res call({String title, bool isDone, String? proofUrl});
+  $Res call({String title, bool isDone, String? assignedTo, String? proofUrl});
 }
 
 /// @nodoc
@@ -509,6 +510,7 @@ class _$TaskCheckListCopyWithImpl<$Res, $Val extends TaskCheckList>
   $Res call({
     Object? title = null,
     Object? isDone = null,
+    Object? assignedTo = freezed,
     Object? proofUrl = freezed,
   }) {
     return _then(_value.copyWith(
@@ -520,6 +522,10 @@ class _$TaskCheckListCopyWithImpl<$Res, $Val extends TaskCheckList>
           ? _value.isDone
           : isDone // ignore: cast_nullable_to_non_nullable
               as bool,
+      assignedTo: freezed == assignedTo
+          ? _value.assignedTo
+          : assignedTo // ignore: cast_nullable_to_non_nullable
+              as String?,
       proofUrl: freezed == proofUrl
           ? _value.proofUrl
           : proofUrl // ignore: cast_nullable_to_non_nullable
@@ -536,7 +542,7 @@ abstract class _$$TaskCheckListImplCopyWith<$Res>
       __$$TaskCheckListImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String title, bool isDone, String? proofUrl});
+  $Res call({String title, bool isDone, String? assignedTo, String? proofUrl});
 }
 
 /// @nodoc
@@ -552,6 +558,7 @@ class __$$TaskCheckListImplCopyWithImpl<$Res>
   $Res call({
     Object? title = null,
     Object? isDone = null,
+    Object? assignedTo = freezed,
     Object? proofUrl = freezed,
   }) {
     return _then(_$TaskCheckListImpl(
@@ -563,6 +570,10 @@ class __$$TaskCheckListImplCopyWithImpl<$Res>
           ? _value.isDone
           : isDone // ignore: cast_nullable_to_non_nullable
               as bool,
+      assignedTo: freezed == assignedTo
+          ? _value.assignedTo
+          : assignedTo // ignore: cast_nullable_to_non_nullable
+              as String?,
       proofUrl: freezed == proofUrl
           ? _value.proofUrl
           : proofUrl // ignore: cast_nullable_to_non_nullable
@@ -575,7 +586,10 @@ class __$$TaskCheckListImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$TaskCheckListImpl implements _TaskCheckList {
   _$TaskCheckListImpl(
-      {required this.title, required this.isDone, this.proofUrl});
+      {required this.title,
+      required this.isDone,
+      this.assignedTo,
+      this.proofUrl});
 
   factory _$TaskCheckListImpl.fromJson(Map<String, dynamic> json) =>
       _$$TaskCheckListImplFromJson(json);
@@ -585,11 +599,13 @@ class _$TaskCheckListImpl implements _TaskCheckList {
   @override
   final bool isDone;
   @override
+  final String? assignedTo;
+  @override
   final String? proofUrl;
 
   @override
   String toString() {
-    return 'TaskCheckList(title: $title, isDone: $isDone, proofUrl: $proofUrl)';
+    return 'TaskCheckList(title: $title, isDone: $isDone, assignedTo: $assignedTo, proofUrl: $proofUrl)';
   }
 
   @override
@@ -599,13 +615,16 @@ class _$TaskCheckListImpl implements _TaskCheckList {
             other is _$TaskCheckListImpl &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.isDone, isDone) || other.isDone == isDone) &&
+            (identical(other.assignedTo, assignedTo) ||
+                other.assignedTo == assignedTo) &&
             (identical(other.proofUrl, proofUrl) ||
                 other.proofUrl == proofUrl));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, title, isDone, proofUrl);
+  int get hashCode =>
+      Object.hash(runtimeType, title, isDone, assignedTo, proofUrl);
 
   @JsonKey(ignore: true)
   @override
@@ -625,6 +644,7 @@ abstract class _TaskCheckList implements TaskCheckList {
   factory _TaskCheckList(
       {required final String title,
       required final bool isDone,
+      final String? assignedTo,
       final String? proofUrl}) = _$TaskCheckListImpl;
 
   factory _TaskCheckList.fromJson(Map<String, dynamic> json) =
@@ -634,6 +654,8 @@ abstract class _TaskCheckList implements TaskCheckList {
   String get title;
   @override
   bool get isDone;
+  @override
+  String? get assignedTo;
   @override
   String? get proofUrl;
   @override

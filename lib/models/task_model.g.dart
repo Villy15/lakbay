@@ -54,6 +54,7 @@ _$TaskCheckListImpl _$$TaskCheckListImplFromJson(Map<String, dynamic> json) =>
     _$TaskCheckListImpl(
       title: json['title'] as String,
       isDone: json['isDone'] as bool,
+      assignedTo: json['assignedTo'] as String?,
       proofUrl: json['proofUrl'] as String?,
     );
 
@@ -61,5 +62,6 @@ Map<String, dynamic> _$$TaskCheckListImplToJson(_$TaskCheckListImpl instance) =>
     <String, dynamic>{
       'title': instance.title,
       'isDone': instance.isDone,
+      'assignedTo': instance.assignedTo,
       'proofUrl': instance.proofUrl,
     };
