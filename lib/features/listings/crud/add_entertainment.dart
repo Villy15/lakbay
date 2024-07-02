@@ -20,6 +20,8 @@ import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+enum CancelPolicy { fixedCancelRate, percentageCancelRate }
+
 enum IntervalOptions { paddedIntervals, fixedIntervals }
 
 enum SchedulingOptions { dayAvaiabilityScheduling, fixedScheduling }
@@ -40,20 +42,13 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 
   // stepper
   int activeStep = 0;
-  int upperBound = 6;
+  int upperBound = 5;
 
   // initial values
   String type = 'Rentals';
   num guests = 0;
-  Map<String, bool> workingDays = {
-    'Monday': false,
-    'Tuesday': false,
-    'Wednesday': false,
-    'Thursday': false,
-    'Friday': false,
-    'Saturday': false,
-    'Sunday': false,
-  };
+  List<bool> workingDays = List.filled(7, false);
+
   List<AvailableDay> availableDays = [];
   List<AvailableTime> availableTimes = [];
   TimeOfDay duration = const TimeOfDay(hour: 1, minute: 15);
@@ -85,6 +80,8 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       TextEditingController();
   final TextEditingController _cancellationPeriodController =
       TextEditingController();
+  CancelPolicy _selectedCancel = CancelPolicy.fixedCancelRate; // Default value
+
   @override
   void initState() {
     super.initState();
@@ -218,10 +215,12 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                         hour: _selectedClosingHours.hour,
                         minute: _selectedClosingHours.minute),
                     guestInfo: _guestInfoController.text,
-                    cancellationRate:
-                        num.parse((_cancellationRateController.text)) / 100,
                     cancellationPeriod:
-                        num.parse((_cancellationPeriodController.text)),
+                        num.parse(_cancellationPeriodController.text),
+                    cancellationRate: _selectedCancel ==
+                            CancelPolicy.fixedCancelRate
+                        ? num.parse((_cancellationRateController.text))
+                        : num.parse((_cancellationRateController.text)) / 100,
                   );
                   debugPrint(listing.toString());
                   //Update image URLs in the listing model
@@ -316,10 +315,10 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               Icons.policy,
               color: Theme.of(context).colorScheme.background,
             ),
-            Icon(
-              Icons.summarize_outlined,
-              color: Theme.of(context).colorScheme.background,
-            ),
+            // Icon(
+            //   Icons.summarize_outlined,
+            //   color: Theme.of(context).colorScheme.background,
+            // ),
           ],
 
           // activeStep property set to activeStep variable defined above.
@@ -361,14 +360,14 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           case 'Watching/Performances':
             return createScheduling(context);
           case 'Activities/Tours':
-            return addActivitiesDetails(context);
+            return createScheduling(context);
           default:
-            return addRentalDetails(context);
+            return calculateIntervals(context);
         }
       case 5:
         return addPolicies(context);
-      case 6:
-        return reviewListing(context);
+      // case 6:
+      //   return reviewListing(context);
       default:
         return chooseType(context);
     }
@@ -388,7 +387,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
         TextFormField(
           controller: _titleController,
           decoration: const InputDecoration(
-            labelText: 'Listing Title*',
+            labelText: 'Listing Title',
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: "Banana Boating",
@@ -399,7 +398,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           controller: _descriptionController,
           maxLines: null,
           decoration: const InputDecoration(
-            labelText: 'Description*',
+            labelText: 'Description',
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: "Go on a banana boat ride...",
@@ -412,7 +411,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               controller: _priceController,
               maxLines: null,
               decoration: const InputDecoration(
-                labelText: 'Price*',
+                labelText: 'Price',
                 border: OutlineInputBorder(),
                 floatingLabelBehavior: FloatingLabelBehavior.always,
                 hintText: "250",
@@ -430,7 +429,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               controller: durationController,
               maxLines: 1,
               decoration: const InputDecoration(
-                labelText: 'Duration*',
+                labelText: 'Duration',
                 border: OutlineInputBorder(),
                 floatingLabelBehavior: FloatingLabelBehavior
                     .always, // Keep the label always visible
@@ -474,7 +473,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                 controller: _unitsController,
                 maxLines: null,
                 decoration: const InputDecoration(
-                  labelText: 'Number of Units*',
+                  labelText: 'Number of Units',
                   border: OutlineInputBorder(),
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   hintText: "2",
@@ -493,7 +492,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                 controller: _capacityController,
                 maxLines: null,
                 decoration: const InputDecoration(
-                  labelText: 'Capacity*',
+                  labelText: 'Capacity',
                   border: OutlineInputBorder(),
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   hintText: "10",
@@ -513,7 +512,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               controller: _selectedOpeningHoursController,
               maxLines: 1,
               decoration: const InputDecoration(
-                labelText: 'Start Time*',
+                labelText: 'Start Time',
                 border: OutlineInputBorder(),
 
                 floatingLabelBehavior: FloatingLabelBehavior
@@ -551,7 +550,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               controller: _selectedClosingHoursController,
               maxLines: 1,
               decoration: const InputDecoration(
-                labelText: 'End Time*',
+                labelText: 'End Time',
                 border: OutlineInputBorder(),
                 floatingLabelBehavior: FloatingLabelBehavior
                     .always, // Keep the label always visible
@@ -602,7 +601,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
         TextFormField(
           controller: _titleController,
           decoration: const InputDecoration(
-            labelText: 'Listing Title*',
+            labelText: 'Listing Title',
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: "Traditional Fire Dance",
@@ -613,7 +612,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           controller: _descriptionController,
           maxLines: null,
           decoration: const InputDecoration(
-            labelText: 'Description*',
+            labelText: 'Description',
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText:
@@ -625,7 +624,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           controller: _priceController,
           maxLines: null,
           decoration: const InputDecoration(
-            labelText: 'Price*',
+            labelText: 'Price',
             prefix: Text('₱'),
             suffix: Text(
               'per person',
@@ -644,7 +643,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                 controller: _capacityController,
                 maxLines: null,
                 decoration: const InputDecoration(
-                  labelText: 'Capacity*',
+                  labelText: 'Capacity',
                   border: OutlineInputBorder(),
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   suffix: Text(
@@ -661,7 +660,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                 controller: durationController,
                 maxLines: 1,
                 decoration: const InputDecoration(
-                  labelText: 'Duration*',
+                  labelText: 'Duration',
                   border: OutlineInputBorder(),
                   floatingLabelBehavior: FloatingLabelBehavior
                       .always, // Keep the label always visible
@@ -701,7 +700,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               controller: _selectedOpeningHoursController,
               maxLines: 1,
               decoration: const InputDecoration(
-                labelText: 'Opening Hours*',
+                labelText: 'Opening Hours',
                 border: OutlineInputBorder(),
                 floatingLabelBehavior: FloatingLabelBehavior
                     .always, // Keep the label always visible
@@ -738,7 +737,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               controller: _selectedClosingHoursController,
               maxLines: 1,
               decoration: const InputDecoration(
-                labelText: 'Closing Hours*',
+                labelText: 'Closing Hours',
                 border: OutlineInputBorder(),
                 floatingLabelBehavior: FloatingLabelBehavior
                     .always, // Keep the label always visible
@@ -784,8 +783,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
         TextFormField(
           controller: _titleController,
           decoration: const InputDecoration(
-            labelText: 'Listing Title*',
-            helperText: '*required',
+            labelText: 'Listing Title',
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText: "Pottery Making Class",
@@ -796,8 +794,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           controller: _descriptionController,
           maxLines: null,
           decoration: const InputDecoration(
-            labelText: 'Description*',
-            helperText: '*required',
+            labelText: 'Description',
             border: OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             hintText:
@@ -809,8 +806,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           controller: _priceController,
           maxLines: null,
           decoration: const InputDecoration(
-            labelText: 'Price*',
-            helperText: '*required',
+            labelText: 'Price',
             prefix: Text('₱'),
             suffix: Text(
               'per person',
@@ -821,44 +817,96 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             hintText: "Price per person",
           ),
         ),
-        TextFormField(
-          controller: _capacityController,
-          maxLines: null,
-          decoration: const InputDecoration(
-            labelText: 'Capacity*',
-            helperText: '*optional',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            suffix: Text(
-              'person/s',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
-            ),
-            hintText: "10",
+        const SizedBox(height: 10),
+        SizedBox(
+          width: MediaQuery.sizeOf(context).width,
+          child: Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _capacityController,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    labelText: 'Capacity',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    suffix: Text(
+                      'person/s',
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                    ),
+                    hintText: "10",
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextFormField(
+                  controller: durationController,
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    labelText: 'Duration',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Keep the label always visible
+                    hintText: "1:15",
+                  ),
+                  readOnly: true,
+                  onTap: () async {
+                    final TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: duration,
+                      initialEntryMode: TimePickerEntryMode.inputOnly,
+                      builder: (BuildContext context, Widget? child) {
+                        return MediaQuery(
+                          data: MediaQuery.of(context)
+                              .copyWith(alwaysUse24HourFormat: true),
+                          child: child!,
+                        );
+                      },
+                    );
+
+                    if (pickedTime != null) {
+                      setState(() {
+                        durationController.text =
+                            "${pickedTime.hour}:${pickedTime.minute}";
+                        duration = pickedTime;
+                      });
+                    }
+                  },
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(
+          height: 10,
+        ),
+        const Text('Operating Hours',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text('Please select your operating hours...',
+            style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
         const SizedBox(height: 10),
         TextFormField(
-          controller: durationController,
+          controller: _selectedOpeningHoursController,
           maxLines: 1,
           decoration: const InputDecoration(
-            labelText: 'Duration*',
-            helperText: '*required',
+            labelText: 'Start Time',
             border: OutlineInputBorder(),
             floatingLabelBehavior:
                 FloatingLabelBehavior.always, // Keep the label always visible
-            hintText: "1:15",
+            hintText: "8:30",
           ),
           readOnly: true,
           onTap: () async {
             final TimeOfDay? pickedTime = await showTimePicker(
               context: context,
-              initialTime: duration,
+              initialTime: _selectedOpeningHours,
               initialEntryMode: TimePickerEntryMode.inputOnly,
               builder: (BuildContext context, Widget? child) {
                 return MediaQuery(
                   data: MediaQuery.of(context)
-                      .copyWith(alwaysUse24HourFormat: true),
+                      .copyWith(alwaysUse24HourFormat: false),
                   child: child!,
                 );
               },
@@ -866,76 +914,75 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
 
             if (pickedTime != null) {
               setState(() {
-                durationController.text =
-                    "${pickedTime.hour}:${pickedTime.minute}";
-                duration = pickedTime;
+                _selectedOpeningHoursController.text =
+                    pickedTime.format(context);
+                _selectedOpeningHours = pickedTime;
               });
             }
           },
         ),
-        const SizedBox(height: 10),
-        ListTile(
-          title: const Text('Starting/Opening Hours*'),
-          subtitle: Text(
-            'Selected Time: ${_selectedOpeningHours.format(context)}',
-          ),
-          onTap: () async {
-            TimeOfDay? picked = await showTimePicker(
-              context: context,
-              initialTime: _selectedOpeningHours,
-            );
-            if (picked != _selectedOpeningHours) {
-              setState(() {
-                _selectedOpeningHours = picked!;
-              });
-            }
-          },
+        // start time
+        const SizedBox(
+          height: 10,
         ),
-        const SizedBox(height: 10),
-        ListTile(
-          title: const Text('End/Closing Hours*'),
-          subtitle: Text(
-            'Selected Time: ${_selectedClosingHours.format(context)}',
+        // end time
+        TextFormField(
+          controller: _selectedClosingHoursController,
+          maxLines: 1,
+          decoration: const InputDecoration(
+            labelText: 'End Time',
+            border: OutlineInputBorder(),
+            floatingLabelBehavior:
+                FloatingLabelBehavior.always, // Keep the label always visible
+            hintText: "5:30",
           ),
+          readOnly: true,
           onTap: () async {
-            TimeOfDay? picked = await showTimePicker(
+            final TimeOfDay? pickedTime = await showTimePicker(
               context: context,
               initialTime: _selectedClosingHours,
+              initialEntryMode: TimePickerEntryMode.inputOnly,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: false),
+                  child: child!,
+                );
+              },
             );
-            if (picked != _selectedClosingHours) {
+
+            if (pickedTime != null) {
               setState(() {
-                _selectedClosingHours = picked!;
+                _selectedClosingHoursController.text =
+                    pickedTime.format(context);
+                _selectedClosingHours = pickedTime;
               });
             }
           },
         ),
-        const SizedBox(height: 10),
-        datePicker(context, startDate, endDate),
+        // const SizedBox(height: 10),
+        // datePicker(context, startDate, endDate),
         const SizedBox(height: 10),
         const SizedBox(height: 10),
         const Text('Working Days',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const Text('Please select your working days...',
             style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-        GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-          ),
-          itemCount: workingDays.length,
-          itemBuilder: (context, dayIndex) {
-            final day = workingDays.keys.elementAt(dayIndex);
-            final isOpen = workingDays[day]!;
+        Column(
+          children: List<Widget>.generate(7, (int index) {
             return CheckboxListTile(
-              title: Text(day),
-              value: isOpen,
-              subtitle: Text(isOpen ? 'Open' : 'Closed'),
+              title: Text(
+                getDay(index),
+                style: const TextStyle(fontSize: 16),
+              ),
+              value: workingDays[index],
               onChanged: (bool? value) {
                 setState(() {
-                  workingDays[day] = value!;
+                  workingDays[index] = value!;
                 });
               },
             );
-          },
+          }),
         ),
         const SizedBox(height: 10),
       ],
@@ -971,8 +1018,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       TextFormField(
           controller: _addressController,
           decoration: const InputDecoration(
-            labelText: 'Address*',
-            helperText: '*required',
+            labelText: 'Address',
             border: OutlineInputBorder(),
           ),
           readOnly: true,
@@ -1214,7 +1260,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
         maxLines: 1,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.only(top: 5, bottom: 5, left: 10),
-          labelText: 'Time Padding*',
+          labelText: 'Time Padding',
           border: const OutlineInputBorder(),
           floatingLabelBehavior:
               FloatingLabelBehavior.always, // Keep the label always visible
@@ -1300,51 +1346,139 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   Widget addPolicies(BuildContext context) {
     List<String> notes = [
       "Cancellation Rate: The amount that would not be refunded in the situation that a customer cancels their booking.",
-      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel. Otherwise their booking will be cancelled",
-      "Customers booking passed the cancellation period would be required to pay the full amount upon checkout."
+      "Cancellation Period: This refers to the number of days before the scheduled booking, that a customer can cancel and pay the full amount in the case for a downpayment. Otherwise their booking will be cancelled",
+      "Customers booking passed the cancellation period would be required to pay the downpayment or full amount upon checkout."
     ];
     return Column(
       children: [
-        Row(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: TextFormField(
-                controller: _cancellationRateController,
-                maxLines: 1,
-                decoration: const InputDecoration(
-                    labelText: 'Cancellation Rate (%)*',
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    hintText: "5",
-                    suffixText: "%"),
-                onTap: () {},
-              ),
+            const Text('Cancellation',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+
+            // Radio buttons for payment options
+            Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<CancelPolicy>(
+                    title: const Text('Fixed Rate'),
+                    value: CancelPolicy.fixedCancelRate,
+                    groupValue: _selectedCancel,
+                    onChanged: (CancelPolicy? value) {
+                      setState(() {
+                        _selectedCancel = value!;
+                      });
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<CancelPolicy>(
+                    title: const Text('Percent Rate'),
+                    value: CancelPolicy.percentageCancelRate,
+                    groupValue: _selectedCancel,
+                    onChanged: (CancelPolicy? value) {
+                      setState(() {
+                        _selectedCancel = value!;
+                      });
+                    },
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: TextFormField(
-                controller: _cancellationPeriodController,
-                maxLines: 1,
-                keyboardType: TextInputType.number, // For numeric input
-                decoration: const InputDecoration(
-                    labelText:
-                        'Cancellation Period (Day/s)*', // Indicate it's a percentage
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior
-                        .always, // Keep the label always visible
-                    hintText: "5",
-                    suffixText: "Day/s"),
-                onTap: () {
-                  // Handle tap if needed, showing a dialog to select a percentage
-                },
-              ),
-            ),
+            if (_selectedCancel == CancelPolicy.fixedCancelRate) ...[
+              rendFixedCancelRate(),
+            ],
+
+            if (_selectedCancel == CancelPolicy.percentageCancelRate) ...[
+              rendPercentageCancelRate(),
+            ],
           ],
         ),
         addNotes(notes),
+      ],
+    );
+  }
+
+  Row rendPercentageCancelRate() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationRateController,
+            maxLines: 1,
+            decoration: const InputDecoration(
+                labelText: 'Percentage Rate',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5",
+                suffixText: "%"),
+            onTap: () {},
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationPeriodController,
+            maxLines: 1,
+            keyboardType: TextInputType.number, // For numeric input
+            decoration: const InputDecoration(
+                labelText: 'Cancellation Period', // Indicate it's a percentage
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5 Days before the booked date",
+                suffixText: "Day/s"),
+            onTap: () {
+              // Handle tap if needed, e.g., showing a dialog to select a percentage
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row rendFixedCancelRate() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationRateController,
+            maxLines: 1,
+            decoration: const InputDecoration(
+                labelText: 'Fixed Rate',
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5",
+                suffixText: "₱"),
+            onTap: () {},
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: TextFormField(
+            controller: _cancellationPeriodController,
+            maxLines: 1,
+            keyboardType: TextInputType.number, // For numeric input
+            decoration: const InputDecoration(
+                labelText: 'Cancellation Period', // Indicate it's a percentage
+                border: OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Keep the label always visible
+                hintText: "e.g., 5 Days before the booked date",
+                suffixText: "Day/s"),
+            onTap: () {
+              // Handle tap if needed, e.g., showing a dialog to select a percentage
+            },
+          ),
+        ),
       ],
     );
   }
@@ -1546,14 +1680,14 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           case 'Watching/Performances':
             return "Scheduling";
           case 'Activities/Tours':
-            return '';
+            return 'Scheduling';
           default:
             return 'Intervals and Availability';
         }
       case 5:
         return 'Add Policies';
-      case 6:
-        return 'Review Listing';
+      // case 6:
+      //   return 'Review Listing';
       default:
         return 'Choose Type';
     }
@@ -1857,46 +1991,21 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                               fontSize: 15, fontStyle: FontStyle.italic)),
                     ]),
               ),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // Number of columns
-                    crossAxisSpacing: 0.0, // Spacing between columns
-                    mainAxisSpacing: 0.0, // Spacing between rows
-                    mainAxisExtent: MediaQuery.sizeOf(context).height / 15),
-                itemCount: workingDays.length,
-                itemBuilder: (context, dayIndex) {
-                  //this stupid logic just makes it so the days visually display
-                  //top to bottom left to right
-                  final day = workingDays.keys.elementAt((dayIndex.isOdd)
-                      ? (dayIndex + indexPadder)
-                      : (dayIndex.isEven)
-                          ? (3 - indexPadder)
-                          : dayIndex);
-                  dayIndex.isOdd ? (indexPadder = indexPadder - 1) : null;
-                  final isOpen = workingDays[day]!;
+              Column(
+                children: List<Widget>.generate(7, (int index) {
                   return CheckboxListTile(
-                    dense: true,
-                    visualDensity: VisualDensity.compact,
-                    contentPadding: EdgeInsets.zero,
-                    controlAffinity: ListTileControlAffinity.leading,
                     title: Text(
-                      day,
-                      style: const TextStyle(fontSize: 14),
+                      getDay(index),
+                      style: const TextStyle(fontSize: 16),
                     ),
-                    value: isOpen,
+                    value: workingDays[index],
                     onChanged: (bool? value) {
                       setState(() {
-                        workingDays[day] = value!;
-                      });
-                      setVars(() {
-                        //I use this to force a change state of the dialog when clicking a day
-                        changeState = changeState + 1;
+                        workingDays[index] = value!;
                       });
                     },
                   );
-                },
+                }),
               ),
               const SizedBox(
                 height: 10,
@@ -1923,7 +2032,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                               controller: timeSlotController,
                               maxLines: 1,
                               decoration: const InputDecoration(
-                                labelText: 'Time Slot*',
+                                labelText: 'Time Slot',
                                 border: OutlineInputBorder(),
                                 floatingLabelBehavior: FloatingLabelBehavior
                                     .always, // Keep the label always visible
@@ -1965,7 +2074,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                               keyboardType: TextInputType.number,
                               controller: timeSlotCapacityController,
                               decoration: const InputDecoration(
-                                labelText: 'Capacity*',
+                                labelText: 'Capacity',
                                 border: OutlineInputBorder(),
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.always,
@@ -1999,8 +2108,8 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                   ),
                   FilledButton(
                       onPressed: () {
-                        onTapAddTime(
-                            context, timeSlot, timeSlotCapacityController);
+                        // onTapAddTime(
+                        //     context, timeSlot, timeSlotCapacityController);
                       },
                       child: const Text('Add Time')),
                 ],
@@ -2012,58 +2121,58 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     });
   }
 
-  void onTapAddTime(BuildContext context, TimeOfDay timeSlot,
-      TextEditingController timeSlotCapacityController) {
-    availableTimes = [];
-    return setState(() {
-      workingDays.forEach((key, value) {
-        if (value == true) {
-          if (availableDays
-              .asMap()
-              .entries
-              .any((element) => element.value.day == key)) {
-            availableTimes = availableDays[
-                    availableDays.indexWhere((element) => element.day == key)]
-                .availableTimes
-                .toList(growable: true);
-            if (!availableTimes
-                .asMap()
-                .entries
-                .any((element) => element.value.time == timeSlot)) {
-              availableTimes.add(AvailableTime(
-                  available: true,
-                  currentPax: 0,
-                  maxPax: num.parse(timeSlotCapacityController.text),
-                  time: timeSlot));
-              availableTimes.sort((timeOne, timeTwo) {
-                return int.parse('${timeOne.time.hour}${timeOne.time.minute}')
-                    .compareTo(int.parse(
-                        '${timeTwo.time.hour}${timeTwo.time.minute}'));
-              });
-            }
-            availableDays[
-                    availableDays.indexWhere((element) => element.day == key)] =
-                AvailableDay(
-                    available: true, day: key, availableTimes: availableTimes);
-          } else {
-            availableTimes
-                    .asMap()
-                    .entries
-                    .any((element) => element.value.time != timeSlot)
-                ? availableTimes.add(AvailableTime(
-                    available: true,
-                    currentPax: 0,
-                    maxPax: num.parse(timeSlotCapacityController.text),
-                    time: timeSlot))
-                : null;
-            availableDays.add(AvailableDay(
-                available: true, day: key, availableTimes: availableTimes));
-          }
-        }
-        workingDays[key] = false;
-      });
-    });
-  }
+  // void onTapAddTime(BuildContext context, TimeOfDay timeSlot,
+  //     TextEditingController timeSlotCapacityController) {
+  //   availableTimes = [];
+  //   return setState(() {
+  //     workingDays.forEach((key, value) {
+  //       if (value == true) {
+  //         if (availableDays
+  //             .asMap()
+  //             .entries
+  //             .any((element) => element.value.day == key)) {
+  //           availableTimes = availableDays[
+  //                   availableDays.indexWhere((element) => element.day == key)]
+  //               .availableTimes
+  //               .toList(growable: true);
+  //           if (!availableTimes
+  //               .asMap()
+  //               .entries
+  //               .any((element) => element.value.time == timeSlot)) {
+  //             availableTimes.add(AvailableTime(
+  //                 available: true,
+  //                 currentPax: 0,
+  //                 maxPax: num.parse(timeSlotCapacityController.text),
+  //                 time: timeSlot));
+  //             availableTimes.sort((timeOne, timeTwo) {
+  //               return int.parse('${timeOne.time.hour}${timeOne.time.minute}')
+  //                   .compareTo(int.parse(
+  //                       '${timeTwo.time.hour}${timeTwo.time.minute}'));
+  //             });
+  //           }
+  //           availableDays[
+  //                   availableDays.indexWhere((element) => element.day == key)] =
+  //               AvailableDay(
+  //                   available: true, day: key, availableTimes: availableTimes);
+  //         } else {
+  //           availableTimes
+  //                   .asMap()
+  //                   .entries
+  //                   .any((element) => element.value.time != timeSlot)
+  //               ? availableTimes.add(AvailableTime(
+  //                   available: true,
+  //                   currentPax: 0,
+  //                   maxPax: num.parse(timeSlotCapacityController.text),
+  //                   time: timeSlot))
+  //               : null;
+  //           availableDays.add(AvailableDay(
+  //               available: true, day: key, availableTimes: availableTimes));
+  //         }
+  //       }
+  //       workingDays[key] = false;
+  //     });
+  //   });
+  // }
 }
 
 final listingStartDate =
