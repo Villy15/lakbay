@@ -46,8 +46,8 @@ class _BookingsEntertainmentCustomerState
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
-          context.pop();
           ref.read(navBarVisibilityProvider.notifier).show();
+          context.pop();
         },
         child: ref
             .watch(getBookingByIdProvider(

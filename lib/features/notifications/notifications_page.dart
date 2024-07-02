@@ -273,7 +273,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       required bool isRead,
       required VoidCallback onTap}) {
     return ListTile(
-      onTap: onTap,
       leading: leading,
       tileColor: isRead
           ? Theme.of(context).colorScheme.background

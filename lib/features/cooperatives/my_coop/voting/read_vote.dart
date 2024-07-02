@@ -155,8 +155,8 @@ class _ReadVoteState extends ConsumerState<ReadVote> {
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        context.pop();
         ref.read(navBarVisibilityProvider.notifier).show();
+        context.pop();
       },
       child: Scaffold(
         appBar: AppBar(

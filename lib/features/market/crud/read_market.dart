@@ -21,8 +21,8 @@ class _ReadMarketPageState extends ConsumerState<ReadMarketPage> {
   }
 
   void pop() {
-    context.pop();
     ref.read(navBarVisibilityProvider.notifier).show();
+    context.pop();
   }
 
   @override

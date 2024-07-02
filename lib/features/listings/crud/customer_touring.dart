@@ -34,8 +34,8 @@ class _CustomerTouringState extends ConsumerState<CustomerTouring> {
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        Navigator.of(context).pop();
         ref.read(navBarVisibilityProvider.notifier).show();
+        Navigator.of(context).pop();
       },
       child: Scaffold(
         extendBodyBehindAppBar: true,

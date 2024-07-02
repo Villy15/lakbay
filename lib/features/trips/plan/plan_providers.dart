@@ -53,6 +53,10 @@ class PlanLocationProvider extends StateNotifier<String?> {
   void clearLocation() {
     state = '';
   }
+  
+  void reset () {
+    state = null;
+  }
 }
 
 final listingLocationProvider =
@@ -131,6 +135,10 @@ class PlanStartDateProvider extends StateNotifier<DateTime?> {
   void setStartDate(DateTime startDate) {
     state = startDate;
   }
+
+  void reset() {
+    state = null;
+  }
 }
 
 // Plan End Date State Notifier Provider
@@ -144,6 +152,10 @@ class PlanEndDateProvider extends StateNotifier<DateTime?> {
 
   void setEndDate(DateTime endDate) {
     state = endDate;
+  }
+
+  void reset() {
+    state = null ;
   }
 }
 

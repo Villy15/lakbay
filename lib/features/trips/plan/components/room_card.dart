@@ -37,6 +37,7 @@ class RoomCard extends ConsumerStatefulWidget {
   final DateTime? startDate;
   final DateTime? endDate;
   final Query? query;
+  final List<ListingModel>? accommodationListings;
   const RoomCard(
       {super.key,
       required this.category,
@@ -46,7 +47,8 @@ class RoomCard extends ConsumerStatefulWidget {
       this.guests,
       this.startDate,
       this.endDate,
-      this.query});
+      this.query,
+      this.accommodationListings});
 
   @override
   ConsumerState<RoomCard> createState() => _RoomCardState();
@@ -68,12 +70,14 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     final currentUser = ref.read(userProvider);
     // final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     List<String> unavailableRoomUids =
-        getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
+        getUnavailableRoomUids(widget.bookings, startDate!, endDate!, widget.accommodationListings!);
     Query query = widget.query ??
         FirebaseFirestore.instance.collectionGroup('availableRooms');
     if (unavailableRoomUids.isNotEmpty) {
       query = query.where('uid', whereNotIn: unavailableRoomUids);
     }
+
+    debugPrint('${widget.accommodationListings}');
 
     return ref.watch(getRoomByPropertiesProvider(query)).when(
           data: (List<AvailableRoom> rooms) {

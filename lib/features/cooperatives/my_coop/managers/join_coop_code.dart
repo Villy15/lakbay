@@ -151,8 +151,8 @@ class _JoinCoopCodePageState extends ConsumerState<JoinCoopCodePage> {
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        context.pop();
         ref.read(navBarVisibilityProvider.notifier).show();
+        context.pop();
       },
       child: Scaffold(
         appBar: AppBar(title: const Text('Add Members with CSV')),

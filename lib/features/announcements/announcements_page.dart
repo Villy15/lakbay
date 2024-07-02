@@ -83,8 +83,8 @@ class _AnnouncementsPageState extends ConsumerState<AnnouncementsPage> {
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        context.pop();
         ref.read(navBarVisibilityProvider.notifier).show();
+        context.pop();
       },
       child: Scaffold(
         appBar: _appBar(),

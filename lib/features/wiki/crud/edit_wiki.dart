@@ -56,8 +56,8 @@ class _EditWikiPageState extends ConsumerState<EditWikiPage> {
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        context.pop();
         ref.read(navBarVisibilityProvider.notifier).show();
+        context.pop();
       },
       child: Scaffold(
         appBar: AppBar(title: const Text('Edit Wiki')),
@@ -68,8 +68,8 @@ class _EditWikiPageState extends ConsumerState<EditWikiPage> {
               // Cancel Button
               TextButton(
                 onPressed: () {
-                  context.pop();
                   ref.read(navBarVisibilityProvider.notifier).show();
+                  context.pop();
                 },
                 child: const Text('Cancel'),
               ),

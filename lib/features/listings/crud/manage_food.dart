@@ -43,8 +43,8 @@ class _ManageFoodState extends ConsumerState<ManageFood> {
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
-          context.pop();
           ref.read(navBarVisibilityProvider.notifier).show();
+          context.pop();
         },
         child: DefaultTabController(
             initialIndex: 0,
