@@ -416,9 +416,9 @@ class _CustomerTransportCheckoutState
                             isEqualTo:
                                 Timestamp.fromDate(updatedBooking.startDate!));
 
-                    ref.read(listingControllerProvider.notifier).addBooking(
-                        ref, updatedBooking, widget.listing, context,
-                        query: query);
+                    // ref.read(listingControllerProvider.notifier).addBooking(
+                    //     ref, updatedBooking, widget.listing, context,
+                    //     query: query);
                     // Navigator.pop(context);
 
                     await payWithPaymaya(updatedBooking, widget.listing, ref, context, _paymentOption, amountTotal, query);
