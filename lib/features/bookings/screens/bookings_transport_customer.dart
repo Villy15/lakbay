@@ -378,7 +378,7 @@ class _BookingsTransportCustomerState
                                           Text(
                                               'Cancellation before ${DateFormat('MMM d, HH:mm a').format(booking.endDate!.subtract(const Duration(days: 5)))}'
                                               ' entitles you to a refund amount of ₱${(booking.amountPaid!).toStringAsFixed(2)}\n'
-                                              'Cancellation after stated date entitles you to a refund amount of ₱${(booking.amountPaid! - (booking.amountPaid! * widget.listing.cancellationRate!)).toStringAsFixed(2)}')
+                                              'Cancellation after stated date entitles you to a refund amount of ₱${(booking.amountPaid! - (widget.listing.cancellationRate! > 1 ? widget.listing.cancellationRate! : booking.amountPaid! * (widget.listing.cancellationRate!))).toStringAsFixed(2)}')
                                       ])),
 
                             ...reservationActions.entries.map((entry) {
@@ -691,9 +691,9 @@ class _BookingsTransportCustomerState
       ref.read(salesControllerProvider.notifier).updateSale(
           context, updatedSale,
           booking: updatedBooking, trip: updatedTrip);
-      ref.read(notificationControllerProvider.notifier).addNotification(
-        transportUserCancelNotif, context
-      );
+      ref
+          .read(notificationControllerProvider.notifier)
+          .addNotification(transportUserCancelNotif, context);
     }
   }
 }
