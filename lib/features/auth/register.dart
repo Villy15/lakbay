@@ -17,6 +17,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
   final TextEditingController _birthDateController = TextEditingController();
   final TextEditingController _nationalityController = TextEditingController();
   final TextEditingController _civilStatusController = TextEditingController();
@@ -36,6 +37,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     if (_formKey.currentState!.validate()) {
       final firstName = _firstNameController.text.trim();
       final lastName = _lastNameController.text.trim();
+      final gender = _genderController.text.trim();
       final nationality = _nationalityController.text.trim();
       final civilStatus = _civilStatusController.text.trim();
       final religion = _religionController.text.trim();
@@ -55,6 +57,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             context: context,
             firstName: firstName,
             lastName: lastName,
+            gender: gender,
             birthDate: birthDateFormatted,
             nationality: nationality,
             civilStatus: civilStatus,
@@ -93,41 +96,76 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       const Loader(),
                       SizedBox(height: mqheight * 0.5),
                     ] else ...[
-                      TextFormField(
-                        controller: _firstNameController,
-                        style: const TextStyle(color: Colors.black),
-                        decoration: const InputDecoration(
-                          fillColor: Colors.white54,
-                          filled: true,
-                          prefixIcon: Icon(Icons.person),
-                          contentPadding: EdgeInsets.all(20),
-                          hintText: "First Name",
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(30.0)),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _firstNameController,
+                              style: const TextStyle(color: Colors.black),
+                              decoration: const InputDecoration(
+                                fillColor: Colors.white54,
+                                filled: true,
+                                prefixIcon: Icon(Icons.person),
+                                contentPadding: EdgeInsets.all(20),
+                                hintText: "First Name",
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0)),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your first name';
+                                }
+                                return null;
+                              },
+                            ),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(30.0)),
+                          SizedBox(
+                              width: MediaQuery.sizeOf(context).width / 30),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _lastNameController,
+                              style: const TextStyle(color: Colors.black),
+                              decoration: const InputDecoration(
+                                fillColor: Colors.white54,
+                                filled: true,
+                                prefixIcon: Icon(Icons.person),
+                                contentPadding: EdgeInsets.all(20),
+                                hintText: "Last Name",
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0)),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your last name';
+                                }
+                                return null;
+                              },
+                            ),
                           ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your first name';
-                          }
-                          return null;
-                        },
+                        ],
                       ),
                       SizedBox(height: mqheight * 0.025),
                       TextFormField(
-                        controller: _lastNameController,
+                        controller: _genderController,
                         style: const TextStyle(color: Colors.black),
                         decoration: const InputDecoration(
                           fillColor: Colors.white54,
                           filled: true,
                           prefixIcon: Icon(Icons.person),
                           contentPadding: EdgeInsets.all(20),
-                          hintText: "Last Name",
+                          hintText: 'Gender',
                           enabledBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(30.0)),
@@ -139,7 +177,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your last name';
+                            return 'Please enter your gender';
                           }
                           return null;
                         },
@@ -287,16 +325,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   }
 
   Column greetingText() {
-    return const Column(
+    return Column(
       children: [
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
             "Register to Lakbay",
             style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w500,
-            ),
+                fontSize: 32,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.primary),
           ),
         ),
       ],
