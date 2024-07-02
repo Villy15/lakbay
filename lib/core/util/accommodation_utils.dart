@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -6,10 +7,16 @@ List<String> getUnavailableRoomUids(
   List<String> unavailableRoomUids = [];
   Map<String, List<DateTime>> rooms = {};
 
-  Set<String?> accommodationUids = accommodationListings!.map((listing) => listing.uid).toSet();
+  Set<String?>? listingUids = accommodationListings?.map((listing) => listing.uid).toSet();
 
-  List<ListingBookings> filteredBookings = bookings.where((booking) => accommodationUids.contains(booking.roomUid)).toList();
+  // accommodation uids are found in listings/availableRooms. therefore, you need to get the list of bookings that are under the accommodation listings
+  // view the list of bookings that are under the accommodation listings
+  // Provide a default empty set if listingUids is null
+  List<ListingBookings> filteredBookings = bookings.where((booking) => (listingUids ?? {}).contains(booking.roomUid)).toList();
 
+  debugPrint('this is accommodation uids: $listingUids');
+  debugPrint('This is filtered bookings: $filteredBookings');
+  
 
 // Put all the dates booked under a certain room uid in map with its corresponding value being a list of all the dates
   for (ListingBookings booking in filteredBookings) {
