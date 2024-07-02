@@ -117,7 +117,9 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                         : '${DateFormat.yMMMMd().format(daysPlan.currentDay!)} - ${DateFormat.yMMMMd().format(planEndDate)}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
-                if (widget.category == "Transport" || widget.category == "Food" ||  widget.category == "Entertainment")
+                if (widget.category == "Transport" ||
+                    widget.category == "Food" ||
+                    widget.category == "Entertainment")
                   Text(
                     formattedCurrentDate,
                     style: Theme.of(context).textTheme.bodySmall,
@@ -347,16 +349,14 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
           listing.category == category;
     }).toList();
 
-    
-    // testingSnapshot.toString();
-
-    debugPrint('this is bookings: ${widget.bookings}');
-    debugPrint('this is listings: ${widget.listings}');
-
-
     switch (category) {
       case "Accommodation":
-        return RoomCard(category: category, bookings: widget.bookings!, accommodationListings: filteredListings);
+        return RoomCard(
+          category: category,
+          bookings: widget.bookings!,
+          accommodationListings: filteredListings,
+          allListings: widget.listings,
+        );
 
       case "Transport":
         return TransportCard(
