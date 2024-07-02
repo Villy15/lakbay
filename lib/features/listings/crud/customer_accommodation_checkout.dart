@@ -61,7 +61,7 @@ class _CustomerAccomodationCheckoutState
     _maxGuestCount = widget.room.guests;
     updatedBooking = widget.booking;
     downpaymentAmount = widget.listing.downpaymentRate! > 1
-        ? widget.listing.downpaymentRate!
+        ? widget.listing.downpaymentRate! + (widget.booking.price * _nights)
         : (widget.booking.price * _nights) * (widget.listing.downpaymentRate!);
     vatAmount = downpaymentAmount * (vat - 1);
     amountDue = vatAmount + downpaymentAmount;
@@ -585,8 +585,11 @@ class _CustomerAccomodationCheckoutState
                   onChanged: (PaymentOption? value) {
                     setState(() {
                       _selectedPaymentOption = value!;
-                      downpaymentAmount = (widget.booking.price * _nights) *
-                          widget.listing.downpaymentRate!;
+                      downpaymentAmount = widget.listing.downpaymentRate! > 1
+                          ? widget.listing.downpaymentRate! +
+                              (widget.booking.price * _nights)
+                          : (widget.booking.price * _nights) *
+                              (widget.listing.downpaymentRate!);
                       vatAmount = (downpaymentAmount) * (vat - 1);
                       amountDue = vatAmount + downpaymentAmount;
                     });
@@ -664,7 +667,7 @@ class _CustomerAccomodationCheckoutState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                        "Downpayment Rate (${(widget.listing.downpaymentRate! * 100).toStringAsFixed(0)}%):"),
+                        "Downpayment Rate (${(widget.listing.downpaymentRate! > 1 ? widget.listing.downpaymentRate : widget.listing.downpaymentRate! * 100)!.toStringAsFixed(0)}%):"),
                     Text("₱${downpaymentAmount?.toStringAsFixed(2)}"),
                   ],
                 ),

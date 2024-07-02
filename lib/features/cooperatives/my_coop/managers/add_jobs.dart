@@ -47,13 +47,13 @@ List<Map> tourismTypes = [
       "active": false,
     }
   },
-  {
-    "touring": {
-      "title": "Touring",
-      "controller": touringController,
-      "active": false,
-    }
-  },
+  // {
+  //   "touring": {
+  //     "title": "Touring",
+  //     "controller": touringController,
+  //     "active": false,
+  //   }
+  // },
   {
     "food": {
       "title": "Food",
@@ -344,14 +344,19 @@ class _AddJobsState extends ConsumerState<AddJobs> {
                                           onTap: () {
                                             setSelected(() {
                                               setFiles(() {
-                                                requiredFiles.removeAt(fileIndex);
-                                                updatedJob = updatedJob.copyWith(
-                                                    requiredFiles: requiredFiles);
+                                                requiredFiles
+                                                    .removeAt(fileIndex);
+                                                updatedJob =
+                                                    updatedJob.copyWith(
+                                                        requiredFiles:
+                                                            requiredFiles);
                                                 updatedJobs[index] = updatedJob;
                                                 setState(() {
                                                   tourismJobs?[key] =
-                                                      tourismJobs?[key]?.copyWith(
-                                                          jobs: updatedJobs);
+                                                      tourismJobs?[key]
+                                                          ?.copyWith(
+                                                              jobs:
+                                                                  updatedJobs);
                                                 });
                                               });
                                             });
