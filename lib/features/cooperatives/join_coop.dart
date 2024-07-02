@@ -12,9 +12,9 @@ import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/models/coop_member_roles_model.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/user_model.dart';
-import 'package:lakbay/models/coop_member_roles_model.dart';
 import 'package:lakbay/models/wrappers/join_coop_params.dart';
 
 class JoinCoopPage extends ConsumerStatefulWidget {
@@ -467,9 +467,9 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                               child: ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: reqFilesList!.length,
+                                  itemCount: reqFilesList?.length,
                                   itemBuilder: (context, docIndex) {
-                                    var doc = reqFilesList![docIndex];
+                                    var doc = reqFilesList?[docIndex];
                                     var fileName = docIndex < documents!.length
                                         ? documents![docIndex]!
                                             .path
@@ -481,7 +481,7 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                       subtitle: fileName == ""
                                           ? null
                                           : Text(fileName),
-                                      title: Text(doc!),
+                                      title: Text(doc?.toString() ?? ""),
                                       trailing: InkWell(
                                         onTap: () async {
                                           FilePickerResult? result =

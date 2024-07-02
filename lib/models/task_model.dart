@@ -33,6 +33,7 @@ class TaskCheckList with _$TaskCheckList {
   factory TaskCheckList({
     required String title,
     required bool isDone,
+    String? assignedTo,
     String? proofUrl,
   }) = _TaskCheckList;
 

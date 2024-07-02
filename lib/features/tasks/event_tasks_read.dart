@@ -28,6 +28,8 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+
     return Scaffold(
         appBar: AppBar(
           title: const Text("Task Details"),
@@ -35,11 +37,15 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
         body: ref.watch(getTaskProvider(widget.taskId)).when(
               data: (TaskModel task) {
                 debugPrintJson("File Name: event_tasks_read.dart");
+
+                // Check if user is a manager
+                final isPublisher = task.publisherId == user?.uid;
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: ListView(
                     children: [
-                      headerCard(context, task),
+                      headerCard(context, task, isPublisher),
                       const SizedBox(height: 20),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,8 +79,13 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
                       const SizedBox(height: 20),
 
                       // Button for Ask for Contributions
-                      taskContribution(task, context),
-                      const SizedBox(height: 20),
+                      isPublisher
+                          ? taskContribution(task, context)
+                          : const SizedBox.shrink(),
+
+                      isPublisher
+                          ? const SizedBox(height: 20)
+                          : const SizedBox.shrink(),
 
                       taskDesc(context, task),
                       const SizedBox(height: 20),
@@ -259,7 +270,7 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
     );
   }
 
-  Widget headerCard(BuildContext context, TaskModel task) {
+  Widget headerCard(BuildContext context, TaskModel task, bool isPublisher) {
     return Card(
       clipBehavior: Clip.hardEdge,
       elevation: 1,
@@ -271,7 +282,7 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            eventPriority(context, task),
+            eventPriority(context, task, isPublisher),
             const SizedBox(height: 10),
             eventTitle(context, task),
             eventDueDate(context, task),
@@ -374,7 +385,7 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
     );
   }
 
-  Widget eventPriority(BuildContext context, TaskModel task) {
+  Widget eventPriority(BuildContext context, TaskModel task, bool isPublisher) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -403,10 +414,12 @@ class _ReadEventTaskState extends ConsumerState<ReadEventTask> {
           ],
         ),
         // Elevated Button to Edit Task
-        ElevatedButton(
-          onPressed: () => editTask(context, task),
-          child: const Text('Edit'),
-        )
+        isPublisher
+            ? ElevatedButton(
+                onPressed: () => editTask(context, task),
+                child: const Text('Edit'),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }

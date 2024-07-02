@@ -506,7 +506,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                     style: const TextStyle(fontSize: 14),
                   ),
                   title: Text(
-                    application.name!,
+                    application.name ?? 'No Application Name',
                     style: const TextStyle(fontSize: 16),
                   ),
                   subtitle: Text(application.role!),
