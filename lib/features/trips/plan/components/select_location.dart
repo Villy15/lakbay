@@ -92,6 +92,7 @@ class _SelectLocationState extends ConsumerState<SelectLocation> {
                           break;
                       }
                       // ignore: use_build_context_synchronously
+                      ref.read(predictionsProvider.notifier).state = [];
                       context.pop();
                     },
                   );

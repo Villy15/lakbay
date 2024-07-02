@@ -63,6 +63,11 @@ class _TripsAddTripState extends ConsumerState<TripsAddTrip> {
       );
 
       ref.read(plansControllerProvider.notifier).addPlan(plan, context, ref);
+
+      // reset location 
+      ref.read(planLocationProvider.notifier).reset();
+      ref.read(planStartDateProvider.notifier).reset();
+      ref.read(planEndDateProvider.notifier).reset();
     }
   }
 
@@ -75,12 +80,19 @@ class _TripsAddTripState extends ConsumerState<TripsAddTrip> {
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        context.pop();
         ref.read(navBarVisibilityProvider.notifier).show();
+
+        // reset location 
+        ref.read(planLocationProvider.notifier).reset();
+        ref.read(planStartDateProvider.notifier).reset();
+        ref.read(planEndDateProvider.notifier).reset();
+        context.pop();
+        
       },
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Add Trip'),
+          
         ),
         body: SingleChildScrollView(
           child: Form(

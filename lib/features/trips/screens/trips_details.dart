@@ -66,8 +66,8 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
         child: PopScope(
           canPop: false,
           onPopInvoked: (bool didPop) {
-            context.pop();
             ref.read(navBarVisibilityProvider.notifier).show();
+            context.pop();
           },
           child: ref.watch(getPlanByUidProvider(widget.planUid)).when(
                 data: (plan) {

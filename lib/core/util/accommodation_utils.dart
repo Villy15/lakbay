@@ -1,12 +1,18 @@
+import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 List<String> getUnavailableRoomUids(
-    List<ListingBookings> bookings, DateTime startDate, DateTime endDate) {
+    List<ListingBookings> bookings, DateTime startDate, DateTime endDate, List<ListingModel>? accommodationListings) {
   List<String> unavailableRoomUids = [];
   Map<String, List<DateTime>> rooms = {};
 
+  Set<String?> accommodationUids = accommodationListings!.map((listing) => listing.uid).toSet();
+
+  List<ListingBookings> filteredBookings = bookings.where((booking) => accommodationUids.contains(booking.roomUid)).toList();
+
+
 // Put all the dates booked under a certain room uid in map with its corresponding value being a list of all the dates
-  for (ListingBookings booking in bookings) {
+  for (ListingBookings booking in filteredBookings) {
     DateTime currentDate = booking.startDate!;
     if (_isDateInRange(currentDate, startDate, booking.endDate!) == true) {
       while ((currentDate.isBefore(booking.endDate!))) {

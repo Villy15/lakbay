@@ -88,8 +88,8 @@ class _CoopSustainabilityPageState
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        context.pop();
         ref.read(navBarVisibilityProvider.notifier).show();
+        context.pop();
       },
       child: Scaffold(
           // floating action button to generate report as pdf file

@@ -163,8 +163,8 @@ class _AddListingState extends ConsumerState<AddListing> {
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        context.pop();
         ref.read(navBarVisibilityProvider.notifier).show();
+        context.pop();
       },
       child: Scaffold(
         appBar: AppBar(title: const Text('Add Listing')),
@@ -695,8 +695,8 @@ class _AddListingState extends ConsumerState<AddListing> {
           if (activeStep == 0) ...[
             TextButton(
               onPressed: () {
-                context.pop();
                 ref.read(navBarVisibilityProvider.notifier).show();
+                context.pop();
               },
               child: const Text('Cancel'),
             ),

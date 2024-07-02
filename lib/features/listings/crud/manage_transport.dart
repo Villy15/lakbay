@@ -80,8 +80,9 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
     return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) {
-          context.pop();
           ref.read(navBarVisibilityProvider.notifier).show();
+          context.pop();
+          
         },
         child: DefaultTabController(
             initialIndex: 0,

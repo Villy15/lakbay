@@ -27,8 +27,8 @@ class _ReadMemberPageState extends ConsumerState<ReadMemberPage> {
   }
 
   void pop() {
-    context.pop();
     ref.read(navBarVisibilityProvider.notifier).show();
+    context.pop();
   }
 
   void editProfile(UserModel user) {

@@ -63,8 +63,8 @@ class _ReadEventPageState extends ConsumerState<ReadEventPage> {
             return PopScope(
               canPop: false,
               onPopInvoked: (bool didPop) {
-                context.pop();
                 ref.read(navBarVisibilityProvider.notifier).show();
+                context.pop();
               },
               child: Scaffold(
                 // Add appbar with back button
@@ -75,8 +75,8 @@ class _ReadEventPageState extends ConsumerState<ReadEventPage> {
                     iconSize: 20,
                     icon: const Icon(Icons.arrow_back),
                     onPressed: () {
-                      context.pop();
                       ref.read(navBarVisibilityProvider.notifier).show();
+                      context.pop();
                     },
                   ),
                 ),

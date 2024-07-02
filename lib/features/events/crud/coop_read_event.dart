@@ -64,8 +64,9 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
               child: PopScope(
                 canPop: false,
                 onPopInvoked: (bool didPop) {
-                  context.pop();
                   ref.read(navBarVisibilityProvider.notifier).show();
+                  context.pop();
+                  
                 },
                 child: Scaffold(
                   appBar: _appBar(event),

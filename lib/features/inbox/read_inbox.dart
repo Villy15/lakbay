@@ -242,8 +242,8 @@ class _ReadInboxPageState extends ConsumerState<ReadInboxPage> {
             return PopScope(
               canPop: false,
               onPopInvoked: (bool didPop) {
-                context.pop();
                 ref.read(navBarVisibilityProvider.notifier).show();
+                context.pop();
               },
               child: Scaffold(
                 backgroundColor: Theme.of(context).colorScheme.background,

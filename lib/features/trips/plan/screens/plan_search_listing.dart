@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -116,7 +117,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                         : '${DateFormat.yMMMMd().format(daysPlan.currentDay!)} - ${DateFormat.yMMMMd().format(planEndDate)}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
-                if (widget.category == "Transport")
+                if (widget.category == "Transport" || widget.category == "Food" ||  widget.category == "Entertainment")
                   Text(
                     formattedCurrentDate,
                     style: Theme.of(context).textTheme.bodySmall,
@@ -126,6 +127,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
             InkWell(
               child: const Icon(Icons.map_outlined),
               onTap: () {
+                debugPrint('this is listings from widget: ${widget.listings}');
                 onTapLocation();
               },
             ),
@@ -340,23 +342,35 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   }
 
   Widget listingCardController(String category) {
+    final filteredListings = widget.listings?.where((listing) {
+      return listing.address.contains(ref.read(planLocationProvider)!) &&
+          listing.category == category;
+    }).toList();
+
+    
+    // testingSnapshot.toString();
+
+    debugPrint('this is bookings: ${widget.bookings}');
+    debugPrint('this is listings: ${widget.listings}');
+
+
     switch (category) {
       case "Accommodation":
-        return RoomCard(category: category, bookings: widget.bookings!);
+        return RoomCard(category: category, bookings: widget.bookings!, accommodationListings: filteredListings);
 
       case "Transport":
         return TransportCard(
-            category: category, transportListings: widget.listings!);
+            category: category, transportListings: filteredListings);
 
       case "Food":
-        return FoodCard(category: category, foodListings: widget.listings!);
+        return FoodCard(category: category, foodListings: filteredListings);
 
       case "Tour":
-        return TripCard(category: category, tripListings: widget.listings!);
+        return TripCard(category: category, tripListings: filteredListings);
 
       case "Entertainment":
         return EntertainmentCard(
-            category: category, entertainmentListings: widget.listings!);
+            category: category, entertainmentListings: filteredListings);
 
       default:
         return const Text("An Error Occurred!");

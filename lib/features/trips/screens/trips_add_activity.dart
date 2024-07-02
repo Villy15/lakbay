@@ -227,10 +227,17 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                     .where('startDate', isGreaterThan: today);
                 final bookings = await ref
                     .watch(getBookingsByPropertiesProvider((query)).future);
+                final queryForListings = FirebaseFirestore.instance
+                    .collection("listings")
+                    .where('category', isEqualTo: category["name"]);
+                final listings = await ref
+                    .watch(getListingsByPropertiesProvider(queryForListings)
+                        .future);
                 debugPrint("booking:s ${bookings.length}");
                 if (context.mounted) {
                   context.push('/plan/add_activity/search_listing', extra: {
                     'bookings': bookings,
+                    'listings': listings,
                     'category': category["name"]
                   });
                 }

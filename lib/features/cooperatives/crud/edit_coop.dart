@@ -68,8 +68,8 @@ class _EditCoopPageState extends ConsumerState<EditCoopPage> {
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        context.pop();
         ref.read(navBarVisibilityProvider.notifier).show();
+        context.pop();
       },
       child: Scaffold(
           appBar: AppBar(title: const Text('Register Cooperative')),
@@ -80,8 +80,8 @@ class _EditCoopPageState extends ConsumerState<EditCoopPage> {
                 // Cancel Button
                 TextButton(
                   onPressed: () {
-                    context.pop();
                     ref.read(navBarVisibilityProvider.notifier).show();
+                    context.pop();
                   },
                   child: const Text('Cancel'),
                 ),
