@@ -228,7 +228,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                               title: const Text(
                                                                   'Profile Incomplete'),
                                                               content: const Text(
-                                                                  'To book a room, you need to complete your profile first.'),
+                                                                  'To book a service, you need to complete your profile first.'),
                                                               actions: [
                                                                 FilledButton(
                                                                   onPressed:
@@ -1128,27 +1128,28 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else {
-
                       // send a notification to the user once the room transfer is successful
                       final roomTransferNotif = NotificationsModel(
-                        title: 'Room Transfer',
-                        message: 'You have been transferred to Room ID: ${room.roomId}. Please check your new room details.',
-                        listingId: updatedBooking.listingId,
-                        ownerId: updatedBooking.customerId,
-                        bookingId: updatedBooking.id,
-                        type: 'listing',
-                        isToAllMembers: false,
-                        createdAt: DateTime.now(),
-                        isRead: false
-                      );
-                      
+                          title: 'Room Transfer',
+                          message:
+                              'You have been transferred to Room ID: ${room.roomId}. Please check your new room details.',
+                          listingId: updatedBooking.listingId,
+                          ownerId: updatedBooking.customerId,
+                          bookingId: updatedBooking.id,
+                          type: 'listing',
+                          isToAllMembers: false,
+                          createdAt: DateTime.now(),
+                          isRead: false);
+
                       try {
                         ref
                             .read(notificationControllerProvider.notifier)
                             .addNotification(roomTransferNotif, context);
-                        debugPrint('Success! A notification has been sent to the user.');
+                        debugPrint(
+                            'Success! A notification has been sent to the user.');
                       } catch (e) {
-                        debugPrint('Error while trying to send a notification: $e');
+                        debugPrint(
+                            'Error while trying to send a notification: $e');
                       }
                       return const Text(
                           'Customer has been transferred to another room. Tasks accomplished prior have been invalidated due to the room transfer.'); // Show the text after delay
@@ -1170,9 +1171,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
   }
 }
 
-Future<void> sendRoomTransferNotification(WidgetRef ref, NotificationsModel notification, BuildContext context) async {
+Future<void> sendRoomTransferNotification(WidgetRef ref,
+    NotificationsModel notification, BuildContext context) async {
   try {
-    await ref.read(notificationControllerProvider.notifier).addNotification(notification, context);
+    await ref
+        .read(notificationControllerProvider.notifier)
+        .addNotification(notification, context);
     // Handle success, possibly updating the state to show a success message
     debugPrint('Notification sent successfully!');
   } catch (e) {

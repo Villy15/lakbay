@@ -60,8 +60,9 @@ class _CustomerAccomodationCheckoutState
     _nights = _endDate.difference(_startDate).inDays;
     _maxGuestCount = widget.room.guests;
     updatedBooking = widget.booking;
-    downpaymentAmount =
-        (widget.booking.price * _nights) * widget.listing.downpaymentRate!;
+    downpaymentAmount = widget.listing.downpaymentRate! > 1
+        ? widget.listing.downpaymentRate!
+        : (widget.booking.price * _nights) * (widget.listing.downpaymentRate!);
     vatAmount = downpaymentAmount * (vat - 1);
     amountDue = vatAmount + downpaymentAmount;
 
@@ -75,7 +76,7 @@ class _CustomerAccomodationCheckoutState
 
     initUniLinks();
   }
-  
+
   void initUniLinks() async {
     _sub = getUriLinksStream().listen((Uri? uri) {
       if (uri != null) {
@@ -85,7 +86,6 @@ class _CustomerAccomodationCheckoutState
       debugPrint('Failed to get latest link: $err.');
     });
   }
-
 
   @override
   void dispose() {
@@ -97,23 +97,23 @@ class _CustomerAccomodationCheckoutState
   }
 
   Future<bool> handleUri(Uri uri) async {
-  switch(uri.path) {
-    case '/payment-success': 
-      // Assuming some asynchronous operation to validate payment
-      // For immediate return, you can just return true;
-      return true;
-      
-    case '/payment-failure':
-      return false;
-      
-    case '/payment-cancel':
-      return false;
-      
-    default:
-      // Handle unknown cases
-      return false;
+    switch (uri.path) {
+      case '/payment-success':
+        // Assuming some asynchronous operation to validate payment
+        // For immediate return, you can just return true;
+        return true;
+
+      case '/payment-failure':
+        return false;
+
+      case '/payment-cancel':
+        return false;
+
+      default:
+        // Handle unknown cases
+        return false;
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -185,11 +185,8 @@ class _CustomerAccomodationCheckoutState
                       createdAt: DateTime.now());
                 });
 
-                await payWithPaymaya(updatedBooking, widget.listing, ref, context, _selectedPaymentOption.name, amountDue, null);
-                
-
-                
-
+                await payWithPaymaya(updatedBooking, widget.listing, ref,
+                    context, _selectedPaymentOption.name, amountDue, null);
               },
               child: Text('Confirm and Pay',
                   style: TextStyle(
@@ -201,9 +198,6 @@ class _CustomerAccomodationCheckoutState
       ),
     );
   }
-  
-
-
 
   // Calling the PayMaya API for checkout payment
   // Future<void> payWithPaymaya(ListingBookings listingBookings, WidgetRef ref, BuildContext context) async {
@@ -300,7 +294,6 @@ class _CustomerAccomodationCheckoutState
   //     debugPrint('Failed to process checkout. This is the response: $responseBody');
   //   }
   // }
-
 
   Future<void> notifyPublisher(
       ListingModel listingModel, ListingBookings updatedBookings) async {

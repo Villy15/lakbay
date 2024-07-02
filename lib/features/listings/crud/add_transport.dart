@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
@@ -38,7 +39,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   // stepper
   int activeStep = 0;
-  int upperBound = 7;
+  int upperBound = 6;
 
   // initial values
   String type = 'Public';
@@ -126,7 +127,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             },
             child: const Text('Back'))
       ],
-
       // Next
       if (activeStep != upperBound) ...[
         FilledButton(
@@ -205,7 +205,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                 pickUp: _pickupController.text,
                                 destination: _destinationController.text,
                                 title: _titleController.text,
-                                fixedTasks: fixedTasks,
+                                // fixedTasks: fixedTasks,
                                 type: type,
                                 publisherName: ref.read(userProvider)!.name,
                                 images: _images
@@ -310,10 +310,10 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               Icons.image_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
-            Icon(
-              Icons.task,
-              color: Theme.of(context).colorScheme.background,
-            ),
+            // Icon(
+            //   Icons.task,
+            //   color: Theme.of(context).colorScheme.background,
+            // ),
             Icon(Icons.policy, color: Theme.of(context).colorScheme.background),
           ],
 
@@ -370,14 +370,14 @@ class _AddTransportState extends ConsumerState<AddTransport> {
       case 5:
         return 'Add listing photo/s';
 
-      case 6:
-        return 'Add Fixed Tasks';
+      // case 6:
+      //   return 'Add Fixed Tasks';
 
-      case 7:
+      case 6:
         return 'Add Policies';
 
-      case 8:
-        return 'Review Listing';
+      // case 7:
+      //   return 'Review Listing';
 
       default:
         return 'Choose Type';
@@ -939,9 +939,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   Widget addDetails(BuildContext context) {
     List<String> notes = [
-      'Vehicle count will be used to determine how many availability of your service.',
-      'Luggage and Capacity is referring to a singular vehicle.',
-      'Vehicles pertained should be of similar capacity, in the case of a larger or smaller vehicle, create another listing for it.',
+      // 'Vehicle count will be used to determine how many availability of your service.',
+      // 'Luggage and Capacity is referring to a singular vehicle.',
+      // 'Vehicles pertained should be of similar capacity, in the case of a larger or smaller vehicle, create another listing for it.',
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1568,9 +1568,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         return addLocation(context);
       case 5:
         return addListingPhotos(context);
+      // case 6:
+      // return addFixedTasks(context);
       case 6:
-        return addFixedTasks(context);
-      case 7:
         return addPolicies(context);
       default:
         return chooseType(context);
@@ -1784,7 +1784,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                         ),
                         trailing: IconButton(
                           onPressed: () {
-                            departureTimes.removeAt(timeIndex);
+                            setState(() {
+                              departureTimes.removeAt(timeIndex);
+                            });
                           },
                           icon: const Icon(Icons.close),
                           iconSize: 14,
