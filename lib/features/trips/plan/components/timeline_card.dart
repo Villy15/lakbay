@@ -296,27 +296,31 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
               ),
             ),
           ),
-        ref
-            .watch(getBookingByIdProvider(
-                (widget.activity.listingId!, widget.activity.bookingId!)))
-            .when(
-              data: (booking) {
-                return ref
-                    .watch(getListingProvider(widget.activity.listingId!))
-                    .when(
-                        data: (listing) {
-                          return _buildCard(context, booking, listing);
-                        },
-                        error: ((error, stackTrace) {
-                          return Text('Error: $error');
-                        }),
-                        loading: () => const CircularProgressIndicator());
-              },
-              loading: () => const CircularProgressIndicator(),
-              error: (error, stackTrace) {
-                return Text('Error: $error');
-              },
-            ),
+        if (widget.activity.bookingId != null) ...[
+          ref
+              .watch(getBookingByIdProvider(
+                  (widget.activity.listingId!, widget.activity.bookingId!)))
+              .when(
+                data: (booking) {
+                  return ref
+                      .watch(getListingProvider(widget.activity.listingId!))
+                      .when(
+                          data: (listing) {
+                            return _buildCard(context, booking, listing);
+                          },
+                          error: ((error, stackTrace) {
+                            return Text('Error: $error');
+                          }),
+                          loading: () => const CircularProgressIndicator());
+                },
+                loading: () => const CircularProgressIndicator(),
+                error: (error, stackTrace) {
+                  return Text('Error: $error');
+                },
+              ),
+        ] else ...[
+          manualCard(),
+        ],
         if (widget.plan.tripStatus != "Completed")
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -367,6 +371,29 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
             ],
           )
       ],
+    );
+  }
+
+  Card manualCard() {
+    return Card(
+      clipBehavior: Clip.hardEdge,
+      elevation: 1,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+      ),
+      child: SizedBox(
+          height: MediaQuery.sizeOf(context).height / 5,
+          width: MediaQuery.sizeOf(context).width,
+          child: Center(
+              child: Expanded(
+            child: Text(
+              widget.activity.title!,
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.primary),
+            ),
+          ))),
     );
   }
 
