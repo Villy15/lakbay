@@ -36,7 +36,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             context.push('/inbox');
           },
           icon: const Badge(
-            isLabelVisible: true,
+            isLabelVisible: false,
             label: Text('3'),
             child: Icon(Icons.inbox_outlined),
           ),

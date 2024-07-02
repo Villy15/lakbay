@@ -86,6 +86,7 @@ class AuthController extends StateNotifier<bool> {
     required String password,
     required String firstName,
     required String lastName,
+    required String gender,
     required DateTime birthDate,
     required String nationality,
     required String civilStatus,
@@ -95,6 +96,7 @@ class AuthController extends StateNotifier<bool> {
     final user = await _authRepository.register(
       firstName: firstName,
       lastName: lastName,
+      gender: gender,
       birthDate: birthDate,
       nationality: nationality,
       civilStatus: civilStatus,

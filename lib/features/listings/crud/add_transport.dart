@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
@@ -38,7 +39,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   // stepper
   int activeStep = 0;
-  int upperBound = 7;
+  int upperBound = 6;
 
   // initial values
   String type = 'Public';
@@ -126,7 +127,6 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             },
             child: const Text('Back'))
       ],
-
       // Next
       if (activeStep != upperBound) ...[
         FilledButton(
@@ -205,7 +205,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                 pickUp: _pickupController.text,
                                 destination: _destinationController.text,
                                 title: _titleController.text,
-                                fixedTasks: fixedTasks,
+                                // fixedTasks: fixedTasks,
                                 type: type,
                                 publisherName: ref.read(userProvider)!.name,
                                 images: _images
@@ -310,10 +310,10 @@ class _AddTransportState extends ConsumerState<AddTransport> {
               Icons.image_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
-            Icon(
-              Icons.task,
-              color: Theme.of(context).colorScheme.background,
-            ),
+            // Icon(
+            //   Icons.task,
+            //   color: Theme.of(context).colorScheme.background,
+            // ),
             Icon(Icons.policy, color: Theme.of(context).colorScheme.background),
           ],
 
@@ -370,14 +370,14 @@ class _AddTransportState extends ConsumerState<AddTransport> {
       case 5:
         return 'Add listing photo/s';
 
-      case 6:
-        return 'Add Fixed Tasks';
+      // case 6:
+      //   return 'Add Fixed Tasks';
 
-      case 7:
+      case 6:
         return 'Add Policies';
 
-      case 8:
-        return 'Review Listing';
+      // case 7:
+      //   return 'Review Listing';
 
       default:
         return 'Choose Type';
@@ -387,7 +387,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   Widget chooseType(BuildContext context) {
     List<Map<String, dynamic>> types = [
       {'name': 'Public', 'icon': Icons.car_rental_sharp},
-      {'name': 'Private', 'icon': Icons.car_rental_outlined}
+      // {'name': 'Private', 'icon': Icons.car_rental_outlined}
     ];
 
     return Column(
@@ -939,9 +939,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   Widget addDetails(BuildContext context) {
     List<String> notes = [
-      'Vehicle count will be used to determine how many availability of your service.',
-      'Luggage and Capacity is referring to a singular vehicle.',
-      'Vehicles pertained should be of similar capacity, in the case of a larger or smaller vehicle, create another listing for it.',
+      // 'Vehicle count will be used to determine how many availability of your service.',
+      // 'Luggage and Capacity is referring to a singular vehicle.',
+      // 'Vehicles pertained should be of similar capacity, in the case of a larger or smaller vehicle, create another listing for it.',
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1053,93 +1053,93 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         //         ),
         //       );
         //     }),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: MediaQuery.sizeOf(context).width * .5,
-              child: FilledButton(
-                  onPressed: () async {
-                    List<String> assignedNames = [];
-                    List<CooperativeMembers>? members;
-                    TextEditingController committeeController =
-                        TextEditingController(text: 'Tourism');
-                    members = await ref
-                        .read(getAllMembersInCommitteeProvider(CommitteeParams(
-                      committeeName: committeeController.text,
-                      coopUid: ref.watch(userProvider)!.currentCoop!,
-                    )).future);
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     SizedBox(
+        //       width: MediaQuery.sizeOf(context).width * .5,
+        //       child: FilledButton(
+        //           onPressed: () async {
+        //             List<String> assignedNames = [];
+        //             List<CooperativeMembers>? members;
+        //             TextEditingController committeeController =
+        //                 TextEditingController(text: 'Tourism');
+        //             members = await ref
+        //                 .read(getAllMembersInCommitteeProvider(CommitteeParams(
+        //               committeeName: committeeController.text,
+        //               coopUid: ref.watch(userProvider)!.currentCoop!,
+        //             )).future);
 
-                    members = members!
-                        .where(
-                            (member) => !drivers.values.contains(member.name))
-                        .toList();
-                    if (context.mounted) {
-                      return showModalBottomSheet(
-                        context: context,
-                        builder: (builder) {
-                          return Container(
-                            padding: const EdgeInsets.all(
-                                10.0), // Padding for overall container
-                            child: Column(
-                              children: [
-                                // Optional: Add a title or header for the modal
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0),
-                                  child: Text(
-                                    "Members (${committeeController.text})",
-                                    style: const TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: ListView.builder(
-                                    itemCount: members!.length,
-                                    itemBuilder: (context, index) {
-                                      return ListTile(
-                                        title: Text(
-                                          members![index].name,
-                                          style: const TextStyle(
-                                              fontSize:
-                                                  16.0), // Adjust font size
-                                        ),
-                                        onTap: () {
-                                          setState(() {
-                                            drivers[members![index].uid!] =
-                                                members[index]
-                                                    .name; // Add to the map
-                                            assignedNames
-                                                .add(members[index].name);
-                                          });
-                                          Navigator.pop(
-                                              context); // Use Navigator.pop to close the bottom sheet
-                                        },
+        //             members = members!
+        //                 .where(
+        //                     (member) => !drivers.values.contains(member.name))
+        //                 .toList();
+        //             if (context.mounted) {
+        //               return showModalBottomSheet(
+        //                 context: context,
+        //                 builder: (builder) {
+        //                   return Container(
+        //                     padding: const EdgeInsets.all(
+        //                         10.0), // Padding for overall container
+        //                     child: Column(
+        //                       children: [
+        //                         // Optional: Add a title or header for the modal
+        //                         Padding(
+        //                           padding: const EdgeInsets.symmetric(
+        //                               vertical: 10.0),
+        //                           child: Text(
+        //                             "Members (${committeeController.text})",
+        //                             style: const TextStyle(
+        //                               fontSize: 18.0,
+        //                               fontWeight: FontWeight.bold,
+        //                             ),
+        //                           ),
+        //                         ),
+        //                         Expanded(
+        //                           child: ListView.builder(
+        //                             itemCount: members!.length,
+        //                             itemBuilder: (context, index) {
+        //                               return ListTile(
+        //                                 title: Text(
+        //                                   members![index].name,
+        //                                   style: const TextStyle(
+        //                                       fontSize:
+        //                                           16.0), // Adjust font size
+        //                                 ),
+        //                                 onTap: () {
+        //                                   setState(() {
+        //                                     drivers[members![index].uid!] =
+        //                                         members[index]
+        //                                             .name; // Add to the map
+        //                                     assignedNames
+        //                                         .add(members[index].name);
+        //                                   });
+        //                                   Navigator.pop(
+        //                                       context); // Use Navigator.pop to close the bottom sheet
+        //                                 },
 
-                                        // Optional: Add trailing icons or actions
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          4.0), // Adjust the radius as needed
-                    ),
-                  ),
-                  child: const Text('Add Driver')),
-            ),
-          ],
-        ),
+        //                                 // Optional: Add trailing icons or actions
+        //                               );
+        //                             },
+        //                           ),
+        //                         ),
+        //                       ],
+        //                     ),
+        //                   );
+        //                 },
+        //               );
+        //             }
+        //           },
+        //           style: FilledButton.styleFrom(
+        //             shape: RoundedRectangleBorder(
+        //               borderRadius: BorderRadius.circular(
+        //                   4.0), // Adjust the radius as needed
+        //             ),
+        //           ),
+        //           child: const Text('Add Driver')),
+        //     ),
+        //   ],
+        // ),
         addNotes(notes),
       ],
     );
@@ -1568,9 +1568,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         return addLocation(context);
       case 5:
         return addListingPhotos(context);
+      // case 6:
+      // return addFixedTasks(context);
       case 6:
-        return addFixedTasks(context);
-      case 7:
         return addPolicies(context);
       default:
         return chooseType(context);
@@ -1784,7 +1784,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                         ),
                         trailing: IconButton(
                           onPressed: () {
-                            departureTimes.removeAt(timeIndex);
+                            setState(() {
+                              departureTimes.removeAt(timeIndex);
+                            });
                           },
                           icon: const Icon(Icons.close),
                           iconSize: 14,

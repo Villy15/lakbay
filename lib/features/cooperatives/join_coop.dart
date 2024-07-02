@@ -47,6 +47,8 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
   TextEditingController jobController = TextEditingController(text: "");
 
   List<ReqFile> reqFiles = [];
+  List<String?>? reqFilesList = [];
+  List<File?>? documents = [];
   File? _validId;
   File? _birthCertificate;
 
@@ -83,18 +85,13 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
   }
 
   void joinCooperative() async {
-    List<File> files = [_validId!, _birthCertificate!];
-    List<String> fileTypes = ["Valid ID", "Birth Certificate"];
-
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
     }
 
-    // Add user to members in Coop
-
-    for (int i = 0; i < files.length; i++) {
-      var file = files[i];
-      final String fileName = _validId!.path.split('/').last;
+    for (int i = 0; i < documents!.length; i++) {
+      var file = documents![i];
+      final String fileName = file!.path.split('/').last;
       final String path = "cooperatives/$fileName";
       await ref
           .read(storageRepositoryProvider)
@@ -110,7 +107,7 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                 (fileUrl) {
                   ReqFile reqFile = ReqFile(
                       fileName: fileName,
-                      fileTitle: fileTypes[i],
+                      fileTitle: reqFilesList![i],
                       path: path,
                       url: fileUrl);
                   setState(() {
@@ -233,68 +230,34 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                           // _buildImage(context, userData),
 
                           const SizedBox(height: 20),
-
-                          Row(
-                            children: [
-                              Text(
-                                "${user!.name} · ",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "${user.gender} · ",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "${user.civilStatus}",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            user!.name,
+                            style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary),
                           ),
-
-                          Row(
-                            children: [
-                              Text(
-                                "${DateFormat('MMMM d, yyyy').format(user.birthDate!)} · ",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                user.age.toString(),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "${user.nationality} · ",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "${user.religion}",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  BiWeightText(
+                                      title: "Gender: ", content: user.gender!),
+                                  BiWeightText(
+                                      title: "Birth Date: ",
+                                      content: DateFormat('MMMM d, yyyy')
+                                          .format(user.birthDate!)),
+                                  BiWeightText(
+                                      title: "Nationality: : ",
+                                      content: user.nationality!),
+                                  BiWeightText(
+                                      title: "Civil Status: : ",
+                                      content: user.civilStatus!),
+                                  BiWeightText(
+                                      title: "Religion: ",
+                                      content: user.religion!),
+                                ]),
                           ),
 
                           const SizedBox(height: 20),
@@ -447,8 +410,10 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                                       setState(() {
                                                         jobController.text =
                                                             job.jobTitle!;
-                                                        context.pop();
+                                                        reqFilesList =
+                                                            job.requiredFiles;
                                                       });
+                                                      context.pop();
                                                     },
                                                   );
                                                 },
@@ -483,10 +448,9 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                                   .withOpacity(0.6),
                             ),
                           ),
-
                           // Valid IDs are as follow:
                           Text(
-                            'Valid IDs are as follow: ',
+                            'Required Documents are as follows: ',
                             style: TextStyle(
                               fontSize: 16,
                               color: Theme.of(context)
@@ -497,151 +461,187 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
                           ),
 
                           // Valid IDs
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('1. Passport'),
-                                Text('2. Driver\'s License'),
-                                Text('3. SSS ID'),
-                                Text('4. GSIS ID'),
-                                Text('5. PRC ID'),
-                              ],
-                            ),
-                          ),
+                          Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: reqFilesList!.length,
+                                  itemBuilder: (context, docIndex) {
+                                    var doc = reqFilesList![docIndex];
+                                    var fileName = docIndex < documents!.length
+                                        ? documents![docIndex]!
+                                            .path
+                                            .split('/')
+                                            .last
+                                        : "";
+                                    return ListTile(
+                                      leading: Text("${docIndex + 1}"),
+                                      subtitle: fileName == ""
+                                          ? null
+                                          : Text(fileName),
+                                      title: Text(doc!),
+                                      trailing: InkWell(
+                                        onTap: () async {
+                                          FilePickerResult? result =
+                                              await FilePicker.platform
+                                                  .pickFiles(
+                                            type: FileType.custom,
+                                            allowedExtensions: [
+                                              'pdf'
+                                            ], // specify the allowed extensions
+                                          );
+
+                                          if (result != null) {
+                                            final File file =
+                                                File(result.files.single.path!);
+                                            setState(() {
+                                              if (docIndex < reqFiles.length) {
+                                                documents![docIndex] = file;
+                                              } else {
+                                                documents!.add(file);
+                                              }
+                                            });
+                                          }
+                                        },
+                                        child: const Icon(
+                                            Icons.file_copy_outlined),
+                                      ),
+                                    );
+                                  })),
 
                           // Valid ID
 
-                          ListTile(
-                            onTap: () async {
-                              FilePickerResult? result =
-                                  await FilePicker.platform.pickFiles(
-                                type: FileType.custom,
-                                allowedExtensions: [
-                                  'pdf'
-                                ], // specify the allowed extensions
-                              );
+                          // ListTile(
+                          //   onTap: () async {
+                          //     FilePickerResult? result =
+                          //         await FilePicker.platform.pickFiles(
+                          //       type: FileType.custom,
+                          //       allowedExtensions: [
+                          //         'pdf'
+                          //       ], // specify the allowed extensions
+                          //     );
 
-                              if (result != null) {
-                                final File file =
-                                    File(result.files.single.path!);
-                                setState(() {
-                                  _validId = file;
-                                });
-                              }
-                            },
-                            title: const Text('Valid ID'),
-                            subtitle: _validId != null
-                                // File name
-                                ? Text(
-                                    'PDF selected: ${_validId!.path.split('/').last}')
-                                : const Text('Select a PDF file'),
-                            trailing: const Icon(Icons.file_copy_outlined),
-                          ),
+                          //     if (result != null) {
+                          //       final File file =
+                          //           File(result.files.single.path!);
+                          //       setState(() {
+                          //         _validId = file;
+                          //       });
+                          //     }
+                          //   },
+                          //   title: const Text('Valid ID'),
+                          //   subtitle: _validId != null
+                          //       // File name
+                          //       ? Text(
+                          //           'PDF selected: ${_validId!.path.split('/').last}')
+                          //       : const Text('Select a PDF file'),
+                          //   trailing: const Icon(Icons.file_copy_outlined),
+                          // ),
 
                           // Birth Certificate
-                          ListTile(
-                            onTap: () async {
-                              FilePickerResult? result =
-                                  await FilePicker.platform.pickFiles(
-                                type: FileType.custom,
-                                allowedExtensions: [
-                                  'pdf'
-                                ], // specify the allowed extensions
-                              );
+                          // ListTile(
+                          //   onTap: () async {
+                          //     FilePickerResult? result =
+                          //         await FilePicker.platform.pickFiles(
+                          //       type: FileType.custom,
+                          //       allowedExtensions: [
+                          //         'pdf'
+                          //       ], // specify the allowed extensions
+                          //     );
 
-                              if (result != null) {
-                                setState(() {
-                                  _birthCertificate =
-                                      File(result.files.single.path!);
-                                });
-                              }
-                            },
-                            title: const Text('Birth Certificate'),
-                            subtitle: _birthCertificate != null
-                                ? Text(
-                                    'PDF selected: ${_birthCertificate!.path.split('/').last}')
-                                : const Text('Select a PDF file'),
-                            trailing: const Icon(Icons.file_copy_outlined),
-                          ),
+                          //     if (result != null) {
+                          //       setState(() {
+                          //         _birthCertificate =
+                          //             File(result.files.single.path!);
+                          //       });
+                          //     }
+                          //   },
+                          //   title: const Text('Birth Certificate'),
+                          //   subtitle: _birthCertificate != null
+                          //       ? Text(
+                          //           'PDF selected: ${_birthCertificate!.path.split('/').last}')
+                          //       : const Text('Select a PDF file'),
+                          //   trailing: const Icon(Icons.file_copy_outlined),
+                          // ),
 
                           const SizedBox(height: 10),
 
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0, vertical: 24.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('Pay with',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold)),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        SizedBox(
-                                          width: 70, // specify the width
-                                          height: 40, // specify the height
-                                          child: Image.asset(
-                                              "lib/core/images/paymaya.png"),
-                                        ),
-                                        Icon(Icons.payment,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary),
-                                        // Add more payment method icons as needed
-                                      ],
-                                    ),
+                          // Padding(
+                          //   padding: const EdgeInsets.all(8.0),
+                          //   child: Card(
+                          //     child: Padding(
+                          //       padding: const EdgeInsets.symmetric(
+                          //           horizontal: 16.0, vertical: 24.0),
+                          //       child: Column(
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         children: [
+                          //           const Text('Pay with',
+                          //               style: TextStyle(
+                          //                   fontSize: 20,
+                          //                   fontWeight: FontWeight.bold)),
+                          //           const SizedBox(height: 10),
+                          //           Row(
+                          //             mainAxisAlignment:
+                          //                 MainAxisAlignment.spaceBetween,
+                          //             children: [
+                          //               SizedBox(
+                          //                 width: 70, // specify the width
+                          //                 height: 40, // specify the height
+                          //                 child: Image.asset(
+                          //                     "lib/core/images/paymaya.png"),
+                          //               ),
+                          //               Icon(Icons.payment,
+                          //                   color: Theme.of(context)
+                          //                       .colorScheme
+                          //                       .primary),
+                          //               // Add more payment method icons as needed
+                          //             ],
+                          //           ),
 
-                                    const SizedBox(height: 10),
+                          //           const SizedBox(height: 10),
 
-                                    // Payment Instructions
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text('Total',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold)),
-                                        Text(
-                                            '₱${widget.coop.membershipFee?.toStringAsFixed(2)}',
-                                            style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold)),
-                                      ],
-                                    ),
+                          //           // Payment Instructions
+                          //           Row(
+                          //             mainAxisAlignment:
+                          //                 MainAxisAlignment.spaceBetween,
+                          //             children: [
+                          //               const Text('Total',
+                          //                   style: TextStyle(
+                          //                       fontSize: 20,
+                          //                       fontWeight: FontWeight.bold)),
+                          //               Text(
+                          //                   '₱${widget.coop.membershipFee?.toStringAsFixed(2)}',
+                          //                   style: const TextStyle(
+                          //                       fontSize: 20,
+                          //                       fontWeight: FontWeight.bold)),
+                          //             ],
+                          //           ),
 
-                                    // Details of Payment Label
-                                    const SizedBox(height: 10),
-                                    const Text('Details of Payment',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold)),
+                          //           // Details of Payment Label
+                          //           const SizedBox(height: 10),
+                          //           const Text('Details of Payment',
+                          //               style: TextStyle(
+                          //                   fontSize: 16,
+                          //                   fontWeight: FontWeight.bold)),
 
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text("Membership Fee"),
-                                        Text(
-                                            '₱${widget.coop.membershipFee?.toStringAsFixed(2)}'),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                          //           Row(
+                          //             mainAxisAlignment:
+                          //                 MainAxisAlignment.spaceBetween,
+                          //             children: [
+                          //               const Text("Membership Fee"),
+                          //               Text(
+                          //                   '₱${widget.coop.membershipFee?.toStringAsFixed(2)}'),
+                          //             ],
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
 
-                          const SizedBox(height: 20),
+                          // const SizedBox(height: 20),
 
                           Card(
                             child: Padding(

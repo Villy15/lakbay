@@ -197,7 +197,7 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
     List<Map<String, dynamic>> categories = [
       {'name': 'Accommodation', 'icon': Icons.hotel_outlined},
       {'name': 'Transport', 'icon': Icons.directions_bus_outlined},
-      {'name': 'Tour', 'icon': Icons.map_outlined},
+      // {'name': 'Tour', 'icon': Icons.map_outlined},
       {'name': 'Food', 'icon': Icons.restaurant_outlined},
       {'name': 'Entertainment', 'icon': Icons.movie_creation_outlined},
     ];
@@ -207,8 +207,9 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
       shrinkWrap: true,
       itemCount: categories.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         childAspectRatio: 1.0,
+        mainAxisExtent: 120,
       ),
       itemBuilder: (context, index) {
         final category = categories[index];
@@ -277,19 +278,19 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                 }
                 break;
 
-              case 'Tour':
-              final query = FirebaseFirestore.instance
-                    .collection('listings')
-                    .where('category', isEqualTo: category["name"]);
-                final listings = await ref
-                    .watch(getListingsByPropertiesProvider(query).future);
-                if (context.mounted) {
-                  context.push('/plan/add_activity/search_listing', extra: {
-                    'listings': listings,
-                    'category': category["name"]
-                  });
-                }
-                break;
+              // case 'Tour':
+              //   final query = FirebaseFirestore.instance
+              //       .collection('listings')
+              //       .where('category', isEqualTo: category["name"]);
+              //   final listings = await ref
+              //       .watch(getListingsByPropertiesProvider(query).future);
+              //   if (context.mounted) {
+              //     context.push('/plan/add_activity/search_listing', extra: {
+              //       'listings': listings,
+              //       'category': category["name"]
+              //     });
+              //   }
+              //   break;
             }
           },
           child: Column(
