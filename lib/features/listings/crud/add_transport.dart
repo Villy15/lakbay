@@ -9,6 +9,7 @@ import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
@@ -67,6 +68,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _fromController = TextEditingController();
+  final TextEditingController _toController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _feeController = TextEditingController();
   final TextEditingController _byHourFeeController = TextEditingController();
@@ -79,6 +82,31 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   final TextEditingController _cancellationPeriodController =
       TextEditingController();
   CancelPolicy _selectedCancel = CancelPolicy.fixedCancelRate; // Default value
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      ref.read(navBarVisibilityProvider.notifier).hide();
+    });
+  }
+
+  @override
+  void dispose() {
+    // dispose of controllers when widget is removed
+    _titleController.dispose();
+    _fromController.dispose();
+    _toController.dispose();
+    _descriptionController.dispose();
+    _feeController.dispose();
+    _byHourFeeController.dispose();
+    _addressController.dispose();
+    _destinationController.dispose();
+    _pickupController.dispose();
+    _cancellationRateController.dispose();
+    _cancellationPeriodController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +232,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                 publisherId: ref.read(userProvider)!.uid,
                                 pickUp: _pickupController.text,
                                 destination: _destinationController.text,
-                                title: _titleController.text,
+                                // combine from and to
+                                title:
+                                    '${_fromController.text} to ${_toController.text}',
                                 // fixedTasks: fixedTasks,
                                 type: type,
                                 publisherName: ref.read(userProvider)!.name,
@@ -273,6 +303,10 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                 ref.read(listingControllerProvider.notifier).addListing(
                     listing, context,
                     transports: availableTransports);
+                // reset the locations for the next listing
+                ref.read(listingLocationProvider.notifier).reset();
+                ref.read(pickupPointLocationProvider.notifier).reset();
+                ref.read(destinationLocationProvider.notifier).reset();
               }));
     }
   }
@@ -939,9 +973,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
 
   Widget addDetails(BuildContext context) {
     List<String> notes = [
-      // 'Vehicle count will be used to determine how many availability of your service.',
-      // 'Luggage and Capacity is referring to a singular vehicle.',
-      // 'Vehicles pertained should be of similar capacity, in the case of a larger or smaller vehicle, create another listing for it.',
+      "From and To titles are going to be used when your listing is being searched for. With this, we recommend using informative labels.",
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -949,13 +981,34 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         const Text('Please add the details of your listing...',
             style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
         const SizedBox(height: 10),
-        TextFormField(
-          controller: _titleController,
-          decoration: const InputDecoration(
-              labelText: 'Listing Title*',
-              border: OutlineInputBorder(),
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: "Lakbay Transport"),
+        // make a row for _fromController and _toController
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _fromController,
+                decoration: const InputDecoration(
+                    labelText: 'From',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    hintText: "e.g., SM City BF"),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Icon(Icons.arrow_forward),
+            ),
+            Expanded(
+              child: TextFormField(
+                controller: _toController,
+                decoration: const InputDecoration(
+                    labelText: 'To',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    hintText: "e.g., Filinvest"),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         TextFormField(

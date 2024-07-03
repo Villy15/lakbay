@@ -39,7 +39,7 @@ class _TripsEditTripState extends ConsumerState<TripsEditTrip> {
   }
 
   void onTapLocation() {
-    context.push('/plan/location');
+    context.push('/select_location', extra: 'plan');
   }
 
   void onSubmit() {
@@ -47,6 +47,8 @@ class _TripsEditTripState extends ConsumerState<TripsEditTrip> {
       final location = ref.read(planLocationProvider);
       final startDate = ref.read(planStartDateProvider);
       final endDate = ref.read(planEndDateProvider);
+
+      debugPrint('location is now: $location');
 
       var updatedPlan = widget.plan.copyWith(
         location: location!,
@@ -69,12 +71,14 @@ class _TripsEditTripState extends ConsumerState<TripsEditTrip> {
     final planStartDate = ref.watch(planStartDateProvider);
     final planEndDate = ref.watch(planEndDateProvider);
 
+    debugPrint('planLocation: $planLocation');
+    debugPrint('planStartDate: $planStartDate');
+    debugPrint('planEndDate: $planEndDate');
+
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        ref.read(navBarVisibilityProvider.notifier).show();
         context.pop();
-        
       },
       child: Scaffold(
         appBar: AppBar(
@@ -178,15 +182,21 @@ class _TripsEditTripState extends ConsumerState<TripsEditTrip> {
                 // travelWith(context),
 
                 // Filled button that says Start my new Tri
-                Padding(
+                Container(
                   padding: const EdgeInsets.all(16.0),
+                  width: double.infinity,
                   child: FilledButton(
                     onPressed: () {
                       onSubmit();
                     },
                     style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12.0),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          8.0), // Adjust the value as needed
+                                    ),
+                                  ),
                     child: const Text(
                       'Start my new Trip',
                       style: TextStyle(fontSize: 16),

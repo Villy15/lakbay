@@ -274,101 +274,106 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
   }
 
   Widget _listings() {
-    return ref.watch(getListingsByCoopProvider(widget.coopId)).maybeWhen(
-          data: (List<ListingModel> listings) {
-            if (listings.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      'lib/core/images/SleepingCatFromGlitch.svg',
-                      height: 100, // Adjust height as desired
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'No listings yet!',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Create a listing at the',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    const Text(
-                      'bottom right corner!',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
+    debugPrint(widget.coopId);
+    return ref.watch(getListingsByCoopProvider(widget.coopId)).when(
+      data: (List<ListingModel> listings) {
+        debugPrint('Listings: $listings');
+        if (listings.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'lib/core/images/SleepingCatFromGlitch.svg',
+                  height: 100, // Adjust height as desired
                 ),
-              );
-            }
-
-            // Sorting Logic
-            listings.sort((a, b) {
-              // Calculate the number of bookings for each listing
-              final aBookings =
-                  ref.watch(getAllBookingsProvider(a.uid!)).asData?.value ?? [];
-              final bBookings =
-                  ref.watch(getAllBookingsProvider(b.uid!)).asData?.value ?? [];
-
-              // Compare the number of bookings (descending order)
-              return bBookings.length.compareTo(aBookings.length);
-            });
-
-            // Filter listings based on selected tags only if any tag is selected
-            final filteredListings =
-                availableListingsTags.where((tag) => tag.isSelected).isEmpty
-                    ? listings
-                    : listings
-                        .where((listing) => availableListingsTags
-                            .where((tag) => tag.isSelected)
-                            .map((tag) => tag.name)
-                            .contains(listing.category))
-                        .toList();
-
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  listingTags(),
-                  ListView.builder(
-                    itemCount: filteredListings.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final listing = filteredListings[index];
-
-                      return ref
-                          .watch(getAllBookingsProvider(listing.uid!))
-                          .maybeWhen(
-                            data: (List<ListingBookings> bookings) {
-                              // Order the listings based on the number of bookings per listings
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4.0),
-                                child: CommunityHubListingCard(
-                                  listing: listing,
-                                  bookings: bookings,
-                                ),
-                              );
-                            },
-                            orElse: () => const SizedBox.shrink(),
-                          );
-                    },
+                const SizedBox(height: 20),
+                const Text(
+                  'No listings yet!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
                   ),
-                ],
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Create a listing at the',
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+                const Text(
+                  'bottom right corner!',
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        // Sorting Logic
+        listings.sort((a, b) {
+          // Calculate the number of bookings for each listing
+          final aBookings =
+              ref.watch(getAllBookingsProvider(a.uid!)).asData?.value ?? [];
+          final bBookings =
+              ref.watch(getAllBookingsProvider(b.uid!)).asData?.value ?? [];
+
+          // Compare the number of bookings (descending order)
+          return bBookings.length.compareTo(aBookings.length);
+        });
+
+        // Filter listings based on selected tags only if any tag is selected
+        final filteredListings =
+            availableListingsTags.where((tag) => tag.isSelected).isEmpty
+                ? listings
+                : listings
+                    .where((listing) => availableListingsTags
+                        .where((tag) => tag.isSelected)
+                        .map((tag) => tag.name)
+                        .contains(listing.category))
+                    .toList();
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              listingTags(),
+              ListView.builder(
+                itemCount: filteredListings.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final listing = filteredListings[index];
+
+                  return ref
+                      .watch(getAllBookingsProvider(listing.uid!))
+                      .maybeWhen(
+                        data: (List<ListingBookings> bookings) {
+                          // Order the listings based on the number of bookings per listings
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: CommunityHubListingCard(
+                              listing: listing,
+                              bookings: bookings,
+                            ),
+                          );
+                        },
+                        orElse: () => const SizedBox.shrink(),
+                      );
+                },
               ),
-            );
-          },
-          orElse: () => const SizedBox.shrink(),
+            ],
+          ),
         );
+      },
+      error: (error, stackTrace) => ErrorText(
+        error: error.toString(),
+        stackTrace: stackTrace.toString(),
+      ),
+      loading: () => const Loader(),
+    );
   }
 
   PreferredSize _appBar(GlobalKey<ScaffoldState> scaffoldKey, UserModel? user,

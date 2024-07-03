@@ -66,8 +66,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       TextEditingController(text: '1:15');
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _addressController =
-      TextEditingController(text: 'Eastwood City');
+  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _unitsController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
@@ -236,6 +235,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                     ref
                         .read(listingControllerProvider.notifier)
                         .addListing(listing, context);
+                    ref.read(listingLocationProvider.notifier).reset();
                   }
                 },
               ));

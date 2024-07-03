@@ -72,7 +72,11 @@ class ListingLocationProvider extends StateNotifier<String?> {
 
   // set the location to empty
   void clearLocation() {
-    state = '';
+    state = null;
+  }
+
+  void reset() {
+    state = null;
   }
 }
 
@@ -104,6 +108,10 @@ class DestinationLocationProvider extends StateNotifier<String?> {
   void clearLocation() {
     state = '';
   }
+  
+  void reset() {
+    state = null;
+  }
 }
 
 final pickupPointLocationProvider =
@@ -120,6 +128,10 @@ class PickupPointLocationProvider extends StateNotifier<String?> {
   // set the location to empty
   void clearLocation() {
     state = '';
+  }
+  void reset() {
+    state = null;
+  
   }
 }
 

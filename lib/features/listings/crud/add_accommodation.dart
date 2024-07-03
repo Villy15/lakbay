@@ -45,13 +45,12 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   // initial values
   String type = 'Nature-Based';
   int activeStep = 0;
-  int upperBound = 5;
+  int upperBound = 3;
 
   // controllers
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _addressController =
-      TextEditingController(text: 'Eastwood City');
+  final TextEditingController _addressController = TextEditingController();
   final TextEditingController checkInController =
       TextEditingController(text: ('11:30 AM'));
   final TextEditingController checkOutController =
@@ -166,10 +165,10 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
                   );
                   // debugPrint("$listing");
                   if (mounted) {
-                    ref.read(listingLocationProvider.notifier).clearLocation();
                     ref.read(listingControllerProvider.notifier).addListing(
                         listing, context,
                         rooms: listing.availableRooms);
+                    ref.read(listingLocationProvider.notifier).reset();
                   }
                 },
               ));
@@ -309,19 +308,11 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
-              Icons.details_outlined,
-              color: Theme.of(context).colorScheme.background,
-            ),
-            Icon(
               Icons.meeting_room_outlined,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
               Icons.map_outlined,
-              color: Theme.of(context).colorScheme.background,
-            ),
-            Icon(
-              Icons.task,
               color: Theme.of(context).colorScheme.background,
             ),
             Icon(
@@ -455,22 +446,13 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   String headerText() {
     switch (activeStep) {
       case 1:
-        return 'Add details';
-
-      case 2:
         return 'Add Rooms';
 
-      case 3:
+      case 2:
         return 'Set Location';
 
-      case 4:
-        return 'Add Fixed Tasks';
-
-      case 5:
+      case 3:
         return 'Add Policies';
-
-      case 6:
-        return 'Review Listing';
 
       default:
         return 'Add Details';
@@ -2015,14 +1997,10 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
   Widget stepForm(BuildContext context) {
     switch (activeStep) {
       case 1:
-        return addDetails(context);
-      case 2:
         return addRoomDetails(context);
-      case 3:
+      case 2:
         return addLocation(context);
-      case 4:
-        return addFixedTasks(context);
-      case 5:
+      case 3:
         return addPolicies(context);
 
       default:

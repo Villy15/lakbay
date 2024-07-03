@@ -402,7 +402,7 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                 ]),
                                 SizedBox(
                                     width: double.infinity,
-                                    child: ElevatedButton(
+                                    child: FilledButton(
                                         onPressed: () {
                                           context.pop();
                                           final currentTrip =
@@ -442,6 +442,11 @@ class FoodCardState extends ConsumerState<FoodCard> {
                                                         booking: booking));
                                               });
                                         },
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(4.0)
+                                          )
+                                        ),
                                         child: const Text('Proceed')))
                               ]))
                         ])));
