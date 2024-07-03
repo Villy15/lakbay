@@ -904,21 +904,45 @@ class _TransportCardState extends ConsumerState<TransportCard> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-            leading: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  context.pop();
-                }),
-            title:
-                Text(formattedStartDate, style: const TextStyle(fontSize: 18)),
-            elevation: 1),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Customer Details",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              Text(
+                formattedStartDate, // Replace with your subtitle text
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onBackground, // Adjust subtitle color as needed
+                ),
+              ),
+            ],
+          ),
+          elevation: 0,
+          iconTheme: IconThemeData(
+            color: Theme.of(context)
+                .colorScheme
+                .primary, // Change this color to your desired color
+          ),
+        ),
         body: SingleChildScrollView(
             child: Container(
           margin: const EdgeInsets.only(top: 10),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(
+            Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: Column(children: [
                   Row(children: [
                     Expanded(
@@ -1032,8 +1056,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                             endTime = time;
                           }
                         }),
-                  ],
-                  Column(children: [
+                    const SizedBox(height: 20),
                     CheckboxListTile(
                       enabled: false,
                       value: governmentId,
@@ -1049,36 +1072,38 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                         padding: EdgeInsets.only(left: 16),
                         child: Text(
                             'Your Government ID is required as a means to protect cooperatives.',
-                            style: TextStyle(fontSize: 12, color: Colors.grey)))
-                  ]),
-                  Container(
-                    margin: const EdgeInsets.only(top: 20),
-                    width: double.infinity,
-                    child: FilledButton(
-                        onPressed: () async {
-                          await proceedTransportCheckOut(
-                              typeOfTrip,
-                              listing,
-                              user,
-                              transport,
-                              startDate,
-                              departureTime,
-                              endDate,
-                              guests,
-                              phoneNoController,
-                              emergencyContactNameController,
-                              emergencyContactNoController,
-                              startTime,
-                              endTime);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                4.0), // Adjust the radius as needed
+                            style:
+                                TextStyle(fontSize: 12, color: Colors.grey))),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                          onPressed: () async {
+                            await proceedTransportCheckOut(
+                                typeOfTrip,
+                                listing,
+                                user,
+                                transport,
+                                startDate,
+                                departureTime,
+                                endDate,
+                                guests,
+                                phoneNoController,
+                                emergencyContactNameController,
+                                emergencyContactNoController,
+                                startTime,
+                                endTime);
+                          },
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Adjust the value as needed
+                            ),
                           ),
-                        ),
-                        child: const Text('Proceed')),
-                  )
+                          child: const Text('Proceed')),
+                    )
+                  ],
                 ]))
           ]),
         )));

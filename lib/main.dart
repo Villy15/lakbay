@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,13 +12,9 @@ import 'package:lakbay/core/theme/theme.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/loader.dart';
-import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/firebase_options.dart';
-import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/router.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +36,8 @@ void main() async {
     sound: true,
   );
 
-  debugPrint('User granted permission: ${settings.authorizationStatus == AuthorizationStatus.authorized}');
+  debugPrint(
+      'User granted permission: ${settings.authorizationStatus == AuthorizationStatus.authorized}');
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     RemoteNotification? notification = message.notification;
@@ -48,7 +47,7 @@ void main() async {
       // Display the notification
       debugPrint('Title: ${notification.title}');
       debugPrint('Body: ${notification.body}');
-      
+
       FirebaseApi().sendNotification(
         title: notification.title!,
         body: notification.body!,
@@ -61,7 +60,6 @@ void main() async {
 
   FirebaseMessaging.onBackgroundMessage(_backgroundMessageHandler);
 
-
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -71,31 +69,29 @@ Future<void> _backgroundMessageHandler(RemoteMessage message) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize the Flutter local notifications plugin.
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   // Android-specific initialization
-  var initializationSettingsAndroid = const AndroidInitializationSettings('@mipmap/ic_launcher');
-  var initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+  var initializationSettingsAndroid =
+      const AndroidInitializationSettings('@mipmap/ic_launcher');
+  var initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid);
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   debugPrint("Handling a background message: ${message.messageId}");
 
   // Create a notification
   var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
-    'your_channel_id',
-    'your_channel_name',
-    importance: Importance.max,
-    priority: Priority.high,
-    styleInformation: BigTextStyleInformation('')
-  );
-  var platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    message.notification?.title,
-    message.notification?.body,
-    platformChannelSpecifics,
-    payload: 'Default_Sound'
-  );
+      'your_channel_id', 'your_channel_name',
+      importance: Importance.max,
+      priority: Priority.high,
+      styleInformation: BigTextStyleInformation(''));
+  var platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+  await flutterLocalNotificationsPlugin.show(0, message.notification?.title,
+      message.notification?.body, platformChannelSpecifics,
+      payload: 'Default_Sound');
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -110,8 +106,6 @@ class _MyAppState extends ConsumerState<MyApp> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
-
-
   @override
   void initState() {
     super.initState();
@@ -120,12 +114,10 @@ class _MyAppState extends ConsumerState<MyApp> {
       saveDeviceToken(token!);
       debugPrint('the device token is saved!!!');
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     final theme = ref.watch(themeNotifierProvider);
 
     return ref.watch(authStateChangeProvider).when(
@@ -166,8 +158,6 @@ class _MyAppState extends ConsumerState<MyApp> {
   Future<void> saveDeviceToken(String token) async {
     // get current user
     final user = FirebaseAuth.instance.currentUser;
-
-
 
     // better security here
     if (user != null) {

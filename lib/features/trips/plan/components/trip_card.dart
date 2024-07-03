@@ -471,7 +471,7 @@ class _TripCardState extends ConsumerState<TripCard> {
                           padding: EdgeInsets.only(
                               left: 16.0), // Align with the checkbox title
                           child: Text(
-                            "You're Governemnt ID is required as a means to protect cooperatives.",
+                            "Your Governemnt ID is required as a means to protect cooperatives.",
                             style: TextStyle(
                               fontSize: 12, // Smaller font size for fine print
                               color: Colors
