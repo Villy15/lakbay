@@ -265,7 +265,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                         padding: EdgeInsets.only(
                             left: 16.0), // Align with the checkbox title
                         child: Text(
-                          "You're Governemnt ID is required as a means to protect cooperatives.",
+                          "Your Governemnt ID is required as a means to protect cooperatives.",
                           style: TextStyle(
                             fontSize: 12, // Smaller font size for fine print
                             color: Colors
@@ -325,6 +325,13 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                       booking: booking));
                             });
                       },
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              8.0), // Adjust the value as needed
+                        ),
+                      ),
                       child: const Text('Proceed'),
                     ),
                   ),

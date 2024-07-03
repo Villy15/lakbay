@@ -812,12 +812,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                   TextFormField(
                                       controller: emailController,
                                       decoration: const InputDecoration(
-                                          labelText: 'Email*',
-                                          border: OutlineInputBorder(),
-                                          floatingLabelBehavior:
-                                              FloatingLabelBehavior.always,
-                                          hintText: "username@gmail.com",
-                                          helperText: "*required"),
+                                        labelText: 'Email',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: "username@gmail.com",
+                                      ),
                                       keyboardType: TextInputType.emailAddress,
                                       // if email is not null, put the initial value
                                       onChanged: (value) {
@@ -830,12 +830,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                   TextFormField(
                                     controller: firstNameController,
                                     decoration: const InputDecoration(
-                                        labelText: 'First Name*',
-                                        border: OutlineInputBorder(),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always,
-                                        hintText: "First Name",
-                                        helperText: "*required"),
+                                      labelText: 'First Name',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      hintText: "First Name",
+                                    ),
                                     // put initial value if the user's first name is not null
                                     // initialValue: user.firstName ?? '',
                                     onChanged: (value) {
@@ -846,12 +846,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                   TextFormField(
                                     controller: lastNameController,
                                     decoration: const InputDecoration(
-                                        labelText: 'Last Name*',
-                                        border: OutlineInputBorder(),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always,
-                                        hintText: "Last Name",
-                                        helperText: "*required"),
+                                      labelText: 'Last Name',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      hintText: "Last Name",
+                                    ),
                                     // initialValue: user.lastName ?? '',
                                     onChanged: (value) {
                                       user = user.copyWith(lastName: value);
@@ -861,12 +861,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                   TextFormField(
                                     controller: addressController,
                                     decoration: const InputDecoration(
-                                        labelText: 'Address*',
-                                        border: OutlineInputBorder(),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always,
-                                        hintText: "Street, City, Province",
-                                        helperText: "*required"),
+                                      labelText: 'Address',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      hintText: "Street, City, Province",
+                                    ),
                                     // initialValue: user.address ?? '',
                                     onChanged: (value) {
                                       user = user.copyWith(address: value);
@@ -876,12 +876,11 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                   TextFormField(
                                     controller: phoneNoController,
                                     decoration: const InputDecoration(
-                                        labelText: 'Phone Number*',
+                                        labelText: 'Phone Number',
                                         border: OutlineInputBorder(),
                                         floatingLabelBehavior:
                                             FloatingLabelBehavior.always,
                                         prefixText: "+63 ",
-                                        helperText: "*required",
                                         hintText: '91234567891'),
                                     keyboardType: TextInputType.phone,
                                     // initialValue: user.phoneNo ?? '',
@@ -935,12 +934,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                   TextFormField(
                                     controller: emergencyContactNameController,
                                     decoration: const InputDecoration(
-                                        labelText: 'Emergency Contact Name',
-                                        border: OutlineInputBorder(),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always,
-                                        hintText: "Lastname Firstname",
-                                        helperText: "*required"),
+                                      labelText: 'Emergency Contact Name',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      hintText: "Lastname Firstname",
+                                    ),
                                     // initialValue: user.emergencyContactName ?? '',
                                     onChanged: (value) {
                                       user = user.copyWith(
@@ -951,13 +950,13 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                   TextFormField(
                                     controller: emergencyContactNoController,
                                     decoration: const InputDecoration(
-                                        labelText: 'Emergency Contact Number',
-                                        border: OutlineInputBorder(),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always,
-                                        prefixText: "+63 ",
-                                        hintText: '91234567891',
-                                        helperText: "*required"),
+                                      labelText: 'Emergency Contact Number',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      prefixText: "+63 ",
+                                      hintText: '91234567891',
+                                    ),
                                     keyboardType: TextInputType.phone,
                                     // initialValue: user.emergencyContactNo ?? '',
                                     onChanged: (value) {
@@ -990,8 +989,6 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                           formKey,
                                           profilePicture,
                                           governmentId);
-
-                                      debugPrint('this is user: $user');
 
                                       // close dialog
                                       // ignore: use_build_context_synchronously
@@ -1053,18 +1050,40 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppBar(
-                    leading: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.of(context).pop(),
+                    iconTheme: IconThemeData(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary, // Change this color to your desired color
                     ),
-                    title: Text(
-                      "$formattedStartDate - $formattedEndDate",
-                      style: const TextStyle(fontSize: 18),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Customer Details",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        Text(
+                          "$formattedStartDate - $formattedEndDate", // Replace with your subtitle text
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onBackground, // Adjust subtitle color as needed
+                          ),
+                        ),
+                      ],
                     ),
                     elevation: 0, // Optional: Remove shadow
                   ),
-                  Padding(
+                  Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 20),
                     child: Column(
                       children: [
                         TextFormField(
@@ -1096,117 +1115,118 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                         TextFormField(
                           controller: emergencyContactNameController,
                           decoration: const InputDecoration(
-                              labelText: 'Emergency Contact Name*',
-                              border: OutlineInputBorder(),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              hintText: "Lastname Firstname",
-                              helperText: "*required"),
+                            labelText: 'Emergency Contact Name',
+                            border: OutlineInputBorder(),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            hintText: "Lastname Firstname",
+                          ),
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
                           controller: emergencyContactNoController,
                           decoration: const InputDecoration(
-                              labelText: 'Emergency Contact Number',
-                              border: OutlineInputBorder(),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              prefixText: "+63 ",
-                              hintText: '91234567891',
-                              helperText: "*required"),
+                            labelText: 'Emergency Contact Number',
+                            border: OutlineInputBorder(),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            prefixText: "+63 ",
+                            hintText: '91234567891',
+                          ),
                           keyboardType: TextInputType.phone,
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Column(
-                    children: [
-                      CheckboxListTile(
-                        enabled: false,
-                        title: const Text("Government ID"),
-                        value: governmentId,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            governmentId = value ?? false;
-                          });
-                        },
-                        controlAffinity: ListTileControlAffinity
-                            .leading, // Position the checkbox at the start of the ListTile
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(
-                            left: 16.0), // Align with the checkbox title
-                        child: Text(
-                          "You're Governemnt ID is required as a means to protect cooperatives.",
-                          style: TextStyle(
-                            fontSize: 12, // Smaller font size for fine print
-                            color: Colors
-                                .grey, // Optional: Grey color for fine print
+                        const SizedBox(height: 10),
+                        CheckboxListTile(
+                          enabled: false,
+                          title: const Text("Government ID"),
+                          value: governmentId,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              governmentId = value ?? false;
+                            });
+                          },
+                          controlAffinity: ListTileControlAffinity
+                              .leading, // Position the checkbox at the start of the ListTile
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(
+                              left: 16.0), // Align with the checkbox title
+                          child: Text(
+                            "Your Governemnt ID is required as a means to protect cooperatives.",
+                            style: TextStyle(
+                              fontSize: 12, // Smaller font size for fine print
+                              color: Colors
+                                  .grey, // Optional: Grey color for fine print
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: () {
-                        startDate = startDate.copyWith(
-                            hour: listing.checkIn!.hour,
-                            minute: listing.checkIn!.minute);
-                        endDate = endDate.copyWith(
-                            hour: listing.checkOut!.hour,
-                            minute: listing.checkOut!.minute);
-                        final currentTrip = ref.read(currentTripProvider);
-                        final user = ref.read(userProvider);
-
-                        ListingBookings booking = ListingBookings(
-                          tripUid: currentTrip!.uid!,
-                          tripName: currentTrip.name,
-                          listingId: listing.uid!,
-                          listingTitle: listing.title,
-                          customerName: user!.name,
-                          bookingStatus: "Reserved",
-                          price: room.price,
-                          category: "Accommodation",
-                          roomId: room.roomId,
-                          roomUid: room.uid,
-                          startDate: startDate,
-                          endDate: endDate,
-                          email: user.email ?? '',
-                          governmentId: user.governmentId ?? '',
-                          guests: num.parse(guestNum),
-                          customerPhoneNo: phoneNoController.text,
-                          customerId: user.uid,
-                          emergencyContactName:
-                              emergencyContactNameController.text,
-                          emergencyContactNo: emergencyContactNoController.text,
-                          needsContributions: false,
-                          tasks: listing.fixedTasks,
-                          cooperativeId: listing.cooperative.cooperativeId,
-                        );
-
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return Dialog.fullscreen(
-                                  child: CustomerAccommodationCheckout(
-                                      listing: listing,
-                                      room: room,
-                                      booking: booking));
-                            }).then((value) {
-                          context.pop();
-                          context.pop();
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              4.0), // Adjust the radius as needed
+                        const SizedBox(
+                          height: 20,
                         ),
-                      ),
-                      child: const Text('Proceed'),
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: () {
+                              startDate = startDate.copyWith(
+                                  hour: listing.checkIn!.hour,
+                                  minute: listing.checkIn!.minute);
+                              endDate = endDate.copyWith(
+                                  hour: listing.checkOut!.hour,
+                                  minute: listing.checkOut!.minute);
+                              final currentTrip = ref.read(currentTripProvider);
+                              final user = ref.read(userProvider);
+
+                              ListingBookings booking = ListingBookings(
+                                tripUid: currentTrip!.uid!,
+                                tripName: currentTrip.name,
+                                listingId: listing.uid!,
+                                listingTitle: listing.title,
+                                customerName: user!.name,
+                                bookingStatus: "Reserved",
+                                price: room.price,
+                                category: "Accommodation",
+                                roomId: room.roomId,
+                                roomUid: room.uid,
+                                startDate: startDate,
+                                endDate: endDate,
+                                email: user.email ?? '',
+                                governmentId: user.governmentId ?? '',
+                                guests: num.parse(guestNum),
+                                customerPhoneNo: phoneNoController.text,
+                                customerId: user.uid,
+                                emergencyContactName:
+                                    emergencyContactNameController.text,
+                                emergencyContactNo:
+                                    emergencyContactNoController.text,
+                                needsContributions: false,
+                                tasks: listing.fixedTasks,
+                                cooperativeId:
+                                    listing.cooperative.cooperativeId,
+                              );
+
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialog.fullscreen(
+                                        child: CustomerAccommodationCheckout(
+                                            listing: listing,
+                                            room: room,
+                                            booking: booking));
+                                  }).then((value) {
+                                context.pop();
+                                context.pop();
+                              });
+                            },
+                            style: FilledButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    8.0), // Adjust the value as needed
+                              ),
+                            ),
+                            child: const Text('Proceed'),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
