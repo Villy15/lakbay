@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:lakbay/core/constants/firebase_constants.dart';
@@ -69,6 +70,7 @@ class ListingRepository {
 
   // Read all listing by CoopID
   Stream<List<ListingModel>> readListingsByCoopId(String coopId) {
+    debugPrint("COOP ID!!: $coopId");
     return _listings
         .where('cooperative.cooperativeId', isEqualTo: coopId)
         .snapshots()

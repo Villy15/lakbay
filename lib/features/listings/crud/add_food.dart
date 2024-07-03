@@ -84,6 +84,22 @@ class _AddFoodState extends ConsumerState<AddFood> {
     });
   }
 
+  @override
+  void dispose() {
+    // dispose of the controllers when widget is removed
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _feeController.dispose();
+    _priceController.dispose();
+    _dealNameController.dispose();
+    _dealDescriptionController.dispose();
+    _addressController.dispose();
+    _cancellationPeriodController.dispose();
+    _cancellationRateController.dispose();
+    _paxController.dispose();
+    super.dispose();
+  }
+
   void submitAddListing() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -152,6 +168,7 @@ class _AddFoodState extends ConsumerState<AddFood> {
                     ref
                         .read(listingControllerProvider.notifier)
                         .addListing(listing, context);
+                    ref.read(listingLocationProvider.notifier).reset();
                   }
                 },
               ));
@@ -1325,12 +1342,20 @@ class _AddFoodState extends ConsumerState<AddFood> {
       Center(
         child: FilledButton(
           onPressed: () {
-            showModalBottomSheet(
+            showDialog(
                 context: context,
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return addDealBottomSheet(
-                      dealImgs, _dealNameController, guests);
+                builder: (context) {
+                  dealImgs.clear();
+                  _dealNameController.clear();
+                  _dealDescriptionController.clear();
+                  _priceController.clear();
+                  guests = 0;
+                  return SizedBox(
+                    child: Dialog.fullscreen(
+                      child: showAddDealForm(dealImgs, _dealNameController,
+                          _dealDescriptionController, _priceController, guests),
+                    ),
+                  );
                 });
           },
           style: FilledButton.styleFrom(
@@ -1342,6 +1367,205 @@ class _AddFoodState extends ConsumerState<AddFood> {
         ),
       ),
     ]);
+  }
+
+  Widget showAddDealForm(
+      List<File> images,
+      TextEditingController dealNameController,
+      TextEditingController descriptionController,
+      TextEditingController priceController,
+      num guests) {
+    return StatefulBuilder(builder: (context, setState) {
+      return Column(children: [
+        AppBar(
+            leading: IconButton(
+                iconSize: 30,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(Icons.arrow_back)),
+            title: const Text("Create Deal",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+        Expanded(
+            child: SingleChildScrollView(
+                child: SizedBox(
+                    height: MediaQuery.sizeOf(context).height,
+                    width: double.infinity,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: GestureDetector(
+                                child: Row(children: [
+                              Icon(Icons.image_outlined,
+                                  color: Theme.of(context).iconTheme.color),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                  child: ImagePickerFormField(
+                                      height:
+                                          MediaQuery.sizeOf(context).height / 5,
+                                      width: MediaQuery.sizeOf(context).width /
+                                          1.3,
+                                      context: context,
+                                      initialValue: images,
+                                      onSaved: (List<File>? files) {
+                                        images.clear();
+                                        images.addAll(files!);
+
+                                        tempDealImgs.add(images);
+                                      },
+                                      validator: (List<File>? files) {
+                                        if (files == null || files.isEmpty) {
+                                          return 'Please select some images';
+                                        }
+                                        return null;
+                                      },
+                                      onImagesSelected: (List<File> files) {
+                                        images.clear();
+                                        images.addAll(files);
+
+                                        tempDealImgs.add(List.from(images));
+                                      }))
+                            ])),
+                          ),
+                          const SizedBox(height: 15),
+                          Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: TextFormField(
+                                  controller: dealNameController,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Deal Name*',
+                                      helperText: '*required',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      hintText: "Bundle Meal No. 1",
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 12)),
+                                  validator: (String? value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter some text';
+                                    }
+                                    return null;
+                                  })),
+                          SizedBox(
+                              height: MediaQuery.sizeOf(context).height / 50),
+                          Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: TextFormField(
+                                  controller: descriptionController,
+                                  maxLines: null,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Description*',
+                                      helperText: '*required',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      hintText: "This meal includes...",
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 12)),
+                                  validator: (String? value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter some text';
+                                    }
+                                    return null;
+                                  })),
+                          const SizedBox(height: 15),
+                          Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: TextFormField(
+                                  controller: priceController,
+                                  maxLines: null,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Price*',
+                                      helperText: '*required',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      prefix: Text('₱'),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 12)),
+                                  validator: (String? value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter some text';
+                                    }
+                                    return null;
+                                  })),
+                          const SizedBox(height: 5),
+                          ListTile(
+                              title: const Row(children: [
+                                Icon(Icons.people_alt_outlined),
+                                SizedBox(width: 10),
+                                Text('Guests')
+                              ]),
+                              trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                        icon: const Icon(Icons.remove),
+                                        onPressed: () {
+                                          if (guests >= 1) {
+                                            setState(() {
+                                              guests--;
+                                            });
+                                          }
+                                        }),
+                                    const SizedBox(width: 10),
+                                    Text('$guests',
+                                        style: const TextStyle(fontSize: 16)),
+                                    const SizedBox(width: 10),
+                                    IconButton(
+                                        icon: const Icon(Icons.add),
+                                        onPressed: () {
+                                          setState(() {
+                                            guests++;
+                                          });
+                                        })
+                                  ])),
+                          const SizedBox(height: 30),
+                          FilledButton(
+                              onPressed: () {
+                                _dealImgs = List.from(tempDealImgs);
+                                FoodService deal = FoodService(
+                                    available: true,
+                                    dealName: dealNameController.text,
+                                    dealDescription: descriptionController.text,
+                                    price: num.parse(priceController.text),
+                                    guests: guests,
+                                    startTime:
+                                        TimeOfDay.fromDateTime(startDate),
+                                    endTime: TimeOfDay.fromDateTime(endDate),
+                                    workingDays: workingDays,
+                                    dealImgs: images
+                                        .map((image) =>
+                                            ListingImages(path: image.path))
+                                        .toList());
+                                this.setState(() {
+                                  int index = availableDeals.indexWhere(
+                                      (deal) =>
+                                          deal.dealName ==
+                                          dealNameController.text);
+                                  if (index == -1) {
+                                    availableDeals.add(deal);
+                                  } else {
+                                    availableDeals[index] = deal;
+                                  }
+                                });
+                                Navigator.of(context).pop();
+                              },
+                              style: FilledButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(8.0))),
+                              child: const Text('Add Deal'))
+                        ]))))
+      ]);
+    });
   }
 
   DraggableScrollableSheet addDealBottomSheet(
