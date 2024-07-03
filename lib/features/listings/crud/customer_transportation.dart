@@ -6,14 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/days_provider.dart';
-import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_checkout.dart';
-import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
@@ -56,348 +55,28 @@ class _CustomerTransportationState
             initialIndex: 0,
             length: tabs.length,
             child: Scaffold(
-                appBar: AppBar(
-                  title: widget.listing.title.length > 20
-                      ? Text('${widget.listing.title.substring(0, 20)}...',
-                          style: const TextStyle(
-                              fontSize: 25.0, fontWeight: FontWeight.bold))
-                      : Text(widget.listing.title,
-                          style: const TextStyle(
-                              fontSize: 25.0, fontWeight: FontWeight.bold)),
-                  bottom: TabBar(
-                    tabAlignment: TabAlignment.center,
-                    labelPadding: EdgeInsets.zero,
-                    isScrollable: true,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    tabs: tabs,
-                  ),
+              appBar: AppBar(
+                title: widget.listing.title.length > 20
+                    ? Text('${widget.listing.title.substring(0, 20)}...',
+                        style: const TextStyle(
+                            fontSize: 25.0, fontWeight: FontWeight.bold))
+                    : Text(widget.listing.title,
+                        style: const TextStyle(
+                            fontSize: 25.0, fontWeight: FontWeight.bold)),
+                bottom: TabBar(
+                  tabAlignment: TabAlignment.center,
+                  labelPadding: EdgeInsets.zero,
+                  isScrollable: true,
+                  indicatorSize: TabBarIndicatorSize.label,
+                  tabs: tabs,
                 ),
-                body: TabBarView(children: [
-                  details(),
-                ]),
-                // create a bottom navigation bar for the customer
-                // so that they may be able to book the transport
-                bottomNavigationBar: BottomAppBar(
-                    color: Colors.white,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 0, right: 24),
-                                  child: RichText(
-                                      text: TextSpan(children: [
-                                    TextSpan(
-                                        text: '₱${widget.listing.price}',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary)),
-                                    TextSpan(
-                                        text: ' per person',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.normal,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary))
-                                  ]))),
-                              Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: GestureDetector(
-                                      onTap: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                  title: const Text(
-                                                      'Transport Details'),
-                                                  content: SizedBox(
-                                                      height:
-                                                          MediaQuery.sizeOf(
-                                                                      context)
-                                                                  .height /
-                                                              4,
-                                                      width: MediaQuery.sizeOf(
-                                                                  context)
-                                                              .width /
-                                                          1.5,
-                                                      child: Column(children: [
-                                                        Row(children: [
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 4.5),
-                                                            child: Icon(
-                                                                Icons
-                                                                    .people_alt_outlined,
-                                                                size: 30),
-                                                          ),
-                                                          Text(
-                                                              "Guests: ${widget.listing.availableTransport!.guests}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          18))
-                                                        ]),
-                                                        const SizedBox(
-                                                            height: 10),
-                                                        Row(children: [
-                                                          const Icon(
-                                                              Icons
-                                                                  .luggage_outlined,
-                                                              size: 30),
-                                                          Text(
-                                                              "Pickup Point: ${widget.listing.pickUp}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          18))
-                                                        ]),
-                                                        const SizedBox(
-                                                            height: 10),
-                                                        Row(
-                                                          children: [
-                                                            const Icon(
-                                                                Icons
-                                                                    .location_on_outlined,
-                                                                size: 30),
-                                                            Text(
-                                                                'Destination: ${widget.listing.destination}',
-                                                                style:
-                                                                    const TextStyle(
-                                                                        fontSize:
-                                                                            18))
-                                                          ],
-                                                        )
-                                                      ])));
-                                            });
-                                      },
-                                      child: RichText(
-                                        text: TextSpan(children: [
-                                          TextSpan(
-                                              text: 'Transport Details',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary,
-                                                  fontStyle: FontStyle.italic)),
-                                          WidgetSpan(
-                                            child: Icon(
-                                              Icons.keyboard_arrow_down,
-                                              size: 14,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
-                                            ),
-                                          )
-                                        ]),
-                                      )))
-                            ]),
-                        Container(
-                            alignment: Alignment.bottomRight,
-                            child: Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 8.0, right: 8.0, bottom: 8.0),
-                                child: SizedBox(
-                                    height:
-                                        MediaQuery.of(context).size.height / 15,
-                                    width:
-                                        MediaQuery.of(context).size.width / 2.3,
-                                    child: FilledButton(
-                                      onPressed: () async {
-                                        final bookings = await ref.watch(
-                                            getAllBookingsProvider(
-                                                    widget.listing.uid!)
-                                                .future);
-
-                                        if (widget.listing.type == 'Public') {
-                                          if (context.mounted) {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                      title: const Text(
-                                                          'Select a Departure Time',
-                                                          style: TextStyle(
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                      content: SizedBox(
-                                                          height:
-                                                              MediaQuery.sizeOf(
-                                                                          context)
-                                                                      .height /
-                                                                  3.5,
-                                                          width:
-                                                              MediaQuery.sizeOf(
-                                                                          context)
-                                                                      .width /
-                                                                  1.5,
-                                                          child: Column(
-                                                              children: widget
-                                                                  .listing
-                                                                  .availableTransport!
-                                                                  .departureTimes!
-                                                                  .map(
-                                                                      (departureTime) {
-                                                            DateTime dateTimeSlot = DateTime(
-                                                                daysPlan
-                                                                    .currentDay!
-                                                                    .year,
-                                                                daysPlan
-                                                                    .currentDay!
-                                                                    .month,
-                                                                daysPlan
-                                                                    .currentDay!
-                                                                    .day,
-                                                                departureTime
-                                                                    .hour,
-                                                                departureTime
-                                                                    .minute);
-                                                            List<ListingBookings>
-                                                                bookingsCopy =
-                                                                bookings;
-                                                            Map<DateTime?, num>
-                                                                deptTimeAndGuests =
-                                                                {
-                                                              dateTimeSlot: widget
-                                                                  .listing
-                                                                  .availableTransport!
-                                                                  .guests
-                                                            };
-                                                            // format the currentDate
-                                                            String
-                                                                formattedCurrentDate =
-                                                                DateFormat(
-                                                                        'yyyy-MM-dd')
-                                                                    .format(daysPlan
-                                                                        .currentDay!);
-
-                                                            for (ListingBookings booking
-                                                                in bookingsCopy) {
-                                                              // only get the date and not the time from booking.startDate. trim it to only get the date
-
-                                                              DateTime
-                                                                  bookingStartDate =
-                                                                  booking
-                                                                      .startDate!;
-                                                              String
-                                                                  formattedDate =
-                                                                  DateFormat(
-                                                                          'yyyy-MM-dd')
-                                                                      .format(
-                                                                          bookingStartDate);
-
-                                                              // check the formattedCurrentDate and the formattedDate if they are the same
-                                                              if (formattedCurrentDate ==
-                                                                  formattedDate) {
-                                                                // remove duplicates of departure time, and get the total number of guests for each departure time
-
-                                                                if (deptTimeAndGuests
-                                                                    .containsKey(
-                                                                        bookingStartDate)) {
-                                                                  deptTimeAndGuests[
-                                                                      bookingStartDate] = deptTimeAndGuests[
-                                                                          bookingStartDate]! -
-                                                                      booking
-                                                                          .guests;
-                                                                }
-                                                                //  else {
-                                                                //   deptTimeAndGuests[
-                                                                //       booking
-                                                                //           .startDate] = booking
-                                                                //       .guests;
-                                                                // }
-                                                                // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
-                                                              }
-                                                            }
-                                                            return ListTile(
-                                                                title: Text(
-                                                                    departureTime
-                                                                        .format(
-                                                                            context)),
-                                                                trailing: Text(
-                                                                    'Slots Left: ${deptTimeAndGuests[dateTimeSlot]}'),
-                                                                onTap:
-                                                                    () async {
-                                                                  if (deptTimeAndGuests[
-                                                                          dateTimeSlot] !=
-                                                                      null) {
-                                                                    if (deptTimeAndGuests[
-                                                                            dateTimeSlot]! ==
-                                                                        0) {
-                                                                      // show an alert dialog that the selected departure time is already full
-                                                                      showDialog(
-                                                                          context:
-                                                                              context,
-                                                                          builder:
-                                                                              (context) {
-                                                                            return AlertDialog(title: const Text('Departure Time is Full'), content: Text('The time ${departureTime.format(context)} has reached its capacity of ${deptTimeAndGuests[dateTimeSlot]}.  Please select another time.'), actions: [
-                                                                              TextButton(
-                                                                                  onPressed: () {
-                                                                                    Navigator.pop(context);
-                                                                                  },
-                                                                                  child: const Text('Close'))
-                                                                            ]);
-                                                                          });
-                                                                    } else {
-                                                                      // show confirm booking
-                                                                      showConfirmBooking(
-                                                                              widget.listing.availableTransport!,
-                                                                              widget.listing,
-                                                                              daysPlan.currentDay!,
-                                                                              daysPlan.currentDay!,
-                                                                              departureTime,
-                                                                              'Public')
-                                                                          .then((value) {});
-                                                                    }
-                                                                  } else {
-                                                                    // show confirm booking
-                                                                    showConfirmBooking(
-                                                                        widget
-                                                                            .listing
-                                                                            .availableTransport!,
-                                                                        widget
-                                                                            .listing,
-                                                                        daysPlan
-                                                                            .currentDay!,
-                                                                        daysPlan
-                                                                            .currentDay!,
-                                                                        departureTime,
-                                                                        'Public');
-                                                                  }
-                                                                });
-                                                          }).toList())));
-                                                });
-                                          }
-                                        }
-                                      },
-                                      style: FilledButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              4.0), // Adjust the radius as needed
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Book now',
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ))))
-                      ],
-                    )))));
+              ),
+              body: TabBarView(children: [
+                details(),
+              ]),
+              // create a bottom navigation bar for the customer
+              // so that they may be able to book the transport
+            )));
   }
 
   Future<dynamic> showConfirmBooking(
@@ -741,28 +420,39 @@ class _CustomerTransportationState
       // const Divider(),
       // ],
 
-      ListTile(
-        leading: SizedBox(
-          height: 40,
-          width: 40,
-          child: DisplayImage(
-              imageUrl:
-                  'cooperatives/${widget.listing.cooperative.cooperativeName}/download.jpg',
-              height: 40,
-              width: 40,
-              radius: BorderRadius.circular(20)),
-        ),
-        // Contact owner
-        trailing: IconButton(
-          onPressed: () {
-            // Show snackbar with reviews
-            showSnackBar(context, 'Contact owner');
-          },
-          icon: const Icon(Icons.message_rounded),
-        ),
-        title: Text('Hosted by ${widget.listing.cooperative.cooperativeName}',
-            style: Theme.of(context).textTheme.labelLarge),
-      ),
+      ref
+          .watch(
+              getCooperativeProvider(widget.listing.cooperative.cooperativeId))
+          .maybeWhen(
+            data: (coop) {
+              return ListTile(
+                leading: SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: DisplayImage(
+                      imageUrl: coop.imageUrl,
+                      height: 40,
+                      width: 40,
+                      radius: BorderRadius.circular(20)),
+                ),
+                // Contact owner
+                trailing: IconButton(
+                  onPressed: () {
+                    // Show snackbar with reviews
+                    // createRoom(context, widget.listing.publisherId);
+                  },
+                  icon: const Icon(Icons.message_rounded),
+                ),
+                title: Text('Hosted by ${coop.name}',
+                    style: Theme.of(context).textTheme.labelLarge),
+              );
+            },
+            orElse: () => const ListTile(
+              leading: Icon(Icons.error),
+              title: Text('Error'),
+              subtitle: Text('Something went wrong'),
+            ),
+          ),
       const Divider(),
 
       const SizedBox(height: 5),

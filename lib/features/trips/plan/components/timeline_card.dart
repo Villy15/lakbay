@@ -93,11 +93,15 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
     return '';
   }
 
-  void addStartTime() {
+  void addStartTime(DateTime? startTime) {
     // Add a start time to the activity by adding a time picker
     showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: startTime!.isAfter(DateTime.now())
+          ? TimeOfDay.fromDateTime(startTime)
+          : TimeOfDay.now(),
+      initialEntryMode: TimePickerEntryMode.inputOnly,
+      helpText: 'Select Start Time',
     ).then((time) {
       if (time != null) {
         final updatedPlan = widget.plan.copyWith(
@@ -125,15 +129,16 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
     });
   }
 
-  void addEndTime() {
+  void addEndTime(DateTime? startTime) {
     // Add a start time to the activity by adding a time picker
     showTimePicker(
       context: context,
       // Make the initial time to startDate
       initialTime: widget.activity.startTime != null
-          ? TimeOfDay.fromDateTime(
-              widget.activity.startTime!.add(const Duration(hours: 1)))
+          ? TimeOfDay.fromDateTime(widget.activity.startTime!)
           : TimeOfDay.now(),
+      initialEntryMode: TimePickerEntryMode.inputOnly,
+      helpText: 'Select End Time',
     ).then((time) {
       if (time != null) {
         final updatedPlan = widget.plan.copyWith(
@@ -291,6 +296,26 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                           ),
                         ],
                       ),
+                    ),
+                  if (widget.activity.category == 'Manual')
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                              height: MediaQuery.sizeOf(context).height / 40,
+                              child: Image.asset(
+                                  'lib/core/images/right-arrow.png')),
+                          Text(
+                            DateFormat('hh:mm a')
+                                .format(widget.activity.endTime!),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     )
                 ],
               ),
@@ -337,35 +362,29 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
               Row(
                 children: [
                   if (widget.activity.bookingId == null)
-                    IconButton(
-                      onPressed: () => addStartTime(),
-                      icon: const Icon(
-                        Icons.timer_outlined,
-                      ),
+                    TextButton(
+                      onPressed: () {
+                        addEndTime(widget.activity.endTime);
+
+                        addStartTime(widget.activity.startTime);
+                      },
+                      child: const Text('Edit Start & End Time'),
                     ),
                   // Set Duration
-                  if (widget.activity.bookingId == null)
-                    IconButton(
-                      onPressed: widget.activity.startTime != null
-                          ? () => addEndTime()
-                          : null,
-                      icon: const Icon(
-                        Icons.timelapse_outlined,
-                      ),
-                    ),
+
                   // Manage expenses
-                  IconButton(
-                    onPressed: () => addExpense(),
-                    icon: const Icon(
-                      Icons.attach_money,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => addCheckList(),
-                    icon: const Icon(
-                      Icons.checklist_outlined,
-                    ),
-                  ),
+                  // IconButton(
+                  //   onPressed: () => addExpense(),
+                  //   icon: const Icon(
+                  //     Icons.attach_money,
+                  //   ),
+                  // ),
+                  // IconButton(
+                  //   onPressed: () => addCheckList(),
+                  //   icon: const Icon(
+                  //     Icons.checklist_outlined,
+                  //   ),
+                  // ),
                 ],
               ),
             ],

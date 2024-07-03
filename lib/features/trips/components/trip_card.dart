@@ -115,15 +115,15 @@ class TripCard extends ConsumerWidget {
                         ),
 
                         // Participants
-                        const Row(
+                        Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.people,
                               size: 16,
                             ),
                             Text(
-                              ' 2 participants',
-                              style: TextStyle(
+                              '${plan.guests.toString()} participants',
+                              style: const TextStyle(
                                 fontSize: 16,
                               ),
                             ),
