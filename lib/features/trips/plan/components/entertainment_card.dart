@@ -590,35 +590,37 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                                               for (ListingBookings booking
                                                   in bookingsCopy) {
                                                 // only get the date and not the time from booking.startDate. trim it to only get the date
+                                                if (booking.bookingStatus !=
+                                                    "Cancelled") {
+                                                  DateTime bookingStartDate =
+                                                      booking.startDate!;
+                                                  String formattedDate =
+                                                      DateFormat('yyyy-MM-dd')
+                                                          .format(
+                                                              bookingStartDate);
 
-                                                DateTime bookingStartDate =
-                                                    booking.startDate!;
-                                                String formattedDate =
-                                                    DateFormat('yyyy-MM-dd')
-                                                        .format(
-                                                            bookingStartDate);
+                                                  // check the formattedCurrentDate and the formattedDate if they are the same
+                                                  if (formattedCurrentDate ==
+                                                      formattedDate) {
+                                                    // remove duplicates of departure time, and get the total number of guests for each departure time
 
-                                                // check the formattedCurrentDate and the formattedDate if they are the same
-                                                if (formattedCurrentDate ==
-                                                    formattedDate) {
-                                                  // remove duplicates of departure time, and get the total number of guests for each departure time
-
-                                                  if (availableTimeAndCapacity
-                                                      .containsKey(
-                                                          bookingStartDate)) {
-                                                    availableTimeAndCapacity[
-                                                            bookingStartDate] =
-                                                        availableTimeAndCapacity[
-                                                                bookingStartDate]! -
-                                                            booking.guests;
+                                                    if (availableTimeAndCapacity
+                                                        .containsKey(
+                                                            bookingStartDate)) {
+                                                      availableTimeAndCapacity[
+                                                              bookingStartDate] =
+                                                          availableTimeAndCapacity[
+                                                                  bookingStartDate]! -
+                                                              booking.guests;
+                                                    }
+                                                    //  else {
+                                                    //   deptTimeAndGuests[
+                                                    //       booking
+                                                    //           .startDate] = booking
+                                                    //       .guests;
+                                                    // }
+                                                    // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
                                                   }
-                                                  //  else {
-                                                  //   deptTimeAndGuests[
-                                                  //       booking
-                                                  //           .startDate] = booking
-                                                  //       .guests;
-                                                  // }
-                                                  // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
                                                 }
                                               }
                                               return ListTile(

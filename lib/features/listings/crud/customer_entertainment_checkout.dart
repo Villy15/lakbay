@@ -49,7 +49,7 @@ class _CustomerAccomodationCheckoutState
     _guestCount = widget.booking.guests;
     _startDate = widget.booking.startDate!;
     _endDate = widget.booking.endDate!;
-    _maxGuestCount = widget.listing.pax!;
+    _maxGuestCount = widget.availableTime.maxPax;
     updatedBooking = widget.booking;
     // downpaymentAmount = (widget.booking.price * _guestCount) * 1;
     // vatAmount = downpaymentAmount * (vat - 1);
@@ -322,7 +322,7 @@ class _CustomerAccomodationCheckoutState
                             fontSize: 16,
                           )),
                       Text(
-                          'This rental has a remaining capacity of ${_maxGuestCount - widget.availableTime.maxPax}',
+                          'This service has a remaining capacity of ${_maxGuestCount - widget.booking.guests}',
                           style: TextStyle(
                               fontSize: 12,
                               color: Theme.of(context).colorScheme.primary,
