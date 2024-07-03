@@ -495,7 +495,6 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
       //           fontSize: Theme.of(context).textTheme.titleLarge?.fontSize)),
       // ),
       ListView.builder(
-          scrollDirection: Axis.horizontal,
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: widget.listing.availableDeals!.length,
