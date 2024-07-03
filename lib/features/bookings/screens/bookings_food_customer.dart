@@ -244,10 +244,16 @@ class _BookingsFoodCustomerState extends ConsumerState<BookingsFoodCustomer> {
                                 child: Row(children: [
                                   const Icon(Icons.location_on_outlined),
                                   const SizedBox(width: 8),
-                                  Text(widget.listing.address,
+                                  Expanded(
+                                    child: Text(
+                                      widget.listing.address,
                                       style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.normal))
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
                                 ])),
 
                             const Padding(
