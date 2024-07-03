@@ -37,16 +37,21 @@ class RoomCard extends ConsumerStatefulWidget {
   final DateTime? startDate;
   final DateTime? endDate;
   final Query? query;
-  const RoomCard(
-      {super.key,
-      required this.category,
-      required this.bookings,
-      this.customerBooking,
-      this.reason,
-      this.guests,
-      this.startDate,
-      this.endDate,
-      this.query,});
+  final List<ListingModel>? accommodationListings;
+  final List<ListingModel>? allListings;
+  const RoomCard({
+    super.key,
+    required this.category,
+    required this.bookings,
+    this.customerBooking,
+    this.reason,
+    this.guests,
+    this.startDate,
+    this.endDate,
+    this.query,
+    this.accommodationListings,
+    this.allListings,
+  });
 
   @override
   ConsumerState<RoomCard> createState() => _RoomCardState();
@@ -110,63 +115,88 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            room.listingName!,
-                                            style: const TextStyle(
-                                              fontSize:
-                                                  18, // Increased font size, larger than the previous one
-                                              fontWeight:
-                                                  FontWeight.bold, // Bold text
-                                            ),
-                                          ),
-                                          Text(
-                                            "${room.bedrooms} Bedroom",
-                                            style: const TextStyle(
-                                              fontSize:
-                                                  14, // Increased font size, larger than the previous one
-                                              fontWeight:
-                                                  FontWeight.w500, // Bold text
-                                            ),
-                                          ),
-                                          RichText(
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: "₱${room.price}",
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                          14, // Size for the price
-                                                      fontWeight: FontWeight
-                                                          .w500, // Bold for the price
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurface),
+                                      Text(
+                                        room.listingName!,
+                                        style: const TextStyle(
+                                          fontSize:
+                                              18, // Increased font size, larger than the previous one
+                                          fontWeight:
+                                              FontWeight.bold, // Bold text
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: MediaQuery.sizeOf(context).width,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Flexible(
+                                              flex: 1,
+                                              child: Text(
+                                                "${room.bedrooms} Bedroom",
+                                                style: const TextStyle(
+                                                  fontSize:
+                                                      14, // Increased font size, larger than the previous one
+                                                  fontWeight: FontWeight
+                                                      .w500, // Bold text
                                                 ),
-                                                TextSpan(
-                                                  text: " per night",
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                          14, // Smaller size for 'per night'
-                                                      fontStyle: FontStyle
-                                                          .italic, // Italicized 'per night'
-                                                      fontWeight: FontWeight
-                                                          .normal, // Normal weight for 'per night'
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurface),
-                                                ),
-                                              ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                            Flexible(
+                                              flex: 1,
+                                              child: Text(
+                                                "Check In: ${widget.allListings?.firstWhere((element) {
+                                                      if (element.uid! ==
+                                                          room.listingId) {
+                                                        return true;
+                                                      } else {
+                                                        return false;
+                                                      }
+                                                    }).checkIn!.format(context)}",
+                                                style: const TextStyle(
+                                                  fontSize:
+                                                      14, // Increased font size, larger than the previous one
+                                                  fontWeight: FontWeight
+                                                      .w500, // Bold text
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: "₱${room.price}",
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      14, // Size for the price
+                                                  fontWeight: FontWeight
+                                                      .w500, // Bold for the price
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface),
+                                            ),
+                                            TextSpan(
+                                              text: " per night",
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      14, // Smaller size for 'per night'
+                                                  fontStyle: FontStyle
+                                                      .italic, // Italicized 'per night'
+                                                  fontWeight: FontWeight
+                                                      .normal, // Normal weight for 'per night'
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -325,8 +355,12 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return AlertDialog(
-                                                  title: const Text(
-                                                      "Room Details"),
+                                                  title: Text("Room Details",
+                                                      style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary, // Set the text color to black or your desired color
+                                                      )),
                                                   content: SizedBox(
                                                     height: MediaQuery.sizeOf(
                                                                 context)
@@ -340,16 +374,50 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                       children: [
                                                         Row(
                                                           children: [
-                                                            const Icon(
-                                                                Icons
-                                                                    .people_alt_outlined,
-                                                                size: 30),
-                                                            Text(
-                                                              "Guests: ${room.guests}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          18),
+                                                            Icon(
+                                                              Icons
+                                                                  .people_alt_outlined,
+                                                              size: 20,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 10),
+                                                            Expanded(
+                                                              child: RichText(
+                                                                text: TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                          "Can accommodate up to \n",
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        color: Theme.of(context)
+                                                                            .colorScheme
+                                                                            .onBackground, // Set the text color to black or your desired color
+                                                                      ),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text: room.guests >
+                                                                              1
+                                                                          ? "${room.guests} guests"
+                                                                          : "${room.guests} guest",
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        color: Theme.of(context)
+                                                                            .colorScheme
+                                                                            .primary, // Set the text color to black or your desired color
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
                                                             ),
                                                           ],
                                                         ),
@@ -358,16 +426,49 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                         ),
                                                         Row(
                                                           children: [
-                                                            const Icon(
-                                                                Icons
-                                                                    .bed_rounded,
-                                                                size: 30),
-                                                            Text(
-                                                              "Beds: ${room.beds}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          18),
+                                                            Icon(
+                                                              Icons.bed_rounded,
+                                                              size: 20,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 10),
+                                                            Expanded(
+                                                              child: RichText(
+                                                                text: TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                          "The room has ",
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        color: Theme.of(context)
+                                                                            .colorScheme
+                                                                            .onBackground, // Set the text color to black or your desired color
+                                                                      ),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text: room.beds >
+                                                                              1
+                                                                          ? "${room.beds} beds"
+                                                                          : "${room.beds} bed",
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        color: Theme.of(context)
+                                                                            .colorScheme
+                                                                            .primary, // Set the text color to black or your desired color
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
                                                             ),
                                                           ],
                                                         ),
@@ -376,16 +477,50 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                         ),
                                                         Row(
                                                           children: [
-                                                            const Icon(
-                                                                Icons
-                                                                    .bathtub_outlined,
-                                                                size: 30),
-                                                            Text(
-                                                              "Bathrooms: ${room.bathrooms}",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          18),
+                                                            Icon(
+                                                              Icons
+                                                                  .bathtub_outlined,
+                                                              size: 20,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 10),
+                                                            Expanded(
+                                                              child: RichText(
+                                                                text: TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                          "The room has ",
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        color: Theme.of(context)
+                                                                            .colorScheme
+                                                                            .onBackground, // Set the text color to black or your desired color
+                                                                      ),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text: room.bathrooms >
+                                                                              1
+                                                                          ? "${room.bathrooms} bathrooms"
+                                                                          : "${room.bathrooms} bathroom",
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        color: Theme.of(context)
+                                                                            .colorScheme
+                                                                            .primary, // Set the text color to black or your desired color
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
                                                             ),
                                                           ],
                                                         ),

@@ -280,7 +280,7 @@ class _BookingsAccomodationCustomerState
 
                                     // checked in time
                                     Text(
-                                      ('Checked In: ${booking.serviceStart != null ? TimeOfDay.fromDateTime(booking.serviceStart!).format(context) : ""}'),
+                                      ('Check In: ${booking.serviceStart != null ? TimeOfDay.fromDateTime(booking.serviceStart!).format(context) : ""}'),
                                       style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w300),
@@ -435,12 +435,12 @@ class _BookingsAccomodationCustomerState
                                 Text(
                                     'Cancellation before ${DateFormat('MMM d, HH:mm a').format(booking.endDate!.subtract(const Duration(days: 5)))}'
                                     ' entitles you to a refund amount of ₱${booking.amountPaid!.toStringAsFixed(2)}\n'
-                                    'Cancellation after stated date entitles you to a refund amount of ₱${(booking.amountPaid! - (booking.amountPaid! * widget.listing.cancellationRate!)).toStringAsFixed(2)}'),
+                                    'Cancellation after stated date entitles you to a refund amount of ₱${(booking.amountPaid! - (widget.listing.cancellationRate! > 1 ? widget.listing.cancellationRate! : booking.amountPaid! * (widget.listing.cancellationRate!))).toStringAsFixed(2)}'),
                               if (booking.paymentOption == "Full Payment")
                                 Text(
                                     'Cancellation before ${DateFormat('MMM d, HH:mm a').format(booking.endDate!.subtract(const Duration(days: 5)))}'
-                                    ' entitles you to a refund amount of ₱${(booking.amountPaid! - (booking.amountPaid! * widget.listing.downpaymentRate!)).toStringAsFixed(2)}\n'
-                                    'Cancellation after stated date entitles you to a refund amount of ₱${(booking.amountPaid! - (booking.amountPaid! * widget.listing.cancellationRate!)).toStringAsFixed(2)}'),
+                                    ' entitles you to a refund amount of ₱${(booking.amountPaid!).toStringAsFixed(2)}\n'
+                                    'Cancellation after stated date entitles you to a refund amount of ₱${(booking.amountPaid! - (widget.listing.cancellationRate! > 1 ? widget.listing.cancellationRate! : booking.amountPaid! * (widget.listing.cancellationRate!))).toStringAsFixed(2)}'),
                             ],
                           ),
                         ),
@@ -535,16 +535,16 @@ class _BookingsAccomodationCustomerState
                       ),
 
                       // Payment Information Header
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Payment Information',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                      // const Padding(
+                      //   padding: EdgeInsets.all(8.0),
+                      //   child: Text(
+                      //     'Payment Information',
+                      //     style: TextStyle(
+                      //       fontSize: 20,
+                      //       fontWeight: FontWeight.bold,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   )),
                 );
@@ -636,7 +636,7 @@ class _BookingsAccomodationCustomerState
                         onPressed: () =>
                             onTapPayBalance(context, booking, balance)
                                 .then((value) {
-                                  context.pop();
+                          context.pop();
                         }),
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -710,8 +710,8 @@ class _BookingsAccomodationCustomerState
 
   Future<dynamic> onTapPayBalance(
       context, ListingBookings booking, num amountDue) async {
-    
-    await payWithPaymaya(booking, widget.listing, ref, context, 'Downpayment', amountDue, null);
+    await payWithPaymaya(
+        booking, widget.listing, ref, context, 'Downpayment', amountDue, null);
     // final updatedBooking = booking.copyWith(
     //     amountPaid: amountDue + booking.amountPaid!,
     //     paymentStatus: "Fully Paid");
@@ -975,9 +975,9 @@ class _BookingsAccomodationCustomerState
       ref.read(salesControllerProvider.notifier).updateSale(
           context, updatedSale,
           booking: updatedBooking, trip: updatedTrip);
-      ref.read(notificationControllerProvider.notifier).addNotification(
-        accommodationUserCancelNotif, context
-      );
+      ref
+          .read(notificationControllerProvider.notifier)
+          .addNotification(accommodationUserCancelNotif, context);
     }
   }
 }

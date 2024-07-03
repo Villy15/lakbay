@@ -270,13 +270,13 @@ class _BookingsFoodCustomerState extends ConsumerState<BookingsFoodCustomer> {
                                           fontWeight: FontWeight.normal))
                                 ])),
 
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 15, right: 15, top: 20),
-                                child: Text('Payment Information',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold)))
+                            // const Padding(
+                            //     padding: EdgeInsets.only(
+                            //         left: 15, right: 15, top: 20),
+                            //     child: Text('Payment Information',
+                            //         style: TextStyle(
+                            //             fontSize: 20,
+                            //             fontWeight: FontWeight.bold)))
                           ])));
                 },
                 error: ((error, stackTrace) => ErrorText(
@@ -432,7 +432,10 @@ class _BookingsFoodCustomerState extends ConsumerState<BookingsFoodCustomer> {
                                           onPressed: selectedReason != null
                                               ? () {
                                                   // cancel booking
-                                                  cancellationPaymentDetails(context, booking, paymentDetails);
+                                                  cancellationPaymentDetails(
+                                                      context,
+                                                      booking,
+                                                      paymentDetails);
                                                 }
                                               : null,
                                           style: FilledButton.styleFrom(
@@ -531,9 +534,9 @@ class _BookingsFoodCustomerState extends ConsumerState<BookingsFoodCustomer> {
       ref.read(salesControllerProvider.notifier).updateSale(
           context, updatedSale,
           booking: updatedBooking, trip: updatedTrip);
-      ref.read(notificationControllerProvider.notifier).addNotification(
-        foodUserCancelNotif, context
-      );
+      ref
+          .read(notificationControllerProvider.notifier)
+          .addNotification(foodUserCancelNotif, context);
     }
   }
 }

@@ -400,16 +400,16 @@ class _BookingsEntertainmentCustomerState
                             ),
 
                             // Payment Information Header
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                'Payment Information',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            // const Padding(
+                            //   padding: EdgeInsets.all(8.0),
+                            //   child: Text(
+                            //     'Payment Information',
+                            //     style: TextStyle(
+                            //       fontSize: 20,
+                            //       fontWeight: FontWeight.bold,
+                            //     ),
+                            //   ),
+                            // ),
                           ])));
                 },
                 error: (error, stackTrace) =>
@@ -672,9 +672,9 @@ class _BookingsEntertainmentCustomerState
       ref.read(salesControllerProvider.notifier).updateSale(
           context, updatedSale,
           booking: updatedBooking, trip: updatedTrip);
-      ref.read(notificationControllerProvider.notifier).addNotification(
-        entertainmentUserNotif, context
-      );
+      ref
+          .read(notificationControllerProvider.notifier)
+          .addNotification(entertainmentUserNotif, context);
     }
   }
 }

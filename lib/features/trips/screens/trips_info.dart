@@ -240,41 +240,41 @@ class _TripsInfoState extends ConsumerState<TripsInfo> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
 
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.0),
-              child: Text(
-                'Our Memories',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
+            // const Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 12.0),
+            //   child: Text(
+            //     'Our Memories',
+            //     style: TextStyle(
+            //       fontSize: 24.0,
+            //       fontWeight: FontWeight.bold,
+            //     ),
+            //   ),
+            // ),
+            // const SizedBox(height: 10),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: DottedBorder(
-                borderType: BorderType.RRect,
-                radius: const Radius.circular(12),
-                padding: const EdgeInsets.all(6),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(12)),
-                  child: SizedBox(
-                    height: 100,
-                    // max width
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    child: const Center(
-                      child: Icon(
-                        Icons.camera_alt,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            )
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            //   child: DottedBorder(
+            //     borderType: BorderType.RRect,
+            //     radius: const Radius.circular(12),
+            //     padding: const EdgeInsets.all(6),
+            //     child: ClipRRect(
+            //       borderRadius: const BorderRadius.all(Radius.circular(12)),
+            //       child: SizedBox(
+            //         height: 100,
+            //         // max width
+            //         width: MediaQuery.of(context).size.width * 0.3,
+            //         child: const Center(
+            //           child: Icon(
+            //             Icons.camera_alt,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // )
             // Location
           ],
         ),

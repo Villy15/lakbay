@@ -13,6 +13,7 @@ import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_image.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
+import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/common/widgets/text_in_bottomsheet.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/crud/customer_accommodation_checkout.dart';
@@ -276,7 +277,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                   ),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
+                    child: FilledButton(
                       onPressed: () {
                         startDate = startDate.copyWith(
                             hour: widget.listing.checkIn!.hour,
@@ -377,58 +378,84 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
           ),
 
           Padding(
-            padding: const EdgeInsets.only(left: 10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 14.0),
-                  child: DisplayText(
-                    text: widget.listing.title,
-                    lines: 2,
-                    style: const TextStyle(
-                      fontSize: 22,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Check In',
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w500),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(widget.listing.checkIn!.format(context),
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500)),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const VerticalDivider(
+                        color: Colors.grey,
+                        thickness: 5,
+                        width: 10,
+                        indent: 0,
+                        endIndent: 0,
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _displaySubHeader('Check Out'),
+                              const SizedBox(height: 10),
+                              Text(widget.listing.checkOut!.format(context),
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _displaySubHeader("Description"),
+                TextInBottomSheet(
+                    widget.listing.title, widget.listing.description, context),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Find Us Here',
+                    style: TextStyle(
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                // Location
-                DisplayText(
-                  text:
-                      "Location: ${widget.listing.province}, ${widget.listing.city}",
-                  lines: 4,
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
+
+                // Getting There Address
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: MediaQuery.sizeOf(context).height / 5,
+                    child: MapWidget(address: widget.listing.address),
                   ),
                 ),
-
-                DisplayText(
-                  text: "${widget.listing.category} · ${widget.listing.type}",
-                  lines: 1,
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
-                  ),
-                ),
-
-                const Divider(),
-                DisplayText(
-                  text: 'Description',
-                  lines: 1,
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
-                  ),
-                ),
-                TextInBottomSheet(
-                    "About this space", widget.listing.description, context),
-
-                const Divider(),
-                // DisplayText(
-                //   text: 'Where you\'ll sleep',
-                //   lines: 1,
-                //   style: TextStyle(
-                //     fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -471,20 +498,20 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
           const Divider(),
 
           // Add this to current trip
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-            child: FilledButton(
-              onPressed: () {
-                addCurrentTrip(context, planUid);
-              },
-              style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all<Size>(
-                    const Size(double.infinity, 45)),
-              ),
-              child: const Text('Add this to current trip'),
-            ),
-          ),
+          // Padding(
+          //   padding:
+          //       const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+          //   child: FilledButton(
+          //     onPressed: () {
+          //       addCurrentTrip(context, planUid);
+          //     },
+          //     style: ButtonStyle(
+          //       minimumSize: MaterialStateProperty.all<Size>(
+          //           const Size(double.infinity, 45)),
+          //     ),
+          //     child: const Text('Add this to current trip'),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -502,6 +529,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                     .images!
                     .map((listingImage) => listingImage.url)
                     .toList();
+                var room = rooms[index];
                 return Card(
                   elevation: 1.0, // Slight shadow for depth
                   margin: const EdgeInsets.all(8.0), // Space around the card
@@ -571,7 +599,7 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                   ],
                                 ),
                                 Center(
-                                    child: ElevatedButton(
+                                    child: FilledButton(
                                   onPressed: () async {
                                     final bookings = await ref.watch(
                                         getAllBookingsByIdProvider((
@@ -583,9 +611,11 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                       showSelectDate(context, bookings, index);
                                     }
                                   },
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 50, vertical: 15),
+                                  style: FilledButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          8.0), // Adjust the value as needed
+                                    ),
                                   ),
                                   child: const Text(
                                     'Book Now',
@@ -604,7 +634,12 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: const Text("Room Details"),
+                                            title: Text("Room Details",
+                                                style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary, // Set the text color to black or your desired color
+                                                )),
                                             content: SizedBox(
                                               height: MediaQuery.sizeOf(context)
                                                       .height /
@@ -616,14 +651,48 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                                 children: [
                                                   Row(
                                                     children: [
-                                                      const Icon(
-                                                          Icons
-                                                              .people_alt_outlined,
-                                                          size: 30),
-                                                      Text(
-                                                        "Guests: ${rooms[index].guests}",
-                                                        style: const TextStyle(
-                                                            fontSize: 18),
+                                                      Icon(
+                                                        Icons
+                                                            .people_alt_outlined,
+                                                        size: 20,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
+                                                      ),
+                                                      const SizedBox(width: 10),
+                                                      Expanded(
+                                                        child: RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    "Can accommodate up to \n",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .onBackground, // Set the text color to black or your desired color
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text: room.guests >
+                                                                        1
+                                                                    ? "${room.guests} guests"
+                                                                    : "${room.guests} guest",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .primary, // Set the text color to black or your desired color
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
@@ -632,13 +701,47 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                                   ),
                                                   Row(
                                                     children: [
-                                                      const Icon(
-                                                          Icons.bed_rounded,
-                                                          size: 30),
-                                                      Text(
-                                                        "Beds: ${rooms[index].beds}",
-                                                        style: const TextStyle(
-                                                            fontSize: 18),
+                                                      Icon(
+                                                        Icons.bed_rounded,
+                                                        size: 20,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
+                                                      ),
+                                                      const SizedBox(width: 10),
+                                                      Expanded(
+                                                        child: RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    "The room has ",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .onBackground, // Set the text color to black or your desired color
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text: room.beds >
+                                                                        1
+                                                                    ? "${room.beds} beds"
+                                                                    : "${room.beds} bed",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .primary, // Set the text color to black or your desired color
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
@@ -647,14 +750,47 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                                                   ),
                                                   Row(
                                                     children: [
-                                                      const Icon(
-                                                          Icons
-                                                              .bathtub_outlined,
-                                                          size: 30),
-                                                      Text(
-                                                        "Bathrooms: ${rooms[index].bathrooms}",
-                                                        style: const TextStyle(
-                                                            fontSize: 18),
+                                                      Icon(
+                                                        Icons.bathtub_outlined,
+                                                        size: 20,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
+                                                      ),
+                                                      const SizedBox(width: 10),
+                                                      Expanded(
+                                                        child: RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    "The room has ",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .onBackground, // Set the text color to black or your desired color
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text: room.bathrooms >
+                                                                        1
+                                                                    ? "${room.bathrooms} bathrooms"
+                                                                    : "${room.bathrooms} bathroom",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .primary, // Set the text color to black or your desired color
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
@@ -763,5 +899,23 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
             ),
           ),
         ));
+  }
+
+  Widget _displaySubtitleText(String text) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
+    );
+  }
+
+  Text _displaySubHeader(String subHeader) {
+    return Text(
+      subHeader,
+      style: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        // Add other styling as needed
+      ),
+    );
   }
 }
