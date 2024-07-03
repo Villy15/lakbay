@@ -118,11 +118,11 @@ class _CustomerAccomodationCheckoutState
                       paymentStatus: paymentStatus,
                       totalPrice: num.parse(totalPrice.toStringAsFixed(2)),
                       amountPaid: num.parse(amountDue.toStringAsFixed(2)),
-                      createdAt: DateTime.now()
-                      );
+                      createdAt: DateTime.now());
                 });
-                
-                await payWithPaymaya(updatedBooking, widget.listing, ref, context, paymentOption, amountDue, null);
+
+                await payWithPaymaya(updatedBooking, widget.listing, ref,
+                    context, paymentOption, amountDue, null);
                 // context.pop();
                 // context.pop();
                 // context.pop();
@@ -322,7 +322,7 @@ class _CustomerAccomodationCheckoutState
                             fontSize: 16,
                           )),
                       Text(
-                          'This rental has a remaining capacity of ${_maxGuestCount - widget.availableTime.currentPax}',
+                          'This rental has a remaining capacity of ${_maxGuestCount - widget.availableTime.maxPax}',
                           style: TextStyle(
                               fontSize: 12,
                               color: Theme.of(context).colorScheme.primary,

@@ -9,15 +9,16 @@ part of 'listing_model.dart';
 _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
     _$ListingModelImpl(
       address: json['address'] as String,
-      availableDates: (json['availableDates'] as List<dynamic>?)
-          ?.map((e) => AvailableDate.fromJson(e as Map<String, dynamic>))
-          .toList(),
       availableTimes: (json['availableTimes'] as List<dynamic>?)
           ?.map((e) => AvailableTime.fromJson(e as Map<String, dynamic>))
           .toList(),
       availableRooms: (json['availableRooms'] as List<dynamic>?)
           ?.map((e) => AvailableRoom.fromJson(e as Map<String, dynamic>))
           .toList(),
+      entertainmentScheduling: json['entertainmentScheduling'] == null
+          ? null
+          : EntertainmentScheduling.fromJson(
+              json['entertainmentScheduling'] as Map<String, dynamic>),
       category: json['category'] as String,
       cancellationRate: json['cancellationRate'] as num?,
       checkIn: _$JsonConverterFromJson<Map<String, dynamic>, TimeOfDay>(
@@ -90,12 +91,11 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
     <String, dynamic>{
       'address': instance.address,
-      'availableDates':
-          instance.availableDates?.map((e) => e.toJson()).toList(),
       'availableTimes':
           instance.availableTimes?.map((e) => e.toJson()).toList(),
       'availableRooms':
           instance.availableRooms?.map((e) => e.toJson()).toList(),
+      'entertainmentScheduling': instance.entertainmentScheduling?.toJson(),
       'category': instance.category,
       'cancellationRate': instance.cancellationRate,
       'checkIn': _$JsonConverterToJson<Map<String, dynamic>, TimeOfDay>(
@@ -370,12 +370,32 @@ Map<String, dynamic> _$$FoodServiceImplToJson(_$FoodServiceImpl instance) =>
       'endTime': const TimeOfDayConverter().toJson(instance.endTime),
     };
 
+_$EntertainmentSchedulingImpl _$$EntertainmentSchedulingImplFromJson(
+        Map<String, dynamic> json) =>
+    _$EntertainmentSchedulingImpl(
+      type: json['type'] as String?,
+      availability: (json['availability'] as List<dynamic>?)
+          ?.map((e) => AvailableDay.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      fixedDates: (json['fixedDates'] as List<dynamic>?)
+          ?.map((e) => AvailableDate.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$EntertainmentSchedulingImplToJson(
+        _$EntertainmentSchedulingImpl instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+      'availability': instance.availability?.map((e) => e.toJson()).toList(),
+      'fixedDates': instance.fixedDates?.map((e) => e.toJson()).toList(),
+    };
+
 _$EntertainmentServiceImpl _$$EntertainmentServiceImplFromJson(
         Map<String, dynamic> json) =>
     _$EntertainmentServiceImpl(
-      json['uid'] as String?,
-      json['listingId'] as String?,
-      json['listingName'] as String?,
+      uid: json['uid'] as String?,
+      listingId: json['listingId'] as String?,
+      listingName: json['listingName'] as String?,
       entertainmentId: json['entertainmentId'] as String,
       guests: json['guests'] as num,
       price: json['price'] as num,
@@ -434,7 +454,6 @@ Map<String, dynamic> _$$AvailableDayImplToJson(_$AvailableDayImpl instance) =>
 _$AvailableTimeImpl _$$AvailableTimeImplFromJson(Map<String, dynamic> json) =>
     _$AvailableTimeImpl(
       available: json['available'] as bool,
-      currentPax: json['currentPax'] as num,
       maxPax: json['maxPax'] as num,
       time: const TimeOfDayConverter()
           .fromJson(json['time'] as Map<String, dynamic>),
@@ -443,7 +462,6 @@ _$AvailableTimeImpl _$$AvailableTimeImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$AvailableTimeImplToJson(_$AvailableTimeImpl instance) =>
     <String, dynamic>{
       'available': instance.available,
-      'currentPax': instance.currentPax,
       'maxPax': instance.maxPax,
       'time': const TimeOfDayConverter().toJson(instance.time),
     };
