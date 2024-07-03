@@ -143,6 +143,32 @@ class CoopsRepository {
     }
   }
 
+  // Add a member in members in the members arrray of the cooperative
+  FutureEither<String> addMemberToCoop(String coopId, String uid) async {
+    try {
+      // Edit the coop to add the member to the list of members but not in the subcollection
+      var coop = await _communities.doc(coopId).get();
+
+      if (coop.exists) {
+        var coopData = coop.data() as Map<String, dynamic>;
+        var members = coopData['members'] as List<dynamic>;
+
+        if (!members.contains(uid)) {
+          members.add(uid);
+          coopData['members'] = members;
+
+          await _communities.doc(coopId).update(coopData);
+        }
+      }
+
+      return right(uid);
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   // Delete a member in members subcollection
   FutureVoid deleteMember(String coopId, String uid) async {
     try {

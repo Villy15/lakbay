@@ -90,12 +90,14 @@ class TripCard extends ConsumerWidget {
                             Icons.location_on,
                             size: 16,
                           ),
-                          Text(
-                            plan.location,
-                            style: const TextStyle(
-                              fontSize: 16,
+                          Expanded(
+                            child: Text(
+                              plan.location,
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       )),
