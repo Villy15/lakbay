@@ -888,7 +888,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                     ),
                     border: OutlineInputBorder(),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: "Price per person",
+                    hintText: "50",
                   ),
                 ),
               ),
