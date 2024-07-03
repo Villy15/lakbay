@@ -63,6 +63,11 @@ class UsersController extends StateNotifier<bool> {
     _ref.read(userProvider.notifier).setUser(user);
   }
 
+  void editUserAfterJoinCoopCoopsJoined(
+      String uid, CooperativesJoined user) async {
+    await _userRepository.editUserCooperativesJoined(uid, user);
+  }
+
   // Edit user isCoopView
   void editUserIsCoopView(
       BuildContext context, String uid, UserModel user) async {

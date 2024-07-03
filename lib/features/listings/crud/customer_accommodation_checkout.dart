@@ -4,14 +4,11 @@ import 'dart:convert';
 // import 'package:cooptourism/core/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
-import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
-import 'package:lakbay/payments/payment_web_view.dart';
 import 'package:lakbay/payments/payment_with_paymaya.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:uni_links/uni_links.dart';
@@ -666,9 +663,15 @@ class _CustomerAccomodationCheckoutState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                        "Downpayment Rate (${(widget.listing.downpaymentRate! > 1 ? widget.listing.downpaymentRate : widget.listing.downpaymentRate! * 100)!.toStringAsFixed(0)}%):"),
-                    Text("₱${downpaymentAmount?.toStringAsFixed(2)}"),
+                    if (widget.listing.downpaymentRate! > 1) ...[
+                      const Text("Downpayment Rate (₱)"),
+                      Text(
+                          "₱${widget.listing.downpaymentRate!.toStringAsFixed(2)}"),
+                    ] else if (widget.listing.downpaymentRate! < 1) ...[
+                      Text(
+                          "Downpayment Rate (${(widget.listing.downpaymentRate! * 100).toStringAsFixed(0)}%):"),
+                      Text("₱${downpaymentAmount?.toStringAsFixed(2)}"),
+                    ],
                   ],
                 ),
             ]),

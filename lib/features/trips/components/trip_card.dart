@@ -90,12 +90,14 @@ class TripCard extends ConsumerWidget {
                             Icons.location_on,
                             size: 16,
                           ),
-                          Text(
-                            plan.location,
-                            style: const TextStyle(
-                              fontSize: 16,
+                          Expanded(
+                            child: Text(
+                              plan.location,
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       )),
@@ -115,15 +117,15 @@ class TripCard extends ConsumerWidget {
                         ),
 
                         // Participants
-                        const Row(
+                        Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.people,
                               size: 16,
                             ),
                             Text(
-                              ' 2 participants',
-                              style: TextStyle(
+                              '${plan.guests.toString()} participants',
+                              style: const TextStyle(
                                 fontSize: 16,
                               ),
                             ),

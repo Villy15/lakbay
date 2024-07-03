@@ -58,6 +58,20 @@ class UserRepository {
     }
   }
 
+  // Edit user cooperativesJoined by uid and
+  FutureVoid editUserCooperativesJoined(
+      String uid, CooperativesJoined coopsJoined) async {
+    try {
+      return right(_users.doc(uid).update({
+        'cooperativesJoined': [coopsJoined.toJson()]
+      }));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   CollectionReference get _users =>
       _firestore.collection(FirebaseConstants.usersCollection);
 }

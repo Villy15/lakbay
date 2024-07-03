@@ -224,8 +224,28 @@ class CoopsController extends StateNotifier<bool> {
       (r) {
         // Handle the success here
         state = false;
-        showSnackBar(context, 'Cooperative updated successfully');
-        context.pop();
+        // showSnackBar(context, 'Cooperative updated successfully');
+        // context.pop();
+      },
+    );
+  }
+
+  void addMemberUidOnMembersList(String coopUid, String memberUid) async {
+    state = true;
+    final result = await _coopsRepository.addMemberToCoop(coopUid, memberUid);
+
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        // showSnackBar(context, l.message);
+      },
+      (r) {
+        // Handle the success here
+        state = false;
+        // showSnackBar(context, 'Member added successfully');
+        // context.pop();
+        // _ref.read(navBarVisibilityProvider.notifier).show();
       },
     );
   }
@@ -633,15 +653,14 @@ class CoopsController extends StateNotifier<bool> {
 
           // add notification
           final notif = NotificationsModel(
-            title:
-                ref.watch(getCooperativeProvider(coopUid)).asData?.value.name,
-            message: "A new announcement is made: ${coopAnnouncement.title}",
-            coopId: coopUid,
-            isToAllMembers: true,
-            type: 'coop_announcement',
-            createdAt: DateTime.now(),
-            isRead: false
-          );
+              title:
+                  ref.watch(getCooperativeProvider(coopUid)).asData?.value.name,
+              message: "A new announcement is made: ${coopAnnouncement.title}",
+              coopId: coopUid,
+              isToAllMembers: true,
+              type: 'coop_announcement',
+              createdAt: DateTime.now(),
+              isRead: false);
 
           ref
               .read(notificationControllerProvider.notifier)
