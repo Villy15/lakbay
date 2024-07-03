@@ -591,8 +591,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                                                   in bookingsCopy) {
                                                 // only get the date and not the time from booking.startDate. trim it to only get the date
                                                 if (booking.bookingStatus !=
-                                                        "Cancelled" &&
-                                                    day.available == true) {
+                                                    "Cancelled") {
                                                   DateTime bookingStartDate =
                                                       booking.startDate!;
                                                   String formattedDate =
