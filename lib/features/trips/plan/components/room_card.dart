@@ -73,11 +73,16 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     final currentUser = ref.read(userProvider);
     // final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     List<String> unavailableRoomUids =
-        getUnavailableRoomUids(widget.bookings, startDate!, endDate!);
+        getUnavailableRoomUids(widget.bookings, startDate!, endDate!, widget.accommodationListings);
     Query query = widget.query ??
         FirebaseFirestore.instance.collectionGroup('availableRooms');
     if (unavailableRoomUids.isNotEmpty) {
       query = query.where('uid', whereNotIn: unavailableRoomUids);
+    }
+    
+    if (widget.accommodationListings != null) {
+      query = query.where('listingId',
+          whereIn: widget.accommodationListings!.map((e) => e.uid).toList());
     }
 
     return ref.watch(getRoomByPropertiesProvider(query)).when(
