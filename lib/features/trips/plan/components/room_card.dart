@@ -153,7 +153,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                             ),
                                             Flexible(
                                               flex: 1,
-                                              child: Text(
+                                              child: widget.allListings != null ? Text(
                                                 "Check In: ${widget.allListings?.firstWhere((element) {
                                                       if (element.uid! ==
                                                           room.listingId) {
@@ -162,13 +162,14 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                                                         return false;
                                                       }
                                                     }).checkIn!.format(context)}",
+                                                    
                                                 style: const TextStyle(
                                                   fontSize:
                                                       14, // Increased font size, larger than the previous one
                                                   fontWeight: FontWeight
                                                       .w500, // Bold text
                                                 ),
-                                              ),
+                                              ) : Text(""),
                                             ),
                                           ],
                                         ),
