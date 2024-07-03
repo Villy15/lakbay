@@ -30,7 +30,6 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        ref.read(navBarVisibilityProvider.notifier).show();
         Navigator.of(context).pop();
       },
       child: Scaffold(
@@ -40,7 +39,6 @@ class _CustomerEntertainmentState extends ConsumerState<CustomerEntertainment> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              ref.read(navBarVisibilityProvider.notifier).show();
               Navigator.of(context).pop();
             },
           ),
