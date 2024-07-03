@@ -242,7 +242,7 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                       context.push('/plan/add_activity/search_listing', extra: {
                         'bookings': bookings,
                         'listings': listings,
-                        'category': category["name"]
+                        'category': category["name"],
                       });
                     }
                     break;

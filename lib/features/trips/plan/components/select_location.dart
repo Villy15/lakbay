@@ -85,6 +85,9 @@ class _SelectLocationState extends ConsumerState<SelectLocation> {
                               ref.read(pickupPointLocationProvider.notifier);
                           pickupPointLocation.setLocation(predictions[index]);
                           break;
+                        case 'search_plan': 
+                          final planSearchLocation = ref.read(planSearchLocationProvider.notifier);
+                          planSearchLocation.setLocation(predictions[index]);
                         default:
                           final planLocation =
                               ref.read(planLocationProvider.notifier);

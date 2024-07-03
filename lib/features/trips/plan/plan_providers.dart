@@ -135,6 +135,29 @@ class PickupPointLocationProvider extends StateNotifier<String?> {
   }
 }
 
+// Plan Search Location State Notifier Provider
+final planSearchLocationProvider =
+    StateNotifierProvider<PlanSearchLocationProvider, String?>(
+  (ref) => PlanSearchLocationProvider(),
+);
+
+class PlanSearchLocationProvider extends StateNotifier<String?> {
+  PlanSearchLocationProvider() : super(null);
+
+  void setLocation(String location) {
+    state = location;
+  }
+
+  void reset() {
+    state = null;
+  }
+
+  void clearLocation() {
+    state = '';
+  }
+
+}
+
 // Plan Start Date State Notifier Provider
 final planStartDateProvider =
     StateNotifierProvider<PlanStartDateProvider, DateTime?>(

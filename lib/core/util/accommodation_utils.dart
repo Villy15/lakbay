@@ -1,36 +1,68 @@
+import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 List<String> getUnavailableRoomUids(
-    List<ListingBookings> bookings, DateTime startDate, DateTime endDate) {
+    List<ListingBookings> bookings, DateTime startDate, DateTime endDate, List<ListingModel>? filteredListings) {
   List<String> unavailableRoomUids = [];
   Map<String, List<DateTime>> rooms = {};
 
-// Put all the dates booked under a certain room uid in map with its corresponding value being a list of all the dates
-  for (ListingBookings booking in bookings) {
-    DateTime currentDate = booking.startDate!;
-    if (_isDateInRange(currentDate, startDate, booking.endDate!) == true) {
-      while ((currentDate.isBefore(booking.endDate!))) {
-        if (rooms.containsKey(booking.roomUid)) {
-          rooms[booking.roomUid!]!.add(currentDate);
-        } else {
-          rooms[booking.roomUid!] = [currentDate];
+  if (filteredListings == null) {
+    // Put all the dates booked under a certain room uid in map with its corresponding value being a list of all the dates
+    for (ListingBookings booking in bookings) {
+      DateTime currentDate = booking.startDate!;
+      if (_isDateInRange(currentDate, startDate, booking.endDate!) == true) {
+        while ((currentDate.isBefore(booking.endDate!))) {
+          if (rooms.containsKey(booking.roomUid)) {
+            rooms[booking.roomUid!]!.add(currentDate);
+          } else {
+            rooms[booking.roomUid!] = [currentDate];
+          }
+          // Move to the next day
+          currentDate = currentDate.add(const Duration(days: 1));
         }
-        // Move to the next day
-        currentDate = currentDate.add(const Duration(days: 1));
+        // Sort the list of dates for the room UID
+        rooms[booking.roomUid!]!.sort();
       }
-      // Sort the list of dates for the room UID
-      rooms[booking.roomUid!]!.sort();
     }
+
+  // for each room in the map, you check if there is a date overlap, trying to find if there is any availability that fits your desired plan dates
+
+    rooms.forEach((roomUid, dateList) {
+      if (isDateOverlap(startDate, endDate, dateList) == true) {
+        unavailableRoomUids.add(roomUid);
+      }
+    });
+    return unavailableRoomUids;
   }
+  else {
+    Set<String?>? listingUids = filteredListings?.map((listing) => listing.uid).toSet();
+    List<ListingBookings> filteredBookings = bookings.where((booking) => (listingUids ?? {}).contains(booking.roomUid)).toList();
 
-// for each room in the map, you check if there is a date overlap, trying to find if there is any availability that fits your desired plan dates
-
-  rooms.forEach((roomUid, dateList) {
-    if (isDateOverlap(startDate, endDate, dateList) == true) {
-      unavailableRoomUids.add(roomUid);
+    for (ListingBookings booking in filteredBookings) {
+      DateTime currentDate = booking.startDate!;
+      if (_isDateInRange(currentDate, startDate, booking.endDate!) == true) {
+        while ((currentDate.isBefore(booking.endDate!))) {
+          if (rooms.containsKey(booking.roomUid)) {
+            rooms[booking.roomUid!]!.add(currentDate);
+          } else {
+            rooms[booking.roomUid!] = [currentDate];
+          }
+          // Move to the next day
+          currentDate = currentDate.add(const Duration(days: 1));
+        }
+        // Sort the list of dates for the room UID
+        rooms[booking.roomUid!]!.sort();
+      }
     }
-  });
-  return unavailableRoomUids;
+
+    rooms.forEach((roomUid, dateList) {
+      if (isDateOverlap(startDate, endDate, dateList) == true) {
+        unavailableRoomUids.add(roomUid);
+      }
+    });
+
+    return unavailableRoomUids;
+  }
 }
 
 bool _isDateInRange(DateTime date, DateTime planStart, DateTime planEnd) {

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -59,13 +60,17 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
     }
   }
 
-  Widget entertainmentTypeController(
+  Widget? entertainmentTypeController(
       ListingModel listing, String? type, DateTime currentDate) {
     final List<String?> imageUrls =
         listing.images!.map((listingImage) => listingImage.url).toList();
     switch (type) {
       case 'Rental':
         return rentalCard(listing, imageUrls, currentDate);
+      case "Watching/Performances":
+        return rentalCard(listing, imageUrls, currentDate);
+      case 'Activities/Tours':
+        return activityToursCard(listing, imageUrls, currentDate);
       default:
         return rentalCard(listing, imageUrls, currentDate);
     }
@@ -125,8 +130,8 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                               ),
                               TextSpan(
                                 text: listing.duration!.hour == 0
-                                    ? ' /${listing.duration!.minute}mins'
-                                    : ' /${listing.duration!.hour}:${listing.duration!.minute} hr:mins',
+                                    ? '/ ${listing.duration!.minute} mins'
+                                    : '/ ${listing.duration!.hour} hrs ${listing.duration!.minute.remainder(60)} mins',
                                 style: TextStyle(
                                     fontSize:
                                         14, // Smaller size for 'per night'
@@ -209,7 +214,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                                     builder: (context) {
                                       return AlertDialog(
                                         title: const Text(
-                                            'Select a Departure Time',
+                                            'Select a Rental Time Slot',
                                             style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold)),
@@ -412,6 +417,345 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
         ],
       )),
     );
+  }
+
+  Widget? activityToursCard(
+      ListingModel listing, List<String?> imageUrls, DateTime currentDate) {
+    final currentUser = ref.read(userProvider);
+    final dayIndex = ref.read(daysPlanProvider).currentDay!.weekday - 1;
+    var day = listing.entertainmentScheduling!.availability![dayIndex];
+    var timeSlots = day.availableTimes;
+    if (day.available == true) {
+      return SizedBox(
+        // height: MediaQuery.sizeOf(context).height / 2,
+        width: MediaQuery.sizeOf(context).width / 2,
+        child: Card(
+            child: Column(
+          children: [
+            ImageSlider(
+                images: imageUrls,
+                height: MediaQuery.sizeOf(context).height / 4,
+                width: MediaQuery.sizeOf(context).width / 2,
+                radius: BorderRadius.circular(10)),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 20.0,
+                  right: 10,
+                  top: 10,
+                  bottom: 10), // Reduced overall padding
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            listing.title,
+                            style: const TextStyle(
+                              fontSize:
+                                  14, // Increased font size, larger than the previous one
+                              fontWeight: FontWeight.w500, // Bold text
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "₱${listing.price}",
+                                  style: TextStyle(
+                                      fontSize: 14, // Size for the price
+                                      fontWeight:
+                                          FontWeight.w500, // Bold for the price
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface),
+                                ),
+                                TextSpan(
+                                  text: listing.duration!.hour == 0
+                                      ? '/ ${listing.duration!.minute} mins'
+                                      : '/ ${listing.duration!.hour} hrs ${listing.duration!.minute.remainder(60)} mins',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.normal,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: MediaQuery.sizeOf(context).height / 30,
+                  ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        FilledButton(
+                            onPressed: () {
+                              context.push('/market/${widget.category}',
+                                  extra: listing);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    4.0), // Adjust the radius as needed
+                              ),
+                            ),
+                            child: const Text('View Listing',
+                                style: TextStyle(fontSize: 14))),
+                        FilledButton(
+                            onPressed: () async {
+                              if (currentUser?.name == 'Lakbay User' ||
+                                  currentUser?.phoneNo == null ||
+                                  currentUser?.emergencyContact == null ||
+                                  currentUser?.emergencyContactName == null ||
+                                  currentUser?.governmentId == null) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                          title:
+                                              const Text('Profile Incomplete'),
+                                          content: const Text(
+                                              'To book an entertainment, you need to complete your profile first.'),
+                                          actions: [
+                                            FilledButton(
+                                                onPressed: () async {
+                                                  showUpdateProfile(
+                                                      context, currentUser!);
+                                                },
+                                                style: FilledButton.styleFrom(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        4.0))),
+                                                child: const Text(
+                                                    'Update Profile',
+                                                    style: TextStyle(
+                                                        fontSize: 14)))
+                                          ]);
+                                    });
+                              } else {
+                                if (context.mounted) {
+                                  final bookings = await ref.watch(
+                                      getAllBookingsProvider(listing.uid!)
+                                          .future);
+                                  // String formattedCurrentDate =
+                                  //     DateFormat('MMMM dd, yyyy')
+                                  //         .format(currentDate);
+
+                                  showDialog(
+                                      // ignore: use_build_context_synchronously
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          scrollable: true,
+                                          title: const Text('Select a time',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold)),
+                                          content: Column(
+                                              children: timeSlots
+                                                  .map((availableTime) {
+                                            {
+                                              DateTime dateTimeSlot = DateTime(
+                                                  currentDate.year,
+                                                  currentDate.month,
+                                                  currentDate.day,
+                                                  availableTime.time.hour,
+                                                  availableTime.time.minute);
+                                              List<ListingBookings>
+                                                  bookingsCopy = bookings;
+                                              Map<DateTime?, num>
+                                                  availableTimeAndCapacity = {
+                                                dateTimeSlot:
+                                                    availableTime.maxPax
+                                              };
+                                              // format the currentDate
+                                              String formattedCurrentDate =
+                                                  DateFormat('yyyy-MM-dd')
+                                                      .format(currentDate);
+
+                                              for (ListingBookings booking
+                                                  in bookingsCopy) {
+                                                // only get the date and not the time from booking.startDate. trim it to only get the date
+                                                if (booking.bookingStatus !=
+                                                    "Cancelled") {
+                                                  DateTime bookingStartDate =
+                                                      booking.startDate!;
+                                                  String formattedDate =
+                                                      DateFormat('yyyy-MM-dd')
+                                                          .format(
+                                                              bookingStartDate);
+
+                                                  // check the formattedCurrentDate and the formattedDate if they are the same
+                                                  if (formattedCurrentDate ==
+                                                      formattedDate) {
+                                                    // remove duplicates of departure time, and get the total number of guests for each departure time
+
+                                                    if (availableTimeAndCapacity
+                                                        .containsKey(
+                                                            bookingStartDate)) {
+                                                      availableTimeAndCapacity[
+                                                              bookingStartDate] =
+                                                          availableTimeAndCapacity[
+                                                                  bookingStartDate]! -
+                                                              booking.guests;
+                                                    }
+                                                    //  else {
+                                                    //   deptTimeAndGuests[
+                                                    //       booking
+                                                    //           .startDate] = booking
+                                                    //       .guests;
+                                                    // }
+                                                    // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
+                                                  }
+                                                }
+                                              }
+                                              return ListTile(
+                                                  title: Text(availableTime.time
+                                                      .format(context)),
+                                                  trailing: Text(
+                                                      'Slots Left: ${availableTimeAndCapacity[dateTimeSlot]}'),
+                                                  onTap: () async {
+                                                    num capacity =
+                                                        availableTimeAndCapacity[
+                                                                dateTimeSlot] ??
+                                                            0;
+
+                                                    if (capacity == 0) {
+                                                      // show an alert dialog that the selected departure time is already full
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return AlertDialog(
+                                                                title: const Text(
+                                                                    'No units available'),
+                                                                content: Text(
+                                                                    'The time ${availableTime.time.format(context)} has reached its capacity of ${availableTimeAndCapacity[dateTimeSlot]}.  Please select another time.'),
+                                                                actions: [
+                                                                  TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child: const Text(
+                                                                          'Close'))
+                                                                ]);
+                                                          });
+                                                    } else {
+                                                      showConfirmBooking(
+                                                          availableTime,
+                                                          listing,
+                                                          currentDate);
+                                                    }
+                                                  });
+                                            }
+                                          }).toList()),
+                                          actions: [
+                                            FilledButton(
+                                                onPressed: () {
+                                                  context.pop();
+                                                },
+                                                child: const Text("Back"))
+                                          ],
+                                        );
+                                        // });
+                                      });
+                                }
+                              }
+                            },
+                            style: FilledButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    4.0), // Adjust the radius as needed
+                              ),
+                            ),
+                            child: const Text('Book Now',
+                                style: TextStyle(fontSize: 14)))
+                      ]),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                            child: Row(children: [
+                          const Icon(Icons.hiking_outlined),
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(listing.type!,
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                          )
+                        ])),
+                        TextButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Entertainment Details"),
+                                    content: const Placeholder(),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text("Close"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Entertainment Details",
+                                    style: TextStyle(
+                                        // color: Colors.grey,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.5),
+                                        fontStyle: FontStyle
+                                            .italic // Underline for emphasis
+                                        ),
+                                  ),
+                                  const WidgetSpan(
+                                    child: Icon(
+                                      Icons
+                                          .keyboard_arrow_down, // Arrow pointing down icon
+                                      size:
+                                          16.0, // Adjust the size to fit your design
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ))
+                      ])
+                ],
+              ),
+            )
+          ],
+        )),
+      );
+    } else {
+      return null;
+    }
   }
 
   Future<UserModel> submitUpdateProfile(
@@ -776,18 +1120,40 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppBar(
-                      leading: IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                      title: Text(
-                        formattedStartDate,
-                        style: const TextStyle(fontSize: 18),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Customer Details",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          Text(
+                            formattedStartDate, // Replace with your subtitle text
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onBackground, // Adjust subtitle color as needed
+                            ),
+                          ),
+                        ],
                       ),
                       elevation: 0, // Optional: Remove shadow
+                      iconTheme: IconThemeData(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary, // Change this color to your desired color
+                      ),
                     ),
-                    Padding(
+                    Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
                       child: Column(
                         children: [
                           TextFormField(
@@ -839,90 +1205,97 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                             ),
                             keyboardType: TextInputType.phone,
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Column(
-                      children: [
-                        CheckboxListTile(
-                          enabled: false,
-                          title: const Text("Government ID"),
-                          value: governmentId,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              governmentId = value ?? false;
-                            });
-                          },
-                          controlAffinity: ListTileControlAffinity
-                              .leading, // Position the checkbox at the start of the ListTile
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(
-                              left: 16.0), // Align with the checkbox title
-                          child: Text(
-                            "You're Governemnt ID is required as a means to protect cooperatives.",
-                            style: TextStyle(
-                              fontSize: 12, // Smaller font size for fine print
-                              color: Colors
-                                  .grey, // Optional: Grey color for fine print
+                          const SizedBox(height: 10),
+                          CheckboxListTile(
+                            enabled: false,
+                            title: const Text("Government ID"),
+                            value: governmentId,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                governmentId = value ?? false;
+                              });
+                            },
+                            controlAffinity: ListTileControlAffinity
+                                .leading, // Position the checkbox at the start of the ListTile
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(
+                                left: 16.0), // Align with the checkbox title
+                            child: Text(
+                              "Your Governemnt ID is required as a means to protect cooperatives.",
+                              style: TextStyle(
+                                fontSize:
+                                    12, // Smaller font size for fine print
+                                color: Colors
+                                    .grey, // Optional: Grey color for fine print
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: () {
-                          DateTime startDate = currentDate.copyWith(
-                              hour: availableTime.time.hour,
-                              minute: availableTime.time.minute);
-                          DateTime endDate = startDate.add(Duration(
-                              hours: listing.duration!.hour,
-                              minutes: listing.duration!.minute));
-                          final currentTrip = ref.read(currentTripProvider);
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(
+                              onPressed: () {
+                                DateTime startDate = currentDate.copyWith(
+                                    hour: availableTime.time.hour,
+                                    minute: availableTime.time.minute);
+                                DateTime endDate = startDate.add(Duration(
+                                    hours: listing.duration!.hour,
+                                    minutes: listing.duration!.minute));
+                                final currentTrip =
+                                    ref.read(currentTripProvider);
 
-                          ListingBookings booking = ListingBookings(
-                            tripUid: currentTrip!.uid!,
-                            tripName: currentTrip.name,
-                            listingId: listing.uid!,
-                            listingTitle: listing.title,
-                            customerName: ref.read(userProvider)!.name,
-                            bookingStatus: "Reserved",
-                            price: listing.price!,
-                            category: "Entertainment",
-                            startDate: startDate,
-                            endDate: endDate,
-                            email: user!.email ?? '',
-                            governmentId: user.governmentId ??
-                                '', // add the government id
-                            guests: guests,
-                            customerPhoneNo: phoneNoController.text,
-                            customerId: ref.read(userProvider)!.uid,
-                            emergencyContactName:
-                                emergencyContactNameController.text,
-                            emergencyContactNo:
-                                emergencyContactNoController.text,
-                            needsContributions: false,
-                            tasks: listing.fixedTasks,
-                            cooperativeId: listing.cooperative.cooperativeId,
-                          );
+                                ListingBookings booking = ListingBookings(
+                                  tripUid: currentTrip!.uid!,
+                                  tripName: currentTrip.name,
+                                  listingId: listing.uid!,
+                                  listingTitle: listing.title,
+                                  customerName: ref.read(userProvider)!.name,
+                                  bookingStatus: "Reserved",
+                                  price: listing.price!,
+                                  category: "Entertainment",
+                                  startDate: startDate,
+                                  endDate: endDate,
+                                  email: user!.email ?? '',
+                                  governmentId: user.governmentId ??
+                                      '', // add the government id
+                                  guests: guests,
+                                  customerPhoneNo: phoneNoController.text,
+                                  customerId: ref.read(userProvider)!.uid,
+                                  emergencyContactName:
+                                      emergencyContactNameController.text,
+                                  emergencyContactNo:
+                                      emergencyContactNoController.text,
+                                  needsContributions: false,
+                                  cooperativeId:
+                                      listing.cooperative.cooperativeId,
+                                );
 
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog.fullscreen(
-                                    child: CustomerEntertainmentCheckout(
-                                        listing: listing,
-                                        availableTime: availableTime,
-                                        booking: booking));
-                              }).then((value) {
-                            context.pop();
-                            context.pop();
-                          });
-                        },
-                        child: const Text('Proceed'),
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return Dialog.fullscreen(
+                                          child: CustomerEntertainmentCheckout(
+                                              listing: listing,
+                                              availableTime: availableTime,
+                                              booking: booking));
+                                    }).then((value) {
+                                  context.pop();
+                                  context.pop();
+                                });
+                              },
+                              style: FilledButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      8.0), // Adjust the value as needed
+                                ),
+                              ),
+                              child: const Text('Proceed'),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
