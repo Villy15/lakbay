@@ -184,7 +184,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                                                 showUpdateProfile(
                                                     context, currentUser!);
                                               },
-                                              style: ElevatedButton.styleFrom(
+                                              style: FilledButton.styleFrom(
                                                   shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -338,7 +338,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
 
                             // showConfirmBooking(transport, listing, DateTime.now(), DateTime.now(), , endTime, typeOfTrip);
                           },
-                          style: ElevatedButton.styleFrom(
+                          style: FilledButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                   4.0), // Adjust the radius as needed
@@ -728,7 +728,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                                           .read(userProvider.notifier)
                                           .setUser(user);
                                     },
-                                    style: ElevatedButton.styleFrom(
+                                    style: FilledButton.styleFrom(
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
                                             4.0), // Adjust the radius as needed
@@ -873,7 +873,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                     ),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: FilledButton(
                         onPressed: () {
                           DateTime startDate = currentDate.copyWith(
                               hour: availableTime.time.hour,
