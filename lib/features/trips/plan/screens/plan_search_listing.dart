@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/days_provider.dart';
+import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/trips/plan/components/entertainment_card.dart';
 import 'package:lakbay/features/trips/plan/components/food_card.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
@@ -11,6 +12,7 @@ import 'package:lakbay/features/trips/plan/components/transport_card.dart';
 import 'package:lakbay/features/trips/plan/components/trip_card.dart';
 import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 class PlanSearchListing extends ConsumerStatefulWidget {
@@ -18,7 +20,10 @@ class PlanSearchListing extends ConsumerStatefulWidget {
   final List<ListingBookings>? bookings;
   final List<ListingModel>? listings;
   const PlanSearchListing(
-      {super.key, required this.category, this.bookings, this.listings});
+      {super.key,
+      required this.category,
+      this.bookings,
+      this.listings});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -61,7 +66,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
 
   void onTapLocation() {
-    context.push('/plan/location');
+    context.push('/select_location', extra: 'search_plan');
   }
 
   void updateSortOrder(SortBy newSortBy) {
@@ -84,7 +89,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     final daysPlan = ref.read(daysPlanProvider);
     final formattedCurrentDate =
         DateFormat.MMMMd().format(daysPlan.currentDay!);
-
+    final planSearch = ref.watch(planSearchLocationProvider);
     Future.delayed(Duration.zero, () {
       if (ref.watch(parentStateProvider) == true) {
         context.pop();
@@ -98,6 +103,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
+            ref.read(planSearchLocationProvider.notifier).reset();
             context.pop();
             context.pop();
           },
@@ -133,9 +139,8 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
               ],
             ),
             InkWell(
-              child: const Icon(Icons.map_outlined),
+              child: const Icon(Icons.search_rounded),
               onTap: () {
-                debugPrint('this is listings from widget: ${widget.listings}');
                 onTapLocation();
               },
             ),
@@ -200,6 +205,26 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                             Wrap(
                               spacing: 8.0,
                               children: [
+                                // if the planSearch is not null, show the ActionChip. Otherwise, show the Text widget
+                                if (planSearch != null)
+                                  ActionChip(
+                                    onPressed: () {
+                                      // Filter
+                                      showLocationAlertDialog(
+                                          context, planSearch);
+                                    },
+                                    label: SizedBox(
+                                      width: MediaQuery.of(context).size.width /
+                                          7.5,
+                                      child: Text(
+                                        planSearch,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                    avatar:
+                                        const Icon(Icons.location_on_outlined),
+                                  ),
                                 ActionChip(
                                   onPressed: () {
                                     // Filter
@@ -225,7 +250,8 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                     const Divider(),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: listingCardController(selectedCategory),
+                      child:
+                          listingCardController(selectedCategory, planSearch),
                     ),
                   ],
                 )),
@@ -321,6 +347,76 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         });
   }
 
+  // show the location along with a map widget
+  Future<dynamic> showLocationAlertDialog(
+      BuildContext context, String planSearch) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          //adjust the height and width of the dialog
+          title: Text(
+            'Location: $planSearch',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          content: Container(
+            height: MediaQuery.of(context).size.height / 5,
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: MapWidget(address: planSearch),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                final bool confirm = await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(
+                              'Confirm',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            content: Text(
+                              'Are you sure you want to remove the location?',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  context.pop(false);
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  context.pop(true);
+                                },
+                                child: const Text('Confirm'),
+                              ),
+                            ],
+                          );
+                        }) ??
+                    false;
+
+                if (confirm) {
+                  ref.read(planSearchLocationProvider.notifier).reset();
+                  // ignore: use_build_context_synchronously
+                  context.pop();
+                }
+              },
+              child: const Text('Remove Filter'),
+            ),
+            TextButton(
+              onPressed: () {
+                context.pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<dynamic> showFilterBottomSheet(BuildContext context) {
     return showModalBottomSheet(
         context: context,
@@ -393,21 +489,33 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         });
   }
 
-  Widget listingCardController(String category) {
+  Widget listingCardController(String category, String? planSearch) {
+    if (planSearch != null) {
+      // Filter the listings based on the search
+      listingResults = widget.listings!
+          .where((listing) => listing.address!.contains(planSearch))
+          .toList();
+    } else {
+      listingResults = widget.listings;
+    }
+
     switch (category) {
+      // if planSearch is not null, show the listings based on the search
+
       case "Accommodation":
         return RoomCard(
           category: category,
           bookings: widget.bookings!,
+          accommodationListings: planSearch != null ? listingResults : null,
           allListings: widget.listings,
         );
 
       case "Transport":
         return TransportCard(
-            category: category, transportListings: widget.listings!);
+            category: category, transportListings: listingResults);
 
       case "Food":
-        return FoodCard(category: category, foodListings: widget.listings!);
+        return FoodCard(category: category, foodListings: listingResults);
 
       case "Tour":
         return TripCard(category: category, tripListings: widget.listings!);
