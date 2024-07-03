@@ -342,35 +342,24 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   }
 
   Widget listingCardController(String category) {
-    final filteredListings = widget.listings?.where((listing) {
-      return listing.address.contains(ref.read(planLocationProvider)!) &&
-          listing.category == category;
-    }).toList();
-
-    
-    // testingSnapshot.toString();
-
-    debugPrint('this is bookings: ${widget.bookings}');
-    debugPrint('this is listings: ${widget.listings}');
-
 
     switch (category) {
       case "Accommodation":
-        return RoomCard(category: category, bookings: widget.bookings!, accommodationListings: filteredListings);
+        return RoomCard(category: category, bookings: widget.bookings!);
 
       case "Transport":
         return TransportCard(
-            category: category, transportListings: filteredListings);
+            category: category, transportListings: widget.listings!);
 
       case "Food":
-        return FoodCard(category: category, foodListings: filteredListings);
+        return FoodCard(category: category, foodListings: widget.listings!);
 
       case "Tour":
-        return TripCard(category: category, tripListings: filteredListings);
+        return TripCard(category: category, tripListings: widget.listings!);
 
       case "Entertainment":
         return EntertainmentCard(
-            category: category, entertainmentListings: filteredListings);
+            category: category, entertainmentListings: widget.listings!);
 
       default:
         return const Text("An Error Occurred!");
