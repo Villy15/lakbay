@@ -80,7 +80,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
   final TextEditingController _cancellationPeriodController =
       TextEditingController();
   CancelPolicy _selectedCancel = CancelPolicy.fixedCancelRate; // Default value
-
+  EntertainmentScheduling entertainmentScheduling = EntertainmentScheduling();
   @override
   void initState() {
     super.initState();
@@ -193,6 +193,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                     title: _titleController.text,
                     availableDays: availableDays,
                     type: type,
+                    entertainmentScheduling: entertainmentScheduling,
                     city: "",
                     province: "",
                     images: _images?.map((image) {
@@ -236,6 +237,73 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                         .read(listingControllerProvider.notifier)
                         .addListing(listing, context);
                     ref.read(listingLocationProvider.notifier).reset();
+                  }
+                },
+              ));
+    }
+  }
+
+  void submitAddTour() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      final imagePath = 'listings/${widget.coop.name}';
+      final ids = _images!.map((image) => image.path.split('/').last).toList();
+      ref
+          .read(storageRepositoryProvider)
+          .storeFiles(
+            path: imagePath,
+            ids: ids,
+            files: _images!,
+          )
+          .then((value) => value.fold(
+                (failure) => debugPrint('Failed to upload images: $failure'),
+                (imageUrls) async {
+                  ListingCooperative cooperative = ListingCooperative(
+                      cooperativeId: widget.coop.uid!,
+                      cooperativeName: widget.coop.name);
+                  debugPrint(cooperative.toString());
+                  // Prepare data for ListingModel
+                  ListingModel listing = ListingModel(
+                    availableTimes: availableTimes,
+                    address: _addressController.text,
+                    category: widget.category,
+                    description: _descriptionController.text,
+                    title: _titleController.text,
+                    type: type,
+                    entertainmentScheduling: entertainmentScheduling,
+                    city: "",
+                    province: "",
+                    images: _images?.map((image) {
+                      final imagePath =
+                          'listings/${widget.coop.name}/${image.path.split('/').last}';
+                      return ListingImages(path: imagePath);
+                    }).toList(),
+                    cooperative: cooperative,
+                    publisherId: ref.read(userProvider)!.uid,
+                    publisherName: ref.read(userProvider)!.name,
+                    price: num.parse(_priceController.text),
+                    duration: duration,
+                    cancellationPeriod:
+                        num.parse(_cancellationPeriodController.text),
+                    cancellationRate: _selectedCancel ==
+                            CancelPolicy.fixedCancelRate
+                        ? num.parse((_cancellationRateController.text))
+                        : num.parse((_cancellationRateController.text)) / 100,
+                  );
+                  //Update image URLs in the listing model
+                  listing = listing.copyWith(
+                    images: listing.images!.asMap().entries.map((entry) {
+                      return entry.value.copyWith(url: imageUrls[entry.key]);
+                    }).toList(),
+                  );
+
+                  debugPrint(listing.toString());
+                  if (mounted) {
+                    ref.read(listingLocationProvider.notifier).clearLocation();
+                    ref
+                        .read(listingControllerProvider.notifier)
+                        .addListing(listing, context);
                   }
                 },
               ));
@@ -802,40 +870,25 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
           ),
         ),
         const SizedBox(height: 10),
-        TextFormField(
-          controller: _priceController,
-          maxLines: null,
-          decoration: const InputDecoration(
-            labelText: 'Price',
-            prefix: Text('₱'),
-            suffix: Text(
-              'per person',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
-            ),
-            border: OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: "Price per person",
-          ),
-        ),
-        const SizedBox(height: 10),
         SizedBox(
           width: MediaQuery.sizeOf(context).width,
           child: Row(
             children: [
               Expanded(
                 child: TextFormField(
-                  controller: _capacityController,
+                  controller: _priceController,
                   maxLines: null,
                   decoration: const InputDecoration(
-                    labelText: 'Capacity',
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    labelText: 'Price',
+                    prefix: Text('₱'),
                     suffix: Text(
-                      'person/s',
+                      'per person',
                       style:
                           TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
                     ),
-                    hintText: "10",
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    hintText: "Price per person",
                   ),
                 ),
               ),
@@ -879,112 +932,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
             ],
           ),
         ),
-        const SizedBox(
-          height: 10,
-        ),
-        const Text('Operating Hours',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const Text('Please select your operating hours...',
-            style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-        const SizedBox(height: 10),
-        TextFormField(
-          controller: _selectedOpeningHoursController,
-          maxLines: 1,
-          decoration: const InputDecoration(
-            labelText: 'Start Time',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior:
-                FloatingLabelBehavior.always, // Keep the label always visible
-            hintText: "8:30",
-          ),
-          readOnly: true,
-          onTap: () async {
-            final TimeOfDay? pickedTime = await showTimePicker(
-              context: context,
-              initialTime: _selectedOpeningHours,
-              initialEntryMode: TimePickerEntryMode.inputOnly,
-              builder: (BuildContext context, Widget? child) {
-                return MediaQuery(
-                  data: MediaQuery.of(context)
-                      .copyWith(alwaysUse24HourFormat: false),
-                  child: child!,
-                );
-              },
-            );
-
-            if (pickedTime != null) {
-              setState(() {
-                _selectedOpeningHoursController.text =
-                    pickedTime.format(context);
-                _selectedOpeningHours = pickedTime;
-              });
-            }
-          },
-        ),
-        // start time
-        const SizedBox(
-          height: 10,
-        ),
-        // end time
-        TextFormField(
-          controller: _selectedClosingHoursController,
-          maxLines: 1,
-          decoration: const InputDecoration(
-            labelText: 'End Time',
-            border: OutlineInputBorder(),
-            floatingLabelBehavior:
-                FloatingLabelBehavior.always, // Keep the label always visible
-            hintText: "5:30",
-          ),
-          readOnly: true,
-          onTap: () async {
-            final TimeOfDay? pickedTime = await showTimePicker(
-              context: context,
-              initialTime: _selectedClosingHours,
-              initialEntryMode: TimePickerEntryMode.inputOnly,
-              builder: (BuildContext context, Widget? child) {
-                return MediaQuery(
-                  data: MediaQuery.of(context)
-                      .copyWith(alwaysUse24HourFormat: false),
-                  child: child!,
-                );
-              },
-            );
-
-            if (pickedTime != null) {
-              setState(() {
-                _selectedClosingHoursController.text =
-                    pickedTime.format(context);
-                _selectedClosingHours = pickedTime;
-              });
-            }
-          },
-        ),
-        // const SizedBox(height: 10),
-        // datePicker(context, startDate, endDate),
-        const SizedBox(height: 10),
-        const SizedBox(height: 10),
-        const Text('Working Days',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const Text('Please select your working days...',
-            style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-        Column(
-          children: List<Widget>.generate(7, (int index) {
-            return CheckboxListTile(
-              title: Text(
-                getDay(index),
-                style: const TextStyle(fontSize: 16),
-              ),
-              value: workingDays[index],
-              onChanged: (bool? value) {
-                setState(() {
-                  workingDays[index] = value!;
-                });
-              },
-            );
-          }),
-        ),
-        const SizedBox(height: 10),
       ],
     );
   }
@@ -1171,7 +1118,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               setState(() {
                 availableTimes.add(AvailableTime(
                     available: true,
-                    currentPax: 0,
                     maxPax: num.parse(_capacityController.text),
                     time: pickedTime));
               });
@@ -1311,17 +1257,13 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     List<AvailableTime> intervals = [];
     num maxPax = num.parse(_capacityController.text);
     AvailableTime currentTime = AvailableTime(
-        available: true,
-        currentPax: 0,
-        maxPax: maxPax,
-        time: _selectedOpeningHours);
+        available: true, maxPax: maxPax, time: _selectedOpeningHours);
     while (currentTime.time.hour < _selectedClosingHours.hour ||
         (currentTime.time.hour == _selectedClosingHours.hour &&
             currentTime.time.minute < _selectedClosingHours.minute)) {
       intervals.add(currentTime);
       currentTime = AvailableTime(
         available: true,
-        currentPax: 0,
         maxPax: maxPax,
         time: TimeOfDay(
             hour: currentTime.time.hour + intervalDuration.hour,
@@ -1331,7 +1273,6 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       if (currentTime.time.minute >= 60) {
         currentTime = AvailableTime(
           available: true,
-          currentPax: 0,
           maxPax: maxPax,
           time: TimeOfDay(
               hour: currentTime.time.hour + 1,
@@ -1739,7 +1680,16 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              submitAddListing();
+              switch (type) {
+                case "Rentals":
+                  return submitAddListing();
+                case "Watching/Performances":
+                  return submitAddTour();
+                case "Activities/Tours":
+                  return submitAddTour();
+                default:
+                  return submitAddTour();
+              }
             },
             child: Text(
               'Submit',
@@ -1884,10 +1834,8 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                             showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return SizedBox(
-                                    child: Dialog(
-                                      child: showSchedulingForm(),
-                                    ),
+                                  return Dialog.fullscreen(
+                                    child: showSchedulingForm(),
                                   );
                                 });
                           },
@@ -1902,48 +1850,117 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                           child: const Text('Add Schedule'),
                         ),
                       ),
-                      GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // Number of columns
-                          crossAxisSpacing: 0.0, // Spacing between columns
-                          mainAxisSpacing: 0.0, // Spacing between rows
-                          mainAxisExtent:
-                              MediaQuery.sizeOf(context).height * .18,
-                        ),
-                        itemCount: availableDays.length,
-                        itemBuilder: (context, dayIndex) {
-                          //this stupid logic just makes it so the days visually display
-                          //top to bottom left to right
-                          final day = availableDays[dayIndex];
-                          return Container(
-                            margin:
-                                const EdgeInsets.only(left: 10, bottom: 20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(day.day),
-                                day.availableTimes.isNotEmpty
-                                    ? Wrap(
-                                        children: day.availableTimes
-                                            .map((availableTime) {
-                                          return Text(
-                                            '${availableTime.time.format(context)} ',
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w300,
-                                              color: Colors.black,
-                                            ),
-                                          );
-                                        }).toList(),
-                                      )
-                                    : const Text('No Time Set'),
-                              ],
-                            ),
-                          );
-                        },
-                      )
+                      if (entertainmentScheduling.availability != null)
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount:
+                                entertainmentScheduling.availability?.length,
+                            itemBuilder: (context, dayIndex) {
+                              AvailableDay day = entertainmentScheduling
+                                  .availability![dayIndex];
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    day.day,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  day.availableTimes.isNotEmpty
+                                      ? GridView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount: day.availableTimes.length,
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount:
+                                                2, // Number of columns
+                                            mainAxisSpacing:
+                                                0, // Spacing between rows
+                                            crossAxisSpacing:
+                                                0.0, // Spacing between columns
+                                            childAspectRatio:
+                                                2.0, // Adjust this value to change the item aspect ratio
+                                          ),
+                                          itemBuilder: (context, timeIndex) {
+                                            AvailableTime time =
+                                                day.availableTimes[timeIndex];
+                                            return GridTile(
+                                              header: Text(
+                                                time.time.format(context),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "Capacity: ${time.maxPax}",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : const Center(
+                                          child: Text("No Schedule")),
+                                ],
+                              );
+                            }),
+                      // GridView.builder(
+                      //   shrinkWrap: true,
+                      //   physics: const NeverScrollableScrollPhysics(),
+                      //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      //     crossAxisCount: 2, // Number of columns
+                      //     crossAxisSpacing: 0.0, // Spacing between columns
+                      //     mainAxisSpacing: 0.0, // Spacing between rows
+                      //     mainAxisExtent:
+                      //         MediaQuery.sizeOf(context).height * .18,
+                      //   ),
+                      //   itemCount: availableDays.length,
+                      //   itemBuilder: (context, dayIndex) {
+                      //     //this stupid logic just makes it so the days visually display
+                      //     //top to bottom left to right
+                      //     final day = availableDays[dayIndex];
+                      //     return Container(
+                      //       margin:
+                      //           const EdgeInsets.only(left: 10, bottom: 20.0),
+                      //       child: Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           Text(day.day),
+                      //           day.availableTimes.isNotEmpty
+                      //               ? Wrap(
+                      //                   children: day.availableTimes
+                      //                       .map((availableTime) {
+                      //                     return Text(
+                      //                       '${availableTime.time.format(context)} ',
+                      //                       style: const TextStyle(
+                      //                         fontSize: 12,
+                      //                         fontWeight: FontWeight.w300,
+                      //                         color: Colors.black,
+                      //                       ),
+                      //                     );
+                      //                   }).toList(),
+                      //                 )
+                      //               : const Text('No Time Set'),
+                      //         ],
+                      //       ),
+                      //     );
+                      //   },
+                      // )
                     ],
                     if (_selectedSchedulingOption ==
                         SchedulingOptions.fixedScheduling) ...[
@@ -1965,158 +1982,302 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
     TextEditingController timeSlotController =
         TextEditingController(text: '8:30 AM');
     TextEditingController timeSlotCapacityController = TextEditingController();
-    ScrollController scrollController = ScrollController();
-    int changeState = 0;
+    var localWorkingDays = [...workingDays];
+    List<AvailableTime> timeSlots = [];
     return StatefulBuilder(builder: (context, setVars) {
-      int indexPadder = 3;
-      return Container(
-        padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
-        height: MediaQuery.sizeOf(context).height / 1.2,
-        width: MediaQuery.sizeOf(context).width * 1,
-        child: SingleChildScrollView(
-          controller: scrollController,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Working Days',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      Text('Please indicate the days of booking availability.',
-                          style: TextStyle(
-                              fontSize: 15, fontStyle: FontStyle.italic)),
-                    ]),
+      return Column(
+        children: [
+          AppBar(
+            leading: IconButton(
+              iconSize: 30,
+              onPressed: () {
+                Navigator.of(context).pop(); // Corrected the navigation method
+              },
+              icon: const Icon(
+                Icons.arrow_back,
               ),
-              Column(
-                children: List<Widget>.generate(7, (int index) {
-                  return CheckboxListTile(
-                    title: Text(
-                      getDay(index),
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    value: workingDays[index],
-                    onChanged: (bool? value) {
-                      setState(() {
-                        workingDays[index] = value!;
-                      });
-                    },
-                  );
-                }),
+            ),
+            title: const Text(
+              "Availability Scheduling",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Time Slot & Capacity',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      const Text(
-                          'Please indicate the time slot and capacity for selected days.',
-                          style: TextStyle(
-                              fontSize: 15, fontStyle: FontStyle.italic)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: timeSlotController,
-                              maxLines: 1,
-                              decoration: const InputDecoration(
-                                labelText: 'Time Slot',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior: FloatingLabelBehavior
-                                    .always, // Keep the label always visible
-                                hintText: "8:30 AM",
-                              ),
-                              readOnly: true,
-                              onTap: () async {
-                                final TimeOfDay? pickedTime =
-                                    await showTimePicker(
-                                  context: context,
-                                  initialTime: timeSlot,
-                                  initialEntryMode:
-                                      TimePickerEntryMode.inputOnly,
-                                  builder:
-                                      (BuildContext context, Widget? child) {
-                                    return MediaQuery(
-                                      data: MediaQuery.of(context).copyWith(
-                                          alwaysUse24HourFormat: false),
-                                      child: child!,
-                                    );
-                                  },
-                                );
-
-                                if (pickedTime != null) {
-                                  setVars(() {
-                                    timeSlotController.text =
-                                        pickedTime.format(context);
-                                    timeSlot = pickedTime;
-                                  });
-                                }
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              keyboardType: TextInputType.number,
-                              controller: timeSlotCapacityController,
-                              decoration: const InputDecoration(
-                                labelText: 'Capacity',
-                                border: OutlineInputBorder(),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                hintText: "10",
-                                suffix: Text(
-                                  'person/s',
+                          Text('Working Days',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      Theme.of(context).colorScheme.primary)),
+                          const Text(
+                              'Please indicate the days of booking availability.',
+                              style: TextStyle(
+                                  fontSize: 15, fontStyle: FontStyle.italic)),
+                        ]),
+                  ),
+                  Column(
+                    children: List<Widget>.generate(7, (int index) {
+                      return CheckboxListTile(
+                        visualDensity: VisualDensity.compact,
+                        title: Text(
+                          getDay(index),
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        value: localWorkingDays[index],
+                        onChanged: (bool? value) {
+                          setVars(() {
+                            localWorkingDays[index] = value!;
+                          });
+                        },
+                      );
+                    }),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text('Time Slot & Capacity',
                                   style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w300),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary)),
+                              const SizedBox(width: 10),
+                              FilledButton(
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const Text('Check Out'),
+                                          content: SizedBox(
+                                            width: MediaQuery.sizeOf(context)
+                                                .width,
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: TextFormField(
+                                                    controller:
+                                                        timeSlotController,
+                                                    maxLines: 1,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      labelText: 'Time Slot',
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      floatingLabelBehavior:
+                                                          FloatingLabelBehavior
+                                                              .always, // Keep the label always visible
+                                                      hintText: "8:30 AM",
+                                                    ),
+                                                    readOnly: true,
+                                                    onTap: () async {
+                                                      final TimeOfDay?
+                                                          pickedTime =
+                                                          await showTimePicker(
+                                                        context: context,
+                                                        initialTime: timeSlot,
+                                                        initialEntryMode:
+                                                            TimePickerEntryMode
+                                                                .inputOnly,
+                                                        builder: (BuildContext
+                                                                context,
+                                                            Widget? child) {
+                                                          return MediaQuery(
+                                                            data: MediaQuery.of(
+                                                                    context)
+                                                                .copyWith(
+                                                                    alwaysUse24HourFormat:
+                                                                        false),
+                                                            child: child!,
+                                                          );
+                                                        },
+                                                      );
+
+                                                      if (pickedTime != null) {
+                                                        setVars(() {
+                                                          timeSlotController
+                                                                  .text =
+                                                              pickedTime.format(
+                                                                  context);
+                                                          timeSlot = pickedTime;
+                                                        });
+                                                      }
+                                                    },
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Expanded(
+                                                  child: TextFormField(
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    controller:
+                                                        timeSlotCapacityController,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      labelText: 'Capacity',
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      floatingLabelBehavior:
+                                                          FloatingLabelBehavior
+                                                              .always,
+                                                      hintText: "10",
+                                                      suffix: Text(
+                                                        'person/s',
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w300),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          actions: [
+                                            FilledButton(
+                                                onPressed: () {
+                                                  context.pop();
+                                                },
+                                                style: FilledButton.styleFrom(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 12.0),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0), // Adjust the value as needed
+                                                  ),
+                                                ),
+                                                child: const Text('Cancel')),
+                                            FilledButton(
+                                                onPressed: () {
+                                                  setVars(() {
+                                                    AvailableTime
+                                                        availableTime =
+                                                        AvailableTime(
+                                                            available: true,
+                                                            maxPax: num.parse(
+                                                                timeSlotCapacityController
+                                                                    .text),
+                                                            time: timeSlot);
+                                                    timeSlots
+                                                        .add(availableTime);
+                                                  });
+                                                  context.pop();
+                                                },
+                                                style: FilledButton.styleFrom(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 12.0),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0), // Adjust the value as needed
+                                                  ),
+                                                ),
+                                                child: const Text('Add')),
+                                          ],
+                                        );
+                                      });
+                                },
+                                style: FilledButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        8.0), // Adjust the value as needed
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Add",
+                                  style: TextStyle(fontSize: 14),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ]),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FilledButton(
-                      onPressed: () {
-                        context.pop();
-                      },
-                      child: const Text('Close')),
-                  const SizedBox(
-                    width: 10,
+                          const Text(
+                              'Please indicate the time slot and capacity for selected days.',
+                              style: TextStyle(
+                                  fontSize: 15, fontStyle: FontStyle.italic)),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: timeSlots.length,
+                              itemBuilder: (context, timeSlotIndex) {
+                                var timeSlot = timeSlots[timeSlotIndex];
+                                return ListTile(
+                                  title: Text(timeSlot.time.format(context)),
+                                  subtitle:
+                                      Text("Capacity: ${timeSlot.maxPax}"),
+                                  trailing: const Icon(Icons.close),
+                                );
+                              }),
+                        ]),
                   ),
-                  FilledButton(
-                      onPressed: () {
-                        // onTapAddTime(
-                        //     context, timeSlot, timeSlotCapacityController);
-                      },
-                      child: const Text('Add Time')),
+                  Container(
+                    margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                    width: double.infinity,
+                    child: FilledButton(
+                        onPressed: () {
+                          EntertainmentScheduling updatedScheduling =
+                              EntertainmentScheduling.fromJson(
+                                  entertainmentScheduling.toJson());
+                          List<AvailableDay> updatedDays = [];
+                          for (int i = 0; i < localWorkingDays.length; i++) {
+                            var day = localWorkingDays[i];
+                            AvailableDay updatedDay = AvailableDay(
+                                available: day,
+                                day: getDay(i),
+                                availableTimes: day == true ? timeSlots : []);
+                            updatedDays.add(updatedDay);
+                          }
+                          setState(() {
+                            entertainmentScheduling = entertainmentScheduling
+                                .copyWith(availability: updatedDays);
+                          });
+                          context.pop();
+                        },
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Adjust the value as needed
+                          ),
+                        ),
+                        child: const Text('Save')),
+                  )
                 ],
-              )
-            ],
+              ),
+            ),
           ),
-        ),
+        ],
       );
     });
   }

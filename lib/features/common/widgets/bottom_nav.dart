@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/notif_with_number.dart';
-import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/models/user_model.dart';
 
 class BottomNavBar extends ConsumerStatefulWidget {
@@ -210,10 +210,10 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         break;
       case 5:
         // call the markAllNotificationsAsRead function
-        // ref.read(authControllerProvider.notifier).logout();
-        ref
-            .read(notificationControllerProvider.notifier)
-            .markAllNotificationsAsRead(widget.user!.uid);
+        ref.read(authControllerProvider.notifier).logout();
+        // ref
+        //     .read(notificationControllerProvider.notifier)
+        //     .markAllNotificationsAsRead(widget.user!.uid);
         context.go('/notifications');
         break;
     }

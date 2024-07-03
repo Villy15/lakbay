@@ -11,9 +11,9 @@ part 'listing_model.g.dart';
 class ListingModel with _$ListingModel {
   factory ListingModel({
     required String address,
-    List<AvailableDate>? availableDates,
     List<AvailableTime>? availableTimes,
     List<AvailableRoom>? availableRooms,
+    EntertainmentScheduling? entertainmentScheduling,
     required String category,
     num? cancellationRate,
     @TimeOfDayConverter() TimeOfDay? checkIn,
@@ -190,14 +190,29 @@ class FoodService with _$FoodService {
 }
 
 @freezed
+class EntertainmentScheduling with _$EntertainmentScheduling {
+  factory EntertainmentScheduling({
+    String? type,
+    List<AvailableDay>? availability,
+    List<AvailableDate>? fixedDates,
+  }) = _EntertainmentScheduling;
+
+  factory EntertainmentScheduling.fromJson(Map<String, dynamic> json) =>
+      _$EntertainmentSchedulingFromJson(json);
+}
+
+@freezed
 class EntertainmentService with _$EntertainmentService {
-  factory EntertainmentService(
-      String? uid, String? listingId, String? listingName,
-      {required String entertainmentId,
-      required num guests,
-      required num price,
-      required bool available,
-      required List<ListingImages> entertainmentImgs}) = _EntertainmentService;
+  factory EntertainmentService({
+    String? uid,
+    String? listingId,
+    String? listingName,
+    required String entertainmentId,
+    required num guests,
+    required num price,
+    required bool available,
+    required List<ListingImages> entertainmentImgs,
+  }) = _EntertainmentService;
 
   factory EntertainmentService.fromJson(Map<String, dynamic> json) =>
       _$EntertainmentServiceFromJson(json);
@@ -231,7 +246,6 @@ class AvailableDay with _$AvailableDay {
 class AvailableTime with _$AvailableTime {
   factory AvailableTime({
     required bool available,
-    required num currentPax,
     required num maxPax,
     @TimeOfDayConverter() required TimeOfDay time,
   }) = _AvailableTime;

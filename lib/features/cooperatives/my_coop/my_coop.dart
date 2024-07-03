@@ -18,6 +18,7 @@ import 'package:lakbay/features/cooperatives/my_coop/components/goal_card.dart';
 import 'package:lakbay/features/events/widgets/event_card.dart';
 import 'package:lakbay/features/listings/widgets/listing_card.dart';
 import 'package:lakbay/features/notifications/notifications_controller.dart';
+import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
@@ -464,8 +465,8 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
     Query query = FirebaseFirestore.instance
         .collection("cooperatives")
         .doc(widget.coopId)
-        .collection("applications");
-    // .where("status", isEqualTo: "pending");
+        .collection("applications")
+        .where("status", isEqualTo: "pending");
     return ref.watch(getApplicationByProperties(query)).when(
           data: (applications) {
             if (applications.isEmpty) {
@@ -708,7 +709,7 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                   committeeName: updatedApplication.committee,
                   timestamp: DateTime.now());
               CooperativeMembers newMember = CooperativeMembers(
-                  uid: application.uid!,
+                  uid: application.userUid!,
                   name: updatedApplication.name!,
                   committees: [memberRole],
                   isManager: false,
@@ -729,13 +730,40 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                   .editApplication(updatedApplication, context);
               ref
                   .read(coopsControllerProvider.notifier)
-                  .addMember(updatedApplication.uid!, newMember, context);
+                  .addMember(updatedApplication.coopId!, newMember, context);
 
               ref
-                  .read(notificationControllerProvider.notifier)
-                  .addNotification(acceptedCoopNotif, context);
+                  .read(coopsControllerProvider.notifier)
+                  .addMemberUidOnMembersList(
+                      updatedApplication.coopId!, updatedApplication.userUid!);
 
-              context.pop();
+              final user = await ref
+                  .read(getUserDataProvider(application.userUid!).future);
+
+              final newUser = user.copyWith(
+                cooperativesJoined: [
+                  ...user.cooperativesJoined ?? [],
+                  CooperativesJoined(
+                    cooperativeId: updatedApplication.coopId!,
+                    role: "Member",
+                    cooperativeName: coopName,
+                  ),
+                ],
+                currentCoop: updatedApplication.coopId!,
+              );
+
+              ref
+                  .read(usersControllerProvider.notifier)
+                  .editUserAfterJoinCoopCoopsJoined(
+                      application.userUid!, newUser);
+
+              if (context.mounted) {
+                ref
+                    .read(notificationControllerProvider.notifier)
+                    .addNotification(acceptedCoopNotif, context);
+
+                context.pop();
+              }
             },
             child: const Text('Yes'),
           ),

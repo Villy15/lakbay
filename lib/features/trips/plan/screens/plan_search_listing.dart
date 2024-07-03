@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/days_provider.dart';
@@ -108,8 +108,14 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(planLocation ?? 'Location',
-                    style: Theme.of(context).textTheme.bodyMedium),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: Text(
+                    planLocation ?? 'Location',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
                 if (widget.category == 'Accommodation')
                   Text(
                     daysPlan.currentDay == null || planEndDate == null
@@ -137,48 +143,92 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: widget.listings!.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 100),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'lib/core/images/SleepingCatFromGlitch.svg',
+                                height: 100, // Adjust height as desired
+                              ),
+                              const SizedBox(height: 20),
+                              const Text(
+                                'No listings found',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'Create a wiki at the button below',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const Text(
+                                'to share your knowledge',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Column(
                   children: [
-                    Wrap(
-                      spacing: 8.0,
-                      children: [
-                        ActionChip(
-                          onPressed: () {
-                            // Filter
-                            showFilterBottomSheet(context);
-                          },
-                          label: Text(selectedCategory),
-                          avatar: const Icon(Icons.filter_alt_outlined),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Wrap(
+                              spacing: 8.0,
+                              children: [
+                                ActionChip(
+                                  onPressed: () {
+                                    // Filter
+                                    showFilterBottomSheet(context);
+                                  },
+                                  label: Text(selectedCategory),
+                                  avatar: const Icon(Icons.filter_alt_outlined),
+                                ),
+                                ActionChip(
+                                  onPressed: () {
+                                    // Sort
+                                    showSortBottomSheet(context);
+                                  },
+                                  label: const Text('Sort'),
+                                  avatar: const Icon(Icons.sort),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        ActionChip(
-                          onPressed: () {
-                            // Sort
-                            showSortBottomSheet(context);
-                          },
-                          label: const Text('Sort'),
-                          avatar: const Icon(Icons.sort),
-                        ),
-                      ],
+                      ),
+                    ),
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: listingCardController(selectedCategory),
                     ),
                   ],
-                ),
-              ),
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: listingCardController(selectedCategory),
-            ),
-          ],
-        ),
-      ),
+                )),
     );
   }
 
@@ -344,7 +394,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   }
 
   Widget listingCardController(String category) {
-
     switch (category) {
       case "Accommodation":
         return RoomCard(

@@ -151,17 +151,20 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(
+                      FilledButton(
                           onPressed: () {
                             context.push('/market/${widget.category}',
                                 extra: listing);
                           },
                           style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 25, vertical: 5)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  4.0), // Adjust the radius as needed
+                            ),
+                          ),
                           child: const Text('View Listing',
                               style: TextStyle(fontSize: 14))),
-                      ElevatedButton(
+                      FilledButton(
                           onPressed: () async {
                             if (currentUser?.name == 'Lakbay User' ||
                                 currentUser?.phoneNo == null ||
@@ -181,7 +184,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                                                 showUpdateProfile(
                                                     context, currentUser!);
                                               },
-                                              style: ElevatedButton.styleFrom(
+                                              style: FilledButton.styleFrom(
                                                   shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -335,9 +338,12 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
 
                             // showConfirmBooking(transport, listing, DateTime.now(), DateTime.now(), , endTime, typeOfTrip);
                           },
-                          style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 25, vertical: 5)),
+                          style: FilledButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  4.0), // Adjust the radius as needed
+                            ),
+                          ),
                           child: const Text('Book Now',
                               style: TextStyle(fontSize: 14)))
                     ]),
@@ -722,7 +728,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                                           .read(userProvider.notifier)
                                           .setUser(user);
                                     },
-                                    style: ElevatedButton.styleFrom(
+                                    style: FilledButton.styleFrom(
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
                                             4.0), // Adjust the radius as needed
@@ -867,7 +873,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                     ),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: FilledButton(
                         onPressed: () {
                           DateTime startDate = currentDate.copyWith(
                               hour: availableTime.time.hour,
