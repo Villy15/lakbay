@@ -335,7 +335,7 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
                       ),
                     ),
                     Text(
-                      DateFormat('MMM dd, yyyy').format(
+                      DateFormat('EEE, MMM dd, yyyy').format(
                         plan.startDate!.add(
                           Duration(days: index),
                         ),

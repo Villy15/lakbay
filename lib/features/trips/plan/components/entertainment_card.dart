@@ -4,11 +4,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/days_provider.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/crud/customer_entertainment_checkout.dart';
@@ -423,339 +425,706 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
       ListingModel listing, List<String?> imageUrls, DateTime currentDate) {
     final currentUser = ref.read(userProvider);
     final dayIndex = ref.read(daysPlanProvider).currentDay!.weekday - 1;
-    var day = listing.entertainmentScheduling!.availability![dayIndex];
-    var timeSlots = day.availableTimes;
-    if (day.available == true) {
-      return SizedBox(
-        // height: MediaQuery.sizeOf(context).height / 2,
-        width: MediaQuery.sizeOf(context).width / 2,
-        child: Card(
+    switch (listing.entertainmentScheduling!.type) {
+      case "dayScheduling":
+        {
+          var day = listing.entertainmentScheduling!.availability![dayIndex];
+          AvailableDay? availableDay;
+          var daysOfWeek = 0;
+          var startIndex = dayIndex + 1;
+          while (daysOfWeek < 7) {
+            if (startIndex >= 7) {
+              startIndex = 0; // Wrap around to the beginning of the week
+            }
+
+            var tempDay =
+                listing.entertainmentScheduling!.availability![startIndex];
+            if (tempDay.available == true && startIndex != dayIndex) {
+              availableDay = tempDay;
+              break; // Found the available day, exit the loop
+            }
+
+            startIndex++;
+            daysOfWeek++;
+          }
+          var timeSlots = day.availableTimes;
+
+          return daySchedulingCard(imageUrls, listing, currentUser, timeSlots,
+              currentDate, day, availableDay);
+        }
+      case "dateScheduling":
+        {
+          var date = listing.entertainmentScheduling!.fixedDates!.where((date) {
+            return date.date.eqvYearMonthDay(currentDate);
+          }).first;
+          var availableDate = listing.entertainmentScheduling!.fixedDates!
+              .where((availableDate) {
+            return availableDate.available == true &&
+                availableDate.date.isAfter(currentDate);
+          }).first;
+          var timeSlots = date.availableTimes;
+          return dateSchedulingCard(imageUrls, listing, currentUser, timeSlots,
+              currentDate, date, availableDate);
+        }
+    }
+    return null;
+  }
+
+  SizedBox dateSchedulingCard(
+      List<String?> imageUrls,
+      ListingModel listing,
+      UserModel? currentUser,
+      List<AvailableTime> timeSlots,
+      DateTime currentDate,
+      AvailableDate date,
+      AvailableDate availableDate) {
+    return SizedBox(
+      // height: MediaQuery.sizeOf(context).height / 2,
+      width: MediaQuery.sizeOf(context).width / 2,
+      child: Card(
+          child: Column(
+        children: [
+          ImageSlider(
+              images: imageUrls,
+              height: MediaQuery.sizeOf(context).height / 4,
+              width: MediaQuery.sizeOf(context).width / 2,
+              radius: BorderRadius.circular(10)),
+          Padding(
+            padding: const EdgeInsets.only(
+                left: 20.0,
+                right: 10,
+                top: 10,
+                bottom: 10), // Reduced overall padding
             child: Column(
-          children: [
-            ImageSlider(
-                images: imageUrls,
-                height: MediaQuery.sizeOf(context).height / 4,
-                width: MediaQuery.sizeOf(context).width / 2,
-                radius: BorderRadius.circular(10)),
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 20.0,
-                  right: 10,
-                  top: 10,
-                  bottom: 10), // Reduced overall padding
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          listing.title,
+                          style: const TextStyle(
+                            fontSize:
+                                14, // Increased font size, larger than the previous one
+                            fontWeight: FontWeight.w500, // Bold text
+                          ),
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "₱${listing.price}",
+                                style: TextStyle(
+                                    fontSize: 14, // Size for the price
+                                    fontWeight:
+                                        FontWeight.w500, // Bold for the price
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface),
+                              ),
+                              TextSpan(
+                                text: listing.duration!.hour == 0
+                                    ? '/ ${listing.duration!.minute} mins'
+                                    : '/ ${listing.duration!.hour} hrs ${listing.duration!.minute.remainder(60)} mins',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.normal,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: MediaQuery.sizeOf(context).height / 30,
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            listing.title,
-                            style: const TextStyle(
-                              fontSize:
-                                  14, // Increased font size, larger than the previous one
-                              fontWeight: FontWeight.w500, // Bold text
+                      FilledButton(
+                          onPressed: () {
+                            context.push('/market/${widget.category}',
+                                extra: listing);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  4.0), // Adjust the radius as needed
                             ),
                           ),
-                          RichText(
+                          child: const Text('View Listing',
+                              style: TextStyle(fontSize: 14))),
+                      date.available == true
+                          ? dateSchedulingBookNow(
+                              currentUser, listing, timeSlots, currentDate)
+                          : FilledButton(
+                              onPressed: null,
+                              style: FilledButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      4.0), // Adjust the radius as needed
+                                ),
+                              ),
+                              child: Text(
+                                  'Next Available \n ${formatDateMMDDYYYY(availableDate.date)}',
+                                  style: const TextStyle(fontSize: 14)))
+                    ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: Row(children: [
+                        Icon(listing.type! == "Activities/Tours"
+                            ? Icons.hiking_outlined
+                            : Icons.movie_outlined),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(listing.type!,
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                        )
+                      ])),
+                      TextButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Entertainment Details"),
+                                  content: const Placeholder(),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text("Close"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: RichText(
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: "₱${listing.price}",
+                                  text: "Entertainment Details",
                                   style: TextStyle(
-                                      fontSize: 14, // Size for the price
-                                      fontWeight:
-                                          FontWeight.w500, // Bold for the price
+                                      // color: Colors.grey,
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .onSurface),
+                                          .onSurface
+                                          .withOpacity(0.5),
+                                      fontStyle: FontStyle
+                                          .italic // Underline for emphasis
+                                      ),
                                 ),
-                                TextSpan(
-                                  text: listing.duration!.hour == 0
-                                      ? '/ ${listing.duration!.minute} mins'
-                                      : '/ ${listing.duration!.hour} hrs ${listing.duration!.minute.remainder(60)} mins',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.normal,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
+                                const WidgetSpan(
+                                  child: Icon(
+                                    Icons
+                                        .keyboard_arrow_down, // Arrow pointing down icon
+                                    size:
+                                        16.0, // Adjust the size to fit your design
+                                    color: Colors.grey,
                                   ),
-                                )
+                                ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: MediaQuery.sizeOf(context).height / 30,
-                  ),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        FilledButton(
-                            onPressed: () {
-                              context.push('/market/${widget.category}',
-                                  extra: listing);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    4.0), // Adjust the radius as needed
-                              ),
-                            ),
-                            child: const Text('View Listing',
-                                style: TextStyle(fontSize: 14))),
+                          ))
+                    ])
+              ],
+            ),
+          )
+        ],
+      )),
+    );
+  }
+
+  FilledButton dateSchedulingBookNow(
+      UserModel? currentUser,
+      ListingModel listing,
+      List<AvailableTime> timeSlots,
+      DateTime currentDate) {
+    return FilledButton(
+        onPressed: () async {
+          if (currentUser?.name == 'Lakbay User' ||
+              currentUser?.phoneNo == null ||
+              currentUser?.emergencyContact == null ||
+              currentUser?.emergencyContactName == null ||
+              currentUser?.governmentId == null) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                      title: const Text('Profile Incomplete'),
+                      content: const Text(
+                          'To book an entertainment, you need to complete your profile first.'),
+                      actions: [
                         FilledButton(
                             onPressed: () async {
-                              if (currentUser?.name == 'Lakbay User' ||
-                                  currentUser?.phoneNo == null ||
-                                  currentUser?.emergencyContact == null ||
-                                  currentUser?.emergencyContactName == null ||
-                                  currentUser?.governmentId == null) {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                          title:
-                                              const Text('Profile Incomplete'),
-                                          content: const Text(
-                                              'To book an entertainment, you need to complete your profile first.'),
-                                          actions: [
-                                            FilledButton(
-                                                onPressed: () async {
-                                                  showUpdateProfile(
-                                                      context, currentUser!);
-                                                },
-                                                style: FilledButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        4.0))),
-                                                child: const Text(
-                                                    'Update Profile',
-                                                    style: TextStyle(
-                                                        fontSize: 14)))
-                                          ]);
-                                    });
-                              } else {
-                                if (context.mounted) {
-                                  final bookings = await ref.watch(
-                                      getAllBookingsProvider(listing.uid!)
-                                          .future);
-                                  // String formattedCurrentDate =
-                                  //     DateFormat('MMMM dd, yyyy')
-                                  //         .format(currentDate);
+                              showUpdateProfile(context, currentUser!);
+                            },
+                            style: FilledButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
+                            child: const Text('Update Profile',
+                                style: TextStyle(fontSize: 14)))
+                      ]);
+                });
+          } else {
+            if (context.mounted) {
+              final bookings =
+                  await ref.watch(getAllBookingsProvider(listing.uid!).future);
+              // String formattedCurrentDate =
+              //     DateFormat('MMMM dd, yyyy')
+              //         .format(currentDate);
 
+              showDialog(
+                  // ignore: use_build_context_synchronously
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      scrollable: true,
+                      title: const Text('Select a time',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      content: Column(
+                          children: timeSlots.map((availableTime) {
+                        {
+                          DateTime dateTimeSlot = DateTime(
+                              currentDate.year,
+                              currentDate.month,
+                              currentDate.day,
+                              availableTime.time.hour,
+                              availableTime.time.minute);
+                          List<ListingBookings> bookingsCopy = bookings;
+                          Map<DateTime?, num> availableTimeAndCapacity = {
+                            dateTimeSlot: availableTime.maxPax
+                          };
+                          // format the currentDate
+                          String formattedCurrentDate =
+                              DateFormat('yyyy-MM-dd').format(currentDate);
+
+                          for (ListingBookings booking in bookingsCopy) {
+                            // only get the date and not the time from booking.startDate. trim it to only get the date
+                            if (booking.bookingStatus != "Cancelled") {
+                              DateTime bookingStartDate = booking.startDate!;
+                              String formattedDate = DateFormat('yyyy-MM-dd')
+                                  .format(bookingStartDate);
+
+                              // check the formattedCurrentDate and the formattedDate if they are the same
+                              if (formattedCurrentDate == formattedDate) {
+                                // remove duplicates of departure time, and get the total number of guests for each departure time
+
+                                if (availableTimeAndCapacity
+                                    .containsKey(bookingStartDate)) {
+                                  availableTimeAndCapacity[bookingStartDate] =
+                                      availableTimeAndCapacity[
+                                              bookingStartDate]! -
+                                          booking.guests;
+                                }
+                                //  else {
+                                //   deptTimeAndGuests[
+                                //       booking
+                                //           .startDate] = booking
+                                //       .guests;
+                                // }
+                                // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
+                              }
+                            }
+                          }
+                          return ListTile(
+                              title: Text(availableTime.time.format(context)),
+                              trailing: Text(
+                                  'Slots Left: ${availableTimeAndCapacity[dateTimeSlot]}'),
+                              onTap: () async {
+                                num capacity =
+                                    availableTimeAndCapacity[dateTimeSlot] ?? 0;
+
+                                if (capacity == 0) {
+                                  // show an alert dialog that the selected departure time is already full
                                   showDialog(
-                                      // ignore: use_build_context_synchronously
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
-                                          scrollable: true,
-                                          title: const Text('Select a time',
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold)),
-                                          content: Column(
-                                              children: timeSlots
-                                                  .map((availableTime) {
-                                            {
-                                              DateTime dateTimeSlot = DateTime(
-                                                  currentDate.year,
-                                                  currentDate.month,
-                                                  currentDate.day,
-                                                  availableTime.time.hour,
-                                                  availableTime.time.minute);
-                                              List<ListingBookings>
-                                                  bookingsCopy = bookings;
-                                              Map<DateTime?, num>
-                                                  availableTimeAndCapacity = {
-                                                dateTimeSlot:
-                                                    availableTime.maxPax
-                                              };
-                                              // format the currentDate
-                                              String formattedCurrentDate =
-                                                  DateFormat('yyyy-MM-dd')
-                                                      .format(currentDate);
-
-                                              for (ListingBookings booking
-                                                  in bookingsCopy) {
-                                                // only get the date and not the time from booking.startDate. trim it to only get the date
-                                                if (booking.bookingStatus !=
-                                                    "Cancelled") {
-                                                  DateTime bookingStartDate =
-                                                      booking.startDate!;
-                                                  String formattedDate =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(
-                                                              bookingStartDate);
-
-                                                  // check the formattedCurrentDate and the formattedDate if they are the same
-                                                  if (formattedCurrentDate ==
-                                                      formattedDate) {
-                                                    // remove duplicates of departure time, and get the total number of guests for each departure time
-
-                                                    if (availableTimeAndCapacity
-                                                        .containsKey(
-                                                            bookingStartDate)) {
-                                                      availableTimeAndCapacity[
-                                                              bookingStartDate] =
-                                                          availableTimeAndCapacity[
-                                                                  bookingStartDate]! -
-                                                              booking.guests;
-                                                    }
-                                                    //  else {
-                                                    //   deptTimeAndGuests[
-                                                    //       booking
-                                                    //           .startDate] = booking
-                                                    //       .guests;
-                                                    // }
-                                                    // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
-                                                  }
-                                                }
-                                              }
-                                              return ListTile(
-                                                  title: Text(availableTime.time
-                                                      .format(context)),
-                                                  trailing: Text(
-                                                      'Slots Left: ${availableTimeAndCapacity[dateTimeSlot]}'),
-                                                  onTap: () async {
-                                                    num capacity =
-                                                        availableTimeAndCapacity[
-                                                                dateTimeSlot] ??
-                                                            0;
-
-                                                    if (capacity == 0) {
-                                                      // show an alert dialog that the selected departure time is already full
-                                                      showDialog(
-                                                          context: context,
-                                                          builder: (context) {
-                                                            return AlertDialog(
-                                                                title: const Text(
-                                                                    'No units available'),
-                                                                content: Text(
-                                                                    'The time ${availableTime.time.format(context)} has reached its capacity of ${availableTimeAndCapacity[dateTimeSlot]}.  Please select another time.'),
-                                                                actions: [
-                                                                  TextButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      },
-                                                                      child: const Text(
-                                                                          'Close'))
-                                                                ]);
-                                                          });
-                                                    } else {
-                                                      showConfirmBooking(
-                                                          availableTime,
-                                                          listing,
-                                                          currentDate);
-                                                    }
-                                                  });
-                                            }
-                                          }).toList()),
-                                          actions: [
-                                            FilledButton(
-                                                onPressed: () {
-                                                  context.pop();
-                                                },
-                                                child: const Text("Back"))
-                                          ],
-                                        );
-                                        // });
+                                            title: const Text(
+                                                'No units available'),
+                                            content: Text(
+                                                'The time ${availableTime.time.format(context)} has reached its capacity of ${availableTimeAndCapacity[dateTimeSlot]}.  Please select another time.'),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('Close'))
+                                            ]);
                                       });
+                                } else {
+                                  showConfirmBooking(
+                                      availableTime, listing, currentDate);
                                 }
-                              }
+                              });
+                        }
+                      }).toList()),
+                      actions: [
+                        FilledButton(
+                            onPressed: () {
+                              context.pop();
+                            },
+                            child: const Text("Back"))
+                      ],
+                    );
+                    // });
+                  });
+            }
+          }
+        },
+        style: FilledButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(4.0), // Adjust the radius as needed
+          ),
+        ),
+        child: const Text('Book Now', style: TextStyle(fontSize: 14)));
+  }
+
+  SizedBox daySchedulingCard(
+      List<String?> imageUrls,
+      ListingModel listing,
+      UserModel? currentUser,
+      List<AvailableTime> timeSlots,
+      DateTime currentDate,
+      AvailableDay? day,
+      AvailableDay? availableDay) {
+    return SizedBox(
+      // height: MediaQuery.sizeOf(context).height / 2,
+      width: MediaQuery.sizeOf(context).width / 2,
+      child: Card(
+          child: Column(
+        children: [
+          ImageSlider(
+              images: imageUrls,
+              height: MediaQuery.sizeOf(context).height / 4,
+              width: MediaQuery.sizeOf(context).width / 2,
+              radius: BorderRadius.circular(10)),
+          Padding(
+            padding: const EdgeInsets.only(
+                left: 20.0,
+                right: 10,
+                top: 10,
+                bottom: 10), // Reduced overall padding
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          listing.title,
+                          style: const TextStyle(
+                            fontSize:
+                                14, // Increased font size, larger than the previous one
+                            fontWeight: FontWeight.w500, // Bold text
+                          ),
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "₱${listing.price}",
+                                style: TextStyle(
+                                    fontSize: 14, // Size for the price
+                                    fontWeight:
+                                        FontWeight.w500, // Bold for the price
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface),
+                              ),
+                              TextSpan(
+                                text: listing.duration!.hour == 0
+                                    ? '/ ${listing.duration!.minute} mins'
+                                    : '/ ${listing.duration!.hour} hrs ${listing.duration!.minute.remainder(60)} mins',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.normal,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: MediaQuery.sizeOf(context).height / 30,
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      FilledButton(
+                          onPressed: () {
+                            context.push('/market/${widget.category}',
+                                extra: listing);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  4.0), // Adjust the radius as needed
+                            ),
+                          ),
+                          child: const Text('View Listing',
+                              style: TextStyle(fontSize: 14))),
+                      day?.available == true
+                          ? daySchedulingBookNow(
+                              currentUser, listing, timeSlots, currentDate)
+                          : FilledButton(
+                              onPressed: null,
+                              style: FilledButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      4.0), // Adjust the radius as needed
+                                ),
+                              ),
+                              child: Text(
+                                  'Next Available \n ${availableDay?.day}',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 14)))
+                    ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: Row(children: [
+                        Icon(listing.type! == "Activities/Tours"
+                            ? Icons.hiking_outlined
+                            : Icons.movie_outlined),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(listing.type!,
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                        )
+                      ])),
+                      TextButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Entertainment Details"),
+                                  content: const Placeholder(),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text("Close"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "Entertainment Details",
+                                  style: TextStyle(
+                                      // color: Colors.grey,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withOpacity(0.5),
+                                      fontStyle: FontStyle
+                                          .italic // Underline for emphasis
+                                      ),
+                                ),
+                                const WidgetSpan(
+                                  child: Icon(
+                                    Icons
+                                        .keyboard_arrow_down, // Arrow pointing down icon
+                                    size:
+                                        16.0, // Adjust the size to fit your design
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ))
+                    ])
+              ],
+            ),
+          )
+        ],
+      )),
+    );
+  }
+
+  FilledButton daySchedulingBookNow(
+      UserModel? currentUser,
+      ListingModel listing,
+      List<AvailableTime> timeSlots,
+      DateTime currentDate) {
+    return FilledButton(
+        onPressed: () async {
+          if (currentUser?.name == 'Lakbay User' ||
+              currentUser?.phoneNo == null ||
+              currentUser?.emergencyContact == null ||
+              currentUser?.emergencyContactName == null ||
+              currentUser?.governmentId == null) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                      title: const Text('Profile Incomplete'),
+                      content: const Text(
+                          'To book an entertainment, you need to complete your profile first.'),
+                      actions: [
+                        FilledButton(
+                            onPressed: () async {
+                              showUpdateProfile(context, currentUser!);
                             },
                             style: FilledButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    4.0), // Adjust the radius as needed
-                              ),
-                            ),
-                            child: const Text('Book Now',
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4.0))),
+                            child: const Text('Update Profile',
                                 style: TextStyle(fontSize: 14)))
-                      ]),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                            child: Row(children: [
-                          const Icon(Icons.hiking_outlined),
-                          const SizedBox(width: 5),
-                          Flexible(
-                            child: Text(listing.type!,
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold)),
-                          )
-                        ])),
-                        TextButton(
+                      ]);
+                });
+          } else {
+            if (context.mounted) {
+              final bookings =
+                  await ref.watch(getAllBookingsProvider(listing.uid!).future);
+              // String formattedCurrentDate =
+              //     DateFormat('MMMM dd, yyyy')
+              //         .format(currentDate);
+
+              showDialog(
+                  // ignore: use_build_context_synchronously
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      scrollable: true,
+                      title: const Text('Select a time',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      content: Column(
+                          children: timeSlots.map((availableTime) {
+                        {
+                          DateTime dateTimeSlot = DateTime(
+                              currentDate.year,
+                              currentDate.month,
+                              currentDate.day,
+                              availableTime.time.hour,
+                              availableTime.time.minute);
+                          List<ListingBookings> bookingsCopy = bookings;
+                          Map<DateTime?, num> availableTimeAndCapacity = {
+                            dateTimeSlot: availableTime.maxPax
+                          };
+                          // format the currentDate
+                          String formattedCurrentDate =
+                              DateFormat('yyyy-MM-dd').format(currentDate);
+
+                          for (ListingBookings booking in bookingsCopy) {
+                            // only get the date and not the time from booking.startDate. trim it to only get the date
+                            if (booking.bookingStatus != "Cancelled") {
+                              DateTime bookingStartDate = booking.startDate!;
+                              String formattedDate = DateFormat('yyyy-MM-dd')
+                                  .format(bookingStartDate);
+
+                              // check the formattedCurrentDate and the formattedDate if they are the same
+                              if (formattedCurrentDate == formattedDate) {
+                                // remove duplicates of departure time, and get the total number of guests for each departure time
+
+                                if (availableTimeAndCapacity
+                                    .containsKey(bookingStartDate)) {
+                                  availableTimeAndCapacity[bookingStartDate] =
+                                      availableTimeAndCapacity[
+                                              bookingStartDate]! -
+                                          booking.guests;
+                                }
+                                //  else {
+                                //   deptTimeAndGuests[
+                                //       booking
+                                //           .startDate] = booking
+                                //       .guests;
+                                // }
+                                // check if the selected departure time's availability through the number of guests. guests must not exceed the available transport's capacity
+                              }
+                            }
+                          }
+                          return ListTile(
+                              title: Text(availableTime.time.format(context)),
+                              trailing: Text(
+                                  'Slots Left: ${availableTimeAndCapacity[dateTimeSlot]}'),
+                              onTap: () async {
+                                num capacity =
+                                    availableTimeAndCapacity[dateTimeSlot] ?? 0;
+
+                                if (capacity == 0) {
+                                  // show an alert dialog that the selected departure time is already full
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                            title: const Text(
+                                                'No units available'),
+                                            content: Text(
+                                                'The time ${availableTime.time.format(context)} has reached its capacity of ${availableTimeAndCapacity[dateTimeSlot]}.  Please select another time.'),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('Close'))
+                                            ]);
+                                      });
+                                } else {
+                                  showConfirmBooking(
+                                      availableTime, listing, currentDate);
+                                }
+                              });
+                        }
+                      }).toList()),
+                      actions: [
+                        FilledButton(
                             onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Entertainment Details"),
-                                    content: const Placeholder(),
-                                    actions: [
-                                      TextButton(
-                                        child: const Text("Close"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
+                              context.pop();
                             },
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: "Entertainment Details",
-                                    style: TextStyle(
-                                        // color: Colors.grey,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.5),
-                                        fontStyle: FontStyle
-                                            .italic // Underline for emphasis
-                                        ),
-                                  ),
-                                  const WidgetSpan(
-                                    child: Icon(
-                                      Icons
-                                          .keyboard_arrow_down, // Arrow pointing down icon
-                                      size:
-                                          16.0, // Adjust the size to fit your design
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ))
-                      ])
-                ],
-              ),
-            )
-          ],
-        )),
-      );
-    } else {
-      return null;
-    }
+                            child: const Text("Back"))
+                      ],
+                    );
+                    // });
+                  });
+            }
+          }
+        },
+        style: FilledButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(4.0), // Adjust the radius as needed
+          ),
+        ),
+        child: const Text('Book Now', style: TextStyle(fontSize: 14)));
   }
 
   Future<UserModel> submitUpdateProfile(

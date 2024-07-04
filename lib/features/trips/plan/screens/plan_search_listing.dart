@@ -20,10 +20,7 @@ class PlanSearchListing extends ConsumerStatefulWidget {
   final List<ListingBookings>? bookings;
   final List<ListingModel>? listings;
   const PlanSearchListing(
-      {super.key,
-      required this.category,
-      this.bookings,
-      this.listings});
+      {super.key, required this.category, this.bookings, this.listings});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -88,7 +85,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     final planEndDate = ref.watch(planEndDateProvider);
     final daysPlan = ref.read(daysPlanProvider);
     final formattedCurrentDate =
-        DateFormat.MMMMd().format(daysPlan.currentDay!);
+        DateFormat('EEE, MMM dd').format(daysPlan.currentDay!);
     final planSearch = ref.watch(planSearchLocationProvider);
     Future.delayed(Duration.zero, () {
       if (ref.watch(parentStateProvider) == true) {
@@ -126,7 +123,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                   Text(
                     daysPlan.currentDay == null || planEndDate == null
                         ? 'Select a date'
-                        : '${DateFormat.yMMMMd().format(daysPlan.currentDay!)} - ${DateFormat.yMMMMd().format(planEndDate)}',
+                        : '${DateFormat('EEE, MMM dd').format(daysPlan.currentDay!)} - ${DateFormat('EEE, MMM dd').format(planEndDate)}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 if (widget.category == "Transport" ||
@@ -359,7 +356,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
             'Location: $planSearch',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
-          content: Container(
+          content: SizedBox(
             height: MediaQuery.of(context).size.height / 5,
             width: MediaQuery.of(context).size.width * 0.8,
             child: MapWidget(address: planSearch),
@@ -493,7 +490,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     if (planSearch != null) {
       // Filter the listings based on the search
       listingResults = widget.listings!
-          .where((listing) => listing.address!.contains(planSearch))
+          .where((listing) => listing.address.contains(planSearch))
           .toList();
     } else {
       listingResults = widget.listings;
