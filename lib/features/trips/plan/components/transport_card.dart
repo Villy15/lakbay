@@ -940,10 +940,10 @@ class _TransportCardState extends ConsumerState<TransportCard> {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: Column(children: [
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
+                children: [
                   Row(children: [
                     Expanded(
                       child: TextFormField(
@@ -1000,111 +1000,112 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           prefixText: '+63 '),
                       keyboardType: TextInputType.phone),
-                  if (privateBookingType == 'Select Time') ...[
-                    const SizedBox(height: 10),
-                    TextFormField(
-                        controller: startTimeController,
-                        decoration: InputDecoration(
-                          labelText: 'Booking Start Time',
+                  // if (privateBookingType == 'Select Time') ...[
+                  const SizedBox(height: 10),
+                  TextFormField(
+                      controller: startTimeController,
+                      decoration: InputDecoration(
+                        labelText: 'Booking Start Time',
+                        border: const OutlineInputBorder(),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        hintText: transport.startTime!.format(context),
+                      ),
+                      readOnly: true,
+                      onTap: () async {
+                        // show time picker
+                        final time = await showTimePicker(
+                            context: context,
+                            initialTime: transport.startTime!,
+                            initialEntryMode: TimePickerEntryMode.inputOnly,
+                            builder: (context, child) {
+                              return MediaQuery(
+                                  data: MediaQuery.of(context)
+                                      .copyWith(alwaysUse24HourFormat: false),
+                                  child: child!);
+                            });
+
+                        if (time != null) {
+                          startTimeController!.text = time.format(context);
+                          startTime = time;
+                        }
+                      }),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                      controller: endTimeController,
+                      decoration: InputDecoration(
+                          labelText: 'Booking End Time',
                           border: const OutlineInputBorder(),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: transport.startTime!.format(context),
-                        ),
-                        readOnly: true,
-                        onTap: () async {
-                          // show time picker
-                          final time = await showTimePicker(
-                              context: context,
-                              initialTime: transport.startTime!,
-                              initialEntryMode: TimePickerEntryMode.inputOnly,
-                              builder: (context, child) {
-                                return MediaQuery(
-                                    data: MediaQuery.of(context)
-                                        .copyWith(alwaysUse24HourFormat: false),
-                                    child: child!);
-                              });
+                          hintText: transport.endTime!.format(context)),
+                      readOnly: true,
+                      onTap: () async {
+                        // show time picker
+                        final time = await showTimePicker(
+                            context: context,
+                            initialTime: transport.endTime!,
+                            initialEntryMode: TimePickerEntryMode.inputOnly,
+                            builder: (context, child) {
+                              return MediaQuery(
+                                  data: MediaQuery.of(context)
+                                      .copyWith(alwaysUse24HourFormat: false),
+                                  child: child!);
+                            });
 
-                          if (time != null) {
-                            startTimeController!.text = time.format(context);
-                            startTime = time;
-                          }
-                        }),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                        controller: endTimeController,
-                        decoration: InputDecoration(
-                            labelText: 'Booking End Time',
-                            border: const OutlineInputBorder(),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            hintText: transport.endTime!.format(context)),
-                        readOnly: true,
-                        onTap: () async {
-                          // show time picker
-                          final time = await showTimePicker(
-                              context: context,
-                              initialTime: transport.endTime!,
-                              initialEntryMode: TimePickerEntryMode.inputOnly,
-                              builder: (context, child) {
-                                return MediaQuery(
-                                    data: MediaQuery.of(context)
-                                        .copyWith(alwaysUse24HourFormat: false),
-                                    child: child!);
-                              });
-
-                          if (time != null) {
-                            endTimeController!.text = time.format(context);
-                            endTime = time;
-                          }
-                        }),
-                    const SizedBox(height: 20),
-                    CheckboxListTile(
-                      enabled: false,
-                      value: governmentId,
-                      title: const Text("Government ID"),
-                      onChanged: (bool? value) {
-                        setState(() {
-                          governmentId = value ?? false;
-                        });
-                      },
-                      controlAffinity: ListTileControlAffinity.leading,
-                    ),
-                    const Padding(
-                        padding: EdgeInsets.only(left: 16),
-                        child: Text(
-                            'Your Government ID is required as a means to protect cooperatives.',
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.grey))),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                          onPressed: () async {
-                            await proceedTransportCheckOut(
-                                typeOfTrip,
-                                listing,
-                                user,
-                                transport,
-                                startDate,
-                                departureTime,
-                                endDate,
-                                guests,
-                                phoneNoController,
-                                emergencyContactNameController,
-                                emergencyContactNoController,
-                                startTime,
-                                endTime);
-                          },
-                          style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  8.0), // Adjust the value as needed
-                            ),
+                        if (time != null) {
+                          endTimeController!.text = time.format(context);
+                          endTime = time;
+                        }
+                      }),
+                  const SizedBox(height: 20),
+                  CheckboxListTile(
+                    enabled: false,
+                    value: governmentId,
+                    title: const Text("Government ID"),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        governmentId = value ?? false;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+                  const Padding(
+                      padding: EdgeInsets.only(left: 16),
+                      child: Text(
+                          'Your Government ID is required as a means to protect cooperatives.',
+                          style: TextStyle(fontSize: 12, color: Colors.grey))),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                        onPressed: () async {
+                          await proceedTransportCheckOut(
+                              typeOfTrip,
+                              listing,
+                              user,
+                              transport,
+                              startDate,
+                              departureTime,
+                              endDate,
+                              guests,
+                              phoneNoController,
+                              emergencyContactNameController,
+                              emergencyContactNoController,
+                              startTime,
+                              endTime);
+                        },
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Adjust the value as needed
                           ),
-                          child: const Text('Proceed')),
-                    )
-                  ],
-                ]))
+                        ),
+                        child: const Text('Proceed')),
+                  )
+                ],
+                // ]
+              ),
+            )
           ]),
         )));
   }
