@@ -68,7 +68,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
       case 'Rental':
         return rentalCard(listing, imageUrls, currentDate);
       case "Watching/Performances":
-        return rentalCard(listing, imageUrls, currentDate);
+        return activityToursCard(listing, imageUrls, currentDate);
       case 'Activities/Tours':
         return activityToursCard(listing, imageUrls, currentDate);
       default:

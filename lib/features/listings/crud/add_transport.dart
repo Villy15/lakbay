@@ -598,7 +598,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                   maxLines: null,
                   controller: taskNameController,
                   decoration: const InputDecoration(
-                    labelText: 'Task Name*',
+                    labelText: 'Task Name',
                     border: OutlineInputBorder(),
                     floatingLabelBehavior: FloatingLabelBehavior
                         .always, // Keep the label always visible
@@ -612,7 +612,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                   controller: committeeController,
                   maxLines: 1,
                   decoration: const InputDecoration(
-                    labelText: 'Committee Assigned*',
+                    labelText: 'Committee Assigned',
                     border: OutlineInputBorder(),
                     floatingLabelBehavior: FloatingLabelBehavior
                         .always, // Keep the label always visible
@@ -1015,7 +1015,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           controller: _descriptionController,
           maxLines: null,
           decoration: const InputDecoration(
-              labelText: 'Description*',
+              labelText: 'Description',
               border: OutlineInputBorder(),
               floatingLabelBehavior: FloatingLabelBehavior.always,
               hintText: "A transport from Lakbay..."),
@@ -1024,7 +1024,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         TextFormField(
           controller: _feeController,
           decoration: const InputDecoration(
-              labelText: 'Price*',
+              labelText: 'Price',
               prefix: Text('₱'),
               border: OutlineInputBorder(),
               floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -1233,7 +1233,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
       TextFormField(
           controller: _addressController,
           decoration: const InputDecoration(
-            labelText: 'Address*',
+            labelText: 'Address',
             border: OutlineInputBorder(),
           ),
           readOnly: true,
@@ -1289,85 +1289,84 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           );
         }),
       ),
-      const SizedBox(height: 10),
       // indicate the working hours of the listing
-      const Text('Operating Hours',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-      const Text('Please select your operating hours...',
-          style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-      const SizedBox(height: 10),
-      TextFormField(
-        controller: startDateController,
-        maxLines: 1,
-        decoration: const InputDecoration(
-          labelText: 'Start Time*',
-          border: OutlineInputBorder(),
-          floatingLabelBehavior:
-              FloatingLabelBehavior.always, // Keep the label always visible
-          hintText: "8:30",
-        ),
-        readOnly: true,
-        onTap: () async {
-          final TimeOfDay? pickedTime = await showTimePicker(
-            context: context,
-            initialTime: startDate,
-            initialEntryMode: TimePickerEntryMode.inputOnly,
-            builder: (BuildContext context, Widget? child) {
-              return MediaQuery(
-                data: MediaQuery.of(context)
-                    .copyWith(alwaysUse24HourFormat: false),
-                child: child!,
-              );
-            },
-          );
+      // const Text('Operating Hours',
+      //     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      // const Text('Please select your operating hours...',
+      //     style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+      // const SizedBox(height: 10),
+      // TextFormField(
+      //   controller: startDateController,
+      //   maxLines: 1,
+      //   decoration: const InputDecoration(
+      //     labelText: 'Start Time*',
+      //     border: OutlineInputBorder(),
+      //     floatingLabelBehavior:
+      //         FloatingLabelBehavior.always, // Keep the label always visible
+      //     hintText: "8:30",
+      //   ),
+      //   readOnly: true,
+      //   onTap: () async {
+      //     final TimeOfDay? pickedTime = await showTimePicker(
+      //       context: context,
+      //       initialTime: startDate,
+      //       initialEntryMode: TimePickerEntryMode.inputOnly,
+      //       builder: (BuildContext context, Widget? child) {
+      //         return MediaQuery(
+      //           data: MediaQuery.of(context)
+      //               .copyWith(alwaysUse24HourFormat: false),
+      //           child: child!,
+      //         );
+      //       },
+      //     );
 
-          if (pickedTime != null) {
-            setState(() {
-              startDateController.text = pickedTime.format(context);
-              startDate = pickedTime;
-            });
-          }
-        },
-      ),
+      //     if (pickedTime != null) {
+      //       setState(() {
+      //         startDateController.text = pickedTime.format(context);
+      //         startDate = pickedTime;
+      //       });
+      //     }
+      //   },
+      // ),
       // start time
-      const SizedBox(
-        height: 10,
-      ),
+      // const SizedBox(
+      //   height: 10,
+      // ),
       // end time
-      TextFormField(
-        controller: endDateController,
-        maxLines: 1,
-        decoration: const InputDecoration(
-          labelText: 'End Time*',
-          border: OutlineInputBorder(),
-          floatingLabelBehavior:
-              FloatingLabelBehavior.always, // Keep the label always visible
-          hintText: "5:30",
-        ),
-        readOnly: true,
-        onTap: () async {
-          final TimeOfDay? pickedTime = await showTimePicker(
-            context: context,
-            initialTime: endDate,
-            initialEntryMode: TimePickerEntryMode.inputOnly,
-            builder: (BuildContext context, Widget? child) {
-              return MediaQuery(
-                data: MediaQuery.of(context)
-                    .copyWith(alwaysUse24HourFormat: false),
-                child: child!,
-              );
-            },
-          );
+      // TextFormField(
+      //   controller: endDateController,
+      //   maxLines: 1,
+      //   decoration: const InputDecoration(
+      //     labelText: 'End Time*',
+      //     border: OutlineInputBorder(),
+      //     floatingLabelBehavior:
+      //         FloatingLabelBehavior.always, // Keep the label always visible
+      //     hintText: "5:30",
+      //   ),
+      //   readOnly: true,
+      //   onTap: () async {
+      //     final TimeOfDay? pickedTime = await showTimePicker(
+      //       context: context,
+      //       initialTime: endDate,
+      //       initialEntryMode: TimePickerEntryMode.inputOnly,
+      //       builder: (BuildContext context, Widget? child) {
+      //         return MediaQuery(
+      //           data: MediaQuery.of(context)
+      //               .copyWith(alwaysUse24HourFormat: false),
+      //           child: child!,
+      //         );
+      //       },
+      //     );
 
-          if (pickedTime != null) {
-            setState(() {
-              endDateController.text = pickedTime.format(context);
-              endDate = pickedTime;
-            });
-          }
-        },
-      ),
-      const SizedBox(height: 30),
+      //     if (pickedTime != null) {
+      //       setState(() {
+      //         endDateController.text = pickedTime.format(context);
+      //         endDate = pickedTime;
+      //       });
+      //     }
+      //   },
+      // ),
+      const SizedBox(height: 10),
       // check if the type is public
       if (type == 'Public') ...[
         const Text('Travel Duration',
@@ -1379,7 +1378,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
           controller: travelDurationController,
           maxLines: 1,
           decoration: const InputDecoration(
-            labelText: 'Duration*',
+            labelText: 'Duration',
             border: OutlineInputBorder(),
             floatingLabelBehavior:
                 FloatingLabelBehavior.always, // Keep the label always visible
@@ -1422,10 +1421,10 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         TextFormField(
             controller: _pickupController,
             decoration: const InputDecoration(
-                labelText: 'Pickup*',
+                labelText: 'Pickup',
                 border: OutlineInputBorder(),
                 floatingLabelBehavior: FloatingLabelBehavior.always,
-                hintText: "Address*"),
+                hintText: "Address"),
             readOnly: true,
             onTap: () async {
               // make this pop another page so that
@@ -1436,7 +1435,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         TextFormField(
           controller: _destinationController,
           decoration: const InputDecoration(
-              labelText: 'Destination*',
+              labelText: 'Destination',
               border: OutlineInputBorder(),
               floatingLabelBehavior: FloatingLabelBehavior.always,
               hintText: "Address*"),

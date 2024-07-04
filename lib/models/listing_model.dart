@@ -192,7 +192,7 @@ class FoodService with _$FoodService {
 @freezed
 class EntertainmentScheduling with _$EntertainmentScheduling {
   factory EntertainmentScheduling({
-    String? type,
+    String? type, //[dayScheduling, dateScheduling]
     List<AvailableDay>? availability,
     List<AvailableDate>? fixedDates,
   }) = _EntertainmentScheduling;
