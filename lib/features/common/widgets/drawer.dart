@@ -260,16 +260,16 @@ class CustomDrawerState extends ConsumerState<CustomDrawer> {
                 : const SizedBox.shrink(),
 
             // Assets
-            widget.user!.isCoopView ?? false
-                ? ListTile(
-                    title: const Text('Assets'),
-                    leading: const Icon(Icons.car_rental_outlined),
-                    onTap: () => {
-                      context.pop(),
-                      context.push('/assets'),
-                    },
-                  )
-                : const SizedBox.shrink(),
+            // widget.user!.isCoopView ?? false
+            //     ? ListTile(
+            //         title: const Text('Assets'),
+            //         leading: const Icon(Icons.car_rental_outlined),
+            //         onTap: () => {
+            //           context.pop(),
+            //           context.push('/assets'),
+            //         },
+            //       )
+            //     : const SizedBox.shrink(),
           ],
         ),
       ),
