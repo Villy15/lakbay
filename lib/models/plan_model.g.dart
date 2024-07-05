@@ -55,6 +55,7 @@ _$PlanActivityImpl _$$PlanActivityImplFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String?,
       description: json['description'] as String?,
       imageUrl: json['imageUrl'] as String?,
+      isManual: json['isManual'] as bool?,
       startTime:
           const TimestampSerializer().fromJson(json['startTime'] as Timestamp?),
       endTime:
@@ -71,6 +72,7 @@ Map<String, dynamic> _$$PlanActivityImplToJson(_$PlanActivityImpl instance) =>
       'title': instance.title,
       'description': instance.description,
       'imageUrl': instance.imageUrl,
+      'isManual': instance.isManual,
       'startTime': const TimestampSerializer().toJson(instance.startTime),
       'endTime': const TimestampSerializer().toJson(instance.endTime),
     };

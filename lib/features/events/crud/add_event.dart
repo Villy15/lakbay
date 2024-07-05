@@ -36,6 +36,9 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
   final _locationController = TextEditingController();
   final _cityController = TextEditingController();
   final _provinceController = TextEditingController();
+  final _goalController = TextEditingController();
+  final _objectiveController = TextEditingController();
+
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 1));
 
@@ -68,6 +71,8 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
     _locationController.dispose();
     _cityController.dispose();
     _provinceController.dispose();
+    _goalController.dispose();
+    _objectiveController.dispose();
 
     // Dispose start and end date
     debugPrint('Disposing start and end date');
@@ -246,6 +251,7 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                               helperText: 'optional'),
                         ),
                         const SizedBox(height: 10),
+
                         // Type of event
 
                         TextFormField(

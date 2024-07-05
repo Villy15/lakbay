@@ -164,6 +164,8 @@ class DepartureModel with _$DepartureModel {
 @freezed
 class AssignedVehicle with _$AssignedVehicle {
   factory AssignedVehicle({
+    String? driverName,
+    String? driverId,
     AvailableTransport? vehicle,
     List<ListingBookings>? passengers,
   }) = _AssignedVehicle;

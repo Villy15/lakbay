@@ -30,6 +30,8 @@ mixin _$EventModel {
   String? get imageUrl => throw _privateConstructorUsedError;
   List<String> get members => throw _privateConstructorUsedError;
   List<String> get managers => throw _privateConstructorUsedError;
+  List<EventGoalsAndObjectives>? get goalsAndObjectives =>
+      throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get startDate => throw _privateConstructorUsedError;
   @TimestampSerializer()
@@ -60,6 +62,7 @@ abstract class $EventModelCopyWith<$Res> {
       String? imageUrl,
       List<String> members,
       List<String> managers,
+      List<EventGoalsAndObjectives>? goalsAndObjectives,
       @TimestampSerializer() DateTime? startDate,
       @TimestampSerializer() DateTime? endDate,
       EventCooperative cooperative,
@@ -91,6 +94,7 @@ class _$EventModelCopyWithImpl<$Res, $Val extends EventModel>
     Object? imageUrl = freezed,
     Object? members = null,
     Object? managers = null,
+    Object? goalsAndObjectives = freezed,
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? cooperative = null,
@@ -137,6 +141,10 @@ class _$EventModelCopyWithImpl<$Res, $Val extends EventModel>
           ? _value.managers
           : managers // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      goalsAndObjectives: freezed == goalsAndObjectives
+          ? _value.goalsAndObjectives
+          : goalsAndObjectives // ignore: cast_nullable_to_non_nullable
+              as List<EventGoalsAndObjectives>?,
       startDate: freezed == startDate
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
@@ -184,6 +192,7 @@ abstract class _$$EventModelImplCopyWith<$Res>
       String? imageUrl,
       List<String> members,
       List<String> managers,
+      List<EventGoalsAndObjectives>? goalsAndObjectives,
       @TimestampSerializer() DateTime? startDate,
       @TimestampSerializer() DateTime? endDate,
       EventCooperative cooperative,
@@ -214,6 +223,7 @@ class __$$EventModelImplCopyWithImpl<$Res>
     Object? imageUrl = freezed,
     Object? members = null,
     Object? managers = null,
+    Object? goalsAndObjectives = freezed,
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? cooperative = null,
@@ -260,6 +270,10 @@ class __$$EventModelImplCopyWithImpl<$Res>
           ? _value._managers
           : managers // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      goalsAndObjectives: freezed == goalsAndObjectives
+          ? _value._goalsAndObjectives
+          : goalsAndObjectives // ignore: cast_nullable_to_non_nullable
+              as List<EventGoalsAndObjectives>?,
       startDate: freezed == startDate
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
@@ -294,12 +308,14 @@ class _$EventModelImpl implements _EventModel {
       this.imageUrl,
       required final List<String> members,
       required final List<String> managers,
+      final List<EventGoalsAndObjectives>? goalsAndObjectives,
       @TimestampSerializer() this.startDate,
       @TimestampSerializer() this.endDate,
       required this.cooperative,
       this.eventType})
       : _members = members,
-        _managers = managers;
+        _managers = managers,
+        _goalsAndObjectives = goalsAndObjectives;
 
   factory _$EventModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$EventModelImplFromJson(json);
@@ -336,6 +352,17 @@ class _$EventModelImpl implements _EventModel {
     return EqualUnmodifiableListView(_managers);
   }
 
+  final List<EventGoalsAndObjectives>? _goalsAndObjectives;
+  @override
+  List<EventGoalsAndObjectives>? get goalsAndObjectives {
+    final value = _goalsAndObjectives;
+    if (value == null) return null;
+    if (_goalsAndObjectives is EqualUnmodifiableListView)
+      return _goalsAndObjectives;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @TimestampSerializer()
   final DateTime? startDate;
@@ -349,7 +376,7 @@ class _$EventModelImpl implements _EventModel {
 
   @override
   String toString() {
-    return 'EventModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, members: $members, managers: $managers, startDate: $startDate, endDate: $endDate, cooperative: $cooperative, eventType: $eventType)';
+    return 'EventModel(uid: $uid, name: $name, description: $description, address: $address, city: $city, province: $province, imagePath: $imagePath, imageUrl: $imageUrl, members: $members, managers: $managers, goalsAndObjectives: $goalsAndObjectives, startDate: $startDate, endDate: $endDate, cooperative: $cooperative, eventType: $eventType)';
   }
 
   @override
@@ -371,6 +398,8 @@ class _$EventModelImpl implements _EventModel {
                 other.imageUrl == imageUrl) &&
             const DeepCollectionEquality().equals(other._members, _members) &&
             const DeepCollectionEquality().equals(other._managers, _managers) &&
+            const DeepCollectionEquality()
+                .equals(other._goalsAndObjectives, _goalsAndObjectives) &&
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate) &&
             (identical(other.endDate, endDate) || other.endDate == endDate) &&
@@ -394,6 +423,7 @@ class _$EventModelImpl implements _EventModel {
       imageUrl,
       const DeepCollectionEquality().hash(_members),
       const DeepCollectionEquality().hash(_managers),
+      const DeepCollectionEquality().hash(_goalsAndObjectives),
       startDate,
       endDate,
       cooperative,
@@ -425,6 +455,7 @@ abstract class _EventModel implements EventModel {
       final String? imageUrl,
       required final List<String> members,
       required final List<String> managers,
+      final List<EventGoalsAndObjectives>? goalsAndObjectives,
       @TimestampSerializer() final DateTime? startDate,
       @TimestampSerializer() final DateTime? endDate,
       required final EventCooperative cooperative,
@@ -453,6 +484,8 @@ abstract class _EventModel implements EventModel {
   List<String> get members;
   @override
   List<String> get managers;
+  @override
+  List<EventGoalsAndObjectives>? get goalsAndObjectives;
   @override
   @TimestampSerializer()
   DateTime? get startDate;
@@ -625,4 +658,184 @@ abstract class _EventCooperative implements EventCooperative {
   @JsonKey(ignore: true)
   _$$EventCooperativeImplCopyWith<_$EventCooperativeImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+EventGoalsAndObjectives _$EventGoalsAndObjectivesFromJson(
+    Map<String, dynamic> json) {
+  return _EventGoalsAndObjectives.fromJson(json);
+}
+
+/// @nodoc
+mixin _$EventGoalsAndObjectives {
+  String get goal => throw _privateConstructorUsedError;
+  num get objective => throw _privateConstructorUsedError;
+  bool? get isAchieved => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $EventGoalsAndObjectivesCopyWith<EventGoalsAndObjectives> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $EventGoalsAndObjectivesCopyWith<$Res> {
+  factory $EventGoalsAndObjectivesCopyWith(EventGoalsAndObjectives value,
+          $Res Function(EventGoalsAndObjectives) then) =
+      _$EventGoalsAndObjectivesCopyWithImpl<$Res, EventGoalsAndObjectives>;
+  @useResult
+  $Res call({String goal, num objective, bool? isAchieved});
+}
+
+/// @nodoc
+class _$EventGoalsAndObjectivesCopyWithImpl<$Res,
+        $Val extends EventGoalsAndObjectives>
+    implements $EventGoalsAndObjectivesCopyWith<$Res> {
+  _$EventGoalsAndObjectivesCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goal = null,
+    Object? objective = null,
+    Object? isAchieved = freezed,
+  }) {
+    return _then(_value.copyWith(
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      objective: null == objective
+          ? _value.objective
+          : objective // ignore: cast_nullable_to_non_nullable
+              as num,
+      isAchieved: freezed == isAchieved
+          ? _value.isAchieved
+          : isAchieved // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$EventGoalsAndObjectivesImplCopyWith<$Res>
+    implements $EventGoalsAndObjectivesCopyWith<$Res> {
+  factory _$$EventGoalsAndObjectivesImplCopyWith(
+          _$EventGoalsAndObjectivesImpl value,
+          $Res Function(_$EventGoalsAndObjectivesImpl) then) =
+      __$$EventGoalsAndObjectivesImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String goal, num objective, bool? isAchieved});
+}
+
+/// @nodoc
+class __$$EventGoalsAndObjectivesImplCopyWithImpl<$Res>
+    extends _$EventGoalsAndObjectivesCopyWithImpl<$Res,
+        _$EventGoalsAndObjectivesImpl>
+    implements _$$EventGoalsAndObjectivesImplCopyWith<$Res> {
+  __$$EventGoalsAndObjectivesImplCopyWithImpl(
+      _$EventGoalsAndObjectivesImpl _value,
+      $Res Function(_$EventGoalsAndObjectivesImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goal = null,
+    Object? objective = null,
+    Object? isAchieved = freezed,
+  }) {
+    return _then(_$EventGoalsAndObjectivesImpl(
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      objective: null == objective
+          ? _value.objective
+          : objective // ignore: cast_nullable_to_non_nullable
+              as num,
+      isAchieved: freezed == isAchieved
+          ? _value.isAchieved
+          : isAchieved // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$EventGoalsAndObjectivesImpl implements _EventGoalsAndObjectives {
+  _$EventGoalsAndObjectivesImpl(
+      {required this.goal, required this.objective, this.isAchieved});
+
+  factory _$EventGoalsAndObjectivesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EventGoalsAndObjectivesImplFromJson(json);
+
+  @override
+  final String goal;
+  @override
+  final num objective;
+  @override
+  final bool? isAchieved;
+
+  @override
+  String toString() {
+    return 'EventGoalsAndObjectives(goal: $goal, objective: $objective, isAchieved: $isAchieved)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EventGoalsAndObjectivesImpl &&
+            (identical(other.goal, goal) || other.goal == goal) &&
+            (identical(other.objective, objective) ||
+                other.objective == objective) &&
+            (identical(other.isAchieved, isAchieved) ||
+                other.isAchieved == isAchieved));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, goal, objective, isAchieved);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$EventGoalsAndObjectivesImplCopyWith<_$EventGoalsAndObjectivesImpl>
+      get copyWith => __$$EventGoalsAndObjectivesImplCopyWithImpl<
+          _$EventGoalsAndObjectivesImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$EventGoalsAndObjectivesImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _EventGoalsAndObjectives implements EventGoalsAndObjectives {
+  factory _EventGoalsAndObjectives(
+      {required final String goal,
+      required final num objective,
+      final bool? isAchieved}) = _$EventGoalsAndObjectivesImpl;
+
+  factory _EventGoalsAndObjectives.fromJson(Map<String, dynamic> json) =
+      _$EventGoalsAndObjectivesImpl.fromJson;
+
+  @override
+  String get goal;
+  @override
+  num get objective;
+  @override
+  bool? get isAchieved;
+  @override
+  @JsonKey(ignore: true)
+  _$$EventGoalsAndObjectivesImplCopyWith<_$EventGoalsAndObjectivesImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }

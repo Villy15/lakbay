@@ -652,45 +652,49 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                             trailing: const InkWell(
                                 child: Icon(Icons.file_open_outlined)),
                             onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    createFileOfPdfUrl(file.url!).then((value) {
-                                      setState(() {
-                                        remotePdfPath = value.path;
-                                      });
+                              String? pdfPath;
+
+                              createFileOfPdfUrl(file.url!).then((value) {
+                                pdfPath = value.path;
+                                setState(() {
+                                  remotePdfPath = value.path;
+                                });
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Dialog.fullscreen(
+                                        child: PDFView(
+                                          filePath: pdfPath,
+                                          swipeHorizontal: true,
+                                          enableSwipe: true,
+                                          autoSpacing: false,
+                                          pageFling: true,
+                                          pageSnap: true,
+                                          defaultPage: currentPage!,
+                                          fitPolicy: FitPolicy.BOTH,
+                                          preventLinkNavigation:
+                                              false, // if set to true the link is handled in flutter
+                                          onRender: (pages) {
+                                            setState(() {
+                                              totalPages = pages;
+                                              isReady = true;
+                                            });
+                                          },
+                                          onViewCreated: (PDFViewController
+                                              pdfViewController) {
+                                            controller
+                                                .complete(pdfViewController);
+                                          },
+                                          onPageChanged:
+                                              (int? page, int? total) {
+                                            setState(() {
+                                              currentPage = page;
+                                            });
+                                          },
+                                        ),
+                                      );
                                     });
-                                    return Dialog.fullscreen(
-                                      child: PDFView(
-                                        filePath: remotePdfPath,
-                                        swipeHorizontal: true,
-                                        enableSwipe: true,
-                                        autoSpacing: false,
-                                        pageFling: true,
-                                        pageSnap: true,
-                                        defaultPage: currentPage!,
-                                        fitPolicy: FitPolicy.BOTH,
-                                        preventLinkNavigation:
-                                            false, // if set to true the link is handled in flutter
-                                        onRender: (pages) {
-                                          setState(() {
-                                            totalPages = pages;
-                                            isReady = true;
-                                          });
-                                        },
-                                        onViewCreated: (PDFViewController
-                                            pdfViewController) {
-                                          controller
-                                              .complete(pdfViewController);
-                                        },
-                                        onPageChanged: (int? page, int? total) {
-                                          setState(() {
-                                            currentPage = page;
-                                          });
-                                        },
-                                      ),
-                                    );
-                                  });
+                              });
                             },
                           );
                         })

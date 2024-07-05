@@ -330,6 +330,8 @@ Map<String, dynamic> _$$DepartureModelImplToJson(
 _$AssignedVehicleImpl _$$AssignedVehicleImplFromJson(
         Map<String, dynamic> json) =>
     _$AssignedVehicleImpl(
+      driverName: json['driverName'] as String?,
+      driverId: json['driverId'] as String?,
       vehicle: json['vehicle'] == null
           ? null
           : AvailableTransport.fromJson(
@@ -342,6 +344,8 @@ _$AssignedVehicleImpl _$$AssignedVehicleImplFromJson(
 Map<String, dynamic> _$$AssignedVehicleImplToJson(
         _$AssignedVehicleImpl instance) =>
     <String, dynamic>{
+      'driverName': instance.driverName,
+      'driverId': instance.driverId,
       'vehicle': instance.vehicle?.toJson(),
       'passengers': instance.passengers?.map((e) => e.toJson()).toList(),
     };

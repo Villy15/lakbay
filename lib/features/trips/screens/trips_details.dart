@@ -348,7 +348,14 @@ class _TripDetailsPlanState extends ConsumerState<TripDetailsPlan> {
           } else {
             if (plan.tripStatus != "Completed") {
               return InkWell(
-                onTap: () => (),
+                onTap: () {
+                  DateTime newEnd = plan.endDate!.add(const Duration(days: 1));
+                  PlanModel updatedPlan = plan.copyWith(endDate: newEnd);
+                  ref.read(planEndDateProvider.notifier).setEndDate(newEnd);
+                  ref
+                      .read(plansControllerProvider.notifier)
+                      .updatePlan(updatedPlan, context);
+                },
                 child: const SizedBox(
                   width: 100,
                   child: Column(

@@ -11,7 +11,9 @@ import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
+import 'package:lakbay/features/cooperatives/coop_members_roles_controller.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_member_roles_model.dart';
 import 'package:lakbay/models/coop_model.dart';
 import 'package:lakbay/models/user_model.dart';
@@ -159,6 +161,7 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
     ref
         .read(coopsControllerProvider.notifier)
         .addApplication(updatedCoop.uid!, application, context);
+
     // ref
     //     .read(usersControllerProvider.notifier)
     //     .editProfileFromJoiningCoop(context, user.uid, updatedUser);
@@ -171,6 +174,7 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
     // ref
     //     .read(coopMemberRolesControllerProvider.notifier)
     //     .addMemberRole(coopMemberRoles, context);
+    context.pop();
   }
 
   // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RENDER UI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

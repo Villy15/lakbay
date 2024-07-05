@@ -44,7 +44,7 @@ class EventsPage extends ConsumerWidget {
                             childAspectRatio: 3 / 2,
                             crossAxisSpacing: 20,
                             mainAxisSpacing: 20,
-                            mainAxisExtent: 240,
+                            mainAxisExtent: 260,
                           ),
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),

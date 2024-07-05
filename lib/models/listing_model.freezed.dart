@@ -3013,6 +3013,8 @@ AssignedVehicle _$AssignedVehicleFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AssignedVehicle {
+  String? get driverName => throw _privateConstructorUsedError;
+  String? get driverId => throw _privateConstructorUsedError;
   AvailableTransport? get vehicle => throw _privateConstructorUsedError;
   List<ListingBookings>? get passengers => throw _privateConstructorUsedError;
 
@@ -3028,7 +3030,11 @@ abstract class $AssignedVehicleCopyWith<$Res> {
           AssignedVehicle value, $Res Function(AssignedVehicle) then) =
       _$AssignedVehicleCopyWithImpl<$Res, AssignedVehicle>;
   @useResult
-  $Res call({AvailableTransport? vehicle, List<ListingBookings>? passengers});
+  $Res call(
+      {String? driverName,
+      String? driverId,
+      AvailableTransport? vehicle,
+      List<ListingBookings>? passengers});
 
   $AvailableTransportCopyWith<$Res>? get vehicle;
 }
@@ -3046,10 +3052,20 @@ class _$AssignedVehicleCopyWithImpl<$Res, $Val extends AssignedVehicle>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? driverName = freezed,
+    Object? driverId = freezed,
     Object? vehicle = freezed,
     Object? passengers = freezed,
   }) {
     return _then(_value.copyWith(
+      driverName: freezed == driverName
+          ? _value.driverName
+          : driverName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      driverId: freezed == driverId
+          ? _value.driverId
+          : driverId // ignore: cast_nullable_to_non_nullable
+              as String?,
       vehicle: freezed == vehicle
           ? _value.vehicle
           : vehicle // ignore: cast_nullable_to_non_nullable
@@ -3082,7 +3098,11 @@ abstract class _$$AssignedVehicleImplCopyWith<$Res>
       __$$AssignedVehicleImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({AvailableTransport? vehicle, List<ListingBookings>? passengers});
+  $Res call(
+      {String? driverName,
+      String? driverId,
+      AvailableTransport? vehicle,
+      List<ListingBookings>? passengers});
 
   @override
   $AvailableTransportCopyWith<$Res>? get vehicle;
@@ -3099,10 +3119,20 @@ class __$$AssignedVehicleImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? driverName = freezed,
+    Object? driverId = freezed,
     Object? vehicle = freezed,
     Object? passengers = freezed,
   }) {
     return _then(_$AssignedVehicleImpl(
+      driverName: freezed == driverName
+          ? _value.driverName
+          : driverName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      driverId: freezed == driverId
+          ? _value.driverId
+          : driverId // ignore: cast_nullable_to_non_nullable
+              as String?,
       vehicle: freezed == vehicle
           ? _value.vehicle
           : vehicle // ignore: cast_nullable_to_non_nullable
@@ -3118,12 +3148,20 @@ class __$$AssignedVehicleImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$AssignedVehicleImpl implements _AssignedVehicle {
-  _$AssignedVehicleImpl({this.vehicle, final List<ListingBookings>? passengers})
+  _$AssignedVehicleImpl(
+      {this.driverName,
+      this.driverId,
+      this.vehicle,
+      final List<ListingBookings>? passengers})
       : _passengers = passengers;
 
   factory _$AssignedVehicleImpl.fromJson(Map<String, dynamic> json) =>
       _$$AssignedVehicleImplFromJson(json);
 
+  @override
+  final String? driverName;
+  @override
+  final String? driverId;
   @override
   final AvailableTransport? vehicle;
   final List<ListingBookings>? _passengers;
@@ -3138,7 +3176,7 @@ class _$AssignedVehicleImpl implements _AssignedVehicle {
 
   @override
   String toString() {
-    return 'AssignedVehicle(vehicle: $vehicle, passengers: $passengers)';
+    return 'AssignedVehicle(driverName: $driverName, driverId: $driverId, vehicle: $vehicle, passengers: $passengers)';
   }
 
   @override
@@ -3146,6 +3184,10 @@ class _$AssignedVehicleImpl implements _AssignedVehicle {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AssignedVehicleImpl &&
+            (identical(other.driverName, driverName) ||
+                other.driverName == driverName) &&
+            (identical(other.driverId, driverId) ||
+                other.driverId == driverId) &&
             (identical(other.vehicle, vehicle) || other.vehicle == vehicle) &&
             const DeepCollectionEquality()
                 .equals(other._passengers, _passengers));
@@ -3153,8 +3195,8 @@ class _$AssignedVehicleImpl implements _AssignedVehicle {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, vehicle, const DeepCollectionEquality().hash(_passengers));
+  int get hashCode => Object.hash(runtimeType, driverName, driverId, vehicle,
+      const DeepCollectionEquality().hash(_passengers));
 
   @JsonKey(ignore: true)
   @override
@@ -3173,12 +3215,18 @@ class _$AssignedVehicleImpl implements _AssignedVehicle {
 
 abstract class _AssignedVehicle implements AssignedVehicle {
   factory _AssignedVehicle(
-      {final AvailableTransport? vehicle,
+      {final String? driverName,
+      final String? driverId,
+      final AvailableTransport? vehicle,
       final List<ListingBookings>? passengers}) = _$AssignedVehicleImpl;
 
   factory _AssignedVehicle.fromJson(Map<String, dynamic> json) =
       _$AssignedVehicleImpl.fromJson;
 
+  @override
+  String? get driverName;
+  @override
+  String? get driverId;
   @override
   AvailableTransport? get vehicle;
   @override

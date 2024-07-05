@@ -461,7 +461,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
               .where((availableDate) {
             return availableDate.available == true &&
                 availableDate.date.isAfter(currentDate);
-          }).first;
+          }).firstOrNull;
           var timeSlots = date.availableTimes;
           return dateSchedulingCard(imageUrls, listing, currentUser, timeSlots,
               currentDate, date, availableDate);
@@ -477,7 +477,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
       List<AvailableTime> timeSlots,
       DateTime currentDate,
       AvailableDate date,
-      AvailableDate availableDate) {
+      AvailableDate? availableDate) {
     return SizedBox(
       // height: MediaQuery.sizeOf(context).height / 2,
       width: MediaQuery.sizeOf(context).width / 2,
@@ -576,7 +576,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                                 ),
                               ),
                               child: Text(
-                                  'Next Available \n ${formatDateMMDDYYYY(availableDate.date)}',
+                                  'Next Available \n ${availableDate != null ? formatDateMMDDYYYY(availableDate.date) : "Not Scheduled"}',
                                   style: const TextStyle(fontSize: 14)))
                     ]),
                 Row(
