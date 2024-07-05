@@ -235,10 +235,13 @@ class _ReadEventPageState extends ConsumerState<ReadEventPage> {
                           children: [
                             const Icon(Icons.location_on),
                             const SizedBox(width: 8),
-                            Text(
-                              'Address: ${event.address}, ${event.city}, ${event.province}',
-                              style: const TextStyle(
-                                fontSize: 16.0,
+                            Expanded(
+                              child: Text(
+                                'Address: ${event.address}, ${event.city}, ${event.province}',
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],

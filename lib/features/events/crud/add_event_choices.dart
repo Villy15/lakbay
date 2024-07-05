@@ -22,8 +22,14 @@ class _AddEventChoicesState extends ConsumerState<AddEventChoices> {
     );
   }
 
-  void addEventPredetermined(BuildContext context, CooperativeModel coop,
-      String eventType, String eventName, String eventDesc) {
+  void addEventPredetermined(
+      BuildContext context,
+      CooperativeModel coop,
+      String eventType,
+      String eventName,
+      String eventDesc,
+      String eventGoal,
+      num eventObjective) {
     context.pushNamed(
       'add_event_predetermined',
       extra: {
@@ -31,6 +37,8 @@ class _AddEventChoicesState extends ConsumerState<AddEventChoices> {
         'eventType': eventType,
         'eventName': eventName,
         'eventDesc': eventDesc,
+        'eventGoal': eventGoal,
+        'eventObjective': eventObjective,
       },
     );
   }
@@ -81,6 +89,8 @@ class _AddEventChoicesState extends ConsumerState<AddEventChoices> {
                         'Community Engagement',
                         'Tree Planting',
                         'Planting trees is a great way to help the environment. Trees provide oxygen, improve air quality, conserve water, preserve soil, and support wildlife. Planting trees is also a great way to help the environment. Trees provide oxygen, improve air quality, conserve water, preserve soil, and support wildlife.',
+                        'Trees planted',
+                        100,
                       ),
                     ),
                     ListTile(
@@ -92,6 +102,8 @@ class _AddEventChoicesState extends ConsumerState<AddEventChoices> {
                         'Community Engagement',
                         'Plastic Waste Reduction Campaigns',
                         'Plastic waste reduction campaigns are a great way to help the environment. Plastic waste reduction campaigns help reduce the amount of plastic waste that ends up in landfills and oceans. Plastic waste reduction campaigns also help raise awareness about the importance of reducing plastic waste and encourage people to use less plastic.',
+                        'Amount of trash collected (in kilograms)',
+                        100,
                       ),
                     ),
                     ListTile(
@@ -105,6 +117,8 @@ class _AddEventChoicesState extends ConsumerState<AddEventChoices> {
                         'Community Engagement',
                         'River and Watershed Protection Programs',
                         'River and watershed protection programs are a great way to help the environment. River and watershed protection programs help protect rivers and watersheds from pollution, habitat destruction, and other threats. River and watershed protection programs also help raise awareness about the importance of protecting rivers and watersheds and encourage people to take action to protect them.',
+                        'Amount of trash collected (in kilograms)',
+                        100,
                       ),
                     ),
                     // Create your own community engagement events here
