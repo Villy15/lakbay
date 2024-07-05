@@ -435,6 +435,7 @@ mixin _$PlanActivity {
   String? get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
+  bool? get isManual => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get startTime => throw _privateConstructorUsedError;
   @TimestampSerializer()
@@ -461,6 +462,7 @@ abstract class $PlanActivityCopyWith<$Res> {
       String? title,
       String? description,
       String? imageUrl,
+      bool? isManual,
       @TimestampSerializer() DateTime? startTime,
       @TimestampSerializer() DateTime? endTime});
 }
@@ -486,6 +488,7 @@ class _$PlanActivityCopyWithImpl<$Res, $Val extends PlanActivity>
     Object? title = freezed,
     Object? description = freezed,
     Object? imageUrl = freezed,
+    Object? isManual = freezed,
     Object? startTime = freezed,
     Object? endTime = freezed,
   }) {
@@ -522,6 +525,10 @@ class _$PlanActivityCopyWithImpl<$Res, $Val extends PlanActivity>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      isManual: freezed == isManual
+          ? _value.isManual
+          : isManual // ignore: cast_nullable_to_non_nullable
+              as bool?,
       startTime: freezed == startTime
           ? _value.startTime
           : startTime // ignore: cast_nullable_to_non_nullable
@@ -551,6 +558,7 @@ abstract class _$$PlanActivityImplCopyWith<$Res>
       String? title,
       String? description,
       String? imageUrl,
+      bool? isManual,
       @TimestampSerializer() DateTime? startTime,
       @TimestampSerializer() DateTime? endTime});
 }
@@ -574,6 +582,7 @@ class __$$PlanActivityImplCopyWithImpl<$Res>
     Object? title = freezed,
     Object? description = freezed,
     Object? imageUrl = freezed,
+    Object? isManual = freezed,
     Object? startTime = freezed,
     Object? endTime = freezed,
   }) {
@@ -610,6 +619,10 @@ class __$$PlanActivityImplCopyWithImpl<$Res>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      isManual: freezed == isManual
+          ? _value.isManual
+          : isManual // ignore: cast_nullable_to_non_nullable
+              as bool?,
       startTime: freezed == startTime
           ? _value.startTime
           : startTime // ignore: cast_nullable_to_non_nullable
@@ -634,6 +647,7 @@ class _$PlanActivityImpl implements _PlanActivity {
       this.title,
       this.description,
       this.imageUrl,
+      this.isManual,
       @TimestampSerializer() this.startTime,
       @TimestampSerializer() this.endTime});
 
@@ -658,6 +672,8 @@ class _$PlanActivityImpl implements _PlanActivity {
   @override
   final String? imageUrl;
   @override
+  final bool? isManual;
+  @override
   @TimestampSerializer()
   final DateTime? startTime;
   @override
@@ -666,7 +682,7 @@ class _$PlanActivityImpl implements _PlanActivity {
 
   @override
   String toString() {
-    return 'PlanActivity(key: $key, dateTime: $dateTime, listingId: $listingId, bookingId: $bookingId, category: $category, title: $title, description: $description, imageUrl: $imageUrl, startTime: $startTime, endTime: $endTime)';
+    return 'PlanActivity(key: $key, dateTime: $dateTime, listingId: $listingId, bookingId: $bookingId, category: $category, title: $title, description: $description, imageUrl: $imageUrl, isManual: $isManual, startTime: $startTime, endTime: $endTime)';
   }
 
   @override
@@ -688,6 +704,8 @@ class _$PlanActivityImpl implements _PlanActivity {
                 other.description == description) &&
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
+            (identical(other.isManual, isManual) ||
+                other.isManual == isManual) &&
             (identical(other.startTime, startTime) ||
                 other.startTime == startTime) &&
             (identical(other.endTime, endTime) || other.endTime == endTime));
@@ -695,8 +713,19 @@ class _$PlanActivityImpl implements _PlanActivity {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, key, dateTime, listingId,
-      bookingId, category, title, description, imageUrl, startTime, endTime);
+  int get hashCode => Object.hash(
+      runtimeType,
+      key,
+      dateTime,
+      listingId,
+      bookingId,
+      category,
+      title,
+      description,
+      imageUrl,
+      isManual,
+      startTime,
+      endTime);
 
   @JsonKey(ignore: true)
   @override
@@ -722,6 +751,7 @@ abstract class _PlanActivity implements PlanActivity {
       final String? title,
       final String? description,
       final String? imageUrl,
+      final bool? isManual,
       @TimestampSerializer() final DateTime? startTime,
       @TimestampSerializer() final DateTime? endTime}) = _$PlanActivityImpl;
 
@@ -745,6 +775,8 @@ abstract class _PlanActivity implements PlanActivity {
   String? get description;
   @override
   String? get imageUrl;
+  @override
+  bool? get isManual;
   @override
   @TimestampSerializer()
   DateTime? get startTime;
