@@ -18,6 +18,7 @@ class CooperativeMembers with _$CooperativeMembers {
     @Default(false) bool? isManager,
     BoardRole? boardRole,
     @TimestampSerializer() DateTime? timestamp,
+    bool? paidMembershipFee
   }) = _CooperativeMembers;
 
   factory CooperativeMembers.fromJson(Map<String, dynamic> json) =>

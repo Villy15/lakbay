@@ -285,7 +285,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       ),
       subtitle: RichText(
         text: TextSpan(
-          text: '${message.split(': ')[0]}: ',
+          text: message.split(': ')[0],
           style: DefaultTextStyle.of(context).style,
           children: <TextSpan>[
             TextSpan(

@@ -30,6 +30,7 @@ mixin _$CooperativeMembers {
   BoardRole? get boardRole => throw _privateConstructorUsedError;
   @TimestampSerializer()
   DateTime? get timestamp => throw _privateConstructorUsedError;
+  bool? get paidMembershipFee => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -51,7 +52,8 @@ abstract class $CooperativeMembersCopyWith<$Res> {
       List<CooperativeMembersRole>? committees,
       bool? isManager,
       BoardRole? boardRole,
-      @TimestampSerializer() DateTime? timestamp});
+      @TimestampSerializer() DateTime? timestamp,
+      bool? paidMembershipFee});
 
   $CooperativeMembersRoleCopyWith<$Res>? get role;
   $BoardRoleCopyWith<$Res>? get boardRole;
@@ -78,6 +80,7 @@ class _$CooperativeMembersCopyWithImpl<$Res, $Val extends CooperativeMembers>
     Object? isManager = freezed,
     Object? boardRole = freezed,
     Object? timestamp = freezed,
+    Object? paidMembershipFee = freezed,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -112,6 +115,10 @@ class _$CooperativeMembersCopyWithImpl<$Res, $Val extends CooperativeMembers>
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      paidMembershipFee: freezed == paidMembershipFee
+          ? _value.paidMembershipFee
+          : paidMembershipFee // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 
@@ -156,7 +163,8 @@ abstract class _$$CooperativeMembersImplCopyWith<$Res>
       List<CooperativeMembersRole>? committees,
       bool? isManager,
       BoardRole? boardRole,
-      @TimestampSerializer() DateTime? timestamp});
+      @TimestampSerializer() DateTime? timestamp,
+      bool? paidMembershipFee});
 
   @override
   $CooperativeMembersRoleCopyWith<$Res>? get role;
@@ -183,6 +191,7 @@ class __$$CooperativeMembersImplCopyWithImpl<$Res>
     Object? isManager = freezed,
     Object? boardRole = freezed,
     Object? timestamp = freezed,
+    Object? paidMembershipFee = freezed,
   }) {
     return _then(_$CooperativeMembersImpl(
       name: null == name
@@ -217,6 +226,10 @@ class __$$CooperativeMembersImplCopyWithImpl<$Res>
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      paidMembershipFee: freezed == paidMembershipFee
+          ? _value.paidMembershipFee
+          : paidMembershipFee // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -232,7 +245,8 @@ class _$CooperativeMembersImpl extends _CooperativeMembers {
       final List<CooperativeMembersRole>? committees,
       this.isManager = false,
       this.boardRole,
-      @TimestampSerializer() this.timestamp})
+      @TimestampSerializer() this.timestamp,
+      this.paidMembershipFee})
       : _privileges = privileges,
         _committees = committees,
         super._();
@@ -274,10 +288,12 @@ class _$CooperativeMembersImpl extends _CooperativeMembers {
   @override
   @TimestampSerializer()
   final DateTime? timestamp;
+  @override
+  final bool? paidMembershipFee;
 
   @override
   String toString() {
-    return 'CooperativeMembers(name: $name, uid: $uid, privileges: $privileges, role: $role, committees: $committees, isManager: $isManager, boardRole: $boardRole, timestamp: $timestamp)';
+    return 'CooperativeMembers(name: $name, uid: $uid, privileges: $privileges, role: $role, committees: $committees, isManager: $isManager, boardRole: $boardRole, timestamp: $timestamp, paidMembershipFee: $paidMembershipFee)';
   }
 
   @override
@@ -297,7 +313,9 @@ class _$CooperativeMembersImpl extends _CooperativeMembers {
             (identical(other.boardRole, boardRole) ||
                 other.boardRole == boardRole) &&
             (identical(other.timestamp, timestamp) ||
-                other.timestamp == timestamp));
+                other.timestamp == timestamp) &&
+            (identical(other.paidMembershipFee, paidMembershipFee) ||
+                other.paidMembershipFee == paidMembershipFee));
   }
 
   @JsonKey(ignore: true)
@@ -311,7 +329,8 @@ class _$CooperativeMembersImpl extends _CooperativeMembers {
       const DeepCollectionEquality().hash(_committees),
       isManager,
       boardRole,
-      timestamp);
+      timestamp,
+      paidMembershipFee);
 
   @JsonKey(ignore: true)
   @override
@@ -330,15 +349,15 @@ class _$CooperativeMembersImpl extends _CooperativeMembers {
 
 abstract class _CooperativeMembers extends CooperativeMembers {
   factory _CooperativeMembers(
-          {required final String name,
-          final String? uid,
-          final List<String>? privileges,
-          final CooperativeMembersRole? role,
-          final List<CooperativeMembersRole>? committees,
-          final bool? isManager,
-          final BoardRole? boardRole,
-          @TimestampSerializer() final DateTime? timestamp}) =
-      _$CooperativeMembersImpl;
+      {required final String name,
+      final String? uid,
+      final List<String>? privileges,
+      final CooperativeMembersRole? role,
+      final List<CooperativeMembersRole>? committees,
+      final bool? isManager,
+      final BoardRole? boardRole,
+      @TimestampSerializer() final DateTime? timestamp,
+      final bool? paidMembershipFee}) = _$CooperativeMembersImpl;
   _CooperativeMembers._() : super._();
 
   factory _CooperativeMembers.fromJson(Map<String, dynamic> json) =
@@ -361,6 +380,8 @@ abstract class _CooperativeMembers extends CooperativeMembers {
   @override
   @TimestampSerializer()
   DateTime? get timestamp;
+  @override
+  bool? get paidMembershipFee;
   @override
   @JsonKey(ignore: true)
   _$$CooperativeMembersImplCopyWith<_$CooperativeMembersImpl> get copyWith =>

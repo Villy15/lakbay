@@ -98,6 +98,7 @@ import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/plan_model.dart';
 import 'package:lakbay/models/subcollections/coop_announcements_model.dart';
+import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/task_model.dart';
@@ -558,7 +559,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               buildSubRoute('/my_coop/:coopId',
                   (context, pathParameters, extra) {
                 return MyCoopPage(coopId: pathParameters['coopId']!);
-              }),
+
+              }, 
+              
+              ),
 
               // * LISTINGS VIEW
               // Read Listing

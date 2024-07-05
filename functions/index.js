@@ -279,6 +279,86 @@ exports.userPendingBalance = functions.pubsub.schedule('00 00 * * *') // set to 
   }
 });
 
+// PayMaya API checkout for membership fee
+exports.payWithPaymayaCheckoutMemFee = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    res.end();
+    return;
+  }
+
+  const url = 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts';
+  const secretKey = functions.config().paymaya.public_key;
+  const encodedSecretKey = Buffer.from(secretKey + ":").toString('base64');
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Basic ' + encodedSecretKey
+  };
+
+  const name = req.body.name;
+  const [firstName, lastName] = name.split(' ');
+  const totalPrice = req.body.totalPrice;
+  const redirectUrls = req.body.redirectUrls;
+
+  const body = JSON.stringify({
+    authorizationType: "NORMAL",
+    totalAmount: {
+      value: parseFloat(totalPrice).toFixed(2),
+      currency: 'PHP',
+      details: { discount: 0, serviceCharge: 0, shippingFee: 0, tax: 0, subtotal: totalPrice }
+    },
+    buyer: {
+      firstName: firstName,
+      lastName: lastName,
+    },
+    items: [{
+      name: 'Membership Fee',
+      quantity: 1,
+      totalAmount: {
+        value: parseFloat(totalPrice).toFixed(2),
+        details: { discount: 0, unitPrice: totalPrice }
+      }
+    }],
+    redirectUrl: {
+      success: redirectUrls.success,
+      failure: redirectUrls.failure,
+      cancel: redirectUrls.cancel
+    },
+    requestReferenceNumber: req.body.requestReferenceNumber
+  });
+
+  console.log('Request Headers:', headers);
+  console.log('Request Body:', body);
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: body
+    });
+
+    const data = await response.json();
+    console.log('Success:', data);
+    
+    if (data.checkoutId) {
+      // redirect the user to the PayMaya payment page
+      res.status(200).json({statusCode: 303, redirectUrl: data.redirectUrl});
+    }
+    else {
+      console.error('Error:', data);
+      res.status(500).send('Failed to create checkout. Here is the data: ' + JSON.stringify(data));
+    }
+  } catch (e) {
+    console.error('Error:', e);
+    res.status(500).send('Failed to create checkout. Error: ' + e);
+  }
+  
+});
+
 // PayMaya API with checkout 
 exports.payWithPaymayaCheckout = functions.https.onRequest(async (req, res) => {
   res.set('Access-Control-Allow-Origin', '*');

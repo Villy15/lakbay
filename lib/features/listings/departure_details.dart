@@ -632,26 +632,30 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                           builder: (context) {
                             return AlertDialog(
                               title: const Text("Drivers"),
-                              content: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: drivers.length,
-                                  itemBuilder: (context, dIndex) {
-                                    var d = drivers[dIndex];
-                                    return ListTile(
-                                        title: Text(d.name),
-                                        onTap: () {
-                                          setAssginedVehicle(() {
-                                            assignedVehicle =
-                                                assignedVehicle.copyWith(
-                                                    driverId: d.uid,
-                                                    driverName: d.name);
-                                          });
-                                          context.pop();
-                                        },
-                                        trailing: const Icon(
-                                            size: 10,
-                                            Icons.arrow_forward_ios_rounded));
-                                  }),
+                              content: SizedBox(
+                                height: MediaQuery.sizeOf(context).height / 4,
+                                width: MediaQuery.sizeOf(context).width,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: drivers.length,
+                                    itemBuilder: (context, dIndex) {
+                                      var d = drivers[dIndex];
+                                      return ListTile(
+                                          title: Text(d.name),
+                                          onTap: () {
+                                            setAssginedVehicle(() {
+                                              assignedVehicle =
+                                                  assignedVehicle.copyWith(
+                                                      driverId: d.uid,
+                                                      driverName: d.name);
+                                            });
+                                            context.pop();
+                                          },
+                                          trailing: const Icon(
+                                              size: 10,
+                                              Icons.arrow_forward_ios_rounded));
+                                    }),
+                              ),
                               actions: [
                                 FilledButton(
                                     onPressed: () {
@@ -685,26 +689,30 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                           builder: (context) {
                             return AlertDialog(
                               title: const Text("Vehicles"),
-                              content: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: vehicles.length,
-                                  itemBuilder: (context, vIndex) {
-                                    var v = vehicles[vIndex];
-                                    return ListTile(
-                                        leading: Text("${v.guests}"),
-                                        title:
-                                            Text("Vehicle No: ${v.vehicleNo}"),
-                                        onTap: () {
-                                          setAssginedVehicle(() {
-                                            assignedVehicle = assignedVehicle
-                                                .copyWith(vehicle: v);
-                                          });
-                                          context.pop();
-                                        },
-                                        trailing: const Icon(
-                                            size: 10,
-                                            Icons.arrow_forward_ios_rounded));
-                                  }),
+                              content: SizedBox(
+                                height: MediaQuery.sizeOf(context).height / 4,
+                                width: MediaQuery.sizeOf(context).width,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: vehicles.length,
+                                    itemBuilder: (context, vIndex) {
+                                      var v = vehicles[vIndex];
+                                      return ListTile(
+                                          leading: Text("${v.guests}"),
+                                          title:
+                                              Text("Vehicle No: ${v.vehicleNo}"),
+                                          onTap: () {
+                                            setAssginedVehicle(() {
+                                              assignedVehicle = assignedVehicle
+                                                  .copyWith(vehicle: v);
+                                            });
+                                            context.pop();
+                                          },
+                                          trailing: const Icon(
+                                              size: 10,
+                                              Icons.arrow_forward_ios_rounded));
+                                    }),
+                              ),
                               actions: [
                                 FilledButton(
                                     onPressed: () {

@@ -29,6 +29,7 @@ import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/coop_vote_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/join_coop_params.dart';
+import 'package:lakbay/payments/payment_with_paymaya.dart';
 
 class MyCoopPage extends ConsumerStatefulWidget {
   final String coopId;
@@ -44,16 +45,20 @@ final Completer<PDFViewController> controller = Completer<PDFViewController>();
 int? totalPages = 0;
 int? currentPage = 0;
 bool isReady = false;
+bool isPaid = false;
 
 class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   late List<CoopAnnouncements> coopAnnouncements;
   late List<CoopGoals> coopGoals;
   late List<CoopVote> coopVotes;
   late final UserModel user;
+  CooperativeMembers? memberDetails;
+
   @override
   void initState() {
     super.initState();
     user = ref.read(userProvider)!;
+    _fetchMemberDetails(); 
     coopAnnouncements = [
       // CoopAnnouncements(
       //   title:
@@ -146,6 +151,20 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
     ];
   }
 
+  Future<void> _fetchMemberDetails() async {
+    try {
+      final member = await ref
+          .read(getMemberProvider(user.uid).future);
+      memberDetails = member;
+      debugPrint('this is the member details: $memberDetails');
+      setState(() {
+        isPaid = memberDetails?.paidMembershipFee ?? false;
+      });
+    } catch (e) {
+      debugPrint('Error fetching member details: $e');
+    }
+  }
+
   void viewMembers(BuildContext context, CooperativeModel coop) {
     context.pushNamed(
       'coop_members',
@@ -235,8 +254,8 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('this is the payment status: ${memberDetails?.paidMembershipFee}');
     final user = ref.watch(userProvider);
-
     return ref.watch(getCooperativeProvider(widget.coopId)).when(
           data: (CooperativeModel coop) {
             return DefaultTabController(
@@ -717,7 +736,9 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                   name: updatedApplication.name!,
                   committees: [memberRole],
                   isManager: false,
-                  timestamp: DateTime.now());
+                  timestamp: DateTime.now(),
+                  paidMembershipFee: false
+                  );
 
               NotificationsModel acceptedCoopNotif = NotificationsModel(
                   title: 'Application Accepted!',
@@ -891,39 +912,75 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
                     ),
                     radius: 35,
                   ),
-                  coop.managers.contains(user?.uid)
-                      ? OutlinedButton(
-                          onPressed: () {
-                            managerTools(context, coop);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                  Row(
+                    children: [
+                      coop.managers.contains(user?.uid)
+                          ? OutlinedButton(
+                              onPressed: () {
+                                managerTools(context, coop);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 25,
+                                ),
+                              ),
+                              child: const Text('Manager Tools'),
+                            )
+                          : OutlinedButton(
+                              onPressed: () {
+                                _showModalBottomSheet(context, coop);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 25,
+                                ),
+                              ),
+                              child: Text(
+                                coop.members.contains(user?.uid)
+                                    ? 'Joined'
+                                    : 'Join',
+                              ),
                             ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 25,
+                          const SizedBox(width: 5),
+
+                          // if member has yet to pay (e.g., paidMembershipFee == false), then show the pay membership button
+                          // member.asStream == false ? 
+                          isPaid == false ?
+                          OutlinedButton(
+                            onPressed: () {
+                              debugPrint('they have yet to pay: ${memberDetails?.paidMembershipFee}');
+                              payMembershipFeeMaya(memberDetails!, ref, context, coop.membershipFee!).then(
+                                (value) {
+                                  setState(() {
+                                    isPaid = !isPaid;
+                                  });
+                                }
+                              );
+                              
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10
+                              )
                             ),
-                          ),
-                          child: const Text('Manager Tools'),
-                        )
-                      : OutlinedButton(
-                          onPressed: () {
-                            _showModalBottomSheet(context, coop);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 25,
-                            ),
-                          ),
-                          child: Text(
-                            coop.members.contains(user?.uid)
-                                ? 'Joined'
-                                : 'Join',
-                          ),
-                        ),
+                            child: Text(
+                              'Pay Membership',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary
+                              ),
+                            )
+                          ) : const SizedBox.shrink(),
+                    ],
+                  ),
                 ],
               ),
               const SizedBox(height: 5),

@@ -311,6 +311,14 @@ class _TodayPageState extends ConsumerState<TodayPage> {
           );
     }
 
+    if (user.isCoopView == false || user.isCoopView == null) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) { 
+          debugPrint('I landed at trips!');
+          return context.go('/trips');
+        });
+    }
+
     return memberScaffold(user, context);
   }
 

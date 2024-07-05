@@ -210,6 +210,50 @@ class CoopsController extends StateNotifier<bool> {
     );
   }
 
+  // update user of cooperative when payment is successful
+  void updateUserAfterPayment(CooperativeMembers member, BuildContext context) async {
+    debugPrint('i am working');
+    state = true; 
+    CooperativeMembers updatedMember = member.copyWith(paidMembershipFee: true);
+
+    final result = await _coopsRepository.updateMember(_ref.read(userProvider)!.currentCoop!, updatedMember.uid!, updatedMember);
+    debugPrint('hello world!');
+    result.fold(
+      (l) {
+        // Handle the error here
+        state = false;
+        showSnackBar(context, l.message);
+      },
+      (r) {
+        // Handle the success here
+        state = false;
+        showSnackBar(
+          context, 
+          'Payment successful! You are now an official member of the cooperative...',
+        );
+        _ref.read(navBarVisibilityProvider.notifier).show();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Payment Successful'),
+              content: const Text('You are now an official member of the cooperative.'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        
+      },
+    );
+  }
+
   // Edit a cooperative
   void editCooperative(CooperativeModel coop, BuildContext context) async {
     state = true;
@@ -338,6 +382,7 @@ class CoopsController extends StateNotifier<bool> {
           ),
           committees: [],
           timestamp: DateTime.now(),
+          paidMembershipFee: false
         );
 
         // Add user to members in Coop
