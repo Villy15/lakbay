@@ -61,7 +61,6 @@ class _ReadCoopPageState extends ConsumerState<ReadCoopPage> {
     final List<JoinCoopParams> application =
         await ref.watch(getApplicationByProperties(query).future);
 
-    debugPrint("application: $application");
     setState(() {
       applicationPending = application.isNotEmpty;
     });
@@ -210,7 +209,7 @@ class _ReadCoopPageState extends ConsumerState<ReadCoopPage> {
                 ),
                 child: InkWell(
                   splashColor: Colors.orange.withAlpha(30),
-                  onTap: ()  =>   readEvent(context, event.uid!),
+                  onTap: () => readEvent(context, event.uid!),
                   child: SizedBox(
                     width: double.infinity,
                     // height: 290,
@@ -321,7 +320,7 @@ class _ReadCoopPageState extends ConsumerState<ReadCoopPage> {
   void readEvent(BuildContext context, String eventId) {
     context.push("/read_event/$eventId").then((onValue) {
       ref.read(navBarVisibilityProvider.notifier).hide();
-    }) ;
+    });
   }
 
   SliverAppBar sliverAppBarHeaderWithTabs(
