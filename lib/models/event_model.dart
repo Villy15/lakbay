@@ -18,6 +18,7 @@ class EventModel with _$EventModel {
     String? imageUrl,
     required List<String> members,
     required List<String> managers,
+    List<EventGoalsAndObjectives>? goalsAndObjectives,
     @TimestampSerializer() DateTime? startDate,
     @TimestampSerializer() DateTime? endDate,
     required EventCooperative cooperative,
@@ -37,4 +38,16 @@ class EventCooperative with _$EventCooperative {
 
   factory EventCooperative.fromJson(Map<String, dynamic> json) =>
       _$EventCooperativeFromJson(json);
+}
+
+@freezed
+class EventGoalsAndObjectives with _$EventGoalsAndObjectives {
+  factory EventGoalsAndObjectives({
+    required String goal,
+    required num objective,
+    bool? isAchieved,
+  }) = _EventGoalsAndObjectives;
+
+  factory EventGoalsAndObjectives.fromJson(Map<String, dynamic> json) =>
+      _$EventGoalsAndObjectivesFromJson(json);
 }

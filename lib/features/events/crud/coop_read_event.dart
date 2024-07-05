@@ -60,7 +60,7 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
 
             return DefaultTabController(
               initialIndex: 0,
-              length: 2,
+              length: 3,
               child: PopScope(
                 canPop: false,
                 onPopInvoked: (bool didPop) {
@@ -160,6 +160,36 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
                           // Address
                           eventLocation(event),
                           const SizedBox(height: 20),
+
+                          if (event.goalsAndObjectives?.isNotEmpty ??
+                              false) ...[
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12.0),
+                              child: Text(
+                                "Goal and Objectives",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            ListView.builder(
+                              itemCount: event.goalsAndObjectives?.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                final goal = event.goalsAndObjectives?[index];
+                                return ListTile(
+                                  leading: const Icon(Icons.task_outlined),
+                                  title: Text(goal?.goal ?? ''),
+                                  subtitle: Text(
+                                    'Objective: ${goal?.objective}',
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: FilledButton(
@@ -186,6 +216,182 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
                           ),
 
                           const SizedBox(height: 100),
+                        ],
+                      ),
+
+                      // Event Summary
+                      // Number of participants
+                      // List of tasks and their status
+                      // Goals and Objectives
+
+                      ListView(
+                        children: [
+                          const ListTile(
+                            title: Text(
+                              "Event Summary",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.people),
+                            title: Text(
+                              '${event.members.length} Participants Joined',
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+
+                          // List down all goals
+                          if (event.goalsAndObjectives?.isNotEmpty ??
+                              false) ...[
+                            const ListTile(
+                              title: Text(
+                                "Goals and Objectives",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            ListView.builder(
+                              itemCount: event.goalsAndObjectives?.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                final goal = event.goalsAndObjectives?[index];
+                                return ListTile(
+                                  leading: const Icon(Icons.task_outlined),
+                                  title: Text(goal?.goal ?? ''),
+                                  subtitle: Text(
+                                    'Objective: ${goal?.objective}',
+                                  ),
+                                  // Modify the trailing to be a button that toggles the isAchieved status
+                                  trailing: TextButton(
+                                    child: Text(
+                                      goal?.isAchieved == true
+                                          ? 'Achieved'
+                                          : 'Click if Achieved',
+                                      style: TextStyle(
+                                        color: goal?.isAchieved == true
+                                            ? Colors.green
+                                            : Colors.red,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      // Toggle the isAchieved status
+                                      final newEvent = event.copyWith(
+                                        goalsAndObjectives: event
+                                            .goalsAndObjectives!
+                                            .map(
+                                              (e) => e == goal
+                                                  ? e.copyWith(isAchieved: true)
+                                                  : e,
+                                            )
+                                            .toList(),
+                                      );
+
+                                      ref
+                                          .read(
+                                              eventsControllerProvider.notifier)
+                                          .editEventWithoutPop(
+                                              newEvent, context);
+                                    },
+                                  ),
+                                );
+                              },
+                            )
+                          ],
+                          const ListTile(
+                            title: Text(
+                              "Tasks Created",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          // List of tasks and their status
+                          ref
+                              .watch(getTasksByCoopIdAndEventIdProvider(
+                                  (user.currentCoop!, widget.eventId)))
+                              .when(
+                                data: (tasks) {
+                                  if (tasks.isEmpty) {
+                                    return const ListTile(
+                                      title: Text(
+                                        "No Tasks Yet!",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return Column(
+                                    children: [
+                                      ListView.builder(
+                                        itemCount: tasks.length,
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          final task = tasks[index];
+
+                                          final totalTasks =
+                                              task.checkList?.length ?? 0;
+                                          final completedTasks = task.checkList
+                                                  ?.where((task) => task.isDone)
+                                                  .length ??
+                                              0;
+                                          final progress = totalTasks > 0
+                                              ? completedTasks / totalTasks
+                                              : 0.0;
+
+                                          final isAchieved = progress == 1.0;
+
+                                          return ListTile(
+                                              leading: const Icon(Icons.task),
+                                              title: Text(task.title),
+                                              subtitle: Text(
+                                                task.description!,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              trailing: TextButton(
+                                                child: Text(
+                                                  isAchieved == true
+                                                      ? 'Achieved'
+                                                      : 'Not Achieved',
+                                                  style: TextStyle(
+                                                    color: isAchieved == true
+                                                        ? Colors.green
+                                                        : Colors.red,
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  null;
+                                                },
+                                              ));
+
+                                          // return Padding(
+                                          //   padding: const EdgeInsets.all(8.0),
+                                          //   child: CoopTaskCard(task: task),
+                                          // );
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                                loading: () => const SizedBox.shrink(),
+                                error: (error, stack) => ErrorText(
+                                  error: error.toString(),
+                                  stackTrace: stack.toString(),
+                                ),
+                              )
                         ],
                       )
                     ],
@@ -439,6 +645,12 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
         child: Tab(
           // icon: Icon(Icons.people),
           child: Text('Details'),
+        ),
+      ),
+      const SizedBox(
+        width: 100.0,
+        child: Tab(
+          child: Text('Summary'),
         ),
       ),
     ];

@@ -47,6 +47,8 @@ class _AddEventPagePredeterminedState
   final _locationController = TextEditingController();
   final _cityController = TextEditingController();
   final _provinceController = TextEditingController();
+  final _goalController = TextEditingController();
+  final _objectiveController = TextEditingController();
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 1));
 
@@ -93,6 +95,8 @@ class _AddEventPagePredeterminedState
     _locationController.dispose();
     _cityController.dispose();
     _provinceController.dispose();
+    _goalController.dispose();
+    _objectiveController.dispose();
 
     // Dispose start and end date
     debugPrint('Disposing start and end date');
@@ -274,6 +278,29 @@ class _AddEventPagePredeterminedState
                         // Type of event
 
                         TextFormField(
+                          controller: _goalController,
+                          decoration: const InputDecoration(
+                            icon: Icon(Icons.check_circle_outline),
+                            border: OutlineInputBorder(),
+                            labelText: 'Goal',
+                            helperText: 'optional',
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: _objectiveController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            icon: Icon(Icons.format_list_numbered),
+                            border: OutlineInputBorder(),
+                            labelText: 'Objective',
+                            helperText: 'optional',
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        TextFormField(
                           controller: _locationController,
                           decoration: const InputDecoration(
                             icon: Icon(Icons.location_on),
@@ -377,6 +404,13 @@ class _AddEventPagePredeterminedState
                       city: _cityController.text,
                       province: _provinceController.text,
                       eventType: _selectedType,
+                      goalsAndObjectives: [
+                        EventGoalsAndObjectives(
+                          goal: _goalController.text,
+                          objective: double.parse(_objectiveController.text),
+                          isAchieved: false,
+                        ),
+                      ],
                       imagePath: imagePath,
                       members: [userUid],
                       managers: [userUid],

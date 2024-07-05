@@ -88,6 +88,22 @@ class EventController extends StateNotifier<bool> {
     );
   }
 
+  void editEventWithoutPop(EventModel event, BuildContext context) async {
+    state = true;
+    debugPrint('Event: $event');
+    final result = await _eventsRepository.updateEvent(event);
+
+    result.fold(
+      (failure) {
+        state = false;
+        showSnackBar(context, failure.message);
+      },
+      (success) {
+        state = false;
+      },
+    );
+  }
+
   void joinEvent(String eventUid, String memberUid, BuildContext context,
       EventModel event) async {
     state = true;
