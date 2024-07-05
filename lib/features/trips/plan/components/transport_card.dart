@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/days_provider.dart';
 import 'package:lakbay/core/providers/storage_repository_providers.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
+import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/image_slider.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_checkout.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
@@ -259,7 +260,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                       .future);
                                           for (var vehicle in vehicles) {
                                             for (var departureTime
-                                                in vehicle.departureTimes!) {
+                                                in transport.departureTimes!) {
                                               // Check if the departure time is not already in the set
                                               if (!timeSlots.keys
                                                   .contains(departureTime)) {
@@ -292,6 +293,9 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                               showDialog(
                                                   context: context,
                                                   builder: (context) {
+                                                    List<String> notes = [
+                                                      "Slots remaining can appear to exceed the the expected amount that can fit a vehicle, this is because, vehicle assigning will be done after you have reserved your ticket.",
+                                                    ];
                                                     return AlertDialog(
                                                       title: const Text(
                                                           'Select a Departure Time',
@@ -305,7 +309,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                               MediaQuery.sizeOf(
                                                                           context)
                                                                       .height /
-                                                                  3.5,
+                                                                  2,
                                                           width:
                                                               MediaQuery.sizeOf(
                                                                           context)
@@ -314,127 +318,113 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                                           child:
                                                               SingleChildScrollView(
                                                             child: Column(
-                                                                children:
-                                                                    sortedKeys.map(
-                                                                        (key) {
-                                                              num passengers =
-                                                                  timeSlots[
-                                                                      key]!;
-                                                              DateTime dateTimeSlot = DateTime(
-                                                                  daysPlan
-                                                                      .currentDay!
-                                                                      .year,
-                                                                  daysPlan
-                                                                      .currentDay!
-                                                                      .month,
-                                                                  daysPlan
-                                                                      .currentDay!
-                                                                      .day,
-                                                                  key.hour,
-                                                                  key.minute);
-                                                              List<ListingBookings>
-                                                                  bookingsCopy =
-                                                                  bookings;
-                                                              Map<DateTime?,
-                                                                      num>
-                                                                  deptTimeAndGuests =
-                                                                  {
-                                                                dateTimeSlot:
-                                                                    passengers
-                                                              };
-                                                              // format the currentDate
-                                                              String
-                                                                  formattedCurrentDate =
-                                                                  DateFormat(
-                                                                          'yyyy-MM-dd')
-                                                                      .format(daysPlan
-                                                                          .currentDay!);
+                                                              children: [
+                                                                ...sortedKeys
+                                                                    .map((key) {
+                                                                  num passengers =
+                                                                      timeSlots[
+                                                                          key]!;
+                                                                  DateTime dateTimeSlot = DateTime(
+                                                                      daysPlan
+                                                                          .currentDay!
+                                                                          .year,
+                                                                      daysPlan
+                                                                          .currentDay!
+                                                                          .month,
+                                                                      daysPlan
+                                                                          .currentDay!
+                                                                          .day,
+                                                                      key.hour,
+                                                                      key.minute);
+                                                                  List<ListingBookings>
+                                                                      bookingsCopy =
+                                                                      bookings;
+                                                                  Map<DateTime?,
+                                                                          num>
+                                                                      deptTimeAndGuests =
+                                                                      {
+                                                                    dateTimeSlot:
+                                                                        passengers
+                                                                  };
+                                                                  // format the currentDate
+                                                                  String
+                                                                      formattedCurrentDate =
+                                                                      DateFormat(
+                                                                              'yyyy-MM-dd')
+                                                                          .format(
+                                                                              daysPlan.currentDay!);
 
-                                                              for (ListingBookings booking
-                                                                  in bookingsCopy) {
-                                                                DateTime
-                                                                    bookingStartDate =
-                                                                    booking
-                                                                        .startDate!;
-                                                                String
-                                                                    formattedDate =
-                                                                    DateFormat(
-                                                                            'yyyy-MM-dd')
-                                                                        .format(
-                                                                            bookingStartDate);
-
-                                                                // check the formattedCurrentDate and the formattedDate if they are the same
-                                                                if (formattedCurrentDate ==
-                                                                    formattedDate) {
-                                                                  // remove duplicates of departure time, and get the total number of guests for each departure time
-
-                                                                  if (deptTimeAndGuests
-                                                                      .containsKey(
-                                                                          bookingStartDate)) {
-                                                                    deptTimeAndGuests[
-                                                                        bookingStartDate] = deptTimeAndGuests[
-                                                                            bookingStartDate]! -
+                                                                  for (ListingBookings booking
+                                                                      in bookingsCopy) {
+                                                                    DateTime
+                                                                        bookingStartDate =
                                                                         booking
-                                                                            .guests;
-                                                                  }
-                                                                }
-                                                              }
-                                                              return ListTile(
-                                                                  title: Text(
-                                                                      key.format(
-                                                                          context)),
-                                                                  trailing: Text(
-                                                                      'Slots Left: ${deptTimeAndGuests[dateTimeSlot]}'),
-                                                                  onTap:
-                                                                      () async {
-                                                                    if (deptTimeAndGuests[
-                                                                            dateTimeSlot] !=
-                                                                        null) {
-                                                                      if (deptTimeAndGuests[
-                                                                              dateTimeSlot]! ==
-                                                                          0) {
-                                                                        // show an alert dialog that the selected departure time is already full
-                                                                        showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (context) {
-                                                                              return AlertDialog(title: const Text('Departure Time is Full'), content: Text('The time ${key.format(context)} has reached its capacity of $passengers.  Please select another time.'), actions: [
-                                                                                TextButton(
-                                                                                    onPressed: () {
-                                                                                      Navigator.pop(context);
-                                                                                    },
-                                                                                    child: const Text('Close'))
-                                                                              ]);
-                                                                            });
-                                                                      } else {
-                                                                        // show confirm booking
-                                                                        showConfirmBooking(
-                                                                                transport.availableTransport!,
-                                                                                transport,
-                                                                                daysPlan.currentDay!,
-                                                                                daysPlan.currentDay!,
-                                                                                key,
-                                                                                'Public',
-                                                                                null)
-                                                                            .then((value) {});
+                                                                            .startDate!;
+                                                                    String
+                                                                        formattedDate =
+                                                                        DateFormat('yyyy-MM-dd')
+                                                                            .format(bookingStartDate);
+
+                                                                    // check the formattedCurrentDate and the formattedDate if they are the same
+                                                                    if (formattedCurrentDate ==
+                                                                        formattedDate) {
+                                                                      // remove duplicates of departure time, and get the total number of guests for each departure time
+
+                                                                      if (deptTimeAndGuests
+                                                                          .containsKey(
+                                                                              bookingStartDate)) {
+                                                                        deptTimeAndGuests[
+                                                                            bookingStartDate] = deptTimeAndGuests[
+                                                                                bookingStartDate]! -
+                                                                            booking.guests;
                                                                       }
-                                                                    } else {
-                                                                      // show confirm booking
-                                                                      showConfirmBooking(
-                                                                          transport
-                                                                              .availableTransport!,
-                                                                          transport,
-                                                                          daysPlan
-                                                                              .currentDay!,
-                                                                          daysPlan
-                                                                              .currentDay!,
-                                                                          key,
-                                                                          'Public',
-                                                                          null);
                                                                     }
-                                                                  });
-                                                            }).toList()),
+                                                                  }
+                                                                  return ListTile(
+                                                                      title: Text(
+                                                                          key.format(
+                                                                              context)),
+                                                                      trailing:
+                                                                          Text(
+                                                                              'Slots left: ${deptTimeAndGuests[dateTimeSlot]}'),
+                                                                      onTap:
+                                                                          () async {
+                                                                        if (deptTimeAndGuests[dateTimeSlot] !=
+                                                                            null) {
+                                                                          if (deptTimeAndGuests[dateTimeSlot]! ==
+                                                                              0) {
+                                                                            // show an alert dialog that the selected departure time is already full
+                                                                            showDialog(
+                                                                                context: context,
+                                                                                builder: (context) {
+                                                                                  return AlertDialog(title: const Text('Departure Time is Full'), content: Text('The time ${key.format(context)} has reached its capacity of $passengers.  Please select another time.'), actions: [
+                                                                                    TextButton(
+                                                                                        onPressed: () {
+                                                                                          Navigator.pop(context);
+                                                                                        },
+                                                                                        child: const Text('Close'))
+                                                                                  ]);
+                                                                                });
+                                                                          } else {
+                                                                            // show confirm booking
+                                                                            showConfirmBooking(transport.availableTransport!, transport, daysPlan.currentDay!, daysPlan.currentDay!, key, 'Public', null).then((value) {});
+                                                                          }
+                                                                        } else {
+                                                                          // show confirm booking
+                                                                          showConfirmBooking(
+                                                                              transport.availableTransport!,
+                                                                              transport,
+                                                                              daysPlan.currentDay!,
+                                                                              daysPlan.currentDay!,
+                                                                              key,
+                                                                              'Public',
+                                                                              null);
+                                                                        }
+                                                                      });
+                                                                }),
+                                                                addNotes(notes)
+                                                              ],
+                                                            ),
                                                           )),
                                                       actions: [
                                                         FilledButton(
@@ -692,6 +682,43 @@ class _TransportCardState extends ConsumerState<TransportCard> {
         ),
       );
     }
+  }
+
+  Column addNotes(
+    List<String> notes,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(
+          height: 20,
+        ),
+        DisplayText(
+          text: "Notes:",
+          lines: 1,
+          style: Theme.of(context).textTheme.headlineSmall!,
+        ),
+        ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: notes.length,
+            itemBuilder: ((context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 5),
+                    DisplayText(
+                      text: notes[index],
+                      lines: 10,
+                      style: Theme.of(context).textTheme.bodySmall!,
+                    ),
+                  ],
+                ),
+              );
+            }))
+      ],
+    );
   }
 
   bool isOverlapping(

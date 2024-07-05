@@ -60,7 +60,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
       width: 100.0,
       child: Tab(
         // icon: Icon(Icons.meeting_room_outlined),
-        child: Text('Vehicles'),
+        child: Text('Departures & Vehicles'),
       ),
     ),
   ];
@@ -75,6 +75,10 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
     });
   }
 
+  TextEditingController vehicleNo = TextEditingController();
+  num guests = 0;
+  num luggage = 0;
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -82,7 +86,6 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
         onPopInvoked: (bool didPop) {
           ref.read(navBarVisibilityProvider.notifier).show();
           context.pop();
-          
         },
         child: DefaultTabController(
             initialIndex: 0,
@@ -538,7 +541,6 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
           String formattedEndDate = DateFormat('MMMM dd, yyyy').format(endDate);
 
           if (typeOfTrip == 'One Way Trip') {
-            debugPrint('this is the end date: $endDate');
             return oneWayTrip(
                 formattedStartDate,
                 formattedEndDate,
@@ -973,153 +975,312 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
     Query query = FirebaseFirestore.instance
         .collectionGroup('availableTransport')
         .where('listingId', isEqualTo: widget.listing.uid!);
-
-    return ref.watch(getTransportByPropertiesProvider(query)).when(
-        data: (List<AvailableTransport> vehicles) {
-          return Stack(
+    Query listingQuery = FirebaseFirestore.instance
+        .collection("listings")
+        .where("uid", isEqualTo: widget.listing.uid!);
+    return SingleChildScrollView(
+      child: Column(children: [
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              vehicles.isEmpty
-                  ? SizedBox(
-                      height: MediaQuery.sizeOf(context).height / 4,
-                      width: double.infinity,
-                      child: const Center(child: Text("No Vehicles Added")))
-                  : ListView.builder(
-                      // physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: vehicles.length,
-                      itemBuilder: ((context, index) {
-                        final vehicle = vehicles[index];
-                        List<TimeOfDay> sortedTimes =
-                            vehicle.departureTimes?.toList(growable: true) ??
-                                [];
-                        sortedTimes.sort((a, b) {
-                          return a.hour.compareTo(b.hour) == 0
-                              ? a.minute.compareTo(b.minute)
-                              : a.hour.compareTo(b.hour);
-                        });
-                        return Column(
-                          children: [
-                            ListTile(
-                              title: Text('Vehicle No: ${index + 1}'),
-                              subtitle: Text(
-                                'Capacity: ${vehicle.guests} | Luggage: ${vehicle.luggage}',
-                              ),
-                              trailing: InkWell(
-                                child: const Icon(Icons.more_time_rounded),
-                                onTap: () async {
-                                  var time =
-                                      const TimeOfDay(hour: 8, minute: 30);
-                                  final TimeOfDay? pickedTime =
-                                      await showTimePicker(
-                                    context: context,
-                                    initialTime: time,
-                                    initialEntryMode:
-                                        TimePickerEntryMode.inputOnly,
-                                    builder:
-                                        (BuildContext context, Widget? child) {
-                                      return MediaQuery(
-                                        data: MediaQuery.of(context).copyWith(
-                                            alwaysUse24HourFormat: false),
-                                        child: child!,
+              Row(
+                children: [
+                  const Text("Departure Times",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      )),
+                  const SizedBox(width: 10),
+                  InkWell(
+                    child: Icon(
+                      Icons.more_time_rounded,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    onTap: () async {
+                      final listing = await ref.watch(
+                          getListingsByPropertiesProvider(listingQuery).future);
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            TextEditingController departureTimeController =
+                                TextEditingController();
+                            TimeOfDay departureTime =
+                                const TimeOfDay(hour: 8, minute: 30);
+                            return StatefulBuilder(
+                                builder: (context, setDeparture) {
+                              return AlertDialog(
+                                title: const Text("Departure Time"),
+                                content: SizedBox(
+                                  width: MediaQuery.sizeOf(context).width,
+                                  child: TextFormField(
+                                    controller: departureTimeController,
+                                    maxLines: 1,
+                                    decoration: const InputDecoration(
+                                      labelText: "Time",
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior: FloatingLabelBehavior
+                                          .always, // Keep the label always visible
+                                      hintText: "8:30 AM",
+                                    ),
+                                    readOnly: true,
+                                    onTap: () async {
+                                      final TimeOfDay? pickedTime =
+                                          await showTimePicker(
+                                        context: context,
+                                        initialTime: departureTime,
+                                        initialEntryMode:
+                                            TimePickerEntryMode.inputOnly,
+                                        builder: (BuildContext context,
+                                            Widget? child) {
+                                          return MediaQuery(
+                                            data: MediaQuery.of(context)
+                                                .copyWith(
+                                                    alwaysUse24HourFormat:
+                                                        false),
+                                            child: child!,
+                                          );
+                                        },
                                       );
+
+                                      if (pickedTime != null) {
+                                        setDeparture(() {
+                                          departureTimeController.text =
+                                              pickedTime.format(context);
+                                          departureTime = pickedTime;
+                                        });
+                                      }
                                     },
-                                  );
-                                  if (pickedTime != null) {
-                                    var departureTimes =
-                                        vehicle.departureTimes ?? [];
-                                    if (departureTimes.contains(pickedTime)) {
-                                    } else {
-                                      var updatedDepartureTimes =
-                                          departureTimes.toList(growable: true);
-                                      updatedDepartureTimes.add(pickedTime);
-                                      var updatedTransport = vehicle.copyWith(
-                                          departureTimes:
-                                              updatedDepartureTimes);
-                                      ref
-                                          .read(listingControllerProvider
-                                              .notifier)
-                                          .updateTransport(
-                                              context, updatedTransport, "");
-                                    }
-                                  }
-                                },
+                                  ),
+                                ),
+                                actions: [
+                                  FilledButton(
+                                      onPressed: () {
+                                        context.pop();
+                                      },
+                                      style: FilledButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12.0),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              8.0), // Adjust the value as needed
+                                        ),
+                                      ),
+                                      child: const Text('Cancel')),
+                                  FilledButton(
+                                      onPressed: () {
+                                        List<TimeOfDay> updatedDepartureTimes =
+                                            [
+                                          ...listing.first.departureTimes ?? []
+                                        ];
+                                        updatedDepartureTimes
+                                            .add(departureTime);
+                                        var updatedListing = listing.first
+                                            .copyWith(
+                                                departureTimes:
+                                                    updatedDepartureTimes);
+                                        ref
+                                            .read(listingControllerProvider
+                                                .notifier)
+                                            .updateListing(
+                                                context, updatedListing);
+
+                                        context.pop();
+                                      },
+                                      style: FilledButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12.0),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              8.0), // Adjust the value as needed
+                                        ),
+                                      ),
+                                      child: const Text('Add')),
+                                ],
+                              );
+                            });
+                          });
+                    },
+                  )
+                ],
+              ),
+              const SizedBox(height: 10),
+              if (widget.listing.departureTimes != null)
+                ref.watch(getListingsByPropertiesProvider(listingQuery)).when(
+                      data: (List<ListingModel> listing) {
+                        var sortedDepartureTimes =
+                            List<TimeOfDay>.from(listing.first.departureTimes!);
+                        sortedDepartureTimes.sort((a, b) {
+                          int totalMinutesA = a.hour * 60 + a.minute;
+                          int totalMinutesB = b.hour * 60 + b.minute;
+                          return totalMinutesA.compareTo(totalMinutesB);
+                        });
+                        return GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 4, // 2 columns
+                                  childAspectRatio: 3,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10),
+                          itemCount: sortedDepartureTimes.length,
+                          itemBuilder: (context, departureIndex) {
+                            var dTime = sortedDepartureTimes[departureIndex];
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children: sortedTimes.map((time) {
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        time.format(context),
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w300),
-                                      ),
-                                    );
-                                  }).toList(),
+                              child: Center(
+                                child: Text(
+                                  dTime.format(context),
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300),
                                 ),
                               ),
-                            ),
-                          ],
+                            );
+                          },
                         );
-                      })),
-              Container(
-                margin: const EdgeInsets.only(bottom: 25, right: 25),
-                child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: FilledButton(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                  contentPadding: const EdgeInsets.all(10),
-                                  title: const Text('Add Vehicle'),
-                                  content: addVehicleForm());
-                            });
                       },
-                      style: FilledButton.styleFrom(
-                        shape: const CircleBorder(), // Circular shape
-                        padding: const EdgeInsets.all(
-                            15), // Padding to make the button larger
+                      error: (error, stackTrace) => ErrorText(
+                        error: error.toString(),
+                        stackTrace: '',
                       ),
-                      child: const Icon(Icons.add), // Plus icon
-                    )),
-              )
+                      loading: () => const Loader(),
+                    ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Text("Vehicles",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      )),
+                  const SizedBox(width: 10),
+                  InkWell(
+                    child: Icon(
+                      Icons.add,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    onTap: () async {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Vehicle Information"),
+                              content: showAddVehicleForm(),
+                              actions: [
+                                FilledButton(
+                                    onPressed: () {
+                                      context.pop();
+                                    },
+                                    style: FilledButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12.0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            8.0), // Adjust the value as needed
+                                      ),
+                                    ),
+                                    child: const Text('Cancel')),
+                                FilledButton(
+                                    onPressed: () {
+                                      AvailableTransport transport =
+                                          AvailableTransport(
+                                        available: true,
+                                        vehicleNo: num.parse(vehicleNo.text),
+                                        guests: guests,
+                                        luggage: luggage,
+                                      );
+                                      if (context.mounted) {
+                                        ref
+                                            .read(listingControllerProvider
+                                                .notifier)
+                                            .addTransport(context,
+                                                widget.listing, transport);
+                                      }
+
+                                      context.pop();
+                                    },
+                                    style: FilledButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12.0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            8.0), // Adjust the value as needed
+                                      ),
+                                    ),
+                                    child: const Text('Add')),
+                              ],
+                            );
+                          });
+                    },
+                  )
+                ],
+              ),
             ],
-          );
-        },
-        error: ((error, stackTrace) => Scaffold(
-            body: ErrorText(
-                error: error.toString(), stackTrace: stackTrace.toString()))),
-        loading: () => const Scaffold(body: Loader()));
+          ),
+        ),
+        ref.watch(getTransportByPropertiesProvider(query)).when(
+              data: (List<AvailableTransport> vehicles) {
+                // Sort the vehicles list by vehicleNo parsed into a number
+                vehicles.sort((a, b) => a.vehicleNo!.compareTo(b.vehicleNo!));
+
+                return ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: vehicles.length,
+                  itemBuilder: (context, index) {
+                    final vehicle = vehicles[index];
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text('Vehicle No: ${vehicle.vehicleNo}'),
+                          subtitle: Text(
+                            'Capacity: ${vehicle.guests} | Luggage: ${vehicle.luggage}',
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              error: (error, stackTrace) => Scaffold(
+                body: ErrorText(
+                  error: error.toString(),
+                  stackTrace: stackTrace.toString(),
+                ),
+              ),
+              loading: () => const Scaffold(body: Loader()),
+            )
+      ]),
+    );
   }
 
-  Widget addVehicleForm() {
-    TimeOfDay departureTime = const TimeOfDay(hour: 8, minute: 30);
-    TextEditingController vehicleNoController = TextEditingController();
-    TextEditingController departureController = TextEditingController();
-    List<TimeOfDay> departureTimes = [];
-    num capacity = 0;
+  Widget showAddVehicleForm() {
+    TextEditingController vehicleNo = TextEditingController();
+    num guests = 0;
     num luggage = 0;
-    return StatefulBuilder(builder: (context, setState) {
+    return StatefulBuilder(builder: (context, setVehicle) {
       return SingleChildScrollView(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(
               margin: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TextFormField(
-                  controller: vehicleNoController,
+                  controller: vehicleNo,
+                  onChanged: (value) {
+                    setVehicle(() {
+                      vehicleNo.text = value;
+                    });
+                    setState(() {
+                      this.vehicleNo.text = value;
+                    });
+                  },
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Vehicle No",
@@ -1135,84 +1296,34 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                     return null;
                   })),
           const SizedBox(height: 10),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: TextFormField(
-              controller: departureController,
-              decoration: InputDecoration(
-                  labelText: 'Departure Time',
-                  border: const OutlineInputBorder(),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: departureTime.format(context)),
-              readOnly: true,
-              onTap: () async {
-                showTimePicker(
-                  context: context,
-                  initialTime: departureTime,
-                  initialEntryMode: TimePickerEntryMode.inputOnly,
-                ).then((time) {
-                  if (time != null) {
-                    setState(() {
-                      departureTimes.add(time);
-                      departureController.text = time.format(context);
-                    });
-                  }
-                });
-              },
-            ),
-          ),
-          SizedBox(
-            height: MediaQuery.sizeOf(context).height * .16,
-            width: MediaQuery.sizeOf(context).width * 4,
-            child: departureTimes.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: departureTimes.length,
-                    itemBuilder: (context, timeIndex) {
-                      return ListTile(
-                        dense: true,
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 0, horizontal: 25),
-                        leading: Text('[${timeIndex + 1}]'),
-                        title: Text(
-                          departureTimes[timeIndex].format(context),
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        trailing: IconButton(
-                          onPressed: () {
-                            departureTimes.removeAt(timeIndex);
-                          },
-                          icon: const Icon(Icons.close),
-                          iconSize: 14,
-                        ),
-                      );
-                    })
-                : const Center(
-                    child: Text('No Departure Times',
-                        style: TextStyle(fontWeight: FontWeight.w300))),
-          ),
           SizedBox(height: MediaQuery.sizeOf(context).height / 50),
           ListTile(
-              horizontalTitleGap: 0,
+              horizontalTitleGap: -10,
               title: const Text('Passengers', style: TextStyle(fontSize: 14)),
               trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                 IconButton(
                     iconSize: 14,
                     icon: const Icon(Icons.remove),
                     onPressed: () {
-                      if (capacity >= 1) {
+                      if (guests >= 1) {
+                        setVehicle(() {
+                          guests--;
+                        });
                         setState(() {
-                          capacity--;
+                          this.guests--;
                         });
                       }
                     }),
-                Text("$capacity", style: const TextStyle(fontSize: 16)),
+                Text("$guests", style: const TextStyle(fontSize: 16)),
                 IconButton(
                     iconSize: 14,
                     icon: const Icon(Icons.add),
                     onPressed: () {
+                      setVehicle(() {
+                        guests++;
+                      });
                       setState(() {
-                        capacity++;
+                        this.guests++;
                       });
                     })
               ])),
@@ -1227,8 +1338,11 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                     icon: const Icon(Icons.remove),
                     onPressed: () {
                       if (luggage >= 1) {
-                        setState(() {
+                        setVehicle(() {
                           luggage--;
+                        });
+                        setState(() {
+                          this.luggage--;
                         });
                       }
                     }),
@@ -1237,42 +1351,14 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                     iconSize: 14,
                     icon: const Icon(Icons.add),
                     onPressed: () {
-                      setState(() {
+                      setVehicle(() {
                         luggage++;
+                      });
+                      setState(() {
+                        this.luggage++;
                       });
                     })
               ])),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              FilledButton(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  child: const Text("Close")),
-              const SizedBox(
-                width: 10,
-              ),
-              FilledButton(
-                  onPressed: () {
-                    AvailableTransport transport = AvailableTransport(
-                      available: true,
-                      vehicleNo: num.parse(vehicleNoController.text),
-                      departureTimes: departureTimes,
-                      guests: capacity,
-                      luggage: luggage,
-                    );
-                    if (context.mounted) {
-                      ref
-                          .read(listingControllerProvider.notifier)
-                          .addTransport(context, widget.listing, transport);
-                    }
-
-                    context.pop();
-                  },
-                  child: const Text("Confirm")),
-            ],
-          )
         ]),
       );
     });
