@@ -39,6 +39,8 @@ import 'package:lakbay/features/dashboard/coop_dashboard.dart';
 import 'package:lakbay/features/dashboard/manager/coop_home_page.dart';
 import 'package:lakbay/features/dashboard/manager/coop_tasks_page.dart';
 import 'package:lakbay/features/events/crud/add_event.dart';
+import 'package:lakbay/features/events/crud/add_event_choices.dart';
+import 'package:lakbay/features/events/crud/add_event_predetermined.dart';
 import 'package:lakbay/features/events/crud/confirm_event.dart';
 import 'package:lakbay/features/events/crud/coop_read_event.dart';
 import 'package:lakbay/features/events/crud/edit_event.dart';
@@ -54,7 +56,6 @@ import 'package:lakbay/features/listings/accommodation_booking_details.dart';
 import 'package:lakbay/features/listings/crud/add_accommodation.dart';
 import 'package:lakbay/features/listings/crud/add_entertainment.dart';
 import 'package:lakbay/features/listings/crud/add_food.dart';
-import 'package:lakbay/features/listings/crud/add_tours.dart';
 import 'package:lakbay/features/listings/crud/add_transport.dart';
 import 'package:lakbay/features/listings/crud/category_page_controller.dart';
 import 'package:lakbay/features/listings/crud/choose_category.dart';
@@ -870,13 +871,52 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               buildSubRoute(
                 '/my_coop/events/functions/add',
                 (context, pathParameters, extra) {
-                  CooperativeModel coop = extra as CooperativeModel;
+                  final Map<String, dynamic> params =
+                      extra as Map<String, dynamic>;
+                  final CooperativeModel coop =
+                      params['coop'] as CooperativeModel;
+                  final String eventType = params['eventType'] as String;
 
                   return AddEventPage(
                     coop: coop,
+                    eventType: eventType,
                   );
                 },
                 name: 'add_event',
+              ),
+
+              buildSubRoute(
+                '/my_coop/events/functions/add_predetermined',
+                (context, pathParameters, extra) {
+                  final Map<String, dynamic> params =
+                      extra as Map<String, dynamic>;
+                  final CooperativeModel coop =
+                      params['coop'] as CooperativeModel;
+                  final String eventType = params['eventType'] as String;
+                  final String eventName = params['eventName'] as String;
+                  final String eventDesc = params['eventDesc'] as String;
+
+                  return AddEventPagePredetermined(
+                    coop: coop,
+                    eventType: eventType,
+                    eventName: eventName,
+                    eventDesc: eventDesc,
+                  );
+                },
+                name: 'add_event_predetermined',
+              ),
+
+              // Add Event to Cooperative
+              buildSubRoute(
+                '/my_coop/events/functions/add_event_choices',
+                (context, pathParameters, extra) {
+                  CooperativeModel coop = extra as CooperativeModel;
+
+                  return AddEventChoices(
+                    coop: coop,
+                  );
+                },
+                name: 'add_event_choices',
               ),
 
               buildSubRoute('/my_coop/functions/events',

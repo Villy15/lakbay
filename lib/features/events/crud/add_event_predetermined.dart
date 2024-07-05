@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,18 +17,28 @@ import 'package:lakbay/models/coop_model.dart';
 //import 'package:lakbay/features/events/events_repository.dart';
 import 'package:lakbay/models/event_model.dart';
 import 'package:lakbay/models/notifications_model.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class AddEventPage extends ConsumerStatefulWidget {
+class AddEventPagePredetermined extends ConsumerStatefulWidget {
   final CooperativeModel coop;
   final String eventType;
-  const AddEventPage({super.key, required this.coop, required this.eventType});
+  final String eventName;
+  final String eventDesc;
+  const AddEventPagePredetermined(
+      {super.key,
+      required this.coop,
+      required this.eventType,
+      required this.eventName,
+      required this.eventDesc});
 
   @override
-  ConsumerState<AddEventPage> createState() => _AddEventPageState();
+  ConsumerState<AddEventPagePredetermined> createState() =>
+      _AddEventPagePredeterminedState();
 }
 
-class _AddEventPageState extends ConsumerState<AddEventPage> {
+class _AddEventPagePredeterminedState
+    extends ConsumerState<AddEventPagePredetermined> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   File? _image;
@@ -56,9 +67,23 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
 
     // Initialize the selected type
     _selectedType = widget.eventType;
+    _nameController.text = widget.eventName;
+    _descriptionController.text = widget.eventDesc;
     _locationController.text = widget.coop.address ?? '';
     _cityController.text = widget.coop.city;
     _provinceController.text = widget.coop.province;
+  }
+
+  Future<File> loadImageFileFromAssets(String path, String image) async {
+    final byteData = await rootBundle.load(path);
+    final buffer = byteData.buffer;
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    File tempFile =
+        File('$tempPath/imageName.png'); // Use the correct file extension
+    await tempFile.writeAsBytes(
+        buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    return tempFile;
   }
 
   @override
