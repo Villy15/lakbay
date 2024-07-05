@@ -28,6 +28,7 @@ _$CooperativeMembersImpl _$$CooperativeMembersImplFromJson(
           : BoardRole.fromJson(json['boardRole'] as Map<String, dynamic>),
       timestamp:
           const TimestampSerializer().fromJson(json['timestamp'] as Timestamp?),
+      paidMembershipFee: json['paidMembershipFee'] as bool?,
     );
 
 Map<String, dynamic> _$$CooperativeMembersImplToJson(
@@ -41,6 +42,7 @@ Map<String, dynamic> _$$CooperativeMembersImplToJson(
       'isManager': instance.isManager,
       'boardRole': instance.boardRole?.toJson(),
       'timestamp': const TimestampSerializer().toJson(instance.timestamp),
+      'paidMembershipFee': instance.paidMembershipFee,
     };
 
 _$CooperativeMembersRoleImpl _$$CooperativeMembersRoleImplFromJson(

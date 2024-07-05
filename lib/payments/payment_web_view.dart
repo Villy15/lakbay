@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
 
@@ -29,22 +30,25 @@ class _PaymentWebViewState extends ConsumerState<PaymentWebView> {
           ),
         );
         Navigator.of(context).pop(false);
+        ref.read(navBarVisibilityProvider.notifier).show();
         return false;
       },
       child: Scaffold(
-        appBar: _appBar(context, 'Booking Payment'),
+        appBar: _appBar(context, 'Maya Checkout'),
         body: WebView(
           initialUrl: widget.uri.toString(),
           javascriptMode: JavascriptMode.unrestricted,
           navigationDelegate: (NavigationRequest request) {
             if (request.url.startsWith('https://lakbay.com/payment-success')) {
               // Handle payment success
+              debugPrint('this is working!!');
               Navigator.of(context).pop(true);
               return NavigationDecision.prevent;
             }
             if (request.url.startsWith('https://lakbay.com/payment-failure') ||
                 request.url.startsWith('https://lakbay.com/payment-cancel')) {
               // Handle payment failure or cancellation
+              debugPrint('this is not working!!');
               Navigator.of(context).pop(false);
               return NavigationDecision.prevent;
             }
