@@ -444,14 +444,14 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
                 _displaySubHeader("Description"),
                 TextInBottomSheet(
                     widget.listing.title, widget.listing.description, context),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Text(
                     'Find Us Here',
                     style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                 ),
 
@@ -918,11 +918,12 @@ class _CustomerAccomodationState extends ConsumerState<CustomerAccomodation> {
   Text _displaySubHeader(String subHeader) {
     return Text(
       subHeader,
-      style: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        // Add other styling as needed
-      ),
+      style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: Theme.of(context).colorScheme.primary
+          // Add other styling as needed
+          ),
     );
   }
 }

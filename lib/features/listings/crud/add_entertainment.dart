@@ -1692,7 +1692,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                           child: const Text('Add Schedule'),
                         ),
                       ),
-                      if (entertainmentScheduling.type == "dayScheduling")
+                      if (entertainmentScheduling.availability != null)
                         ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -1783,7 +1783,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                           child: const Text('Add Schedule'),
                         ),
                       ),
-                      if (entertainmentScheduling.type == "dateScheduling")
+                      if (entertainmentScheduling.fixedDates != null)
                         ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),

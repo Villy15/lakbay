@@ -24,6 +24,7 @@ class ListingModel with _$ListingModel {
     required ListingCooperative cooperative,
     required String description,
     List<String>? driverNames,
+    @TimeOfDayConverter() List<TimeOfDay>? departureTimes,
     List<String>? driverIds,
     num? downpaymentRate,
     num? fixedCancellationRate,

@@ -34,6 +34,10 @@ _$ListingModelImpl _$$ListingModelImplFromJson(Map<String, dynamic> json) =>
       driverNames: (json['driverNames'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      departureTimes: (json['departureTimes'] as List<dynamic>?)
+          ?.map((e) =>
+              const TimeOfDayConverter().fromJson(e as Map<String, dynamic>))
+          .toList(),
       driverIds: (json['driverIds'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -108,6 +112,9 @@ Map<String, dynamic> _$$ListingModelImplToJson(_$ListingModelImpl instance) =>
       'cooperative': instance.cooperative.toJson(),
       'description': instance.description,
       'driverNames': instance.driverNames,
+      'departureTimes': instance.departureTimes
+          ?.map(const TimeOfDayConverter().toJson)
+          .toList(),
       'driverIds': instance.driverIds,
       'downpaymentRate': instance.downpaymentRate,
       'fixedCancellationRate': instance.fixedCancellationRate,

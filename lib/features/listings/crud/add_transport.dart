@@ -50,6 +50,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   TimeOfDay startDate = const TimeOfDay(hour: 8, minute: 30);
   TimeOfDay endDate = const TimeOfDay(hour: 17, minute: 30);
   TimeOfDay travelDuration = const TimeOfDay(hour: 1, minute: 15);
+  TimeOfDay departureTime = const TimeOfDay(hour: 8, minute: 30);
+
   final TextEditingController startDateController =
       TextEditingController(text: ('8:30 AM'));
   final TextEditingController endDateController =
@@ -63,7 +65,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   List<AvailableTransport> availableTransports = [];
   List<File>? _images = [];
   int departures = 0;
-  final List<TimeOfDay> _departureTime = [];
+  final List<TimeOfDay> _departureTimes = [];
   bool _showByHourFeeField = false;
 
   // controllers
@@ -76,6 +78,8 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
   final TextEditingController _pickupController = TextEditingController();
+  final TextEditingController _departureTimeController =
+      TextEditingController();
 
   final TextEditingController _cancellationRateController =
       TextEditingController();
@@ -207,9 +211,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                 workingDays: workingDays,
                                 startTime: startDate,
                                 endTime: endDate,
-                                departureTimes: _departureTime.isEmpty
+                                departureTimes: _departureTimes.isEmpty
                                     ? null
-                                    : _departureTime,
+                                    : _departureTimes,
                                 // if travel time is empty, set to null
                                 priceByHour: _byHourFeeController.text.isEmpty
                                     ? null
@@ -226,6 +230,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                                 duration: travelDuration,
                                 description: _descriptionController.text,
                                 driverIds: drivers.keys.toList(),
+                                departureTimes: _departureTimes,
                                 driverNames: drivers.values.toList(),
                                 price: num.parse(_feeController.text),
                                 province: widget.coop.province,
@@ -1366,6 +1371,130 @@ class _AddTransportState extends ConsumerState<AddTransport> {
       //     }
       //   },
       // ),
+      Row(
+        children: [
+          const Text("Departure Times",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              )),
+          const SizedBox(width: 10),
+          FilledButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text("Departure Time"),
+                      content: SizedBox(
+                        width: MediaQuery.sizeOf(context).width,
+                        child: TextFormField(
+                          controller: _departureTimeController,
+                          maxLines: 1,
+                          decoration: const InputDecoration(
+                            labelText: "Time",
+                            border: OutlineInputBorder(),
+                            floatingLabelBehavior: FloatingLabelBehavior
+                                .always, // Keep the label always visible
+                            hintText: "8:30 AM",
+                          ),
+                          readOnly: true,
+                          onTap: () async {
+                            final TimeOfDay? pickedTime = await showTimePicker(
+                              context: context,
+                              initialTime: departureTime,
+                              initialEntryMode: TimePickerEntryMode.inputOnly,
+                              builder: (BuildContext context, Widget? child) {
+                                return MediaQuery(
+                                  data: MediaQuery.of(context)
+                                      .copyWith(alwaysUse24HourFormat: false),
+                                  child: child!,
+                                );
+                              },
+                            );
+
+                            if (pickedTime != null) {
+                              setState(() {
+                                _departureTimeController.text =
+                                    pickedTime.format(context);
+                                departureTime = pickedTime;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                      actions: [
+                        FilledButton(
+                            onPressed: () {
+                              context.pop();
+                            },
+                            style: FilledButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    8.0), // Adjust the value as needed
+                              ),
+                            ),
+                            child: const Text('Cancel')),
+                        FilledButton(
+                            onPressed: () {
+                              setState(() {
+                                _departureTimes.add(departureTime);
+                              });
+                              context.pop();
+                            },
+                            style: FilledButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    8.0), // Adjust the value as needed
+                              ),
+                            ),
+                            child: const Text('Add')),
+                      ],
+                    );
+                  });
+            },
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 0.0),
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(8.0), // Adjust the value as needed
+              ),
+            ),
+            child: const Text(
+              "Add",
+              style: TextStyle(fontSize: 14),
+            ),
+          ),
+        ],
+      ),
+      GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // 2 columns
+            childAspectRatio: 2.5),
+        itemCount: _departureTimes.length,
+        itemBuilder: (context, departureIndex) {
+          var dTime = _departureTimes[departureIndex];
+          return Card(
+            child: ListTile(
+              subtitle: null,
+              title: Text(dTime.format(context)),
+              leading: InkWell(
+                  child: const Icon(Icons.close),
+                  onTap: () => {
+                        setState(() {
+                          _departureTimes.removeAt(departureIndex);
+                        })
+                      }),
+            ),
+          );
+        },
+      ),
       const SizedBox(height: 10),
       // check if the type is public
       if (type == 'Public') ...[
@@ -1461,6 +1590,9 @@ class _AddTransportState extends ConsumerState<AddTransport> {
   }
 
   Widget addListingPhotos(BuildContext context) {
+    List<String> notes = [
+      "We recommend including your photos of the vehicles so that your customers would have a better understanding of your transport service."
+    ];
     return Column(children: [
       GestureDetector(
           child: Row(children: [
@@ -1486,127 +1618,128 @@ class _AddTransportState extends ConsumerState<AddTransport> {
             },
           ),
         )
-      ]))
+      ])),
+      addNotes(notes),
     ]);
   }
 
-  Widget reviewListing(BuildContext context) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          if (_images?.isNotEmpty == true) ...[
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0, left: 12.0),
-              child: DisplayText(
-                  text: "Listing Photo/s",
-                  lines: 1,
-                  style:
-                      TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ImageSlider(
-                  images: _images,
-                  height: MediaQuery.sizeOf(context).height / 2.5,
-                  width: double.infinity,
-                  radius: BorderRadius.circular(10)),
-            ),
-          ],
+  // Widget reviewListing(BuildContext context) {
+  //   return Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: <Widget>[
+  //         if (_images?.isNotEmpty == true) ...[
+  //           const Padding(
+  //             padding: EdgeInsets.only(top: 8.0, left: 12.0),
+  //             child: DisplayText(
+  //                 text: "Listing Photo/s",
+  //                 lines: 1,
+  //                 style:
+  //                     TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+  //           ),
+  //           Padding(
+  //             padding: const EdgeInsets.all(8.0),
+  //             child: ImageSlider(
+  //                 images: _images,
+  //                 height: MediaQuery.sizeOf(context).height / 2.5,
+  //                 width: double.infinity,
+  //                 radius: BorderRadius.circular(10)),
+  //           ),
+  //         ],
 
-          ListTile(
-              title: const Text('Category',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              subtitle: Text(widget.category)),
-          ListTile(
-              title: const Text(
-                'Type',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(type)),
-          const Divider(),
-          // Step 1
-          ListTile(
-              title: const Text(
-                'Title',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(_titleController.text)),
-          ListTile(
-            title: const Text('Description',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            subtitle: Text(_descriptionController.text),
-          ),
-          if (type == 'Public') ...[
-            ListTile(
-              title: const Text('Ticket Price',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              subtitle: Text("₱${_feeController.text} / per person"),
-            ),
-          ] else ...[
-            ListTile(
-              title: const Text('Whole Day Price',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              subtitle: Text("₱${_feeController.text}"),
-            ),
-            ListTile(
-              title: const Text('Price By Hour',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              subtitle: Text("₱${_byHourFeeController.text} / per hour"),
-            )
-          ],
+  //         ListTile(
+  //             title: const Text('Category',
+  //                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  //             subtitle: Text(widget.category)),
+  //         ListTile(
+  //             title: const Text(
+  //               'Type',
+  //               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  //             ),
+  //             subtitle: Text(type)),
+  //         const Divider(),
+  //         // Step 1
+  //         ListTile(
+  //             title: const Text(
+  //               'Title',
+  //               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  //             ),
+  //             subtitle: Text(_titleController.text)),
+  //         ListTile(
+  //           title: const Text('Description',
+  //               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  //           subtitle: Text(_descriptionController.text),
+  //         ),
+  //         if (type == 'Public') ...[
+  //           ListTile(
+  //             title: const Text('Ticket Price',
+  //                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  //             subtitle: Text("₱${_feeController.text} / per person"),
+  //           ),
+  //         ] else ...[
+  //           ListTile(
+  //             title: const Text('Whole Day Price',
+  //                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  //             subtitle: Text("₱${_feeController.text}"),
+  //           ),
+  //           ListTile(
+  //             title: const Text('Price By Hour',
+  //                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  //             subtitle: Text("₱${_byHourFeeController.text} / per hour"),
+  //           )
+  //         ],
 
-          const Divider(),
-          ListTile(
-            title: const Text('Guest Capacity',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            subtitle: Text("$guests"),
-          ),
-          ListTile(
-            title: const Text('Luggage Capacity',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            subtitle: Text("$luggage"),
-          ),
-          const Divider(),
-          // add working days
-          ListTile(
-            title: const Text('Working Days',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            subtitle: Text(workingDays
-                .asMap()
-                .entries
-                .where((element) => element.value)
-                .map((e) => getDay(e.key))
-                .toList()
-                .join(', ')),
-          ),
-          // add working hours
-          ListTile(
-            title: const Text('Operating Hours',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            subtitle: Text('$startDate - $endDate'),
-          ),
+  //         const Divider(),
+  //         ListTile(
+  //           title: const Text('Guest Capacity',
+  //               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  //           subtitle: Text("$guests"),
+  //         ),
+  //         ListTile(
+  //           title: const Text('Luggage Capacity',
+  //               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  //           subtitle: Text("$luggage"),
+  //         ),
+  //         const Divider(),
+  //         // add working days
+  //         ListTile(
+  //           title: const Text('Working Days',
+  //               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  //           subtitle: Text(workingDays
+  //               .asMap()
+  //               .entries
+  //               .where((element) => element.value)
+  //               .map((e) => getDay(e.key))
+  //               .toList()
+  //               .join(', ')),
+  //         ),
+  //         // add working hours
+  //         ListTile(
+  //           title: const Text('Operating Hours',
+  //               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  //           subtitle: Text('$startDate - $endDate'),
+  //         ),
 
-          // insert departure times if there are any
-          if (type == 'Public') ...[
-            const Divider(),
-            ListTile(
-              title: const Text('Departure Times',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: List.generate(
-                  _departureTime.length,
-                  (index) => Text(_departureTime[index].format(context)),
-                ),
-              ),
-            ),
-            const ListTile(
-              title: Text('Travel Time',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            )
-          ],
-        ]);
-  }
+  //         // insert departure times if there are any
+  //         if (type == 'Public') ...[
+  //           const Divider(),
+  //           ListTile(
+  //             title: const Text('Departure Times',
+  //                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  //             subtitle: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: List.generate(
+  //                 _departureTimes.length,
+  //                 (index) => Text(_departureTime[index].format(context)),
+  //               ),
+  //             ),
+  //           ),
+  //           const ListTile(
+  //             title: Text('Travel Time',
+  //                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+  //           )
+  //         ],
+  //       ]);
+  // }
 
   Widget stepForm(BuildContext context) {
     switch (activeStep) {
@@ -1671,23 +1804,16 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         shrinkWrap: true,
         itemCount: availableTransports.length,
         itemBuilder: ((context, transportIndex) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text('[${transportIndex + 1}]'),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Text(
+          return Card(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  title: Text(
                     "Vehicle No: ${availableTransports[transportIndex].vehicleNo}",
                     style: const TextStyle(fontSize: 14),
                   ),
-                  SizedBox(
-                    width: MediaQuery.sizeOf(context).width * .3,
-                  ),
-                  InkWell(
+                  leading: InkWell(
                     onTap: () {
                       setState(() {
                         availableTransports.removeAt(transportIndex);
@@ -1698,66 +1824,62 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                       size: 16,
                       color: Colors.black,
                     ),
-                  )
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.only(
-                    left: MediaQuery.sizeOf(context).width * .1),
-                child: Row(
-                  children: [
-                    Text(
-                      'Capacity: ${availableTransports[transportIndex].guests} | ',
-                      style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.w300),
-                    ),
-                    Text(
-                      'Luggage: ${availableTransports[transportIndex].luggage}',
-                      style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.w300),
-                    ),
-                  ],
-                ),
-              ),
-              availableTransports.isEmpty
-                  ? SizedBox(
-                      height: MediaQuery.sizeOf(context).height / 4,
-                      width: double.infinity,
-                      child: const Center(child: Text("No Vehicles Added")))
-                  : Container(
-                      padding: EdgeInsets.only(
-                          left: MediaQuery.sizeOf(context).width * .1),
-                      child: Wrap(
-                        direction: Axis.horizontal,
-                        spacing:
-                            8, // Adjust the spacing between items as needed
-                        runSpacing:
-                            8, // Adjust the run spacing (vertical spacing) as needed
-                        children: List.generate(
-                          availableTransports[transportIndex]
-                              .departureTimes!
-                              .length,
-                          (index) {
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                availableTransports[transportIndex]
-                                    .departureTimes![index]
-                                    .format(context),
-                                style: const TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.w300),
-                              ),
-                            );
-                          },
-                        ),
+                  ),
+                  subtitle: Row(
+                    children: [
+                      Text(
+                        'Capacity: ${availableTransports[transportIndex].guests} | ',
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w300),
                       ),
-                    )
-            ],
+                      Text(
+                        'Luggage: ${availableTransports[transportIndex].luggage}',
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w300),
+                      ),
+                    ],
+                  ),
+                ),
+                // availableTransports.isEmpty
+                //     ? SizedBox(
+                //         height: MediaQuery.sizeOf(context).height / 4,
+                //         width: double.infinity,
+                //         child: const Center(child: Text("No Vehicles Added")))
+                //     : Container(
+                //         padding: EdgeInsets.only(
+                //             left: MediaQuery.sizeOf(context).width * .1),
+                //         child: Wrap(
+                //           direction: Axis.horizontal,
+                //           spacing:
+                //               8, // Adjust the spacing between items as needed
+                //           runSpacing:
+                //               8, // Adjust the run spacing (vertical spacing) as needed
+                //           children: List.generate(
+                //             availableTransports[transportIndex]
+                //                 .departureTimes!
+                //                 .length,
+                //             (index) {
+                //               return Container(
+                //                 padding: const EdgeInsets.symmetric(
+                //                     horizontal: 8, vertical: 4),
+                //                 decoration: BoxDecoration(
+                //                   border: Border.all(color: Colors.grey),
+                //                   borderRadius: BorderRadius.circular(8),
+                //                 ),
+                //                 child: Text(
+                //                   availableTransports[transportIndex]
+                //                       .departureTimes![index]
+                //                       .format(context),
+                //                   style: const TextStyle(
+                //                       fontSize: 12, fontWeight: FontWeight.w300),
+                //                 ),
+                //               );
+                //             },
+                //           ),
+                //         ),
+                //       )
+              ],
+            ),
           );
         }));
   }
@@ -1790,65 +1912,65 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                     return null;
                   })),
           const SizedBox(height: 10),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: TextFormField(
-              controller: departureController,
-              decoration: InputDecoration(
-                  labelText: 'Departure Time',
-                  border: const OutlineInputBorder(),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText:
-                      "${startDate.hour}:${startDate.minute} ${startDate.period.name.toUpperCase()}"),
-              readOnly: true,
-              onTap: () async {
-                showTimePicker(
-                  context: context,
-                  initialTime: startDate,
-                  initialEntryMode: TimePickerEntryMode.inputOnly,
-                ).then((time) {
-                  if (time != null) {
-                    setState(() {
-                      departureTimes.add(time);
-                      departureController.text = time.format(context);
-                    });
-                  }
-                });
-              },
-            ),
-          ),
-          SizedBox(
-            height: MediaQuery.sizeOf(context).height * .16,
-            width: MediaQuery.sizeOf(context).width * 4,
-            child: departureTimes.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: departureTimes.length,
-                    itemBuilder: (context, timeIndex) {
-                      return ListTile(
-                        dense: true,
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 0, horizontal: 25),
-                        leading: Text('[${timeIndex + 1}]'),
-                        title: Text(
-                          departureTimes[timeIndex].format(context),
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        trailing: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              departureTimes.removeAt(timeIndex);
-                            });
-                          },
-                          icon: const Icon(Icons.close),
-                          iconSize: 14,
-                        ),
-                      );
-                    })
-                : const Center(
-                    child: Text('No Departure Times',
-                        style: TextStyle(fontWeight: FontWeight.w300))),
-          ),
+          // Container(
+          //   margin: const EdgeInsets.symmetric(horizontal: 20.0),
+          //   child: TextFormField(
+          //     controller: departureController,
+          //     decoration: InputDecoration(
+          //         labelText: 'Departure Time',
+          //         border: const OutlineInputBorder(),
+          //         floatingLabelBehavior: FloatingLabelBehavior.always,
+          //         hintText:
+          //             "${startDate.hour}:${startDate.minute} ${startDate.period.name.toUpperCase()}"),
+          //     readOnly: true,
+          //     onTap: () async {
+          //       showTimePicker(
+          //         context: context,
+          //         initialTime: startDate,
+          //         initialEntryMode: TimePickerEntryMode.inputOnly,
+          //       ).then((time) {
+          //         if (time != null) {
+          //           setState(() {
+          //             departureTimes.add(time);
+          //             departureController.text = time.format(context);
+          //           });
+          //         }
+          //       });
+          //     },
+          //   ),
+          // ),
+          // SizedBox(
+          //   height: MediaQuery.sizeOf(context).height * .16,
+          //   width: MediaQuery.sizeOf(context).width * 4,
+          //   child: departureTimes.isNotEmpty
+          //       ? ListView.builder(
+          //           shrinkWrap: true,
+          //           itemCount: departureTimes.length,
+          //           itemBuilder: (context, timeIndex) {
+          //             return ListTile(
+          //               dense: true,
+          //               contentPadding: const EdgeInsets.symmetric(
+          //                   vertical: 0, horizontal: 25),
+          //               leading: Text('[${timeIndex + 1}]'),
+          //               title: Text(
+          //                 departureTimes[timeIndex].format(context),
+          //                 style: const TextStyle(fontSize: 16),
+          //               ),
+          //               trailing: IconButton(
+          //                 onPressed: () {
+          //                   setState(() {
+          //                     departureTimes.removeAt(timeIndex);
+          //                   });
+          //                 },
+          //                 icon: const Icon(Icons.close),
+          //                 iconSize: 14,
+          //               ),
+          //             );
+          //           })
+          //       : const Center(
+          //           child: Text('No Departure Times',
+          //               style: TextStyle(fontWeight: FontWeight.w300))),
+          // ),
           SizedBox(height: MediaQuery.sizeOf(context).height / 50),
           ListTile(
               horizontalTitleGap: 0,
@@ -1907,6 +2029,13 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                   onPressed: () {
                     context.pop();
                   },
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          8.0), // Adjust the value as needed
+                    ),
+                  ),
                   child: const Text("Close")),
               const SizedBox(
                 width: 10,
@@ -1934,6 +2063,13 @@ class _AddTransportState extends ConsumerState<AddTransport> {
                     });
                     context.pop();
                   },
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          8.0), // Adjust the value as needed
+                    ),
+                  ),
                   child: const Text("Confirm")),
             ],
           )
