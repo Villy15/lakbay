@@ -1,202 +1,149 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
-import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 class CustomerTransportReceipt extends ConsumerWidget {
   final ListingModel listing;
   final ListingBookings booking;
+
   const CustomerTransportReceipt(
       {super.key, required this.listing, required this.booking});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-        body: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: SingleChildScrollView(
-          child: Container(
-              margin:
-                  EdgeInsets.only(top: MediaQuery.sizeOf(context).height / 10),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey[300]!, width: 2.0),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3))
-                  ],
-                  borderRadius: BorderRadius.circular(8)),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      appBar: AppBar(
+        title: const Text("Transport Booking Receipt"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Column(
                   children: [
-                    const Text('Booking Successful!'),
-                    const Text('Booking Information'),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Booking Ref No: '),
-                          Text('${booking.id}')
-                        ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Trip Name: '),
-                          Text(booking.tripName)
-                        ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Payment Option: '),
-                          Text('${booking.paymentOption}')
-                        ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Status: '),
-                          Text(booking.bookingStatus)
-                        ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Listing Title: '),
-                          Text(listing.title)
-                        ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Trip: '),
-                          Text('${booking.typeOfTrip}')
-                        ]),
-                    if (booking.typeOfTrip == 'Public') ...[
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Booked Date: '),
-                            Text(_formatDatetime(booking.startDate!))
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Departure Time: '),
-                            Text(_formatTimeOfDay(booking.startTime!))
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Pickup Point: '),
-                            Flexible(
-                                child: Text(
-                              '${listing.pickUp}',
-                              overflow: TextOverflow.ellipsis,
-                            ))
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Destination: '),
-                            Flexible(
-                                child: Text(
-                              '${listing.destination}',
-                              overflow: TextOverflow.ellipsis,
-                            ))
-                          ]),
-                    ] else ...[
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Booked First Date: '),
-                            Text(_formatDatetime(booking.startDate!))
-                          ]),
-                    ],
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Guests: '),
-                          Text('${booking.guests}')
-                        ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Customer Name: '),
-                          Text(booking.customerName)
-                        ]),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Customer No.:"),
-                        Text(" ${booking.customerPhoneNo}"),
-                      ],
+                    const Icon(Icons.check_circle,
+                        color: Colors.green, size: 80),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Booking Successful!",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Emergency Contact Name:"),
-                        Text(" ${booking.emergencyContactName}"),
-                      ],
+                    const SizedBox(height: 10),
+                    Text(
+                      "Booking Reference: ${booking.id}",
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Emergency Contact No.:"),
-                        Text(" ${booking.emergencyContactNo}"),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Price:"),
-                        Text(" ${booking.price}"),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Amount Paid:"),
-                        Text(" ${booking.amountPaid!.toStringAsFixed(2)}"),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Amount Due:"),
-                        Text(
-                            " ${(booking.totalPrice! - booking.amountPaid!).toStringAsFixed(2)}"),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                          onPressed: () {
-                            ref
-                                .read(parentStateProvider.notifier)
-                                .setState(true);
-                            context.pop();
-                          },
-                          child: const Text("Close")),
-                    )
-                  ]))),
-    ));
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              const Divider(thickness: 2),
+              const Text(
+                "Payment Details",
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green),
+              ),
+              const SizedBox(height: 10),
+              _buildReceiptTile(
+                icon: Icons.directions_bus,
+                label: "Transport Price",
+                value: '₱${booking.price.toStringAsFixed(2)}',
+              ),
+              _buildReceiptTile(
+                icon: Icons.money,
+                label: "Amount Paid",
+                value: '₱${booking.amountPaid!.toStringAsFixed(2)}',
+              ),
+              _buildReceiptTile(
+                icon: Icons.money_off,
+                label: "Amount Due",
+                value:
+                    '₱${(booking.totalPrice! - booking.amountPaid!).toStringAsFixed(2)}',
+              ),
+              const SizedBox(height: 20),
+              const Divider(thickness: 2),
+              const Text(
+                "Booking Information",
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green),
+              ),
+              const SizedBox(height: 10),
+              _buildReceiptTile(
+                icon: Icons.payment,
+                label: "Payment Option",
+                value: booking.paymentOption ?? "-",
+              ),
+              _buildReceiptTile(
+                icon: Icons.check_circle,
+                label: "Status",
+                value: booking.bookingStatus,
+              ),
+              _buildReceiptTile(
+                icon: Icons.title,
+                label: "Listing Title",
+                value: listing.title,
+              ),
+              _buildReceiptTile(
+                icon: Icons.group,
+                label: "Guests",
+                value: booking.guests.toString(),
+              ),
+              _buildReceiptTile(
+                icon: Icons.person,
+                label: "Customer Name",
+                value: booking.customerName,
+              ),
+              _buildReceiptTile(
+                icon: Icons.phone,
+                label: "Customer No.",
+                value: booking.customerPhoneNo,
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                    onPressed: () {
+                      context.pop();
+                    },
+                    child: const Text("Close")),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
-  String _formatTimeOfDay(TimeOfDay time) {
-    final now = DateTime.now();
-    final dt = DateTime(now.year, now.month, now.day, time.hour, time.minute);
-    final format = DateFormat.jm(); //"6:00 AM"
-    return format.format(dt);
-  }
-
-  String _formatDatetime(DateTime dateTime) {
-    final format = DateFormat('yyyy-MM-dd'); // Format the date as "yyyy-MM-dd"
-    return format.format(dateTime);
+  Widget _buildReceiptTile({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.orange.shade900),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ),
+          Text(value, style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+        ],
+      ),
+    );
   }
 }
