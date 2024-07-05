@@ -37,7 +37,7 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
 
   void addEvent(BuildContext context, CooperativeModel coop) {
     context.pushNamed(
-      'add_event',
+      'add_event_choices',
       extra: coop,
     );
   }

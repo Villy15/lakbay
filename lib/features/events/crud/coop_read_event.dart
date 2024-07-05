@@ -66,7 +66,6 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
                 onPopInvoked: (bool didPop) {
                   ref.read(navBarVisibilityProvider.notifier).show();
                   context.pop();
-                  
                 },
                 child: Scaffold(
                   appBar: _appBar(event),
@@ -212,10 +211,14 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
             children: [
               const Icon(Icons.location_on),
               const SizedBox(width: 8),
-              Text(
-                'Address: ${event.address}, ${event.city}, ${event.province}',
-                style: const TextStyle(
-                  fontSize: 16.0,
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Text(
+                  'Address: ${event.address}, ${event.city}, ${event.province}',
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -224,14 +227,6 @@ class _CoopReadEventPageState extends ConsumerState<CoopReadEventPage> {
         const SizedBox(height: 10),
 
         // Map Placeholder
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Container(
-            height: 200,
-            width: double.infinity,
-            color: Colors.grey[300],
-          ),
-        ),
       ],
     );
   }

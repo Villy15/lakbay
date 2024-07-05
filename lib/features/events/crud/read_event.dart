@@ -247,14 +247,6 @@ class _ReadEventPageState extends ConsumerState<ReadEventPage> {
                       const SizedBox(height: 10),
 
                       // Map Placeholder
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Container(
-                          height: 200,
-                          width: double.infinity,
-                          color: Colors.grey[300],
-                        ),
-                      ),
                     ],
                   ),
                 ),
