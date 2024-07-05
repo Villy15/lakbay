@@ -261,6 +261,10 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime displayDate =
+        isSameDate(widget.activity.startTime!, widget.thisDay)
+            ? widget.activity.startTime!
+            : widget.activity.endTime!;
     return Column(
       children: [
         if (widget.activity.startTime != null)
@@ -271,33 +275,14 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
               child: Row(
                 children: [
                   Text(
-                    DateFormat('hh:mm a').format(widget.activity.startTime!),
+                    DateFormat('hh:mm a').format(displayDate),
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  if (widget.activity.category == 'Transport')
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                              height: MediaQuery.sizeOf(context).height / 40,
-                              child: Image.asset(
-                                  'lib/core/images/right-arrow.png')),
-                          Text(
-                            DateFormat('hh:mm a')
-                                .format(widget.activity.endTime!),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  if (widget.activity.category == 'Manual')
+                  if (widget.activity.isManual == true &&
+                      widget.activity.category != "Accommodation")
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -317,6 +302,26 @@ class _TimelineCardState extends ConsumerState<TimelineCard> {
                         ],
                       ),
                     )
+                  else if (widget.activity.category == 'Transport')
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                              height: MediaQuery.sizeOf(context).height / 40,
+                              child: Image.asset(
+                                  'lib/core/images/right-arrow.png')),
+                          Text(
+                            DateFormat('hh:mm a')
+                                .format(widget.activity.endTime!),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),

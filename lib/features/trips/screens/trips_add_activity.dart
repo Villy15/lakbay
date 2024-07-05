@@ -342,6 +342,8 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                 builder: (BuildContext context) {
                   TextEditingController titleController =
                       TextEditingController();
+                  TextEditingController categoryController =
+                      TextEditingController();
                   TextEditingController startTimeController =
                       TextEditingController();
                   TextEditingController endTimeController =
@@ -366,6 +368,35 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                                     .always, // Keep the label always visible
                                 hintText: "",
                               ),
+                            ),
+                            const SizedBox(height: 10),
+                            DropdownButtonFormField<String>(
+                              value: categoryController.text.isEmpty
+                                  ? null
+                                  : categoryController.text,
+                              decoration: const InputDecoration(
+                                labelText: 'Category',
+                                border: OutlineInputBorder(),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                              ),
+                              hint: const Text('Select an activity'),
+                              items: [
+                                "Accommodation",
+                                "Transport",
+                                "Food",
+                                "Entertainment"
+                              ].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  categoryController.text = newValue!;
+                                });
+                              },
                             ),
                             const SizedBox(height: 10),
                             Row(
@@ -476,7 +507,9 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                                 DateTime formattedEndTime = DateTime(
                                   thisSelectedDate.year,
                                   thisSelectedDate.month,
-                                  thisSelectedDate.day,
+                                  categoryController.text == "Accommodation"
+                                      ? thisSelectedDate.day + 1
+                                      : thisSelectedDate.day,
                                   thisEndTime.hour,
                                   thisEndTime.minute,
                                 );
@@ -486,7 +519,8 @@ class _TripsAddActivityState extends ConsumerState<TripsAddActivity> {
                                   key: DateTime.now()
                                       .millisecondsSinceEpoch
                                       .toString(),
-                                  category: "Manual",
+                                  category: categoryController.text,
+                                  isManual: true,
                                   dateTime: ref.watch(selectedDateProvider),
                                   startTime: formattedStartTime,
                                   endTime: formattedEndTime,

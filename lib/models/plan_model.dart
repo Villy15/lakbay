@@ -49,6 +49,7 @@ class PlanActivity with _$PlanActivity {
     String? title,
     String? description,
     String? imageUrl,
+    bool? isManual,
     @TimestampSerializer() DateTime? startTime,
     @TimestampSerializer() DateTime? endTime,
   }) = _PlanActivity;
