@@ -1769,8 +1769,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
                         width: MediaQuery.sizeOf(context).width / 1.2,
                         child: FilledButton(
                           onPressed: () {
-                            debugPrint(entertainmentScheduling.toString());
-                            // showDateScheduling(context);
+                            showDateScheduling(context);
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
