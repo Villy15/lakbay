@@ -92,7 +92,7 @@ class _PlanPageState extends ConsumerState<PlanPage> {
                                 ),
                                 const SizedBox(height: 20),
                                 const Text(
-                                  'No Trips yet!',
+                                  'No Complete trips by others!',
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w600,
@@ -100,13 +100,13 @@ class _PlanPageState extends ConsumerState<PlanPage> {
                                 ),
                                 const SizedBox(height: 4),
                                 const Text(
-                                  'Create a new trip ',
+                                  'Complete a new trip now!',
                                   style: TextStyle(
                                     fontSize: 16,
                                   ),
                                 ),
                                 const Text(
-                                  'to start planning your next adventure!',
+                                  'Or wait for others to complete their trips.',
                                   style: TextStyle(
                                     fontSize: 16,
                                   ),
