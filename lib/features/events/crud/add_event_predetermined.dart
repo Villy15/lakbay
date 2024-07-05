@@ -25,12 +25,16 @@ class AddEventPagePredetermined extends ConsumerStatefulWidget {
   final String eventType;
   final String eventName;
   final String eventDesc;
+  final String eventGoal;
+  final num eventObjective;
   const AddEventPagePredetermined(
       {super.key,
       required this.coop,
       required this.eventType,
       required this.eventName,
-      required this.eventDesc});
+      required this.eventDesc,
+      required this.eventGoal,
+      required this.eventObjective});
 
   @override
   ConsumerState<AddEventPagePredetermined> createState() =>
@@ -74,6 +78,8 @@ class _AddEventPagePredeterminedState
     _locationController.text = widget.coop.address ?? '';
     _cityController.text = widget.coop.city;
     _provinceController.text = widget.coop.province;
+    _goalController.text = widget.eventGoal;
+    _objectiveController.text = widget.eventObjective.toString();
   }
 
   Future<File> loadImageFileFromAssets(String path, String image) async {

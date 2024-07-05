@@ -129,7 +129,7 @@ pw.Widget _buildMetricCard({
           pw.SvgImage(svg: tree, width: 40, height: 40),
         ] else if (title == 'Community Involvement') ...[
           pw.SvgImage(svg: people, width: 40, height: 40),
-        ] else if (title == 'River Clean-Up Activities') ...[
+        ] else if (title == 'River and Watershed Protection Programs') ...[
           pw.SvgImage(svg: river, width: 40, height: 40),
         ] else if (title == 'Sales and Revenue') ...[
           pw.SvgImage(svg: money, width: 40, height: 40),

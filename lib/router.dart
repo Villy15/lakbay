@@ -895,12 +895,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   final String eventType = params['eventType'] as String;
                   final String eventName = params['eventName'] as String;
                   final String eventDesc = params['eventDesc'] as String;
+                  final String eventGoal = params['eventGoal'] as String;
+                  final num eventObjective = params['eventObjective'] as num;
 
                   return AddEventPagePredetermined(
                     coop: coop,
                     eventType: eventType,
                     eventName: eventName,
                     eventDesc: eventDesc,
+                    eventGoal: eventGoal,
+                    eventObjective: eventObjective,
                   );
                 },
                 name: 'add_event_predetermined',

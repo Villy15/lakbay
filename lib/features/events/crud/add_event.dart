@@ -252,27 +252,6 @@ class _AddEventPageState extends ConsumerState<AddEventPage> {
                         ),
                         const SizedBox(height: 10),
 
-                        // Goal and Objective
-                        TextFormField(
-                          controller: _goalController,
-                          decoration: const InputDecoration(
-                            icon: Icon(Icons.check),
-                            border: OutlineInputBorder(),
-                            labelText: 'Goal',
-                            helperText: 'optional',
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          controller: _objectiveController,
-                          decoration: const InputDecoration(
-                            icon: Icon(Icons.check),
-                            border: OutlineInputBorder(),
-                            labelText: 'Objective',
-                            helperText: 'optional',
-                          ),
-                        ),
-
                         // Type of event
 
                         TextFormField(
