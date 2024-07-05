@@ -76,13 +76,13 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
+                                SizedBox(
+                                  width: MediaQuery.sizeOf(context).width,
+                                  child: Expanded(
+                                    child: Text(
                                       transport.title,
                                       style: const TextStyle(
                                         fontSize:
@@ -91,96 +91,86 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                             FontWeight.bold, // Bold text
                                       ),
                                     ),
-                                    Text(
-                                      transport.title,
-                                      style: const TextStyle(
-                                        fontSize:
-                                            14, // Increased font size, larger than the previous one
-                                        fontWeight:
-                                            FontWeight.w500, // Bold text
-                                      ),
-                                    ),
-                                    RichText(
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text:
-                                                "₱${widget.transportListings![index].price}",
-                                            style: TextStyle(
-                                                fontSize:
-                                                    14, // Size for the price
-                                                fontWeight: FontWeight
-                                                    .w500, // Bold for the price
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface),
-                                          ),
-                                          if (widget.transportListings![index]
-                                                  .type ==
-                                              'Public') ...[
-                                            TextSpan(
-                                              text: " per trip",
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      14, // Smaller size for 'per night'
-                                                  fontStyle: FontStyle
-                                                      .italic, // Italicized 'per night'
-                                                  fontWeight: FontWeight
-                                                      .normal, // Normal weight for 'per night'
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurface),
-                                            ),
-                                          ] else ...[
-                                            TextSpan(
-                                              text: " / day",
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      14, // Smaller size for 'per night'
-                                                  fontStyle: FontStyle
-                                                      .italic, // Italicized 'per night'
-                                                  fontWeight: FontWeight
-                                                      .normal, // Normal weight for 'per night'
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurface),
-                                            ),
-                                          ]
-                                        ],
-                                      ),
-                                    ),
-                                    // add rental per hour if the transport is private and offers hourly rental
-                                    if (widget.transportListings![index].type ==
-                                        'Private') ...[
-                                      RichText(
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text:
-                                                  "₱${transport.availableTransport!.priceByHour}",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurface),
-                                            ),
-                                            TextSpan(
-                                              text: " / hour",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontStyle: FontStyle.italic,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurface),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ],
+                                  ),
                                 ),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            "₱${widget.transportListings![index].price}",
+                                        style: TextStyle(
+                                            fontSize: 14, // Size for the price
+                                            fontWeight: FontWeight
+                                                .w500, // Bold for the price
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface),
+                                      ),
+                                      if (widget
+                                              .transportListings![index].type ==
+                                          'Public') ...[
+                                        TextSpan(
+                                          text: " per trip",
+                                          style: TextStyle(
+                                              fontSize:
+                                                  14, // Smaller size for 'per night'
+                                              fontStyle: FontStyle
+                                                  .italic, // Italicized 'per night'
+                                              fontWeight: FontWeight
+                                                  .normal, // Normal weight for 'per night'
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface),
+                                        ),
+                                      ] else ...[
+                                        TextSpan(
+                                          text: " / day",
+                                          style: TextStyle(
+                                              fontSize:
+                                                  14, // Smaller size for 'per night'
+                                              fontStyle: FontStyle
+                                                  .italic, // Italicized 'per night'
+                                              fontWeight: FontWeight
+                                                  .normal, // Normal weight for 'per night'
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface),
+                                        ),
+                                      ]
+                                    ],
+                                  ),
+                                ),
+                                // add rental per hour if the transport is private and offers hourly rental
+                                if (widget.transportListings![index].type ==
+                                    'Private') ...[
+                                  RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text:
+                                              "₱${transport.availableTransport!.priceByHour}",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface),
+                                        ),
+                                        TextSpan(
+                                          text: " / hour",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontStyle: FontStyle.italic,
+                                              fontWeight: FontWeight.normal,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                             SizedBox(
@@ -901,9 +891,16 @@ class _TransportCardState extends ConsumerState<TransportCard> {
       UserModel user,
       ListingModel listing,
       String? privateBookingType) {
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
+    return SingleChildScrollView(
+        child: Container(
+      margin: const EdgeInsets.only(top: 10),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        AppBar(
+          iconTheme: IconThemeData(
+            color: Theme.of(context)
+                .colorScheme
+                .primary, // Change this color to your desired color
+          ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -927,186 +924,172 @@ class _TransportCardState extends ConsumerState<TransportCard> {
               ),
             ],
           ),
-          elevation: 0,
-          iconTheme: IconThemeData(
-            color: Theme.of(context)
-                .colorScheme
-                .primary, // Change this color to your desired color
-          ),
+          elevation: 0, // Optional: Remove shadow
         ),
-        body: SingleChildScrollView(
-            child: Container(
-          margin: const EdgeInsets.only(top: 10),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: Column(children: [
-                  Row(children: [
-                    Expanded(
-                      child: TextFormField(
-                          controller: guestController,
-                          decoration: const InputDecoration(
-                              labelText: 'Guests: ',
-                              border: OutlineInputBorder(),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              hintText: "1"),
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) {
-                            guests = int.tryParse(value) ?? 0;
-                          }),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextFormField(
-                          decoration: InputDecoration(
-                              labelText: 'Luggage: (Max: ${transport.luggage})',
-                              border: const OutlineInputBorder(),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              hintText: "1"),
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) {
-                            luggage = int.tryParse(value) ?? 0;
-                          }),
-                    ),
-                  ]),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                      controller: phoneNoController,
+        Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(children: [
+              Row(children: [
+                Expanded(
+                  child: TextFormField(
+                      controller: guestController,
                       decoration: const InputDecoration(
-                          labelText: 'Phone Number',
+                          labelText: 'Guests: ',
                           border: OutlineInputBorder(),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          prefixText: "+63 "),
-                      keyboardType: TextInputType.phone),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                      controller: emergencyContactNameController,
-                      decoration: const InputDecoration(
-                          labelText: 'Emergency Contact Name',
-                          border: OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: "Lastname Firstname")),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                      controller: emergencyContactNoController,
-                      decoration: const InputDecoration(
-                          labelText: 'Emergency Contact No.',
-                          border: OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          prefixText: '+63 '),
-                      keyboardType: TextInputType.phone),
-                  if (privateBookingType == 'Select Time') ...[
-                    const SizedBox(height: 10),
-                    TextFormField(
-                        controller: startTimeController,
-                        decoration: InputDecoration(
-                          labelText: 'Booking Start Time',
+                          hintText: "1"),
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        guests = int.tryParse(value) ?? 0;
+                      }),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextFormField(
+                      decoration: InputDecoration(
+                          labelText: 'Luggage: (Max: ${transport.luggage})',
                           border: const OutlineInputBorder(),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: transport.startTime!.format(context),
-                        ),
-                        readOnly: true,
-                        onTap: () async {
-                          // show time picker
-                          final time = await showTimePicker(
-                              context: context,
-                              initialTime: transport.startTime!,
-                              initialEntryMode: TimePickerEntryMode.inputOnly,
-                              builder: (context, child) {
-                                return MediaQuery(
-                                    data: MediaQuery.of(context)
-                                        .copyWith(alwaysUse24HourFormat: false),
-                                    child: child!);
-                              });
-
-                          if (time != null) {
-                            startTimeController!.text = time.format(context);
-                            startTime = time;
-                          }
-                        }),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                        controller: endTimeController,
-                        decoration: InputDecoration(
-                            labelText: 'Booking End Time',
-                            border: const OutlineInputBorder(),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            hintText: transport.endTime!.format(context)),
-                        readOnly: true,
-                        onTap: () async {
-                          // show time picker
-                          final time = await showTimePicker(
-                              context: context,
-                              initialTime: transport.endTime!,
-                              initialEntryMode: TimePickerEntryMode.inputOnly,
-                              builder: (context, child) {
-                                return MediaQuery(
-                                    data: MediaQuery.of(context)
-                                        .copyWith(alwaysUse24HourFormat: false),
-                                    child: child!);
-                              });
-
-                          if (time != null) {
-                            endTimeController!.text = time.format(context);
-                            endTime = time;
-                          }
-                        }),
-                    const SizedBox(height: 20),
-                    CheckboxListTile(
-                      enabled: false,
-                      value: governmentId,
-                      title: const Text("Government ID"),
-                      onChanged: (bool? value) {
-                        setState(() {
-                          governmentId = value ?? false;
-                        });
-                      },
-                      controlAffinity: ListTileControlAffinity.leading,
+                          hintText: "1"),
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        luggage = int.tryParse(value) ?? 0;
+                      }),
+                ),
+              ]),
+              const SizedBox(height: 10),
+              TextFormField(
+                  controller: phoneNoController,
+                  decoration: const InputDecoration(
+                      labelText: 'Phone Number',
+                      border: OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      prefixText: "+63 "),
+                  keyboardType: TextInputType.phone),
+              const SizedBox(height: 10),
+              TextFormField(
+                  controller: emergencyContactNameController,
+                  decoration: const InputDecoration(
+                      labelText: 'Emergency Contact Name',
+                      border: OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: "Lastname Firstname")),
+              const SizedBox(height: 10),
+              TextFormField(
+                  controller: emergencyContactNoController,
+                  decoration: const InputDecoration(
+                      labelText: 'Emergency Contact No.',
+                      border: OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      prefixText: '+63 '),
+                  keyboardType: TextInputType.phone),
+              if (privateBookingType == 'Select Time') ...[
+                const SizedBox(height: 10),
+                TextFormField(
+                    controller: startTimeController,
+                    decoration: InputDecoration(
+                      labelText: 'Booking Start Time',
+                      border: const OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: transport.startTime!.format(context),
                     ),
-                    const Padding(
-                        padding: EdgeInsets.only(left: 16),
-                        child: Text(
-                            'Your Government ID is required as a means to protect cooperatives.',
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.grey))),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                          onPressed: () async {
-                            await proceedTransportCheckOut(
-                                typeOfTrip,
-                                listing,
-                                user,
-                                transport,
-                                startDate,
-                                departureTime,
-                                endDate,
-                                guests,
-                                phoneNoController,
-                                emergencyContactNameController,
-                                emergencyContactNoController,
-                                startTime,
-                                endTime);
-                          },
-                          style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  8.0), // Adjust the value as needed
-                            ),
-                          ),
-                          child: const Text('Proceed')),
-                    )
-                  ],
-                ]))
-          ]),
-        )));
+                    readOnly: true,
+                    onTap: () async {
+                      // show time picker
+                      final time = await showTimePicker(
+                          context: context,
+                          initialTime: transport.startTime!,
+                          initialEntryMode: TimePickerEntryMode.inputOnly,
+                          builder: (context, child) {
+                            return MediaQuery(
+                                data: MediaQuery.of(context)
+                                    .copyWith(alwaysUse24HourFormat: false),
+                                child: child!);
+                          });
+
+                      if (time != null) {
+                        startTimeController!.text = time.format(context);
+                        startTime = time;
+                      }
+                    }),
+                const SizedBox(height: 10),
+                TextFormField(
+                    controller: endTimeController,
+                    decoration: InputDecoration(
+                        labelText: 'Booking End Time',
+                        border: const OutlineInputBorder(),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        hintText: transport.endTime!.format(context)),
+                    readOnly: true,
+                    onTap: () async {
+                      // show time picker
+                      final time = await showTimePicker(
+                          context: context,
+                          initialTime: transport.endTime!,
+                          initialEntryMode: TimePickerEntryMode.inputOnly,
+                          builder: (context, child) {
+                            return MediaQuery(
+                                data: MediaQuery.of(context)
+                                    .copyWith(alwaysUse24HourFormat: false),
+                                child: child!);
+                          });
+
+                      if (time != null) {
+                        endTimeController!.text = time.format(context);
+                        endTime = time;
+                      }
+                    }),
+              ],
+              const SizedBox(height: 20),
+              CheckboxListTile(
+                enabled: false,
+                value: governmentId,
+                title: const Text("Government ID"),
+                onChanged: (bool? value) {
+                  setState(() {
+                    governmentId = value ?? false;
+                  });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+              ),
+              const Padding(
+                  padding: EdgeInsets.only(left: 16),
+                  child: Text(
+                      'Your Government ID is required as a means to protect cooperatives.',
+                      style: TextStyle(fontSize: 12, color: Colors.grey))),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                    onPressed: () async {
+                      await proceedTransportCheckOut(
+                          typeOfTrip,
+                          listing,
+                          user,
+                          transport,
+                          startDate,
+                          departureTime,
+                          endDate,
+                          guests,
+                          phoneNoController,
+                          emergencyContactNameController,
+                          emergencyContactNoController,
+                          startTime,
+                          endTime);
+                    },
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            8.0), // Adjust the value as needed
+                      ),
+                    ),
+                    child: const Text('Proceed')),
+              )
+            ]))
+      ]),
+    ));
   }
 
   Future<UserModel> submitUpdateProfile(
@@ -1230,12 +1213,12 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                   TextFormField(
                                       controller: emailController,
                                       decoration: const InputDecoration(
-                                          labelText: 'Email*',
-                                          border: OutlineInputBorder(),
-                                          floatingLabelBehavior:
-                                              FloatingLabelBehavior.always,
-                                          hintText: "username@gmail.com",
-                                          helperText: "*required"),
+                                        labelText: 'Email',
+                                        border: OutlineInputBorder(),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        hintText: "username@gmail.com",
+                                      ),
                                       keyboardType: TextInputType.emailAddress,
                                       // if email is not null, put the initial value
                                       onChanged: (value) {
@@ -1248,12 +1231,12 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                   TextFormField(
                                     controller: firstNameController,
                                     decoration: const InputDecoration(
-                                        labelText: 'First Name*',
-                                        border: OutlineInputBorder(),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always,
-                                        hintText: "First Name",
-                                        helperText: "*required"),
+                                      labelText: 'First Name',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      hintText: "First Name",
+                                    ),
                                     // put initial value if the user's first name is not null
                                     // initialValue: user.firstName ?? '',
                                     onChanged: (value) {
@@ -1279,12 +1262,12 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                   TextFormField(
                                     controller: addressController,
                                     decoration: const InputDecoration(
-                                        labelText: 'Address*',
-                                        border: OutlineInputBorder(),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always,
-                                        hintText: "Street, City, Province",
-                                        helperText: "*required"),
+                                      labelText: 'Address*',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      hintText: "Street, City, Province",
+                                    ),
                                     // initialValue: user.address ?? '',
                                     onChanged: (value) {
                                       user = user.copyWith(address: value);
@@ -1294,12 +1277,11 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                   TextFormField(
                                     controller: phoneNoController,
                                     decoration: const InputDecoration(
-                                        labelText: 'Phone Number*',
+                                        labelText: 'Phone Number',
                                         border: OutlineInputBorder(),
                                         floatingLabelBehavior:
                                             FloatingLabelBehavior.always,
                                         prefixText: "+63 ",
-                                        helperText: "*required",
                                         hintText: '91234567891'),
                                     keyboardType: TextInputType.phone,
                                     // initialValue: user.phoneNo ?? '',
@@ -1353,12 +1335,12 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                   TextFormField(
                                     controller: emergencyContactNameController,
                                     decoration: const InputDecoration(
-                                        labelText: 'Emergency Contact Name',
-                                        border: OutlineInputBorder(),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always,
-                                        hintText: "Lastname Firstname",
-                                        helperText: "*required"),
+                                      labelText: 'Emergency Contact Name',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      hintText: "Lastname Firstname",
+                                    ),
                                     // initialValue: user.emergencyContactName ?? '',
                                     onChanged: (value) {
                                       user = user.copyWith(
@@ -1369,13 +1351,13 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                   TextFormField(
                                     controller: emergencyContactNoController,
                                     decoration: const InputDecoration(
-                                        labelText: 'Emergency Contact Number',
-                                        border: OutlineInputBorder(),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always,
-                                        prefixText: "+63 ",
-                                        hintText: '91234567891',
-                                        helperText: "*required"),
+                                      labelText: 'Emergency Contact Number',
+                                      border: OutlineInputBorder(),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      prefixText: "+63 ",
+                                      hintText: '91234567891',
+                                    ),
                                     keyboardType: TextInputType.phone,
                                     // initialValue: user.emergencyContactNo ?? '',
                                     onChanged: (value) {
@@ -1408,8 +1390,6 @@ class _TransportCardState extends ConsumerState<TransportCard> {
                                           formKey,
                                           profilePicture,
                                           governmentId);
-
-                                      debugPrint('this is user: $user');
 
                                       // close dialog
                                       Navigator.of(context).pop();
