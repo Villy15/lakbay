@@ -45,6 +45,7 @@ final Completer<PDFViewController> controller = Completer<PDFViewController>();
 int? totalPages = 0;
 int? currentPage = 0;
 bool isReady = false;
+bool isPaid = false;
 
 class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   late List<CoopAnnouncements> coopAnnouncements;
@@ -156,6 +157,9 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
           .read(getMemberProvider(user.uid).future);
       memberDetails = member;
       debugPrint('this is the member details: $memberDetails');
+      setState(() {
+        isPaid = memberDetails?.paidMembershipFee ?? false;
+      });
     } catch (e) {
       debugPrint('Error fetching member details: $e');
     }
@@ -947,11 +951,17 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
 
                           // if member has yet to pay (e.g., paidMembershipFee == false), then show the pay membership button
                           // member.asStream == false ? 
-                          memberDetails?.paidMembershipFee == false ?
+                          isPaid == false ?
                           OutlinedButton(
                             onPressed: () {
                               debugPrint('they have yet to pay: ${memberDetails?.paidMembershipFee}');
-                              payMembershipFeeMaya(memberDetails!, ref, context, coop.membershipFee!);
+                              payMembershipFeeMaya(memberDetails!, ref, context, coop.membershipFee!).then(
+                                (value) {
+                                  setState(() {
+                                    isPaid = !isPaid;
+                                  });
+                                }
+                              );
                               
                             },
                             style: ElevatedButton.styleFrom(

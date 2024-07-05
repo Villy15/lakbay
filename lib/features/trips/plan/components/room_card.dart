@@ -1293,7 +1293,7 @@ class _RoomCardState extends ConsumerState<RoomCard> {
                       final roomTransferNotif = NotificationsModel(
                           title: 'Room Transfer',
                           message:
-                              'You have been transferred to Room ID: ${room.roomId}. Please check your new room details.',
+                              'You have been transferred to Room No.: ${room.roomId}. Please check your new room details.',
                           listingId: updatedBooking.listingId,
                           ownerId: updatedBooking.customerId,
                           bookingId: updatedBooking.id,
