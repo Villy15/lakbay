@@ -47,10 +47,39 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   };
   dynamic listingResults = [];
 
+  bool showLocationField = false;
+  final filterSearch = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  List<ListingModel> searchFilterResult = [];
+  String finalFilteredSearch = '';
+
   @override
   void initState() {
     super.initState();
     selectedCategory = capitalize(widget.category);
+    filterSearch.addListener(() {
+      debugPrint('filter search text: ${filterSearch.text}');
+      finalFilteredSearch = filterSearch.text;
+      debugPrint("final search: $finalFilteredSearch");
+      debugPrint('calling listing controller!');
+      listingCardController(selectedCategory, finalFilteredSearch);
+      Future.delayed(const Duration(milliseconds: 100), () {
+        setState(() {});
+      });
+    });
+
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        FocusScope.of(context).unfocus();
+        debugPrint('unfocused!');
+
+        if (filterSearch.text.isNotEmpty) {
+          finalFilteredSearch = filterSearch.text;
+          debugPrint('this is the final filtered search: $finalFilteredSearch');
+          listingCardController(selectedCategory, finalFilteredSearch);
+        }
+      }
+    });
     // String capitalizedCategory = capitalize(widget.category);
     // if (filters.containsKey(selectedCate)) {
     //   filters[capitalizedCategory] = true;
@@ -58,6 +87,13 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     //   // Make all true
     //   filters.updateAll((key, value) => true);
     // }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    filterSearch.dispose();
+    super.dispose();
   }
 
   String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
@@ -138,7 +174,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
             InkWell(
               child: const Icon(Icons.search_rounded),
               onTap: () {
-                onTapLocation();
+                toggleLocationFieldVisibility();
               },
             ),
           ],
@@ -192,6 +228,49 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                 )
               : Column(
                   children: [
+                    Visibility(
+                      visible: showLocationField,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                            focusNode: _focusNode,
+                            controller: filterSearch,
+                            textInputAction: TextInputAction.search,
+                            onSubmitted: (value) {
+                              debugPrint(
+                                  'Enter pressed with search text: $value');
+                              listingCardController(selectedCategory, value);
+                            },
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                              hintText: 'Search Location',
+                              prefixIcon: const Padding(
+                                padding: EdgeInsets.only(right: 20, top: 5.5),
+                                child: Icon(
+                                  Icons.search,
+                                  size: 18,
+                                ),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: const Padding(
+                                  padding: EdgeInsets.only(top: 5.5),
+                                  child: Icon(Icons.close, size: 20),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    filterSearch.clear();
+                                    showLocationField = false;
+                                    finalFilteredSearch = '';
+                                  });
+                                  debugPrint(
+                                      'I press to close the filter search!');
+                                  listingCardController(
+                                      selectedCategory, finalFilteredSearch);
+                                },
+                              ),
+                            )),
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Align(
@@ -202,26 +281,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                             Wrap(
                               spacing: 8.0,
                               children: [
-                                // if the planSearch is not null, show the ActionChip. Otherwise, show the Text widget
-                                if (planSearch != null)
-                                  ActionChip(
-                                    onPressed: () {
-                                      // Filter
-                                      showLocationAlertDialog(
-                                          context, planSearch);
-                                    },
-                                    label: SizedBox(
-                                      width: MediaQuery.of(context).size.width /
-                                          7.5,
-                                      child: Text(
-                                        planSearch,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                    ),
-                                    avatar:
-                                        const Icon(Icons.location_on_outlined),
-                                  ),
                                 ActionChip(
                                   onPressed: () {
                                     // Filter
@@ -247,8 +306,8 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                     const Divider(),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child:
-                          listingCardController(selectedCategory, planSearch),
+                      child: listingCardController(
+                          selectedCategory, finalFilteredSearch),
                     ),
                   ],
                 )),
@@ -414,6 +473,17 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     );
   }
 
+  void toggleLocationFieldVisibility() {
+    setState(() {
+      showLocationField = !showLocationField;
+    });
+    if (showLocationField) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(_focusNode);
+      });
+    }
+  }
+
   Future<dynamic> showFilterBottomSheet(BuildContext context) {
     return showModalBottomSheet(
         context: context,
@@ -486,24 +556,34 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         });
   }
 
-  Widget listingCardController(String category, String? planSearch) {
-    if (planSearch != null) {
+  Widget listingCardController(String category, String? searchFilter) {
+    debugPrint('this is the search filter wawawawa: $searchFilter');
+    if (searchFilter != null) {
       // Filter the listings based on the search
       listingResults = widget.listings!
-          .where((listing) => listing.address.contains(planSearch))
+          .where((listing) => listing.address.contains(searchFilter))
           .toList();
     } else {
       listingResults = widget.listings;
     }
 
-    switch (category) {
-      // if planSearch is not null, show the listings based on the search
+    if (searchFilter != null && category == 'Transport') {
+      listingResults = widget.listings!
+          .where((listing) =>
+              listing.pickUp!.contains(searchFilter) ||
+              listing.destination!.contains(searchFilter))
+          .toList();
+    }
 
+    debugPrint(
+        'this is the length of listingResults: ${listingResults.length}');
+
+    switch (category) {
       case "Accommodation":
         return RoomCard(
           category: category,
           bookings: widget.bookings!,
-          accommodationListings: planSearch != null ? listingResults : null,
+          accommodationListings: searchFilter != null ? listingResults : null,
           allListings: widget.listings,
         );
 
@@ -515,9 +595,11 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         return FoodCard(category: category, foodListings: listingResults);
 
       case "Tour":
+        debugPrint('ganorn talaga!');
         return TripCard(category: category, tripListings: widget.listings!);
 
       case "Entertainment":
+        debugPrint('wowie!');
         return EntertainmentCard(
             category: category, entertainmentListings: widget.listings!);
 
