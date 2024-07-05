@@ -9,11 +9,13 @@ import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/common/widgets/display_text.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
+import 'package:lakbay/features/cooperatives/coops_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/listings/widgets/emergency_process_dialog.dart';
 import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/notifications_model.dart';
+import 'package:lakbay/models/subcollections/coop_members_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:slider_button/slider_button.dart';
 
@@ -33,12 +35,13 @@ class DepartureDetails extends ConsumerStatefulWidget {
 late DepartureModel departureDetails;
 Map<num, num> passengerCount = {};
 late Widget map;
+AssignedVehicle? selectedVehicle;
 
 class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
   List<SizedBox> tabs = [
     const SizedBox(width: 100.0, child: Tab(child: Text('Details'))),
     const SizedBox(width: 100.0, child: Tab(child: Text('Passengers'))),
-    const SizedBox(width: 100.0, child: Tab(child: Text('Expenses'))),
+    // const SizedBox(width: 100.0, child: Tab(child: Text('Expenses'))),
   ];
 
   @override
@@ -66,8 +69,10 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
     String formattedEndDate = DateFormat('MMMM dd')
         .format(departureDetails.passengers.first.endDate!);
 
-    for (var vehicle in departureDetails.vehicles!) {
-      passengerCount[vehicle.vehicle!.vehicleNo!] = 0;
+    if (departureDetails.vehicles != null) {
+      for (var vehicle in departureDetails.vehicles!) {
+        passengerCount[vehicle.vehicle!.vehicleNo!] = 0;
+      }
     }
     for (var booking in departureDetails.passengers) {
       if (booking.vehicleNo != null) {
@@ -186,16 +191,16 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                   updatedPassengers[i] = updatedBooking;
 
                   final disembarkNotif = NotificationsModel(
-                    title: 'You have arrived!',
-                    message: 'You have successfully arrived at your destination. Thank you for using Lakbay!',
-                    ownerId: updatedBooking.customerId,
-                    bookingId: updatedBooking.id,
-                    listingId: updatedBooking.listingId,
-                    isToAllMembers: false,
-                    type: 'listing',
-                    createdAt: DateTime.now(),
-                    isRead: false
-                  );
+                      title: 'You have arrived!',
+                      message:
+                          'You have successfully arrived at your destination. Thank you for using Lakbay!',
+                      ownerId: updatedBooking.customerId,
+                      bookingId: updatedBooking.id,
+                      listingId: updatedBooking.listingId,
+                      isToAllMembers: false,
+                      type: 'listing',
+                      createdAt: DateTime.now(),
+                      isRead: false);
 
                   ref.read(listingControllerProvider.notifier).updateBooking(
                       context, booking.listingId, updatedBooking, "");
@@ -319,7 +324,18 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
     Query query = FirebaseFirestore.instance
         .collectionGroup('availableTransport')
         .where('listingId', isEqualTo: widget.listing.uid);
+    Query driverQuery = FirebaseFirestore.instance
+        .collection("cooperatives")
+        .doc(widget.listing.cooperative.cooperativeId)
+        .collection("members");
     Map<String, Map<String, dynamic>> generalActions = {
+      "assignD&V": {
+        "icon": Icons.person_search_outlined,
+        "title": "Assign Vehicle & Driver",
+        "action": () {
+          assignVehicleAndDriverForm(context, query);
+        },
+      },
       "contact": {
         "icon": Icons.call,
         "title": "Contact Passengers",
@@ -475,190 +491,303 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
               ],
             ),
           ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ref.watch(getTransportByPropertiesProvider(query)).when(
-                      data: (List<AvailableTransport> vehicles) {
-                        List<AvailableTransport> filteredVehicles = [];
-                        for (var vehicle in vehicles) {
-                          if (vehicle.departureTimes!.contains(
-                              TimeOfDay.fromDateTime(
-                                  departureDetails.departure!))) {
-                            filteredVehicles.add(vehicle);
-                          }
-                        }
-                        return ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: filteredVehicles.length,
-                            itemBuilder: (context, vehicleIndex) {
-                              final vehicle = filteredVehicles[vehicleIndex];
-                              return Container(
-                                padding: const EdgeInsets.only(bottom: 5),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                title: const Text(
-                                                    'Vehicle Information'),
-                                                content: SizedBox(
-                                                  height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          .1,
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          1,
-                                                  child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text.rich(
-                                                          TextSpan(
-                                                            text: 'Capacity: ',
-                                                            style: const TextStyle(
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                            children: [
-                                                              TextSpan(
-                                                                text:
-                                                                    '${vehicle.guests}',
-                                                                style: const TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        )
-                                                      ]),
-                                                ),
-                                                actions: [
-                                                  FilledButton(
-                                                      onPressed: () {
-                                                        context.pop();
-                                                      },
-                                                      child:
-                                                          const Text('Close'))
-                                                ],
-                                              );
-                                            });
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: _displaySubtitleText(
-                                          'Vehicle No: ${vehicle.vehicleNo ?? 'Not Set'}',
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                        height:
-                                            MediaQuery.sizeOf(context).height *
-                                                .05,
-                                        width: 1,
-                                        color: Colors.grey),
-                                    InkWell(
-                                      onTap: ["Waiting"].contains(
-                                              departureDetails.departureStatus!)
-                                          ? () async {
-                                              selectPassengerDialog(
-                                                  context, vehicle, widget.listing);
-                                            }
-                                          : null,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: _displaySubtitleText(
-                                            'Passengers: ${passengerCount[vehicle.vehicleNo]}'),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            });
-                      },
-                      error: (error, stackTrace) => ErrorText(
-                        error: error.toString(),
-                        stackTrace: '',
+          if (departureDetails.vehicles != null)
+            ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: departureDetails.vehicles!.length,
+                itemBuilder: (context, vIndex) {
+                  var vehicle = departureDetails.vehicles![vIndex];
+                  debugPrint("vehicle: ${departureDetails.vehicles![vIndex]}");
+                  var boardedCount = 0 as num;
+                  if (vehicle.passengers != null) {
+                    boardedCount =
+                        vehicle.passengers!.fold<num>(0, (boarded, passenger) {
+                      return boarded + passenger.guests;
+                    });
+                  }
+
+                  return ListTile(
+                    leading: RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        children: [
+                          TextSpan(
+                              text: boardedCount.toString(),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground)),
+                          const TextSpan(
+                              text: '/',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          TextSpan(
+                            text: vehicle.vehicle!.guests.toString(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
                       ),
-                      loading: () => const Loader(),
                     ),
-                if (!["Cancelled", "Completed"]
-                    .contains(departureDetails.departureStatus)) ...[
-                  const SizedBox(height: 10),
-                  ...generalActions.entries.map((entry) {
-                    final generalAction = entry.value;
-                    return Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.only(
-                            left: 15,
-                            right: 15,
-                          ), // Adjust the padding as needed
-                          child: const Divider(
-                            color: Colors.grey,
-                            height: 1.0,
-                          ),
-                        ),
-                        ListTile(
-                          leading: Icon(
-                            generalAction['icon'],
-                            size: 20,
-                          ),
-                          title: Text(generalAction['title'],
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w400)),
-                          onTap: generalAction["action"],
-                          trailing: const Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            size: 16,
-                          ),
-                        ),
-                      ],
-                    );
-                  })
+
+                    // Text(vehicle.vehicle!.guests.toString(),
+                    //     style: TextStyle(
+                    //         fontSize: 16,
+                    //         color: Theme.of(context).colorScheme.primary)
+                    //         ),
+                    title: Text(vehicle.driverName!,
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).colorScheme.primary)),
+                    trailing: InkWell(
+                        onTap: ["Waiting"]
+                                .contains(departureDetails.departureStatus!)
+                            ? () async {
+                                selectPassengerDialog(
+                                    context, vehicle, widget.listing);
+                              }
+                            : null,
+                        child:
+                            const Icon(Icons.directions_bus_filled_outlined)),
+                    subtitle: Text("Vehicle No: ${vehicle.vehicle!.vehicleNo}",
+                        style: const TextStyle(
+                          fontSize: 12,
+                        )),
+                  );
+                }),
+          if (!["Cancelled", "Completed"]
+              .contains(departureDetails.departureStatus)) ...[
+            const SizedBox(height: 10),
+            ...generalActions.entries.map((entry) {
+              final generalAction = entry.value;
+              return Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(
+                      left: 15,
+                      right: 15,
+                    ), // Adjust the padding as needed
+                    child: const Divider(
+                      color: Colors.grey,
+                      height: 1.0,
+                    ),
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      generalAction['icon'],
+                      size: 20,
+                    ),
+                    title: Text(generalAction['title'],
+                        style: const TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w400)),
+                    onTap: generalAction["action"],
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16,
+                    ),
+                  ),
                 ],
-                const SizedBox(height: 10),
-              ],
-            ),
-          ),
+              );
+            })
+          ],
+          const SizedBox(height: 10),
         ],
       ),
     );
   }
 
+  Future<dynamic> assignVehicleAndDriverForm(
+      BuildContext context, Query<Object?> query) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          AssignedVehicle assignedVehicle = AssignedVehicle();
+          return StatefulBuilder(builder: (context, setAssginedVehicle) {
+            return AlertDialog(
+              title: const Text("Driver and Vehicle"),
+              content: SizedBox(
+                height: MediaQuery.sizeOf(context).height / 4,
+                child: Column(children: [
+                  InkWell(
+                    onTap: () async {
+                      List<CooperativeMembers> members = await ref.read(
+                          getAllMembersProvider(
+                                  widget.listing.cooperative.cooperativeId)
+                              .future);
+                      List<CooperativeMembers> drivers =
+                          members.where((member) {
+                        return member.committees!.any(
+                            (committee) => committee.role!.contains("Driver"));
+                      }).toList();
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Drivers"),
+                              content: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: drivers.length,
+                                  itemBuilder: (context, dIndex) {
+                                    var d = drivers[dIndex];
+                                    return ListTile(
+                                        title: Text(d.name),
+                                        onTap: () {
+                                          setAssginedVehicle(() {
+                                            assignedVehicle =
+                                                assignedVehicle.copyWith(
+                                                    driverId: d.uid,
+                                                    driverName: d.name);
+                                          });
+                                          context.pop();
+                                        },
+                                        trailing: const Icon(
+                                            size: 10,
+                                            Icons.arrow_forward_ios_rounded));
+                                  }),
+                              actions: [
+                                FilledButton(
+                                    onPressed: () {
+                                      context.pop();
+                                    },
+                                    style: FilledButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12.0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            8.0), // Adjust the value as needed
+                                      ),
+                                    ),
+                                    child: const Text("Close"))
+                              ],
+                            );
+                          });
+                    },
+                    child: ListTile(
+                        title: Text(
+                            'Driver: ${assignedVehicle.driverName ?? 'Not Set'}'),
+                        trailing: const Icon(
+                            size: 16, Icons.arrow_forward_ios_rounded)),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      final vehicles = await ref
+                          .read(getTransportByPropertiesProvider(query).future);
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Vehicles"),
+                              content: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: vehicles.length,
+                                  itemBuilder: (context, vIndex) {
+                                    var v = vehicles[vIndex];
+                                    return ListTile(
+                                        leading: Text("${v.guests}"),
+                                        title:
+                                            Text("Vehicle No: ${v.vehicleNo}"),
+                                        onTap: () {
+                                          setAssginedVehicle(() {
+                                            assignedVehicle = assignedVehicle
+                                                .copyWith(vehicle: v);
+                                          });
+                                          context.pop();
+                                        },
+                                        trailing: const Icon(
+                                            size: 10,
+                                            Icons.arrow_forward_ios_rounded));
+                                  }),
+                              actions: [
+                                FilledButton(
+                                    onPressed: () {
+                                      context.pop();
+                                    },
+                                    style: FilledButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12.0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            8.0), // Adjust the value as needed
+                                      ),
+                                    ),
+                                    child: const Text("Close"))
+                              ],
+                            );
+                          });
+                    },
+                    child: ListTile(
+                      title: Text(
+                          'Vechicle No: ${assignedVehicle.vehicle?.vehicleNo ?? 'Not Set'}'),
+                      trailing:
+                          const Icon(size: 16, Icons.arrow_forward_ios_rounded),
+                    ),
+                  )
+                ]),
+              ),
+              actions: [
+                FilledButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          8.0), // Adjust the value as needed
+                    ),
+                  ),
+                  child: const Text(
+                    "Close",
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    setState(() {
+                      List<AssignedVehicle> assignedVehicles = [
+                        ...departureDetails.vehicles ?? []
+                      ];
+                      assignedVehicles.add(assignedVehicle);
+                      departureDetails =
+                          departureDetails.copyWith(vehicles: assignedVehicles);
+                      ref
+                          .read(listingControllerProvider.notifier)
+                          .updateDeparture(context, departureDetails, '');
+                    });
+                    context.pop();
+                  },
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          8.0), // Adjust the value as needed
+                    ),
+                  ),
+                  child: const Text(
+                    "Save",
+                    style: TextStyle(fontSize: 14),
+                  ),
+                )
+              ],
+            );
+          });
+        });
+  }
+
   Future<dynamic> selectPassengerDialog(
-      BuildContext context, AvailableTransport vehicle, ListingModel listing) {
+      BuildContext context, AssignedVehicle vehicle, ListingModel listing) {
     List<ListingBookings> boardedPassengers = [];
     List<ListingBookings> notBoardedPassengers = [];
     for (var booking in departureDetails.passengers) {
-      if (booking.vehicleNo == vehicle.vehicleNo) {
+      if (booking.vehicleNo == vehicle.vehicle!.vehicleNo) {
         boardedPassengers.add(booking);
       } else if (booking.vehicleNo == null) {
         notBoardedPassengers.add(booking);
@@ -697,7 +826,6 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                 final booking = boardedPassengers[boardedIndex];
                                 return InkWell(
                                   onTap: () async {
-                                    debugPrint('This is your booking ID: ${booking.id}');
                                     ListingBookings updatedPassenger =
                                         booking.copyWith(vehicleNo: null);
                                     setPassengers(() {
@@ -706,41 +834,38 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                       boardedPassengers.remove(booking);
                                     });
 
-                                    debugPrint('This is the final booking for not boarded user: ${updatedPassenger.id}');
-
                                     // send a notif when the user has been removed from the boarded list
                                     final notBoardedUserNotif = NotificationsModel(
-                                      title: 'Boarding Cancelled!',
-                                      message: 'You have been removed from the boarded list for your trip to ${departureDetails.destination}.',
-                                      ownerId: updatedPassenger.customerId,
-                                      bookingId: updatedPassenger.id,
-                                      listingId: updatedPassenger.listingId,
-                                      isToAllMembers: false,
-                                      type: 'listing',
-                                      createdAt: DateTime.now(),
-                                      isRead: false
-                                    );
+                                        title: 'Boarding Cancelled!',
+                                        message:
+                                            'You have been removed from the boarded list for your trip to ${departureDetails.destination}.',
+                                        ownerId: updatedPassenger.customerId,
+                                        bookingId: updatedPassenger.id,
+                                        listingId: updatedPassenger.listingId,
+                                        isToAllMembers: false,
+                                        type: 'listing',
+                                        createdAt: DateTime.now(),
+                                        isRead: false);
 
                                     try {
                                       await ref
-                                        .read(notificationControllerProvider.notifier)
-                                        .addNotification(notBoardedUserNotif, context);
-                                      debugPrint('successfully added the notification for the user!');
+                                          .read(notificationControllerProvider
+                                              .notifier)
+                                          .addNotification(
+                                              notBoardedUserNotif, context);
                                     } catch (e) {
-                                      debugPrint('This is the error when storing the notifs: $e');
+                                      debugPrint(
+                                          'This is the error when storing the notifs: $e');
                                     }
-                                    
 
                                     List<AssignedVehicle>
                                         updatedAssignedVehicles = [];
                                     AssignedVehicle updatedAssignedVehicle =
-                                        AssignedVehicle(
-                                            vehicle: vehicle.copyWith(
-                                                vehicleNo: vehicle.vehicleNo),
+                                        vehicle.copyWith(
                                             passengers: boardedPassengers);
                                     for (var currentVehicle
                                         in departureDetails.vehicles!) {
-                                      if (vehicle.vehicleNo ==
+                                      if (vehicle.vehicle!.vehicleNo ==
                                           currentVehicle.vehicle!.vehicleNo) {
                                         updatedAssignedVehicles
                                             .add(updatedAssignedVehicle);
@@ -769,7 +894,9 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                             listingControllerProvider.notifier)
                                         .updateDeparture(
                                             // ignore: use_build_context_synchronously
-                                            context, updatedDeparture, '');
+                                            context,
+                                            updatedDeparture,
+                                            '');
                                     ListingBookings updatedBooking =
                                         booking.copyWith(vehicleNo: null);
                                     ref
@@ -824,44 +951,44 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                     notBoardedPassengers[notBoardedIndex];
                                 return InkWell(
                                   onTap: () async {
-                                    debugPrint('This is your booking ID for boarding: ${booking.id}');
-                                    ListingBookings updatedPassenger = booking
-                                        .copyWith(vehicleNo: vehicle.vehicleNo);
+                                    ListingBookings updatedPassenger =
+                                        booking.copyWith(
+                                            vehicleNo:
+                                                vehicle.vehicle!.vehicleNo);
                                     setPassengers(() {
                                       boardedPassengers.add(updatedPassenger);
                                       notBoardedPassengers.remove(booking);
                                     });
 
-                                    debugPrint('This is the final booking for not boarded user: ${updatedPassenger.id}');
-
                                     // send a notif when the user has been added to the boarded list
                                     final boardedNotif = NotificationsModel(
-                                      title: 'You have been boarded!',
-                                      message: 'You have been successfully boarded for your trip to '
-                                          '${departureDetails.destination} with Vehicle No. ${vehicle.vehicleNo}. Enjoy your trip!',
-                                      ownerId: updatedPassenger.customerId,
-                                      bookingId: updatedPassenger.id,
-                                      listingId: updatedPassenger.listingId,
-                                      isToAllMembers: false,
-                                      type: 'listing',
-                                      createdAt: DateTime.now(),
-                                      isRead: false
-                                    );
+                                        title: 'You have been boarded!',
+                                        message:
+                                            'You have been successfully boarded for your trip to '
+                                            '${departureDetails.destination} with Vehicle No. ${vehicle.vehicle!.vehicleNo}. Enjoy your trip!',
+                                        ownerId: updatedPassenger.customerId,
+                                        bookingId: updatedPassenger.id,
+                                        listingId: updatedPassenger.listingId,
+                                        isToAllMembers: false,
+                                        type: 'listing',
+                                        createdAt: DateTime.now(),
+                                        isRead: false);
 
                                     try {
                                       await ref
-                                        .read(notificationControllerProvider.notifier)
-                                        .addNotification(boardedNotif, context);
+                                          .read(notificationControllerProvider
+                                              .notifier)
+                                          .addNotification(
+                                              boardedNotif, context);
                                     } catch (e) {
-                                      debugPrint('This is the error when storing the notifs: $e');
+                                      debugPrint(
+                                          'This is the error when storing the notifs: $e');
                                     }
 
-                                    
                                     List<AssignedVehicle>
                                         updatedAssignedVehicles = [];
                                     AssignedVehicle updatedAssignedVehicle =
-                                        AssignedVehicle(
-                                            vehicle: vehicle,
+                                        vehicle.copyWith(
                                             passengers: boardedPassengers);
                                     for (var currentVehicle
                                         in departureDetails.vehicles!) {
@@ -895,9 +1022,13 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                             listingControllerProvider.notifier)
                                         .updateDeparture(
                                             // ignore: use_build_context_synchronously
-                                            context, updatedDeparture, '');
-                                    ListingBookings updatedBooking = booking
-                                        .copyWith(vehicleNo: vehicle.vehicleNo);
+                                            context,
+                                            updatedDeparture,
+                                            '');
+                                    ListingBookings updatedBooking =
+                                        booking.copyWith(
+                                            vehicleNo:
+                                                vehicle.vehicle!.vehicleNo);
                                     ref
                                         .read(
                                             listingControllerProvider.notifier)
