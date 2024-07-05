@@ -22,7 +22,6 @@ import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
-import 'package:lakbay/models/wrappers/rooms_params.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
