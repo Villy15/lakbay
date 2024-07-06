@@ -455,7 +455,12 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
         {
           var date = listing.entertainmentScheduling!.fixedDates!.where((date) {
             return date.date.eqvYearMonthDay(currentDate);
-          }).first;
+          }).firstOrNull; // Changed from .first to .firstOrNull
+
+          if (date == null) {
+            // Handle the case when no matching date is found
+            return null;
+          }
           var availableDate = listing.entertainmentScheduling!.fixedDates!
               .where((availableDate) {
             return availableDate.available == true &&
