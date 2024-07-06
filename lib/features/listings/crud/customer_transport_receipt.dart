@@ -114,6 +114,8 @@ class CustomerTransportReceipt extends ConsumerWidget {
                 child: FilledButton(
                     onPressed: () {
                       context.pop();
+                      context.pop();
+                      context.pop();
                     },
                     child: const Text("Close")),
               )

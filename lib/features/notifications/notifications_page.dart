@@ -162,8 +162,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   final group = groupedNotifs[index];
                   final title = group[0] as String;
                   final groupNotifs = group[1] as List<NotificationsModel>;
-                  groupNotifs.sort(
-                      (a, b) => b.createdAt!.compareTo(a.createdAt!));
+                  groupNotifs
+                      .sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
