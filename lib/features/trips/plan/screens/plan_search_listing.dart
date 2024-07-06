@@ -646,25 +646,32 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         return const Text("An Error Occurred!");
     }
   }
+  // remove excess spaces from the search filter
+  String removeExcessSpaces(String searchFilter) {
+    return searchFilter.trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
 
   Widget listingCardController(String category, String? searchFilter) {
+    debugPrint('I am the category: $category');
     debugPrint('this is bookings: ${widget.bookings}');
     debugPrint('this is the search filter wawawawa: $searchFilter');
     debugPrint('this is the listings: ${widget.listings}');
     if (searchFilter != null) {
       // Filter the listings based on the search
+      final removeSpaceFilterSearch = removeExcessSpaces(searchFilter);
       listingResults = widget.listings!
-          .where((listing) => listing.address.contains(searchFilter))
+          .where((listing) => listing.address.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()))
           .toList();
     } else {
       listingResults = widget.listings;
     }
 
     if (searchFilter != null && category == 'Transport') {
+      final removeSpaceFilterSearch = removeExcessSpaces(searchFilter);
       listingResults = widget.listings!
           .where((listing) =>
-              listing.pickUp!.contains(searchFilter) ||
-              listing.destination!.contains(searchFilter))
+              listing.pickUp!.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()) ||
+              listing.destination!.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()))
           .toList();
     }
 

@@ -11,6 +11,7 @@ import 'package:lakbay/features/events/events_controller.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/models/notifications_model.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({super.key});
@@ -271,6 +272,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       leading: leadingWidget,
       isRead: isRead,
       onTap: onTap,
+      createdAt: notif.createdAt!,
     );
   }
 
@@ -279,7 +281,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       required String message,
       required Widget leading,
       required bool isRead,
-      required VoidCallback onTap}) {
+      required VoidCallback onTap, required DateTime createdAt}) {
     return ListTile(
       leading: leading,
       tileColor: isRead
@@ -291,17 +293,29 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           fontWeight: FontWeight.w600,
         ),
       ),
-      subtitle: RichText(
-        text: TextSpan(
-          text: message.split(': ')[0],
-          style: DefaultTextStyle.of(context).style,
-          children: <TextSpan>[
-            TextSpan(
-              text:
-                  message.split(': ').length > 1 ? message.split(': ')[1] : '',
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+            text: TextSpan(
+              text: message.split(': ')[0],
+              style: DefaultTextStyle.of(context).style,
+              children: <TextSpan>[
+                TextSpan(
+                  text:
+                      message.split(': ').length > 1 ? message.split(': ')[1] : '',
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            timeago.format(createdAt, locale: 'en_short'),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onBackground.withOpacity(0.6),
+            ),
+          ),
+        ],
       ),
     );
   }

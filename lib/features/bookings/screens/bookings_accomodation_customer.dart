@@ -733,11 +733,21 @@ class _BookingsAccomodationCustomerState
           'Other': false,
         };
 
-        Map<String, num> paymentDetails = {
-          'Original Booking': (booking.amountPaid!),
-          'Your total refund': (booking.amountPaid! -
-              (booking.amountPaid! * widget.listing.cancellationRate!)),
-        };
+        Map<String, num> paymentDetails = {};
+
+        if (widget.listing.cancellationRate! > 1) {
+          paymentDetails = {
+            'Original Booking': (booking.amountPaid!),
+            'Your total refund': (booking.amountPaid! - widget.listing.cancellationRate!),
+          };
+        }
+        else {
+          paymentDetails = {
+            'Original Booking': (booking.amountPaid!),
+            'Your total refund': (booking.amountPaid! -
+                (booking.amountPaid! * widget.listing.cancellationRate!)),
+          };
+        }
 
         String? selectedReason;
         return StatefulBuilder(builder: (context, setDialogState) {

@@ -477,7 +477,7 @@ class _BookingsTransportCustomerState
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.8,
-                        child: ElevatedButton(
+                        child: FilledButton(
                           onPressed: selectedReason != null
                               ? () {
                                   cancellationPaymentDetails(
@@ -578,7 +578,7 @@ class _BookingsTransportCustomerState
                 children: [
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.8,
-                    child: ElevatedButton(
+                    child: FilledButton(
                       onPressed: () {
                         onTapCancel(context, booking).then((value) {
                           context.pop();

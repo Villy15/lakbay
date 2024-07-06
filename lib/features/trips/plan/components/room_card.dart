@@ -1028,13 +1028,13 @@ class _RoomCardState extends ConsumerState<RoomCard> {
   void showConfirmBooking(AvailableRoom room, ListingModel listing,
       DateTime startDate, DateTime endDate, BuildContext context) {
     final user = ref.read(userProvider);
+    var guests = ref.read(currentPlanGuestsProvider);
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         // ignore: unused_local_variable
-        num guests = 0;
-        String? guestNum = room.guests.toString();
+        String? guestNum = guests.toString();
         debugPrint('this is the room number of guests: $guestNum');
         TextEditingController guestController =
             TextEditingController(text: guestNum);
