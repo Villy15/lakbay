@@ -44,7 +44,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     'Transport': false,
     'Accommodation': false,
     'Food': false,
-    'Tours': false,
     'Entertainment': false,
   };
   dynamic listingResults = [];
@@ -67,7 +66,14 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
       finalFilteredSearch = filterSearch.text;
       debugPrint("final search: $finalFilteredSearch");
       debugPrint('calling listing controller!');
-      listingCardController(selectedCategory, finalFilteredSearch);
+      debugPrint('this is the selected category at the moment: $selectedCategory');
+
+      if (selectedCategory == widget.category) {
+        listingCardController(selectedCategory, finalFilteredSearch);
+      } else {
+        debugPrint('i am now searching for the category: $selectedCategory');
+        listingCardFilterByCategory(selectedCategory, filterCategoryBookings, filterCategoryListings, finalFilteredSearch);
+      }
       Future.delayed(const Duration(milliseconds: 100), () {
         setState(() {});
       });
@@ -79,9 +85,14 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         debugPrint('unfocused!');
 
         if (filterSearch.text.isNotEmpty) {
+          debugPrint('this is the selected category at the moment: $selectedCategory');
           finalFilteredSearch = filterSearch.text;
           debugPrint('this is the final filtered search: $finalFilteredSearch');
-          listingCardController(selectedCategory, finalFilteredSearch);
+          if (selectedCategory == widget.category) {
+            listingCardController(selectedCategory, finalFilteredSearch);
+          } else {
+            listingCardFilterByCategory(selectedCategory, filterCategoryBookings, filterCategoryListings, finalFilteredSearch);
+          }
         }
       }
     });
@@ -617,6 +628,31 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   }
 
   Widget listingCardFilterByCategory(String category, List<ListingBookings> listingBookings, List<ListingModel> listingModel, String? searchFilter) {
+    debugPrint('this is the search filter: $searchFilter');
+
+    if (searchFilter != null) {
+      // Filter the listings based on the search
+      final removeSpaceFilterSearch = removeExcessSpaces(searchFilter);
+      listingModel = listingModel.where((element) => element.address.contains(removeSpaceFilterSearch)).toList();
+      debugPrint('I am working!');
+    } else {
+      listingModel = listingModel;
+      debugPrint('I did not work');
+    }
+
+    if (searchFilter != null && category == 'Transport') {
+      final removeSpaceFilterSearch = removeExcessSpaces(searchFilter);
+      listingModel = listingModel
+          .where((listing) =>
+              listing.pickUp!.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()) ||
+              listing.destination!.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()))
+          .toList();
+    }
+
+    debugPrint(
+        'this is the length of listingModel: ${listingModel.length}');
+
+
     switch(category) {
       case "Accommodation":
         return RoomCard(
@@ -652,18 +688,17 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   }
 
   Widget listingCardController(String category, String? searchFilter) {
-    debugPrint('I am the category: $category');
-    debugPrint('this is bookings: ${widget.bookings}');
-    debugPrint('this is the search filter wawawawa: $searchFilter');
-    debugPrint('this is the listings: ${widget.listings}');
+
     if (searchFilter != null) {
       // Filter the listings based on the search
       final removeSpaceFilterSearch = removeExcessSpaces(searchFilter);
       listingResults = widget.listings!
           .where((listing) => listing.address.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()))
           .toList();
+      debugPrint('I am working!');
     } else {
       listingResults = widget.listings;
+      debugPrint('I did not work');
     }
 
     if (searchFilter != null && category == 'Transport') {
@@ -674,6 +709,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
               listing.destination!.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()))
           .toList();
     }
+
 
     debugPrint(
         'this is the length of listingResults: ${listingResults.length}');
@@ -694,14 +730,11 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
       case "Food":
         return FoodCard(category: category, foodListings: listingResults);
 
-      case "Tour":
-        debugPrint('ganorn talaga!');
-        return TripCard(category: category, tripListings: widget.listings!);
 
       case "Entertainment":
         debugPrint('wowie!');
         return EntertainmentCard(
-            category: category, entertainmentListings: widget.listings!);
+            category: category, entertainmentListings: listingResults);
 
       default:
         return const Text("An Error Occurred!");

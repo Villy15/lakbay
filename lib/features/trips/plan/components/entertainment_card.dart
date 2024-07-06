@@ -37,6 +37,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
   Widget build(BuildContext context) {
     final daysPlan = ref.read(daysPlanProvider);
     if (widget.entertainmentListings != null) {
+      debugPrint('this is the entertainment list ${widget.entertainmentListings}');
       return SizedBox(
           width: double.infinity,
           child: ListView.builder(

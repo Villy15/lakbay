@@ -451,7 +451,7 @@ class _BookingsEntertainmentCustomerState
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.8,
-                        child: ElevatedButton(
+                        child: FilledButton(
                           onPressed: selectedReason != null
                               ? () {
                                   cancellationPaymentDetails(
