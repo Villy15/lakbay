@@ -454,17 +454,18 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
         }
       case "dateScheduling":
         {
-          var date = listing.entertainmentScheduling!.fixedDates!.where((date) {
+          var dateSched =
+              listing.entertainmentScheduling!.fixedDates!.where((date) {
             return date.date.eqvYearMonthDay(currentDate);
-          }).first;
+          }).firstOrNull;
           var availableDate = listing.entertainmentScheduling!.fixedDates!
               .where((availableDate) {
             return availableDate.available == true &&
                 availableDate.date.isAfter(currentDate);
           }).firstOrNull;
-          var timeSlots = date.availableTimes;
+          var timeSlots = dateSched?.availableTimes;
           return dateSchedulingCard(imageUrls, listing, currentUser, timeSlots,
-              currentDate, date, availableDate);
+              currentDate, dateSched, availableDate);
         }
     }
     return null;
@@ -474,9 +475,9 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
       List<String?> imageUrls,
       ListingModel listing,
       UserModel? currentUser,
-      List<AvailableTime> timeSlots,
+      List<AvailableTime>? timeSlots,
       DateTime currentDate,
-      AvailableDate date,
+      AvailableDate? date,
       AvailableDate? availableDate) {
     return SizedBox(
       // height: MediaQuery.sizeOf(context).height / 2,
@@ -564,9 +565,9 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                           ),
                           child: const Text('View Listing',
                               style: TextStyle(fontSize: 14))),
-                      date.available == true
+                      date != null && date.available == true
                           ? dateSchedulingBookNow(
-                              currentUser, listing, timeSlots, currentDate)
+                              currentUser, listing, timeSlots!, currentDate)
                           : FilledButton(
                               onPressed: null,
                               style: FilledButton.styleFrom(
