@@ -844,7 +844,7 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
 
                                     // send a notif when the user has been removed from the boarded list
                                     final notBoardedUserNotif = NotificationsModel(
-                                        title: 'Boarding Cancelled!',
+                                        title: 'You have been deboarded!',
                                         message:
                                             'You have been removed from the boarded list for your trip to ${departureDetails.destination}.',
                                         ownerId: updatedPassenger.customerId,
@@ -972,8 +972,8 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                     final boardedNotif = NotificationsModel(
                                         title: 'You have been boarded!',
                                         message:
-                                            'You have been successfully boarded for your trip to '
-                                            '${departureDetails.destination} with Vehicle No. ${vehicle.vehicle!.vehicleNo}. Enjoy your trip!',
+                                            'You have been boarded for your trip to '
+                                            '${departureDetails.destination} in Vehicle No. ${vehicle.vehicle!.vehicleNo}. Enjoy your trip!',
                                         ownerId: updatedPassenger.customerId,
                                         bookingId: updatedPassenger.id,
                                         listingId: updatedPassenger.listingId,

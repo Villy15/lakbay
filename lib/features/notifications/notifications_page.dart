@@ -136,6 +136,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   .where((notif) => notif.createdAt!.isBefore(last30Days))
                   .toList();
 
+              // sort notifications by createdAt
+              // todayNotifs.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+              // yesterdayNotifs.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+              // last7DaysNotifs.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+              // last30DaysNotifs.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+
               final groupedNotifs = [
                 if (todayNotifs.isNotEmpty) ['Today', todayNotifs],
                 if (yesterdayNotifs.isNotEmpty) ['Yesterday', yesterdayNotifs],
@@ -155,6 +161,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   final group = groupedNotifs[index];
                   final title = group[0] as String;
                   final groupNotifs = group[1] as List<NotificationsModel>;
+                  groupNotifs.sort(
+                      (a, b) => b.createdAt!.compareTo(a.createdAt!));
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

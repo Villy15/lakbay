@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lakbay/core/providers/days_provider.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
+import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/trips/plan/components/entertainment_card.dart';
 import 'package:lakbay/features/trips/plan/components/food_card.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
@@ -46,6 +48,9 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     'Entertainment': false,
   };
   dynamic listingResults = [];
+  late List<ListingBookings> filterCategoryBookings;
+  late List<ListingModel> filterCategoryListings;
+
 
   bool showLocationField = false;
   final filterSearch = TextEditingController();
@@ -117,12 +122,11 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   @override
   Widget build(BuildContext context) {
     final planLocation = ref.watch(planLocationProvider);
-    // final planStartDate = ref.watch(planStartDateProvider);
     final planEndDate = ref.watch(planEndDateProvider);
     final daysPlan = ref.read(daysPlanProvider);
     final formattedCurrentDate =
         DateFormat('EEE, MMM dd').format(daysPlan.currentDay!);
-    final planSearch = ref.watch(planSearchLocationProvider);
+    // final planSearch = ref.watch(planSearchLocationProvider);
     Future.delayed(Duration.zero, () {
       if (ref.watch(parentStateProvider) == true) {
         context.pop();
@@ -242,7 +246,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                               listingCardController(selectedCategory, value);
                             },
                             decoration: InputDecoration(
-                              contentPadding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                              contentPadding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                               hintText: 'Search Location',
                               prefixIcon: const Padding(
                                 padding: EdgeInsets.only(right: 20, top: 5.5),
@@ -306,8 +310,20 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                     const Divider(),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: listingCardController(
-                          selectedCategory, finalFilteredSearch),
+                      // if the actionchip is triggered, the listingCardFilterByCategory will be called
+                      // else, the listingCardController will be called
+
+                      child: selectedCategory != widget.category
+                        ? listingCardFilterByCategory(
+                          selectedCategory,
+                          filterCategoryBookings,
+                          filterCategoryListings,
+                          finalFilteredSearch,
+                          )
+                        : listingCardController(selectedCategory, finalFilteredSearch)
+
+                      // child: listingCardController(
+                      //     selectedCategory, finalFilteredSearch),
                     ),
                   ],
                 )),
@@ -485,6 +501,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   }
 
   Future<dynamic> showFilterBottomSheet(BuildContext context) {
+    final planStartDate = ref.watch(planStartDateProvider);
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -531,9 +548,52 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                             // List of checkbox tiles of each category
                             ...filters.keys.map((category) {
                               return InkWell(
-                                onTap: () {
-                                  this.setState(() {
+                                onTap: () async {
+                                  final today = Timestamp.fromDate(planStartDate!);
+                                  final filterCategoryFuture = await ref.read(getAllListingsProvider.future);
+                                  final filterCategory = filterCategoryFuture;
+                                  // print the data of the filterCategoryListings
+                                  debugPrint('This is all the listings: $filterCategory');
+                                  final query = FirebaseFirestore.instance
+                                    .collectionGroup(
+                                        'bookings'); // Perform collection group query for 'bookings'
+                                    final bookings = await ref
+                                        .watch(getBookingsByPropertiesProvider((query)).future);
+
+                                    debugPrint('this is bookings: $bookings');
+                                    
+                                    filterCategoryBookings = bookings;
+                                    debugPrint('this is the filterCategoryBookings: $filterCategoryBookings');
+                                  
+                                  // final filterBookings = await ref.watch(getAllBookingsProvider);
+                                  this.setState(()  {
                                     selectedCategory = category;
+                                    // use the filterCategory then assign it to filterCategoryListings. use the selectedCategory to filter the listings
+                                    filterCategoryListings = filterCategory.where((element) => element.category == selectedCategory).toList();
+
+                                    debugPrint('this is the filterCategoryListings: $filterCategoryListings');
+                                    
+
+                                    // selectedCategory = category;
+                                    // // do a ref.read to get the filtered listings by category
+                                    // ref.read(getAllListingsByCategoryProvider(category)).whenData((value) {
+                                    //   filterCategoryListings = value;
+                                    // });
+
+                                    // final query = FirebaseFirestore.instance
+                                    // .collectionGroup(
+                                    //     'bookings') // Perform collection group query for 'bookings'
+                                    // .where('category', isEqualTo: selectedCategory)
+                                    // .where('bookingStatus', isEqualTo: "Reserved")
+                                    // .where('startDate', isGreaterThan: today);
+                                    // final bookings = await ref
+                                    //     .watch(getBookingsByPropertiesProvider((query)).future);
+
+                                    // filterCategoryBookings = bookings;
+
+
+                                    // listingCardFilterByCategory(category, filterCategoryBookings, filterCategoryListings, null);
+                                    // ignore: use_build_context_synchronously
                                     context.pop();
                                   });
                                 },
@@ -556,8 +616,41 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         });
   }
 
+  Widget listingCardFilterByCategory(String category, List<ListingBookings> listingBookings, List<ListingModel> listingModel, String? searchFilter) {
+    switch(category) {
+      case "Accommodation":
+        return RoomCard(
+          category: category,
+          bookings: listingBookings,
+          accommodationListings: searchFilter != null ? listingModel.where((element) => element.address.contains(searchFilter)).toList() : null,
+          allListings: listingModel,
+        );
+
+      case "Transport":
+        return TransportCard(
+            category: category, transportListings: listingModel);
+
+      case "Food":
+        return FoodCard(category: category, foodListings: listingModel);
+
+      case "Tour":
+        debugPrint('ganorn talaga!');
+        return TripCard(category: category, tripListings: listingModel);
+
+      case "Entertainment":
+        debugPrint('wowie!');
+        return EntertainmentCard(
+            category: category, entertainmentListings: listingModel);
+
+      default:
+        return const Text("An Error Occurred!");
+    }
+  }
+
   Widget listingCardController(String category, String? searchFilter) {
+    debugPrint('this is bookings: ${widget.bookings}');
     debugPrint('this is the search filter wawawawa: $searchFilter');
+    debugPrint('this is the listings: ${widget.listings}');
     if (searchFilter != null) {
       // Filter the listings based on the search
       listingResults = widget.listings!
