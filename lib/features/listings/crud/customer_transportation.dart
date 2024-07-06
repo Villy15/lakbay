@@ -169,23 +169,20 @@ class _CustomerTransportationState
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: _displaySubHeader("Operating Days"),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: getWorkingDays(
-                              widget.listing.availableTransport!.workingDays!),
-                        ),
-                      ],
-                    ),
-                  ]),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: _displaySubHeader("Operating Days"),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: getWorkingDays(
+                        widget.listing.availableTransport!.workingDays!),
+                  ),
+                ],
+              ),
             )
           ],
         ),
@@ -240,32 +237,23 @@ class _CustomerTransportationState
     ];
     List<String> result = [];
     for (int i = 0; i < workingDays.length; i++) {
-      if (workingDays[i]) {
-        int start = i;
-        // Find the end of this sequence of days
-        while (i + 1 < workingDays.length && workingDays[i + 1]) {
-          i++;
-        }
-        // If start and i are the same, it means only one day is available
-        if (start == i) {
-          result.add(daysOfWeek[start]);
-        } else {
-          // Else, we have a range of days
-          result.add('${daysOfWeek[start]}-${daysOfWeek[i]}');
-        }
+      if (workingDays[i] == true) {
+        result.add(daysOfWeek[i]);
       }
     }
-
     return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: result.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 3 / 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        mainAxisExtent: 120,
       ),
-      itemCount: daysOfWeek.length,
       itemBuilder: (context, index) {
-        String day = daysOfWeek[index];
+        String day = result[index];
         return Card(
-          elevation: 2,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -279,7 +267,35 @@ class _CustomerTransportationState
                   ),
                 ),
                 const SizedBox(height: 8),
-                // ...times[day]!.map((time) => Text(time)).toList(),
+                Expanded(
+                  child: GridView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 4,
+                      mainAxisSpacing: 4,
+                      childAspectRatio: 3,
+                    ),
+                    itemCount: widget.listing.departureTimes!.length,
+                    itemBuilder: (context, timeIndex) {
+                      var time = widget.listing.departureTimes![timeIndex];
+                      return Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          time.format(context),
+                          style: const TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
