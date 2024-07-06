@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
@@ -456,7 +455,12 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
         {
           var date = listing.entertainmentScheduling!.fixedDates!.where((date) {
             return date.date.eqvYearMonthDay(currentDate);
-          }).first;
+          }).firstOrNull; // Changed from .first to .firstOrNull
+
+          if (date == null) {
+            // Handle the case when no matching date is found
+            return null;
+          }
           var availableDate = listing.entertainmentScheduling!.fixedDates!
               .where((availableDate) {
             return availableDate.available == true &&
