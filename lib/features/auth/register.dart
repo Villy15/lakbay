@@ -26,6 +26,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool _obscureText = true;
+  String? _selectedGender;
+  String? _selectedCivilStatus;
+  String? _selectedReligion;
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -37,10 +40,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     if (_formKey.currentState!.validate()) {
       final firstName = _firstNameController.text.trim();
       final lastName = _lastNameController.text.trim();
-      final gender = _genderController.text.trim();
+      final gender = _selectedGender;
       final nationality = _nationalityController.text.trim();
-      final civilStatus = _civilStatusController.text.trim();
-      final religion = _religionController.text.trim();
+      final civilStatus = _selectedCivilStatus;
+      final religion = _selectedReligion;
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
 
@@ -57,11 +60,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             context: context,
             firstName: firstName,
             lastName: lastName,
-            gender: gender,
+            gender: gender ?? 'Male',
             birthDate: birthDateFormatted,
             nationality: nationality,
-            civilStatus: civilStatus,
-            religion: religion,
+            civilStatus: civilStatus ?? 'Single',
+            religion: religion ?? 'Roman Catholic',
             email: email,
             password: password,
           );
@@ -157,9 +160,19 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ],
                       ),
                       SizedBox(height: mqheight * 0.025),
-                      TextFormField(
-                        controller: _genderController,
-                        style: const TextStyle(color: Colors.black),
+                      DropdownButtonFormField<String>(
+                        value: _selectedGender,
+                        items: ['Male', 'Female', 'Other']
+                            .map((label) => DropdownMenuItem(
+                                  value: label,
+                                  child: Text(label),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedGender = value!;
+                          });
+                        },
                         decoration: const InputDecoration(
                           fillColor: Colors.white54,
                           filled: true,
@@ -177,7 +190,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your gender';
+                            return 'Please select your gender';
                           }
                           return null;
                         },
@@ -254,15 +267,25 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         },
                       ),
                       SizedBox(height: mqheight * 0.025),
-                      TextFormField(
-                        controller: _civilStatusController,
-                        style: const TextStyle(color: Colors.black),
+                      DropdownButtonFormField<String>(
+                        value: _selectedCivilStatus,
+                        items: ['Single', 'Married', 'Divorced', 'Widowed']
+                            .map((label) => DropdownMenuItem(
+                                  value: label,
+                                  child: Text(label),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedCivilStatus = value;
+                          });
+                        },
                         decoration: const InputDecoration(
                           fillColor: Colors.white54,
                           filled: true,
-                          prefixIcon: Icon(Icons.people),
+                          prefixIcon: Icon(Icons.family_restroom),
                           contentPadding: EdgeInsets.all(20),
-                          hintText: "Civil Status",
+                          hintText: 'Civil Status',
                           enabledBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(30.0)),
@@ -274,21 +297,41 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your civil status';
+                            return 'Please select your civil status';
                           }
                           return null;
                         },
                       ),
                       SizedBox(height: mqheight * 0.025),
-                      TextFormField(
-                        controller: _religionController,
-                        style: const TextStyle(color: Colors.black),
+                      DropdownButtonFormField<String>(
+                        value: _selectedReligion,
+                        items: [
+                          "Roman Catholic",
+                          "Islam",
+                          "Iglesia ni Cristo",
+                          "Seventh Day Adventist",
+                          "Aglipay",
+                          "Bible Baptist Church",
+                          "Jehovah’s Witness",
+                          "Church of Christ",
+                          "Other"
+                        ]
+                            .map((label) => DropdownMenuItem(
+                                  value: label,
+                                  child: Text(label),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedReligion = value;
+                          });
+                        },
                         decoration: const InputDecoration(
                           fillColor: Colors.white54,
                           filled: true,
-                          prefixIcon: Icon(Icons.people),
+                          prefixIcon: Icon(Icons.account_balance),
                           contentPadding: EdgeInsets.all(20),
-                          hintText: "Religion",
+                          hintText: 'Religion',
                           enabledBorder: OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(30.0)),
@@ -300,7 +343,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your religion';
+                            return 'Please select your religion';
                           }
                           return null;
                         },
