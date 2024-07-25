@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, unused_local_variable
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -699,8 +700,8 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                                       var v = vehicles[vIndex];
                                       return ListTile(
                                           leading: Text("${v.guests}"),
-                                          title:
-                                              Text("Vehicle No: ${v.vehicleNo}"),
+                                          title: Text(
+                                              "Vehicle No: ${v.vehicleNo}"),
                                           onTap: () {
                                             setAssginedVehicle(() {
                                               assignedVehicle = assignedVehicle
@@ -813,270 +814,259 @@ class _DepartureDetailsState extends ConsumerState<DepartureDetails> {
                   },
                   child: const Text('Close'))
             ],
-            content: SizedBox(
-              height: MediaQuery.sizeOf(context).height * .5,
-              width: MediaQuery.sizeOf(context).height * 1,
-              child: StatefulBuilder(builder: (context, setPassengers) {
-                return Column(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Boarded',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w500)),
-                          ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: boardedPassengers.length,
-                              itemBuilder: (context, boardedIndex) {
-                                final booking = boardedPassengers[boardedIndex];
-                                return InkWell(
-                                  onTap: () async {
-                                    ListingBookings updatedPassenger =
-                                        booking.copyWith(vehicleNo: null);
-                                    setPassengers(() {
-                                      notBoardedPassengers
-                                          .add(updatedPassenger);
-                                      boardedPassengers.remove(booking);
-                                    });
+            content: StatefulBuilder(builder: (context, setPassengers) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Boarded',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  Expanded(
+                    flex: 1,
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        // physics: const NeverScrollableScrollPhysics(),
+                        itemCount: boardedPassengers.length,
+                        itemBuilder: (context, boardedIndex) {
+                          final booking = boardedPassengers[boardedIndex];
+                          return InkWell(
+                            onTap: () async {
+                              var localBoarded = [...boardedPassengers];
+                              var localNotBoarded = [...notBoardedPassengers];
+                              ListingBookings updatedPassenger =
+                                  booking.copyWith(vehicleNo: null);
+                              localNotBoarded.add(updatedPassenger);
+                              localBoarded.remove(booking);
+                              setPassengers(() {
+                                notBoardedPassengers = localNotBoarded;
+                                boardedPassengers = localBoarded;
+                              });
 
-                                    // send a notif when the user has been removed from the boarded list
-                                    final notBoardedUserNotif = NotificationsModel(
-                                        title: 'You have been deboarded!',
-                                        message:
-                                            'You have been removed from the boarded list for your trip to ${departureDetails.destination}.',
-                                        ownerId: updatedPassenger.customerId,
-                                        bookingId: updatedPassenger.id,
-                                        listingId: updatedPassenger.listingId,
-                                        isToAllMembers: false,
-                                        type: 'listing',
-                                        createdAt: DateTime.now(),
-                                        isRead: false);
+                              // send a notif when the user has been removed from the boarded list
+                              final notBoardedUserNotif = NotificationsModel(
+                                  title: 'You have been deboarded!',
+                                  message:
+                                      'You have been removed from the boarded list for your trip to ${departureDetails.destination}.',
+                                  ownerId: updatedPassenger.customerId,
+                                  bookingId: updatedPassenger.id,
+                                  listingId: updatedPassenger.listingId,
+                                  isToAllMembers: false,
+                                  type: 'listing',
+                                  createdAt: DateTime.now(),
+                                  isRead: false);
 
-                                    try {
-                                      await ref
-                                          .read(notificationControllerProvider
-                                              .notifier)
-                                          .addNotification(
-                                              notBoardedUserNotif, context);
-                                    } catch (e) {
-                                      debugPrint(
-                                          'This is the error when storing the notifs: $e');
-                                    }
+                              try {
+                                await ref
+                                    .read(
+                                        notificationControllerProvider.notifier)
+                                    .addNotification(
+                                        notBoardedUserNotif, context);
+                              } catch (e) {
+                                debugPrint(
+                                    'This is the error when storing the notifs: $e');
+                              }
 
-                                    List<AssignedVehicle>
-                                        updatedAssignedVehicles = [];
-                                    AssignedVehicle updatedAssignedVehicle =
-                                        vehicle.copyWith(
-                                            passengers: boardedPassengers);
-                                    for (var currentVehicle
-                                        in departureDetails.vehicles!) {
-                                      if (vehicle.vehicle!.vehicleNo ==
-                                          currentVehicle.vehicle!.vehicleNo) {
-                                        updatedAssignedVehicles
-                                            .add(updatedAssignedVehicle);
-                                      } else {
-                                        updatedAssignedVehicles
-                                            .add(currentVehicle);
-                                      }
-                                    }
-                                    List<ListingBookings> updatedPassengers =
-                                        [];
-                                    for (var passenger
-                                        in notBoardedPassengers) {
-                                      updatedPassengers.add(passenger);
-                                    }
-                                    for (var passenger in boardedPassengers) {
-                                      updatedPassengers.add(passenger);
-                                    }
+                              List<AssignedVehicle> updatedAssignedVehicles =
+                                  [];
+                              AssignedVehicle updatedAssignedVehicle =
+                                  vehicle.copyWith(passengers: localBoarded);
+                              for (var currentVehicle
+                                  in departureDetails.vehicles!) {
+                                if (vehicle.vehicle!.vehicleNo ==
+                                    currentVehicle.vehicle!.vehicleNo) {
+                                  updatedAssignedVehicles
+                                      .add(updatedAssignedVehicle);
+                                } else {
+                                  updatedAssignedVehicles.add(currentVehicle);
+                                }
+                              }
 
-                                    DepartureModel updatedDeparture =
-                                        departureDetails.copyWith(
-                                            passengers: updatedPassengers,
-                                            vehicles: updatedAssignedVehicles);
+                              List<ListingBookings> updatedPassengers = [
+                                ...localNotBoarded,
+                                ...localBoarded
+                              ];
+                              final updatedPassengerIds =
+                                  updatedPassengers.map((p) => p.id).toSet();
 
-                                    ref
-                                        .read(
-                                            listingControllerProvider.notifier)
-                                        .updateDeparture(
-                                            // ignore: use_build_context_synchronously
-                                            context,
-                                            updatedDeparture,
-                                            '');
-                                    ListingBookings updatedBooking =
-                                        booking.copyWith(vehicleNo: null);
-                                    ref
-                                        .read(
-                                            listingControllerProvider.notifier)
-                                        .updateBooking(
-                                            // ignore: use_build_context_synchronously
-                                            context,
-                                            booking.listingId,
-                                            updatedBooking,
-                                            '');
-                                    setState(() {
-                                      departureDetails = updatedDeparture;
-                                    });
-                                  },
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ListTile(
-                                        leading: Text(
-                                          '${booking.guests}',
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        title: Text(
-                                          booking.customerName,
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Not Boarded',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w500)),
-                          ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: notBoardedPassengers.length,
-                              itemBuilder: (context, notBoardedIndex) {
-                                final booking =
-                                    notBoardedPassengers[notBoardedIndex];
-                                return InkWell(
-                                  onTap: () async {
-                                    ListingBookings updatedPassenger =
-                                        booking.copyWith(
-                                            vehicleNo:
-                                                vehicle.vehicle!.vehicleNo);
-                                    setPassengers(() {
-                                      boardedPassengers.add(updatedPassenger);
-                                      notBoardedPassengers.remove(booking);
-                                    });
+                              // Add missing passengers from departureDetails.passengers
+                              for (var passenger
+                                  in departureDetails.passengers) {
+                                if (!updatedPassengerIds
+                                    .contains(passenger.id)) {
+                                  updatedPassengers.add(passenger);
+                                }
+                              }
 
-                                    // send a notif when the user has been added to the boarded list
-                                    final boardedNotif = NotificationsModel(
-                                        title: 'You have been boarded!',
-                                        message:
-                                            'You have been boarded for your trip to '
-                                            '${departureDetails.destination} in Vehicle No. ${vehicle.vehicle!.vehicleNo}. Enjoy your trip!',
-                                        ownerId: updatedPassenger.customerId,
-                                        bookingId: updatedPassenger.id,
-                                        listingId: updatedPassenger.listingId,
-                                        isToAllMembers: false,
-                                        type: 'listing',
-                                        createdAt: DateTime.now(),
-                                        isRead: false);
+                              DepartureModel updatedDeparture =
+                                  departureDetails.copyWith(
+                                      passengers: updatedPassengers,
+                                      vehicles: updatedAssignedVehicles);
 
-                                    try {
-                                      await ref
-                                          .read(notificationControllerProvider
-                                              .notifier)
-                                          .addNotification(
-                                              boardedNotif, context);
-                                    } catch (e) {
-                                      debugPrint(
-                                          'This is the error when storing the notifs: $e');
-                                    }
+                              ref
+                                  .read(listingControllerProvider.notifier)
+                                  .updateDeparture(
+                                      // ignore: use_build_context_synchronously
+                                      context,
+                                      updatedDeparture,
+                                      '');
+                              ListingBookings updatedBooking =
+                                  booking.copyWith(vehicleNo: null);
+                              ref
+                                  .read(listingControllerProvider.notifier)
+                                  .updateBooking(
+                                      // ignore: use_build_context_synchronously
+                                      context,
+                                      booking.listingId,
+                                      updatedBooking,
+                                      '');
+                              setState(() {
+                                departureDetails = updatedDeparture;
+                              });
+                            },
+                            child: ListTile(
+                              leading: Text(
+                                '${booking.guests}',
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                              title: Text(
+                                booking.customerName,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              trailing:
+                                  const Icon(Icons.keyboard_arrow_down_rounded),
+                            ),
+                          );
+                        }),
+                  ),
+                  const Text('Not Boarded',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  Expanded(
+                    flex: 1,
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        // physics: const NeverScrollableScrollPhysics(),
+                        itemCount: notBoardedPassengers.length,
+                        itemBuilder: (context, notBoardedIndex) {
+                          final booking = notBoardedPassengers[notBoardedIndex];
+                          return InkWell(
+                            onTap: () async {
+                              var localBoarded = [...boardedPassengers];
+                              var localNotBoarded = [...notBoardedPassengers];
+                              ListingBookings updatedPassenger =
+                                  booking.copyWith(
+                                      vehicleNo: vehicle.vehicle!.vehicleNo);
+                              localBoarded.add(updatedPassenger);
+                              localNotBoarded.remove(booking);
+                              setPassengers(() {
+                                boardedPassengers = localBoarded;
+                                notBoardedPassengers = localNotBoarded;
+                              });
 
-                                    List<AssignedVehicle>
-                                        updatedAssignedVehicles = [];
-                                    AssignedVehicle updatedAssignedVehicle =
-                                        vehicle.copyWith(
-                                            passengers: boardedPassengers);
-                                    for (var currentVehicle
-                                        in departureDetails.vehicles!) {
-                                      if (currentVehicle.vehicle!.vehicleNo ==
-                                          updatedAssignedVehicle
-                                              .vehicle!.vehicleNo) {
-                                        updatedAssignedVehicles
-                                            .add(updatedAssignedVehicle);
-                                      } else {
-                                        updatedAssignedVehicles
-                                            .add(currentVehicle);
-                                      }
-                                    }
-                                    List<ListingBookings> updatedPassengers =
-                                        [];
-                                    for (var passenger in boardedPassengers) {
-                                      updatedPassengers.add(passenger);
-                                    }
+                              // send a notif when the user has been added to the boarded list
+                              final boardedNotif = NotificationsModel(
+                                  title: 'You have been boarded!',
+                                  message:
+                                      'You have been boarded for your trip to '
+                                      '${departureDetails.destination} in Vehicle No. ${vehicle.vehicle!.vehicleNo}. Enjoy your trip!',
+                                  ownerId: updatedPassenger.customerId,
+                                  bookingId: updatedPassenger.id,
+                                  listingId: updatedPassenger.listingId,
+                                  isToAllMembers: false,
+                                  type: 'listing',
+                                  createdAt: DateTime.now(),
+                                  isRead: false);
 
-                                    for (var passenger
-                                        in notBoardedPassengers) {
-                                      updatedPassengers.add(passenger);
-                                    }
-                                    DepartureModel updatedDeparture =
-                                        departureDetails.copyWith(
-                                            passengers: updatedPassengers,
-                                            vehicles: updatedAssignedVehicles);
+                              try {
+                                await ref
+                                    .read(
+                                        notificationControllerProvider.notifier)
+                                    .addNotification(boardedNotif, context);
+                              } catch (e) {
+                                debugPrint(
+                                    'This is the error when storing the notifs: $e');
+                              }
 
-                                    ref
-                                        .read(
-                                            listingControllerProvider.notifier)
-                                        .updateDeparture(
-                                            // ignore: use_build_context_synchronously
-                                            context,
-                                            updatedDeparture,
-                                            '');
-                                    ListingBookings updatedBooking =
-                                        booking.copyWith(
-                                            vehicleNo:
-                                                vehicle.vehicle!.vehicleNo);
-                                    ref
-                                        .read(
-                                            listingControllerProvider.notifier)
-                                        .updateBooking(
-                                            // ignore: use_build_context_synchronously
-                                            context,
-                                            booking.listingId,
-                                            updatedBooking,
-                                            '');
-                                    setState(() {
-                                      departureDetails = updatedDeparture;
-                                    });
-                                  },
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ListTile(
-                                        leading: Text(
-                                          '${booking.guests}',
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        title: Text(
-                                          booking.customerName,
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              }),
-            ),
+                              List<AssignedVehicle> updatedAssignedVehicles =
+                                  [];
+                              AssignedVehicle updatedAssignedVehicle =
+                                  vehicle.copyWith(passengers: localBoarded);
+                              for (var currentVehicle
+                                  in departureDetails.vehicles!) {
+                                if (currentVehicle.vehicle!.vehicleNo ==
+                                    updatedAssignedVehicle.vehicle!.vehicleNo) {
+                                  updatedAssignedVehicles
+                                      .add(updatedAssignedVehicle);
+                                } else {
+                                  updatedAssignedVehicles.add(currentVehicle);
+                                }
+                              }
+                              List<ListingBookings> updatedPassengers = [];
+                              for (var passenger in localBoarded) {
+                                updatedPassengers.add(passenger);
+                              }
+
+                              for (var passenger in localNotBoarded) {
+                                updatedPassengers.add(passenger);
+                              }
+
+                              final updatedPassengerIds =
+                                  updatedPassengers.map((p) => p.id).toSet();
+
+                              // Add missing passengers from departureDetails.passengers
+                              for (var passenger
+                                  in departureDetails.passengers) {
+                                if (!updatedPassengerIds
+                                    .contains(passenger.id)) {
+                                  updatedPassengers.add(passenger);
+                                }
+                              }
+                              DepartureModel updatedDeparture =
+                                  departureDetails.copyWith(
+                                      passengers: updatedPassengers,
+                                      vehicles: updatedAssignedVehicles);
+
+                              ref
+                                  .read(listingControllerProvider.notifier)
+                                  .updateDeparture(
+                                      // ignore: use_build_context_synchronously
+                                      context,
+                                      updatedDeparture,
+                                      '');
+                              ListingBookings updatedBooking = booking.copyWith(
+                                  vehicleNo: vehicle.vehicle!.vehicleNo);
+                              ref
+                                  .read(listingControllerProvider.notifier)
+                                  .updateBooking(
+                                      // ignore: use_build_context_synchronously
+                                      context,
+                                      booking.listingId,
+                                      updatedBooking,
+                                      '');
+                              setState(() {
+                                departureDetails = updatedDeparture;
+                              });
+                            },
+                            child: ListTile(
+                              leading: Text(
+                                '${booking.guests}',
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                              title: Text(
+                                booking.customerName,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              trailing:
+                                  const Icon(Icons.keyboard_arrow_up_rounded),
+                            ),
+                          );
+                        }),
+                  ),
+                ],
+              );
+            }),
           );
         });
   }

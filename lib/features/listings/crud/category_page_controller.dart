@@ -7,6 +7,7 @@ import 'package:lakbay/features/listings/crud/customer_food.dart';
 import 'package:lakbay/features/listings/crud/customer_touring.dart';
 import 'package:lakbay/features/listings/crud/customer_transportation.dart';
 import 'package:lakbay/features/listings/crud/manage_accommodation.dart';
+import 'package:lakbay/features/listings/crud/manage_entertainment.dart';
 import 'package:lakbay/features/listings/crud/manage_food.dart';
 import 'package:lakbay/features/listings/crud/manage_transport.dart';
 import 'package:lakbay/models/listing_model.dart';
@@ -66,9 +67,10 @@ class CategoryPageController extends ConsumerWidget {
         return ManageTransportation(listing: listing);
 
       case 'Food':
-        return ManageFood(
-          listing: listing
-        );
+        return ManageFood(listing: listing);
+
+      case 'Entertainment':
+        return ManageEntertainment(listing: listing);
 
       default:
         return ManageAccommodation(
