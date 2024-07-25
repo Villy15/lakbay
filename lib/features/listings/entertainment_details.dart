@@ -175,14 +175,17 @@ class _EntertainmentDetailsState extends ConsumerState<EntertainmentDetails> {
     );
   }
 
-  bool allCancelled() {
-    return widget.bookings
-        .every((booking) => booking.bookingStatus == 'Cancelled');
+  bool sentEmergencyReq(List<ListingBookings> bookings) {
+    return bookings
+        .any((booking) => booking.bookingStatus == 'Emergency Request');
   }
 
-  bool allCompleted() {
-    return widget.bookings
-        .every((booking) => booking.bookingStatus == 'Completed');
+  bool allCancelled(List<ListingBookings> bookings) {
+    return bookings.every((booking) => booking.bookingStatus == 'Cancelled');
+  }
+
+  bool allCompleted(List<ListingBookings> bookings) {
+    return bookings.every((booking) => booking.bookingStatus == 'Completed');
   }
 
   Widget details(BuildContext context, List<ListingBookings> bookings) {
@@ -236,8 +239,10 @@ class _EntertainmentDetailsState extends ConsumerState<EntertainmentDetails> {
           Stack(children: [
             Container(
               foregroundDecoration: BoxDecoration(
-                  color:
-                      Colors.black.withOpacity((allCancelled()) ? 0.5 : 0.0)),
+                  color: Colors.black.withOpacity(
+                      (allCancelled(bookings) || sentEmergencyReq(bookings))
+                          ? 0.5
+                          : 0.0)),
               child: SizedBox(
                 width: double.infinity,
                 height: MediaQuery.sizeOf(context).height * .4,
@@ -250,11 +255,13 @@ class _EntertainmentDetailsState extends ConsumerState<EntertainmentDetails> {
                 children: [
                   Flexible(
                       child: Text(
-                          allCancelled()
+                          allCancelled(bookings)
                               ? "Your ${widget.listing.type} Has Been Cancelled"
-                              : allCompleted()
-                                  ? "Your Departure Has Been Completed"
-                                  : '',
+                              : sentEmergencyReq(bookings)
+                                  ? "Emergency Request\nOn-Going"
+                                  : allCompleted(bookings)
+                                      ? "Your Departure Has Been Completed"
+                                      : '',
                           style: TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.bold,
@@ -342,7 +349,7 @@ class _EntertainmentDetailsState extends ConsumerState<EntertainmentDetails> {
               widget.listing.type == "Activities/Tours")
             ListTile(
               leading: const Icon(Icons.person_4_outlined),
-              title: Text(widget.bookings.first.tourGuideName!,
+              title: Text(bookings.first.tourGuideName!,
                   style: TextStyle(
                       fontSize: 16,
                       color: Theme.of(context).colorScheme.primary)),

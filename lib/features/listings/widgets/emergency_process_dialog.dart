@@ -168,6 +168,7 @@ onTapRefundGuests(
                           }
                           context.pop();
                           context.pop();
+                          context.pop();
                         },
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12.0),

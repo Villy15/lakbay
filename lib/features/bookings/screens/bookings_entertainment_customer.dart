@@ -112,18 +112,119 @@ class _BookingsEntertainmentCustomerState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                             Stack(children: [
-                              Container(
-                                  foregroundDecoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(
-                                          booking.bookingStatus == "Cancelled"
-                                              ? 0.5
-                                              : 0.0)),
-                                  child: ImageSlider(
-                                      images: imageUrls,
-                                      height:
-                                          MediaQuery.sizeOf(context).height / 2,
-                                      width: double.infinity,
-                                      radius: BorderRadius.circular(0))),
+                              if (booking.bookingStatus == "Emergency Request")
+                                Card(
+                                  elevation: 3,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                                Icons.warning_amber_outlined,
+                                                color: Colors.red,
+                                                size: 30),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Emergency Request",
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  Text(
+                                                    "We regret to inform you that your service provider has encountered issues, making the service unavailable. You may either Cancel (entitled to a refund) or Re-Book the service",
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurface,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            const Icon(Icons.report_problem,
+                                                color: Colors.red, size: 30),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: FilledButton(
+                                                onPressed: () =>
+                                                    erCancel(context, booking),
+                                                style: FilledButton.styleFrom(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 12.0),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0), // Adjust the value as needed
+                                                  ),
+                                                ),
+                                                child: const Text("Cancel"),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Expanded(
+                                              child: FilledButton(
+                                                onPressed: () =>
+                                                    erRebook(booking),
+                                                style: FilledButton.styleFrom(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 12.0),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0), // Adjust the value as needed
+                                                  ),
+                                                ),
+                                                child: const Text("Re-Book"),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              else
+                                Container(
+                                    foregroundDecoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(
+                                            booking.bookingStatus ==
+                                                        "Cancelled" ||
+                                                    booking.bookingStatus ==
+                                                        "Request Refund"
+                                                ? 0.5
+                                                : 0.0)),
+                                    child: ImageSlider(
+                                        images: imageUrls,
+                                        height:
+                                            MediaQuery.sizeOf(context).height /
+                                                2,
+                                        width: double.infinity,
+                                        radius: BorderRadius.circular(0))),
                               Padding(
                                 padding:
                                     const EdgeInsets.only(top: 70.0, left: 30),
@@ -133,7 +234,10 @@ class _BookingsEntertainmentCustomerState
                                         child: Text(
                                             booking.bookingStatus == 'Cancelled'
                                                 ? "Your Booking Has Been Cancelled"
-                                                : '',
+                                                : booking.bookingStatus ==
+                                                        "Request Refund"
+                                                    ? "Your refund has been requested"
+                                                    : '',
                                             style: const TextStyle(
                                                 fontSize: 26,
                                                 fontWeight: FontWeight.bold,
@@ -142,7 +246,6 @@ class _BookingsEntertainmentCustomerState
                                 ),
                               )
                             ]),
-
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8.0, vertical: 20),
@@ -409,6 +512,44 @@ class _BookingsEntertainmentCustomerState
                 error: (error, stackTrace) =>
                     ErrorText(error: error.toString(), stackTrace: ''),
                 loading: () => const CircularProgressIndicator()));
+  }
+
+  void erRebook(ListingBookings booking) {}
+
+  Future<dynamic> erCancel(BuildContext context, ListingBookings booking) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Request Refund"),
+            content: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.15,
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: const Column(
+                children: [
+                  Text(
+                      "Your booking will be cancelled, and a full refund will be requested from the service provider."),
+                ],
+              ),
+            ),
+            actions: [
+              FilledButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: const Text('Back')),
+              FilledButton(
+                  onPressed: () {
+                    final updatedBooking =
+                        booking.copyWith(bookingStatus: "Request Refund");
+                    ref.read(listingControllerProvider.notifier).updateBooking(
+                        context, booking.listingId, updatedBooking, "");
+                    context.pop();
+                  },
+                  child: const Text('Confirm')),
+            ],
+          );
+        });
   }
 
   Future<dynamic> cancelBookingProcess(
