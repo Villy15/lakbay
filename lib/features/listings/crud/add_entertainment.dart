@@ -908,7 +908,7 @@ class _AddEntertainmentState extends ConsumerState<AddEntertainment> {
       // Google Map
       SizedBox(
         height: 400,
-        child: MapWidget(address: mapAddress),
+        child: MapWidget(address: mapAddress, radius: true),
       )
     ]);
   }

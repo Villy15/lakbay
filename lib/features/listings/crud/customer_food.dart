@@ -170,8 +170,7 @@ class _CustomerFoodState extends ConsumerState<CustomerFood> {
                     child: SizedBox(
                         height: MediaQuery.sizeOf(context).height / 5,
                         child: MapWidget(
-                          address: widget.listing.address,
-                        )))
+                            address: widget.listing.address, radius: true)))
               ],
             )),
         ref

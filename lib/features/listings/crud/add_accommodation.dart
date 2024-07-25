@@ -1216,7 +1216,7 @@ class _AddAccommodationState extends ConsumerState<AddAccommodation> {
       // Google Map
       SizedBox(
         height: 400,
-        child: MapWidget(address: mapAddress),
+        child: MapWidget(address: mapAddress, radius: true),
       )
     ]);
   }

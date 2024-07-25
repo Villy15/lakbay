@@ -518,9 +518,7 @@ class _AddListingState extends ConsumerState<AddListing> {
       // Google Map
       SizedBox(
         height: 400,
-        child: MapWidget(
-          address: _addressController.text,
-        ),
+        child: MapWidget(address: _addressController.text, radius: true),
       ),
     ]);
   }

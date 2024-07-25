@@ -8,6 +8,7 @@ import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/location/map_repository.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
@@ -44,11 +45,11 @@ Future<dynamic> emergencyProcess(
           },
         },
         'Entertainment': {
-          'Assigned tour guide is no longer available': {
-            'action': () {},
-            'subtitle':
-                'Search through registered tour guides within your cooperative to find one capable and available',
-          },
+          // 'Assigned tour guide is no longer available': {
+          //   'action': () {},
+          //   'subtitle':
+          //       'Search through registered tour guides within your cooperative to find one capable and available',
+          // },
           "Uncontrollable circumstances made the service unavailable": {
             'action': () => onTapRefundGuests(ref, context, bookings),
             'subtitle':
@@ -122,11 +123,12 @@ Future<dynamic> emergencyProcess(
 
 onTapRefundGuests(
     WidgetRef ref, BuildContext context, List<ListingBookings>? bookings) {
+  debugPrint("$bookings");
   final refundDetails = {
-    "Number of Bookings": (bookings!.length),
-    "Amount Refundable": bookings.fold<num>(0, (num sum, booking) {
+    "Number of Bookings": "${bookings!.length}",
+    "Amount Refundable": "₱${bookings.fold<num>(0, (num sum, booking) {
       return sum + booking.price;
-    }),
+    }).toStringAsFixed(2)} PHP",
   };
   return showDialog(
       context: context,
@@ -152,7 +154,21 @@ onTapRefundGuests(
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: FilledButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          for (var booking in bookings) {
+                            final updatedBooking = booking.copyWith(
+                                bookingStatus: "Emergency Request");
+                            ref
+                                .read(listingControllerProvider.notifier)
+                                .updateBooking(
+                                    context,
+                                    updatedBooking.listingId,
+                                    updatedBooking,
+                                    "");
+                          }
+                          context.pop();
+                          context.pop();
+                        },
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12.0),
                           shape: RoundedRectangleBorder(
@@ -175,8 +191,8 @@ onTapRefundGuests(
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: const Text(
-                    "Request Customer Cancellation or ReBooking",
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                    "Request Customer Cancellation or Re-Booking",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SizedBox(
@@ -184,7 +200,8 @@ onTapRefundGuests(
                 ),
                 ...refundDetails.entries.map((entry) {
                   return Padding(
-                    padding: const EdgeInsets.only(top: 15.0),
+                    padding:
+                        const EdgeInsets.only(top: 15.0, left: 15, right: 15),
                     child: Column(
                       children: [
                         Row(
@@ -195,7 +212,7 @@ onTapRefundGuests(
                               style: const TextStyle(fontSize: 14),
                             ),
                             Text(
-                              "₱${entry.value.toStringAsFixed(2)} PHP",
+                              entry.value,
                               style: const TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.bold),
                             ),
@@ -309,7 +326,8 @@ onTapFindVehicle(
                                       width: MediaQuery.sizeOf(context).width,
                                       child: MapWidget(
                                           address: placemarks.first.street
-                                              .toString()),
+                                              .toString(),
+                                          radius: true),
                                     ),
                                     filteredVehicles.isNotEmpty
                                         ? ListView.builder(

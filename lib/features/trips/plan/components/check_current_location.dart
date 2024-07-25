@@ -49,7 +49,8 @@ class _CheckCurrentLocationState extends ConsumerState<CheckCurrentLocation> {
                 child: const Text('Get Location')),
             // display the map widget
             const SizedBox(height: 10),
-            SizedBox(height: 400, child: MapWidget(address: address))
+            SizedBox(
+                height: 400, child: MapWidget(address: address, radius: true))
           ]));
     }));
   }

@@ -1253,7 +1253,7 @@ class _AddTransportState extends ConsumerState<AddTransport> {
         onVerticalDragUpdate: (details) {},
         child: SizedBox(
           height: 400,
-          child: MapWidget(address: _addressController.text),
+          child: MapWidget(address: _addressController.text, radius: true),
         ),
       ),
 

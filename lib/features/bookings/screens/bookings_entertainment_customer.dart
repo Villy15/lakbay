@@ -357,8 +357,9 @@ class _BookingsEntertainmentCustomerState
                               padding: const EdgeInsets.all(8.0),
                               child: SizedBox(
                                 height: MediaQuery.sizeOf(context).height / 5,
-                                child:
-                                    MapWidget(address: widget.listing.address),
+                                child: MapWidget(
+                                    address: widget.listing.address,
+                                    radius: true),
                               ),
                             ),
 

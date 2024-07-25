@@ -50,7 +50,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   late List<ListingBookings> filterCategoryBookings;
   late List<ListingModel> filterCategoryListings;
 
-
   bool showLocationField = false;
   final filterSearch = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -66,14 +65,16 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
       finalFilteredSearch = filterSearch.text;
       debugPrint("final search: $finalFilteredSearch");
       debugPrint('calling listing controller!');
-      debugPrint('this is the selected category at the moment: $selectedCategory');
+      debugPrint(
+          'this is the selected category at the moment: $selectedCategory');
 
       if (selectedCategory == widget.category) {
         listingCardController(selectedCategory, finalFilteredSearch);
       } else {
         // debugPrint('i am now searching for the category: $selectedCategory');
         // debugPrint('final filtered search: $finalFilteredSearch');
-        listingCardFilterByCategory(selectedCategory, filterCategoryBookings, filterCategoryListings, finalFilteredSearch);
+        listingCardFilterByCategory(selectedCategory, filterCategoryBookings,
+            filterCategoryListings, finalFilteredSearch);
       }
       Future.delayed(const Duration(milliseconds: 100), () {
         setState(() {});
@@ -94,7 +95,11 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
           } else {
             // debugPrint('keyboard closed. searching category: $selectedCategory');
             // debugPrint('final filtered search: $finalFilteredSearch');
-            listingCardFilterByCategory(selectedCategory, filterCategoryBookings, filterCategoryListings, finalFilteredSearch);
+            listingCardFilterByCategory(
+                selectedCategory,
+                filterCategoryBookings,
+                filterCategoryListings,
+                finalFilteredSearch);
           }
         }
       }
@@ -260,7 +265,8 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                               listingCardController(selectedCategory, value);
                             },
                             decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                              contentPadding:
+                                  const EdgeInsets.fromLTRB(0, 15, 0, 0),
                               hintText: 'Search Location',
                               prefixIcon: const Padding(
                                 padding: EdgeInsets.only(right: 20, top: 5.5),
@@ -323,22 +329,23 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                     ),
                     const Divider(),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      // if the actionchip is triggered, the listingCardFilterByCategory will be called
-                      // else, the listingCardController will be called
+                        padding: const EdgeInsets.all(8.0),
+                        // if the actionchip is triggered, the listingCardFilterByCategory will be called
+                        // else, the listingCardController will be called
 
-                      child: selectedCategory != widget.category
-                        ? listingCardFilterByCategory(
-                          selectedCategory,
-                          filterCategoryBookings,
-                          filterCategoryListings,
-                          finalFilteredSearch,
-                          )
-                        : listingCardController(selectedCategory, finalFilteredSearch)
+                        child: selectedCategory != widget.category
+                            ? listingCardFilterByCategory(
+                                selectedCategory,
+                                filterCategoryBookings,
+                                filterCategoryListings,
+                                finalFilteredSearch,
+                              )
+                            : listingCardController(
+                                selectedCategory, finalFilteredSearch)
 
-                      // child: listingCardController(
-                      //     selectedCategory, finalFilteredSearch),
-                    ),
+                        // child: listingCardController(
+                        //     selectedCategory, finalFilteredSearch),
+                        ),
                   ],
                 )),
     );
@@ -448,7 +455,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
           content: SizedBox(
             height: MediaQuery.of(context).size.height / 5,
             width: MediaQuery.of(context).size.width * 0.8,
-            child: MapWidget(address: planSearch),
+            child: MapWidget(address: planSearch, radius: true),
           ),
           actions: [
             TextButton(
@@ -563,30 +570,39 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                             ...filters.keys.map((category) {
                               return InkWell(
                                 onTap: () async {
-                                  final today = Timestamp.fromDate(planStartDate!);
-                                  final filterCategoryFuture = await ref.read(getAllListingsProvider.future);
+                                  final today =
+                                      Timestamp.fromDate(planStartDate!);
+                                  final filterCategoryFuture = await ref
+                                      .read(getAllListingsProvider.future);
                                   final filterCategory = filterCategoryFuture;
                                   // print the data of the filterCategoryListings
-                                  debugPrint('This is all the listings: $filterCategory');
+                                  debugPrint(
+                                      'This is all the listings: $filterCategory');
                                   final query = FirebaseFirestore.instance
-                                    .collectionGroup(
-                                        'bookings'); // Perform collection group query for 'bookings'
-                                    final bookings = await ref
-                                        .watch(getBookingsByPropertiesProvider((query)).future);
+                                      .collectionGroup(
+                                          'bookings'); // Perform collection group query for 'bookings'
+                                  final bookings = await ref.watch(
+                                      getBookingsByPropertiesProvider((query))
+                                          .future);
 
-                                    debugPrint('this is bookings: $bookings');
-                                    
-                                    filterCategoryBookings = bookings;
-                                    debugPrint('this is the filterCategoryBookings: $filterCategoryBookings');
-                                  
+                                  debugPrint('this is bookings: $bookings');
+
+                                  filterCategoryBookings = bookings;
+                                  debugPrint(
+                                      'this is the filterCategoryBookings: $filterCategoryBookings');
+
                                   // final filterBookings = await ref.watch(getAllBookingsProvider);
-                                  this.setState(()  {
+                                  this.setState(() {
                                     selectedCategory = category;
                                     // use the filterCategory then assign it to filterCategoryListings. use the selectedCategory to filter the listings
-                                    filterCategoryListings = filterCategory.where((element) => element.category == selectedCategory).toList();
+                                    filterCategoryListings = filterCategory
+                                        .where((element) =>
+                                            element.category ==
+                                            selectedCategory)
+                                        .toList();
 
-                                    debugPrint('this is the filterCategoryListings: $filterCategoryListings');
-                                    
+                                    debugPrint(
+                                        'this is the filterCategoryListings: $filterCategoryListings');
 
                                     // selectedCategory = category;
                                     // // do a ref.read to get the filtered listings by category
@@ -604,7 +620,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                                     //     .watch(getBookingsByPropertiesProvider((query)).future);
 
                                     // filterCategoryBookings = bookings;
-
 
                                     // listingCardFilterByCategory(category, filterCategoryBookings, filterCategoryListings, null);
                                     // ignore: use_build_context_synchronously
@@ -630,7 +645,11 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         });
   }
 
-  Widget listingCardFilterByCategory(String category, List<ListingBookings> listingBookings, List<ListingModel> listingModel, String? searchFilter) {
+  Widget listingCardFilterByCategory(
+      String category,
+      List<ListingBookings> listingBookings,
+      List<ListingModel> listingModel,
+      String? searchFilter) {
     debugPrint('this is the search filter wow: $searchFilter');
 
     debugPrint('this is the listing model: $listingModel');
@@ -639,7 +658,10 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
     if (searchFilter != null) {
       // Filter the listings based on the search
       final removeSpaceFilterSearch = removeExcessSpaces(searchFilter);
-      listingModel = listingModel.where((element) => element.address.contains(removeSpaceFilterSearch.toLowerCase())).toList();
+      listingModel = listingModel
+          .where((element) =>
+              element.address.contains(removeSpaceFilterSearch.toLowerCase()))
+          .toList();
       debugPrint('I am working!');
     } else {
       listingModel = listingModel;
@@ -650,23 +672,28 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
       final removeSpaceFilterSearch = removeExcessSpaces(searchFilter);
       listingModel = listingModel
           .where((listing) =>
-              listing.pickUp!.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()) ||
-              listing.destination!.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()))
+              listing.pickUp!
+                  .toLowerCase()
+                  .contains(removeSpaceFilterSearch.toLowerCase()) ||
+              listing.destination!
+                  .toLowerCase()
+                  .contains(removeSpaceFilterSearch.toLowerCase()))
           .toList();
     }
 
-    debugPrint(
-        'this is the length of listingModel: ${listingModel.length}');
+    debugPrint('this is the length of listingModel: ${listingModel.length}');
 
-
-
-
-    switch(category) {
+    switch (category) {
       case "Accommodation":
         return RoomCard(
           category: category,
           bookings: listingBookings,
-          accommodationListings: searchFilter != null ? listingModel.where((element) => element.address.contains(searchFilter.toLowerCase())).toList() : null,
+          accommodationListings: searchFilter != null
+              ? listingModel
+                  .where((element) =>
+                      element.address.contains(searchFilter.toLowerCase()))
+                  .toList()
+              : null,
           allListings: listingModel,
         );
 
@@ -690,18 +717,20 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         return const Text("An Error Occurred!");
     }
   }
+
   // remove excess spaces from the search filter
   String removeExcessSpaces(String searchFilter) {
     return searchFilter.trim().replaceAll(RegExp(r'\s+'), ' ');
   }
 
   Widget listingCardController(String category, String? searchFilter) {
-
     if (searchFilter != null) {
       // Filter the listings based on the search
       final removeSpaceFilterSearch = removeExcessSpaces(searchFilter);
       listingResults = widget.listings!
-          .where((listing) => listing.address.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()))
+          .where((listing) => listing.address
+              .toLowerCase()
+              .contains(removeSpaceFilterSearch.toLowerCase()))
           .toList();
       debugPrint('I am working!');
     } else {
@@ -713,11 +742,14 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
       final removeSpaceFilterSearch = removeExcessSpaces(searchFilter);
       listingResults = widget.listings!
           .where((listing) =>
-              listing.pickUp!.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()) ||
-              listing.destination!.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()))
+              listing.pickUp!
+                  .toLowerCase()
+                  .contains(removeSpaceFilterSearch.toLowerCase()) ||
+              listing.destination!
+                  .toLowerCase()
+                  .contains(removeSpaceFilterSearch.toLowerCase()))
           .toList();
     }
-
 
     debugPrint(
         'this is the length of listingResults: ${listingResults.length}');
@@ -737,7 +769,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
 
       case "Food":
         return FoodCard(category: category, foodListings: listingResults);
-
 
       case "Entertainment":
         debugPrint('wowie!');

@@ -219,11 +219,8 @@ class _EntertainmentDetailsState extends ConsumerState<EntertainmentDetails> {
                         child: const Text('Close')),
                     FilledButton(
                         onPressed: () {
-                          emergencyProcess(
-                            ref,
-                            context,
-                            'Entertainment',
-                          );
+                          emergencyProcess(ref, context, 'Entertainment',
+                              bookings: bookings);
                         },
                         child: const Text('Continue')),
                   ],
