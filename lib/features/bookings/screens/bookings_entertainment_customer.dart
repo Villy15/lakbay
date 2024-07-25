@@ -115,6 +115,8 @@ class _BookingsEntertainmentCustomerState
                               if (booking.bookingStatus == "Emergency Request")
                                 Card(
                                   elevation: 3,
+                                  margin: const EdgeInsets.only(
+                                      top: 15, left: 7.5, right: 7.5),
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Padding(
