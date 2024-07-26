@@ -499,7 +499,10 @@ class _BookingsAccomodationCustomerState
                         padding: const EdgeInsets.all(8.0),
                         child: SizedBox(
                           height: MediaQuery.sizeOf(context).height / 5,
-                          child: MapWidget(address: widget.listing.address),
+                          child: MapWidget(
+                            address: widget.listing.address,
+                            radius: true,
+                          ),
                         ),
                       ),
 
@@ -738,10 +741,10 @@ class _BookingsAccomodationCustomerState
         if (widget.listing.cancellationRate! > 1) {
           paymentDetails = {
             'Original Booking': (booking.amountPaid!),
-            'Your total refund': (booking.amountPaid! - widget.listing.cancellationRate!),
+            'Your total refund':
+                (booking.amountPaid! - widget.listing.cancellationRate!),
           };
-        }
-        else {
+        } else {
           paymentDetails = {
             'Original Booking': (booking.amountPaid!),
             'Your total refund': (booking.amountPaid! -

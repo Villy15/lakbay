@@ -46,6 +46,8 @@ mixin _$ListingBookings {
       throw _privateConstructorUsedError; //Partially Paid, Fully Paid, Cancelled
   num get price => throw _privateConstructorUsedError;
   String? get roomId => throw _privateConstructorUsedError;
+  String? get tourGuideName => throw _privateConstructorUsedError;
+  String? get tourGuideId => throw _privateConstructorUsedError;
   num? get vehicleNo => throw _privateConstructorUsedError;
   String? get vehicleUid => throw _privateConstructorUsedError;
   String? get roomUid => throw _privateConstructorUsedError;
@@ -107,6 +109,8 @@ abstract class $ListingBookingsCopyWith<$Res> {
       String? paymentStatus,
       num price,
       String? roomId,
+      String? tourGuideName,
+      String? tourGuideId,
       num? vehicleNo,
       String? vehicleUid,
       String? roomUid,
@@ -161,6 +165,8 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
     Object? paymentStatus = freezed,
     Object? price = null,
     Object? roomId = freezed,
+    Object? tourGuideName = freezed,
+    Object? tourGuideId = freezed,
     Object? vehicleNo = freezed,
     Object? vehicleUid = freezed,
     Object? roomUid = freezed,
@@ -271,6 +277,14 @@ class _$ListingBookingsCopyWithImpl<$Res, $Val extends ListingBookings>
           ? _value.roomId
           : roomId // ignore: cast_nullable_to_non_nullable
               as String?,
+      tourGuideName: freezed == tourGuideName
+          ? _value.tourGuideName
+          : tourGuideName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      tourGuideId: freezed == tourGuideId
+          ? _value.tourGuideId
+          : tourGuideId // ignore: cast_nullable_to_non_nullable
+              as String?,
       vehicleNo: freezed == vehicleNo
           ? _value.vehicleNo
           : vehicleNo // ignore: cast_nullable_to_non_nullable
@@ -371,6 +385,8 @@ abstract class _$$ListingBookingsImplCopyWith<$Res>
       String? paymentStatus,
       num price,
       String? roomId,
+      String? tourGuideName,
+      String? tourGuideId,
       num? vehicleNo,
       String? vehicleUid,
       String? roomUid,
@@ -423,6 +439,8 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
     Object? paymentStatus = freezed,
     Object? price = null,
     Object? roomId = freezed,
+    Object? tourGuideName = freezed,
+    Object? tourGuideId = freezed,
     Object? vehicleNo = freezed,
     Object? vehicleUid = freezed,
     Object? roomUid = freezed,
@@ -533,6 +551,14 @@ class __$$ListingBookingsImplCopyWithImpl<$Res>
           ? _value.roomId
           : roomId // ignore: cast_nullable_to_non_nullable
               as String?,
+      tourGuideName: freezed == tourGuideName
+          ? _value.tourGuideName
+          : tourGuideName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      tourGuideId: freezed == tourGuideId
+          ? _value.tourGuideId
+          : tourGuideId // ignore: cast_nullable_to_non_nullable
+              as String?,
       vehicleNo: freezed == vehicleNo
           ? _value.vehicleNo
           : vehicleNo // ignore: cast_nullable_to_non_nullable
@@ -628,6 +654,8 @@ class _$ListingBookingsImpl extends _ListingBookings {
       this.paymentStatus,
       required this.price,
       this.roomId,
+      this.tourGuideName,
+      this.tourGuideId,
       this.vehicleNo,
       this.vehicleUid,
       this.roomUid,
@@ -717,6 +745,10 @@ class _$ListingBookingsImpl extends _ListingBookings {
   @override
   final String? roomId;
   @override
+  final String? tourGuideName;
+  @override
+  final String? tourGuideId;
+  @override
   final num? vehicleNo;
   @override
   final String? vehicleUid;
@@ -759,7 +791,7 @@ class _$ListingBookingsImpl extends _ListingBookings {
 
   @override
   String toString() {
-    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, cooperativeId: $cooperativeId, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, paymentStatus: $paymentStatus, price: $price, roomId: $roomId, vehicleNo: $vehicleNo, vehicleUid: $vehicleUid, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, tripUid: $tripUid, tripName: $tripName, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime, serviceStart: $serviceStart, serviceComplete: $serviceComplete, createdAt: $createdAt)';
+    return 'ListingBookings(amountPaid: $amountPaid, customerId: $customerId, customerName: $customerName, customerPhoneNo: $customerPhoneNo, category: $category, email: $email, cooperativeId: $cooperativeId, emergencyContactName: $emergencyContactName, emergencyContactNo: $emergencyContactNo, endDate: $endDate, expenses: $expenses, tasks: $tasks, governmentId: $governmentId, guests: $guests, listingId: $listingId, listingTitle: $listingTitle, luggage: $luggage, id: $id, needsContributions: $needsContributions, paymentOption: $paymentOption, paymentStatus: $paymentStatus, price: $price, roomId: $roomId, tourGuideName: $tourGuideName, tourGuideId: $tourGuideId, vehicleNo: $vehicleNo, vehicleUid: $vehicleUid, roomUid: $roomUid, selectedDate: $selectedDate, selectedTime: $selectedTime, startDate: $startDate, bookingStatus: $bookingStatus, totalPrice: $totalPrice, tripUid: $tripUid, tripName: $tripName, typeOfTrip: $typeOfTrip, startTime: $startTime, endTime: $endTime, serviceStart: $serviceStart, serviceComplete: $serviceComplete, createdAt: $createdAt)';
   }
 
   @override
@@ -804,6 +836,10 @@ class _$ListingBookingsImpl extends _ListingBookings {
                 other.paymentStatus == paymentStatus) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.roomId, roomId) || other.roomId == roomId) &&
+            (identical(other.tourGuideName, tourGuideName) ||
+                other.tourGuideName == tourGuideName) &&
+            (identical(other.tourGuideId, tourGuideId) ||
+                other.tourGuideId == tourGuideId) &&
             (identical(other.vehicleNo, vehicleNo) ||
                 other.vehicleNo == vehicleNo) &&
             (identical(other.vehicleUid, vehicleUid) ||
@@ -862,6 +898,8 @@ class _$ListingBookingsImpl extends _ListingBookings {
         paymentStatus,
         price,
         roomId,
+        tourGuideName,
+        tourGuideId,
         vehicleNo,
         vehicleUid,
         roomUid,
@@ -920,6 +958,8 @@ abstract class _ListingBookings extends ListingBookings {
           final String? paymentStatus,
           required final num price,
           final String? roomId,
+          final String? tourGuideName,
+          final String? tourGuideId,
           final num? vehicleNo,
           final String? vehicleUid,
           final String? roomUid,
@@ -989,6 +1029,10 @@ abstract class _ListingBookings extends ListingBookings {
   num get price;
   @override
   String? get roomId;
+  @override
+  String? get tourGuideName;
+  @override
+  String? get tourGuideId;
   @override
   num? get vehicleNo;
   @override

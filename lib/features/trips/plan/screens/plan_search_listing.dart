@@ -51,7 +51,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
   late List<ListingBookings> filterCategoryBookings;
   late List<ListingModel> filterCategoryListings;
 
-
   bool showLocationField = false;
   final filterSearch = TextEditingController();
   final filterSearchCategory = TextEditingController();
@@ -71,7 +70,8 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
       finalFilteredSearch = filterSearch.text;
       debugPrint("final search: $finalFilteredSearch");
       debugPrint('calling listing controller!');
-      debugPrint('this is the selected category at the moment: $selectedCategory');
+      debugPrint(
+          'this is the selected category at the moment: $selectedCategory');
 
       if (selectedCategory == widget.category) {
         listingCardController(selectedCategory, finalFilteredSearch);
@@ -330,7 +330,8 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                               listingCardController(selectedCategory, value);
                             },
                             decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                              contentPadding:
+                                  const EdgeInsets.fromLTRB(0, 15, 0, 0),
                               hintText: 'Search Location',
                               prefixIcon: const Padding(
                                 padding: EdgeInsets.only(right: 20, top: 5.5),
@@ -392,9 +393,9 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                     ),
                     const Divider(),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      // if the actionchip is triggered, the listingCardFilterByCategory will be called
-                      // else, the listingCardController will be called
+                        padding: const EdgeInsets.all(8.0),
+                        // if the actionchip is triggered, the listingCardFilterByCategory will be called
+                        // else, the listingCardController will be called
 
                       child: selectedCategory != widget.category
                         ? listingCardFilterByCategory(
@@ -405,9 +406,9 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                           )
                         : listingCardController(selectedCategory, finalFilteredSearch)
 
-                      // child: listingCardController(
-                      //     selectedCategory, finalFilteredSearch),
-                    ),
+                        // child: listingCardController(
+                        //     selectedCategory, finalFilteredSearch),
+                        ),
                   ],
                 )),
     );
@@ -517,7 +518,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
           content: SizedBox(
             height: MediaQuery.of(context).size.height / 5,
             width: MediaQuery.of(context).size.width * 0.8,
-            child: MapWidget(address: planSearch),
+            child: MapWidget(address: planSearch, radius: true),
           ),
           actions: [
             TextButton(
@@ -638,17 +639,18 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
                                   final filterCategory = filterCategoryFuture;
                                   // print the data of the filterCategoryListings
                                   final query = FirebaseFirestore.instance
-                                    .collectionGroup(
-                                        'bookings'); // Perform collection group query for 'bookings'
-                                    final bookings = await ref
-                                        .watch(getBookingsByPropertiesProvider((query)).future);
+                                      .collectionGroup(
+                                          'bookings'); // Perform collection group query for 'bookings'
+                                  final bookings = await ref.watch(
+                                      getBookingsByPropertiesProvider((query))
+                                          .future);
 
                                    
                                     
                                     filterCategoryBookings = bookings;
                                   
                                   // final filterBookings = await ref.watch(getAllBookingsProvider);
-                                  this.setState(()  {
+                                  this.setState(() {
                                     selectedCategory = category;
                                     // use the filterCategory then assign it to filterCategoryListings. use the selectedCategory to filter the listings
                                     filterCategoryListings = filterCategory.where((element) => element.category == selectedCategory).toList();
@@ -782,6 +784,7 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
         return const Text("An Error Occurred!");
     }
   }
+
   // remove excess spaces from the search filter
   String cleanAndNormalizeSearchFilter(String searchFilter) {
     // Remove excess spaces
@@ -808,7 +811,9 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
       final removeSpaceFilterSearch = cleanAndNormalizeSearchFilter(searchFilter);
 
       listingResults = widget.listings!
-          .where((listing) => listing.address.toLowerCase().contains(removeSpaceFilterSearch.toLowerCase()))
+          .where((listing) => listing.address
+              .toLowerCase()
+              .contains(removeSpaceFilterSearch.toLowerCase()))
           .toList();
       // debugPrint('this is the new listing results with search filter on: $listingResults, search filter: $searchFilter');
 
@@ -890,7 +895,6 @@ class _PlanSearchListingState extends ConsumerState<PlanSearchListing> {
 
       case "Food":
         return FoodCard(category: category, foodListings: listingResults);
-
 
       case "Entertainment":
         return EntertainmentCard(

@@ -8,12 +8,15 @@ import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/location/map_repository.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
+import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 Future<dynamic> emergencyProcess(
     WidgetRef ref, BuildContext context, String category,
-    {ListingBookings? booking, DepartureModel? departureDetails}) {
+    {ListingBookings? booking,
+    DepartureModel? departureDetails,
+    List<ListingBookings>? bookings}) {
   return showDialog(
     context: context,
     builder: (context) {
@@ -33,12 +36,24 @@ Future<dynamic> emergencyProcess(
           'There is no driver available': {
             'action': () {},
             'subtitle':
-                'Search through assigned drivers within your cooperative to find one capable and available',
+                'Search through registered drivers within your cooperative to find one capable and available',
           },
           'Vehicle broke down during transit': {
             'action': () => onTapFindVehicle(ref, context, departureDetails),
             'subtitle':
                 'This will search for an available rescue vehicle within the same cooperative.',
+          },
+        },
+        'Entertainment': {
+          // 'Assigned tour guide is no longer available': {
+          //   'action': () {},
+          //   'subtitle':
+          //       'Search through registered tour guides within your cooperative to find one capable and available',
+          // },
+          "Uncontrollable circumstances made the service unavailable": {
+            'action': () => onTapRefundGuests(ref, context, bookings),
+            'subtitle':
+                'This will prompt guests to either rebook their scheduled date or cancel their booking.',
           },
         }
       };
@@ -104,6 +119,121 @@ Future<dynamic> emergencyProcess(
       });
     },
   );
+}
+
+onTapRefundGuests(
+    WidgetRef ref, BuildContext context, List<ListingBookings>? bookings) {
+  debugPrint("$bookings");
+  final refundDetails = {
+    "Number of Bookings": "${bookings!.length}",
+    "Amount Refundable": "₱${bookings.fold<num>(0, (num sum, booking) {
+      return sum + booking.price;
+    }).toStringAsFixed(2)} PHP",
+  };
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog.fullscreen(
+          child: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            bottomNavigationBar: PreferredSize(
+              preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).height /
+                  30), // Adjust the height as needed
+              child: BottomAppBar(
+                surfaceTintColor: Colors.transparent,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: FilledButton(
+                        onPressed: () {
+                          for (var booking in bookings) {
+                            final updatedBooking = booking.copyWith(
+                                bookingStatus: "Emergency Request");
+                            ref
+                                .read(listingControllerProvider.notifier)
+                                .updateBooking(
+                                    context,
+                                    updatedBooking.listingId,
+                                    updatedBooking,
+                                    "");
+                          }
+                          context.pop();
+                          context.pop();
+                          context.pop();
+                        },
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Adjust the value as needed
+                          ),
+                        ),
+                        child: const Text(
+                          'Confirm Request',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            body: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: const Text(
+                    "Request Customer Cancellation or Re-Booking",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.sizeOf(context).height / 20,
+                ),
+                ...refundDetails.entries.map((entry) {
+                  return Padding(
+                    padding:
+                        const EdgeInsets.only(top: 15.0, left: 15, right: 15),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              entry.key.toString(),
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                            Text(
+                              entry.value,
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 15),
+                          height: 1,
+                          width: double.infinity,
+                          color: Colors.grey[200],
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      });
 }
 
 onTapFindVehicle(
@@ -197,7 +327,8 @@ onTapFindVehicle(
                                       width: MediaQuery.sizeOf(context).width,
                                       child: MapWidget(
                                           address: placemarks.first.street
-                                              .toString()),
+                                              .toString(),
+                                          radius: true),
                                     ),
                                     filteredVehicles.isNotEmpty
                                         ? ListView.builder(
@@ -359,7 +490,6 @@ Future<dynamic> onTapFindRoomReplacement(
                 final bookings = await ref
                     .watch(getBookingsByPropertiesProvider((query)).future);
 
-
                 Query secondQuery = FirebaseFirestore.instance
                     .collectionGroup('availableRooms')
                     .where('listingId', isEqualTo: booking.listingId);
@@ -386,15 +516,15 @@ Future<dynamic> onTapFindRoomReplacement(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 15.0),
                                 child: RoomCard(
-                                    category: booking.category,
-                                    bookings: bookings,
-                                    customerBooking: booking,
-                                    reason: 'emergency',
-                                    guests: booking.guests,
-                                    startDate: booking.startDate,
-                                    endDate: booking.endDate,
-                                    query: secondQuery,
-                                    ),
+                                  category: booking.category,
+                                  bookings: bookings,
+                                  customerBooking: booking,
+                                  reason: 'emergency',
+                                  guests: booking.guests,
+                                  startDate: booking.startDate,
+                                  endDate: booking.endDate,
+                                  query: secondQuery,
+                                ),
                               ),
                             ),
                           ));

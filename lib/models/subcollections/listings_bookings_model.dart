@@ -34,6 +34,8 @@ class ListingBookings with _$ListingBookings {
     String? paymentStatus, //Partially Paid, Fully Paid, Cancelled
     required num price,
     String? roomId,
+    String? tourGuideName,
+    String? tourGuideId,
     num? vehicleNo,
     String? vehicleUid,
     String? roomUid,
@@ -41,7 +43,7 @@ class ListingBookings with _$ListingBookings {
     String? selectedTime,
     @TimestampSerializer() DateTime? startDate,
     required String
-        bookingStatus, //[Reserved, Cancelled, Completed, Refunded, Maintenance
+        bookingStatus, //[Reserved, Cancelled, Completed, Refunded, Maintenance, Emergency Request
     num? totalPrice,
     required String tripUid,
     required String tripName,

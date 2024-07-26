@@ -8,7 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapWidget extends StatefulWidget {
   final String address;
-  const MapWidget({super.key, required this.address});
+  final bool? radius;
+  const MapWidget({super.key, required this.address, this.radius});
 
   @override
   State<MapWidget> createState() => MapWidgetState();
@@ -43,7 +44,9 @@ class MapWidgetState extends State<MapWidget> {
           return Text('Error: ${snapshot.error}');
         } else {
           return ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: widget.radius == true
+                ? BorderRadius.circular(20)
+                : BorderRadius.circular(0),
             child: GoogleMap(
               zoomControlsEnabled: false,
               gestureRecognizers: {

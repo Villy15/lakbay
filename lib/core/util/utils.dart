@@ -90,6 +90,19 @@ String formatDateMMDDYYYY(DateTime date) {
   return '$month $day, $year';
 }
 
+String dayOfTheWeek(int day) {
+  List<String> days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+  return days[day];
+}
+
 String capitalize(String text) {
   return text[0].toUpperCase() + text.substring(1);
 }

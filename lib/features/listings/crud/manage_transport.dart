@@ -60,7 +60,10 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
       width: 100.0,
       child: Tab(
         // icon: Icon(Icons.meeting_room_outlined),
-        child: Text('Departures & Vehicles'),
+        child: Text(
+          'Departures & Vehicles',
+          textAlign: TextAlign.center,
+        ),
       ),
     ),
   ];

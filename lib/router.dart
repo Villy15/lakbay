@@ -64,6 +64,7 @@ import 'package:lakbay/features/listings/crud/customer_food_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_touring.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/departure_details.dart';
+import 'package:lakbay/features/listings/entertainment_details.dart';
 import 'package:lakbay/features/listings/transportation_booking_details.dart';
 import 'package:lakbay/features/market/market_page.dart';
 import 'package:lakbay/features/notifications/notifications_page.dart';
@@ -556,12 +557,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               }),
 
               // My Coop Page
-              buildSubRoute('/my_coop/:coopId',
-                  (context, pathParameters, extra) {
-                return MyCoopPage(coopId: pathParameters['coopId']!);
-
-              }, 
-              
+              buildSubRoute(
+                '/my_coop/:coopId',
+                (context, pathParameters, extra) {
+                  return MyCoopPage(coopId: pathParameters['coopId']!);
+                },
               ),
 
               // * LISTINGS VIEW
@@ -669,6 +669,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                           );
                         },
                         name: 'departure_details',
+                      ),
+                      buildSubRoute(
+                        'entertainment_details',
+                        (context, pathParameters, extra) {
+                          final Map<String, dynamic> bookingDetails =
+                              extra as Map<String, dynamic>;
+                          final List<ListingBookings> bookings =
+                              bookingDetails["bookings"]
+                                  as List<ListingBookings>;
+                          final ListingModel listing =
+                              bookingDetails['listing'] as ListingModel;
+
+                          return EntertainmentDetails(
+                            bookings: bookings,
+                            listing: listing,
+                          );
+                        },
+                        name: 'entertainment_details',
                       ),
                     ],
                   )
