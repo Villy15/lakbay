@@ -7,9 +7,11 @@ import 'package:go_router/go_router.dart';
 import 'package:lakbay/features/common/widgets/map.dart';
 import 'package:lakbay/features/listings/listing_controller.dart';
 import 'package:lakbay/features/location/map_repository.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/features/trips/plan/components/room_card.dart';
 import 'package:lakbay/features/trips/plan/plan_controller.dart';
 import 'package:lakbay/models/listing_model.dart';
+import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 
 Future<dynamic> emergencyProcess(
@@ -262,7 +264,7 @@ onTapRefundGuests(
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: FilledButton(
-                        onPressed: () {
+                        onPressed: () async {
                           for (var booking in bookings) {
                             final updatedBooking = booking.copyWith(
                                 bookingStatus: "Emergency Request");
@@ -273,10 +275,31 @@ onTapRefundGuests(
                                     updatedBooking.listingId,
                                     updatedBooking,
                                     "");
+                            // send a notif to customers that are part of the booking
+                            final cancelledBookingNotif = NotificationsModel(
+                              title: 'Emergency Request',
+                              message: 'There was an emergency request for your booking. Please rebook or cancel your booking.',
+                              ownerId: booking.customerId,
+                              bookingId: booking.id,
+                              listingId: booking.listingId,
+                              type: 'listing',
+                              createdAt: DateTime.now(),
+                              isRead: false
+                            );
+
+                            await ref.read(notificationControllerProvider.notifier).addNotification(cancelledBookingNotif, context);
                           }
+
+
+
+                          // ignore: use_build_context_synchronously
                           context.pop();
+                          // ignore: use_build_context_synchronously
                           context.pop();
+                          // ignore: use_build_context_synchronously
                           context.pop();
+
+                          
                         },
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12.0),

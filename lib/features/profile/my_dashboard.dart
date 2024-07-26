@@ -101,6 +101,7 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
                       rowSummaryCards(filteredSales),
                       lineChart(filteredSales),
                       pieChart(filteredSales),
+                      pieChartByCategory(filteredSales),
                       const SizedBox(height: 16),
                       Text('Transactions',
                           style: Theme.of(context).textTheme.titleLarge),
@@ -212,7 +213,7 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
 
 // Create a SaleData object for each group of sales.
     final List<SaleData> data = groupedSales.entries.map((entry) {
-      return SaleData(entry.key, entry.value);
+      return SaleData(entry.key, entry.value, '');
     }).toList();
 
 // Create a pie series.
@@ -250,6 +251,66 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
               ...createSeries,
             ],
           )),
+    );
+  }
+
+  Card pieChartByCategory(List<SaleModel> sales) {
+    // Define the categories.
+    debugPrint('Sales: $sales');
+
+    // Group the sales data by category.
+    final Map<String, num> groupedSales = {};
+    for (var sale in sales) {
+      groupedSales[sale.category] =
+          (groupedSales[sale.category] ?? 0) + sale.saleAmount;
+    }
+
+    // Calculate the total sales amount.
+    final num totalSales =
+        groupedSales.values.fold(0, (sum, amount) => sum + amount);
+
+    // Create a SaleData object for each category with the percentage.
+    final List<SaleData> data = groupedSales.entries.map((entry) {
+      final percentage = (entry.value / totalSales) * 100;
+      // Assuming listingName is not relevant for the pie chart, using category as listingName
+      return SaleData(entry.key, percentage, entry.key);
+    }).toList();
+
+    // Create a pie series.
+    final List<PieSeries<SaleData, String>> createSeries = [
+      PieSeries<SaleData, String>(
+        dataSource: data,
+        xValueMapper: (SaleData data, _) => data.category,
+        yValueMapper: (SaleData data, _) => data.saleAmount,
+        dataLabelMapper: (SaleData data, _) =>
+            '${data.category}: ${data.saleAmount.toStringAsFixed(2)}%',
+        dataLabelSettings: const DataLabelSettings(
+          isVisible: true,
+          labelPosition: ChartDataLabelPosition.outside,
+          connectorLineSettings:
+              ConnectorLineSettings(type: ConnectorType.line),
+          textStyle: TextStyle(fontSize: 12),
+          labelIntersectAction: LabelIntersectAction.shift,
+        ),
+      ),
+    ];
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SfCircularChart(
+          title: const ChartTitle(
+              text: 'Sales Participation by Category',
+              textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          legend: const Legend(
+              isVisible: true,
+              overflowMode: LegendItemOverflowMode.wrap,
+              position: LegendPosition.bottom),
+          series: [
+            ...createSeries,
+          ],
+        ),
+      ),
     );
   }
 
@@ -756,6 +817,7 @@ class _MyDashBoardState extends ConsumerState<MyDashBoard> {
 class SaleData {
   final String listingName;
   final num saleAmount;
+  final String category;
 
-  SaleData(this.listingName, this.saleAmount);
+  SaleData(this.listingName, this.saleAmount, this.category);
 }

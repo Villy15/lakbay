@@ -64,6 +64,7 @@ import 'package:lakbay/features/listings/crud/customer_food_receipt.dart';
 import 'package:lakbay/features/listings/crud/customer_touring.dart';
 import 'package:lakbay/features/listings/crud/customer_transport_receipt.dart';
 import 'package:lakbay/features/listings/departure_details.dart';
+import 'package:lakbay/features/listings/entertainment_booking_details.dart';
 import 'package:lakbay/features/listings/entertainment_details.dart';
 import 'package:lakbay/features/listings/transportation_booking_details.dart';
 import 'package:lakbay/features/market/market_page.dart';
@@ -644,6 +645,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                               return CustomerTouring(
                                 listing: listing,
                               );
+                            case 'entertainment': 
+                              return EntertainmentBookingDetails(booking: booking, listing: listing);
                             default:
                               return AccommodationBookingsDetails(
                                 booking: booking,

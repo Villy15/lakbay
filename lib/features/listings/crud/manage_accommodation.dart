@@ -444,7 +444,7 @@ class _ManageAccommodationState extends ConsumerState<ManageAccommodation> {
   }
 
   Widget bookings() {
-    return ref.watch(getAllBookingsSortedProvider(widget.listing.uid!)).when(
+    return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
           data: (List<ListingBookings> bookings) {
             // Get all listings by the cooperative
             return ListView.builder(

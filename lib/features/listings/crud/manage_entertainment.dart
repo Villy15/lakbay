@@ -23,6 +23,7 @@ import 'package:lakbay/features/trips/plan/plan_providers.dart';
 import 'package:lakbay/models/listing_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
+import 'package:lakbay/payments/payment_with_paymaya.dart';
 
 class ManageEntertainment extends ConsumerStatefulWidget {
   final ListingModel listing;
@@ -397,46 +398,37 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                         Padding(
                             padding: const EdgeInsets.only(
                                 bottom: 10, left: 10, right: 10),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: FilledButton(
-                                      onPressed: () async {
-                                        ref
-                                            .read(listingControllerProvider
-                                                .notifier)
-                                            .deleteBooking(
-                                                bookings[index], context);
+                            child: SizedBox(
+                              width: 150,
+                              child: FilledButton(
+                                onPressed: () async {
+                                  if (bookings[index].bookingStatus == 'Request Refund') {
+                                    final cancellationRate = widget.listing.cancellationRate! * bookings[index].amountPaid!;
+                                    final refundedPayment = bookings[index].amountPaid! - cancellationRate;
+                                    debugPrint('this is the amount that will be refunded: $refundedPayment');
+                                    await refundWithPaymaya(bookings[index], widget.listing, ref, context, 'Refund', refundedPayment);
+                                  }
+                                  else {
+                                    context.push(
+                                      '/market/${bookings[index].category.toLowerCase()}/booking_details',
+                                      extra: {
+                                        'booking': bookings[index],
+                                        'listing': widget.listing
                                       },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              4.0), // Adjust the radius as needed
-                                        ),
-                                      ),
-                                      child: const Text('Delete')),
+                                    );
+                                  }
+                              
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        4.0), // Adjust the radius as needed
+                                  ),
                                 ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: FilledButton(
-                                      onPressed: () {
-                                        context.push(
-                                          '/market/${bookings[index].category.toLowerCase()}/booking_details',
-                                          extra: {
-                                            'booking': bookings[index],
-                                            'listing': widget.listing
-                                          },
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              4.0), // Adjust the radius as needed
-                                        ),
-                                      ),
-                                      child: const Text('Booking Details')),
+                                child: Text(
+                                  bookings[index].bookingStatus == 'Request Refund' ? 'Refund' : 'Booking Details'
                                 ),
-                              ],
+                              ),
                             ))
                       ]));
                 }));
@@ -535,135 +527,110 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
         bottomAppBar = null;
       });
     }
-    return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
-        data: (List<ListingBookings> bookings) {
-          Map<DateTime, List<ListingBookings>> groupedBookings = {};
-
-          for (var booking in bookings) {
-            var date = booking.startDate;
-            if (!groupedBookings.containsKey(date)) {
-              groupedBookings[date!] = [];
-            }
-            groupedBookings[date]!.add(booking);
+    
+  
+  return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
+    data: (List<ListingBookings> bookings) {
+      if (bookings.isEmpty) {
+        return const Center(child: Text('No Bookings'));
+      } else {
+        // Group bookings by date
+        Map<String, List<ListingBookings>> groupedBookings = {};
+        for (var booking in bookings) {
+          String formattedDate = DateFormat('MMMM dd').format(booking.startDate!);
+          if (!groupedBookings.containsKey(formattedDate)) {
+            groupedBookings[formattedDate] = [];
           }
-          if (bookings.isEmpty) {
-            return const Center(child: Text('No Scheduled Bookings'));
-          } else {
-            return ListView.builder(
-              shrinkWrap: true,
-              itemCount: groupedBookings.length,
-              itemBuilder: ((context, index) {
-                // Convert the map entries to a list
-                final groupedBookingEntry =
-                    groupedBookings.entries.toList()[index];
-                final DateTime startDate = groupedBookingEntry.key;
-                final List<ListingBookings> bookings =
-                    groupedBookingEntry.value;
+          groupedBookings[formattedDate]!.add(booking);
+        }
 
-                String formattedStartDate =
-                    DateFormat('MMMM dd').format(startDate);
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: groupedBookings.length,
+          itemBuilder: (context, index) {
+            String date = groupedBookings.keys.elementAt(index);
+            List<ListingBookings> dailyBookings = groupedBookings[date]!;
 
-                return Card(
-                  elevation: 1.0,
-                  margin: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 40, right: 10, top: 10, bottom: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+            // Assuming all bookings in a group have the same start and end times
+            String formattedStartTime = TimeOfDay.fromDateTime(dailyBookings.first.startDate!).format(context);
+            String formattedEndTime = TimeOfDay.fromDateTime(dailyBookings.first.endDate!).format(context);
+
+            // Sum the passenger count for the group
+            // ignore: avoid_types_as_parameter_names
+            num totalPassengers = dailyBookings.fold(0, (sum, booking) => sum + booking.guests);
+
+            return Card(
+              elevation: 1.0,
+              margin: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40, right: 10, top: 10, bottom: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          date,
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              formattedStartDate,
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                              "Departure: $formattedStartTime | ",
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black),
                             ),
-                            ...bookings.map((booking) {
-                              num passengers = booking.guests;
-                              String formattedStartTime =
-                                  TimeOfDay.fromDateTime(booking.startDate!)
-                                      .format(context);
-                              // Assuming you have departure and arrival times in your Booking class
-                              String formattedEndTime =
-                                  TimeOfDay.fromDateTime(booking.endDate!)
-                                      .format(context);
-
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Start Time: $formattedStartTime | ",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      Text(
-                                        "End Time: $formattedEndTime",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    "Guests: $passengers",
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w300,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }),
+                            Text(
+                              "Arrival: $formattedEndTime",
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black),
+                            ),
                           ],
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10, bottom: 10),
-                        child: FilledButton(
-                          onPressed: () {
-                            context.push(
-                              '/market/entertainment/entertainment_details',
-                              extra: {
-                                'listing': widget.listing,
-                                'bookings': bookings,
-                              },
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  4.0), // Adjust the radius as needed
-                            ),
-                          ),
-                          child: Text(
-                            "${widget.listing.type} Details",
-                            textAlign: TextAlign.center,
-                          ),
+                        Text(
+                          "Total Passengers: $totalPassengers",
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                );
-              }),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                    child: FilledButton(
+                      onPressed: () {
+                        context.push(
+                          '/market/entertainment/entertainment_details',
+                          extra: {
+                            'bookings': dailyBookings,
+                            'listing': widget.listing
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4.0), // Adjust the radius as needed
+                        )
+                      ),
+                      child: Text(
+                        '${widget.listing.type} Details',
+                        textAlign: TextAlign.center
+                      ) 
+                    )
+                  ),
+                ],
+              ),
             );
-          }
-        },
-        error: ((error, stackTrace) => Scaffold(
-            body: ErrorText(
-                error: error.toString(), stackTrace: stackTrace.toString()))),
-        loading: () => const Scaffold(body: Loader()));
+          },
+        );
+      }
+    },
+    error: (error, stackTrace) => Scaffold(
+      body: ErrorText(error: error.toString(), stackTrace: stackTrace.toString()),
+    ),
+    loading: () => const Scaffold(body: Loader()),
+  );
+
+
   }
 
   Widget scheduling() {

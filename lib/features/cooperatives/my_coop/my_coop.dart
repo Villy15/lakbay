@@ -798,48 +798,82 @@ class _MyCoopPageState extends ConsumerState<MyCoopPage> {
   }
 
   Future<dynamic> onReject(
-      BuildContext context, JoinCoopParams application, String coopName) {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Reject'),
-        content: const Text('Do you want to reject this application?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () async {
+    BuildContext context, JoinCoopParams application, String coopName) {
+  return showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Reject'),
+      content: const Text('Do you want to reject this application?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('No'),
+        ),
+        TextButton(
+          onPressed: () async {
+            // Show a dialog to enter the reason for rejection
+            String? reason = await showDialog<String>(
+              context: context,
+              builder: (context) {
+                String input = '';
+                return AlertDialog(
+                  title: const Text('Enter Reason'),
+                  content: TextField(
+                    onChanged: (value) {
+                      input = value;
+                    },
+                    decoration: const InputDecoration(
+                      hintText: 'Reason for rejection',
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, null),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, input),
+                      child: const Text('Submit'),
+                    ),
+                  ],
+                );
+              },
+            );
+
+            if (reason != null && reason.isNotEmpty) {
               JoinCoopParams updatedApplication = application;
               NotificationsModel rejectCoopNotif = NotificationsModel(
-                  title: 'Application Rejected!',
-                  message:
-                      'Your application to join $coopName has been rejected!',
-                  ownerId: application.userUid,
-                  coopId: widget.coopId,
-                  isToAllMembers: false,
-                  type: 'coop',
-                  createdAt: DateTime.now(),
-                  isRead: false);
+                title: 'Application Rejected!',
+                message: "Your application to join $coopName has been rejected! The reason:\n$reason.",
+                ownerId: application.userUid,
+                coopId: widget.coopId,
+                isToAllMembers: false,
+                type: 'coop',
+                createdAt: DateTime.now(),
+                isRead: false,
+              );
               updatedApplication =
                   updatedApplication.copyWith(status: "rejected");
               ref
                   .read(coopsControllerProvider.notifier)
+                  // ignore: use_build_context_synchronously
                   .editApplication(updatedApplication, context);
 
               ref
                   .read(notificationControllerProvider.notifier)
+                  // ignore: use_build_context_synchronously
                   .addNotification(rejectCoopNotif, context);
 
+              // ignore: use_build_context_synchronously
               context.pop();
-            },
-            child: const Text('Yes'),
-          ),
-        ],
-      ),
-    );
-  }
+            }
+          },
+          child: const Text('Yes'),
+        ),
+      ],
+    ),
+  );
+}
 
   // Build Events
   Widget buildListViewEvents(AsyncValue<List<EventModel>> events) {

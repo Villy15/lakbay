@@ -164,7 +164,10 @@ class ListingRepository {
 
 // read bookings
   Stream<List<ListingBookings>> readBookings(listingId) {
-    return bookings(listingId).snapshots().map((snapshot) {
+    return bookings(listingId)
+        .orderBy('startDate', descending: true)
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs.map((doc) {
         return ListingBookings.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
@@ -480,7 +483,7 @@ class ListingRepository {
 
 // Read room by properties
   Stream<List<DepartureModel>> readDeparturesByPoperties(Query query) {
-    return query.snapshots().map((querySnapshot) {
+    return query.orderBy('departure', descending: true).snapshots().map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
         return DepartureModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
