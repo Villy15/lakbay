@@ -191,6 +191,32 @@ class _WikiPageState extends ConsumerState<WikiPage> {
               : const Text('Wiki'),
       actions: [
         // Switch to All Cooperatives Wiki
+        IconButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Help'),
+                  content: const Text(
+                      'Here you can view the wikis created by your cooperatives and all cooperatives in the system.\n\n'
+                      '1. Add a wiki on the bottom right button\n'
+                      '2. Choose All coops on the upper right to view all cooperative wiki posts\n'
+                      '3. Search coop on the search button on the upper right\n'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Close'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          icon: const Icon(Icons.help_outline),
+        ),
         _isSearching
             ? const SizedBox()
             : TextButton(

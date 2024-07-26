@@ -312,11 +312,10 @@ class _TodayPageState extends ConsumerState<TodayPage> {
     }
 
     if (user.isCoopView == false || user.isCoopView == null) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) { 
-          debugPrint('I landed at trips!');
-          return context.go('/trips');
-        });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        debugPrint('I landed at trips!');
+        return context.go('/trips');
+      });
     }
 
     return memberScaffold(user, context);
@@ -348,6 +347,8 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+
+              // Add instructions
 
               const SizedBox(height: 16),
 
@@ -572,6 +573,19 @@ class _TodayPageState extends ConsumerState<TodayPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+
+              // Text instructuions
+              const SizedBox(height: 8),
+
+              Text("These are your summaries during the week",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onBackground
+                        .withOpacity(0.6),
+                  )),
+
               const SizedBox(height: 8),
               Row(
                 // Center
