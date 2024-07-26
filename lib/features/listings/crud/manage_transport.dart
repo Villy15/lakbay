@@ -140,116 +140,113 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                 ))));
   }
 
-  SingleChildScrollView details() {
-    List<String?> imageUrls =
-        widget.listing.images!.map((listingImage) => listingImage.url).toList();
 
+  SingleChildScrollView details() {
+    final List<String?> imageUrls =
+        widget.listing.images!.map((listingImage) => listingImage.url).toList();
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(
-          foregroundDecoration:
-              BoxDecoration(color: Colors.black.withOpacity(0.0)),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
-            width: MediaQuery.of(context).size.width,
-            child: TwoMarkerMapWidget(
-              pickup: widget.listing.pickUp!,
-              destination: widget.listing.destination!,
-            ),
-          )),
+      SizedBox(
+        width: double.infinity,
+        height: MediaQuery.sizeOf(context).height * .4,
+        child: TwoMarkerMapWidget(
+            pickup: widget.listing.pickUp!,
+            destination: widget.listing.destination!),
+      ),
       Padding(
-        padding: const EdgeInsets.only(left: 10.0),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 14.0),
-            child: DisplayText(
-                text: widget.listing.title,
-                lines: 2,
-                style:
-                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          ),
-          DisplayText(
-              text:
-                  'Location: ${widget.listing.province}, ${widget.listing.city}',
-              lines: 4,
-              style: TextStyle(
-                  fontSize: Theme.of(context).textTheme.labelLarge?.fontSize)),
-          DisplayText(
-            text: "${widget.listing.category} · ${widget.listing.type}",
-            lines: 1,
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment
+                    .start, // Align elements to the top by default
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Pick-Up',
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).colorScheme.primary),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: MediaQuery.sizeOf(context).width / 2.5,
+                          child: Text(
+                            widget.listing.pickUp!,
+                            style: const TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w300),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Destination',
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).colorScheme.primary),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: MediaQuery.sizeOf(context).width / 2.5,
+                          child: Text(
+                            widget.listing.destination!,
+                            style: const TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w300),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const Divider(),
-          DisplayText(
-            text: 'Description',
-            lines: 1,
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
-            ),
-          ),
-          if (widget.listing.description.length > 40) ...[
+            _displaySubHeader("Description"),
             TextInBottomSheet(
-                "About this space", widget.listing.description, context)
-          ] else ...[
-            DisplayText(
-              text: widget.listing.description,
-              lines: 5,
-              style: TextStyle(
-                fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
+                widget.listing.title, widget.listing.description, context),
+            _displaySubHeader("Our Vehicles"),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ImageSlider(
+                  images: imageUrls,
+                  height: MediaQuery.sizeOf(context).height / 5,
+                  width: MediaQuery.sizeOf(context).width / 2,
+                  radius: BorderRadius.circular(10)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: _displaySubHeader("Operating Days"),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: getWorkingDays(
+                        widget.listing.availableTransport!.workingDays!),
+                  ),
+                ],
               ),
             )
           ],
-        ]),
+        ),
       ),
-      const SizedBox(height: 10),
-      const Divider(),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  'Working Hours',
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
-                  ),
-                ),
-              ),
-              Text(
-                '${widget.listing.availableTransport!.startTime!.format(context)} - ${widget.listing.availableTransport!.endTime!.format(context)}',
-                style: const TextStyle(fontSize: 12),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: Text(
-                  'Available Days',
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: Text(
-                  getWorkingDays(
-                      widget.listing.availableTransport!.workingDays!),
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ),
-            ],
-          ),
-        ]),
-      ),
-      const Divider(),
       ref
           .watch(
               getCooperativeProvider(widget.listing.cooperative.cooperativeId))
@@ -269,7 +266,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
                 trailing: IconButton(
                   onPressed: () {
                     // Show snackbar with reviews
-                    showSnackBar(context, 'Contact owner');
+                    // createRoom(context, widget.listing.publisherId);
                   },
                   icon: const Icon(Icons.message_rounded),
                 ),
@@ -283,7 +280,100 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
               subtitle: Text('Something went wrong'),
             ),
           ),
+      const Divider(),
+      const SizedBox(height: 5),
     ]));
+  }
+
+  Text _displaySubHeader(String subHeader) {
+    return Text(
+      subHeader,
+      style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: Theme.of(context).colorScheme.primary
+          // Add other styling as needed
+          ),
+    );
+  }
+
+  Widget getWorkingDays(List<bool> workingDays) {
+    const daysOfWeek = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+    List<String> result = [];
+    for (int i = 0; i < workingDays.length; i++) {
+      if (workingDays[i] == true) {
+        result.add(daysOfWeek[i]);
+      }
+    }
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: result.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        mainAxisExtent: 120,
+      ),
+      itemBuilder: (context, index) {
+        String day = result[index];
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  day,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: GridView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 4,
+                      mainAxisSpacing: 4,
+                      childAspectRatio: 3,
+                    ),
+                    itemCount: widget.listing.departureTimes!.length,
+                    itemBuilder: (context, timeIndex) {
+                      var time = widget.listing.departureTimes![timeIndex];
+                      return Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          time.format(context),
+                          style: const TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget bookings() {
@@ -437,35 +527,6 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
     return newStart.isBefore(existingEnd) && newEnd.isAfter(existingStart);
   }
 
-  String getWorkingDays(List<bool> workingDays) {
-    const daysOfWeek = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday'
-    ];
-    List<String> result = [];
-    for (int i = 0; i < workingDays.length; i++) {
-      if (workingDays[i]) {
-        int start = i;
-        // Find the end of this sequence of days
-        while (i + 1 < workingDays.length && workingDays[i + 1]) {
-          i++;
-        }
-        // If start and i are the same, it means only one day is available
-        if (start == i) {
-          result.add(daysOfWeek[start]);
-        } else {
-          // Else, we have a range of days
-          result.add('${daysOfWeek[start]}-${daysOfWeek[i]}');
-        }
-      }
-    }
-    return result.join(', ');
-  }
 
   List<DateTime> getAllDatesFromBookings(List<ListingBookings> bookings) {
     List<DateTime> allDates = [];
