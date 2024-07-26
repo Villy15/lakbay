@@ -750,9 +750,6 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                             ref
                                 .read(listingControllerProvider.notifier)
                                 .updateListing(context, updatedListing);
-                            ref
-                                .read(listingControllerProvider.notifier)
-                                .updateListing(context, updatedListing);
                           }),
                       title: Text(
                         day,

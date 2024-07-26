@@ -494,7 +494,7 @@ class ListingController extends StateNotifier<bool> {
       result.fold(
         (l) => showSnackBar(context, l.message),
         (r) {
-          showSnackBar(context, 'Listing Updated');
+          // showSnackBar(context, 'Listing Updated');
         },
       );
     });
