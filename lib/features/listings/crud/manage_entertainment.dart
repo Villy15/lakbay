@@ -71,7 +71,7 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
   BottomAppBar? bottomAppBar = const BottomAppBar();
   int currentTab = 0;
   @override
-  void initState() {
+  void initState() async {
     super.initState();
 
     Future.delayed(Duration.zero, () {
@@ -116,34 +116,43 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                     tabs: tabs,
                   ),
                 ),
-                bottomNavigationBar: currentTab == 2
-                    ? BottomAppBar(
-                        child: FilledButton(
-                          onPressed: () {},
-                          style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  8.0), // Adjust the value as needed
-                            ),
-                          ),
-                          child: const Text('Edit Listing'),
-                        ),
-                      )
-                    : null,
-                body: TabBarView(
-                  children: [
-                    scheduledBookings(),
-                    bookings(),
-                    details(),
-                    scheduling(),
-                  ],
-                ))));
+                // bottomNavigationBar: currentTab == 2
+                //     ? BottomAppBar(
+                //         child: FilledButton(
+                //           onPressed: () {},
+                //           style: FilledButton.styleFrom(
+                //             padding: const EdgeInsets.symmetric(vertical: 12.0),
+                //             shape: RoundedRectangleBorder(
+                //               borderRadius: BorderRadius.circular(
+                //                   8.0), // Adjust the value as needed
+                //             ),
+                //           ),
+                //           child: const Text('Edit Listing'),
+                //         ),
+                //       )
+                //     : null,
+                body: ref.watch(getListingProvider(widget.listing.uid!)).when(
+                      data: (ListingModel listing) {
+                        return TabBarView(
+                          children: [
+                            scheduledBookings(listing),
+                            bookings(listing),
+                            details(listing),
+                            scheduling(listing),
+                          ],
+                        );
+                      },
+                      error: (error, stackTrace) => ErrorText(
+                        error: error.toString(),
+                        stackTrace: '',
+                      ),
+                      loading: () => const Loader(),
+                    ))));
   }
 
-  Widget details() {
+  Widget details(ListingModel listing) {
     final List<String?> imageUrls =
-        widget.listing.images!.map((listingImage) => listingImage.url).toList();
+        listing.images!.map((listingImage) => listingImage.url).toList();
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       ImageSlider(
@@ -165,8 +174,7 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
               ),
             ),
             _displaySubHeader("Description"),
-            TextInBottomSheet(
-                widget.listing.title, widget.listing.description, context),
+            TextInBottomSheet(listing.title, listing.description, context),
             _displaySubHeader('Getting There'),
             // Getting There Address
             Padding(
@@ -174,12 +182,12 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
               child: SizedBox(
                 height: MediaQuery.sizeOf(context).height / 5,
                 child: MapWidget(
-                  address: widget.listing.address,
+                  address: listing.address,
                   radius: true,
                 ),
               ),
             ),
-            if (widget.listing.entertainmentScheduling!.type == "dayScheduling")
+            if (listing.entertainmentScheduling!.type == "dayScheduling")
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -191,8 +199,9 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
-                      child: getWorkingDays(widget
-                          .listing.entertainmentScheduling!.availability!),
+                      child: getWorkingDays(
+                          listing.entertainmentScheduling!.availability!,
+                          listing),
                     ),
                   ],
                 ),
@@ -201,8 +210,7 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
         ),
       ),
       ref
-          .watch(
-              getCooperativeProvider(widget.listing.cooperative.cooperativeId))
+          .watch(getCooperativeProvider(listing.cooperative.cooperativeId))
           .maybeWhen(
             data: (coop) {
               return ListTile(
@@ -219,7 +227,7 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                 trailing: IconButton(
                   onPressed: () {
                     // Show snackbar with reviews
-                    // createRoom(context, widget.listing.publisherId);
+                    // createRoom(context, listing.publisherId);
                   },
                   icon: const Icon(Icons.message_rounded),
                 ),
@@ -250,7 +258,7 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
     );
   }
 
-  Widget getWorkingDays(List<AvailableDay> workingDays) {
+  Widget getWorkingDays(List<AvailableDay> workingDays, ListingModel listing) {
     const daysOfWeek = [
       'Monday',
       'Tuesday',
@@ -302,10 +310,10 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                       mainAxisSpacing: 4,
                       childAspectRatio: 3,
                     ),
-                    itemCount: widget.listing.entertainmentScheduling!
+                    itemCount: listing.entertainmentScheduling!
                         .availability![index].availableTimes.length,
                     itemBuilder: (context, timeIndex) {
-                      var time = widget.listing.entertainmentScheduling!
+                      var time = listing.entertainmentScheduling!
                           .availability![index].availableTimes[timeIndex];
                       return Container(
                         alignment: Alignment.center,
@@ -331,8 +339,8 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
     );
   }
 
-  Widget bookings() {
-    return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
+  Widget bookings(ListingModel listing) {
+    return ref.watch(getAllBookingsProvider(listing.uid!)).when(
         data: (List<ListingBookings> bookings) {
           if (bookings.isEmpty) {
             return const Center(child: Text('No Bookings'));
@@ -402,22 +410,32 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                               width: 150,
                               child: FilledButton(
                                 onPressed: () async {
-                                  if (bookings[index].bookingStatus == 'Request Refund') {
-                                    final cancellationRate = widget.listing.cancellationRate! * bookings[index].amountPaid!;
-                                    final refundedPayment = bookings[index].amountPaid! - cancellationRate;
-                                    debugPrint('this is the amount that will be refunded: $refundedPayment');
-                                    await refundWithPaymaya(bookings[index], widget.listing, ref, context, 'Refund', refundedPayment);
-                                  }
-                                  else {
+                                  if (bookings[index].bookingStatus ==
+                                      'Request Refund') {
+                                    final cancellationRate =
+                                        listing.cancellationRate! *
+                                            bookings[index].amountPaid!;
+                                    final refundedPayment =
+                                        bookings[index].amountPaid! -
+                                            cancellationRate;
+                                    debugPrint(
+                                        'this is the amount that will be refunded: $refundedPayment');
+                                    await refundWithPaymaya(
+                                        bookings[index],
+                                        listing,
+                                        ref,
+                                        context,
+                                        'Refund',
+                                        refundedPayment);
+                                  } else {
                                     context.push(
                                       '/market/${bookings[index].category.toLowerCase()}/booking_details',
                                       extra: {
                                         'booking': bookings[index],
-                                        'listing': widget.listing
+                                        'listing': listing
                                       },
                                     );
                                   }
-                              
                                 },
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
@@ -425,9 +443,10 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                                         4.0), // Adjust the radius as needed
                                   ),
                                 ),
-                                child: Text(
-                                  bookings[index].bookingStatus == 'Request Refund' ? 'Refund' : 'Booking Details'
-                                ),
+                                child: Text(bookings[index].bookingStatus ==
+                                        'Request Refund'
+                                    ? 'Refund'
+                                    : 'Booking Details'),
                               ),
                             ))
                       ]));
@@ -521,119 +540,323 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
     return allDateTimeRanges;
   }
 
-  Widget scheduledBookings() {
+  Widget scheduledBookings(ListingModel listing) {
     if (currentTab == 0) {
       setState(() {
         bottomAppBar = null;
       });
     }
-    
-  
-  return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
-    data: (List<ListingBookings> bookings) {
-      if (bookings.isEmpty) {
-        return const Center(child: Text('No Bookings'));
-      } else {
-        // Group bookings by date
-        Map<String, List<ListingBookings>> groupedBookings = {};
-        for (var booking in bookings) {
-          String formattedDate = DateFormat('MMMM dd').format(booking.startDate!);
-          if (!groupedBookings.containsKey(formattedDate)) {
-            groupedBookings[formattedDate] = [];
-          }
-          groupedBookings[formattedDate]!.add(booking);
-        }
 
-        return ListView.builder(
-          shrinkWrap: true,
-          itemCount: groupedBookings.length,
-          itemBuilder: (context, index) {
-            String date = groupedBookings.keys.elementAt(index);
-            List<ListingBookings> dailyBookings = groupedBookings[date]!;
+    return ref.watch(getAllBookingsProvider(listing.uid!)).when(
+          data: (List<ListingBookings> bookings) {
+            if (bookings.isEmpty) {
+              return const Center(child: Text('No Bookings'));
+            } else {
+              // Group bookings by date
+              Map<String, List<ListingBookings>> groupedBookings = {};
+              for (var booking in bookings) {
+                String formattedDate =
+                    DateFormat('MMMM dd').format(booking.startDate!);
+                if (!groupedBookings.containsKey(formattedDate)) {
+                  groupedBookings[formattedDate] = [];
+                }
+                groupedBookings[formattedDate]!.add(booking);
+              }
 
-            // Assuming all bookings in a group have the same start and end times
-            String formattedStartTime = TimeOfDay.fromDateTime(dailyBookings.first.startDate!).format(context);
-            String formattedEndTime = TimeOfDay.fromDateTime(dailyBookings.first.endDate!).format(context);
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: groupedBookings.length,
+                itemBuilder: (context, index) {
+                  String date = groupedBookings.keys.elementAt(index);
+                  List<ListingBookings> dailyBookings = groupedBookings[date]!;
 
-            // Sum the passenger count for the group
-            // ignore: avoid_types_as_parameter_names
-            num totalPassengers = dailyBookings.fold(0, (sum, booking) => sum + booking.guests);
+                  // Assuming all bookings in a group have the same start and end times
+                  String formattedStartTime =
+                      TimeOfDay.fromDateTime(dailyBookings.first.startDate!)
+                          .format(context);
+                  String formattedEndTime =
+                      TimeOfDay.fromDateTime(dailyBookings.first.endDate!)
+                          .format(context);
 
-            return Card(
-              elevation: 1.0,
-              margin: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40, right: 10, top: 10, bottom: 10),
+                  // Sum the passenger count for the group
+                  // ignore: avoid_types_as_parameter_names
+                  num totalPassengers = dailyBookings.fold(
+                      0, (sum, booking) => sum + booking.guests);
+
+                  return Card(
+                    elevation: 1.0,
+                    margin: const EdgeInsets.all(8.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
-                          date,
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 40, right: 10, top: 10, bottom: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                date,
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Departure: $formattedStartTime | ",
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.black),
+                                  ),
+                                  Text(
+                                    "Arrival: $formattedEndTime",
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                "Total Passengers: $totalPassengers",
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.black),
+                              ),
+                            ],
+                          ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Departure: $formattedStartTime | ",
-                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black),
-                            ),
-                            Text(
-                              "Arrival: $formattedEndTime",
-                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          "Total Passengers: $totalPassengers",
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black),
-                        ),
+                        Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: 10, left: 10, right: 10),
+                            child: FilledButton(
+                                onPressed: () {
+                                  context.push(
+                                    '/market/entertainment/entertainment_details',
+                                    extra: {
+                                      'bookings': dailyBookings,
+                                      'listing': listing
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      4.0), // Adjust the radius as needed
+                                )),
+                                child: Text('${listing.type} Details',
+                                    textAlign: TextAlign.center))),
                       ],
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-                    child: FilledButton(
-                      onPressed: () {
-                        context.push(
-                          '/market/entertainment/entertainment_details',
-                          extra: {
-                            'bookings': dailyBookings,
-                            'listing': widget.listing
-                          },
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.0), // Adjust the radius as needed
-                        )
+                  );
+                },
+              );
+            }
+          },
+          error: (error, stackTrace) => Scaffold(
+            body: ErrorText(
+                error: error.toString(), stackTrace: stackTrace.toString()),
+          ),
+          loading: () => const Scaffold(body: Loader()),
+        );
+  }
+
+  Widget scheduling(ListingModel listing) {
+    const daysOfWeek = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: daysOfWeek.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 1,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            mainAxisExtent: 120,
+          ),
+          itemBuilder: (context, index) {
+            String day = daysOfWeek[index];
+            return Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      leading: Checkbox(
+                          value: listing.entertainmentScheduling!
+                              .availability![index].available,
+                          onChanged: (value) {
+                            var updatedAvailability = List<AvailableDay>.from(
+                                listing.entertainmentScheduling!.availability!);
+
+                            updatedAvailability[index] =
+                                updatedAvailability[index]
+                                    .copyWith(available: value!);
+
+                            final updatedScheduling = listing
+                                .entertainmentScheduling!
+                                .copyWith(availability: updatedAvailability);
+                            final updatedListing = listing.copyWith(
+                                entertainmentScheduling: updatedScheduling);
+
+                            ref
+                                .read(listingControllerProvider.notifier)
+                                .updateListing(context, updatedListing);
+                            ref
+                                .read(listingControllerProvider.notifier)
+                                .updateListing(context, updatedListing);
+                          }),
+                      title: Text(
+                        day,
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary),
                       ),
-                      child: Text(
-                        '${widget.listing.type} Details',
-                        textAlign: TextAlign.center
-                      ) 
-                    )
-                  ),
-                ],
+                      trailing: InkWell(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                TextEditingController timeController =
+                                    TextEditingController();
+                                TimeOfDay time =
+                                    const TimeOfDay(hour: 8, minute: 30);
+                                return StatefulBuilder(
+                                    builder: (context, setDeparture) {
+                                  return AlertDialog(
+                                    title: const Text("Start Time"),
+                                    content: SizedBox(
+                                      width: MediaQuery.sizeOf(context).width,
+                                      child: TextFormField(
+                                        controller: timeController,
+                                        maxLines: 1,
+                                        decoration: const InputDecoration(
+                                          labelText: "Time",
+                                          border: OutlineInputBorder(),
+                                          floatingLabelBehavior:
+                                              FloatingLabelBehavior
+                                                  .always, // Keep the label always visible
+                                          hintText: "8:30 AM",
+                                        ),
+                                        readOnly: true,
+                                        onTap: () async {
+                                          final TimeOfDay? pickedTime =
+                                              await showTimePicker(
+                                            context: context,
+                                            initialTime: time,
+                                            initialEntryMode:
+                                                TimePickerEntryMode.inputOnly,
+                                            builder: (BuildContext context,
+                                                Widget? child) {
+                                              return MediaQuery(
+                                                data: MediaQuery.of(context)
+                                                    .copyWith(
+                                                        alwaysUse24HourFormat:
+                                                            false),
+                                                child: child!,
+                                              );
+                                            },
+                                          );
+
+                                          if (pickedTime != null) {
+                                            setDeparture(() {
+                                              timeController.text =
+                                                  pickedTime.format(context);
+                                              time = pickedTime;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    actions: [
+                                      FilledButton(
+                                          onPressed: () {
+                                            context.pop();
+                                          },
+                                          style: FilledButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12.0),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  8.0), // Adjust the value as needed
+                                            ),
+                                          ),
+                                          child: const Text('Cancel')),
+                                      FilledButton(
+                                          onPressed: () {},
+                                          style: FilledButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12.0),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  8.0), // Adjust the value as needed
+                                            ),
+                                          ),
+                                          child: const Text('Add')),
+                                    ],
+                                  );
+                                });
+                              });
+                        },
+                        child: const Icon(
+                          Icons.more_time_rounded,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: GridView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          crossAxisSpacing: 4,
+                          mainAxisSpacing: 4,
+                          childAspectRatio: 3,
+                        ),
+                        itemCount: listing.entertainmentScheduling!
+                            .availability![index].availableTimes.length,
+                        itemBuilder: (context, timeIndex) {
+                          var time = listing.entertainmentScheduling!
+                              .availability![index].availableTimes[timeIndex];
+                          return Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              time.time.format(context),
+                              style: const TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           },
-        );
-      }
-    },
-    error: (error, stackTrace) => Scaffold(
-      body: ErrorText(error: error.toString(), stackTrace: stackTrace.toString()),
-    ),
-    loading: () => const Scaffold(body: Loader()),
-  );
-
-
-  }
-
-  Widget scheduling() {
-    return const Placeholder();
+        ),
+      ),
+    );
   }
 }
