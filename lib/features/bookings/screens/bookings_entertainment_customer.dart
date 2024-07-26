@@ -616,6 +616,12 @@ class _BookingsEntertainmentCustomerState
                                       num capacity = availableTimeAndCapacity[
                                               dateTimeSlot] ??
                                           0;
+                                      final plan = await ref.read(
+                                          getPlanByUidProvider(booking.tripUid)
+                                              .future);
+                                      var updatedActivities = [
+                                        ...plan.activities!
+                                      ];
 
                                       if (capacity == 0) {
                                         // show an alert dialog that the selected departure time is already full
@@ -648,9 +654,35 @@ class _BookingsEntertainmentCustomerState
                                                 minutes: widget
                                                     .listing.duration!.minute));
                                         final updatedBooking = booking.copyWith(
-                                            bookingStatus: "Re-Booked",
+                                            bookingStatus: "Reserved",
                                             startDate: startDate,
                                             endDate: endDate);
+                                        var updatedActivity = updatedActivities
+                                            .firstWhere((activity) {
+                                          return activity.bookingId ==
+                                              booking.id;
+                                        }).copyWith(
+                                                dateTime: startDate,
+                                                startTime: startDate,
+                                                endTime: endDate);
+
+                                        int index = updatedActivities
+                                            .indexWhere((activity) =>
+                                                activity.bookingId ==
+                                                booking.id);
+
+                                        if (index != -1) {
+                                          updatedActivities[index] =
+                                              updatedActivity;
+                                        }
+
+                                        final updatedPlan = plan.copyWith(
+                                            activities: updatedActivities,
+                                            endDate:
+                                                endDate.isAfter(plan.endDate!)
+                                                    ? endDate
+                                                    : plan.endDate);
+
                                         ref
                                             .read(listingControllerProvider
                                                 .notifier)
@@ -659,7 +691,11 @@ class _BookingsEntertainmentCustomerState
                                                 booking.listingId,
                                                 updatedBooking,
                                                 "");
-                                        //add code to edit the activity and update the plan
+                                        ref
+                                            .read(plansControllerProvider
+                                                .notifier)
+                                            .updatePlan(updatedPlan, context);
+
                                         context.pop();
                                         context.pop();
                                       }
