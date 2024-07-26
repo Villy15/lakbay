@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lakbay/core/util/utils.dart';
 import 'package:lakbay/features/auth/auth_controller.dart';
 import 'package:lakbay/features/common/error.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
@@ -21,6 +23,7 @@ import 'package:lakbay/models/sale_model.dart';
 import 'package:lakbay/models/subcollections/listings_bookings_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/payments/payment_with_paymaya.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class BookingsAccomodationCustomer extends ConsumerStatefulWidget {
   final ListingModel listing;
@@ -213,6 +216,110 @@ class _BookingsAccomodationCustomerState
                       child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (booking.bookingStatus == "Emergency Request")
+                        Card(
+                          elevation: 3,
+                          margin: const EdgeInsets.only(
+                              top: 15, left: 7.5, right: 7.5, bottom: 15),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.warning_amber_outlined,
+                                        color: Colors.red, size: 30),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Emergency Request",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          Text(
+                                            "We regret to inform you that your service provider has encountered issues, making the room unavailable. You may either Cancel (entitled to a refund) or Re-Book the room",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Icon(Icons.report_problem,
+                                        color: Colors.red, size: 30),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: FilledButton(
+                                        onPressed: () =>
+                                            erCancel(context, booking),
+                                        style: FilledButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12.0),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                8.0), // Adjust the value as needed
+                                          ),
+                                        ),
+                                        child: const Text("Cancel"),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: FilledButton(
+                                        onPressed: () => erRebook(booking),
+                                        style: FilledButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12.0),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                8.0), // Adjust the value as needed
+                                          ),
+                                        ),
+                                        child: const Text("Re-Book"),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        Container(
+                            foregroundDecoration: BoxDecoration(
+                                color: Colors.black.withOpacity(
+                                    booking.bookingStatus == "Cancelled" ||
+                                            booking.bookingStatus ==
+                                                "Request Refund"
+                                        ? 0.5
+                                        : 0.0)),
+                            child: ImageSlider(
+                                images: imageUrls,
+                                height: MediaQuery.sizeOf(context).height / 2,
+                                width: double.infinity,
+                                radius: BorderRadius.circular(0))),
                       Stack(children: [
                         Container(
                             foregroundDecoration: BoxDecoration(
@@ -557,6 +664,179 @@ class _BookingsAccomodationCustomerState
               ),
               loading: () => const CircularProgressIndicator(),
             ));
+  }
+
+  void erRebook(ListingBookings booking) async {
+    final query = FirebaseFirestore.instance
+        .collectionGroup('bookings')
+        .where("category", isEqualTo: "Accommodation");
+    final bookings =
+        await ref.watch(getBookingsByPropertiesProvider((query)).future);
+    showSelectDate(context, booking.startDate!, booking.endDate!, bookings,
+        widget.listing, booking);
+  }
+
+  void showSelectDate(
+      BuildContext context,
+      DateTime startDate,
+      DateTime endDate,
+      List<ListingBookings> bookings,
+      ListingModel listing,
+      ListingBookings booking) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          final maxRange = endDate.difference(startDate);
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Select Date'),
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  context.pop();
+                },
+              ),
+            ),
+            body: Dialog.fullscreen(
+              child: Column(
+                mainAxisSize:
+                    MainAxisSize.min, // Adjust the column size to wrap content
+                children: [
+                  Expanded(
+                    // Remove Expanded if it causes layout issues
+                    child: SfDateRangePicker(
+                        selectionMode: DateRangePickerSelectionMode.single,
+                        enablePastDates: false,
+                        showActionButtons: true,
+                        onSubmit: (value) async {
+                          final plan = await ref.read(
+                              getPlanByUidProvider(booking.tripUid).future);
+                          var updatedActivities = [...plan.activities!];
+                          if (value is DateTime) {
+                            DateTime startDate = value.copyWith(
+                                hour: widget.listing.checkIn!.hour,
+                                minute: widget.listing.checkOut!.minute);
+                            DateTime endDate = startDate.add(Duration(
+                                days: booking.endDate!
+                                    .difference(booking.startDate!)
+                                    .inDays,
+                                hours: widget.listing.checkOut!.hour,
+                                minutes: widget.listing.checkOut!.minute));
+                            final updatedBooking = booking.copyWith(
+                                bookingStatus: "Reserved",
+                                startDate: startDate,
+                                endDate: endDate);
+                            var updatedActivity = updatedActivities
+                                .firstWhere((activity) {
+                              return activity.bookingId == booking.id;
+                            }).copyWith(
+                                    dateTime: startDate,
+                                    startTime: startDate,
+                                    endTime: endDate);
+
+                            int index = updatedActivities.indexWhere(
+                                (activity) => activity.bookingId == booking.id);
+
+                            if (index != -1) {
+                              updatedActivities[index] = updatedActivity;
+                            }
+
+                            final updatedPlan = plan.copyWith(
+                                activities: updatedActivities,
+                                endDate: endDate.isAfter(plan.endDate!)
+                                    ? endDate
+                                    : plan.endDate);
+
+                            ref
+                                .read(listingControllerProvider.notifier)
+                                .updateBooking(context, booking.listingId,
+                                    updatedBooking, "");
+                            ref
+                                .read(plansControllerProvider.notifier)
+                                .updatePlan(updatedPlan, context);
+
+                            context.pop();
+                            context.pop();
+                          }
+                        },
+                        minDate: DateTime.now(),
+                        selectableDayPredicate: (DateTime day) {
+                          //       // Check if the day is in the list of booked dates
+                          final bookedDates = getAllDatesFromBookings(
+                              bookings, booking.roomUid!);
+                          for (DateTime bookedDate in bookedDates) {
+                            if (day.year == bookedDate.year &&
+                                day.month == bookedDate.month &&
+                                day.day == bookedDate.day) {
+                              return false; // Disable this booked date
+                            }
+                          }
+                          return true; // Enable all other dates
+                        }),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  List<DateTime> getAllDatesFromBookings(
+      List<ListingBookings> bookings, String roomUid) {
+    List<DateTime> allDates = [];
+
+    for (ListingBookings booking in bookings) {
+      if (booking.roomUid! == roomUid) {
+        // Add start date
+        DateTime currentDate = booking.startDate!.add(const Duration(days: 0));
+
+        // Keep adding dates until you reach the end date
+        while (currentDate
+            .isBefore(booking.endDate!.subtract(const Duration(days: 1)))) {
+          allDates.add(currentDate);
+          // Move to next day
+          currentDate = currentDate.add(const Duration(days: 1));
+        }
+      }
+    }
+
+    return allDates;
+  }
+
+  Future<dynamic> erCancel(BuildContext context, ListingBookings booking) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Request Refund"),
+            content: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.15,
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: const Column(
+                children: [
+                  Text(
+                      "Your booking will be cancelled, and a full refund will be requested from the service provider."),
+                ],
+              ),
+            ),
+            actions: [
+              FilledButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: const Text('Back')),
+              FilledButton(
+                  onPressed: () {
+                    final updatedBooking =
+                        booking.copyWith(bookingStatus: "Request Refund");
+                    ref.read(listingControllerProvider.notifier).updateBooking(
+                        context, booking.listingId, updatedBooking, "");
+                    context.pop();
+                  },
+                  child: const Text('Confirm')),
+            ],
+          );
+        });
   }
 
   Future<dynamic> onTapCheckOut(BuildContext context, ListingBookings booking) {

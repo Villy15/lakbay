@@ -27,9 +27,10 @@ Future<dynamic> emergencyProcess(
             'subtitle':
                 'This will search for a room replacement within the same cooperative.',
           },
-          'Cancel booking': {
-            'action': () {},
-            'subtitle': 'Cancel the booking and refund the customer.'
+          "Unforeseen circumstances made the room unavailable": {
+            'action': () => onTapRefundGuest(ref, context, booking),
+            'subtitle':
+                'This will prompt guests to either rebook their scheduled date or cancel their booking.',
           },
         },
         'Transport': {
@@ -119,6 +120,113 @@ Future<dynamic> emergencyProcess(
       });
     },
   );
+}
+
+onTapRefundGuest(
+    WidgetRef ref, BuildContext context, ListingBookings? booking) {
+  final refundDetails = {
+    "Number of Guests": "${booking!.guests}",
+    "Amount Refundable": "₱${booking.amountPaid!.toStringAsFixed(2)} PHP",
+  };
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog.fullscreen(
+          child: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            bottomNavigationBar: PreferredSize(
+              preferredSize: Size.fromHeight(MediaQuery.sizeOf(context).height /
+                  30), // Adjust the height as needed
+              child: BottomAppBar(
+                surfaceTintColor: Colors.transparent,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: FilledButton(
+                        onPressed: () {
+                          final updatedBooking = booking.copyWith(
+                              bookingStatus: "Emergency Request");
+                          ref
+                              .read(listingControllerProvider.notifier)
+                              .updateBooking(context, updatedBooking.listingId,
+                                  updatedBooking, "");
+                          context.pop();
+                          context.pop();
+                          context.pop();
+                        },
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                8.0), // Adjust the value as needed
+                          ),
+                        ),
+                        child: const Text(
+                          'Confirm Request',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            body: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: const Text(
+                    "Request Customer Cancellation or Re-Booking",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.sizeOf(context).height / 20,
+                ),
+                ...refundDetails.entries.map((entry) {
+                  return Padding(
+                    padding:
+                        const EdgeInsets.only(top: 15.0, left: 15, right: 15),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              entry.key.toString(),
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                            Text(
+                              entry.value,
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 15),
+                          height: 1,
+                          width: double.infinity,
+                          color: Colors.grey[200],
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      });
 }
 
 onTapRefundGuests(
