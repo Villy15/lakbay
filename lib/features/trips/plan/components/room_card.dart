@@ -38,6 +38,7 @@ class RoomCard extends ConsumerStatefulWidget {
   final Query? query;
   final List<ListingModel>? accommodationListings;
   final List<ListingModel>? allListings;
+  final List<String>? unavailableRoomUids;
   const RoomCard({
     super.key,
     required this.category,
@@ -50,6 +51,7 @@ class RoomCard extends ConsumerStatefulWidget {
     this.query,
     this.accommodationListings,
     this.allListings,
+    this.unavailableRoomUids,
   });
 
   @override
@@ -64,7 +66,6 @@ class _RoomCardState extends ConsumerState<RoomCard> {
 
   @override
   Widget build(BuildContext context) {
-    final guests = ref.read(currentPlanGuestsProvider) ?? widget.guests;
     final startDate = ref.read(planStartDateProvider) ?? widget.startDate;
     final endDate = ref.read(planEndDateProvider) ?? widget.endDate;
     // final daysPlan = ref.read(daysPlanProvider);
@@ -73,20 +74,57 @@ class _RoomCardState extends ConsumerState<RoomCard> {
     // final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     List<String> unavailableRoomUids = getUnavailableRoomUids(
         widget.bookings, startDate!, endDate!, widget.accommodationListings);
+    debugPrint('the unavailable rooms: $unavailableRoomUids');
     Query query = widget.query ??
         FirebaseFirestore.instance.collectionGroup('availableRooms');
+    
+    // if (unavailableRoomUids.isNotEmpty && widget.accommodationListings != null) {
+    //   query = query.where('uid', whereNotIn: unavailableRoomUids);
+    // }
+
     if (unavailableRoomUids.isNotEmpty) {
+      debugPrint('yes yes ye !');
       query = query.where('uid', whereNotIn: unavailableRoomUids);
+      
     }
 
-    if (widget.accommodationListings != null) {
-      query = query.where('listingId',
-          whereIn: widget.accommodationListings!.map((e) => e.uid).toList());
+    else if (widget.accommodationListings!.isNotEmpty && unavailableRoomUids.isNotEmpty) {
+      // use query to get the rooms
+      debugPrint('i am not empty');
+      List<ListingModel> filteredListings = widget.accommodationListings!
+        .where((listing) => listing.availableRooms != null && listing.availableRooms!.any((room) => !unavailableRoomUids.contains(room.roomId)))
+        .toList();
+      debugPrint('these are the filteredListings: $filteredListings');
+
+      List<String> filteredListingIds =
+          filteredListings.map((listing) => listing.uid!).toList();
+      
+      debugPrint('these are the listingIds: $filteredListingIds');
+
+      query = query.where('listingId', whereIn: filteredListingIds);
+        
     }
 
+    else if (widget.accommodationListings!.isNotEmpty && unavailableRoomUids.isEmpty) {
+      // use query to get the rooms
+      debugPrint('im empty');
+      List<ListingModel> filteredListings = widget.accommodationListings!
+        .where((listing) => listing.availableRooms != null)
+        .toList();
+      List<String> filteredListingIds =
+          filteredListings.map((listing) => listing.uid!).toList();
+        
+      debugPrint('these are the listingIds: $filteredListingIds');
+      
+
+      query = query.where('listingId', whereIn: filteredListingIds);
+    }
+    
+    
+    
     return ref.watch(getRoomByPropertiesProvider(query)).when(
           data: (List<AvailableRoom> rooms) {
-            if (rooms.isNotEmpty) {
+            if (rooms .isNotEmpty) {
               return SizedBox(
                 width: double.infinity,
                 child: ListView.builder(

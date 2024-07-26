@@ -43,7 +43,9 @@ class FoodCardState extends ConsumerState<FoodCard> {
     final daysPlan = ref.read(daysPlanProvider);
     final currentUser = ref.read(userProvider);
 
-    if (widget.foodListings != null) {
+    debugPrint('these are the food listings: ${widget.foodListings}');
+
+    if (widget.foodListings!.isNotEmpty) {
       return SizedBox(
           width: double.infinity,
           child: ListView.builder(
@@ -197,7 +199,7 @@ class FoodCardState extends ConsumerState<FoodCard> {
           child: Column(children: [
         const Text('No Food Listings Available'),
         Text(
-            "(${DateFormat('MMMM dd').format(startDate!)} - ${DateFormat('MMMM dd').format(endDate!)})")
+            "(${DateFormat('MMMM dd').format(daysPlan.currentDay!)})")
       ]));
     }
   }

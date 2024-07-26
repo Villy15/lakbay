@@ -32,6 +32,7 @@ dependencies:
   badges: ^2.0.1
   carousel_slider: ^4.2.1
   cloud_firestore: ^4.13.1
+  collection: ^1.15.0
   cupertino_icons: ^1.0.2
   dio: ^5.4.2+1
   document_file_save_plus: ^2.0.0

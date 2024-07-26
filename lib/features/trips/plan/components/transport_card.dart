@@ -43,7 +43,7 @@ class _TransportCardState extends ConsumerState<TransportCard> {
     final daysPlan = ref.read(daysPlanProvider);
     final currentUser = ref.read(userProvider);
 
-    if (widget.transportListings != null) {
+    if (widget.transportListings!.isNotEmpty) {
       return SizedBox(
           width: double.infinity,
           child: ListView.builder(

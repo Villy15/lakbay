@@ -61,6 +61,13 @@ final getAllBookingsProvider = StreamProvider.autoDispose
   return listingController.getAllBookings(listingId);
 });
 
+// getAllBookingsSortedProvider
+final getAllBookingsSortedProvider = StreamProvider.autoDispose
+    .family<List<ListingBookings>, String>((ref, listingId) {
+  final listingController = ref.watch(listingControllerProvider.notifier);
+  return listingController.getAllBookingsSorted(listingId);
+});
+
 // getBookingByIdProvider
 final getBookingByIdProvider = StreamProvider.autoDispose
     .family<ListingBookings, (String listingId, String bookingId)>(
@@ -592,6 +599,11 @@ class ListingController extends StateNotifier<bool> {
   // Read a listing
   Stream<List<ListingBookings>> getAllBookings(String listingId) {
     return _listingRepository.readBookings(listingId);
+  }
+
+  // read all bookings and sort
+  Stream<List<ListingBookings>> getAllBookingsSorted(String listingId) {
+    return _listingRepository.readAndSortBookingsByDate(listingId);
   }
 
   // Read all bookings by cooperativeId
