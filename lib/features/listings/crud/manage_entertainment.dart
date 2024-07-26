@@ -71,7 +71,7 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
   BottomAppBar? bottomAppBar = const BottomAppBar();
   int currentTab = 0;
   @override
-  void initState() async {
+  void initState() {
     super.initState();
 
     Future.delayed(Duration.zero, () {
@@ -206,6 +206,25 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                   ],
                 ),
               )
+            else if (listing.entertainmentScheduling!.type == "dateScheduling")
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: _displaySubHeader("Operating Dates"),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: getWorkingDates(
+                          listing.entertainmentScheduling!.fixedDates!,
+                          listing),
+                    ),
+                  ],
+                ),
+              ) 
           ],
         ),
       ),
@@ -258,6 +277,99 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
     );
   }
 
+  Widget getWorkingDates(List<AvailableDate> workingDates, ListingModel listing) {
+  debugPrint('these are the available dates: $workingDates');
+
+  // Map the available dates to their respective times
+  Map<String, List<AvailableTime>> availableDates = {};
+
+  // Assign the available dates to the time through widget.listing
+  for (int i = 0; i < workingDates.length; i++) {
+    if (workingDates[i].available == true) {
+      // if the date is available, get the respective date's available times
+      for (int j = 0; j < workingDates[i].availableTimes.length; j++) {
+        // map according to date
+        if (availableDates.containsKey(workingDates[i].date.toString()))  {
+          availableDates[workingDates[i].date.toString()]!.add(workingDates[i].availableTimes[j]);
+        } else {
+          availableDates[workingDates[i].date.toString()] = [workingDates[i].availableTimes[j]];
+        }
+      }
+    }
+  }
+
+  debugPrint('this is the final map: $availableDates');
+
+  var sortedEntries = availableDates.entries.toList()
+    ..sort((a, b) => DateTime.parse(a.key).compareTo(DateTime.parse(b.key)));
+
+  availableDates = Map<String, List<AvailableTime>>.fromEntries(sortedEntries);
+
+  debugPrint('this is the sorted map: $availableDates');
+
+  return GridView.builder(
+    physics: const NeverScrollableScrollPhysics(),
+    shrinkWrap: true,
+    itemCount: availableDates.length,
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
+      mainAxisExtent: 120,
+    ),
+    itemBuilder: (context, index) {
+      String date = availableDates.keys.elementAt(index);
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                DateFormat('MMMM dd').format(DateTime.parse(date)),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: GridView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 4,
+                    mainAxisSpacing: 4,
+                    childAspectRatio: 3,
+                  ),
+                  itemCount: availableDates[date]!.length,
+                  itemBuilder: (context, timeIndex) {
+                    var availableTime = availableDates[date]![timeIndex];
+                    debugPrint('this is time yes: ${availableTime.time}');
+                    return Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        availableTime.time.format(context),
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
   Widget getWorkingDays(List<AvailableDay> workingDays, ListingModel listing) {
     const daysOfWeek = [
       'Monday',
@@ -275,18 +387,12 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
     // match the available days to the time through widget.listing
     for (int i = 0; i < workingDays.length; i++) {
       if (workingDays[i].available == true) {
-        debugPrint('this is the day: ${daysOfWeek[i]}');
-        debugPrint(
-            'this is the time: ${widget.listing.entertainmentScheduling!.availability![i].availableTimes}');
-
         // map according to the day
         for (int j = 0;
             j <
                 widget.listing.entertainmentScheduling!.availability![i]
                     .availableTimes.length;
             j++) {
-          debugPrint(
-              'this is the time: ${widget.listing.entertainmentScheduling!.availability![i].availableTimes[j].time}');
           // map according to the time
           if (availableDays.containsKey(daysOfWeek[i])) {
             availableDays[daysOfWeek[i]].add(widget
@@ -304,8 +410,6 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
         }
       }
     }
-
-    debugPrint('final available days: $availableDays');
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -318,7 +422,6 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
       ),
       itemBuilder: (context, index) {
         String day = availableDays.keys.elementAt(index);
-        debugPrint('building card for $day');
         return Card(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
