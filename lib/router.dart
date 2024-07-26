@@ -640,7 +640,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             //   return CustomerEntertainment(
                             //     listing: listing,
                             //   );
-                            case 'tour':
+                            case 'entertainment':
                               return CustomerTouring(
                                 listing: listing,
                               );
