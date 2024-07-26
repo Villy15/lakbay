@@ -209,7 +209,7 @@ class TwoMarkerMapWidgetState extends State<TwoMarkerMapWidget> {
               myLocationButtonEnabled: true,
               initialCameraPosition: CameraPosition(
                 target: centerPoint ?? const LatLng(0, 0),
-                zoom: 12,
+                zoom: 10,
               ),
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);

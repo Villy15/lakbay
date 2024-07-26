@@ -159,6 +159,17 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
               child: Column(
                 children: [
                   eventTags(),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Choose a tag to filter events",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onBackground
+                              .withOpacity(0.6),
+                        )),
+                  ),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -340,6 +351,17 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
               child: Column(
                 children: [
                   listingTags(),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Choose a tag to filter listings",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onBackground
+                              .withOpacity(0.6),
+                        )),
+                  ),
                   ListView.builder(
                     itemCount: filteredListings.length,
                     shrinkWrap: true,
@@ -404,6 +426,32 @@ class _ListingsPageState extends ConsumerState<ListingsPage> {
         ),
         // Add icon on the right side of the app bar of a person
         actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Help'),
+                    content: const Text(
+                      'Here you can view your cooperative\'s listings and events\n\n'
+                      '1. Add a listing or event by clicking the button on the bottom right\n'
+                      '2. You can also contribute by clicking the cards that have tasks that needs contributions',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Close'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: const Icon(Icons.help_outline),
+          ),
           IconButton(
             onPressed: () {
               context.push('/inbox');

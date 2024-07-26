@@ -176,6 +176,7 @@ class ManagerToolsPage extends ConsumerWidget {
       'Add Announcement': () => ListTile(
             leading: const Icon(Icons.announcement),
             title: const Text('Add Announcement'),
+            subtitle: const Text('Add an announcement to the cooperative'),
             onTap: () => addAnnouncement(context, coop),
           ),
 
@@ -183,6 +184,7 @@ class ManagerToolsPage extends ConsumerWidget {
       'Add Goal': () => ListTile(
             leading: const Icon(Icons.add_task),
             title: const Text('Add Goal'),
+            subtitle: const Text('Add a goal to the cooperative'),
             onTap: () => addGoal(
               context,
               coop,
@@ -193,6 +195,7 @@ class ManagerToolsPage extends ConsumerWidget {
       'Add Election Vote': () => ListTile(
             leading: const Icon(Icons.how_to_vote),
             title: const Text('Add Election Vote'),
+            subtitle: const Text('Add a vote to the cooperative'),
             onTap: () => {
               addVote(
                 context,
@@ -204,6 +207,7 @@ class ManagerToolsPage extends ConsumerWidget {
       'Add Job Roles': () => ListTile(
             leading: const Icon(Icons.groups_2_outlined),
             title: const Text('Add Tourism Jobs'),
+            subtitle: const Text('Add job roles to the cooperative'),
             onTap: () => {
               addJobs(
                 context,
@@ -218,12 +222,14 @@ class ManagerToolsPage extends ConsumerWidget {
       'Edit Cooperative': () => ListTile(
             leading: const Icon(Icons.edit),
             title: const Text('Edit Cooperative'),
+            subtitle: const Text('Edit the cooperative details'),
             onTap: () => editCoop(context, coop),
           ),
       // Delete cooperative
       'Delete Cooperative': () => ListTile(
           leading: const Icon(Icons.delete),
           title: const Text('Delete Cooperative'),
+          subtitle: const Text('Delete the cooperative'),
           onTap: () => {
                 showSnackBar(
                   context,
@@ -233,6 +239,7 @@ class ManagerToolsPage extends ConsumerWidget {
       'Manage Privileges': () => ListTile(
             leading: const Icon(Icons.manage_accounts),
             title: const Text('Manage Privileges'),
+            subtitle: const Text('Manage privileges for the cooperative'),
             onTap: () => {
               managePrivileges(
                 context,
@@ -244,6 +251,7 @@ class ManagerToolsPage extends ConsumerWidget {
       'Add Members with CSV': () => ListTile(
             leading: const Icon(Icons.group_add),
             title: const Text('Add Members with CSV'),
+            subtitle: const Text('Add members to the cooperative with CSV'),
             onTap: () => {
               joinCoopCode(
                 context,
@@ -254,6 +262,7 @@ class ManagerToolsPage extends ConsumerWidget {
       'Manage Membership Fee': () => ListTile(
             leading: const Icon(Icons.money),
             title: const Text('Manage Membership Fee'),
+            subtitle: const Text('Manage membership fee for the cooperative'),
             onTap: () => {
               manageMemberShipFee(
                 context,
@@ -265,6 +274,7 @@ class ManagerToolsPage extends ConsumerWidget {
       'Validate Cooperative': () => ListTile(
           leading: const Icon(Icons.verified),
           title: const Text('Validate Cooperative'),
+          subtitle: const Text('Validate the cooperative'),
           onTap: () => {
                 validateCooperative(
                   context,
@@ -275,6 +285,7 @@ class ManagerToolsPage extends ConsumerWidget {
       'Manage Member Dividends': () => ListTile(
           leading: const Icon(Icons.money_off),
           title: const Text('Member Dividends'),
+          subtitle: const Text('Manage member dividends'),
           onTap: () => {
                 manageMemberDividends(
                   context,
@@ -285,6 +296,7 @@ class ManagerToolsPage extends ConsumerWidget {
       'Manage Share Capital': () => ListTile(
           leading: const Icon(Icons.money),
           title: const Text('Manage Share Capital'),
+          subtitle: const Text('Manage share capital for your cooperative'),
           onTap: () => {
                 manageShareCapital(
                   context,

@@ -122,7 +122,7 @@ class _CustomerTransportationState
                           child: Text(
                             widget.listing.pickUp!,
                             style: const TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w400),
+                                fontSize: 12, fontWeight: FontWeight.w300),
                           ),
                         ),
                       ],
@@ -146,7 +146,7 @@ class _CustomerTransportationState
                           child: Text(
                             widget.listing.destination!,
                             style: const TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w400),
+                                fontSize: 12, fontWeight: FontWeight.w300),
                           ),
                         ),
                       ],
