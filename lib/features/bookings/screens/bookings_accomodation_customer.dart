@@ -307,48 +307,35 @@ class _BookingsAccomodationCustomerState
                           ),
                         )
                       else
-                        Container(
-                            foregroundDecoration: BoxDecoration(
-                                color: Colors.black.withOpacity(
-                                    booking.bookingStatus == "Cancelled" ||
-                                            booking.bookingStatus ==
-                                                "Request Refund"
-                                        ? 0.5
-                                        : 0.0)),
-                            child: ImageSlider(
-                                images: imageUrls,
-                                height: MediaQuery.sizeOf(context).height / 2,
-                                width: double.infinity,
-                                radius: BorderRadius.circular(0))),
-                      Stack(children: [
-                        Container(
-                            foregroundDecoration: BoxDecoration(
-                                color: Colors.black.withOpacity(
-                                    booking.bookingStatus == "Cancelled"
-                                        ? 0.5
-                                        : 0.0)),
-                            child: ImageSlider(
-                                images: imageUrls,
-                                height: MediaQuery.sizeOf(context).height / 2,
-                                width: double.infinity,
-                                radius: BorderRadius.circular(0))),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 70.0, left: 30),
-                          child: Row(
-                            children: [
-                              Flexible(
-                                  child: Text(
-                                      booking.bookingStatus == 'Cancelled'
-                                          ? "Your Booking Has Been Cancelled"
-                                          : '',
-                                      style: const TextStyle(
-                                          fontSize: 26,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white))),
-                            ],
-                          ),
-                        )
-                      ]),
+                        Stack(children: [
+                          Container(
+                              foregroundDecoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(
+                                      booking.bookingStatus == "Cancelled"
+                                          ? 0.5
+                                          : 0.0)),
+                              child: ImageSlider(
+                                  images: imageUrls,
+                                  height: MediaQuery.sizeOf(context).height / 2,
+                                  width: double.infinity,
+                                  radius: BorderRadius.circular(0))),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 70.0, left: 30),
+                            child: Row(
+                              children: [
+                                Flexible(
+                                    child: Text(
+                                        booking.bookingStatus == 'Cancelled'
+                                            ? "Your Booking Has Been Cancelled"
+                                            : '',
+                                        style: const TextStyle(
+                                            fontSize: 26,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white))),
+                              ],
+                            ),
+                          )
+                        ]),
                       // Check in Check out
                       Padding(
                         padding: const EdgeInsets.symmetric(
