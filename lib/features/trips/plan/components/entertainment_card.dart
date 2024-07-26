@@ -36,7 +36,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
   @override
   Widget build(BuildContext context) {
     final daysPlan = ref.read(daysPlanProvider);
-    if (widget.entertainmentListings != null) {
+    if (widget.entertainmentListings!.isNotEmpty) {
       debugPrint('this is the entertainment list ${widget.entertainmentListings}');
       return SizedBox(
           width: double.infinity,
@@ -81,6 +81,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
   Widget rentalCard(
       ListingModel listing, List<String?> imageUrls, DateTime currentDate) {
     final currentUser = ref.read(userProvider);
+    debugPrint('This is the rental card: $listing');
 
     return SizedBox(
       // height: MediaQuery.sizeOf(context).height / 2,
@@ -423,6 +424,7 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
 
   Widget? activityToursCard(
       ListingModel listing, List<String?> imageUrls, DateTime currentDate) {
+        debugPrint('This is the activity tours card: $listing');
     final currentUser = ref.read(userProvider);
     final dayIndex = ref.read(daysPlanProvider).currentDay!.weekday - 1;
     switch (listing.entertainmentScheduling!.type) {
@@ -458,16 +460,17 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
             return date.date.eqvYearMonthDay(currentDate);
           }).firstOrNull; // Changed from .first to .firstOrNull
 
-          if (date == null) {
-            // Handle the case when no matching date is found
-            return null;
-          }
+          // if (date == null) {
+          //   debugPrint('i am null. no date found');
+          //   // Handle the case when no matching date is found
+          //   return null;
+          // }
           var availableDate = listing.entertainmentScheduling!.fixedDates!
               .where((availableDate) {
             return availableDate.available == true &&
                 availableDate.date.isAfter(currentDate);
           }).firstOrNull;
-          var timeSlots = date.availableTimes;
+          var timeSlots = date?.availableTimes;
           return dateSchedulingCard(imageUrls, listing, currentUser, timeSlots,
               currentDate, date, availableDate);
         }
@@ -479,9 +482,9 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
       List<String?> imageUrls,
       ListingModel listing,
       UserModel? currentUser,
-      List<AvailableTime> timeSlots,
+      List<AvailableTime>? timeSlots,
       DateTime currentDate,
-      AvailableDate date,
+      AvailableDate? date,
       AvailableDate? availableDate) {
     return SizedBox(
       // height: MediaQuery.sizeOf(context).height / 2,
@@ -569,9 +572,9 @@ class _EntertainmentCardState extends ConsumerState<EntertainmentCard> {
                           ),
                           child: const Text('View Listing',
                               style: TextStyle(fontSize: 14))),
-                      date.available == true
+                      date != null && date.available == true
                           ? dateSchedulingBookNow(
-                              currentUser, listing, timeSlots, currentDate)
+                              currentUser, listing, timeSlots!, currentDate)
                           : FilledButton(
                               onPressed: null,
                               style: FilledButton.styleFrom(

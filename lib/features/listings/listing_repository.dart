@@ -171,6 +171,17 @@ class ListingRepository {
     });
   }
 
+  Stream<List<ListingBookings>> readAndSortBookingsByDate(listingId) {
+    return bookings(listingId)
+        .orderBy('startDate', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ListingBookings.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
   // read task
   Stream<List<BookingTask>> readBookingTasks(String listingId) {
     return bookingTasksCollection(listingId).snapshots().map((snapshot) {
