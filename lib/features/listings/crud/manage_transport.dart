@@ -287,7 +287,7 @@ class _ManageTransportationState extends ConsumerState<ManageTransportation> {
   }
 
   Widget bookings() {
-    return ref.watch(getAllBookingsSortedProvider(widget.listing.uid!)).when(
+    return ref.watch(getAllBookingsProvider(widget.listing.uid!)).when(
         data: (List<ListingBookings> bookings) {
           if (bookings.isEmpty) {
             return const Center(child: Text('No Bookings'));

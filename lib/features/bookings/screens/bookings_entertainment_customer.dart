@@ -714,11 +714,37 @@ class _BookingsEntertainmentCustomerState
                   },
                   child: const Text('Back')),
               FilledButton(
-                  onPressed: () {
+                  onPressed: () async {
                     final updatedBooking =
                         booking.copyWith(bookingStatus: "Request Refund");
                     ref.read(listingControllerProvider.notifier).updateBooking(
                         context, booking.listingId, updatedBooking, "");
+                    // remove the activity from the trip and update the plan
+                    final planTrip = ref.read(getPlanByUidProvider(booking.tripUid).future);
+                    planTrip.then((trip) {
+                      final updatedTrip = trip.copyWith(
+                        activities: trip.activities
+                            ?.where((activity) => activity.bookingId != booking.id)
+                            .toList(),
+                      );
+                      ref.read(plansControllerProvider.notifier).updatePlan(updatedTrip, context);
+                    });
+
+
+                    // notify the cooperative with regards to the cancellation of the booking
+                    final cancelledEmergencyEntertainmentNotif = NotificationsModel(
+                      title: 'Booking Cancelled',
+                      message: 'The customer has opted to cancel the booking and requested a refund.',
+                      ownerId: widget.listing.publisherId,
+                      bookingId: booking.id,
+                      listingId: booking.listingId,
+                      createdAt: DateTime.now(),
+                      type: 'listing',
+                      isRead: false
+                    );
+
+                    await ref.read(notificationControllerProvider.notifier).addNotification(cancelledEmergencyEntertainmentNotif, context);
+                    // ignore: use_build_context_synchronously
                     context.pop();
                   },
                   child: const Text('Confirm')),

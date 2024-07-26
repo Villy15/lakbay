@@ -267,7 +267,7 @@ class ListingController extends StateNotifier<bool> {
           listingId: listing.uid,
           bookingId: bookingUid,
           message:
-              "A booking is made: ${DateFormat('MMMM d, h:mm a').format(booking.startDate!)} - ${DateFormat('MMMM d, h:mm a').format(booking.endDate!)}.",
+              "A booking is made:\n${DateFormat('MMMM d, h:mm a').format(booking.startDate!)} - ${DateFormat('MMMM d, h:mm a').format(booking.endDate!)}.",
           coopId: listing.cooperative.cooperativeId,
           ownerId: listing.publisherId,
           isToAllMembers: false,

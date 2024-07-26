@@ -13,9 +13,11 @@ import 'package:lakbay/features/common/loader.dart';
 import 'package:lakbay/features/common/providers/bottom_nav_provider.dart';
 import 'package:lakbay/features/cooperatives/coop_members_roles_controller.dart';
 import 'package:lakbay/features/cooperatives/coops_controller.dart';
+import 'package:lakbay/features/notifications/notifications_controller.dart';
 import 'package:lakbay/features/user/user_controller.dart';
 import 'package:lakbay/models/coop_member_roles_model.dart';
 import 'package:lakbay/models/coop_model.dart';
+import 'package:lakbay/models/notifications_model.dart';
 import 'package:lakbay/models/user_model.dart';
 import 'package:lakbay/models/wrappers/join_coop_params.dart';
 
@@ -158,6 +160,16 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
       rolesSelected: _selectedRoles,
     );
 
+    final joinedMemberNotif = NotificationsModel(
+      title: 'New Member Application',
+      message: '${user.name} has applied to join ${widget.coop.name}. View the application to approve or reject.',
+      createdAt: DateTime.now(),
+      type: 'coop',
+      ownerId: widget.coop.managers.first,
+      coopId: widget.coop.uid,
+      isRead: false
+    );
+
     ref
         .read(coopsControllerProvider.notifier)
         .addApplication(updatedCoop.uid!, application, context);
@@ -174,6 +186,8 @@ class _JoinCoopPageState extends ConsumerState<JoinCoopPage> {
     // ref
     //     .read(coopMemberRolesControllerProvider.notifier)
     //     .addMemberRole(coopMemberRoles, context);
+
+    await ref.read(notificationControllerProvider.notifier).addNotification(joinedMemberNotif, context);
     context.pop();
   }
 
