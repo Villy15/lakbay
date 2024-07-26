@@ -641,10 +641,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             //   return CustomerEntertainment(
                             //     listing: listing,
                             //   );
-                            case 'entertainment':
-                              return CustomerTouring(
-                                listing: listing,
-                              );
                             case 'entertainment': 
                               return EntertainmentBookingDetails(booking: booking, listing: listing);
                             default:

@@ -268,16 +268,48 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
       'Saturday',
       'Sunday'
     ];
-    List<String> result = [];
+
+    // Map the available days to their respective time
+    Map<String, dynamic> availableDays = {};
+
+    // match the available days to the time through widget.listing
     for (int i = 0; i < workingDays.length; i++) {
       if (workingDays[i].available == true) {
-        result.add(daysOfWeek[i]);
+        debugPrint('this is the day: ${daysOfWeek[i]}');
+        debugPrint(
+            'this is the time: ${widget.listing.entertainmentScheduling!.availability![i].availableTimes}');
+
+        // map according to the day
+        for (int j = 0;
+            j <
+                widget.listing.entertainmentScheduling!.availability![i]
+                    .availableTimes.length;
+            j++) {
+          debugPrint(
+              'this is the time: ${widget.listing.entertainmentScheduling!.availability![i].availableTimes[j].time}');
+          // map according to the time
+          if (availableDays.containsKey(daysOfWeek[i])) {
+            availableDays[daysOfWeek[i]].add(widget
+                .listing
+                .entertainmentScheduling!
+                .availability![i]
+                .availableTimes[j]
+                .time);
+          } else {
+            availableDays[daysOfWeek[i]] = [
+              widget.listing.entertainmentScheduling!.availability![i]
+                  .availableTimes[j].time
+            ];
+          }
+        }
       }
     }
+
+    debugPrint('final available days: $availableDays');
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: result.length,
+      itemCount: availableDays.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 10,
@@ -285,7 +317,8 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
         mainAxisExtent: 120,
       ),
       itemBuilder: (context, index) {
-        String day = result[index];
+        String day = availableDays.keys.elementAt(index);
+        debugPrint('building card for $day');
         return Card(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -310,11 +343,12 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                       mainAxisSpacing: 4,
                       childAspectRatio: 3,
                     ),
-                    itemCount: listing.entertainmentScheduling!
-                        .availability![index].availableTimes.length,
+                    itemCount: availableDays[day].length,
                     itemBuilder: (context, timeIndex) {
-                      var time = listing.entertainmentScheduling!
-                          .availability![index].availableTimes[timeIndex];
+                      var time = availableDays[day][timeIndex];
+                      debugPrint('this is the time $time');
+                      debugPrint(
+                          'this is the item count: ${availableDays[day].length}');
                       return Container(
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
@@ -322,7 +356,7 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          time.time.format(context),
+                          time.format(context),
                           style: const TextStyle(
                             fontSize: 14,
                           ),
