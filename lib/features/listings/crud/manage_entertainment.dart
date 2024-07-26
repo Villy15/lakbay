@@ -138,7 +138,11 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                             scheduledBookings(listing),
                             bookings(listing),
                             details(listing),
-                            scheduling(listing),
+                            if (listing.entertainmentScheduling!.type ==
+                                "dayScheduling")
+                              scheduling(listing)
+                            else
+                              dateScheduling(listing)
                           ],
                         );
                       },
@@ -698,6 +702,10 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
         );
   }
 
+  Widget dateScheduling(ListingModel listing) {
+    return const Placeholder();
+  }
+
   Widget scheduling(ListingModel listing) {
     const daysOfWeek = [
       'Monday',
@@ -925,8 +933,9 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                                 });
                               });
                         },
-                        child: const Icon(
+                        child: Icon(
                           Icons.more_time_rounded,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
