@@ -71,7 +71,7 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
   BottomAppBar? bottomAppBar = const BottomAppBar();
   int currentTab = 0;
   @override
-  void initState() async {
+  void initState() {
     super.initState();
 
     Future.delayed(Duration.zero, () {
@@ -277,16 +277,16 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
       if (workingDays[i].available == true) {
         debugPrint('this is the day: ${daysOfWeek[i]}');
         debugPrint(
-            'this is the time: ${widget.listing.entertainmentScheduling!.availability![i].availableTimes}');
+            'this is the time: ${listing.entertainmentScheduling!.availability![i].availableTimes}');
 
         // map according to the day
         for (int j = 0;
             j <
-                widget.listing.entertainmentScheduling!.availability![i]
-                    .availableTimes.length;
+                listing.entertainmentScheduling!.availability![i].availableTimes
+                    .length;
             j++) {
           debugPrint(
-              'this is the time: ${widget.listing.entertainmentScheduling!.availability![i].availableTimes[j].time}');
+              'this is the time: ${listing.entertainmentScheduling!.availability![i].availableTimes[j].time}');
           // map according to the time
           if (availableDays.containsKey(daysOfWeek[i])) {
             availableDays[daysOfWeek[i]].add(widget
@@ -297,7 +297,7 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                 .time);
           } else {
             availableDays[daysOfWeek[i]] = [
-              widget.listing.entertainmentScheduling!.availability![i]
+              listing.entertainmentScheduling!.availability![i]
                   .availableTimes[j].time
             ];
           }
@@ -765,53 +765,87 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                               builder: (context) {
                                 TextEditingController timeController =
                                     TextEditingController();
+                                TextEditingController capacityController =
+                                    TextEditingController();
                                 TimeOfDay time =
                                     const TimeOfDay(hour: 8, minute: 30);
                                 return StatefulBuilder(
-                                    builder: (context, setDeparture) {
+                                    builder: (context, setTime) {
                                   return AlertDialog(
                                     title: const Text("Start Time"),
                                     content: SizedBox(
+                                      height:
+                                          MediaQuery.sizeOf(context).height / 4,
                                       width: MediaQuery.sizeOf(context).width,
-                                      child: TextFormField(
-                                        controller: timeController,
-                                        maxLines: 1,
-                                        decoration: const InputDecoration(
-                                          labelText: "Time",
-                                          border: OutlineInputBorder(),
-                                          floatingLabelBehavior:
-                                              FloatingLabelBehavior
-                                                  .always, // Keep the label always visible
-                                          hintText: "8:30 AM",
-                                        ),
-                                        readOnly: true,
-                                        onTap: () async {
-                                          final TimeOfDay? pickedTime =
-                                              await showTimePicker(
-                                            context: context,
-                                            initialTime: time,
-                                            initialEntryMode:
-                                                TimePickerEntryMode.inputOnly,
-                                            builder: (BuildContext context,
-                                                Widget? child) {
-                                              return MediaQuery(
-                                                data: MediaQuery.of(context)
-                                                    .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            false),
-                                                child: child!,
-                                              );
-                                            },
-                                          );
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            TextFormField(
+                                              controller: timeController,
+                                              maxLines: 1,
+                                              decoration: const InputDecoration(
+                                                labelText: "Time",
+                                                border: OutlineInputBorder(),
+                                                floatingLabelBehavior:
+                                                    FloatingLabelBehavior
+                                                        .always, // Keep the label always visible
+                                                hintText: "8:30 AM",
+                                              ),
+                                              readOnly: true,
+                                              onTap: () async {
+                                                final TimeOfDay? pickedTime =
+                                                    await showTimePicker(
+                                                  context: context,
+                                                  initialTime: time,
+                                                  initialEntryMode:
+                                                      TimePickerEntryMode
+                                                          .inputOnly,
+                                                  builder:
+                                                      (BuildContext context,
+                                                          Widget? child) {
+                                                    return MediaQuery(
+                                                      data: MediaQuery.of(
+                                                              context)
+                                                          .copyWith(
+                                                              alwaysUse24HourFormat:
+                                                                  false),
+                                                      child: child!,
+                                                    );
+                                                  },
+                                                );
 
-                                          if (pickedTime != null) {
-                                            setDeparture(() {
-                                              timeController.text =
-                                                  pickedTime.format(context);
-                                              time = pickedTime;
-                                            });
-                                          }
-                                        },
+                                                if (pickedTime != null) {
+                                                  setTime(() {
+                                                    timeController.text =
+                                                        pickedTime
+                                                            .format(context);
+                                                    time = pickedTime;
+                                                  });
+                                                }
+                                              },
+                                            ),
+                                            const SizedBox(height: 10),
+                                            TextFormField(
+                                              controller: capacityController,
+                                              maxLines: null,
+                                              decoration: const InputDecoration(
+                                                labelText: 'Capacity',
+                                                border: OutlineInputBorder(),
+                                                floatingLabelBehavior:
+                                                    FloatingLabelBehavior
+                                                        .always,
+                                                hintText: "10",
+                                                suffix: Text(
+                                                  'person/s',
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w300),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                     actions: [
@@ -829,7 +863,54 @@ class _ManageEntertainmentState extends ConsumerState<ManageEntertainment> {
                                           ),
                                           child: const Text('Cancel')),
                                       FilledButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            var times = [
+                                              ...listing
+                                                  .entertainmentScheduling!
+                                                  .availability![index]
+                                                  .availableTimes
+                                            ];
+                                            var newTime = AvailableTime(
+                                                available: true,
+                                                maxPax: num.parse(
+                                                    capacityController.text),
+                                                time: time);
+                                            // Add the new time
+                                            times.add(newTime);
+
+                                            // Sort the list
+                                            times.sort((a, b) => a.time
+                                                .format(context)
+                                                .compareTo(
+                                                    b.time.format(context)));
+                                            var updatedAvailability =
+                                                List<AvailableDay>.from(listing
+                                                    .entertainmentScheduling!
+                                                    .availability!);
+
+                                            updatedAvailability[index] =
+                                                updatedAvailability[index]
+                                                    .copyWith(
+                                                        available: true,
+                                                        availableTimes: times);
+
+                                            final updatedScheduling = listing
+                                                .entertainmentScheduling!
+                                                .copyWith(
+                                                    availability:
+                                                        updatedAvailability);
+                                            final updatedListing =
+                                                listing.copyWith(
+                                                    entertainmentScheduling:
+                                                        updatedScheduling);
+
+                                            ref
+                                                .read(listingControllerProvider
+                                                    .notifier)
+                                                .updateListing(
+                                                    context, updatedListing);
+                                            context.pop();
+                                          },
                                           style: FilledButton.styleFrom(
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 12.0),
